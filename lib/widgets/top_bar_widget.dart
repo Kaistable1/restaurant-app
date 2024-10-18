@@ -55,7 +55,9 @@ class _TopBarWidgetState extends State<TopBarWidget> {
         iconTheme: const IconThemeData(color: AppColors.primaryColor),
         title: GestureDetector(
           onTap: (){
-            // Get.to(()=>TobarWidget());
+            _onItemTapped(0);
+
+
           },
           child: Image.asset(
             'assets/images/topbar_logo.png',
@@ -71,21 +73,28 @@ class _TopBarWidgetState extends State<TopBarWidget> {
                   width:12
               ),
               const SizedBox(width: 3),
-              Text(
-                'USA.Los Vegas',
-                style: TextStyle(
-                  color: AppColors.textColor,
-                  fontWeight: Responsive.isMobile(context)
-                      ? FontWeight.w800
-                      : Responsive.isTablet(context)
-                      ? FontWeight.w600
-                      : FontWeight.w600,
-                  fontFamily: 'Nunito-Regular',
-                  fontSize: Responsive.isMobile(context)
-                      ? 8
-                      : Responsive.isTablet(context)
-                      ? 14
-                      : 16,
+              GestureDetector(
+                onTap: (){
+                  _onItemTapped(7);
+
+
+                },
+                child: Text(
+                  'USA.Los Vegas',
+                  style: TextStyle(
+                    color: AppColors.textColor,
+                    fontWeight: Responsive.isMobile(context)
+                        ? FontWeight.w800
+                        : Responsive.isTablet(context)
+                        ? FontWeight.w600
+                        : FontWeight.w600,
+                    fontFamily: 'Nunito-Regular',
+                    fontSize: Responsive.isMobile(context)
+                        ? 8
+                        : Responsive.isTablet(context)
+                        ? 14
+                        : 16,
+                  ),
                 ),
               ),
               const SizedBox(width: 20,),
@@ -102,7 +111,7 @@ class _TopBarWidgetState extends State<TopBarWidget> {
             if (!Responsive.isMobile(context)) _buildTopBar(context),
             _screens[_selectedIndex],
             SizedBox(height: Responsive.isMobile(context) ? 60 : Responsive.isTablet(context) ? 100 : 120),
-            const BottomContainer(),
+             BottomContainer(onNavigate:_onItemTapped),
           ],
         ),
       ),
@@ -125,19 +134,26 @@ class _TopBarWidgetState extends State<TopBarWidget> {
                 : MainAxisAlignment.spaceEvenly,
             children: [
               SizedBox(width: Responsive.isMobile(context) ? 50 : Responsive.isTablet(context) ? 15 : 20),
-             Image(
-                image: const AssetImage('assets/images/topbar_logo.png'),
-                height: Responsive.isMobile(context)
-                    ? 22
-                    : Responsive.isTablet(context)
-                    ? 35: isLargeScreen ?  100
-                    : 43,
-                width: Responsive.isMobile(context)
-                    ? 50
-                    : Responsive.isTablet(context)
-                    ? 90: isLargeScreen ?  180
-                    : 120,
-              ),
+             GestureDetector(
+               onTap: (){
+                 _onItemTapped(0);
+
+
+               },
+               child: Image(
+                  image: const AssetImage('assets/images/topbar_logo.png'),
+                  height: Responsive.isMobile(context)
+                      ? 22
+                      : Responsive.isTablet(context)
+                      ? 35: isLargeScreen ?  100
+                      : 43,
+                  width: Responsive.isMobile(context)
+                      ? 50
+                      : Responsive.isTablet(context)
+                      ? 90: isLargeScreen ?  180
+                      : 120,
+                ),
+             ),
 
               SizedBox(width: Responsive.isMobile(context) ? 8 : Responsive.isTablet(context) ? 20 : 40),
               _buildNavItem('Home', 0),
@@ -155,21 +171,28 @@ class _TopBarWidgetState extends State<TopBarWidget> {
                     width: Responsive.isMobile(context) ? 12 : Responsive.isTablet(context) ? 16 : 22,
                   ),
                   const SizedBox(width: 3),
-                  Text(
-                    'USA.Los Vegas',
-                    style: TextStyle(
-                      color: AppColors.textColor,
-                      fontWeight: Responsive.isMobile(context)
-                          ? FontWeight.w800
-                          : Responsive.isTablet(context)
-                          ? FontWeight.w600
-                          : FontWeight.w600,
-                      fontFamily: 'Nunito-Regular',
-                      fontSize: Responsive.isMobile(context)
-                          ? 8
-                          : Responsive.isTablet(context)
-                          ? 14
-                          : 16,
+                  GestureDetector(
+                    onTap: (){
+                      _onItemTapped(7);
+
+
+                    },
+                    child: Text(
+                      'USA.Los Vegas',
+                      style: TextStyle(
+                        color: AppColors.textColor,
+                        fontWeight: Responsive.isMobile(context)
+                            ? FontWeight.w800
+                            : Responsive.isTablet(context)
+                            ? FontWeight.w600
+                            : FontWeight.w600,
+                        fontFamily: 'Nunito-Regular',
+                        fontSize: Responsive.isMobile(context)
+                            ? 8
+                            : Responsive.isTablet(context)
+                            ? 14
+                            : 16,
+                      ),
                     ),
                   ),
                 ],
@@ -219,15 +242,15 @@ class _TopBarWidgetState extends State<TopBarWidget> {
       title: Text(
         title,
         style: TextStyle(
-          decoration:_selectedIndex == index || (_selectedIndex == 6 && index == 0 )|| (_selectedIndex == 7 && index == 0) ? TextDecoration.underline : TextDecoration.none,
+          decoration:_selectedIndex == index || (_selectedIndex == 6 && index == 0 )|| (_selectedIndex == 7 && index == 0)|| (_selectedIndex == 8 && index == 0) ? TextDecoration.underline : TextDecoration.none,
           decorationThickness: 1.5,
           decorationColor: AppColors.primaryColor,
           fontSize: 14,
           fontFamily: 'Nunito-Bold',
-          color: _selectedIndex == index || (_selectedIndex == 6 && index == 0 ) || (_selectedIndex == 7 && index == 0)
+          color: _selectedIndex == index || (_selectedIndex == 6 && index == 0 ) || (_selectedIndex == 7 && index == 0)|| (_selectedIndex == 8 && index == 0)
               ? AppColors.primaryColor
               : AppColors.textColor,
-          fontWeight: _selectedIndex == index || (_selectedIndex == 6 && index == 0)
+          fontWeight: _selectedIndex == index || (_selectedIndex == 6 && index == 0)|| (_selectedIndex == 8 && index == 0)
               ? FontWeight.w700
               : FontWeight.w700,
         ),
@@ -253,11 +276,11 @@ class _TopBarWidgetState extends State<TopBarWidget> {
       child: Text(
         title,
         style: TextStyle(
-          decoration: _selectedIndex == index || (_selectedIndex == 6 && index == 0) || (_selectedIndex == 7 && index == 0)
+          decoration: _selectedIndex == index || (_selectedIndex == 6 && index == 0) || (_selectedIndex == 7 && index == 0)|| (_selectedIndex == 8 && index == 0)
               ? TextDecoration.underline
               : TextDecoration.none,
           decorationThickness: 1.5,
-          decorationColor: (_selectedIndex == index || (_selectedIndex == 6 && index == 0) || (_selectedIndex == 7 && index == 0))
+          decorationColor: (_selectedIndex == index || (_selectedIndex == 6 && index == 0) || (_selectedIndex == 7 && index == 0)|| (_selectedIndex == 8 && index == 0))
               ? AppColors.primaryColor
               : AppColors.textColor,
           fontSize: Responsive.isMobile(context)
@@ -266,10 +289,10 @@ class _TopBarWidgetState extends State<TopBarWidget> {
               ? 14
               : 16,
           fontFamily: 'Nunito-Regular',
-          color: (_selectedIndex == index || (_selectedIndex == 6 && index == 0) || (_selectedIndex == 7 && index == 0))
+          color: (_selectedIndex == index || (_selectedIndex == 6 && index == 0) || (_selectedIndex == 7 && index == 0)|| (_selectedIndex == 8 && index == 0))
               ? AppColors.primaryColor
               : AppColors.textColor,
-          fontWeight: (_selectedIndex == index || (_selectedIndex == 6 && index == 0) || (_selectedIndex == 7 && index == 0))
+          fontWeight: (_selectedIndex == index || (_selectedIndex == 6 && index == 0) || (_selectedIndex == 7 && index == 0)|| (_selectedIndex == 8 && index == 0))
               ? FontWeight.w600
               : Responsive.isMobile(context)
               ? Responsive.isTablet(context)

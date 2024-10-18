@@ -16,7 +16,9 @@ class CustomTextFormField extends StatelessWidget {
   final String? prefixImagePath;
   final double? imgHeight;
   final double? imgWidth;
-  final Widget? suffexWidget;// Add this line
+  final Widget? suffexWidget;
+  final bool isShadow;
+  final FontWeight? hintfontWeight;// Add this line
 
   const CustomTextFormField({
     super.key,
@@ -30,7 +32,7 @@ class CustomTextFormField extends StatelessWidget {
     this.controller,
     this.onChanged,
     this.maxLines,
-    this.prefixImagePath, this.imgHeight, this.imgWidth, this.suffexWidget, // Add this line
+    this.prefixImagePath, this.imgHeight, this.imgWidth, this.suffexWidget, this.isShadow = true, this.hintfontWeight, // Add this line
   });
 
   @override
@@ -41,14 +43,16 @@ class CustomTextFormField extends StatelessWidget {
       decoration: BoxDecoration(
         color: containerColor ?? Colors.white, // Set container color
         borderRadius: BorderRadius.circular(Responsive.isMobile(context) ? 4 : 10),
-        boxShadow: [
+        boxShadow: isShadow // Conditional expression
+            ? [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
             spreadRadius: 2,
             blurRadius: 12,
-            offset: const Offset(0, 1), // Same shadow as dropdown
-          ),
-        ],
+            offset: const Offset(0, 1),
+          )
+        ]
+            : [],
       ),
       child: TextFormField(
         maxLines: maxLines,
@@ -65,7 +69,7 @@ class CustomTextFormField extends StatelessWidget {
           hintStyle: TextStyle(
             color: const Color(0xFF4F5762),
             fontFamily: fontfamily ?? "Lora-Regular",
-            fontWeight: FontWeight.w400,
+            fontWeight: hintfontWeight??FontWeight.w400,
             fontSize: hintfontsize ?? 16,
           ),
           border: InputBorder.none, // Removes the default border
@@ -75,7 +79,7 @@ class CustomTextFormField extends StatelessWidget {
             left: Responsive.isMobile(context) ? 9 : 20,
             right: Responsive.isMobile(context) ? 9 : 20,
           ),
-        suffix: suffexWidget,
+          suffix: suffexWidget,
           prefixIcon: prefixImagePath != null // Add this check for prefix icon
               ? Padding(
             padding:  EdgeInsets.all(Responsive.isMobile(context) ? 12 :14),

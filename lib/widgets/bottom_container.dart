@@ -3,9 +3,12 @@ import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
 import '../utils/responsive.dart';
 class BottomContainer extends StatelessWidget {
-  const BottomContainer({super.key});
+  final Function(int)? onNavigate;
+  const BottomContainer({super.key, this.onNavigate});
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isLargeScreen = screenWidth > 1400;
     return Container(
       color: AppColors.botomSheetColor,
       height:  Responsive.isMobile(context) ? 210 :390,
@@ -23,45 +26,61 @@ class BottomContainer extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Business name',
+                    Text('Reference',
                     style: TextStyle(
-                      fontSize:  Responsive.isMobile(context) ? 8 : Responsive.isTablet(context)?14:18,
+                      fontSize:  Responsive.isMobile(context) ? 8 : Responsive.isTablet(context)?14:isLargeScreen?20:18,
                       fontFamily: 'Nunito-Regular',
                       color: AppColors.primaryColor,
                       fontWeight: FontWeight.w500
                     ),
                     ),
                     SizedBox(height:  Responsive.isMobile(context) ? 10: Responsive.isTablet(context)?20 :30,),
-                    Text('emerchant',
+                    GestureDetector(
+                      onTap: (){
+                        if (onNavigate != null) {
+                          onNavigate!(1); // Call the callback to navigate to the 7th screen
+                        }
+
+                      },
+                      child: Text('Favorites',
+                        style: TextStyle(
+                            fontSize:  Responsive.isMobile(context) ? 6 : Responsive.isTablet(context)?12:isLargeScreen?18:16,
+                            fontFamily: 'Nunito-Regular',
+                            color: AppColors.whiteColor,
+                            fontWeight: FontWeight.w400
+                        ),
+                      ),
+                    ),
+                    SizedBox(height:  Responsive.isMobile(context) ? 10: Responsive.isTablet(context)?20 :30,),
+                    GestureDetector(
+                      onTap: (){
+                        if (onNavigate != null) {
+                          onNavigate!(4); // Call the callback to navigate to the 7th screen
+                        }
+
+                      },
+                      child: Text('about app',
+                        style: TextStyle(
+                            fontSize:  Responsive.isMobile(context) ? 6: Responsive.isTablet(context)?12 :isLargeScreen?18:16,
+                            fontFamily: 'Nunito-Regular',
+                            color: AppColors.whiteColor,
+                            fontWeight: FontWeight.w400
+                        ),
+                      ),
+                    ),
+                    SizedBox(height:  Responsive.isMobile(context) ? 10: Responsive.isTablet(context)?20 :30,),
+                    Text('',
                       style: TextStyle(
-                          fontSize:  Responsive.isMobile(context) ? 6 : Responsive.isTablet(context)?12:16,
+                          fontSize:  Responsive.isMobile(context) ? 6 : Responsive.isTablet(context)?12:isLargeScreen?18:16,
                           fontFamily: 'Nunito-Regular',
                           color: AppColors.whiteColor,
                           fontWeight: FontWeight.w400
                       ),
                     ),
                     SizedBox(height:  Responsive.isMobile(context) ? 10: Responsive.isTablet(context)?20 :30,),
-                    Text('about us',
+                    Text('',
                       style: TextStyle(
-                          fontSize:  Responsive.isMobile(context) ? 6: Responsive.isTablet(context)?12 :16,
-                          fontFamily: 'Nunito-Regular',
-                          color: AppColors.whiteColor,
-                          fontWeight: FontWeight.w400
-                      ),
-                    ),
-                    SizedBox(height:  Responsive.isMobile(context) ? 10: Responsive.isTablet(context)?20 :30,),
-                    Text('contact us',
-                      style: TextStyle(
-                          fontSize:  Responsive.isMobile(context) ? 6 : Responsive.isTablet(context)?12:16,
-                          fontFamily: 'Nunito-Regular',
-                          color: AppColors.whiteColor,
-                          fontWeight: FontWeight.w400
-                      ),
-                    ),
-                    SizedBox(height:  Responsive.isMobile(context) ? 10: Responsive.isTablet(context)?20 :30,),
-                    Text('favorite',
-                      style: TextStyle(
-                          fontSize:  Responsive.isMobile(context) ? 6: Responsive.isTablet(context)?12 :16,
+                          fontSize:  Responsive.isMobile(context) ? 6: Responsive.isTablet(context)?12 :isLargeScreen?18:16,
                           fontFamily: 'Nunito-Regular',
                           color: AppColors.whiteColor,
                           fontWeight: FontWeight.w400
@@ -69,53 +88,85 @@ class BottomContainer extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height:  Responsive.isMobile(context) ? 10: Responsive.isTablet(context)?20 :30,),
-                Image(image: const AssetImage('assets/images/botomsheet_logo.png'),
-                  height: Responsive.isMobile(context) ? 40 : Responsive.isTablet(context)?90:156,width:Responsive.isMobile(context) ? 200 : Responsive.isTablet(context)?320: 482,),
-                SizedBox(width: Responsive.isMobile(context) ? 8 :60,),
+                SizedBox(width:  Responsive.isMobile(context) ? 10: Responsive.isTablet(context)?20 :isLargeScreen?90:30,),
+                GestureDetector(
+                  onTap: (){
+                    if (onNavigate != null) {
+                      onNavigate!(0); // Call the callback to navigate to the 7th screen
+                    }
+
+                  },
+                  child: Image(image: const AssetImage('assets/images/botomsheet_logo.png'),
+                    height: Responsive.isMobile(context) ? 40 : Responsive.isTablet(context)?90:156,width:Responsive.isMobile(context) ? 200 : Responsive.isTablet(context)?320: 482,),
+                ),
+                SizedBox(width: Responsive.isMobile(context) ? 8 :isLargeScreen?90:60,),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Support',
                       style: TextStyle(
-                          fontSize: Responsive.isMobile(context) ? 8: Responsive.isTablet(context)?14 :18,
+                          fontSize: Responsive.isMobile(context) ? 8: Responsive.isTablet(context)?14 :isLargeScreen?20:18,
                           fontFamily: 'Nunito-Regular',
                           color: AppColors.primaryColor,
                           fontWeight: FontWeight.w500
                       ),
                     ),
                     SizedBox(height:  Responsive.isMobile(context) ? 10: Responsive.isTablet(context)?20 :30,),
-                    Text("FAQ's",
-                      style: TextStyle(
-                          fontSize:  Responsive.isMobile(context) ? 6 : Responsive.isTablet(context)?12:16,
-                          fontFamily: 'Nunito-Regular',
-                          color: AppColors.whiteColor,
-                          fontWeight: FontWeight.w400
+                    GestureDetector(
+                      onTap: (){
+                        if (onNavigate != null) {
+                          onNavigate!(5); // Call the callback to navigate to the 7th screen
+                        }
+
+                      },
+                      child: Text("Contact us",
+                        style: TextStyle(
+                            fontSize:  Responsive.isMobile(context) ? 6 : Responsive.isTablet(context)?12:isLargeScreen?18:16,
+                            fontFamily: 'Nunito-Regular',
+                            color: AppColors.whiteColor,
+                            fontWeight: FontWeight.w400
+                        ),
                       ),
                     ),
                     SizedBox(height:  Responsive.isMobile(context) ? 10: Responsive.isTablet(context)?20 :30,),
-                    Text('terms of use',
-                      style: TextStyle(
-                          fontSize:  Responsive.isMobile(context) ? 6 : Responsive.isTablet(context)?12:16,
-                          fontFamily: 'Nunito-Regular',
-                          color: AppColors.whiteColor,
-                          fontWeight: FontWeight.w400
+                    GestureDetector(
+                      onTap: (){
+                        if (onNavigate != null) {
+                          onNavigate!(2); // Call the callback to navigate to the 7th screen
+                        }
+
+                      },
+                      child: Text('Terms and condition',
+                        style: TextStyle(
+                            fontSize:  Responsive.isMobile(context) ? 6 : Responsive.isTablet(context)?12:isLargeScreen?18:16,
+                            fontFamily: 'Nunito-Regular',
+                            color: AppColors.whiteColor,
+                            fontWeight: FontWeight.w400
+                        ),
                       ),
                     ),
                     SizedBox(height:  Responsive.isMobile(context) ? 10: Responsive.isTablet(context)?20 :30,),
-                    Text('privacy policy',
-                      style: TextStyle(
-                          fontSize:  Responsive.isMobile(context) ? 6: Responsive.isTablet(context)?12 :16,
-                          fontFamily: 'Nunito-Regular',
-                          color: AppColors.whiteColor,
-                          fontWeight: FontWeight.w400
+                    GestureDetector(
+                      onTap: (){
+                        if (onNavigate != null) {
+                          onNavigate!(3); // Call the callback to navigate to the 7th screen
+                        }
+
+                      },
+                      child: Text('privacy policy',
+                        style: TextStyle(
+                            fontSize:  Responsive.isMobile(context) ? 6: Responsive.isTablet(context)?12 :isLargeScreen?18:16,
+                            fontFamily: 'Nunito-Regular',
+                            color: AppColors.whiteColor,
+                            fontWeight: FontWeight.w400
+                        ),
                       ),
                     ),
                     SizedBox(height:  Responsive.isMobile(context) ? 10: Responsive.isTablet(context)?20 :30,),
-                    Text('fair uses policy',
+                    Text('',
                       style: TextStyle(
-                          fontSize:  Responsive.isMobile(context) ? 6: Responsive.isTablet(context)?12 :16,
+                          fontSize:  Responsive.isMobile(context) ? 6: Responsive.isTablet(context)?12 :isLargeScreen?18:16,
                           fontFamily: 'Nunito-Regular',
                           color: AppColors.whiteColor,
                           fontWeight: FontWeight.w400

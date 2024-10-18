@@ -39,6 +39,7 @@ dependencies:
   fluttertoast:
   flutter_rating_bar: ^4.0.1
   google_maps_flutter: ^2.9.0
+  dotted_border:
 
 dev_dependencies:
   flutter_test:

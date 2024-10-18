@@ -54,6 +54,7 @@ class LocationScreen extends StatelessWidget {
             ),
              SizedBox(height: Responsive.isMobile(context) ? 10 :18),
 
+
             Padding(
               padding:  EdgeInsets.only(left:Responsive.isMobile(context) ? 22: 46.0,right: Responsive.isMobile(context) ? 22: 46.0,),
               child: Container(
