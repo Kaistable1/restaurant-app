@@ -149,6 +149,99 @@ class RestaurantDetailScreen extends StatelessWidget {
                 ],
               ),
               SizedBox(height: Responsive.isMobile(context) ? 10 : 18),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      height: Responsive.isMobile(context) ? 150:Responsive.isTablet(context)?280:isLargeScreen?610:410,
+                      width: Responsive.isMobile(context) ?165:Responsive.isTablet(context)?370:isLargeScreen?864:544,
+
+                      decoration: BoxDecoration(
+                        image: const DecorationImage(
+                          image: AssetImage('assets/images/img1.png'), // Replace with your image asset
+                          fit: BoxFit.cover,
+                        ),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                    SizedBox(width: Responsive.isMobile(context) ?2:10,),
+                    Column(
+                      children: [
+                        Container(
+                          height:Responsive.isMobile(context) ?75:Responsive.isTablet(context)?135:isLargeScreen?300: 200,
+                          width:Responsive.isMobile(context) ?90:Responsive.isTablet(context)?260:isLargeScreen?464: 313,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('assets/images/img1.png'), // Replace with your image asset
+                              fit: BoxFit.cover,
+                            ),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                        SizedBox(height: Responsive.isMobile(context) ?2:10,),
+
+                        Container(
+                          height:Responsive.isMobile(context) ?75:Responsive.isTablet(context)?135:isLargeScreen?300: 200,
+                          width:Responsive.isMobile(context) ?90:Responsive.isTablet(context)?260:isLargeScreen?464: 313,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('assets/images/img1.png'), // Replace with your image asset
+                              fit: BoxFit.cover,
+                            ),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(width: Responsive.isMobile(context) ?2:10,),
+
+                    Column(
+                      children: [
+                        Container(
+                          height:Responsive.isMobile(context) ?75:Responsive.isTablet(context)?135:isLargeScreen?300: 200,
+                          width:Responsive.isMobile(context) ?90:Responsive.isTablet(context)?260:isLargeScreen?464: 313,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('assets/images/img1.png'), // Replace with your image asset
+                              fit: BoxFit.cover,
+                            ),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                        SizedBox(height: Responsive.isMobile(context) ?2:10,),
+                        Container(
+                          height:Responsive.isMobile(context) ?75:Responsive.isTablet(context)?135:isLargeScreen?300: 200,
+                          width:Responsive.isMobile(context) ?90:Responsive.isTablet(context)?260:isLargeScreen?464: 313,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('assets/images/img1.png'), // Replace with your image asset
+                              fit: BoxFit.cover,
+                            ),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Center(
+                            child: Text("view all photos",
+
+                              style: TextStyle(
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: AppColors.whiteColor,
+                                  fontFamily: 'Nunito-Regular',
+                                  fontSize:  Responsive.isMobile(context) ? 6 :Responsive.isTablet(context) ? 12: 20,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColors.whiteColor
+                              ),
+
+                            )  ,
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(height: Responsive.isMobile(context) ? 10 : 18),
               Column(
                 children: [
                   Row(
