@@ -12,99 +12,48 @@ import 'home_controller/home_new_controller.dart';
 import 'home_controller/home_recently_viewed_controller.dart';
 import 'home_controller/home_theme_controller.dart';
 import 'home_controller/home_trending_controller.dart';
+
 class HomeScreen extends StatelessWidget {
   final Function(int)? onNavigate;
   const HomeScreen({super.key, this.onNavigate});
   @override
   Widget build(BuildContext context) {
-
     final HomeLocationController controller = Get.put(HomeLocationController());
     final HomeThemeController themeController = Get.put(HomeThemeController());
-    final HomeRecentlyViewedController recentlyViewedController = Get.put(HomeRecentlyViewedController());
-    final HomeCusinessController cusinessController = Get.put(HomeCusinessController());
-    final HomeTrendingController trendingController = Get.put(HomeTrendingController());
+    final HomeRecentlyViewedController recentlyViewedController =
+        Get.put(HomeRecentlyViewedController());
+    final HomeCusinessController cusinessController =
+        Get.put(HomeCusinessController());
+    final HomeTrendingController trendingController =
+        Get.put(HomeTrendingController());
     final HomeNewController newController = Get.put(HomeNewController());
-    final HomeFilterController filterController = Get.put(HomeFilterController());
-
+    final HomeFilterController filterController =
+        Get.put(HomeFilterController());
 
     double screenWidth = MediaQuery.of(context).size.width;
     bool isLargeScreen = screenWidth > 1400;
-    return  LayoutBuilder(
-        builder: (context, constraints) {
-      int itemsPerRow = Responsive.isMobile(context) ? 2 :Responsive.isTablet(context) ?3:4;
+    return LayoutBuilder(builder: (context, constraints) {
+      int itemsPerRow = Responsive.isMobile(context)
+          ? 2
+          : Responsive.isTablet(context)
+              ? 3
+              : 4;
       double itemWidth = (constraints.maxWidth / itemsPerRow) - 16;
-      double itemHeight = Responsive.isMobile(context)
-          ? 320:(isLargeScreen ?400:400);
-      int filterItemperRow =Responsive.isMobile(context) ? 2 :Responsive.isTablet(context) ?2:3;
+      double itemHeight =
+          Responsive.isMobile(context) ? 320 : (isLargeScreen ? 400 : 400);
+      int filterItemperRow = Responsive.isMobile(context)
+          ? 2
+          : Responsive.isTablet(context)
+              ? 2
+              : 3;
       double filterItemWidth = (constraints.maxWidth / filterItemperRow) - 8;
-      double filterItemHeight = Responsive.isMobile(context)
-          ? 320:(isLargeScreen ?400:200);
+      double filterItemHeight =
+          Responsive.isMobile(context) ? 320 : (isLargeScreen ? 400 : 200);
       return Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
-          //////////////////////////////////to remove////////////////
-          Obx(() {
-            // Determine item count based on screen type
-            int itemCount;
-            if (Responsive.isMobile(context)) {
-              itemCount = cusinessController.cusinessItem.length > 2
-                  ? 2
-                  : cusinessController.cusinessItem.length;
-            } else if (Responsive.isTablet(context)) {
-              itemCount = cusinessController.cusinessItem.length > 3
-                  ? 3
-                  : cusinessController.cusinessItem.length;
-            } else {
-              itemCount = cusinessController.cusinessItem.length > 4
-                  ? 4
-                  : cusinessController.cusinessItem.length;
-            }
-
-            return Padding(
-              padding: EdgeInsets.only(
-                left: Responsive.isMobile(context)
-                    ? 18
-                    : (isLargeScreen ? 48 : 30.0),
-                right: Responsive.isMobile(context)
-                    ? 18
-                    : (isLargeScreen ? 48 : 30.0),
-              ),
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  mainAxisExtent: Responsive.isMobile(context)
-                      ? 263
-                      : (isLargeScreen ? 450 : 350),
-                  crossAxisCount: Responsive.isMobile(context)
-                      ? 2
-                      : (Responsive.isTablet(context) ? 3 : 4),
-                  crossAxisSpacing: Responsive.isMobile(context)
-                      ? 10
-                      : (Responsive.isTablet(context) ? 8 : 10),
-                  mainAxisSpacing: Responsive.isMobile(context)
-                      ? 0
-                      : (Responsive.isTablet(context) ? 2 : 20),
-                  childAspectRatio: itemWidth / itemHeight,
-                ),
-                itemCount: itemCount,
-                itemBuilder: (context, index) {
-                  final item = cusinessController.cusinessItem[index];
-                  return CustomRectangleWidget(
-                    onNavigate: onNavigate,
-                    title: item.title,
-                    description: item.description,
-                    imagePath: item.imagePath,
-                    timetext: item.timetext,
-                    percentText: item.percentText, isFavorite:false.obs ,
-                  );
-                },
-              ),
-            );
-          }),
-          Container (
+          Container(
             height: Responsive.isMobile(context) ? 312 : 576,
             width: Get.width,
             decoration: const BoxDecoration(
@@ -176,7 +125,8 @@ class HomeScreen extends StatelessWidget {
                                 color: const Color(0xFF4F5762),
                                 fontFamily: "Lora-Regular",
                                 fontWeight: FontWeight.w400,
-                                fontSize: Responsive.isMobile(context) ? 10 : 16,
+                                fontSize:
+                                    Responsive.isMobile(context) ? 10 : 16,
                               ),
                               border: InputBorder.none,
                               contentPadding: EdgeInsets.only(
@@ -215,7 +165,8 @@ class HomeScreen extends StatelessWidget {
                               style: TextStyle(
                                 color: AppColors.botomSheetColor,
                                 fontFamily: "Lora-Regular",
-                                fontSize: Responsive.isMobile(context) ? 10 : 16,
+                                fontSize:
+                                    Responsive.isMobile(context) ? 10 : 16,
                                 fontWeight: FontWeight.w400,
                               ),
                             ),
@@ -230,7 +181,8 @@ class HomeScreen extends StatelessWidget {
           ),
           SizedBox(height: Responsive.isMobile(context) ? 25 : 50),
           Padding(
-            padding: EdgeInsets.only(left: Responsive.isMobile(context) ? 18 : 48.0),
+            padding:
+                EdgeInsets.only(left: Responsive.isMobile(context) ? 18 : 48.0),
             child: Text(
               'Location',
               style: TextStyle(
@@ -245,26 +197,37 @@ class HomeScreen extends StatelessWidget {
           Stack(
             children: [
               Padding(
-                padding:  EdgeInsets.only(left: Responsive.isMobile(context)
-                    ?40:32,right: 10),
+                padding: EdgeInsets.only(
+                    left: Responsive.isMobile(context) ? 40 : 32, right: 10),
                 child: SizedBox(
-                  height: Responsive.isMobile(context) ? 180 : isLargeScreen?  364: 270,
+                  height: Responsive.isMobile(context)
+                      ? 180
+                      : isLargeScreen
+                          ? 364
+                          : 270,
                   child: ListView.builder(
                     controller: controller.scrollController,
                     scrollDirection: Axis.horizontal,
                     itemCount: controller.circleItems.length, // Number of items
                     itemBuilder: (context, index) {
-                      final item = controller.circleItems[index]; // Get item from model list
+                      final item = controller
+                          .circleItems[index]; // Get item from model list
                       return Padding(
-                        padding:  EdgeInsets.symmetric(horizontal: Responsive.isMobile(context)
-                            ?29: isLargeScreen?  48:22.0, vertical: Responsive.isMobile(context)
-                            ?6:6),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: Responsive.isMobile(context)
+                                ? 29
+                                : isLargeScreen
+                                    ? 48
+                                    : 22.0,
+                            vertical: Responsive.isMobile(context) ? 6 : 6),
                         child: CircleContainerWidget(
-                          ontap:  (){
+                          ontap: () {
                             if (onNavigate != null) {
-                              onNavigate!(7); // Call the callback to navigate to the 7th screen
+                              onNavigate!(
+                                  7); // Call the callback to navigate to the 7th screen
                             }
-                          },isFavourite: false.obs,
+                          },
+                          isFavourite: false.obs,
                           isLocation: true,
                           imgPath: item.imgPath,
                           titleText: item.titleText,
@@ -284,10 +247,8 @@ class HomeScreen extends StatelessWidget {
                   onTap: () => controller.scrollLeft(),
                   child: Image.asset(
                     'assets/images/arrow_back.png',
-                    height: Responsive.isMobile(context)
-                        ?32:52,
-                    width: Responsive.isMobile(context)
-                        ?32:52,
+                    height: Responsive.isMobile(context) ? 32 : 52,
+                    width: Responsive.isMobile(context) ? 32 : 52,
                   ),
                 ),
               ),
@@ -300,10 +261,8 @@ class HomeScreen extends StatelessWidget {
                   onTap: () => controller.scrollRight(),
                   child: Image.asset(
                     'assets/images/arrow_forward.png',
-                    height: Responsive.isMobile(context)
-                        ?32:52,
-                    width: Responsive.isMobile(context)
-                        ?32:52,
+                    height: Responsive.isMobile(context) ? 32 : 52,
+                    width: Responsive.isMobile(context) ? 32 : 52,
                   ),
                 ),
               ),
@@ -311,7 +270,8 @@ class HomeScreen extends StatelessWidget {
           ),
           SizedBox(height: Responsive.isMobile(context) ? 25 : 50),
           Padding(
-            padding: EdgeInsets.only(left: Responsive.isMobile(context) ? 18 : 48.0),
+            padding:
+                EdgeInsets.only(left: Responsive.isMobile(context) ? 18 : 48.0),
             child: Text(
               'Theme',
               style: TextStyle(
@@ -326,25 +286,36 @@ class HomeScreen extends StatelessWidget {
           Stack(
             children: [
               Padding(
-                padding:  EdgeInsets.only(left: Responsive.isMobile(context)
-                    ?40:32,right: 10),
+                padding: EdgeInsets.only(
+                    left: Responsive.isMobile(context) ? 40 : 32, right: 10),
                 child: SizedBox(
-                  height: Responsive.isMobile(context) ? 180 : isLargeScreen?  364: 270,
+                  height: Responsive.isMobile(context)
+                      ? 180
+                      : isLargeScreen
+                          ? 364
+                          : 270,
                   child: ListView.builder(
                     controller: themeController.scrothemellController,
                     scrollDirection: Axis.horizontal,
-                    itemCount: themeController.circleItems.length, // Number of items
+                    itemCount:
+                        themeController.circleItems.length, // Number of items
                     itemBuilder: (context, index) {
-                      final item = themeController.circleItems[index]; // Get item from model list
+                      final item = themeController
+                          .circleItems[index]; // Get item from model list
                       return Padding(
-                        padding:  EdgeInsets.symmetric(horizontal: Responsive.isMobile(context)
-                            ?29: isLargeScreen?  48:22.0, vertical: Responsive.isMobile(context)
-                            ?6:6),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: Responsive.isMobile(context)
+                                ? 29
+                                : isLargeScreen
+                                    ? 48
+                                    : 22.0,
+                            vertical: Responsive.isMobile(context) ? 6 : 6),
                         child: CircleContainerWidget(
                           isLocation: false,
                           imgPath: item.imgPath,
                           titleText: item.titleText,
-                          descriptionText: item.descriptionText, isFavourite: false.obs,
+                          descriptionText: item.descriptionText,
+                          isFavourite: false.obs,
                         ),
                       );
                     },
@@ -360,10 +331,8 @@ class HomeScreen extends StatelessWidget {
                   onTap: () => themeController.scrollLeft(),
                   child: Image.asset(
                     'assets/images/arrow_back.png',
-                    height: Responsive.isMobile(context)
-                        ?32:52,
-                    width: Responsive.isMobile(context)
-                        ?32:52,
+                    height: Responsive.isMobile(context) ? 32 : 52,
+                    width: Responsive.isMobile(context) ? 32 : 52,
                   ),
                 ),
               ),
@@ -376,10 +345,8 @@ class HomeScreen extends StatelessWidget {
                   onTap: () => themeController.scrollRight(),
                   child: Image.asset(
                     'assets/images/arrow_forward.png',
-                    height: Responsive.isMobile(context)
-                        ?32:52,
-                    width: Responsive.isMobile(context)
-                        ?32:52,
+                    height: Responsive.isMobile(context) ? 32 : 52,
+                    width: Responsive.isMobile(context) ? 32 : 52,
                   ),
                 ),
               ),
@@ -387,7 +354,10 @@ class HomeScreen extends StatelessWidget {
           ),
           SizedBox(height: Responsive.isMobile(context) ? 25 : 50),
           Padding(
-            padding: EdgeInsets.only(left: Responsive.isMobile(context) ? 18 : 48.0,right: Responsive.isMobile(context) ? 18 : 48.0, ),
+            padding: EdgeInsets.only(
+              left: Responsive.isMobile(context) ? 18 : 48.0,
+              right: Responsive.isMobile(context) ? 18 : 48.0,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -475,16 +445,19 @@ class HomeScreen extends StatelessWidget {
                     description: item.description,
                     imagePath: item.imagePath,
                     timetext: item.timetext,
-                    percentText: item.percentText, isFavorite:false.obs,
+                    percentText: item.percentText,
+                    isFavorite: false.obs,
                   );
                 },
               ),
             );
           }),
-
           SizedBox(height: Responsive.isMobile(context) ? 25 : 50),
           Padding(
-            padding: EdgeInsets.only(left: Responsive.isMobile(context) ? 18 : 48.0,right: Responsive.isMobile(context) ? 18 : 48.0, ),
+            padding: EdgeInsets.only(
+              left: Responsive.isMobile(context) ? 18 : 48.0,
+              right: Responsive.isMobile(context) ? 18 : 48.0,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -571,7 +544,8 @@ class HomeScreen extends StatelessWidget {
                     description: item.description,
                     imagePath: item.imagePath,
                     timetext: item.timetext,
-                    percentText: item.percentText, isFavorite: false.obs,
+                    percentText: item.percentText,
+                    isFavorite: false.obs,
                   );
                 },
               ),
@@ -579,7 +553,10 @@ class HomeScreen extends StatelessWidget {
           }),
           SizedBox(height: Responsive.isMobile(context) ? 25 : 50),
           Padding(
-            padding: EdgeInsets.only(left: Responsive.isMobile(context) ? 18 : 48.0,right: Responsive.isMobile(context) ? 18 : 48.0, ),
+            padding: EdgeInsets.only(
+              left: Responsive.isMobile(context) ? 18 : 48.0,
+              right: Responsive.isMobile(context) ? 18 : 48.0,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -666,7 +643,8 @@ class HomeScreen extends StatelessWidget {
                     description: item.description,
                     imagePath: item.imagePath,
                     timetext: item.timetext,
-                    percentText: item.percentText, isFavorite: false.obs,
+                    percentText: item.percentText,
+                    isFavorite: false.obs,
                   );
                 },
               ),
@@ -674,7 +652,10 @@ class HomeScreen extends StatelessWidget {
           }),
           SizedBox(height: Responsive.isMobile(context) ? 25 : 50),
           Padding(
-            padding: EdgeInsets.only(left: Responsive.isMobile(context) ? 18 : 48.0,right: Responsive.isMobile(context) ? 18 : 48.0, ),
+            padding: EdgeInsets.only(
+              left: Responsive.isMobile(context) ? 18 : 48.0,
+              right: Responsive.isMobile(context) ? 18 : 48.0,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -690,20 +671,19 @@ class HomeScreen extends StatelessWidget {
                 GestureDetector(
                     onTap: () {
                       if (onNavigate != null) {
-                        onNavigate!(6); // Call the callback to navigate to the 7th screen
+                        onNavigate!(
+                            6); // Call the callback to navigate to the 7th screen
                       }
                     },
-                    child: Text("view all",
-
+                    child: Text(
+                      "view all",
                       style: TextStyle(
                           decoration: TextDecoration.underline,
                           decorationColor: AppColors.primaryColor,
                           fontFamily: ',',
-                          fontSize:  Responsive.isMobile(context) ? 12 : 20,
+                          fontSize: Responsive.isMobile(context) ? 12 : 20,
                           fontWeight: FontWeight.w500,
-                          color: AppColors.primaryColor
-                      ),
-
+                          color: AppColors.primaryColor),
                     ))
               ],
             ),
@@ -755,13 +735,15 @@ class HomeScreen extends StatelessWidget {
                 ),
                 itemCount: itemCount,
                 itemBuilder: (context, index) {
-                  final item = recentlyViewedController.recentlyViewedItem[index];
+                  final item =
+                      recentlyViewedController.recentlyViewedItem[index];
                   return CustomRectangleWidget(
                     title: item.title,
                     description: item.description,
                     imagePath: item.imagePath,
                     timetext: item.timetext,
-                    percentText: item.percentText, isFavorite: false.obs,
+                    percentText: item.percentText,
+                    isFavorite: false.obs,
                   );
                 },
               ),
@@ -770,7 +752,10 @@ class HomeScreen extends StatelessWidget {
           SizedBox(height: Responsive.isMobile(context) ? 25 : 50),
           SizedBox(height: Responsive.isMobile(context) ? 25 : 50),
           Padding(
-            padding: EdgeInsets.only(left: Responsive.isMobile(context) ? 18 : 48.0,right: Responsive.isMobile(context) ? 18 : 48.0, ),
+            padding: EdgeInsets.only(
+              left: Responsive.isMobile(context) ? 18 : 48.0,
+              right: Responsive.isMobile(context) ? 18 : 48.0,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -786,27 +771,29 @@ class HomeScreen extends StatelessWidget {
                 GestureDetector(
                     onTap: () {
                       if (onNavigate != null) {
-                        onNavigate!(6); // Call the callback to navigate to the 7th screen
+                        onNavigate!(
+                            6); // Call the callback to navigate to the 7th screen
                       }
                     },
-                    child: Text("view all 587 results",
-
+                    child: Text(
+                      "view all 587 results",
                       style: TextStyle(
                           decoration: TextDecoration.underline,
                           decorationColor: AppColors.primaryColor,
                           fontFamily: ',',
-                          fontSize:  Responsive.isMobile(context) ? 12 : 20,
+                          fontSize: Responsive.isMobile(context) ? 12 : 20,
                           fontWeight: FontWeight.w500,
-                          color: AppColors.primaryColor
-                      ),
-
+                          color: AppColors.primaryColor),
                     ))
               ],
             ),
           ),
           SizedBox(height: Responsive.isMobile(context) ? 8 : 20),
           Padding(
-            padding: EdgeInsets.only(left: Responsive.isMobile(context) ? 18 : 48.0,right: Responsive.isMobile(context) ? 18 : 48.0, ),
+            padding: EdgeInsets.only(
+              left: Responsive.isMobile(context) ? 18 : 48.0,
+              right: Responsive.isMobile(context) ? 18 : 48.0,
+            ),
             child: Text(
               '# A B C D E F G H I J K L M N O',
               style: TextStyle(
@@ -817,18 +804,16 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: Responsive.isMobile(context) ? 8 :20),
+          SizedBox(height: Responsive.isMobile(context) ? 8 : 20),
           Obx(() {
             //Determine item count based on screen type
             int itemCount;
             if (Responsive.isMobile(context)) {
-              itemCount = filterController.filterItem.length
-                  > 2
+              itemCount = filterController.filterItem.length > 2
                   ? 4
                   : filterController.filterItem.length;
             } else if (Responsive.isTablet(context)) {
-              itemCount = filterController.filterItem.length
-                  > 3
+              itemCount = filterController.filterItem.length > 3
                   ? 6
                   : filterController.filterItem.length;
             } else {
@@ -864,29 +849,21 @@ class HomeScreen extends StatelessWidget {
                       : (Responsive.isTablet(context) ? 2 : 30),
                   childAspectRatio: filterItemWidth / filterItemHeight,
                 ),
-                itemCount:itemCount,
+                itemCount: itemCount,
                 itemBuilder: (context, index) {
                   final item = filterController.filterItem[index];
                   return CustomFilterWidget(
                     title: item.title,
                     description: item.description,
                     imgPath: item.imagePath,
-
                   );
                 },
               ),
             );
           }),
-
-
-          
           SizedBox(height: Responsive.isMobile(context) ? 4 : 50),
-
-
-
         ],
       );
     });
-
   }
 }

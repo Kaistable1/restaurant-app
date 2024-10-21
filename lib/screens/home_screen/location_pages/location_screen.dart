@@ -10,7 +10,7 @@ import 'location_controller/location_controller.dart';
 
 class LocationScreen extends StatelessWidget {
   final LocationController locationController = Get.put(LocationController());
-   LocationScreen({super.key});
+  LocationScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,17 +18,23 @@ class LocationScreen extends StatelessWidget {
     bool isLargeScreen = screenWidth > 1400;
     return LayoutBuilder(
       builder: (context, constraints) {
-        int itemsPerRow = Responsive.isMobile(context) ? 2 :Responsive.isTablet(context) ?3:4;
+        int itemsPerRow = Responsive.isMobile(context)
+            ? 2
+            : Responsive.isTablet(context)
+                ? 3
+                : 4;
         double itemWidth = (constraints.maxWidth / itemsPerRow) - 16;
         double itemHeight = Responsive.isMobile(context)
-            ? 320:(isLargeScreen ?500:500); // Set a fixed height for items
+            ? 320
+            : (isLargeScreen ? 500 : 500); // Set a fixed height for items
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Padding(
-              padding:  EdgeInsets.only(left: Responsive.isMobile(context) ? 22: 46.0),
+              padding: EdgeInsets.only(
+                  left: Responsive.isMobile(context) ? 22 : 46.0),
               child: Text(
                 'New york ',
                 style: TextStyle(
@@ -39,9 +45,10 @@ class LocationScreen extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: Responsive.isMobile(context) ? 8 :18),
+            SizedBox(height: Responsive.isMobile(context) ? 8 : 18),
             Padding(
-              padding:  EdgeInsets.only(left:Responsive.isMobile(context) ? 22: 46.0),
+              padding: EdgeInsets.symmetric(
+                  horizontal: Responsive.isMobile(context) ? 22 : 46.0),
               child: Text(
                 'The area is lively with restaurants, bars and nightlife.',
                 style: TextStyle(
@@ -52,102 +59,102 @@ class LocationScreen extends StatelessWidget {
                 ),
               ),
             ),
-             SizedBox(height: Responsive.isMobile(context) ? 10 :18),
-
+            SizedBox(height: Responsive.isMobile(context) ? 10 : 18),
 
             Padding(
-              padding:  EdgeInsets.only(left:Responsive.isMobile(context) ? 22: 46.0,right: Responsive.isMobile(context) ? 22: 46.0,),
+              padding: EdgeInsets.only(
+                  left: Responsive.isMobile(context) ? 22 : 46.0),
               child: Container(
-                height: Responsive.isMobile(context) ? 25:50,
+                height: Responsive.isMobile(context) ? 25 : 55,
+                // width: Get.width * 0.6,
                 decoration: BoxDecoration(
-                  color: Color(0xFFEEEFF2),
-                  borderRadius: BorderRadius.circular(Responsive.isMobile(context) ? 4:10)
-                ),
-                child: Padding(
-                  padding:  EdgeInsets.only(left:Responsive.isMobile(context) ? 22: 26.0,right: Responsive.isMobile(context) ? 22: 26.0,),
-                  child:  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: Responsive.isMobile(context) ? 372:Responsive.isTablet(context) ? 572:672,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text('sort:',
-                            style: TextStyle(
-                              fontFamily: 'Nunito-Regular',
-                              fontSize: Responsive.isMobile(context) ? 8:14,
-                                fontWeight: FontWeight.w400,
-                              color: AppColors.textColor
-
-                            ),
-
-                            ),
-                            Container(
-                              height:Responsive.isMobile(context) ? 20:38,
-                              width: Responsive.isMobile(context) ? 80:121,
-                              decoration: BoxDecoration(
-                                color: AppColors.whiteColor,
-                                borderRadius: BorderRadius.circular(Responsive.isMobile(context) ? 4:10),
-
-                              ),
-                              child: Center(
-                                child: Text('most reviewed',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: Responsive.isMobile(context) ? 8:14,
-                                  color: AppColors.primaryColor,
-                                  fontFamily: 'Nunito-Regular'
-
-                                ),),
-                              ),
-
-                            ),
-                            Text('Discount:',
-                              style: TextStyle(
-                                  fontFamily: 'Nunito-Regular',
-                                  fontSize:Responsive.isMobile(context) ? 8:14,
-                                  fontWeight: FontWeight.w400,
-                                  color: AppColors.textColor
-
-                              ),
-
-                            ),
-                            Text('minimum:',
-                              style: TextStyle(
-                                  fontFamily: 'Nunito-Regular',
-                                  fontSize: Responsive.isMobile(context) ? 8:14,
-                                  fontWeight: FontWeight.w400,
-                                  color: AppColors.textColor
-
-                              ),
-
-                            ),
-                            Text('maximum:',
-                              style: TextStyle(
-                                  fontFamily: 'Nunito-Regular',
-                                  fontSize: Responsive.isMobile(context) ? 8:14,
-                                  fontWeight: FontWeight.w400,
-                                  color: AppColors.textColor
-
-                              ),
-
-                            ),
-                          ],
-                        ),
+                    color: const Color(0xFFEEEFF2),
+                    borderRadius: BorderRadius.circular(
+                        Responsive.isMobile(context) ? 4 : 10)),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width:
+                          Responsive.isMobile(context) ? 16 : Get.width * 0.06,
+                    ),
+                    Text(
+                      'sort:',
+                      style: TextStyle(
+                          fontFamily: 'Nunito-Regular',
+                          fontSize: Responsive.isMobile(context) ? 8 : 14,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.textColor),
+                    ),
+                    SizedBox(
+                      width: 18,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: List.generate(
+                        locationController.top.length,
+                        (index) {
+                          return Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 16, right: 16),
+                              child: Obx(
+                                () {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      locationController.selectedTop.value =
+                                          locationController.top[index];
+                                    },
+                                    child: Container(
+                                      height: Responsive.isMobile(context)
+                                          ? 20
+                                          : 40,
+                                      width: Responsive.isMobile(context)
+                                          ? 80
+                                          : 121,
+                                      decoration: BoxDecoration(
+                                        color: locationController
+                                                    .selectedTop.value !=
+                                                locationController.top[index]
+                                            ? Colors.transparent
+                                            : AppColors.whiteColor,
+                                        borderRadius: BorderRadius.circular(
+                                            Responsive.isMobile(context)
+                                                ? 4
+                                                : 10),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          locationController.top[index],
+                                          style: TextStyle(
+                                              fontWeight: locationController
+                                                  .selectedTop.value !=
+                                                  locationController
+                                                      .top[index]? FontWeight.w500:FontWeight.w700,
+                                              fontSize:
+                                                  Responsive.isMobile(context)
+                                                      ? 8
+                                                      : 14,
+                                              color: locationController
+                                                          .selectedTop.value !=
+                                                      locationController
+                                                          .top[index]
+                                                  ? AppColors.darkGrey
+                                                  : AppColors.primaryColor,
+                                              fontFamily: 'Nunito-Regular'),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ));
+                        },
                       ),
-                      Spacer()
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
-            SizedBox(height: Responsive.isMobile(context) ? 2 :22),
+            SizedBox(height: Responsive.isMobile(context) ? 2 : 22),
             Obx(() {
-
-
               return Padding(
                 padding: EdgeInsets.only(
                   left: Responsive.isMobile(context)
@@ -183,7 +190,8 @@ class LocationScreen extends StatelessWidget {
                       description: item.description,
                       imagePath: item.imagePath,
                       timetext: item.timetext,
-                      percentText: item.percentText, isFavorite: false.obs,
+                      percentText: item.percentText,
+                      isFavorite: false.obs,
                     );
                   },
                 ),
@@ -193,6 +201,5 @@ class LocationScreen extends StatelessWidget {
         );
       },
     );
-
   }
 }

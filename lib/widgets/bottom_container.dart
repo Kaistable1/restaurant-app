@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../utils/responsive.dart';
+
 class BottomContainer extends StatelessWidget {
   final Function(int)? onNavigate;
   const BottomContainer({super.key, this.onNavigate});
@@ -11,13 +13,13 @@ class BottomContainer extends StatelessWidget {
     bool isLargeScreen = screenWidth > 1400;
     return Container(
       color: AppColors.botomSheetColor,
-      height:  Responsive.isMobile(context) ? 210 :390,
-      child:  Column(
+      height: Responsive.isMobile(context) ? 210 : 390,
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(
-            padding: EdgeInsets.all(Responsive.isMobile(context) ? 4 :8.0),
+            padding: EdgeInsets.all(Responsive.isMobile(context) ? 4 : 8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -26,183 +28,394 @@ class BottomContainer extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Reference',
-                    style: TextStyle(
-                      fontSize:  Responsive.isMobile(context) ? 8 : Responsive.isTablet(context)?14:isLargeScreen?20:18,
-                      fontFamily: 'Nunito-Regular',
-                      color: AppColors.primaryColor,
-                      fontWeight: FontWeight.w500
+                    Text(
+                      'Reference',
+                      style: TextStyle(
+                          fontSize: Responsive.isMobile(context)
+                              ? 8
+                              : Responsive.isTablet(context)
+                                  ? 14
+                                  : isLargeScreen
+                                      ? 20
+                                      : 18,
+                          fontFamily: 'Nunito-Regular',
+                          color: AppColors.primaryColor,
+                          fontWeight: FontWeight.w500),
                     ),
+                    SizedBox(
+                      height: Responsive.isMobile(context)
+                          ? 10
+                          : Responsive.isTablet(context)
+                              ? 20
+                              : 30,
                     ),
-                    SizedBox(height:  Responsive.isMobile(context) ? 10: Responsive.isTablet(context)?20 :30,),
                     GestureDetector(
-                      onTap: (){
+                      onTap: () {
                         if (onNavigate != null) {
-                          onNavigate!(1); // Call the callback to navigate to the 7th screen
+                          onNavigate!(
+                              1); // Call the callback to navigate to the 7th screen
                         }
-
                       },
-                      child: Text('Favorites',
+                      child: Text(
+                        'Favorites',
                         style: TextStyle(
-                            fontSize:  Responsive.isMobile(context) ? 6 : Responsive.isTablet(context)?12:isLargeScreen?18:16,
+                            fontSize: Responsive.isMobile(context)
+                                ? 6
+                                : Responsive.isTablet(context)
+                                    ? 12
+                                    : isLargeScreen
+                                        ? 18
+                                        : 16,
                             fontFamily: 'Nunito-Regular',
                             color: AppColors.whiteColor,
-                            fontWeight: FontWeight.w400
-                        ),
+                            fontWeight: FontWeight.w400),
                       ),
                     ),
-                    SizedBox(height:  Responsive.isMobile(context) ? 10: Responsive.isTablet(context)?20 :30,),
+                    SizedBox(
+                      height: Responsive.isMobile(context)
+                          ? 10
+                          : Responsive.isTablet(context)
+                              ? 20
+                              : 30,
+                    ),
                     GestureDetector(
-                      onTap: (){
+                      onTap: () {
                         if (onNavigate != null) {
-                          onNavigate!(4); // Call the callback to navigate to the 7th screen
+                          onNavigate!(
+                              4); // Call the callback to navigate to the 7th screen
                         }
-
                       },
-                      child: Text('about app',
+                      child: Text(
+                        'about app',
                         style: TextStyle(
-                            fontSize:  Responsive.isMobile(context) ? 6: Responsive.isTablet(context)?12 :isLargeScreen?18:16,
+                            fontSize: Responsive.isMobile(context)
+                                ? 6
+                                : Responsive.isTablet(context)
+                                    ? 12
+                                    : isLargeScreen
+                                        ? 18
+                                        : 16,
                             fontFamily: 'Nunito-Regular',
                             color: AppColors.whiteColor,
-                            fontWeight: FontWeight.w400
-                        ),
+                            fontWeight: FontWeight.w400),
                       ),
                     ),
-                    SizedBox(height:  Responsive.isMobile(context) ? 10: Responsive.isTablet(context)?20 :30,),
-                    Text('',
-                      style: TextStyle(
-                          fontSize:  Responsive.isMobile(context) ? 6 : Responsive.isTablet(context)?12:isLargeScreen?18:16,
-                          fontFamily: 'Nunito-Regular',
-                          color: AppColors.whiteColor,
-                          fontWeight: FontWeight.w400
-                      ),
+                    SizedBox(
+                      height: Responsive.isMobile(context)
+                          ? 10
+                          : Responsive.isTablet(context)
+                              ? 20
+                              : 30,
                     ),
-                    SizedBox(height:  Responsive.isMobile(context) ? 10: Responsive.isTablet(context)?20 :30,),
-                    Text('',
+                    Text(
+                      '',
                       style: TextStyle(
-                          fontSize:  Responsive.isMobile(context) ? 6: Responsive.isTablet(context)?12 :isLargeScreen?18:16,
+                          fontSize: Responsive.isMobile(context)
+                              ? 6
+                              : Responsive.isTablet(context)
+                                  ? 12
+                                  : isLargeScreen
+                                      ? 18
+                                      : 16,
                           fontFamily: 'Nunito-Regular',
                           color: AppColors.whiteColor,
-                          fontWeight: FontWeight.w400
-                      ),
+                          fontWeight: FontWeight.w400),
+                    ),
+                    SizedBox(
+                      height: Responsive.isMobile(context)
+                          ? 10
+                          : Responsive.isTablet(context)
+                              ? 20
+                              : 30,
+                    ),
+                    Text(
+                      '',
+                      style: TextStyle(
+                          fontSize: Responsive.isMobile(context)
+                              ? 6
+                              : Responsive.isTablet(context)
+                                  ? 12
+                                  : isLargeScreen
+                                      ? 18
+                                      : 16,
+                          fontFamily: 'Nunito-Regular',
+                          color: AppColors.whiteColor,
+                          fontWeight: FontWeight.w400),
                     ),
                   ],
                 ),
-                SizedBox(width:  Responsive.isMobile(context) ? 10: Responsive.isTablet(context)?20 :isLargeScreen?90:30,),
-                GestureDetector(
-                  onTap: (){
-                    if (onNavigate != null) {
-                      onNavigate!(0); // Call the callback to navigate to the 7th screen
-                    }
-
-                  },
-                  child: Image(image: const AssetImage('assets/images/botomsheet_logo.png'),
-                    height: Responsive.isMobile(context) ? 40 : Responsive.isTablet(context)?90:156,width:Responsive.isMobile(context) ? 200 : Responsive.isTablet(context)?320: 482,),
+                SizedBox(
+                  width: Responsive.isMobile(context)
+                      ? 10
+                      : Responsive.isTablet(context)
+                          ? 20
+                          : isLargeScreen
+                              ? 90
+                              : 30,
                 ),
-                SizedBox(width: Responsive.isMobile(context) ? 8 :isLargeScreen?90:60,),
+                GestureDetector(
+                  onTap: () {
+                    if (onNavigate != null) {
+                      onNavigate!(
+                          0); // Call the callback to navigate to the 7th screen
+                    }
+                  },
+                  child: Image(
+                    image:
+                        const AssetImage('assets/images/botomsheet_logo.png'),
+                    height: Responsive.isMobile(context)
+                        ? 40
+                        : Responsive.isTablet(context)
+                            ? 90
+                            : 156,
+                    width: Responsive.isMobile(context)
+                        ? 200
+                        : Responsive.isTablet(context)
+                            ? 320
+                            : 482,
+                  ),
+                ),
+                SizedBox(
+                  width: Responsive.isMobile(context)
+                      ? 8
+                      : isLargeScreen
+                          ? 90
+                          : 60,
+                ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Support',
+                    Text(
+                      'Support',
                       style: TextStyle(
-                          fontSize: Responsive.isMobile(context) ? 8: Responsive.isTablet(context)?14 :isLargeScreen?20:18,
+                          fontSize: Responsive.isMobile(context)
+                              ? 8
+                              : Responsive.isTablet(context)
+                                  ? 14
+                                  : isLargeScreen
+                                      ? 20
+                                      : 18,
                           fontFamily: 'Nunito-Regular',
                           color: AppColors.primaryColor,
-                          fontWeight: FontWeight.w500
-                      ),
+                          fontWeight: FontWeight.w500),
                     ),
-                    SizedBox(height:  Responsive.isMobile(context) ? 10: Responsive.isTablet(context)?20 :30,),
+                    SizedBox(
+                      height: Responsive.isMobile(context)
+                          ? 10
+                          : Responsive.isTablet(context)
+                              ? 20
+                              : 30,
+                    ),
                     GestureDetector(
-                      onTap: (){
+                      onTap: () {
                         if (onNavigate != null) {
-                          onNavigate!(5); // Call the callback to navigate to the 7th screen
+                          onNavigate!(
+                              5); // Call the callback to navigate to the 7th screen
                         }
-
                       },
-                      child: Text("Contact us",
+                      child: Text(
+                        "Contact us",
                         style: TextStyle(
-                            fontSize:  Responsive.isMobile(context) ? 6 : Responsive.isTablet(context)?12:isLargeScreen?18:16,
+                            fontSize: Responsive.isMobile(context)
+                                ? 6
+                                : Responsive.isTablet(context)
+                                    ? 12
+                                    : isLargeScreen
+                                        ? 18
+                                        : 16,
                             fontFamily: 'Nunito-Regular',
                             color: AppColors.whiteColor,
-                            fontWeight: FontWeight.w400
-                        ),
+                            fontWeight: FontWeight.w400),
                       ),
                     ),
-                    SizedBox(height:  Responsive.isMobile(context) ? 10: Responsive.isTablet(context)?20 :30,),
+                    SizedBox(
+                      height: Responsive.isMobile(context)
+                          ? 10
+                          : Responsive.isTablet(context)
+                              ? 20
+                              : 30,
+                    ),
                     GestureDetector(
-                      onTap: (){
+                      onTap: () {
                         if (onNavigate != null) {
-                          onNavigate!(2); // Call the callback to navigate to the 7th screen
+                          onNavigate!(
+                              2); // Call the callback to navigate to the 7th screen
                         }
-
                       },
-                      child: Text('Terms and condition',
+                      child: Text(
+                        'Terms and condition',
                         style: TextStyle(
-                            fontSize:  Responsive.isMobile(context) ? 6 : Responsive.isTablet(context)?12:isLargeScreen?18:16,
+                            fontSize: Responsive.isMobile(context)
+                                ? 6
+                                : Responsive.isTablet(context)
+                                    ? 12
+                                    : isLargeScreen
+                                        ? 18
+                                        : 16,
                             fontFamily: 'Nunito-Regular',
                             color: AppColors.whiteColor,
-                            fontWeight: FontWeight.w400
-                        ),
+                            fontWeight: FontWeight.w400),
                       ),
                     ),
-                    SizedBox(height:  Responsive.isMobile(context) ? 10: Responsive.isTablet(context)?20 :30,),
+                    SizedBox(
+                      height: Responsive.isMobile(context)
+                          ? 10
+                          : Responsive.isTablet(context)
+                              ? 20
+                              : 30,
+                    ),
                     GestureDetector(
-                      onTap: (){
+                      onTap: () {
                         if (onNavigate != null) {
-                          onNavigate!(3); // Call the callback to navigate to the 7th screen
+                          onNavigate!(
+                              3); // Call the callback to navigate to the 7th screen
                         }
-
                       },
-                      child: Text('privacy policy',
+                      child: Text(
+                        'privacy policy',
                         style: TextStyle(
-                            fontSize:  Responsive.isMobile(context) ? 6: Responsive.isTablet(context)?12 :isLargeScreen?18:16,
+                            fontSize: Responsive.isMobile(context)
+                                ? 6
+                                : Responsive.isTablet(context)
+                                    ? 12
+                                    : isLargeScreen
+                                        ? 18
+                                        : 16,
                             fontFamily: 'Nunito-Regular',
                             color: AppColors.whiteColor,
-                            fontWeight: FontWeight.w400
-                        ),
+                            fontWeight: FontWeight.w400),
                       ),
                     ),
-                    SizedBox(height:  Responsive.isMobile(context) ? 10: Responsive.isTablet(context)?20 :30,),
-                    Text('',
+                    SizedBox(
+                      height: Responsive.isMobile(context)
+                          ? 10
+                          : Responsive.isTablet(context)
+                              ? 20
+                              : 30,
+                    ),
+                    Text(
+                      '',
                       style: TextStyle(
-                          fontSize:  Responsive.isMobile(context) ? 6: Responsive.isTablet(context)?12 :isLargeScreen?18:16,
+                          fontSize: Responsive.isMobile(context)
+                              ? 6
+                              : Responsive.isTablet(context)
+                                  ? 12
+                                  : isLargeScreen
+                                      ? 18
+                                      : 16,
                           fontFamily: 'Nunito-Regular',
                           color: AppColors.whiteColor,
-                          fontWeight: FontWeight.w400
-                      ),
+                          fontWeight: FontWeight.w400),
                     ),
                   ],
                 ),
               ],
             ),
           ),
-          SizedBox(height:  Responsive.isMobile(context) ? 30: Responsive.isTablet(context)?20 :30,),
-          Image(image:const AssetImage('assets/images/divider_line.png'),height:1,width: Get.width,fit: BoxFit.cover,),
+          SizedBox(
+            height: Responsive.isMobile(context)
+                ? 30
+                : Responsive.isTablet(context)
+                    ? 20
+                    : 30,
+          ),
+          Image(
+            image: const AssetImage('assets/images/divider_line.png'),
+            height: 1,
+            width: Get.width,
+            fit: BoxFit.cover,
+          ),
           Padding(
-            padding:  EdgeInsets.only(left:  Responsive.isMobile(context) ? 20 :90,
-            right:  Responsive.isMobile(context) ? 30 :60, top: Responsive.isMobile(context) ? 12 :20),
+            padding: EdgeInsets.only(
+                left: Responsive.isMobile(context) ? 20 : 90,
+                right: Responsive.isMobile(context) ? 30 : 60,
+                top: Responsive.isMobile(context) ? 12 : 20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
+              children: <Widget>[
                 Text('© 2024  business name Inc. All rights reserved.',
-                style: TextStyle(
-                  fontWeight: FontWeight.w400,
-                  fontSize:  Responsive.isMobile(context) ? 6 : Responsive.isTablet(context)?8:12,
-                  color: AppColors.whiteColor,
-                  fontFamily: 'Nunito-Regular'
-                )
-                ),
+                    style: TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: Responsive.isMobile(context)
+                            ? 6
+                            : Responsive.isTablet(context)
+                                ? 8
+                                : 12,
+                        color: AppColors.whiteColor,
+                        fontFamily: 'Nunito-Regular')),
                 const Spacer(),
-                Image(image: const AssetImage('assets/images/insta_light.png'),
-                  height:  Responsive.isMobile(context) ? 16: Responsive.isTablet(context)?22 :40,width:  Responsive.isMobile(context) ? 16 : Responsive.isTablet(context)?22:40,),
-                SizedBox(width: Responsive.isMobile(context) ? 6 :10,),
-                Image(image: const AssetImage('assets/images/linkedin_light.png'),
-                  height:  Responsive.isMobile(context) ? 16 : Responsive.isTablet(context)?22:40,width: Responsive.isMobile(context) ? 16: Responsive.isTablet(context)?22 : 40,),
-                SizedBox(width: Responsive.isMobile(context) ? 6 :10,),
-                Image(image: const AssetImage('assets/images/facebook_light.png'),
-                  height:  Responsive.isMobile(context) ? 16 : Responsive.isTablet(context)?22 :40,width: Responsive.isMobile(context) ? 16 : Responsive.isTablet(context)?22 : 40,)
+                GestureDetector(
+                  onTap: () async {
+                    if (!await launchUrl(
+                        Uri.parse('https://www.instagram.com'))) {
+                      throw Exception('Could not launch ');
+                    }
+                  },
+                  child: Image(
+                    image: const AssetImage('assets/images/insta_light.png'),
+                    height: Responsive.isMobile(context)
+                        ? 16
+                        : Responsive.isTablet(context)
+                            ? 22
+                            : 40,
+                    width: Responsive.isMobile(context)
+                        ? 16
+                        : Responsive.isTablet(context)
+                            ? 22
+                            : 40,
+                  ),
+                ),
+                SizedBox(
+                  width: Responsive.isMobile(context) ? 6 : 10,
+                ),
+                GestureDetector(
+                  onTap: () async {
+                    if (!await launchUrl(
+                        Uri.parse('https://www.linkedin.com'))) {
+                      throw Exception('Could not launch ');
+                    }
+                  },
+                  child: Image(
+                    image: const AssetImage('assets/images/linkedin_light.png'),
+                    height: Responsive.isMobile(context)
+                        ? 16
+                        : Responsive.isTablet(context)
+                            ? 22
+                            : 40,
+                    width: Responsive.isMobile(context)
+                        ? 16
+                        : Responsive.isTablet(context)
+                            ? 22
+                            : 40,
+                  ),
+                ),
+                SizedBox(
+                  width: Responsive.isMobile(context) ? 6 : 10,
+                ),
+                GestureDetector(
+
+                  onTap: () async {
+                    if (!await launchUrl(
+                        Uri.parse('https://www.facebook.com'))) {
+                      throw Exception('Could not launch ');
+                    }
+                  },
+                  child: Image(
+                    image: const AssetImage('assets/images/facebook_light.png'),
+                    height: Responsive.isMobile(context)
+                        ? 16
+                        : Responsive.isTablet(context)
+                            ? 22
+                            : 40,
+                    width: Responsive.isMobile(context)
+                        ? 16
+                        : Responsive.isTablet(context)
+                            ? 22
+                            : 40,
+                  ),
+                )
               ],
             ),
           )

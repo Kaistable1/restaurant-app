@@ -110,8 +110,13 @@ class _TopBarWidgetState extends State<TopBarWidget> {
           children: [
             if (!Responsive.isMobile(context)) _buildTopBar(context),
             _screens[_selectedIndex],
-            SizedBox(height: Responsive.isMobile(context) ? 60 : Responsive.isTablet(context) ? 100 : 120),
-             BottomContainer(onNavigate:_onItemTapped),
+            SizedBox(
+                height: Responsive.isMobile(context)
+                    ? 60
+                    : Responsive.isTablet(context)
+                        ? 100
+                        : 120),
+            BottomContainer(onNavigate: _onItemTapped),
           ],
         ),
       ),
@@ -123,56 +128,93 @@ class _TopBarWidgetState extends State<TopBarWidget> {
     bool isLargeScreen = screenWidth > 1400;
     return Column(
       children: [
-        SizedBox(height: Responsive.isMobile(context) ? 20 : Responsive.isTablet(context) ? 40 : 0),
+        SizedBox(
+            height: Responsive.isMobile(context)
+                ? 20
+                : Responsive.isTablet(context)
+                    ? 40
+                    : 0),
         Container(
-          height: Responsive.isMobile(context) ? 50 : Responsive.isTablet(context) ? 70 : 90,
-          padding: EdgeInsets.all(Responsive.isMobile(context) ? 4 : Responsive.isTablet(context) ? 6 : 9),
+          height: Responsive.isMobile(context)
+              ? 50
+              : Responsive.isTablet(context)
+                  ? 70
+                  : 90,
+          padding: EdgeInsets.all(Responsive.isMobile(context)
+              ? 4
+              : Responsive.isTablet(context)
+                  ? 6
+                  : 9),
           color: AppColors.bgColor,
           child: Row(
             mainAxisAlignment: Responsive.isMobile(context)
                 ? MainAxisAlignment.center
                 : MainAxisAlignment.spaceEvenly,
             children: [
-              SizedBox(width: Responsive.isMobile(context) ? 50 : Responsive.isTablet(context) ? 15 : 20),
-             GestureDetector(
-               onTap: (){
-                 _onItemTapped(0);
-
-
-               },
-               child: Image(
+              SizedBox(
+                  width: Responsive.isMobile(context)
+                      ? 50
+                      : Responsive.isTablet(context)
+                          ? 15
+                          : 20),
+              GestureDetector(
+                onTap: () {
+                  _onItemTapped(0);
+                },
+                child: Image(
                   image: const AssetImage('assets/images/topbar_logo.png'),
                   height: Responsive.isMobile(context)
                       ? 22
                       : Responsive.isTablet(context)
-                      ? 35: isLargeScreen ?  100
-                      : 43,
+                          ? 35
+                          : isLargeScreen
+                              ? 100
+                              : 43,
                   width: Responsive.isMobile(context)
                       ? 50
                       : Responsive.isTablet(context)
-                      ? 90: isLargeScreen ?  180
-                      : 120,
+                          ? 90
+                          : isLargeScreen
+                              ? 180
+                              : 120,
                 ),
-             ),
-
-              SizedBox(width: Responsive.isMobile(context) ? 8 : Responsive.isTablet(context) ? 20 : 40),
+              ),
+              SizedBox(
+                  width: Responsive.isMobile(context)
+                      ? 8
+                      : Responsive.isTablet(context)
+                          ? 20
+                          : 40),
               _buildNavItem('Home', 0),
               _buildNavItem('Favorites', 1),
               _buildNavItem('Terms and Condition', 2),
               _buildNavItem('Privacy Policy', 3),
               _buildNavItem('About App', 4),
               _buildNavItem('Contact Us', 5),
-              SizedBox(width: Responsive.isMobile(context) ? 8 : Responsive.isTablet(context) ? 20 : 30),
+              SizedBox(
+                  width: Responsive.isMobile(context)
+                      ? 8
+                      : Responsive.isTablet(context)
+                          ? 20
+                          : 30),
               Row(
                 children: [
                   Image(
                     image: const AssetImage('assets/images/location_icon.png'),
-                    height: Responsive.isMobile(context) ? 12 : Responsive.isTablet(context) ? 16 : 22,
-                    width: Responsive.isMobile(context) ? 12 : Responsive.isTablet(context) ? 16 : 22,
+                    height: Responsive.isMobile(context)
+                        ? 12
+                        : Responsive.isTablet(context)
+                            ? 16
+                            : 22,
+                    width: Responsive.isMobile(context)
+                        ? 12
+                        : Responsive.isTablet(context)
+                            ? 16
+                            : 22,
                   ),
-                   SizedBox(width:Responsive.isTablet(context)?0: 3),
+                  const SizedBox(width: 3),
                   GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       _onItemTapped(7);
 
 
@@ -184,14 +226,14 @@ class _TopBarWidgetState extends State<TopBarWidget> {
                         fontWeight: Responsive.isMobile(context)
                             ? FontWeight.w800
                             : Responsive.isTablet(context)
-                            ? FontWeight.w600
-                            : FontWeight.w600,
+                                ? FontWeight.w600
+                                : FontWeight.w600,
                         fontFamily: 'Nunito-Regular',
                         fontSize: Responsive.isMobile(context)
                             ? 8
                             : Responsive.isTablet(context)
-                            ? 12
-                            : 16,
+                                ? 14
+                                : 16,
                       ),
                     ),
                   ),
@@ -203,14 +245,15 @@ class _TopBarWidgetState extends State<TopBarWidget> {
       ],
     );
   }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
+
   Widget _buildDrawer() {
     return Drawer(
-
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
@@ -242,15 +285,25 @@ class _TopBarWidgetState extends State<TopBarWidget> {
       title: Text(
         title,
         style: TextStyle(
-          decoration:_selectedIndex == index || (_selectedIndex == 6 && index == 0 )|| (_selectedIndex == 7 && index == 0)|| (_selectedIndex == 8 && index == 0) ? TextDecoration.underline : TextDecoration.none,
+          decoration: _selectedIndex == index ||
+                  (_selectedIndex == 6 && index == 0) ||
+                  (_selectedIndex == 7 && index == 0) ||
+                  (_selectedIndex == 8 && index == 0)
+              ? TextDecoration.underline
+              : TextDecoration.none,
           decorationThickness: 1.5,
           decorationColor: AppColors.primaryColor,
           fontSize: 14,
           fontFamily: 'Nunito-Bold',
-          color: _selectedIndex == index || (_selectedIndex == 6 && index == 0 ) || (_selectedIndex == 7 && index == 0)|| (_selectedIndex == 8 && index == 0)
+          color: _selectedIndex == index ||
+                  (_selectedIndex == 6 && index == 0) ||
+                  (_selectedIndex == 7 && index == 0) ||
+                  (_selectedIndex == 8 && index == 0)
               ? AppColors.primaryColor
               : AppColors.textColor,
-          fontWeight: _selectedIndex == index || (_selectedIndex == 6 && index == 0)|| (_selectedIndex == 8 && index == 0)
+          fontWeight: _selectedIndex == index ||
+                  (_selectedIndex == 6 && index == 0) ||
+                  (_selectedIndex == 8 && index == 0)
               ? FontWeight.w700
               : FontWeight.w700,
         ),
@@ -276,11 +329,17 @@ class _TopBarWidgetState extends State<TopBarWidget> {
       child: Text(
         title,
         style: TextStyle(
-          decoration: _selectedIndex == index || (_selectedIndex == 6 && index == 0) || (_selectedIndex == 7 && index == 0)|| (_selectedIndex == 8 && index == 0)
+          decoration: _selectedIndex == index ||
+                  (_selectedIndex == 6 && index == 0) ||
+                  (_selectedIndex == 7 && index == 0) ||
+                  (_selectedIndex == 8 && index == 0)
               ? TextDecoration.underline
               : TextDecoration.none,
           decorationThickness: 1.5,
-          decorationColor: (_selectedIndex == index || (_selectedIndex == 6 && index == 0) || (_selectedIndex == 7 && index == 0)|| (_selectedIndex == 8 && index == 0))
+          decorationColor: (_selectedIndex == index ||
+                  (_selectedIndex == 6 && index == 0) ||
+                  (_selectedIndex == 7 && index == 0) ||
+                  (_selectedIndex == 8 && index == 0))
               ? AppColors.primaryColor
               : AppColors.textColor,
           fontSize: Responsive.isMobile(context)

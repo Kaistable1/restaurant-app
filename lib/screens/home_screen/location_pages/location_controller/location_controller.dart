@@ -1,14 +1,45 @@
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LocationController extends GetxController {
   var locationItem = <LocationItem>[].obs;
-
+  List top = ['most reviewed', 'Discount', 'minimum', 'maximum', ];
+  RxString selectedTop = 'most reviewed'.obs;
   @override
   void onInit() {
     super.onInit();
     loadLocation();
   }
 
+  /// Urls... to links social media...
+  final Uri facebookUrl = Uri.parse('https://www.facebook.com');
+  final Uri twitterUrl = Uri.parse('https://twitter.com');
+  final Uri instagramUrl = Uri.parse('https://www.instagram.com');
+  final Uri likedInUrl = Uri.parse('https://www.linkedin.com');
+
+  Future<void> launchFaceBookUrl() async {
+    if (!await launchUrl(facebookUrl)) {
+      throw Exception('Could not launch $facebookUrl');
+    }
+  }
+
+  Future<void> launchTwitterUrl() async {
+    if (!await launchUrl(twitterUrl)) {
+      throw Exception('Could not launch $twitterUrl');
+    }
+  }
+
+  Future<void> launchInstagramUrl() async {
+    if (!await launchUrl(instagramUrl)) {
+      throw Exception('Could not launch $instagramUrl');
+    }
+  }
+
+  Future<void> launchLinkedinUrl() async {
+    if (!await launchUrl(likedInUrl)) {
+      throw Exception('Could not launch $likedInUrl');
+    }
+  }
   void loadLocation() {
     // Dummy data. Replace with your actual data source.
     locationItem.addAll([
