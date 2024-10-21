@@ -5,6 +5,7 @@ class LocationController extends GetxController {
   var locationItem = <LocationItem>[].obs;
   List top = ['most reviewed', 'Discount', 'minimum', 'maximum', ];
   RxString selectedTop = 'most reviewed'.obs;
+  var selectedDiscount = '10%'.obs;
   @override
   void onInit() {
     super.onInit();
