@@ -228,7 +228,7 @@ class ReviewWidget extends StatelessWidget {
           child: CustomButton(
             ontapp: () {
               Get.dialog(Dialog(
-                  child: uploadImageSection(context)));
+                  child: UploadImageSection()));
             },
             laBelText: 'Write a review',
             height: Responsive.isMobile(context)

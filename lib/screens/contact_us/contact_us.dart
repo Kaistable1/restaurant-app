@@ -18,7 +18,7 @@ class ContactUs extends StatelessWidget {
       child: Container(
         width: Responsive.isMobile(context) ? 300 :677,
 
-        color: AppColors.whiteColor,
+
         child:  Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,

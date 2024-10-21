@@ -19,12 +19,12 @@ class Tabs extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Container(
-          height: Responsive.isMobile(context) ? 25 : 55,
+          height: Responsive.isMobile(context) ? 25 :Responsive.isTablet(context) ?40 :55,
           width: Get.width * 0.6,
           decoration: BoxDecoration(
               color: const Color(0xFFEEEFF2),
               borderRadius: BorderRadius.circular(
-                  Responsive.isMobile(context) ? 4 : 10)),
+                  Responsive.isMobile(context) ? 4 :Responsive.isTablet(context) ?6: 10)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: List.generate(
@@ -43,9 +43,13 @@ class Tabs extends StatelessWidget {
                           child: Container(
                             height: Responsive.isMobile(context)
                                 ? 20
+                                :Responsive.isTablet(context) ?30
+
                                 : 40,
                             width: Responsive.isMobile(context)
-                                ? 80
+                                ? 60
+                                :Responsive.isTablet(context) ?80
+
                                 : 121,
                             decoration: BoxDecoration(
                               color:
@@ -56,6 +60,7 @@ class Tabs extends StatelessWidget {
                               borderRadius: BorderRadius.circular(
                                   Responsive.isMobile(context)
                                       ? 4
+                                      :Responsive.isTablet(context) ?6
                                       : 10),
                             ),
                             child: Center(
@@ -66,6 +71,7 @@ class Tabs extends StatelessWidget {
                                     fontSize: Responsive.isMobile(
                                         context)
                                         ? 12
+                                        :Responsive.isTablet(context) ?14
                                         : 20,
                                     color: controller.selectedTop
                                         .value !=
@@ -83,7 +89,7 @@ class Tabs extends StatelessWidget {
             ),
           ),
         ),
-        const Row(
+         Row(
           children: [
             Icon(
               Icons.access_time_filled,
@@ -97,7 +103,7 @@ class Tabs extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Color(0xFF4F5761),
-                fontSize: 14,
+                fontSize: Responsive.isMobile(context) ? 8 :Responsive.isTablet(context) ?10:14,
                 fontFamily: 'Nunito-Regular',
                 fontWeight: FontWeight.w400,
                 height: 0.16,

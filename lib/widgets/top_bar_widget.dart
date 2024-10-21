@@ -170,7 +170,7 @@ class _TopBarWidgetState extends State<TopBarWidget> {
                     height: Responsive.isMobile(context) ? 12 : Responsive.isTablet(context) ? 16 : 22,
                     width: Responsive.isMobile(context) ? 12 : Responsive.isTablet(context) ? 16 : 22,
                   ),
-                  const SizedBox(width: 3),
+                   SizedBox(width:Responsive.isTablet(context)?0: 3),
                   GestureDetector(
                     onTap: (){
                       _onItemTapped(7);
@@ -190,7 +190,7 @@ class _TopBarWidgetState extends State<TopBarWidget> {
                         fontSize: Responsive.isMobile(context)
                             ? 8
                             : Responsive.isTablet(context)
-                            ? 14
+                            ? 12
                             : 16,
                       ),
                     ),
@@ -286,7 +286,7 @@ class _TopBarWidgetState extends State<TopBarWidget> {
           fontSize: Responsive.isMobile(context)
               ? 8
               : Responsive.isTablet(context)
-              ? 14
+              ? 12
               : 16,
           fontFamily: 'Nunito-Regular',
           color: (_selectedIndex == index || (_selectedIndex == 6 && index == 0) || (_selectedIndex == 7 && index == 0)|| (_selectedIndex == 8 && index == 0))
@@ -296,7 +296,7 @@ class _TopBarWidgetState extends State<TopBarWidget> {
               ? FontWeight.w600
               : Responsive.isMobile(context)
               ? Responsive.isTablet(context)
-              ? FontWeight.w500
+              ? FontWeight.w600
               : FontWeight.w600
               : FontWeight.w600,
         ),

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -63,7 +65,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                         style: TextStyle(
                           color: AppColors.blackColor,
                           fontFamily: 'Nunito-Regular',
-                          fontSize: Responsive.isMobile(context) ? 20 : 32,
+                          fontSize: Responsive.isMobile(context) ? 8 :Responsive.isTablet(context) ?14: 32,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -71,11 +73,11 @@ class RestaurantDetailScreen extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      const Text(
+                       Text(
                         '(4.0)',
                         style: TextStyle(
                           color: Color(0xFF4F5761),
-                          fontSize: 16,
+                          fontSize: Responsive.isMobile(context) ? 8 :Responsive.isTablet(context) ?10:16,
                           fontFamily: 'Nunito-Regular',
                           fontWeight: FontWeight.w400,
                         ),
@@ -83,7 +85,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                       SizedBox(
                         height: 14,
                         child: RatingBar(
-                          itemSize: 14,
+                          itemSize: Responsive.isMobile(context) ? 8 :Responsive.isTablet(context) ?12:14,
                           ignoreGestures: true,
                           initialRating: 4,
                           minRating: 1,
@@ -111,22 +113,22 @@ class RestaurantDetailScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 10),
-                      const Text(
+                       Text(
                         '234 reviews',
                         style: TextStyle(
                           color: AppColors.darkGrey,
-                          fontSize: 16,
+                          fontSize: Responsive.isMobile(context) ? 8 :Responsive.isTablet(context) ?10:16,
                           fontFamily: 'Nunito-Regular',
                           fontWeight: FontWeight.w400,
                           decoration: TextDecoration.underline,
                         ),
                       ),
                       Line10(),
-                      const Text(
+                       Text(
                         'Chinese',
                         style: TextStyle(
                           color: AppColors.darkGrey,
-                          fontSize: 16,
+                          fontSize: Responsive.isMobile(context) ? 8 :Responsive.isTablet(context) ?10:16,
                           fontFamily: 'Nunito-Regular',
                           fontWeight: FontWeight.w400,
                         ),
@@ -145,11 +147,11 @@ class RestaurantDetailScreen extends StatelessWidget {
                           ),
                         );
                       }),
-                      const Text(
+                       Text(
                         'add to favourite',
                         style: TextStyle(
                           color: AppColors.darkGrey,
-                          fontSize: 16,
+                          fontSize: Responsive.isMobile(context) ? 8 :Responsive.isTablet(context) ?10:16,
                           fontFamily: 'Nunito-Regular',
                           fontWeight: FontWeight.w400,
                         ),
@@ -169,17 +171,17 @@ class RestaurantDetailScreen extends StatelessWidget {
                     height: Responsive.isMobile(context)
                         ? 150
                         : Responsive.isTablet(context)
-                            ? 280
+                            ? 240
                             : isLargeScreen
-                                ? 610
+                                ? 550
                                 : 410,
                     width: Responsive.isMobile(context)
                         ? 165
                         : Responsive.isTablet(context)
-                            ? 370
+                            ? Get.width * 0.4
                             : isLargeScreen
-                                ? 864
-                                : 500,
+                                ? Get.width * 0.4
+                                : 480,
                     decoration: BoxDecoration(
                       image: const DecorationImage(
                         image: AssetImage(
@@ -198,17 +200,17 @@ class RestaurantDetailScreen extends StatelessWidget {
                         height: Responsive.isMobile(context)
                             ? 75
                             : Responsive.isTablet(context)
-                                ? 135
+                                ? 115
                                 : isLargeScreen
-                                    ? 300
+                                    ?270
                                     : 200,
                         width: Responsive.isMobile(context)
                             ? 90
                             : Responsive.isTablet(context)
-                                ? 260
+                                ? Get.width * 0.2
                                 : isLargeScreen
-                                    ? 464
-                                    : 313,
+                                    ? Get.width * 0.2
+                                    : 296,
                         decoration: BoxDecoration(
                           image: const DecorationImage(
                             image: AssetImage(
@@ -225,17 +227,17 @@ class RestaurantDetailScreen extends StatelessWidget {
                         height: Responsive.isMobile(context)
                             ? 75
                             : Responsive.isTablet(context)
-                                ? 135
-                                : isLargeScreen
-                                    ? 300
-                                    : 200,
+                            ? 115
+                            : isLargeScreen
+                            ?270
+                            : 200,
                         width: Responsive.isMobile(context)
                             ? 90
                             : Responsive.isTablet(context)
-                                ? 260
-                                : isLargeScreen
-                                    ? 464
-                                    : 313,
+                            ? Get.width * 0.2
+                            : isLargeScreen
+                            ? Get.width * 0.2
+                            : 296,
                         decoration: BoxDecoration(
                           image: const DecorationImage(
                             image: AssetImage(
@@ -256,17 +258,17 @@ class RestaurantDetailScreen extends StatelessWidget {
                         height: Responsive.isMobile(context)
                             ? 75
                             : Responsive.isTablet(context)
-                                ? 135
-                                : isLargeScreen
-                                    ? 300
-                                    : 200,
+                            ? 115
+                            : isLargeScreen
+                            ?270
+                            : 200,
                         width: Responsive.isMobile(context)
                             ? 90
                             : Responsive.isTablet(context)
-                                ? 260
-                                : isLargeScreen
-                                    ? 464
-                                    : 313,
+                            ? Get.width * 0.2
+                            : isLargeScreen
+                            ? Get.width * 0.2
+                            : 296,
                         decoration: BoxDecoration(
                           image: const DecorationImage(
                             image: AssetImage(
@@ -283,40 +285,57 @@ class RestaurantDetailScreen extends StatelessWidget {
                         height: Responsive.isMobile(context)
                             ? 75
                             : Responsive.isTablet(context)
-                                ? 135
-                                : isLargeScreen
-                                    ? 300
-                                    : 200,
+                            ? 115
+                            : isLargeScreen
+                            ? 270
+                            : 200,
                         width: Responsive.isMobile(context)
                             ? 90
                             : Responsive.isTablet(context)
-                                ? 260
-                                : isLargeScreen
-                                    ? 464
-                                    : 313,
+                            ? Get.width * 0.2
+                            : isLargeScreen
+                            ? Get.width * 0.2
+                            : 296,
                         decoration: BoxDecoration(
-                          image: const DecorationImage(
-                            image: AssetImage(
-                                'assets/images/img1.png'), // Replace with your image asset
-                            fit: BoxFit.cover,
-                          ),
-                          borderRadius: BorderRadius.circular(5),
+                          borderRadius: BorderRadius.circular(5), // Apply border radius to the container
                         ),
-                        child: Center(
-                          child: Text(
-                            "view all photos",
-                            style: TextStyle(
-                                decoration: TextDecoration.underline,
-                                decorationColor: AppColors.whiteColor,
-                                fontFamily: 'Nunito-Regular',
-                                fontSize: Responsive.isMobile(context)
-                                    ? 6
-                                    : Responsive.isTablet(context)
-                                        ? 12
-                                        : 20,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.whiteColor),
-                          ),
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            // Background Image with Blur Effect
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(5), // Apply the same borderRadius
+                              child: Stack(
+                                fit: StackFit.expand,
+                                children: [
+                                  Image.asset(
+                                    'assets/images/img1.png', // Your image asset
+                                    fit: BoxFit.cover,
+                                  ),
+                                  BackdropFilter(
+                                    filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1), // Apply blur effect
+                                    child: Container(
+                                      color: Colors.black.withOpacity(0), // Transparent container
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // Text on top of the blurred image
+                            Center(
+                              child: Text(
+                                'view all photos',
+                                style: TextStyle(
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: AppColors.whiteColor,
+                                  color: AppColors.whiteColor,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: Responsive.isMobile(context) ? 6 : Responsive.isTablet(context) ? 10 : 16,
+                                  fontFamily: 'Nunito-Regular',
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -335,10 +354,10 @@ class RestaurantDetailScreen extends StatelessWidget {
                             right: 10),
                         child: SizedBox(
                           height: Responsive.isMobile(context)
-                              ? 180
+                              ? 140
                               : isLargeScreen
-                                  ? 364
-                                  : 270,
+                                  ? 200
+                                  : 140,
                           child: ListView.builder(
                             controller: locationController.scrollController,
                             scrollDirection: Axis.horizontal,

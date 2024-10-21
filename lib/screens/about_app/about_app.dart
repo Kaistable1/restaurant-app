@@ -12,7 +12,7 @@ class AboutApp extends StatelessWidget {
       child: Container(
         width: Responsive.isMobile(context) ? 300 :565,
 
-        color: AppColors.whiteColor,
+
         child:  Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,

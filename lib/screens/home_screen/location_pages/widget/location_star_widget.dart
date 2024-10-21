@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
+
+import '../../../../utils/responsive.dart';
 
 class LocationStarWidget extends StatefulWidget {
   final String timeText;
@@ -31,8 +34,10 @@ class _LocationStarWidgetState extends State<LocationStarWidget> {
     return GestureDetector(
       onTap: _toggleTapped, // Handle tap
       child: Container(
-        height: 100,
-        width: 100,
+        height: 120,
+        width:  Responsive.isMobile(context) ?Get.width *0.14
+            :Responsive.isTablet(context) ?Get.width *0.09
+            :Get.width *0.08,
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage(imagePath),
@@ -46,7 +51,7 @@ class _LocationStarWidgetState extends State<LocationStarWidget> {
                 widget.timeText,
                 style: TextStyle(
                   fontWeight: FontWeight.w700,
-                  fontSize: 18,
+                  fontSize:  Responsive.isMobile(context) ? 10 :Responsive.isTablet(context) ?10:18,
                   color: textColor,
                   fontFamily: 'Nunito-Regular'
                 ),
@@ -55,7 +60,7 @@ class _LocationStarWidgetState extends State<LocationStarWidget> {
                 widget.persentText,
                 style: TextStyle(
                   fontWeight: FontWeight.w700,
-                  fontSize: 18,
+                  fontSize:  Responsive.isMobile(context) ? 10 :Responsive.isTablet(context) ?10:18,
                   color: textColor,
                     fontFamily: 'Nunito-Regular'
                 ),
