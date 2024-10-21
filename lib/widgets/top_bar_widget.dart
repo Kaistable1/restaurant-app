@@ -46,12 +46,12 @@ class _TopBarWidgetState extends State<TopBarWidget> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      backgroundColor: AppColors.whiteColor,
+      backgroundColor: AppColors.bgColor,
       // Add a drawer for mobile views
       appBar: Responsive.isMobile(context)
           ? AppBar(
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.bgColor,
         iconTheme: const IconThemeData(color: AppColors.primaryColor),
         title: GestureDetector(
           onTap: (){
@@ -127,7 +127,7 @@ class _TopBarWidgetState extends State<TopBarWidget> {
         Container(
           height: Responsive.isMobile(context) ? 50 : Responsive.isTablet(context) ? 70 : 90,
           padding: EdgeInsets.all(Responsive.isMobile(context) ? 4 : Responsive.isTablet(context) ? 6 : 9),
-          color: Colors.white,
+          color: AppColors.bgColor,
           child: Row(
             mainAxisAlignment: Responsive.isMobile(context)
                 ? MainAxisAlignment.center

@@ -130,7 +130,7 @@ class RecentlyViewed extends StatelessWidget {
                        onTap: () {
 
 
-                         print('aaaaaaaaaaaaaaaaaaaa');
+
                          if (onNavigate != null) {
                            onNavigate!(8); // Call the callback to navigate to the 7th screen
                          }
@@ -140,7 +140,7 @@ class RecentlyViewed extends StatelessWidget {
                          description: item.description,
                          imagePath: item.imagePath,
                          timetext: item.timetext,
-                         percentText: item.percentText,
+                         percentText: item.percentText, isFavorite: false.obs,
                        ),
                      );
                    },

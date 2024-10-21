@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
 
 import '../utils/responsive.dart';
@@ -8,14 +9,18 @@ class CircleContainerWidget extends StatelessWidget {
   final String titleText;
   final String descriptionText;
   final bool isLocation;
-  final VoidCallback? ontap;// changed islocation to isLocation for better readability
+  final RxBool isFavourite;
+  final VoidCallback?
+      ontap; // changed islocation to isLocation for better readability
 
   const CircleContainerWidget({
     super.key,
     required this.imgPath,
     required this.titleText,
     required this.descriptionText,
-    this.isLocation = false, this.ontap, // Default value remains false
+    this.isLocation = false,
+    this.ontap,
+    required this.isFavourite, // Default value remains false
   });
 
   @override
@@ -29,13 +34,13 @@ class CircleContainerWidget extends StatelessWidget {
         width: Responsive.isMobile(context)
             ? 110
             : isLargeScreen
-            ? 270
-            : 200,
+                ? 270
+                : 200,
         height: Responsive.isMobile(context)
             ? 180
             : isLargeScreen
-            ? 365
-            : 280,
+                ? 365
+                : 280,
         decoration: BoxDecoration(
           color: AppColors.whiteColor,
           boxShadow: [
@@ -57,39 +62,70 @@ class CircleContainerWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Stack(
-              children: [
-                Container(
-                  height: Responsive.isMobile(context)
-                      ? 105
-                      : isLargeScreen
-                      ? 230
-                      : 170,
-                  width: Responsive.isMobile(context)
-                      ? 95
-                      : isLargeScreen
-                      ? 230
-                      : 180,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      image: AssetImage(imgPath), // 'assets/images/circle_img.png'
-                    ),
+            Stack(children: [
+              Container(
+                height: Responsive.isMobile(context)
+                    ? 105
+                    : isLargeScreen
+                        ? 230
+                        : 170,
+                width: Responsive.isMobile(context)
+                    ? 95
+                    : isLargeScreen
+                        ? 230
+                        : 180,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                    image:
+                        AssetImage(imgPath), // 'assets/images/circle_img.png'
                   ),
                 ),
-                Positioned(
-                  left: Responsive.isMobile(context)?20:isLargeScreen?40:30,
-                  top: Responsive.isMobile(context)?20:isLargeScreen?40:30,
-                  child: Image.asset('assets/images/heart_white_icon.png'),
-                  height: Responsive.isMobile(context)?10:isLargeScreen?24:20,width:  Responsive.isMobile(context)?10:isLargeScreen?24:20,)
-              ]
-            ),
+              ),
+              Positioned(
+                left: Responsive.isMobile(context)
+                    ? 20
+                    : isLargeScreen
+                        ? 40
+                        : 30,
+                top: Responsive.isMobile(context)
+                    ? 20
+                    : isLargeScreen
+                        ? 40
+                        : 30,
+                child: Obx(() {
+                  return GestureDetector(
+                      onTap: () {
+                        isFavourite.value = !isFavourite.value;
+                      },
+                      child: isFavourite.value
+                          ? Icon(
+                              Icons.favorite,
+                              color: Colors.red,
+                            )
+                          : Icon(
+                        Icons.favorite,
+                        color: Colors.white,
+                      ));
+                }),
+                height: Responsive.isMobile(context)
+                    ? 10
+                    : isLargeScreen
+                        ? 24
+                        : 20,
+                width: Responsive.isMobile(context)
+                    ? 10
+                    : isLargeScreen
+                        ? 24
+                        : 20,
+              )
+            ]),
             SizedBox(
               height: Responsive.isMobile(context)
                   ? 20
                   : isLargeScreen
-                  ? 25
-                  : 10,
+                      ? 25
+                      : 10,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -101,8 +137,8 @@ class CircleContainerWidget extends StatelessWidget {
                     size: Responsive.isMobile(context)
                         ? 14
                         : isLargeScreen
-                        ? 26
-                        : 18, // Adjust size if needed
+                            ? 26
+                            : 18, // Adjust size if needed
                   ),
                 const SizedBox(width: 4), // Space between icon and text
                 Text(
@@ -112,8 +148,8 @@ class CircleContainerWidget extends StatelessWidget {
                     fontSize: Responsive.isMobile(context)
                         ? 8
                         : isLargeScreen
-                        ? 22
-                        : 16,
+                            ? 22
+                            : 16,
                     fontFamily: 'Nunito-Regular',
                     color: AppColors.botomSheetColor,
                   ),
@@ -124,10 +160,9 @@ class CircleContainerWidget extends StatelessWidget {
               height: Responsive.isMobile(context)
                   ? 2
                   : isLargeScreen
-                  ? 10
-                  : 10,
+                      ? 10
+                      : 10,
             ),
-
             Text(
               descriptionText, // '14 restaurants'
               style: TextStyle(
@@ -135,8 +170,8 @@ class CircleContainerWidget extends StatelessWidget {
                 fontSize: Responsive.isMobile(context)
                     ? 8
                     : isLargeScreen
-                    ? 18
-                    : 14,
+                        ? 18
+                        : 14,
                 fontFamily: 'Nunito-Regular',
                 color: AppColors.textColor,
               ),
@@ -145,8 +180,8 @@ class CircleContainerWidget extends StatelessWidget {
               height: Responsive.isMobile(context)
                   ? 12
                   : isLargeScreen
-                  ? 2
-                  : 2,
+                      ? 2
+                      : 2,
             ),
           ],
         ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
-import 'package:kaistable_website/screens/home_screen/recently_viewed/recently_viewed.dart';
 import '../../utils/responsive.dart';
 import '../../widgets/circle_container_widget.dart';
 import '../../widgets/custom_filter_widget.dart';
@@ -99,7 +98,7 @@ class HomeScreen extends StatelessWidget {
                     description: item.description,
                     imagePath: item.imagePath,
                     timetext: item.timetext,
-                    percentText: item.percentText,
+                    percentText: item.percentText, isFavorite:false.obs ,
                   );
                 },
               ),
@@ -265,7 +264,7 @@ class HomeScreen extends StatelessWidget {
                             if (onNavigate != null) {
                               onNavigate!(7); // Call the callback to navigate to the 7th screen
                             }
-                          },
+                          },isFavourite: false.obs,
                           isLocation: true,
                           imgPath: item.imgPath,
                           titleText: item.titleText,
@@ -345,7 +344,7 @@ class HomeScreen extends StatelessWidget {
                           isLocation: false,
                           imgPath: item.imgPath,
                           titleText: item.titleText,
-                          descriptionText: item.descriptionText,
+                          descriptionText: item.descriptionText, isFavourite: false.obs,
                         ),
                       );
                     },
@@ -476,7 +475,7 @@ class HomeScreen extends StatelessWidget {
                     description: item.description,
                     imagePath: item.imagePath,
                     timetext: item.timetext,
-                    percentText: item.percentText,
+                    percentText: item.percentText, isFavorite:false.obs,
                   );
                 },
               ),
@@ -572,7 +571,7 @@ class HomeScreen extends StatelessWidget {
                     description: item.description,
                     imagePath: item.imagePath,
                     timetext: item.timetext,
-                    percentText: item.percentText,
+                    percentText: item.percentText, isFavorite: false.obs,
                   );
                 },
               ),
@@ -667,7 +666,7 @@ class HomeScreen extends StatelessWidget {
                     description: item.description,
                     imagePath: item.imagePath,
                     timetext: item.timetext,
-                    percentText: item.percentText,
+                    percentText: item.percentText, isFavorite: false.obs,
                   );
                 },
               ),
@@ -762,7 +761,7 @@ class HomeScreen extends StatelessWidget {
                     description: item.description,
                     imagePath: item.imagePath,
                     timetext: item.timetext,
-                    percentText: item.percentText,
+                    percentText: item.percentText, isFavorite: false.obs,
                   );
                 },
               ),
