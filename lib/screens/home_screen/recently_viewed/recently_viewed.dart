@@ -32,7 +32,7 @@ class RecentlyViewed extends StatelessWidget {
                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                  children: [
                    Text(
-                     'recently viewed',
+                     'Recently viewed',
                      style: TextStyle(
                        color: AppColors.botomSheetColor,
                        fontFamily: 'aftika-regular',
@@ -92,7 +92,7 @@ class RecentlyViewed extends StatelessWidget {
                  ],
                ),
              ),
-             const SizedBox(height: 20),
+              SizedBox(height: Responsive.isMobile(context) ?3:20),
              Obx(() {
 
 

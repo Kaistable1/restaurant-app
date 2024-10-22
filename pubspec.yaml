@@ -45,6 +45,7 @@ dependencies:
   url_launcher_web: ^2.3.1
   url_launcher: ^6.3.1
   firebase_core: ^3.6.0
+  dropdown_button2: ^2.3.9
 
 dev_dependencies:
   flutter_test:

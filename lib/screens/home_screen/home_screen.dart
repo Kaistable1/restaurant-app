@@ -198,7 +198,7 @@ class HomeScreen extends StatelessWidget {
             children: [
               Padding(
                 padding: EdgeInsets.only(
-                    left: Responsive.isMobile(context) ? 40 : 32, right: 10),
+                    left: Responsive.isMobile(context) ? 32 : 32, right: 12),
                 child: SizedBox(
                   height: Responsive.isMobile(context)
                       ? 180
@@ -215,7 +215,7 @@ class HomeScreen extends StatelessWidget {
                       return Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: Responsive.isMobile(context)
-                                ? 29
+                                ? 8
                                 : isLargeScreen
                                     ? 48
                                     : 22.0,
@@ -282,12 +282,12 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: Responsive.isMobile(context) ? 25 : 50),
+          SizedBox(height: Responsive.isMobile(context) ? 15 : 50),
           Stack(
             children: [
               Padding(
                 padding: EdgeInsets.only(
-                    left: Responsive.isMobile(context) ? 40 : 32, right: 10),
+                    left: Responsive.isMobile(context) ? 32 : 32, right: 10),
                 child: SizedBox(
                   height: Responsive.isMobile(context)
                       ? 180
@@ -305,17 +305,25 @@ class HomeScreen extends StatelessWidget {
                       return Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: Responsive.isMobile(context)
-                                ? 29
+                                ? 8
                                 : isLargeScreen
                                     ? 48
                                     : 22.0,
                             vertical: Responsive.isMobile(context) ? 6 : 6),
-                        child: CircleContainerWidget(
-                          isLocation: false,
-                          imgPath: item.imgPath,
-                          titleText: item.titleText,
-                          descriptionText: item.descriptionText,
-                          isFavourite: false.obs,
+                        child: GestureDetector(
+                          onTap: () {
+                            if (onNavigate != null) {
+                              onNavigate!(
+                                  8); // Call the callback to navigate to the 7th screen
+                            }
+                          },
+                          child: CircleContainerWidget(
+                            isLocation: false,
+                            imgPath: item.imgPath,
+                            titleText: item.titleText,
+                            descriptionText: item.descriptionText,
+                            isFavourite: false.obs,
+                          ),
                         ),
                       );
                     },
@@ -370,28 +378,27 @@ class HomeScreen extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                // GestureDetector(
-                //     onTap: () {
-                //       if (onNavigate != null) {
-                //         // onNavigate!(6); // Call the callback to navigate to the 7th screen
-                //       }
-                //     },
-                //     child: Text("",
-                //
-                //       style: TextStyle(
-                //           decoration: TextDecoration.underline,
-                //           decorationColor: AppColors.primaryColor,
-                //           fontFamily: ',',
-                //           fontSize:  Responsive.isMobile(context) ? 12 : 20,
-                //           fontWeight: FontWeight.w500,
-                //           color: AppColors.primaryColor
-                //       ),
-                //
-                //     ))
+                GestureDetector(
+                    onTap: () {
+                      if (onNavigate != null) {
+                        onNavigate!(
+                            9); // Call the callback to navigate to the 7th screen
+                      }
+                    },
+                    child: Text(
+                      "view all",
+                      style: TextStyle(
+                          decoration: TextDecoration.underline,
+                          decorationColor: AppColors.primaryColor,
+                          fontFamily: 'Nunito-Regular',
+                          fontSize: Responsive.isMobile(context) ? 12 : 20,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.primaryColor),
+                    ))
               ],
             ),
           ),
-          SizedBox(height: Responsive.isMobile(context) ? 25 : 50),
+          SizedBox(height: Responsive.isMobile(context) ? 0 : 50),
           Obx(() {
             // Determine item count based on screen type
             int itemCount;
@@ -470,28 +477,28 @@ class HomeScreen extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                // GestureDetector(
-                //     onTap: () {
-                //       if (onNavigate != null) {
-                //         // onNavigate!(6); // Call the callback to navigate to the 7th screen
-                //       }
-                //     },
-                //     child: Text("",
-                //
-                //       style: TextStyle(
-                //           decoration: TextDecoration.underline,
-                //           decorationColor: AppColors.primaryColor,
-                //           fontFamily: ',',
-                //           fontSize:  Responsive.isMobile(context) ? 12 : 20,
-                //           fontWeight: FontWeight.w500,
-                //           color: AppColors.primaryColor
-                //       ),
-                //
-                //     ))
+                GestureDetector(
+                    onTap: () {
+                      if (onNavigate != null) {
+                         onNavigate!(10); // Call the callback to navigate to the 7th screen
+                      }
+                    },
+                    child: Text("view all",
+
+                      style: TextStyle(
+                          decoration: TextDecoration.underline,
+                          decorationColor: AppColors.primaryColor,
+                          fontFamily: 'Nunito-Regular',
+                          fontSize:  Responsive.isMobile(context) ? 12 : 20,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.primaryColor
+                      ),
+
+                    ))
               ],
             ),
           ),
-          SizedBox(height: Responsive.isMobile(context) ? 25 : 50),
+          SizedBox(height: Responsive.isMobile(context) ? 0 : 50),
           Obx(() {
             // Determine item count based on screen type
             int itemCount;
@@ -540,6 +547,7 @@ class HomeScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final item = trendingController.trendingItem[index];
                   return CustomRectangleWidget(
+                    onNavigate: onNavigate,
                     title: item.title,
                     description: item.description,
                     imagePath: item.imagePath,
@@ -569,28 +577,28 @@ class HomeScreen extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                // GestureDetector(
-                //     onTap: () {
-                //       if (onNavigate != null) {
-                //         // onNavigate!(6); // Call the callback to navigate to the 7th screen
-                //       }
-                //     },
-                //     child: Text("",
-                //
-                //       style: TextStyle(
-                //           decoration: TextDecoration.underline,
-                //           decorationColor: AppColors.primaryColor,
-                //           fontFamily: ',',
-                //           fontSize:  Responsive.isMobile(context) ? 12 : 20,
-                //           fontWeight: FontWeight.w500,
-                //           color: AppColors.primaryColor
-                //       ),
-                //
-                //     ))
+                GestureDetector(
+                    onTap: () {
+                      if (onNavigate != null) {
+                         onNavigate!(11); // Call the callback to navigate to the 7th screen
+                      }
+                    },
+                    child: Text("view all",
+
+                      style: TextStyle(
+                          decoration: TextDecoration.underline,
+                          decorationColor: AppColors.primaryColor,
+                          fontFamily: 'Nunito-Regular',
+                          fontSize:  Responsive.isMobile(context) ? 12 : 20,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.primaryColor
+                      ),
+
+                    ))
               ],
             ),
           ),
-          SizedBox(height: Responsive.isMobile(context) ? 25 : 50),
+          SizedBox(height: Responsive.isMobile(context) ? 0 : 50),
           Obx(() {
             // Determine item count based on screen type
             int itemCount;
@@ -639,6 +647,7 @@ class HomeScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final item = newController.newItem[index];
                   return CustomRectangleWidget(
+                    onNavigate: onNavigate,
                     title: item.title,
                     description: item.description,
                     imagePath: item.imagePath,
@@ -680,7 +689,7 @@ class HomeScreen extends StatelessWidget {
                       style: TextStyle(
                           decoration: TextDecoration.underline,
                           decorationColor: AppColors.primaryColor,
-                          fontFamily: ',',
+                          fontFamily: 'Nunito-Regular',
                           fontSize: Responsive.isMobile(context) ? 12 : 20,
                           fontWeight: FontWeight.w500,
                           color: AppColors.primaryColor),
@@ -688,7 +697,7 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: Responsive.isMobile(context) ? 4 : 50),
+          SizedBox(height: Responsive.isMobile(context) ? 0 : 50),
           Obx(() {
             // Determine item count based on screen type
             int itemCount;
@@ -738,6 +747,7 @@ class HomeScreen extends StatelessWidget {
                   final item =
                       recentlyViewedController.recentlyViewedItem[index];
                   return CustomRectangleWidget(
+                    onNavigate: onNavigate,
                     title: item.title,
                     description: item.description,
                     imagePath: item.imagePath,
@@ -750,7 +760,7 @@ class HomeScreen extends StatelessWidget {
             );
           }),
           SizedBox(height: Responsive.isMobile(context) ? 25 : 50),
-          SizedBox(height: Responsive.isMobile(context) ? 25 : 50),
+
           Padding(
             padding: EdgeInsets.only(
               left: Responsive.isMobile(context) ? 18 : 48.0,
@@ -772,7 +782,7 @@ class HomeScreen extends StatelessWidget {
                     onTap: () {
                       if (onNavigate != null) {
                         onNavigate!(
-                            6); // Call the callback to navigate to the 7th screen
+                            12); // Call the callback to navigate to the 7th screen
                       }
                     },
                     child: Text(
@@ -852,10 +862,18 @@ class HomeScreen extends StatelessWidget {
                 itemCount: itemCount,
                 itemBuilder: (context, index) {
                   final item = filterController.filterItem[index];
-                  return CustomFilterWidget(
-                    title: item.title,
-                    description: item.description,
-                    imgPath: item.imagePath,
+                  return GestureDetector(
+                    onTap: ()
+                  {
+                  if (onNavigate != null) {
+                  onNavigate!(8); // Call the callback to navigate to the 7th screen
+                  }
+                  },
+                    child: CustomFilterWidget(
+                      title: item.title,
+                      description: item.description,
+                      imgPath: item.imagePath,
+                    ),
                   );
                 },
               ),

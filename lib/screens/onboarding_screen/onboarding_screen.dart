@@ -5,6 +5,7 @@ import 'package:kaistable_website/screens/onboarding_screen/onboarding_controlle
 import '../../utils/responsive.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_dropdown.dart';
+import '../../widgets/dropdown.dart';
 import '../../widgets/top_bar_widget.dart';
 
 class OnboardingScreen extends StatelessWidget {
@@ -118,7 +119,7 @@ class OnboardingScreen extends StatelessWidget {
                                         ? 50
                                         : isLargeScreen
                                             ? 64
-                                            : 22),
+                                            : 122),
 
                             Image.asset(
                               'assets/images/off image.png',
@@ -429,50 +430,55 @@ class ChooseLocationWidget extends StatelessWidget {
           const SizedBox(height: 22),
           Obx(() => Column(
                 children: [
-                  CustomDropdown(
-                    height: Responsive.isMobile(context)
-                        ? 34
-                        : Responsive.isTablet(context)
-                            ? 44
-                            : 60,
-                    width: Responsive.isMobile(context)
-                        ? 200
-                        : Responsive.isTablet(context)
-                            ? 320
-                            : 501,
-                    hintText: "Country",
-                    hintfontsize: Responsive.isMobile(context)
-                        ? 8
-                        : Responsive.isTablet(context)
-                            ? 14
-                            : 18,
+
+                  DropDownButton(
+                    hintText: 'Country',
                     items: ["Pakistan", "USA", "UK"],
-                    selectedValue: controller.selectedCountry.value,
+                    containerColor: Color(0xFFFFFFFF),
+                    textColor: Colors.grey,
                     onChanged: (value) {
                       controller.selectedCountry.value = value!;
                       controller.hasError.value = false;
                     },
-                    containerColor: Color(0xFFFFFFFF),
-                    textColor: Colors.grey,
-                  ),
-                  SizedBox(height: Responsive.isMobile(context) ? 10 : 20),
-                  CustomDropdown(
+                    selectedValue: controller.selectedCountry.value,
                     height: Responsive.isMobile(context)
                         ? 34
                         : Responsive.isTablet(context)
-                            ? 44
-                            : 60,
+                        ? 44
+                        : 60,
                     width: Responsive.isMobile(context)
                         ? 200
                         : Responsive.isTablet(context)
-                            ? 320
-                            : 501,
+                        ? 320
+                        : 501,
+                    hintfontsize: Responsive.isMobile(context)
+                        ? 8
+                        : Responsive.isTablet(context)
+                        ? 14
+                        : 18,),
+                  SizedBox(height: 20,),
+                  DropDownButton(
+                    height: Responsive.isMobile(context)
+                        ? 34
+                        : Responsive.isTablet(context)
+                        ? 44
+                        : 60,
+                    width: Responsive.isMobile(context)
+                        ? 200
+                        : Responsive.isTablet(context)
+                        ? 320
+                        : 501,
                     hintText: "City",
                     hintfontsize: Responsive.isMobile(context)
                         ? 8
                         : Responsive.isTablet(context)
-                            ? 14
-                            : 18,
+                        ? 14
+                        : 18,
+                    dropdownItemWidth: Responsive.isMobile(context)
+                        ? 200
+                        : Responsive.isTablet(context)
+                        ? 320
+                        : 101,
                     items: ["Islamabad", "Lahore", "Karachi"],
                     selectedValue: controller.selectedCity.value,
                     onChanged: (value) {
@@ -480,8 +486,70 @@ class ChooseLocationWidget extends StatelessWidget {
                       controller.hasError.value = false;
                     },
                     containerColor: Color(0xFFFFFFFF),
-                    textColor: Colors.grey,
-                  ),
+                    textColor: Colors.grey,),
+                  // CustomDropdown(
+                  //   height: Responsive.isMobile(context)
+                  //       ? 34
+                  //       : Responsive.isTablet(context)
+                  //           ? 44
+                  //           : 60,
+                  //   width: Responsive.isMobile(context)
+                  //       ? 200
+                  //       : Responsive.isTablet(context)
+                  //           ? 320
+                  //           : 501,
+                  //   hintText: "Country",
+                  //   hintfontsize: Responsive.isMobile(context)
+                  //       ? 8
+                  //       : Responsive.isTablet(context)
+                  //           ? 14
+                  //           : 18,
+                  //   dropdownItemWidth: Responsive.isMobile(context)
+                  //       ? 200
+                  //       : Responsive.isTablet(context)
+                  //       ? 320
+                  //       : 101,
+                  //   items: ["Pakistan", "USA", "UK"],
+                  //   selectedValue: controller.selectedCountry.value,
+                  //   onChanged: (value) {
+                  //     controller.selectedCountry.value = value!;
+                  //     controller.hasError.value = false;
+                  //   },
+                  //   containerColor: Color(0xFFFFFFFF),
+                  //   textColor: Colors.grey,
+                  // ),
+                  // SizedBox(height: Responsive.isMobile(context) ? 10 : 20),
+                  // CustomDropdown(
+                  //   height: Responsive.isMobile(context)
+                  //       ? 34
+                  //       : Responsive.isTablet(context)
+                  //           ? 44
+                  //           : 60,
+                  //   width: Responsive.isMobile(context)
+                  //       ? 200
+                  //       : Responsive.isTablet(context)
+                  //           ? 320
+                  //           : 501,
+                  //   hintText: "City",
+                  //   hintfontsize: Responsive.isMobile(context)
+                  //       ? 8
+                  //       : Responsive.isTablet(context)
+                  //           ? 14
+                  //           : 18,
+                  //   dropdownItemWidth: Responsive.isMobile(context)
+                  //       ? 200
+                  //       : Responsive.isTablet(context)
+                  //       ? 320
+                  //       : 101,
+                  //   items: ["Islamabad", "Lahore", "Karachi"],
+                  //   selectedValue: controller.selectedCity.value,
+                  //   onChanged: (value) {
+                  //     controller.selectedCity.value = value!;
+                  //     controller.hasError.value = false;
+                  //   },
+                  //   containerColor: Color(0xFFFFFFFF),
+                  //   textColor: Colors.grey,
+                  // ),
                   if (controller.hasError.value)
                     Padding(
                       padding: EdgeInsets.only(top: 20.0),

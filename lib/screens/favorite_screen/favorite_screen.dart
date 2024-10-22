@@ -26,24 +26,31 @@ class FavoriteScreen extends StatelessWidget {
                 : 4;
         double itemWidth = (constraints.maxWidth / itemsPerRow) - 16;
         double itemHeight = Responsive.isMobile(context)
-            ? 320
+            ?0
             : (isLargeScreen ? 500 : 500); // Set a fixed height for items
 
         return Padding(
-          padding: const EdgeInsets.all(12.0),
+          padding:  EdgeInsets.only(
+
+              left:Responsive.isMobile(context)
+              ?16: 38.0,right: Responsive.isMobile(context)
+              ?10:38),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Favorites',
-                style: TextStyle(
-                  color: AppColors.botomSheetColor,
-                  fontFamily: 'aftika-regular',
-                  fontSize: Responsive.isMobile(context) ? 22 : 40,
-                  fontWeight: FontWeight.w400,
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'Favorites',
+                  style: TextStyle(
+                    color: AppColors.botomSheetColor,
+                    fontFamily: 'aftika-regular',
+                    fontSize: Responsive.isMobile(context) ? 22 : 40,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ),
-              const SizedBox(height: 20),
+               SizedBox(height: Responsive.isMobile(context) ? 0 :20),
 
               // GridView for responsive grid layout
               Obx(() {
@@ -55,7 +62,7 @@ class FavoriteScreen extends StatelessWidget {
                     mainAxisExtent: Responsive.isMobile(context) ? 263 : 450,
                     crossAxisCount: itemsPerRow, // Number of items per row
                     crossAxisSpacing: Responsive.isMobile(context)
-                        ? 10
+                        ? 0
                         : Responsive.isTablet(context)
                             ? 8
                             : 10, // Space between columns

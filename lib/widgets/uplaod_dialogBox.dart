@@ -19,6 +19,8 @@ class UploadImageSection extends StatefulWidget {
 class _UploadImageSectionState extends State<UploadImageSection> {
   File? _selectedImage; // For mobile platform
   Uint8List? _webImage; // For web platform (byte data)
+  TextEditingController _reviewController = TextEditingController(); // Controller for the text field
+  String? _errorMessage; // Error message for validation
 
   Future<void> _pickImage() async {
     if (kIsWeb) {
@@ -41,6 +43,20 @@ class _UploadImageSectionState extends State<UploadImageSection> {
         });
       }
     }
+  }
+
+  // Validation method
+  void _validateAndSubmit() {
+    setState(() {
+      if (_reviewController.text.isEmpty) {
+        _errorMessage = "Please enter your review.";
+      } else if (_selectedImage == null && _webImage == null) {
+        _errorMessage = "Please upload an image.";
+      } else {
+        _errorMessage = null; // No error
+        Navigator.pop(context); // Close the dialog if validation passes
+      }
+    });
   }
 
   @override
@@ -79,7 +95,7 @@ class _UploadImageSectionState extends State<UploadImageSection> {
               SizedBox(
                 height: 20,
                 child: RatingBar(
-                  itemSize: 14,
+                  itemSize: 18,
                   ignoreGestures: false,
                   initialRating: 4,
                   minRating: 1,
@@ -96,7 +112,7 @@ class _UploadImageSectionState extends State<UploadImageSection> {
                       height: 14,
                     ),
                     empty: Image.asset(
-                      'assets/images/star_empty.png',
+                      'assets/images/star_empty_yellow.png',
                       height: 14,
                     ),
                   ),
@@ -108,6 +124,7 @@ class _UploadImageSectionState extends State<UploadImageSection> {
               ),
               SizedBox(height: 10),
               CustomTextFormField(
+                controller: _reviewController, // Assign controller to the text field
                 maxLines: 5,
                 width: Responsive.isMobile(context) ? 230 : isLargeScreen ? 476 : 436,
                 height: Responsive.isMobile(context) ? 100 : isLargeScreen ? 183 : 120,
@@ -187,6 +204,21 @@ class _UploadImageSectionState extends State<UploadImageSection> {
                 ),
               ),
               SizedBox(height: Responsive.isMobile(context) ? 10 : 20),
+
+              // Display error message here
+              if (_errorMessage != null) // Show error only if there's a message
+                Padding(
+                  padding: EdgeInsets.only(bottom: 10),
+                  child: Text(
+                    _errorMessage!,
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: Responsive.isMobile(context) ? 10 : 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+
               CustomButton(
                 textColor: AppColors.whiteColor,
                 width: Responsive.isMobile(context) ? 100 : isLargeScreen ? 300 : 265,
@@ -195,6 +227,7 @@ class _UploadImageSectionState extends State<UploadImageSection> {
                 fontFamily: 'Nunito-Regular',
                 fontWeight: FontWeight.w700,
                 laBelText: 'Submit',
+                ontapp: _validateAndSubmit, // Call validation on submit
               ),
             ],
           ),
@@ -203,3 +236,4 @@ class _UploadImageSectionState extends State<UploadImageSection> {
     );
   }
 }
+

@@ -10,8 +10,12 @@ import 'package:kaistable_website/screens/terms_and_condition/terms_and_conditio
 
 import '../screens/detail_screens/restaurant_detail_screen.dart';
 import '../screens/favorite_screen/favorite_screen.dart';
+import '../screens/home_screen/cuisiness_viewall/cuisines_view_all.dart';
 import '../screens/home_screen/location_pages/location_screen.dart';
+import '../screens/home_screen/new_view_all/new_viewall.dart';
 import '../screens/home_screen/recently_viewed/recently_viewed.dart';
+import '../screens/home_screen/resturants_filter/resturants_viewall.dart';
+import '../screens/home_screen/trendind_all/trending_view_all.dart';
 import '../utils/responsive.dart';
 import 'bottom_container.dart';
 
@@ -37,7 +41,11 @@ class _TopBarWidgetState extends State<TopBarWidget> {
       ContactUs(),
       RecentlyViewed(onNavigate: _onItemTapped),
       LocationScreen(),
-      RestaurantDetailScreen(onNavigate: _onItemTapped)
+      RestaurantDetailScreen(onNavigate: _onItemTapped),
+      CuisinesViewAll(onNavigate: _onItemTapped),
+      TrendingViewAll(onNavigate: _onItemTapped),
+      NewViewall(onNavigate: _onItemTapped),
+      ResturantsViewall(onNavigate: _onItemTapped)
     ]);
   }
 
@@ -127,36 +135,38 @@ class _TopBarWidgetState extends State<TopBarWidget> {
     double screenWidth = MediaQuery.of(context).size.width;
     bool isLargeScreen = screenWidth > 1400;
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
-            height: Responsive.isMobile(context)
-                ? 20
-                : Responsive.isTablet(context)
-                    ? 40
-                    : 0),
+        // SizedBox(
+        //     width: Responsive.isMobile(context)
+        //         ? 8
+        //         : Responsive.isTablet(context)
+        //         ? 10
+        //         : 10),
         Container(
           height: Responsive.isMobile(context)
               ? 50
               : Responsive.isTablet(context)
                   ? 70
                   : 90,
-          padding: EdgeInsets.all(Responsive.isMobile(context)
-              ? 4
-              : Responsive.isTablet(context)
-                  ? 6
-                  : 9),
+          // padding: EdgeInsets.all(Responsive.isMobile(context)
+          //     ? 4
+          //     : Responsive.isTablet(context)
+          //         ? 6
+          //         : 9),
           color: AppColors.bgColor,
           child: Row(
             mainAxisAlignment: Responsive.isMobile(context)
                 ? MainAxisAlignment.center
                 : MainAxisAlignment.spaceEvenly,
             children: [
-              SizedBox(
-                  width: Responsive.isMobile(context)
-                      ? 50
-                      : Responsive.isTablet(context)
-                          ? 15
-                          : 20),
+              // SizedBox(
+              //     width: Responsive.isMobile(context)
+              //         ? 50
+              //         : Responsive.isTablet(context)
+              //             ? 15
+              //             : 20),
               GestureDetector(
                 onTap: () {
                   _onItemTapped(0);
@@ -179,24 +189,24 @@ class _TopBarWidgetState extends State<TopBarWidget> {
                               : 120,
                 ),
               ),
-              SizedBox(
-                  width: Responsive.isMobile(context)
-                      ? 8
-                      : Responsive.isTablet(context)
-                          ? 20
-                          : 40),
+              // SizedBox(
+              //     width: Responsive.isMobile(context)
+              //         ? 8
+              //         : Responsive.isTablet(context)
+              //             ? 20
+              //             : 40),
               _buildNavItem('Home', 0),
               _buildNavItem('Favorites', 1),
               _buildNavItem('Terms and Condition', 2),
               _buildNavItem('Privacy Policy', 3),
               _buildNavItem('About App', 4),
               _buildNavItem('Contact Us', 5),
-              SizedBox(
-                  width: Responsive.isMobile(context)
-                      ? 8
-                      : Responsive.isTablet(context)
-                          ? 20
-                          : 30),
+              // SizedBox(
+              //     width: Responsive.isMobile(context)
+              //         ? 8
+              //         : Responsive.isTablet(context)
+              //             ? 10
+              //             : 10),
               Row(
                 children: [
                   Image(
@@ -288,7 +298,11 @@ class _TopBarWidgetState extends State<TopBarWidget> {
           decoration: _selectedIndex == index ||
                   (_selectedIndex == 6 && index == 0) ||
                   (_selectedIndex == 7 && index == 0) ||
-                  (_selectedIndex == 8 && index == 0)
+                  (_selectedIndex == 8 && index == 0)||
+              (_selectedIndex == 9 && index == 0)||
+              (_selectedIndex == 10 && index == 0)||
+              (_selectedIndex == 11 && index == 0)||
+              (_selectedIndex == 12 && index == 0)
               ? TextDecoration.underline
               : TextDecoration.none,
           decorationThickness: 1.5,
@@ -298,12 +312,20 @@ class _TopBarWidgetState extends State<TopBarWidget> {
           color: _selectedIndex == index ||
                   (_selectedIndex == 6 && index == 0) ||
                   (_selectedIndex == 7 && index == 0) ||
-                  (_selectedIndex == 8 && index == 0)
+                  (_selectedIndex == 8 && index == 0)||
+              (_selectedIndex == 9 && index == 0)||
+              (_selectedIndex == 10 && index == 0)||
+              (_selectedIndex == 11 && index == 0)||
+              (_selectedIndex == 12 && index == 0)
               ? AppColors.primaryColor
               : AppColors.textColor,
           fontWeight: _selectedIndex == index ||
                   (_selectedIndex == 6 && index == 0) ||
-                  (_selectedIndex == 8 && index == 0)
+                  (_selectedIndex == 8 && index == 0)||
+              (_selectedIndex == 9 && index == 0)||
+              (_selectedIndex == 10 && index == 0)||
+              (_selectedIndex == 11 && index == 0)||
+              (_selectedIndex == 12 && index == 0)
               ? FontWeight.w700
               : FontWeight.w700,
         ),
@@ -318,7 +340,6 @@ class _TopBarWidgetState extends State<TopBarWidget> {
   }
 
 
-
   Widget _buildNavItem(String title, int index) {
     return GestureDetector(
       onTap: () {
@@ -326,42 +347,65 @@ class _TopBarWidgetState extends State<TopBarWidget> {
           _selectedIndex = index; // Update the selected index
         });
       },
-      child: Text(
-        title,
-        style: TextStyle(
-          decoration: _selectedIndex == index ||
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: Responsive.isMobile(context)
+                  ? 8
+                  : Responsive.isTablet(context)
+                  ? 12
+                  : 16,
+              fontFamily: 'Nunito-Regular',
+              color: (_selectedIndex == index ||
                   (_selectedIndex == 6 && index == 0) ||
                   (_selectedIndex == 7 && index == 0) ||
-                  (_selectedIndex == 8 && index == 0)
-              ? TextDecoration.underline
-              : TextDecoration.none,
-          decorationThickness: 1.5,
-          decorationColor: (_selectedIndex == index ||
+                  (_selectedIndex == 8 && index == 0)||
+                  (_selectedIndex == 9 && index == 0)||
+                  (_selectedIndex == 10 && index == 0)||
+                  (_selectedIndex == 11 && index == 0)||
+                  (_selectedIndex == 12 && index == 0)
+
+
+              )
+                  ? AppColors.primaryColor
+                  : AppColors.textColor,
+              fontWeight: (_selectedIndex == index ||
                   (_selectedIndex == 6 && index == 0) ||
                   (_selectedIndex == 7 && index == 0) ||
-                  (_selectedIndex == 8 && index == 0))
-              ? AppColors.primaryColor
-              : AppColors.textColor,
-          fontSize: Responsive.isMobile(context)
-              ? 8
-              : Responsive.isTablet(context)
-              ? 12
-              : 16,
-          fontFamily: 'Nunito-Regular',
-          color: (_selectedIndex == index || (_selectedIndex == 6 && index == 0) || (_selectedIndex == 7 && index == 0)|| (_selectedIndex == 8 && index == 0))
-              ? AppColors.primaryColor
-              : AppColors.textColor,
-          fontWeight: (_selectedIndex == index || (_selectedIndex == 6 && index == 0) || (_selectedIndex == 7 && index == 0)|| (_selectedIndex == 8 && index == 0))
-              ? FontWeight.w600
-              : Responsive.isMobile(context)
-              ? Responsive.isTablet(context)
-              ? FontWeight.w600
-              : FontWeight.w600
-              : FontWeight.w600,
-        ),
+                  (_selectedIndex == 8 && index == 0)||
+                  (_selectedIndex == 9 && index == 0)||
+                  (_selectedIndex == 10 && index == 0)||
+                  (_selectedIndex == 11 && index == 0)||
+                  (_selectedIndex == 12 && index == 0))
+                  ? FontWeight.w600
+                  : FontWeight.w600,
+            ),
+          ),
+          if (_selectedIndex == index ||
+              (_selectedIndex == 6 && index == 0) ||
+              (_selectedIndex == 7 && index == 0) ||
+              (_selectedIndex == 8 && index == 0)||
+              (_selectedIndex == 9 && index == 0)||
+              (_selectedIndex == 10 && index == 0)||
+              (_selectedIndex == 11 && index == 0)||
+              (_selectedIndex == 12 && index == 0))
+            Positioned(
+
+              bottom: 3, // Adjust this value to increase or decrease the space
+              child: Container(
+                height: 1, // Thickness of the underline
+                width: title.length * (Responsive.isMobile(context) ? 8 : Responsive.isTablet(context) ? 12 : 16), // Adjust width based on font size
+                color: AppColors.primaryColor, // Underline color
+              ),
+            ),
+        ],
       ),
     );
   }
+
 
 
 

@@ -14,7 +14,7 @@ class MapWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(10),
       child: GoogleMap(
         markers: {
           const Marker(

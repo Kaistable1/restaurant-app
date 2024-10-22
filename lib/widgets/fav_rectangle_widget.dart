@@ -13,13 +13,13 @@ class CustomRectangleWidget extends StatelessWidget {
   final Function(int)? onNavigate;
   CustomRectangleWidget(
       {super.key,
-      required this.title,
-      required this.isFavorite,
-      required this.imagePath,
-      required this.description,
-      required this.timetext,
-      required this.percentText,
-      this.onNavigate});
+        required this.title,
+        required this.isFavorite,
+        required this.imagePath,
+        required this.description,
+        required this.timetext,
+        required this.percentText,
+        this.onNavigate});
 
   @override
   Widget build(BuildContext context) {
@@ -49,17 +49,17 @@ class CustomRectangleWidget extends StatelessWidget {
                       height: Responsive.isMobile(context)
                           ? 320
                           : isLargeScreen
-                              ? 220
-                              : isTablet
-                                  ? 290
-                                  : 240,
+                          ? 220
+                          : isTablet
+                          ? 290
+                          : 240,
                       width: Responsive.isMobile(context)
                           ? 230
                           : isLargeScreen
-                              ? 350
-                              : isTablet
-                                  ? 380
-                                  : 300,
+                          ? 350
+                          : isTablet
+                          ? 380
+                          : 300,
                       decoration: BoxDecoration(
                         color: AppColors.whiteColor,
                         boxShadow: [
@@ -74,63 +74,101 @@ class CustomRectangleWidget extends StatelessWidget {
                           topLeft: Radius.circular(Responsive.isMobile(context)
                               ? 8
                               : isLargeScreen
-                                  ? 20
-                                  : isTablet
-                                      ? 16
-                                      : 16),
+                              ? 20
+                              : isTablet
+                              ? 16
+                              : 16),
                           topRight: Radius.circular(Responsive.isMobile(context)
                               ? 12
                               : isLargeScreen
-                                  ? 50
-                                  : isTablet
-                                      ? 28
-                                      : 45),
+                              ? 50
+                              : isTablet
+                              ? 28
+                              : 45),
                           bottomRight:
-                              Radius.circular(Responsive.isMobile(context)
-                                  ? 12
-                                  : isLargeScreen
-                                      ? 50
-                                      : isTablet
-                                          ? 28
-                                          : 45),
+                          Radius.circular(Responsive.isMobile(context)
+                              ? 12
+                              : isLargeScreen
+                              ? 50
+                              : isTablet
+                              ? 28
+                              : 45),
                           bottomLeft:
-                              Radius.circular(Responsive.isMobile(context)
-                                  ? 12
-                                  : isLargeScreen
-                                      ? 50
-                                      : isTablet
-                                          ? 28
-                                          : 45),
+                          Radius.circular(Responsive.isMobile(context)
+                              ? 12
+                              : isLargeScreen
+                              ? 50
+                              : isTablet
+                              ? 28
+                              : 45),
                         ),
                       ),
                       child: Padding(
                         padding: EdgeInsets.only(
-                            top: Responsive.isMobile(context)
-                                ? 20
-                                : isLargeScreen
-                                    ? 80
-                                    : isTablet
-                                        ? 65
-                                        : 72,
+                          // top: Responsive.isMobile(context)
+                          //     ? 20
+                          //     : isLargeScreen
+                          //         ? 80
+                          //         : isTablet
+                          //             ? 65
+                          //             : 72,
                             left: Responsive.isMobile(context)
                                 ? 10
                                 : isLargeScreen
-                                    ? 28
-                                    : isTablet
-                                        ? 22
-                                        : 22.0),
+                                ? 28
+                                : isTablet
+                                ? 22
+                                : 22.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            Column(
+                              children: [
+                                Padding(
+                                  padding:
+                                  const EdgeInsets.only(top: 9, right: 6),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.end,
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.end,
+                                        children: List.generate(
+                                            2,
+                                                (index) => _buildStarBox(
+                                                isLargeScreen,
+                                                isTablet,
+                                                context)),
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.end,
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.end,
+                                        children: List.generate(
+                                            2,
+                                                (index) => _buildStarBox(
+                                                isLargeScreen,
+                                                isTablet,
+                                                context)),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                             SizedBox(
                                 height: Responsive.isMobile(context)
                                     ? 8
                                     : isLargeScreen
-                                        ? 12
-                                        : isTablet
-                                            ? 8
-                                            : 10),
+                                    ? 0
+                                    : isTablet
+                                    ? 6
+                                    : 10),
                             Obx(() {
                               return GestureDetector(
                                 onTap: () {
@@ -145,17 +183,17 @@ class CustomRectangleWidget extends StatelessWidget {
                                   height: Responsive.isMobile(context)
                                       ? 12
                                       : isLargeScreen
-                                          ? 32
-                                          : isTablet
-                                              ? 24
-                                              : 21,
+                                      ? 32
+                                      : isTablet
+                                      ? 24
+                                      : 21,
                                   width: Responsive.isMobile(context)
                                       ? 10
                                       : isLargeScreen
-                                          ? 30
-                                          : isTablet
-                                              ? 24
-                                              : 24,
+                                      ? 30
+                                      : isTablet
+                                      ? 24
+                                      : 24,
                                 ),
                               );
                             }),
@@ -163,10 +201,10 @@ class CustomRectangleWidget extends StatelessWidget {
                                 height: Responsive.isMobile(context)
                                     ? 8
                                     : isLargeScreen
-                                        ? 15
-                                        : isTablet
-                                            ? 10
-                                            : 10),
+                                    ? 0
+                                    : isTablet
+                                    ? 8
+                                    : 10),
                             Text(
                               title, // 'Buffet',
                               style: TextStyle(
@@ -174,10 +212,10 @@ class CustomRectangleWidget extends StatelessWidget {
                                 fontSize: Responsive.isMobile(context)
                                     ? 14
                                     : isLargeScreen
-                                        ? 26
-                                        : isTablet
-                                            ? 12
-                                            : 14,
+                                    ? 22
+                                    : isTablet
+                                    ? 12
+                                    : 14,
                                 fontFamily: 'Nunito-Regular',
                                 color: AppColors.textColor,
                               ),
@@ -186,10 +224,10 @@ class CustomRectangleWidget extends StatelessWidget {
                                 height: Responsive.isMobile(context)
                                     ? 8
                                     : isLargeScreen
-                                        ? 12
-                                        : isTablet
-                                            ? 6
-                                            : 6),
+                                    ? 0
+                                    : isTablet
+                                    ? 3
+                                    : 6),
                             Text(
                               description, // 'Duis aute irure dolor in reprehend voluptate velit esse cillum',
                               style: TextStyle(
@@ -197,10 +235,10 @@ class CustomRectangleWidget extends StatelessWidget {
                                 fontSize: Responsive.isMobile(context)
                                     ? 8
                                     : isLargeScreen
-                                        ? 18
-                                        : isTablet
-                                            ? 10
-                                            : 16,
+                                    ? 16
+                                    : isTablet
+                                    ? 10
+                                    : 16,
                                 fontFamily: 'Nunito-Regular',
                                 color: AppColors.textColor,
                               ),
@@ -216,19 +254,19 @@ class CustomRectangleWidget extends StatelessWidget {
                 top: Responsive.isMobile(context) ? 55 : 0,
                 child: Container(
                   height: Responsive.isMobile(context)
-                      ? 85
+                      ? 100
                       : isLargeScreen
-                          ? 190
-                          : isTablet
-                              ? 130
-                              : 170,
+                      ? 190
+                      : isTablet
+                      ? 130
+                      : 170,
                   width: Responsive.isMobile(context)
-                      ? 85
+                      ? 100
                       : isLargeScreen
-                          ? 190
-                          : isTablet
-                              ? 130
-                              : 170,
+                      ? 190
+                      : isTablet
+                      ? 130
+                      : 170,
                   decoration: BoxDecoration(
                     boxShadow: [
                       BoxShadow(
@@ -244,49 +282,49 @@ class CustomRectangleWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              Positioned(
-                top: Responsive.isMobile(context) ? 90 : 90,
-                right: Responsive.isMobile(context)
-                    ? 12
-                    : (isLargeScreen
-                        ? 30
-                        : isTablet
-                            ? 1
-                            : 10),
-                child: Container(
-                  height: Responsive.isMobile(context)
-                      ? 90
-                      : isLargeScreen
-                          ? 210
-                          : isTablet
-                              ? 180
-                              : 130,
-                  width: Responsive.isMobile(context)
-                      ? 95
-                      : isLargeScreen
-                          ? 210
-                          : isTablet
-                              ? 180
-                              : 120,
-                  color: Colors.transparent,
-                  child: Column(
-                    children: [
-                      Row(
-                        children: List.generate(
-                            2,
-                            (index) => _buildStarBox(
-                                isLargeScreen, isTablet, context)),
-                      ),
-                      Row(
-                        children: List.generate(
-                            2,
-                            (index) => _buildStarBox(
-                                isLargeScreen, isTablet, context)),
-                      )
-                    ],
-                  ),
-                ),
-              )
+              // Positioned(
+              //   top: Responsive.isMobile(context) ? 90 : 90,
+              //   right: Responsive.isMobile(context)
+              //       ? 12
+              //       : (isLargeScreen
+              //           ? 30
+              //           : isTablet
+              //               ? 1
+              //               : 10),
+              //   child: Container(
+              //     height: Responsive.isMobile(context)
+              //         ? 90
+              //         : isLargeScreen
+              //             ? 210
+              //             : isTablet
+              //                 ? 180
+              //                 : 130,
+              //     width: Responsive.isMobile(context)
+              //         ? 95
+              //         : isLargeScreen
+              //             ? 210
+              //             : isTablet
+              //                 ? 180
+              //                 : 120,
+              //     color: Colors.transparent,
+              //     child: Column(
+              //       children: [
+              //         Row(
+              //           children: List.generate(
+              //               2,
+              //               (index) => _buildStarBox(
+              //                   isLargeScreen, isTablet, context)),
+              //         ),
+              //         Row(
+              //           children: List.generate(
+              //               2,
+              //               (index) => _buildStarBox(
+              //                   isLargeScreen, isTablet, context)),
+              //         )
+              //       ],
+              //     ),
+              //   ),
+              // )
             ],
           ),
         );
@@ -300,17 +338,17 @@ class CustomRectangleWidget extends StatelessWidget {
       height: Responsive.isMobile(context)
           ? 38
           : isLargeScreen
-              ? 100
-              : isTablet
-                  ? 50
-                  : 65,
+          ? 75
+          : isTablet
+          ? 40
+          : 50,
       width: Responsive.isMobile(context)
           ? 38
           : isLargeScreen
-              ? 100
-              : isTablet
-                  ? 50
-                  : 60,
+          ? 75
+          : isTablet
+          ? 40
+          : 50,
       decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/images/star_img.png'),
@@ -328,10 +366,10 @@ class CustomRectangleWidget extends StatelessWidget {
                 fontSize: Responsive.isMobile(context)
                     ? 7
                     : isLargeScreen
-                        ? 16
-                        : isTablet
-                            ? 10
-                            : 12,
+                    ? 14
+                    : isTablet
+                    ? 8
+                    : 12,
                 fontWeight: FontWeight.w700,
                 color: AppColors.whiteColor,
               ),
@@ -343,10 +381,10 @@ class CustomRectangleWidget extends StatelessWidget {
                 fontSize: Responsive.isMobile(context)
                     ? 5
                     : isLargeScreen
-                        ? 16
-                        : isTablet
-                            ? 10
-                            : 12,
+                    ? 16
+                    : isTablet
+                    ? 10
+                    : 12,
                 fontWeight: FontWeight.w700,
                 color: AppColors.whiteColor,
               ),

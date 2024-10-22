@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../constants/app_colors.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import '../utils/responsive.dart';
 
-class CustomDropdown extends StatelessWidget {
+class DropDownButton extends StatelessWidget {
   final String hintText;
   final double? height;
   final double? width;
@@ -13,84 +13,103 @@ class CustomDropdown extends StatelessWidget {
   final Color textColor;
   final double? hintfontsize;
   final String? fontfamily;
+  final double? dropdownItemWidth;
 
-  const CustomDropdown({
+  const DropDownButton({
     super.key,
     required this.hintText,
+    this.height,
+    this.width,
     required this.items,
     this.selectedValue,
     this.onChanged,
     this.containerColor,
-    this.textColor = Colors.grey,
-    this.height,
-    this.width, this.hintfontsize, this.fontfamily,
+    required this.textColor,
+    this.hintfontsize,
+    this.fontfamily,
+    this.dropdownItemWidth,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: height,
-      width: width,
-      decoration: BoxDecoration(
-        color: containerColor,
-        borderRadius: BorderRadius.circular(Responsive.isMobile(context)? 4 :10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            spreadRadius: 2,
-            blurRadius: 12,
-            offset: const Offset(0, 1),
-          ),
-        ],
-      ),
-      child: DropdownButtonFormField<String>(
-        icon: Align(
-          alignment: Alignment.topLeft, // Aligns the dropdown icon to the right and center
-          child: Image.asset(
-            'assets/images/drop_down_img.png',
-            width: Responsive.isMobile(context)? 8:Responsive.isTablet(context)? 12:18,
-            height: Responsive.isMobile(context)? 8:Responsive.isTablet(context)? 12:18,
+    return DropdownButtonHideUnderline(
+      child: DropdownButton2<String>(
+        isExpanded: true,
+        hint: Text(
+          hintText,
+          style: TextStyle(
+            color: Color(0xFF4F5762),
+            fontFamily: fontfamily ?? "Lora-Regular",
+            fontWeight: FontWeight.w400,
+            fontSize: hintfontsize ?? 16,
           ),
         ),
+        items: items
+            .map((String value) => DropdownMenuItem<String>(
+          value: value,
+          child: Text(
+            value,
+            style: TextStyle(
+              color: Color(0xFF4F5762),
+              fontFamily: fontfamily ?? "Lora-Regular",
+              fontWeight: FontWeight.w400,
+              fontSize: hintfontsize ?? 16,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ))
+            .toList(),
         value: items.contains(selectedValue) ? selectedValue : null,
         onChanged: onChanged,
-        hint: Center(
-          child: Text(
-            hintText,
-            style:  TextStyle(
-              color: Color(0xFF4F5762),
-              fontFamily: fontfamily??"Lora-Regular",
-              fontWeight: FontWeight.w400,
-              fontSize: hintfontsize ??16,
-            ),
+        buttonStyleData: ButtonStyleData(
+          height: height,
+          width: width,
+          padding: EdgeInsets.only(left: 22, right: 22),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(Responsive.isMobile(context)? 4 :10),
+            color: containerColor,
+           boxShadow: [
+          BoxShadow(
+          color: Colors.black.withOpacity(0.1),
+          spreadRadius: 3,
+          blurRadius: 12,
+          offset: const Offset(0, 1),
+        ),
+        ],
+          ),
+          elevation:0
+        ),
+        iconStyleData: IconStyleData(
+          icon: Image.asset(
+            'assets/images/drop_down_img.png',
+            width: Responsive.isMobile(context)
+                ? 8
+                : Responsive.isTablet(context)
+                ? 12
+                : 18,
+            height: Responsive.isMobile(context)
+                ? 8
+                : Responsive.isTablet(context)
+                ? 12
+                : 18,
           ),
         ),
-        decoration:  InputDecoration(
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.only(
-              top: Responsive.isMobile(context)? 6:14, bottom: Responsive.isMobile(context)? 20:12,
-              left: Responsive.isMobile(context)? 9:20,right: Responsive.isMobile(context)? 9:20
-          ), // Center the content vertically
+        dropdownStyleData: DropdownStyleData(
+          width: width,
+          decoration: BoxDecoration(
+            borderRadius:BorderRadius.circular(Responsive.isMobile(context)? 4 :10),
+          ),
+          offset: const Offset(-0, 0),
+          scrollbarTheme: ScrollbarThemeData(
+            radius:  Radius.circular(Responsive.isMobile(context)? 4 :10),
+            thickness: MaterialStateProperty.all<double>(2),
+            thumbVisibility: MaterialStateProperty.all<bool>(true),
+          ),
         ),
-        items: items.map((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(
-              value,
-              style:  TextStyle(
-                color: AppColors.botomSheetColor,
-                fontSize: Responsive.isMobile(context)? 7:14,
-                fontFamily: 'Nunito-Regular'
-              ),
-            ),
-          );
-        }).toList(),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please select an option';
-          }
-          return null;
-        },
+        menuItemStyleData: const MenuItemStyleData(
+          height: 40,
+          padding: EdgeInsets.only(left: 14, right: 14),
+        ),
       ),
     );
   }

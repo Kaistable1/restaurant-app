@@ -90,7 +90,10 @@ class Tabs extends StatelessWidget {
           ),
         ),
          Row(
+           mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
+
             Icon(
               Icons.access_time_filled,
               color: AppColors.primaryColor,
