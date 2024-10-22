@@ -12,9 +12,10 @@ import '../home_controller/home_recently_viewed_controller.dart';
 import '../home_controller/home_trending_controller.dart';
 
 class NewViewall extends StatelessWidget {
+  final ScrollController scrollcontroller;
   final Function(int)? onNavigate;
   final HomeNewController newController = Get.put(HomeNewController());
-  NewViewall({super.key, this.onNavigate});
+  NewViewall({super.key, this.onNavigate, required this.scrollcontroller});
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +100,7 @@ class NewViewall extends StatelessWidget {
                         description: item.description,
                         imagePath: item.imagePath,
                         timetext: item.timetext,
-                        percentText: item.percentText, isFavorite: false.obs,
+                        percentText: item.percentText, isFavorite: false.obs, scrollcontroller: scrollcontroller,
                       ),
                     );
                   },

@@ -6,7 +6,8 @@ import '../utils/responsive.dart';
 
 class BottomContainer extends StatelessWidget {
   final Function(int)? onNavigate;
-  const BottomContainer({super.key, this.onNavigate});
+  final ScrollController scrollcontroller;
+  const BottomContainer({super.key, this.onNavigate, required this.scrollcontroller});
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -52,8 +53,9 @@ class BottomContainer extends StatelessWidget {
                     GestureDetector(
                       onTap: () {
                         if (onNavigate != null) {
-                          onNavigate!(
-                              1); // Call the callback to navigate to the 7th screen
+                          onNavigate!(1);
+                          scrollcontroller.jumpTo(0);// Call the callback to navigate to the 7th screen
+                         // scrollcontroller.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);
                         }
                       },
                       child: Text(
@@ -82,7 +84,9 @@ class BottomContainer extends StatelessWidget {
                       onTap: () {
                         if (onNavigate != null) {
                           onNavigate!(
-                              4); // Call the callback to navigate to the 7th screen
+                              4);
+                          scrollcontroller.jumpTo(0);
+                         // scrollcontroller.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);// Call the callback to navigate to the 7th screen
                         }
                       },
                       child: Text(
@@ -157,7 +161,9 @@ class BottomContainer extends StatelessWidget {
                   onTap: () {
                     if (onNavigate != null) {
                       onNavigate!(
-                          0); // Call the callback to navigate to the 7th screen
+                          0);
+                      scrollcontroller.jumpTo(0);
+                     // scrollcontroller.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);// Call the callback to navigate to the 7th screen
                     }
                   },
                   child: Image(
@@ -211,7 +217,9 @@ class BottomContainer extends StatelessWidget {
                       onTap: () {
                         if (onNavigate != null) {
                           onNavigate!(
-                              5); // Call the callback to navigate to the 7th screen
+                              5);
+                          scrollcontroller.jumpTo(0);
+                         // scrollcontroller.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);// Call the callback to navigate to the 7th screen
                         }
                       },
                       child: Text(
@@ -240,7 +248,9 @@ class BottomContainer extends StatelessWidget {
                       onTap: () {
                         if (onNavigate != null) {
                           onNavigate!(
-                              2); // Call the callback to navigate to the 7th screen
+                              2);
+                          scrollcontroller.jumpTo(0);
+                         // scrollcontroller.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);// Call the callback to navigate to the 7th screen
                         }
                       },
                       child: Text(
@@ -269,7 +279,9 @@ class BottomContainer extends StatelessWidget {
                       onTap: () {
                         if (onNavigate != null) {
                           onNavigate!(
-                              3); // Call the callback to navigate to the 7th screen
+                              3);
+                          scrollcontroller.jumpTo(0);
+                          //scrollcontroller.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);// Call the callback to navigate to the 7th screen
                         }
                       },
                       child: Text(

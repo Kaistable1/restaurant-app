@@ -90,8 +90,8 @@ class Tabs extends StatelessWidget {
           ),
         ),
          Row(
-           mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.end,
+           //mainAxisAlignment: MainAxisAlignment.end,
+          //crossAxisAlignment: CrossAxisAlignment.end,
           children: [
 
             Icon(

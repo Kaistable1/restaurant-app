@@ -14,8 +14,9 @@ import 'home_controller/home_theme_controller.dart';
 import 'home_controller/home_trending_controller.dart';
 
 class HomeScreen extends StatelessWidget {
+  final ScrollController scrollcontroller;
   final Function(int)? onNavigate;
-  const HomeScreen({super.key, this.onNavigate});
+  const HomeScreen({super.key, this.onNavigate, required this.scrollcontroller});
   @override
   Widget build(BuildContext context) {
     final HomeLocationController controller = Get.put(HomeLocationController());
@@ -218,13 +219,14 @@ class HomeScreen extends StatelessWidget {
                                 ? 8
                                 : isLargeScreen
                                     ? 48
-                                    : 22.0,
+                                    : 21.0,
                             vertical: Responsive.isMobile(context) ? 6 : 6),
                         child: CircleContainerWidget(
                           ontap: () {
                             if (onNavigate != null) {
                               onNavigate!(
-                                  7); // Call the callback to navigate to the 7th screen
+                                  7);
+                              scrollcontroller.jumpTo(0);// Call the callback to navigate to the 7th screen
                             }
                           },
                           isFavourite: false.obs,
@@ -314,7 +316,7 @@ class HomeScreen extends StatelessWidget {
                           onTap: () {
                             if (onNavigate != null) {
                               onNavigate!(
-                                  8); // Call the callback to navigate to the 7th screen
+                                  8); scrollcontroller.jumpTo(0);// Call the callback to navigate to the 7th screen
                             }
                           },
                           child: CircleContainerWidget(
@@ -382,7 +384,9 @@ class HomeScreen extends StatelessWidget {
                     onTap: () {
                       if (onNavigate != null) {
                         onNavigate!(
-                            9); // Call the callback to navigate to the 7th screen
+                            9);
+                        scrollcontroller.jumpTo(0);
+                        //scrollcontroller.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);// Call the callback to navigate to the 7th screen
                       }
                     },
                     child: Text(
@@ -454,6 +458,7 @@ class HomeScreen extends StatelessWidget {
                     timetext: item.timetext,
                     percentText: item.percentText,
                     isFavorite: false.obs,
+                    scrollcontroller: scrollcontroller,
                   );
                 },
               ),
@@ -480,7 +485,9 @@ class HomeScreen extends StatelessWidget {
                 GestureDetector(
                     onTap: () {
                       if (onNavigate != null) {
-                         onNavigate!(10); // Call the callback to navigate to the 7th screen
+                         onNavigate!(10);
+                         scrollcontroller.jumpTo(0);
+                         //scrollcontroller.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);// Call the callback to navigate to the 7th screen
                       }
                     },
                     child: Text("view all",
@@ -554,6 +561,7 @@ class HomeScreen extends StatelessWidget {
                     timetext: item.timetext,
                     percentText: item.percentText,
                     isFavorite: false.obs,
+                    scrollcontroller: scrollcontroller,
                   );
                 },
               ),
@@ -580,7 +588,9 @@ class HomeScreen extends StatelessWidget {
                 GestureDetector(
                     onTap: () {
                       if (onNavigate != null) {
-                         onNavigate!(11); // Call the callback to navigate to the 7th screen
+                         onNavigate!(11);
+                         scrollcontroller.jumpTo(0);
+                         //scrollcontroller.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);// Call the callback to navigate to the 7th screen
                       }
                     },
                     child: Text("view all",
@@ -653,7 +663,7 @@ class HomeScreen extends StatelessWidget {
                     imagePath: item.imagePath,
                     timetext: item.timetext,
                     percentText: item.percentText,
-                    isFavorite: false.obs,
+                    isFavorite: false.obs, scrollcontroller: scrollcontroller,
                   );
                 },
               ),
@@ -681,7 +691,9 @@ class HomeScreen extends StatelessWidget {
                     onTap: () {
                       if (onNavigate != null) {
                         onNavigate!(
-                            6); // Call the callback to navigate to the 7th screen
+                            6);
+                        scrollcontroller.jumpTo(0);
+                        //scrollcontroller.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);// Call the callback to navigate to the 7th screen
                       }
                     },
                     child: Text(
@@ -753,7 +765,7 @@ class HomeScreen extends StatelessWidget {
                     imagePath: item.imagePath,
                     timetext: item.timetext,
                     percentText: item.percentText,
-                    isFavorite: false.obs,
+                    isFavorite: false.obs, scrollcontroller: scrollcontroller,
                   );
                 },
               ),
@@ -782,7 +794,8 @@ class HomeScreen extends StatelessWidget {
                     onTap: () {
                       if (onNavigate != null) {
                         onNavigate!(
-                            12); // Call the callback to navigate to the 7th screen
+                            12);
+                        scrollcontroller.jumpTo(0);// Call the callback to navigate to the 7th screen
                       }
                     },
                     child: Text(
@@ -866,7 +879,9 @@ class HomeScreen extends StatelessWidget {
                     onTap: ()
                   {
                   if (onNavigate != null) {
-                  onNavigate!(8); // Call the callback to navigate to the 7th screen
+                  onNavigate!(8);
+                  scrollcontroller.jumpTo(0);
+                  //scrollcontroller.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);// Call the callback to navigate to the 7th screen
                   }
                   },
                     child: CustomFilterWidget(

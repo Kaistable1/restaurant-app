@@ -4,6 +4,7 @@ import 'package:kaistable_website/constants/app_colors.dart';
 import '../../utils/responsive.dart';
 
 class CustomRectangleWidget extends StatelessWidget {
+  final ScrollController scrollcontroller;
   final String title;
   final String imagePath;
   final String description;
@@ -19,7 +20,7 @@ class CustomRectangleWidget extends StatelessWidget {
         required this.description,
         required this.timetext,
         required this.percentText,
-        this.onNavigate});
+        this.onNavigate, required this.scrollcontroller});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +35,8 @@ class CustomRectangleWidget extends StatelessWidget {
         return GestureDetector(
           onTap: () {
             if (onNavigate != null) {
-              onNavigate!(8); // Call the callback to navigate to the 7th screen
+              onNavigate!(8);
+              scrollcontroller.jumpTo(0);// Call the callback to navigate to the 7th screen
             }
           },
           child: Stack(

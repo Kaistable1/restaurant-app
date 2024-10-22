@@ -7,9 +7,10 @@ import '../../constants/app_colors.dart';
 import '../../utils/responsive.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
+import '../../widgets/dropdown.dart';
 
 class ContactUs extends StatelessWidget {
-  final RxBool _isDropdownOpen = false.obs;
+  RxBool isDropdownOpen = false.obs;
   final List<String> items = [
     "Olivia Rhye",
     "Phoenix Baker",
@@ -117,62 +118,74 @@ class ContactUs extends StatelessWidget {
                       children: [
                         DropdownButton2<String>(
                           buttonStyleData: ButtonStyleData(
-
-                              // padding: EdgeInsets.only(left: 22, right: 22),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(Responsive.isMobile(context)? 4 :10),
-                                color: AppColors.whiteColor,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
-                                    spreadRadius: 3,
-                                    blurRadius: 12,
-                                    offset: const Offset(0, 1),
-                                  ),
-                                ],
-                              ),
-                              elevation:0
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(Responsive.isMobile(context) ? 4 : 10),
+                              color: AppColors.whiteColor,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  spreadRadius: 3,
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 1),
+                                ),
+                              ],
+                            ),
+                            elevation: 0,
                           ),
                           isExpanded: true,
                           dropdownStyleData: DropdownStyleData(
-                             // width: 200,
-                              maxHeight: 200,
-                              decoration: BoxDecoration(
-                                  color: AppColors.whiteColor,
-                                  borderRadius: BorderRadius.circular(10))),
+                            maxHeight: 200,
+                            decoration: BoxDecoration(
+                              color: AppColors.whiteColor,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
                           hint: Text(
                             "Tell us why you're contacting us",
                             style: TextStyle(
-                              color:  AppColors.textColor,
+                              color: AppColors.textColor,
                               fontFamily: 'Nunito-Regular',
                               fontWeight: FontWeight.w400,
-                              fontSize:  Responsive.isMobile(context) ? 7 : 14,
+                              fontSize: Responsive.isMobile(context) ? 7 : 14,
                             ),
                           ),
                           iconStyleData: IconStyleData(
                             icon: Padding(
                               padding: const EdgeInsets.only(right: 28.0),
-                              child: Image.asset(
-                                _isDropdownOpen.value ?
-                                'assets/images/aerrow_up.png' : // Image when dropdown is open
-                                'assets/images/drop_down_img.png', // Path to your image asset
-                                width: Responsive.isMobile(context) ? 6:12, // Adjust width of the image as per your requirement
-                                height: Responsive.isMobile(context) ? 6: 12,
+                              child: Obx(
+                                    () => Image.asset(
+                                  controller.isDropdownOpen.value
+                                      ? 'assets/images/aerrow_up.png'
+                                      : 'assets/images/arrow_down.png',
+                                  width: Responsive.isMobile(context) ? 8 : 20,
+                                  height: Responsive.isMobile(context) ? 8 : 20,
+                                ),
                               ),
                             ),
                           ),
                           underline: SizedBox(),
                           items: items.map((String item) => DropdownMenuItem<String>(
                             value: item,
-                            child: Text(
-                              item,
-                              style: TextStyle(
-                                color:  AppColors.textColor,
-                                fontFamily: 'Nunito-Regular',
-                                fontWeight: FontWeight.w400,
-                                fontSize:  Responsive.isMobile(context) ? 7 : 14,
-                              ),
-                              overflow: TextOverflow.ellipsis,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween, // Ensure spacing between text and tick icon
+                              children: [
+                                Text(
+                                  item,
+                                  style: TextStyle(
+                                    color: AppColors.textColor,
+                                    fontFamily: 'Nunito-Regular',
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: Responsive.isMobile(context) ? 7 : 14,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                if (controller.contactingUs.value == item) // Check if this item is selected
+                                  Icon(
+                                    Icons.check, // You can change this to your custom tick icon if needed
+                                    color: Colors.green, // Customize the color of the tick
+                                    size: Responsive.isMobile(context) ? 10 : 20, // Adjust size based on screen
+                                  ),
+                              ],
                             ),
                           )).toList(),
                           value: controller.contactingUs.value, // Ensure this is valid
@@ -180,9 +193,10 @@ class ContactUs extends StatelessWidget {
                             controller.contactingUs.value = value; // Update the dropdown value
                             controller.dropdownError.value = ""; // Clear any previous errors
                           },
-                          // ... rest of your dropdown setup
-                        )
-,
+                          onMenuStateChange: (isOpen) {
+                            controller.isDropdownOpen.value = isOpen; // Track dropdown open state
+                          },
+                        ),
                         if (controller.dropdownError.value.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(top: 5),
@@ -197,6 +211,9 @@ class ContactUs extends StatelessWidget {
                       ],
                     ),
                   ),
+
+
+
                   SizedBox(height: 20),
                   Obx(
                         () => Column(

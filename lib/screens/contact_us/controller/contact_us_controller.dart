@@ -5,19 +5,25 @@ import 'package:get/get_utils/src/get_utils/get_utils.dart';
 
 class ContactUsController extends GetxController {
   // Dropdown value
-  final contactingUs = Rx<String?>(null); // Changed to null
+  var contactingUs = Rxn<String>(); // Nullable reactive string for dropdown
 
+  // Controllers for email and message text fields
   var emailController = TextEditingController();
   var messagreController = TextEditingController();
 
   // Reactive variables for error handling
+  var dropdownError = "".obs;
   var emailError = "".obs;
   var messageError = "".obs;
-  var dropdownError = "".obs;
-  final hasError = RxBool(false);
+
+  // Reactive variable for dropdown open state
+  var isDropdownOpen = false.obs;
+
+  // Reactive boolean to track form errors
+  final hasError = false.obs;
 
   // Validation logic for fields
-  void validateFields(BuildContext context) {
+  void validateFields() {
     // Dropdown validation
     if (contactingUs.value == null) {
       dropdownError.value = "Please select a reason for contacting us";
@@ -41,14 +47,7 @@ class ContactUsController extends GetxController {
       messageError.value = '';
     }
 
-    // Check if there are any errors
-    hasError.value = dropdownError.value.isNotEmpty ||
-        emailError.value.isNotEmpty ||
-        messageError.value.isNotEmpty;
-
-    // If no errors, pop the screen
-    if (!hasError.value) {
-      Navigator.pop(context); // Navigate back
-    }
+    // Check if any validation errors are present
+    hasError.value = dropdownError.value.isNotEmpty || emailError.value.isNotEmpty || messageError.value.isNotEmpty;
   }
 }

@@ -364,7 +364,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                     children: [
                       Padding(
                         padding: EdgeInsets.only(
-                            left: Responsive.isMobile(context) ? 40 : 62,
+                            left: Responsive.isMobile(context) ? 40 : 45,
                             right: 10),
                         child: SizedBox(
                           height: Responsive.isMobile(context)
@@ -386,7 +386,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                         ? 29
                                         : isLargeScreen
                                             ? 48
-                                            : 21.0,
+                                            : 18.0,
                                     vertical:
                                         Responsive.isMobile(context) ? 6 : 6),
                                 child: LocationStarWidget(
@@ -403,7 +403,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                       ),
                       // Left Arrow button with padding for spacing
                       Positioned(
-                        left: 10, // Adjust the value to add space from the list
+                        left: 0, // Adjust the value to add space from the list
                         top: 0,
                         bottom: 0,
                         child: GestureDetector(
@@ -418,7 +418,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                       // Right Arrow button with padding for spacing
                       Positioned(
                         right:
-                            10, // Adjust the value to add space from the list
+                            0, // Adjust the value to add space from the list
                         top: 0,
                         bottom: 0,
                         child: GestureDetector(

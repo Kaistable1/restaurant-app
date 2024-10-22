@@ -1,3 +1,5 @@
+import 'dart:js_interop';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,8 @@ import '../../../widgets/fav_rectangle_widget.dart';
 import 'location_controller/location_controller.dart';
 
 class LocationScreen extends StatelessWidget {
+  final ScrollController scrollcontroller;
+  final Function(int)? onNavigate;
   final List<String> items = [
     '10%',
     '20%',
@@ -19,7 +23,7 @@ class LocationScreen extends StatelessWidget {
 
   ];
   final LocationController locationController = Get.put(LocationController());
-  LocationScreen({super.key});
+  LocationScreen({super.key, this.onNavigate, required this.scrollcontroller});
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +101,7 @@ class LocationScreen extends StatelessWidget {
                         color: AppColors.textColor,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 18,
                     ),
                     Expanded(
@@ -132,16 +136,18 @@ class LocationScreen extends StatelessWidget {
                                     child: Center(
                                       child: locationController.top[index] == 'Discount'
                                           ? Padding(
-                                        padding:  EdgeInsets.all(Responsive.isMobile(context) ? 0:8.0),
+                                        padding: EdgeInsets.all(
+                                            Responsive.isMobile(context) ? 0 : 8.0),
                                         child: DropdownButtonHideUnderline(
                                           child: DropdownButton2<String>(
                                             iconStyleData: IconStyleData(
+
                                               icon: Align(
                                                 alignment: Alignment.centerLeft,
                                                 child: Image.asset(
                                                   'assets/images/drop_down_img.png', // Path to your image asset
-                                                  width: Responsive.isMobile(context) ? 6:12, // Adjust width of the image as per your requirement
-                                                  height: Responsive.isMobile(context) ? 6: 12,
+                                                  width: Responsive.isMobile(context) ? 6 : 12, // Adjust width of the image as per your requirement
+                                                  height: Responsive.isMobile(context) ? 6 : 12,
                                                 ),
                                               ),
                                             ),
@@ -159,11 +165,14 @@ class LocationScreen extends StatelessWidget {
 
                                             // Hint when nothing is selected
                                             hint: Padding(
-                                              padding:  EdgeInsets.only(right: Responsive.isMobile(context) ? 0:8.0),
+                                              padding: EdgeInsets.only(
+                                                  right:
+                                                  Responsive.isMobile(context) ? 0 : 8.0),
                                               child: Text(
                                                 'Discount',
                                                 style: TextStyle(
-                                                  fontSize: Responsive.isMobile(context) ? 8 : 14,
+                                                  fontSize:
+                                                  Responsive.isMobile(context) ? 8 : 14,
                                                   fontWeight: FontWeight.w500,
                                                   color: AppColors.darkGrey,
                                                   fontFamily: 'Nunito-Regular',
@@ -178,44 +187,37 @@ class LocationScreen extends StatelessWidget {
                                                 child: Row(
                                                   children: [
                                                     // Checkbox only in dropdown menu
-                                                    Checkbox(
+                                                   //if(locationController.selectedTop.value != item)
+                                                     Checkbox(
                                                       fillColor: MaterialStateProperty
-                                                          .resolveWith<Color>(
-                                                              (Set<MaterialState> states) {
-                                                            if (states.contains(
-                                                                MaterialState.selected)) {
-                                                              return AppColors.primaryColor;
-                                                            }
-                                                            return AppColors.whiteColor;
-                                                          }),
-
+                                                          .resolveWith<Color>((Set<MaterialState> states) {
+                                                        if (states.contains(MaterialState.selected)) {
+                                                          return AppColors.primaryColor;
+                                                        }
+                                                        return AppColors.whiteColor;
+                                                      }),
                                                       side: MaterialStateBorderSide
-                                                          .resolveWith(
-                                                            (Set<MaterialState> states) {
-                                                          return BorderSide(
-                                                              color: AppColors.primaryColor);
-                                                        },
-                                                      ),
-                                                      value: locationController
-                                                          .selectedTop.value ==
-                                                          item,
+                                                          .resolveWith((Set<MaterialState> states) {
+                                                        return BorderSide(color: AppColors.primaryColor);
+                                                      }),
+                                                      value: locationController.selectedTop.value == item,
                                                       onChanged: (bool? isSelected) {
                                                         if (isSelected == true) {
-                                                          locationController.selectedTop
-                                                              .value = item;
+                                                          locationController.selectedTop.value = item;
                                                           Navigator.pop(context); // Close dropdown after selection
                                                         }
                                                       },
-                                                    ),
+                                                    )
+
+                                                    ,
                                                     // Text inside the dropdown
                                                     Text(
                                                       item,
                                                       style: TextStyle(
                                                         color: AppColors.darkGrey,
                                                         fontWeight: FontWeight.w500,
-                                                        fontSize: Responsive.isMobile(context)
-                                                            ? 8
-                                                            : 14,
+                                                        fontSize:
+                                                        Responsive.isMobile(context) ? 8 : 14,
                                                         fontFamily: 'Nunito-Regular',
                                                       ),
                                                       overflow: TextOverflow.ellipsis,
@@ -234,7 +236,8 @@ class LocationScreen extends StatelessWidget {
                                         ),
                                       )
                                           : Padding(
-                                        padding:  EdgeInsets.all(Responsive.isMobile(context) ? 2:8.0),
+                                        padding: EdgeInsets.all(
+                                            Responsive.isMobile(context) ? 2 : 8.0),
                                         // Text outside the dropdown without checkboxes
                                         child: Text(
                                           locationController.top[index],
@@ -243,8 +246,7 @@ class LocationScreen extends StatelessWidget {
                                                 locationController.top[index]
                                                 ? FontWeight.w500
                                                 : FontWeight.w700,
-                                            fontSize:
-                                            Responsive.isMobile(context) ? 8 : 14,
+                                            fontSize: Responsive.isMobile(context) ? 8 : 14,
                                             color: locationController.selectedTop.value !=
                                                 locationController.top[index]
                                                 ? AppColors.darkGrey
@@ -262,6 +264,7 @@ class LocationScreen extends StatelessWidget {
                         ),
                       ),
                     )
+
 
 
 
@@ -302,13 +305,22 @@ class LocationScreen extends StatelessWidget {
                   itemCount: locationController.locationItem.length,
                   itemBuilder: (context, index) {
                     final item = locationController.locationItem[index];
-                    return CustomRectangleWidget(
-                      title: item.title,
-                      description: item.description,
-                      imagePath: item.imagePath,
-                      timetext: item.timetext,
-                      percentText: item.percentText,
-                      isFavorite: false.obs,
+                    return GestureDetector(
+                      onTap: () {
+                        if (onNavigate != null) {
+                          onNavigate!(
+                              8); // Call the callback to navigate to the 7th screen
+                        }
+                      },
+                      child: CustomRectangleWidget(
+                       onNavigate: onNavigate,
+                        title: item.title,
+                        description: item.description,
+                        imagePath: item.imagePath,
+                        timetext: item.timetext,
+                        percentText: item.percentText,
+                        isFavorite: false.obs, scrollcontroller: scrollcontroller,
+                      ),
                     );
                   },
                 ),

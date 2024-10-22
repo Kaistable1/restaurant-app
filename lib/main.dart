@@ -35,9 +35,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Kaistable Website',
 
-      // home: TopBarWidget(),
         // home: OnboardingScreen(),
-       home:TopBarWidget()
+      home:TopBarWidget()
     );
   }
 }

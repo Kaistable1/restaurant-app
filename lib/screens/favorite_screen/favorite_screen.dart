@@ -9,9 +9,11 @@ import '../../widgets/fav_rectangle_widget.dart';
 import 'controller/favorite_controller.dart';
 
 class FavoriteScreen extends StatelessWidget {
+  final Function(int)? onNavigate;
+  final ScrollController scrollcontroller;
   final controller = Get.put(FavoriteController());
 
-  FavoriteScreen({super.key});
+  FavoriteScreen({super.key, required this.scrollcontroller, this.onNavigate});
 
   @override
   Widget build(BuildContext context) {
@@ -78,12 +80,14 @@ class FavoriteScreen extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final item = controller.favoriteItems[index];
                     return CustomRectangleWidget(
+                      onNavigate: onNavigate,
+
                       title: item.title,
                       description: item.description,
                       imagePath: item.imagePath,
                       timetext: item.timetext,
                       percentText: item.percentText,
-                      isFavorite: item.isFavorite,
+                      isFavorite: item.isFavorite, scrollcontroller: scrollcontroller,
                     );
                   },
                 );

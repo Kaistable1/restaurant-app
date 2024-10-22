@@ -29,22 +29,23 @@ class TopBarWidget extends StatefulWidget {
 class _TopBarWidgetState extends State<TopBarWidget> {
   int _selectedIndex = 0;
   final List<Widget> _screens = [];
+  final scrollController = ScrollController();
   @override
   void initState() {
     super.initState();
     _screens.addAll([
-      HomeScreen(onNavigate: _onItemTapped), // Pass the callback here
-      FavoriteScreen(),
+      HomeScreen(onNavigate: _onItemTapped, scrollcontroller: scrollController,), // Pass the callback here
+      FavoriteScreen(scrollcontroller: scrollController,onNavigate: _onItemTapped),
       const TermsAndCondition(),
       const PrivacyPolicy(),
       const AboutApp(),
       ContactUs(),
-      RecentlyViewed(onNavigate: _onItemTapped),
-      LocationScreen(),
+      RecentlyViewed(onNavigate: _onItemTapped, scrollcontroller: scrollController,),
+      LocationScreen(onNavigate: _onItemTapped, scrollcontroller: scrollController,),
       RestaurantDetailScreen(onNavigate: _onItemTapped),
-      CuisinesViewAll(onNavigate: _onItemTapped),
-      TrendingViewAll(onNavigate: _onItemTapped),
-      NewViewall(onNavigate: _onItemTapped),
+      CuisinesViewAll(onNavigate: _onItemTapped, scrollcontroller: scrollController,),
+      TrendingViewAll(onNavigate: _onItemTapped, scrollcontroller: scrollController,),
+      NewViewall(onNavigate: _onItemTapped, scrollcontroller: scrollController,),
       ResturantsViewall(onNavigate: _onItemTapped)
     ]);
   }
@@ -113,6 +114,7 @@ class _TopBarWidgetState extends State<TopBarWidget> {
           : null,
       drawer: Responsive.isMobile(context) ? _buildDrawer() : null,
       body: SingleChildScrollView(
+        controller: scrollController,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -124,10 +126,10 @@ class _TopBarWidgetState extends State<TopBarWidget> {
                     : Responsive.isTablet(context)
                         ? 100
                         : 120),
-            BottomContainer(onNavigate: _onItemTapped),
+            BottomContainer(onNavigate: _onItemTapped, scrollcontroller:scrollController ,),
           ],
         ),
-      ),
+      )
     );
   }
 
@@ -189,24 +191,24 @@ class _TopBarWidgetState extends State<TopBarWidget> {
                               : 120,
                 ),
               ),
-              // SizedBox(
-              //     width: Responsive.isMobile(context)
-              //         ? 8
-              //         : Responsive.isTablet(context)
-              //             ? 20
-              //             : 40),
+              SizedBox(
+                  width: Responsive.isMobile(context)
+                      ? 8
+                      : Responsive.isTablet(context)
+                          ? 20
+                          : 70),
               _buildNavItem('Home', 0),
               _buildNavItem('Favorites', 1),
               _buildNavItem('Terms and Condition', 2),
               _buildNavItem('Privacy Policy', 3),
               _buildNavItem('About App', 4),
               _buildNavItem('Contact Us', 5),
-              // SizedBox(
-              //     width: Responsive.isMobile(context)
-              //         ? 8
-              //         : Responsive.isTablet(context)
-              //             ? 10
-              //             : 10),
+              SizedBox(
+                  width: Responsive.isMobile(context)
+                      ? 8
+                      : Responsive.isTablet(context)
+                          ? 10
+                          : 50),
               Row(
                 children: [
                   Image(
@@ -239,11 +241,11 @@ class _TopBarWidgetState extends State<TopBarWidget> {
                                 ? FontWeight.w600
                                 : FontWeight.w600,
                         fontFamily: 'Nunito-Regular',
-                        fontSize: Responsive.isMobile(context)
+                        fontSize:  Responsive.isMobile(context)
                             ? 8
                             : Responsive.isTablet(context)
-                                ? 14
-                                : 16,
+                            ? 12
+                            : 16,
                       ),
                     ),
                   ),

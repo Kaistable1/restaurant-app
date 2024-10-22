@@ -8,9 +8,10 @@ import '../../../utils/responsive.dart';
 import '../../../widgets/fav_rectangle_widget.dart';
 import '../home_controller/home_recently_viewed_controller.dart';
 class RecentlyViewed extends StatelessWidget {
+  final ScrollController scrollcontroller;
   final Function(int)? onNavigate;
   final HomeRecentlyViewedController recentlyViewedController = Get.put(HomeRecentlyViewedController());
-   RecentlyViewed({super.key, this.onNavigate});
+   RecentlyViewed({super.key, this.onNavigate, required this.scrollcontroller});
 
   @override
   Widget build(BuildContext context) {
@@ -126,22 +127,13 @@ class RecentlyViewed extends StatelessWidget {
                    itemCount: recentlyViewedController.recentlyViewedItem.length,
                    itemBuilder: (context, index) {
                      final item = recentlyViewedController.recentlyViewedItem[index];
-                     return GestureDetector(
-                       onTap: () {
-
-
-
-                         if (onNavigate != null) {
-                           onNavigate!(8); // Call the callback to navigate to the 7th screen
-                         }
-                       },
-                       child: CustomRectangleWidget(
-                         title: item.title,
-                         description: item.description,
-                         imagePath: item.imagePath,
-                         timetext: item.timetext,
-                         percentText: item.percentText, isFavorite: false.obs,
-                       ),
+                     return CustomRectangleWidget(
+                       onNavigate: onNavigate,
+                       title: item.title,
+                       description: item.description,
+                       imagePath: item.imagePath,
+                       timetext: item.timetext,
+                       percentText: item.percentText, isFavorite: false.obs, scrollcontroller: scrollcontroller,
                      );
                    },
                  ),

@@ -10,9 +10,10 @@ import '../home_controller/home_cusiness_controller.dart';
 import '../home_controller/home_recently_viewed_controller.dart';
 
 class CuisinesViewAll extends StatelessWidget {
+  final ScrollController scrollcontroller;
   final Function(int)? onNavigate;
   final HomeCusinessController cusinessController = Get.put(HomeCusinessController());
-  CuisinesViewAll({super.key, this.onNavigate});
+  CuisinesViewAll({super.key, this.onNavigate, required this.scrollcontroller});
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +98,7 @@ class CuisinesViewAll extends StatelessWidget {
                         description: item.description,
                         imagePath: item.imagePath,
                         timetext: item.timetext,
-                        percentText: item.percentText, isFavorite: false.obs,
+                        percentText: item.percentText, isFavorite: false.obs, scrollcontroller: scrollcontroller,
                       ),
                     );
                   },
