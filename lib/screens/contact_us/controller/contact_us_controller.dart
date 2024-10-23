@@ -4,6 +4,7 @@ import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:get/get_utils/src/get_utils/get_utils.dart';
 
 class ContactUsController extends GetxController {
+  RxString selectedTop = 'most reviewed'.obs;
   // Dropdown value
   var contactingUs = Rxn<String>(); // Nullable reactive string for dropdown
 

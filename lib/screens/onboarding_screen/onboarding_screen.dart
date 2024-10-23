@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
 import 'package:kaistable_website/screens/onboarding_screen/onboarding_controller/onboarding_controller.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../utils/responsive.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_dropdown.dart';
@@ -327,7 +328,14 @@ class OnboardingScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         GestureDetector(
-                            onTap: () {},
+                            onTap: () async {
+                              if (!await launchUrl(
+                                  Uri.parse('https://www.instagram.com'))) {
+                                throw Exception('Could not launch ');
+                              }
+                            },
+
+
                             child: Image(
                               image: AssetImage(
                                 'assets/images/insta_img.png',
@@ -343,7 +351,12 @@ class OnboardingScreen extends StatelessWidget {
                           width: 8,
                         ),
                         GestureDetector(
-                            onTap: () {},
+                            onTap: () async {
+                              if (!await launchUrl(
+                                  Uri.parse('https://www.linkedin.com'))) {
+                                throw Exception('Could not launch ');
+                              }
+                            },
                             child: Image(
                               image: AssetImage(
                                 'assets/images/linkedin_img.png',
@@ -359,7 +372,14 @@ class OnboardingScreen extends StatelessWidget {
                           width: 8,
                         ),
                         GestureDetector(
-                            onTap: () {},
+                            onTap: () async{
+                              if (!await launchUrl(
+                                  Uri.parse('https://www.facebook.com'))) {
+                                throw Exception('Could not launch ');
+                              }
+
+                            },
+
                             child: Image(
                               image: AssetImage(
                                 'assets/images/facebook_img.png',

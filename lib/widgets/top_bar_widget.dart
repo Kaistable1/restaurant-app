@@ -39,7 +39,7 @@ class _TopBarWidgetState extends State<TopBarWidget> {
       const TermsAndCondition(),
       const PrivacyPolicy(),
       const AboutApp(),
-      ContactUs(),
+      ContactUs(onNavigate: _onItemTapped,scrollcontroller: scrollController,),
       RecentlyViewed(onNavigate: _onItemTapped, scrollcontroller: scrollController,),
       LocationScreen(onNavigate: _onItemTapped, scrollcontroller: scrollController,),
       RestaurantDetailScreen(onNavigate: _onItemTapped),
@@ -163,12 +163,12 @@ class _TopBarWidgetState extends State<TopBarWidget> {
                 ? MainAxisAlignment.center
                 : MainAxisAlignment.spaceEvenly,
             children: [
-              // SizedBox(
-              //     width: Responsive.isMobile(context)
-              //         ? 50
-              //         : Responsive.isTablet(context)
-              //             ? 15
-              //             : 20),
+              SizedBox(
+                  width: Responsive.isMobile(context)
+                      ? 50
+                      : Responsive.isTablet(context)
+                          ? 15
+                          :6),
               GestureDetector(
                 onTap: () {
                   _onItemTapped(0);
@@ -196,7 +196,9 @@ class _TopBarWidgetState extends State<TopBarWidget> {
                       ? 8
                       : Responsive.isTablet(context)
                           ? 20
-                          : 70),
+                      : isLargeScreen
+                      ? 200
+                          : 140),
               _buildNavItem('Home', 0),
               _buildNavItem('Favorites', 1),
               _buildNavItem('Terms and Condition', 2),
@@ -208,48 +210,54 @@ class _TopBarWidgetState extends State<TopBarWidget> {
                       ? 8
                       : Responsive.isTablet(context)
                           ? 10
-                          : 50),
-              Row(
-                children: [
-                  Image(
-                    image: const AssetImage('assets/images/location_icon.png'),
-                    height: Responsive.isMobile(context)
-                        ? 12
-                        : Responsive.isTablet(context)
-                            ? 16
-                            : 22,
-                    width: Responsive.isMobile(context)
-                        ? 12
-                        : Responsive.isTablet(context)
-                            ? 16
-                            : 22,
-                  ),
-                  const SizedBox(width: 3),
-                  GestureDetector(
-                    onTap: () {
-                      _onItemTapped(7);
+                      : isLargeScreen
+                      ? 100
+                          : 80),
+              Padding(
+                padding: const EdgeInsets.only(right:18.0),
+                child: Row(
+                  children: [
+                    Image(
+                      image: const AssetImage('assets/images/location_icon.png'),
+                      height: Responsive.isMobile(context)
+                          ? 12
+                          : Responsive.isTablet(context)
+                              ? 16
+                              : 22,
+                      width: Responsive.isMobile(context)
+                          ? 12
+                          : Responsive.isTablet(context)
+                              ? 16
+                              : 22,
+                    ),
+                    const SizedBox(width: 3),
+                    GestureDetector(
+                      onTap: () {
+                        _onItemTapped(7);
 
 
-                    },
-                    child: Text(
-                      'USA.Los Vegas',
-                      style: TextStyle(
-                        color: AppColors.textColor,
-                        fontWeight: Responsive.isMobile(context)
-                            ? FontWeight.w800
-                            : Responsive.isTablet(context)
-                                ? FontWeight.w600
-                                : FontWeight.w600,
-                        fontFamily: 'Nunito-Regular',
-                        fontSize:  Responsive.isMobile(context)
-                            ? 8
-                            : Responsive.isTablet(context)
-                            ? 12
-                            : 16,
+                      },
+                      child: Text(
+                        'USA.Los Vegas',
+                        style: TextStyle(
+                          color: AppColors.textColor,
+                          fontWeight: Responsive.isMobile(context)
+                              ? FontWeight.w800
+                              : Responsive.isTablet(context)
+                                  ? FontWeight.w600
+                                  : FontWeight.w600,
+                          fontFamily: 'Nunito-Regular',
+                          fontSize:  Responsive.isMobile(context)
+                              ? 8
+                              : Responsive.isTablet(context)
+                              ? 12
+                              : 16,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                    SizedBox(width: 20,)
+                  ],
+                ),
               ),
             ],
           ),

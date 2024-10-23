@@ -10,6 +10,8 @@ import '../../widgets/custom_text_field.dart';
 import '../../widgets/dropdown.dart';
 
 class ContactUs extends StatelessWidget {
+  final ScrollController scrollcontroller;
+  final Function(int)? onNavigate;
   RxBool isDropdownOpen = false.obs;
   final List<String> items = [
     "Olivia Rhye",
@@ -23,22 +25,35 @@ class ContactUs extends StatelessWidget {
 
   final ContactUsController controller = Get.put(ContactUsController());
 
-  ContactUs({super.key});
+  ContactUs({super.key, this.onNavigate, required this.scrollcontroller});
 
   // Validation method
   void validateFields() {
-    controller.dropdownError.value = controller.contactingUs.value!.isEmpty
-        ? "Please select a reason for contacting us"
-        : "";
+    // Dropdown validation
+    if (controller.contactingUs.value == null || controller.contactingUs.value!.isEmpty) {
+      controller.dropdownError.value = "Please select a reason for contacting us";
+    } else {
+      controller.dropdownError.value = '';
+    }
 
-    controller.emailError.value = controller.emailController.text.isEmpty
-        ? "Please enter your email"
-        : "";
+    // Email validation
+    if (controller.emailController.text.isEmpty) {
+      controller.emailError.value = "Please enter your email";
+    } else if (!GetUtils.isEmail(controller.emailController.text)) {
+      controller.emailError.value = "Please enter a valid email";
+    } else {
+      controller.emailError.value = '';
+    }
 
-    controller.messageError.value = controller.messagreController.text.isEmpty
-        ? "Please enter a message"
-        : "";
+    // Message validation
+    if (controller.messagreController.text.isEmpty) {
+      controller.messageError.value = "Please enter a message";
+    } else {
+      controller.messageError.value = '';
+    }
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -116,87 +131,116 @@ class ContactUs extends StatelessWidget {
                         () => Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        DropdownButton2<String>(
-                          buttonStyleData: ButtonStyleData(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(Responsive.isMobile(context) ? 4 : 10),
-                              color: AppColors.whiteColor,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  spreadRadius: 3,
-                                  blurRadius: 12,
-                                  offset: const Offset(0, 1),
-                                ),
-                              ],
-                            ),
-                            elevation: 0,
-                          ),
-                          isExpanded: true,
-                          dropdownStyleData: DropdownStyleData(
-                            maxHeight: 200,
-                            decoration: BoxDecoration(
-                              color: AppColors.whiteColor,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          hint: Text(
-                            "Tell us why you're contacting us",
-                            style: TextStyle(
-                              color: AppColors.textColor,
-                              fontFamily: 'Nunito-Regular',
-                              fontWeight: FontWeight.w400,
-                              fontSize: Responsive.isMobile(context) ? 7 : 14,
-                            ),
-                          ),
-                          iconStyleData: IconStyleData(
-                            icon: Padding(
-                              padding: const EdgeInsets.only(right: 28.0),
-                              child: Obx(
-                                    () => Image.asset(
-                                  controller.isDropdownOpen.value
-                                      ? 'assets/images/aerrow_up.png'
-                                      : 'assets/images/arrow_down.png',
-                                  width: Responsive.isMobile(context) ? 8 : 20,
-                                  height: Responsive.isMobile(context) ? 8 : 20,
-                                ),
-                              ),
-                            ),
-                          ),
-                          underline: SizedBox(),
-                          items: items.map((String item) => DropdownMenuItem<String>(
-                            value: item,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween, // Ensure spacing between text and tick icon
-                              children: [
-                                Text(
-                                  item,
-                                  style: TextStyle(
-                                    color: AppColors.textColor,
-                                    fontFamily: 'Nunito-Regular',
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: Responsive.isMobile(context) ? 7 : 14,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                if (controller.contactingUs.value == item) // Check if this item is selected
-                                  Icon(
-                                    Icons.check, // You can change this to your custom tick icon if needed
-                                    color: Colors.green, // Customize the color of the tick
-                                    size: Responsive.isMobile(context) ? 10 : 20, // Adjust size based on screen
-                                  ),
-                              ],
-                            ),
-                          )).toList(),
-                          value: controller.contactingUs.value, // Ensure this is valid
-                          onChanged: (value) {
-                            controller.contactingUs.value = value; // Update the dropdown value
-                            controller.dropdownError.value = ""; // Clear any previous errors
-                          },
-                          onMenuStateChange: (isOpen) {
-                            controller.isDropdownOpen.value = isOpen; // Track dropdown open state
-                          },
-                        ),
+            DropdownButtonHideUnderline(
+            child: DropdownButton2<String>(
+                buttonStyleData: ButtonStyleData(
+                padding: EdgeInsets.only(left: 14),
+        height: Responsive.isMobile(context) ? 34 : 44,
+        width: Get.width,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(Responsive.isMobile(context) ? 4 : 10),
+          color: AppColors.whiteColor,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              spreadRadius: 3,
+              blurRadius: 12,
+              offset: const Offset(0, 1),
+            ),
+          ],
+        ),
+        elevation: 0,
+      ),
+      iconStyleData: IconStyleData(
+        icon: Padding(
+          padding: const EdgeInsets.only(right: 28.0),
+          child: Image.asset(
+            controller.isDropdownOpen.value
+                ? 'assets/images/aerrow_up.png'
+                : 'assets/images/arrow_down.png',
+            width: Responsive.isMobile(context) ? 8 : 20,
+            height: Responsive.isMobile(context) ? 8 : 20,
+          ),
+        ),
+      ),
+      dropdownStyleData: DropdownStyleData(
+        maxHeight: 200,
+        decoration: BoxDecoration(
+          color: AppColors.whiteColor,
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+      value: controller.contactingUs.value, // Use contactingUs for value
+      hint: Padding(
+        padding: EdgeInsets.only(right: Responsive.isMobile(context) ? 0 : 8.0),
+        child: Text(
+          "Tell us why you're contacting us",
+          style: TextStyle(
+            color: AppColors.textColor,
+            fontFamily: 'Nunito-Regular',
+            fontWeight: FontWeight.w400,
+            fontSize: Responsive.isMobile(context) ? 7 : 14,
+          ),
+        ),
+      ),
+      selectedItemBuilder: (BuildContext context) {
+        return items.map((String item) {
+          return Padding(
+            padding: EdgeInsets.only(right: Responsive.isMobile(context) ? 0 : 8.0, top: 12),
+            child: Text(
+              item,
+              style: TextStyle(
+                color: AppColors.darkGrey,
+                fontWeight: FontWeight.w500,
+                fontSize: Responsive.isMobile(context) ? 8 : 14,
+                fontFamily: 'Nunito-Regular',
+              ),
+            ),
+          );
+        }).toList();
+      },
+      items: items.map((String item) {
+        return DropdownMenuItem<String>(
+          value: item,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                item,
+                style: TextStyle(
+                  color: AppColors.darkGrey,
+                  fontWeight: FontWeight.w500,
+                  fontSize: Responsive.isMobile(context) ? 8 : 14,
+                  fontFamily: 'Nunito-Regular',
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+              if (controller.contactingUs.value == item)
+                Padding(
+                  padding: const EdgeInsets.only(right: 18.0),
+                  child: Icon(
+                    Icons.check,
+                    color: AppColors.primaryColor,
+                    size: Responsive.isMobile(context) ? 10 : 20,
+                  ),
+                ),
+            ],
+          ),
+        );
+      }).toList(),
+      onChanged: (String? newValue) {
+        if (newValue != null) {
+          controller.contactingUs.value = newValue; // Set contactingUs directly
+          controller.dropdownError.value = ''; // Clear error when value changes
+          controller.isDropdownOpen.value = false; // Close dropdown
+        }
+      },
+      onMenuStateChange: (bool isOpen) {
+        controller.isDropdownOpen.value = isOpen;
+      },
+    ),
+    ),
+
                         if (controller.dropdownError.value.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(top: 5),
@@ -208,6 +252,92 @@ class ContactUs extends StatelessWidget {
                               ),
                             ),
                           ),
+
+
+
+
+                        // DropdownButton2<String>(
+                        //   buttonStyleData: ButtonStyleData(
+                        //     decoration: BoxDecoration(
+                        //       borderRadius: BorderRadius.circular(Responsive.isMobile(context) ? 4 : 10),
+                        //       color: AppColors.whiteColor,
+                        //       boxShadow: [
+                        //         BoxShadow(
+                        //           color: Colors.black.withOpacity(0.1),
+                        //           spreadRadius: 3,
+                        //           blurRadius: 12,
+                        //           offset: const Offset(0, 1),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //     elevation: 0,
+                        //   ),
+                        //   isExpanded: true,
+                        //   dropdownStyleData: DropdownStyleData(
+                        //     maxHeight: 200,
+                        //     decoration: BoxDecoration(
+                        //       color: AppColors.whiteColor,
+                        //       borderRadius: BorderRadius.circular(10),
+                        //     ),
+                        //   ),
+                        //   hint: Text(
+                        //     "Tell us why you're contacting us",
+                        //     style: TextStyle(
+                        //       color: AppColors.textColor,
+                        //       fontFamily: 'Nunito-Regular',
+                        //       fontWeight: FontWeight.w400,
+                        //       fontSize: Responsive.isMobile(context) ? 7 : 14,
+                        //     ),
+                        //   ),
+                        //   iconStyleData: IconStyleData(
+                        //     icon: Padding(
+                        //       padding: const EdgeInsets.only(right: 28.0),
+                        //       child: Obx(
+                        //             () => Image.asset(
+                        //           controller.isDropdownOpen.value
+                        //                 ? 'assets/images/aerrow_up.png'
+                        //               : 'assets/images/arrow_down.png',
+                        //           width: Responsive.isMobile(context) ? 8 : 20,
+                        //           height: Responsive.isMobile(context) ? 8 : 20,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ),
+                        //   underline: SizedBox(),
+                        //   items: items.map((String item) => DropdownMenuItem<String>(
+                        //     value: item,
+                        //     child: Row(
+                        //       mainAxisAlignment: MainAxisAlignment.spaceBetween, // Ensure spacing between text and tick icon
+                        //       children: [
+                        //         Text(
+                        //           item,
+                        //           style: TextStyle(
+                        //             color: AppColors.textColor,
+                        //             fontFamily: 'Nunito-Regular',
+                        //             fontWeight: FontWeight.w400,
+                        //             fontSize: Responsive.isMobile(context) ? 7 : 14,
+                        //           ),
+                        //           overflow: TextOverflow.ellipsis,
+                        //         ),
+                        //         if (controller.contactingUs.value == item) // Check if this item is selected
+                        //           Icon(
+                        //             Icons.check, // You can change this to your custom tick icon if needed
+                        //             color: Colors.green, // Customize the color of the tick
+                        //             size: Responsive.isMobile(context) ? 10 : 20, // Adjust size based on screen
+                        //           ),
+                        //       ],
+                        //     ),
+                        //   )).toList(),
+                        //   value: controller.contactingUs.value, // Ensure this is valid
+                        //   onChanged: (value) {
+                        //     controller.contactingUs.value = value; // Update the dropdown value
+                        //     controller.dropdownError.value = ""; // Clear any previous errors
+                        //   },
+                        //   onMenuStateChange: (isOpen) {
+                        //     controller.isDropdownOpen.value = isOpen; // Track dropdown open state
+                        //   },
+                        // ),
+
                       ],
                     ),
                   ),
@@ -220,6 +350,7 @@ class ContactUs extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         CustomTextFormField(
+
                           imgHeight: Responsive.isMobile(context) ? 8 : 11,
                           imgWidth: Responsive.isMobile(context) ? 9 : 14,
                           prefixImagePath: 'assets/images/email_icon_black.png',
@@ -284,9 +415,25 @@ class ContactUs extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                     fontSize: Responsive.isMobile(context) ? 12 : 20,
                     ontapp: () {
-                      validateFields(); // Call validateFields directly
+                      validateFields(); // Call validateFields to perform validation
+
+                      // Check if all the error messages are empty, meaning validation passed
+                      if (controller.dropdownError.value.isEmpty &&
+                          controller.emailError.value.isEmpty &&
+                          controller.messageError.value.isEmpty) {
+
+                        // If validation is successful, perform navigation
+                        if (onNavigate != null) {
+                          onNavigate!(0); // Navigate to the 7th screen
+                          scrollcontroller.jumpTo(0); // Scroll to the top of the screen
+                        }
+                      } else {
+                        // If validation fails, you could show a snackbar or log an error (optional)
+                        // e.g., Get.snackbar('Error', 'Please fix the errors before proceeding');
+                      }
                     },
                   ),
+
                 ],
               ),
             ),

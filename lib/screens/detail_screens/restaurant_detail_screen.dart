@@ -33,7 +33,7 @@ class RestaurantDetailScreen extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         int itemsPerRow = Responsive.isMobile(context)
-            ? 2
+            ? 3
             : Responsive.isTablet(context)
                 ? 3
                 : 4;
@@ -51,7 +51,7 @@ class RestaurantDetailScreen extends StatelessWidget {
             children: [
               SizedBox(height: 20,),
               Padding(
-                padding: const EdgeInsets.only(left: 10.0,right: 10),
+                padding: const EdgeInsets.only(left: 2.0,right: 6),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -86,9 +86,9 @@ class RestaurantDetailScreen extends StatelessWidget {
                           ),
                         ),
                         SizedBox(
-                          height: 14,
+                          height: Responsive.isMobile(context) ? 6 :14,
                           child: RatingBar(
-                            itemSize: Responsive.isMobile(context) ? 8 :Responsive.isTablet(context) ?12:14,
+                            itemSize: Responsive.isMobile(context) ? 6 :Responsive.isTablet(context) ?12:14,
                             ignoreGestures: true,
                             initialRating: 4,
                             minRating: 1,
@@ -169,7 +169,7 @@ class RestaurantDetailScreen extends StatelessWidget {
               ),
               SizedBox(height: Responsive.isMobile(context) ? 10 : 18),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.only(right: 55.0),
                 child: Row(
                   mainAxisAlignment:  Responsive.isMobile(context)
                       ? MainAxisAlignment.center:MainAxisAlignment.start,
@@ -364,8 +364,8 @@ class RestaurantDetailScreen extends StatelessWidget {
                     children: [
                       Padding(
                         padding: EdgeInsets.only(
-                            left: Responsive.isMobile(context) ? 40 : 45,
-                            right: 10),
+                            left: Responsive.isMobile(context) ? 20 : 45,
+                            right: Responsive.isMobile(context) ? 2 :10),
                         child: SizedBox(
                           height: Responsive.isMobile(context)
                               ? 140
@@ -383,7 +383,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                               return Padding(
                                 padding: EdgeInsets.symmetric(
                                     horizontal: Responsive.isMobile(context)
-                                        ? 29
+                                        ? 10
                                         : isLargeScreen
                                             ? 48
                                             : 18.0,
