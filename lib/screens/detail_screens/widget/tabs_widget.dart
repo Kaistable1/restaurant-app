@@ -35,7 +35,7 @@ class Tabs extends StatelessWidget {
                         left: 16, right: 16),
                     child: Obx(
                           () {
-                        return GestureDetector(
+                        return InkWell(
                           onTap: () {
                             controller.selectedTop.value =
                             controller.top[index];

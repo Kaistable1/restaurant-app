@@ -11,9 +11,9 @@ class RestaurantDetailController extends GetxController {
     "Assumenda deleniti corporis exercitationem ut blanditiis id aut quo. Nisi cupiditate nihil velit. Beatae similique suscipit dolor neque ut.",
     "Assumenda deleniti corporis exercitationem ut blanditiis id aut quo. Nisi cupiditate nihil velit. Beatae similique suscipit dolor neque ut."
   ];
-  List top = ['menu', 'about', 'reviews'];
+  List top = ['Menu', 'About', 'Reviews'];
   RxBool isFavorite = false.obs;
-  RxString selectedTop = 'menu'.obs;
+  RxString selectedTop = 'Menu'.obs;
 
   final Completer<GoogleMapController> completer =
       Completer<GoogleMapController>();

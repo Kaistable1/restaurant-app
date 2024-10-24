@@ -148,27 +148,35 @@ class HomeScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        Container(
-                          height: 55,
-                          width: Responsive.isMobile(context) ? 66 : 106,
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryColor,
-                            borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(
-                                  Responsive.isMobile(context) ? 4 : 10),
-                              bottomRight: Radius.circular(
-                                  Responsive.isMobile(context) ? 4 : 10),
+                        InkWell(
+                          onTap: () {
+                            if (onNavigate != null) {
+                              onNavigate!(
+                                  12); scrollcontroller.jumpTo(0);// Call the callback to navigate to the 7th screen
+                            }
+                          },
+                          child: Container(
+                            height: 55,
+                            width: Responsive.isMobile(context) ? 66 : 106,
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryColor,
+                              borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(
+                                    Responsive.isMobile(context) ? 4 : 10),
+                                bottomRight: Radius.circular(
+                                    Responsive.isMobile(context) ? 4 : 10),
+                              ),
                             ),
-                          ),
-                          child: Center(
-                            child: Text(
-                              'Search',
-                              style: TextStyle(
-                                color: AppColors.botomSheetColor,
-                                fontFamily: "Lora-Regular",
-                                fontSize:
-                                    Responsive.isMobile(context) ? 10 : 16,
-                                fontWeight: FontWeight.w400,
+                            child: Center(
+                              child: Text(
+                                'Search',
+                                style: TextStyle(
+                                  color: AppColors.botomSheetColor,
+                                  fontFamily: "Lora-Regular",
+                                  fontSize:
+                                      Responsive.isMobile(context) ? 10 : 16,
+                                  fontWeight: FontWeight.w400,
+                                ),
                               ),
                             ),
                           ),
@@ -199,7 +207,7 @@ class HomeScreen extends StatelessWidget {
             children: [
               Padding(
                 padding: EdgeInsets.only(
-                    left: Responsive.isMobile(context) ? 32 : 32, right: 12),
+                    left: Responsive.isMobile(context) ? 32 : 42, right: 35),
                 child: SizedBox(
                   height: Responsive.isMobile(context)
                       ? 180
@@ -216,11 +224,13 @@ class HomeScreen extends StatelessWidget {
                       return Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: Responsive.isMobile(context)
-                                ? 8
+                                ? 18
                                 : isLargeScreen
-                                    ? 48
-                                    : 21.0,
-                            vertical: Responsive.isMobile(context) ? 6 : 6),
+                                    ? 19
+                                    : 20.30,
+                            vertical: Responsive.isMobile(context) ? 6 : 6
+
+                        ),
                         child: CircleContainerWidget(
                           ontap: () {
                             if (onNavigate != null) {
@@ -245,7 +255,7 @@ class HomeScreen extends StatelessWidget {
                 left: 10, // Adjust the value to add space from the list
                 top: 0,
                 bottom: 0,
-                child: GestureDetector(
+                child: InkWell(
                   onTap: () => controller.scrollLeft(),
                   child: Image.asset(
                     'assets/images/arrow_back.png',
@@ -259,7 +269,7 @@ class HomeScreen extends StatelessWidget {
                 right: 10, // Adjust the value to add space from the list
                 top: 0,
                 bottom: 0,
-                child: GestureDetector(
+                child: InkWell(
                   onTap: () => controller.scrollRight(),
                   child: Image.asset(
                     'assets/images/arrow_forward.png',
@@ -289,13 +299,13 @@ class HomeScreen extends StatelessWidget {
             children: [
               Padding(
                 padding: EdgeInsets.only(
-                    left: Responsive.isMobile(context) ? 32 : 32, right: 10),
+                    left: Responsive.isMobile(context) ? 32 : 42, right: 35),
                 child: SizedBox(
                   height: Responsive.isMobile(context)
                       ? 180
                       : isLargeScreen
-                          ? 364
-                          : 270,
+                      ? 364
+                      : 270,
                   child: ListView.builder(
                     controller: themeController.scrothemellController,
                     scrollDirection: Axis.horizontal,
@@ -307,25 +317,24 @@ class HomeScreen extends StatelessWidget {
                       return Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: Responsive.isMobile(context)
-                                ? 8
+                                ? 18
                                 : isLargeScreen
-                                    ? 48
-                                    : 22.0,
+                                ? 19
+                                : 20.30,
                             vertical: Responsive.isMobile(context) ? 6 : 6),
-                        child: GestureDetector(
-                          onTap: () {
+                        child: CircleContainerWidget(
+                          ontap: (){
                             if (onNavigate != null) {
                               onNavigate!(
-                                  8); scrollcontroller.jumpTo(0);// Call the callback to navigate to the 7th screen
+                                  8);
+                              scrollcontroller.jumpTo(0);// Call the callback to navigate to the 7th screen
                             }
                           },
-                          child: CircleContainerWidget(
-                            isLocation: false,
-                            imgPath: item.imgPath,
-                            titleText: item.titleText,
-                            descriptionText: item.descriptionText,
-                            isFavourite: false.obs,
-                          ),
+                          isLocation: false,
+                          imgPath: item.imgPath,
+                          titleText: item.titleText,
+                          descriptionText: item.descriptionText,
+                          isFavourite: false.obs,
                         ),
                       );
                     },
@@ -337,7 +346,7 @@ class HomeScreen extends StatelessWidget {
                 left: 10, // Adjust the value to add space from the list
                 top: 0,
                 bottom: 0,
-                child: GestureDetector(
+                child: InkWell(
                   onTap: () => themeController.scrollLeft(),
                   child: Image.asset(
                     'assets/images/arrow_back.png',
@@ -351,7 +360,7 @@ class HomeScreen extends StatelessWidget {
                 right: 10, // Adjust the value to add space from the list
                 top: 0,
                 bottom: 0,
-                child: GestureDetector(
+                child: InkWell(
                   onTap: () => themeController.scrollRight(),
                   child: Image.asset(
                     'assets/images/arrow_forward.png',
@@ -380,7 +389,7 @@ class HomeScreen extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                GestureDetector(
+                InkWell(
                     onTap: () {
                       if (onNavigate != null) {
                         onNavigate!(
@@ -422,12 +431,13 @@ class HomeScreen extends StatelessWidget {
 
             return Padding(
               padding: EdgeInsets.only(
+
                 left: Responsive.isMobile(context)
                     ? 18
-                    : (isLargeScreen ? 48 : 30.0),
+                    : (isLargeScreen ? 48 : 46.0),
                 right: Responsive.isMobile(context)
                     ? 18
-                    : (isLargeScreen ? 48 : 30.0),
+                    : (isLargeScreen ? 48 : 42.0),
               ),
               child: GridView.builder(
                 shrinkWrap: true,
@@ -482,7 +492,7 @@ class HomeScreen extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                GestureDetector(
+                InkWell(
                     onTap: () {
                       if (onNavigate != null) {
                          onNavigate!(10);
@@ -527,10 +537,10 @@ class HomeScreen extends StatelessWidget {
               padding: EdgeInsets.only(
                 left: Responsive.isMobile(context)
                     ? 18
-                    : (isLargeScreen ? 48 : 30.0),
+                    : (isLargeScreen ? 48 : 46.0),
                 right: Responsive.isMobile(context)
                     ? 18
-                    : (isLargeScreen ? 48 : 30.0),
+                    : (isLargeScreen ? 48 : 42.0),
               ),
               child: GridView.builder(
                 shrinkWrap: true,
@@ -585,7 +595,7 @@ class HomeScreen extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                GestureDetector(
+                InkWell(
                     onTap: () {
                       if (onNavigate != null) {
                          onNavigate!(11);
@@ -630,10 +640,10 @@ class HomeScreen extends StatelessWidget {
               padding: EdgeInsets.only(
                 left: Responsive.isMobile(context)
                     ? 18
-                    : (isLargeScreen ? 48 : 30.0),
+                    : (isLargeScreen ? 48 : 46.0),
                 right: Responsive.isMobile(context)
                     ? 18
-                    : (isLargeScreen ? 48 : 30.0),
+                    : (isLargeScreen ? 48 : 42.0),
               ),
               child: GridView.builder(
                 shrinkWrap: true,
@@ -687,7 +697,7 @@ class HomeScreen extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                GestureDetector(
+                InkWell(
                     onTap: () {
                       if (onNavigate != null) {
                         onNavigate!(
@@ -731,10 +741,10 @@ class HomeScreen extends StatelessWidget {
               padding: EdgeInsets.only(
                 left: Responsive.isMobile(context)
                     ? 18
-                    : (isLargeScreen ? 48 : 30.0),
+                    : (isLargeScreen ? 48 : 46.0),
                 right: Responsive.isMobile(context)
                     ? 18
-                    : (isLargeScreen ? 48 : 30.0),
+                    : (isLargeScreen ? 48 : 42.0),
               ),
               child: GridView.builder(
                 shrinkWrap: true,
@@ -790,7 +800,7 @@ class HomeScreen extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                GestureDetector(
+                InkWell(
                     onTap: () {
                       if (onNavigate != null) {
                         onNavigate!(
@@ -849,10 +859,10 @@ class HomeScreen extends StatelessWidget {
               padding: EdgeInsets.only(
                 left: Responsive.isMobile(context)
                     ? 18
-                    : (isLargeScreen ? 48 : 30.0),
+                    : (isLargeScreen ? 48 : 46.0),
                 right: Responsive.isMobile(context)
                     ? 18
-                    : (isLargeScreen ? 48 : 30.0),
+                    : (isLargeScreen ? 48 : 42.0),
               ),
               child: GridView.builder(
                 shrinkWrap: true,
@@ -875,7 +885,7 @@ class HomeScreen extends StatelessWidget {
                 itemCount: itemCount,
                 itemBuilder: (context, index) {
                   final item = filterController.filterItem[index];
-                  return GestureDetector(
+                  return InkWell(
                     onTap: ()
                   {
                   if (onNavigate != null) {
@@ -894,7 +904,7 @@ class HomeScreen extends StatelessWidget {
               ),
             );
           }),
-          SizedBox(height: Responsive.isMobile(context) ? 4 : 50),
+          SizedBox(height: Responsive.isMobile(context) ? 4 : 2),
         ],
       );
     });

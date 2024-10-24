@@ -50,7 +50,7 @@ class BottomContainer extends StatelessWidget {
                               ? 20
                               : 30,
                     ),
-                    GestureDetector(
+                    InkWell(
                       onTap: () {
                         if (onNavigate != null) {
                           onNavigate!(1);
@@ -80,7 +80,7 @@ class BottomContainer extends StatelessWidget {
                               ? 20
                               : 30,
                     ),
-                    GestureDetector(
+                    InkWell(
                       onTap: () {
                         if (onNavigate != null) {
                           onNavigate!(
@@ -90,7 +90,7 @@ class BottomContainer extends StatelessWidget {
                         }
                       },
                       child: Text(
-                        'about app',
+                        'About app',
                         style: TextStyle(
                             fontSize: Responsive.isMobile(context)
                                 ? 6
@@ -155,9 +155,9 @@ class BottomContainer extends StatelessWidget {
                           ? 20
                           : isLargeScreen
                               ? 90
-                              : 30,
+                              :60,
                 ),
-                GestureDetector(
+                InkWell(
                   onTap: () {
                     if (onNavigate != null) {
                       onNavigate!(
@@ -213,7 +213,7 @@ class BottomContainer extends StatelessWidget {
                               ? 20
                               : 30,
                     ),
-                    GestureDetector(
+                    InkWell(
                       onTap: () {
                         if (onNavigate != null) {
                           onNavigate!(
@@ -244,7 +244,7 @@ class BottomContainer extends StatelessWidget {
                               ? 20
                               : 30,
                     ),
-                    GestureDetector(
+                    InkWell(
                       onTap: () {
                         if (onNavigate != null) {
                           onNavigate!(
@@ -254,7 +254,7 @@ class BottomContainer extends StatelessWidget {
                         }
                       },
                       child: Text(
-                        'Terms and condition',
+                        'Terms and conditions',
                         style: TextStyle(
                             fontSize: Responsive.isMobile(context)
                                 ? 6
@@ -275,7 +275,7 @@ class BottomContainer extends StatelessWidget {
                               ? 20
                               : 30,
                     ),
-                    GestureDetector(
+                    InkWell(
                       onTap: () {
                         if (onNavigate != null) {
                           onNavigate!(
@@ -285,7 +285,7 @@ class BottomContainer extends StatelessWidget {
                         }
                       },
                       child: Text(
-                        'privacy policy',
+                        'Privacy policy',
                         style: TextStyle(
                             fontSize: Responsive.isMobile(context)
                                 ? 6
@@ -358,7 +358,7 @@ class BottomContainer extends StatelessWidget {
                         color: AppColors.whiteColor,
                         fontFamily: 'Nunito-Regular')),
                 const Spacer(),
-                GestureDetector(
+                InkWell(
                   onTap: () async {
                     if (!await launchUrl(
                         Uri.parse('https://www.instagram.com'))) {
@@ -382,7 +382,7 @@ class BottomContainer extends StatelessWidget {
                 SizedBox(
                   width: Responsive.isMobile(context) ? 6 : 10,
                 ),
-                GestureDetector(
+                InkWell(
                   onTap: () async {
                     if (!await launchUrl(
                         Uri.parse('https://www.linkedin.com'))) {
@@ -406,7 +406,7 @@ class BottomContainer extends StatelessWidget {
                 SizedBox(
                   width: Responsive.isMobile(context) ? 6 : 10,
                 ),
-                GestureDetector(
+                InkWell(
 
                   onTap: () async {
                     if (!await launchUrl(

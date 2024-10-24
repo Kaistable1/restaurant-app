@@ -138,7 +138,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                         ),
                         Line10(),
                         Obx(() {
-                          return GestureDetector(
+                          return InkWell(
                             onTap: () {
                               controller.isFavorite.toggle();
                             },
@@ -365,7 +365,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.only(
                             left: Responsive.isMobile(context) ? 20 : 45,
-                            right: Responsive.isMobile(context) ? 2 :10),
+                            right: Responsive.isMobile(context) ? 2 :30),
                         child: SizedBox(
                           height: Responsive.isMobile(context)
                               ? 140
@@ -406,7 +406,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                         left: 0, // Adjust the value to add space from the list
                         top: 0,
                         bottom: 0,
-                        child: GestureDetector(
+                        child: InkWell(
                           onTap: () => locationController.scrollLeft(),
                           child: Image.asset(
                             'assets/images/arrow_back.png',
@@ -421,7 +421,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                             0, // Adjust the value to add space from the list
                         top: 0,
                         bottom: 0,
-                        child: GestureDetector(
+                        child: InkWell(
                           onTap: () => locationController.scrollRight(),
                           child: Image.asset(
                             'assets/images/arrow_forward.png',
@@ -436,9 +436,9 @@ class RestaurantDetailScreen extends StatelessWidget {
               ),
               SizedBox(height: Responsive.isMobile(context) ? 2 : 22),
               Obx(() {
-                return controller.selectedTop.value == 'about'
+                return controller.selectedTop.value == 'About'
                     ? AboutSectionWidget()
-                    : controller.selectedTop.value == 'reviews'
+                    : controller.selectedTop.value == 'Reviews'
                         ? ReviewWidget(isLargeScreen: isLargeScreen)
                         : Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -487,7 +487,10 @@ class RestaurantDetailScreen extends StatelessWidget {
                                           
                                           decoration:BoxDecoration(
                                             color: Colors.white,
-                                            borderRadius: BorderRadius.circular(10)
+                                            borderRadius: BorderRadius.only(
+                                              topLeft:Radius.circular(10),
+                                              bottomLeft: Radius.circular(10)
+                                            )
                                           ),
                                           
                                           child: Table(
@@ -594,7 +597,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                 'Map',
                 style: TextStyle(
                   color: AppColors.headingTextColor,
-                  fontSize: Responsive.isMobile(context) ? 16 : 24,
+                  fontSize: Responsive.isMobile(context) ? 16 : 28,
                   fontFamily: 'aftika-regular',
                   fontWeight: FontWeight.w400,
                 ),
@@ -690,6 +693,8 @@ class RestaurantDetailScreen extends StatelessWidget {
             child: Center(
               child: Text(beforePrice,
                   style: TextStyle(
+                    decoration: TextDecoration.lineThrough,
+                    decorationColor: AppColors.botomSheetColor,
                     color: AppColors.botomSheetColor,
                     fontSize: Responsive.isMobile(context) ? 10 : 14,
                     fontFamily: 'Nunito-Regular',

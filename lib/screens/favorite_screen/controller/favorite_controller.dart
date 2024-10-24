@@ -13,7 +13,7 @@ class FavoriteController extends GetxController {
     // Dummy data. Replace with your actual data source.
     favoriteItems.addAll([
       FavoriteItem(
-          title: 'Buffet',
+          title: 'Pasta',
           description:
               'Duis aute irure dolor in reprehend voluptate velit esse cillum',
           imagePath: 'assets/images/plate_img.png',

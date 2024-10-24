@@ -82,10 +82,10 @@ class ResturantsViewall extends StatelessWidget {
                 padding: EdgeInsets.only(
                   left: Responsive.isMobile(context)
                       ? 18
-                      : (isLargeScreen ? 48 : 30.0),
+                      : (isLargeScreen ? 48 : 46.0),
                   right: Responsive.isMobile(context)
                       ? 18
-                      : (isLargeScreen ? 48 : 30.0),
+                      : (isLargeScreen ? 48 : 42.0),
                 ),
                 child: GridView.builder(
                   shrinkWrap: true,
@@ -108,7 +108,7 @@ class ResturantsViewall extends StatelessWidget {
                   itemCount: itemCount,
                   itemBuilder: (context, index) {
                     final item = filterController.filterItem[index];
-                    return GestureDetector(
+                    return InkWell(
                       onTap: (){
                         if (onNavigate != null) {
                           onNavigate!(8); // Call the callback to navigate to the 7th screen

@@ -131,115 +131,125 @@ class ContactUs extends StatelessWidget {
                         () => Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-            DropdownButtonHideUnderline(
-            child: DropdownButton2<String>(
-                buttonStyleData: ButtonStyleData(
-                padding: EdgeInsets.only(left: 14),
-        height: Responsive.isMobile(context) ? 34 : 44,
-        width: Get.width,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(Responsive.isMobile(context) ? 4 : 10),
-          color: AppColors.whiteColor,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              spreadRadius: 3,
-              blurRadius: 12,
-              offset: const Offset(0, 1),
-            ),
-          ],
-        ),
-        elevation: 0,
-      ),
-      iconStyleData: IconStyleData(
-        icon: Padding(
-          padding: const EdgeInsets.only(right: 28.0),
-          child: Image.asset(
-            controller.isDropdownOpen.value
-                ? 'assets/images/aerrow_up.png'
-                : 'assets/images/arrow_down.png',
-            width: Responsive.isMobile(context) ? 8 : 20,
-            height: Responsive.isMobile(context) ? 8 : 20,
-          ),
-        ),
-      ),
-      dropdownStyleData: DropdownStyleData(
-        maxHeight: 200,
-        decoration: BoxDecoration(
-          color: AppColors.whiteColor,
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
-      value: controller.contactingUs.value, // Use contactingUs for value
-      hint: Padding(
-        padding: EdgeInsets.only(right: Responsive.isMobile(context) ? 0 : 8.0),
-        child: Text(
-          "Tell us why you're contacting us",
-          style: TextStyle(
-            color: AppColors.textColor,
-            fontFamily: 'Nunito-Regular',
-            fontWeight: FontWeight.w400,
-            fontSize: Responsive.isMobile(context) ? 7 : 14,
-          ),
-        ),
-      ),
-      selectedItemBuilder: (BuildContext context) {
-        return items.map((String item) {
-          return Padding(
-            padding: EdgeInsets.only(right: Responsive.isMobile(context) ? 0 : 8.0, top: 12),
-            child: Text(
-              item,
-              style: TextStyle(
-                color: AppColors.darkGrey,
-                fontWeight: FontWeight.w500,
-                fontSize: Responsive.isMobile(context) ? 8 : 14,
-                fontFamily: 'Nunito-Regular',
-              ),
-            ),
-          );
-        }).toList();
-      },
-      items: items.map((String item) {
-        return DropdownMenuItem<String>(
-          value: item,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                item,
-                style: TextStyle(
-                  color: AppColors.darkGrey,
-                  fontWeight: FontWeight.w500,
-                  fontSize: Responsive.isMobile(context) ? 8 : 14,
-                  fontFamily: 'Nunito-Regular',
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-              if (controller.contactingUs.value == item)
-                Padding(
-                  padding: const EdgeInsets.only(right: 18.0),
-                  child: Icon(
-                    Icons.check,
-                    color: AppColors.primaryColor,
-                    size: Responsive.isMobile(context) ? 10 : 20,
-                  ),
-                ),
-            ],
-          ),
-        );
-      }).toList(),
-      onChanged: (String? newValue) {
-        if (newValue != null) {
-          controller.contactingUs.value = newValue; // Set contactingUs directly
-          controller.dropdownError.value = ''; // Clear error when value changes
-          controller.isDropdownOpen.value = false; // Close dropdown
-        }
-      },
-      onMenuStateChange: (bool isOpen) {
-        controller.isDropdownOpen.value = isOpen;
-      },
-    ),
-    ),
+                        DropdownButtonHideUnderline(
+                          child: DropdownButton2<String>(
+                            buttonStyleData: ButtonStyleData(
+                              padding: EdgeInsets.only(left: 14),
+                              height: Responsive.isMobile(context) ? 34 : 44,
+                              width: Get.width,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(Responsive.isMobile(context) ? 4 : 10),
+                                color: AppColors.whiteColor,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    spreadRadius: 3,
+                                    blurRadius: 12,
+                                    offset: const Offset(0, 1),
+                                  ),
+                                ],
+                              ),
+                              elevation: 0,
+                            ),
+                            iconStyleData: IconStyleData(
+                              icon: Padding(
+                                padding: const EdgeInsets.only(right: 28.0),
+                                child: Image.asset(
+                                  controller.isDropdownOpen.value
+                                      ? 'assets/images/arrow_down_icon.png'
+                                      : 'assets/images/aerrow.png',
+                                  width: Responsive.isMobile(context) ? 8 : 16,
+                                  height: Responsive.isMobile(context) ? 8 : 16,
+                                ),
+                              ),
+                            ),
+                            dropdownStyleData: DropdownStyleData(
+                              maxHeight: 200,
+                              decoration: BoxDecoration(
+                                color: AppColors.whiteColor,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            // Add null check here, fallback to null if contactingUs.value is null
+                            value: (controller.contactingUs.value?.isEmpty ?? true) ? null : controller.contactingUs.value,
+
+                            hint: Padding(
+                              padding: EdgeInsets.only(right: Responsive.isMobile(context) ? 0 : 14.0),
+                              child: Text(
+                                "Tell us why you're contacting us",
+                                style: TextStyle(
+                                  color: AppColors.textColor,
+                                  fontFamily: 'Nunito-Regular',
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: Responsive.isMobile(context) ? 7 : 14,
+                                ),
+                              ),
+                            ),
+                            selectedItemBuilder: (BuildContext context) {
+                              return items.map((String item) {
+                                return Padding(
+                                  padding: EdgeInsets.only(right: Responsive.isMobile(context) ? 0 : 14.0, top: 12),
+                                  child: Text(
+                                    item,
+                                    style: TextStyle(
+                                      color: AppColors.darkGrey,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: Responsive.isMobile(context) ? 8 : 14,
+                                      fontFamily: 'Nunito-Regular',
+                                    ),
+                                  ),
+                                );
+                              }).toList();
+                            },
+                            items: items.map((String item) {
+                              return DropdownMenuItem<String>(
+                                value: item,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      item,
+                                      style: TextStyle(
+                                        color: AppColors.darkGrey,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: Responsive.isMobile(context) ? 8 : 14,
+                                        fontFamily: 'Nunito-Regular',
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    if (controller.contactingUs.value == item)
+                                      Padding(
+                                        padding: const EdgeInsets.only(right: 10.0),
+                                        child: Icon(
+                                          Icons.check,
+                                          color: AppColors.primaryColor,
+                                          size: Responsive.isMobile(context) ? 8 : 16,
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+
+                            // Modified onChanged to allow unselecting the selected value
+                            onChanged: (String? newValue) {
+                              if (newValue == controller.contactingUs.value) {
+                                // If clicked again on the selected value, unselect it by setting to null or empty
+                                controller.contactingUs.value = ''; // Set to null or empty to unselect
+                              } else {
+                                controller.contactingUs.value = newValue ?? ''; // Set the new value
+                              }
+                              controller.dropdownError.value = ''; // Clear error when value changes
+                              controller.isDropdownOpen.value = false; // Close dropdown
+                            },
+
+                            onMenuStateChange: (bool isOpen) {
+                              controller.isDropdownOpen.value = isOpen;
+                            },
+                          ),
+                        ),
+
+
 
                         if (controller.dropdownError.value.isNotEmpty)
                           Padding(
@@ -383,6 +393,7 @@ class ContactUs extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         CustomTextFormField(
+
                           height: Responsive.isMobile(context) ? 70 : 89,
                           hintText: 'Message note',
                           controller: controller.messagreController,
@@ -394,7 +405,8 @@ class ContactUs extends StatelessWidget {
                         // Validation message for message
                         if (controller.messageError.value.isNotEmpty)
                           Padding(
-                            padding: const EdgeInsets.only(top: 5),
+                            padding: const EdgeInsets.only(top: 5
+                            ),
                             child: Text(
                               controller.messageError.value,
                               style: TextStyle(
@@ -415,7 +427,8 @@ class ContactUs extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                     fontSize: Responsive.isMobile(context) ? 12 : 20,
                     ontapp: () {
-                      validateFields(); // Call validateFields to perform validation
+                      // Call validateFields to perform validation
+                      validateFields();
 
                       // Check if all the error messages are empty, meaning validation passed
                       if (controller.dropdownError.value.isEmpty &&
@@ -426,18 +439,24 @@ class ContactUs extends StatelessWidget {
                         if (onNavigate != null) {
                           onNavigate!(0); // Navigate to the 7th screen
                           scrollcontroller.jumpTo(0); // Scroll to the top of the screen
+
+                          // Clear the text fields after successful navigation
+                          controller.emailController.clear(); // Clear email field
+                          controller.messagreController.clear(); // Clear message field
+                          controller.contactingUs.value = ''; // Clear dropdown selection (if needed)
                         }
                       } else {
-                        // If validation fails, you could show a snackbar or log an error (optional)
-                        // e.g., Get.snackbar('Error', 'Please fix the errors before proceeding');
+                        // Handle the case when validation fails, e.g., show a snackbar
+                        // Get.snackbar('Error', 'Please fix the errors before proceeding');
                       }
                     },
                   ),
 
+
                 ],
               ),
             ),
-            SizedBox(height: 120),
+            SizedBox(height: 2),
           ],
         ),
       ),

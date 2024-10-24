@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/get_instance.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
@@ -53,45 +54,67 @@ class FavoriteScreen extends StatelessWidget {
                 ),
               ),
                SizedBox(height: Responsive.isMobile(context) ? 0 :20),
-
-              // GridView for responsive grid layout
               Obx(() {
-                return GridView.builder(
-                  shrinkWrap: true, // To allow GridView inside a Column
-                  physics:
-                      const NeverScrollableScrollPhysics(), // Disable GridView scrolling, scroll with the page
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    mainAxisExtent: Responsive.isMobile(context) ? 263 : 450,
-                    crossAxisCount: itemsPerRow, // Number of items per row
-                    crossAxisSpacing: Responsive.isMobile(context)
-                        ? 0
-                        : Responsive.isTablet(context)
-                            ? 8
-                            : 10, // Space between columns
-                    mainAxisSpacing: Responsive.isMobile(context)
-                        ? 0
-                        : Responsive.isTablet(context)
-                            ? 2
-                            : 20, // Space between rows
-                    childAspectRatio: itemWidth /
-                        itemHeight, // Adjust ratio based on item width/height
-                  ),
-                  itemCount: controller.favoriteItems.length,
-                  itemBuilder: (context, index) {
-                    final item = controller.favoriteItems[index];
-                    return CustomRectangleWidget(
-                      onNavigate: onNavigate,
 
-                      title: item.title,
-                      description: item.description,
-                      imagePath: item.imagePath,
-                      timetext: item.timetext,
-                      percentText: item.percentText,
-                      isFavorite: item.isFavorite, scrollcontroller: scrollcontroller,
-                    );
-                  },
+
+                return Padding(
+                  padding: EdgeInsets.only(
+                    left: Responsive.isMobile(context)
+                        ? 18
+                        : (isLargeScreen ? 48 : 6.0),
+                    right: Responsive.isMobile(context)
+                        ? 18
+                        : (isLargeScreen ? 48 : 4.0),
+                  ),
+                  child: GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      mainAxisExtent: Responsive.isMobile(context)
+                          ? 263
+                          : (isLargeScreen ? 400 : 350),
+                      crossAxisCount: Responsive.isMobile(context)
+                          ? 2
+                          : (Responsive.isTablet(context) ? 3 : 4),
+                      crossAxisSpacing: Responsive.isMobile(context)
+                          ? 10
+                          : (Responsive.isTablet(context) ? 8 : 10),
+                      mainAxisSpacing: Responsive.isMobile(context)
+                          ? 0
+                          : (Responsive.isTablet(context) ? 2 : 20),
+                      childAspectRatio: itemWidth / itemHeight,
+                    ),
+                    itemCount: controller.favoriteItems.length,
+                    itemBuilder: (context, index) {
+                      final item = controller.favoriteItems[index];
+                      return InkWell(
+                        onTap: () {
+
+
+
+                          if (onNavigate != null) {
+                            onNavigate!(8); // Call the callback to navigate to the 7th screen
+                          }
+                        },
+                        child: CustomRectangleWidget(
+                          onNavigate: onNavigate,
+                          title: item.title,
+                          description: item.description,
+                          imagePath: item.imagePath,
+                          timetext: item.timetext,
+                          percentText: item.percentText, isFavorite: true.obs, scrollcontroller: scrollcontroller,
+                        ),
+                      );
+                    },
+                  ),
                 );
-              }),
+
+
+              })
+
+
+              ,
+              SizedBox(height: 2,)
             ],
           ),
         );

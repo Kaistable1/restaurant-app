@@ -75,7 +75,10 @@ class _UploadImageSectionState extends State<UploadImageSection> {
         padding: EdgeInsets.all(Responsive.isMobile(context) ? 12 : 22.0),
         child: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              SizedBox(height:Responsive.isMobile(context) ? 10 : 14,),
               Image(
                 image: AssetImage('assets/images/dialogbox_img.png'),
                 height: 78,
@@ -139,13 +142,13 @@ class _UploadImageSectionState extends State<UploadImageSection> {
               SizedBox(height: 10),
               Container(
                 width: Responsive.isMobile(context) ? 230 : isLargeScreen ? 476 : 436,
-                height: Responsive.isMobile(context) ? 100 : isLargeScreen ? 183 : 120,
+                height: Responsive.isMobile(context) ? 100 : isLargeScreen ? 183 : 130,
                 decoration: BoxDecoration(
                   color: Color(0xFFEEEFF1),
                   borderRadius: BorderRadius.circular(Responsive.isMobile(context) ? 4 : 15),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(12.0),
                   child: DottedBorder(
                     dashPattern: const [7, 5],
                     color: AppColors.primaryColor,
@@ -154,49 +157,86 @@ class _UploadImageSectionState extends State<UploadImageSection> {
                     radius: Radius.circular(Responsive.isMobile(context) ? 6 : 12),
                     child: ClipRRect(
                       borderRadius: BorderRadius.all(Radius.circular(Responsive.isMobile(context) ? 4 : 10)),
-                      child: GestureDetector(
+                      child: InkWell(
                         onTap: _pickImage, // Open the image picker when tapped
-                        child: Container(
-                          height: Responsive.isMobile(context) ? 100 : 137,
-                          width: Get.width,
-                          color: Colors.transparent,
-                          child: _webImage != null // Check for web image first
-                              ? Image.memory(
-                            _webImage!,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            height: double.infinity,
-                          )
-                              : _selectedImage != null
-                              ? Image.file(
-                            _selectedImage!,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            height: double.infinity,
-                          )
-                              : Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                'assets/images/document-upload.png',
-                                width: Responsive.isMobile(context) ? 20 : 33,
-                                height: Responsive.isMobile(context) ? 20 : 33,
-                                fit: BoxFit.fill,
+                        child: Stack(
+                          children: [
+                            Container(
+                              height: Responsive.isMobile(context) ? 100 : 137,
+                              width: Get.width,
+                              color: Colors.transparent,
+                              child: _webImage != null // Check for web image first
+                                  ? Image.memory(
+                                _webImage!,
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: double.infinity,
+                              )
+                                  : _selectedImage != null
+                                  ? Image.file(
+                                _selectedImage!,
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: double.infinity,
+                              )
+                                  : Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    'assets/images/document-upload.png',
+                                    width: Responsive.isMobile(context) ? 20 : 33,
+                                    height: Responsive.isMobile(context) ? 20 : 33,
+                                    fit: BoxFit.fill,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    'Drop your image here, or Browse',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: Responsive.isMobile(context) ? 8 : 14,
+                                      fontFamily: 'Nunito-Regular',
+                                      fontWeight: FontWeight.w500,
+                                      color: Color(0xFF606060),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(height: 16),
-                              Text(
-                                'Drop your image here, or Browse',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: Responsive.isMobile(context) ? 8 : 14,
-                                  fontFamily: 'Nunito-Regular',
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xFF606060),
+                            ),
+
+                            // Add a delete icon in the top-right corner
+                            if (_webImage != null || _selectedImage != null)
+                              Positioned(
+                                top: 2,
+                                right: 2,
+                                child: InkWell(
+                                  onTap: (){
+                                    setState(() {
+                                      _webImage = null; // Clear web image
+                                      _selectedImage = null; // Clear mobile image
+                                    });
+                                  },
+                                  child: Container(
+                                    height: 24,
+                                    width: 24,
+                                    decoration: BoxDecoration(
+
+                                      color: AppColors.whiteColor,
+                                      borderRadius: BorderRadius.circular(50)
+                                    ),
+                                    child: Center(
+                                        child: Icon(
+                                          Icons.delete,
+                                          color:Colors.red,
+                                          size: Responsive.isMobile(context) ? 16 : 18,
+                                        ),
+                                      ),
+
+
+                                  ),
                                 ),
                               ),
-                            ],
-                          ),
+                          ],
                         ),
                       ),
                     ),

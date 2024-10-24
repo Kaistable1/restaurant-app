@@ -76,7 +76,7 @@ class CustomTextFormField extends StatelessWidget {
           contentPadding: EdgeInsets.only(
             top: Responsive.isMobile(context) ? 6 : 12,
             bottom: Responsive.isMobile(context) ? 20 : 12,
-            left: Responsive.isMobile(context) ? 9 : 20,
+            left: Responsive.isMobile(context) ? 9 : 14,
             right: Responsive.isMobile(context) ? 9 : 20,
           ),
           suffix: suffexWidget,

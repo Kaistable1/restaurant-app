@@ -18,7 +18,7 @@
 //   Widget build(BuildContext context) {
 //     return Obx(() {
 //       // RxBool isSelected = controller.selectedIndex.contains(index).obs;
-//       return GestureDetector(
+//       return InkWell(
 //         onTap: () {
 //           if (controller.isCover.value) {
 //             if (controller.selectedIndex.contains(index)) {

@@ -105,7 +105,10 @@ class OnboardingScreen extends StatelessWidget {
                             const SizedBox(
                               height: 12,
                             ),
-                            ChooseLocationWidget(controller: controller),
+                            Padding(
+                              padding:  EdgeInsets.only(left:Responsive.isMobile(context) || Responsive.isTablet(context)?28.0:0),
+                              child: ChooseLocationWidget(controller: controller),
+                            ),
                           ],
                         )
                       : Row(
@@ -277,8 +280,13 @@ class OnboardingScreen extends StatelessWidget {
                           ),
                           Row(
                             children: [
-                              GestureDetector(
-                                  onTap: () {},
+                              InkWell(
+                                  onTap: () async{
+                                    if (!await launchUrl(
+                                    Uri.parse('https://play.google.com/store'))) {
+                                    throw Exception('Could not launch ');
+                                    }
+                                  },
                                   child: Image(
                                     image: AssetImage(
                                       'assets/images/googleplay_img.png',
@@ -291,8 +299,14 @@ class OnboardingScreen extends StatelessWidget {
                               SizedBox(
                                 width: 40,
                               ),
-                              GestureDetector(
-                                  onTap: () {},
+                              InkWell(
+                                  onTap: () async {
+                                    if (!await launchUrl(
+                                        Uri.parse('https://www.apple.com/app-store'))) {
+                                      throw Exception('Could not launch ');
+                                    }
+                                  },
+
                                   child: Image(
                                     image: AssetImage(
                                       'assets/images/appstore_img.png',
@@ -327,7 +341,7 @@ class OnboardingScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        GestureDetector(
+                        InkWell(
                             onTap: () async {
                               if (!await launchUrl(
                                   Uri.parse('https://www.instagram.com'))) {
@@ -350,7 +364,7 @@ class OnboardingScreen extends StatelessWidget {
                         SizedBox(
                           width: 8,
                         ),
-                        GestureDetector(
+                        InkWell(
                             onTap: () async {
                               if (!await launchUrl(
                                   Uri.parse('https://www.linkedin.com'))) {
@@ -371,7 +385,7 @@ class OnboardingScreen extends StatelessWidget {
                         SizedBox(
                           width: 8,
                         ),
-                        GestureDetector(
+                        InkWell(
                             onTap: () async{
                               if (!await launchUrl(
                                   Uri.parse('https://www.facebook.com'))) {
@@ -431,8 +445,8 @@ class ChooseLocationWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Form(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             "Choose Location",
@@ -447,8 +461,12 @@ class ChooseLocationWidget extends StatelessWidget {
               color: AppColors.headingTextColor,
             ),
           ),
-          const SizedBox(height: 22),
+           SizedBox(height:Responsive.isMobile(context)
+              ? 10: 22),
           Obx(() => Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+
                 children: [
 
                   DropDownButton(
@@ -476,7 +494,8 @@ class ChooseLocationWidget extends StatelessWidget {
                         : Responsive.isTablet(context)
                         ? 14
                         : 18,),
-                  SizedBox(height: 20,),
+                  SizedBox(height:Responsive.isMobile(context)
+                      ? 10: 22),
                   DropDownButton(
                     height: Responsive.isMobile(context)
                         ? 34
@@ -507,77 +526,29 @@ class ChooseLocationWidget extends StatelessWidget {
                     },
                     containerColor: Color(0xFFFFFFFF),
                     textColor: Colors.grey,),
-                  // CustomDropdown(
-                  //   height: Responsive.isMobile(context)
-                  //       ? 34
-                  //       : Responsive.isTablet(context)
-                  //           ? 44
-                  //           : 60,
-                  //   width: Responsive.isMobile(context)
-                  //       ? 200
-                  //       : Responsive.isTablet(context)
-                  //           ? 320
-                  //           : 501,
-                  //   hintText: "Country",
-                  //   hintfontsize: Responsive.isMobile(context)
-                  //       ? 8
-                  //       : Responsive.isTablet(context)
-                  //           ? 14
-                  //           : 18,
-                  //   dropdownItemWidth: Responsive.isMobile(context)
-                  //       ? 200
-                  //       : Responsive.isTablet(context)
-                  //       ? 320
-                  //       : 101,
-                  //   items: ["Pakistan", "USA", "UK"],
-                  //   selectedValue: controller.selectedCountry.value,
-                  //   onChanged: (value) {
-                  //     controller.selectedCountry.value = value!;
-                  //     controller.hasError.value = false;
-                  //   },
-                  //   containerColor: Color(0xFFFFFFFF),
-                  //   textColor: Colors.grey,
-                  // ),
-                  // SizedBox(height: Responsive.isMobile(context) ? 10 : 20),
-                  // CustomDropdown(
-                  //   height: Responsive.isMobile(context)
-                  //       ? 34
-                  //       : Responsive.isTablet(context)
-                  //           ? 44
-                  //           : 60,
-                  //   width: Responsive.isMobile(context)
-                  //       ? 200
-                  //       : Responsive.isTablet(context)
-                  //           ? 320
-                  //           : 501,
-                  //   hintText: "City",
-                  //   hintfontsize: Responsive.isMobile(context)
-                  //       ? 8
-                  //       : Responsive.isTablet(context)
-                  //           ? 14
-                  //           : 18,
-                  //   dropdownItemWidth: Responsive.isMobile(context)
-                  //       ? 200
-                  //       : Responsive.isTablet(context)
-                  //       ? 320
-                  //       : 101,
-                  //   items: ["Islamabad", "Lahore", "Karachi"],
-                  //   selectedValue: controller.selectedCity.value,
-                  //   onChanged: (value) {
-                  //     controller.selectedCity.value = value!;
-                  //     controller.hasError.value = false;
-                  //   },
-                  //   containerColor: Color(0xFFFFFFFF),
-                  //   textColor: Colors.grey,
-                  // ),
+                  SizedBox(height: 20,),
+
                   if (controller.hasError.value)
                     Padding(
-                      padding: EdgeInsets.only(top: 20.0),
+                      padding: EdgeInsets.only(
+                        // left: Responsive.isMobile(context)
+                        //     ? 90
+                        //     : Responsive.isTablet(context)
+                        //     ? 2
+                        //     : 2.0,
+                      ),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Icon(
                             Icons.error_outline,
                             color: Colors.red,
+                            size: Responsive.isMobile(context)
+                                ? 10
+                                : Responsive.isTablet(context)
+                                ? 16
+                                : 16 ,
                           ),
                           SizedBox(
                             width: 5,
@@ -586,10 +557,10 @@ class ChooseLocationWidget extends StatelessWidget {
                             'Please select both country and city.',
                             style: TextStyle(
                                 color: Colors.red,
-                                fontSize: Responsive.isTablet(context)
-                                    ? 12
+                                fontSize: Responsive.isMobile(context)
+                                    ? 9
                                     : Responsive.isTablet(context)
-                                        ? 12
+                                        ? 14
                                         : 14),
                           ),
                         ],
@@ -597,14 +568,15 @@ class ChooseLocationWidget extends StatelessWidget {
                     ),
                 ],
               )),
-          SizedBox(height: Responsive.isMobile(context) ? 12 : 32),
+          SizedBox(height: Responsive.isMobile(context) ? 12 : Responsive.isTablet(context)
+              ?18: 32),
           Padding(
             padding: EdgeInsets.only(
               left: Responsive.isMobile(context)
-                  ? 50
+                  ? 2
                   : Responsive.isTablet(context)
-                      ? 90
-                      : 120.0,
+                      ? 2
+                      : 2.0,
             ),
             child: CustomButton(
               laBelText: 'Next',

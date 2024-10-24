@@ -32,7 +32,7 @@ class CustomRectangleWidget extends StatelessWidget {
       builder: (context, constraints) {
         double widgetWidth = constraints.maxWidth * 0.3;
 
-        return GestureDetector(
+        return InkWell(
           onTap: () {
             if (onNavigate != null) {
               onNavigate!(8);
@@ -172,7 +172,7 @@ class CustomRectangleWidget extends StatelessWidget {
                                     ? 6
                                     : 10),
                             Obx(() {
-                              return GestureDetector(
+                              return InkWell(
                                 onTap: () {
                                   print('jksdb');
                                   isFavorite.value = !isFavorite.value;

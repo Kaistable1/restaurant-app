@@ -62,7 +62,7 @@ class _TopBarWidgetState extends State<TopBarWidget> {
         centerTitle: true,
         backgroundColor: AppColors.bgColor,
         iconTheme: const IconThemeData(color: AppColors.primaryColor),
-        title: GestureDetector(
+        title: InkWell(
           onTap: (){
             _onItemTapped(0);
 
@@ -76,13 +76,20 @@ class _TopBarWidgetState extends State<TopBarWidget> {
         actions: [
           Row(
             children: [
-              const Image(
-                  image: AssetImage('assets/images/location_icon.png'),
-                  height: 12,
-                  width:12
-              ),
+               InkWell(
+                 onTap: () {
+                   _onItemTapped(7);
+
+
+                 },
+                 child: Image(
+                    image: AssetImage('assets/images/location_icon.png'),
+                    height: 12,
+                    width:12
+                               ),
+               ),
               const SizedBox(width: 3),
-              GestureDetector(
+              InkWell(
                 onTap: (){
                   _onItemTapped(7);
 
@@ -125,7 +132,7 @@ class _TopBarWidgetState extends State<TopBarWidget> {
                     ? 60
                     : Responsive.isTablet(context)
                         ? 100
-                        : 120),
+                        : 50),
             BottomContainer(onNavigate: _onItemTapped, scrollcontroller:scrollController ,),
           ],
         ),
@@ -169,7 +176,7 @@ class _TopBarWidgetState extends State<TopBarWidget> {
                       : Responsive.isTablet(context)
                           ? 15
                           :6),
-              GestureDetector(
+              InkWell(
                 onTap: () {
                   _onItemTapped(0);
                 },
@@ -201,10 +208,10 @@ class _TopBarWidgetState extends State<TopBarWidget> {
                           : 140),
               _buildNavItem('Home', 0),
               _buildNavItem('Favorites', 1),
-              _buildNavItem('Terms and Condition', 2),
-              _buildNavItem('Privacy Policy', 3),
-              _buildNavItem('About App', 4),
-              _buildNavItem('Contact Us', 5),
+              _buildNavItem('Terms and conditions', 2),
+              _buildNavItem('Privacy policy', 3),
+              _buildNavItem('About app', 4),
+              _buildNavItem('Contact us', 5),
               SizedBox(
                   width: Responsive.isMobile(context)
                       ? 8
@@ -217,21 +224,28 @@ class _TopBarWidgetState extends State<TopBarWidget> {
                 padding: const EdgeInsets.only(right:18.0),
                 child: Row(
                   children: [
-                    Image(
-                      image: const AssetImage('assets/images/location_icon.png'),
-                      height: Responsive.isMobile(context)
-                          ? 12
-                          : Responsive.isTablet(context)
-                              ? 16
-                              : 22,
-                      width: Responsive.isMobile(context)
-                          ? 12
-                          : Responsive.isTablet(context)
-                              ? 16
-                              : 22,
+                    InkWell(
+                      onTap: () {
+                        _onItemTapped(7);
+
+
+                      },
+                      child: Image(
+                        image: const AssetImage('assets/images/location_icon.png'),
+                        height: Responsive.isMobile(context)
+                            ? 12
+                            : Responsive.isTablet(context)
+                                ? 16
+                                : 22,
+                        width: Responsive.isMobile(context)
+                            ? 12
+                            : Responsive.isTablet(context)
+                                ? 16
+                                : 22,
+                      ),
                     ),
                     const SizedBox(width: 3),
-                    GestureDetector(
+                    InkWell(
                       onTap: () {
                         _onItemTapped(7);
 
@@ -291,10 +305,10 @@ class _TopBarWidgetState extends State<TopBarWidget> {
           ),
           _buildDrawerItem('Home', 0),
           _buildDrawerItem('Favorites', 1),
-          _buildDrawerItem('Terms and Condition', 2),
-          _buildDrawerItem('Privacy Policy', 3),
-          _buildDrawerItem('About App', 4),
-          _buildDrawerItem('Contact Us', 5),
+          _buildDrawerItem('Terms and conditions', 2),
+          _buildDrawerItem('Privacy policy', 3),
+          _buildDrawerItem('About app', 4),
+          _buildDrawerItem('Contact us', 5),
         ],
       ),
     );
@@ -351,7 +365,7 @@ class _TopBarWidgetState extends State<TopBarWidget> {
 
 
   Widget _buildNavItem(String title, int index) {
-    return GestureDetector(
+    return InkWell(
       onTap: () {
         setState(() {
           _selectedIndex = index; // Update the selected index

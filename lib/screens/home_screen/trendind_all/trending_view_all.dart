@@ -59,10 +59,10 @@ class TrendingViewAll extends StatelessWidget {
                 padding: EdgeInsets.only(
                   left: Responsive.isMobile(context)
                       ? 18
-                      : (isLargeScreen ? 48 : 30.0),
+                      : (isLargeScreen ? 48 : 46.0),
                   right: Responsive.isMobile(context)
                       ? 18
-                      : (isLargeScreen ? 48 : 30.0),
+                      : (isLargeScreen ? 48 : 42.0),
                 ),
                 child: GridView.builder(
                   shrinkWrap: true,
@@ -85,7 +85,7 @@ class TrendingViewAll extends StatelessWidget {
                   itemCount: trendingController.trendingItem.length,
                   itemBuilder: (context, index) {
                     final item = trendingController.trendingItem[index];
-                    return GestureDetector(
+                    return InkWell(
                       onTap: () {
 
 

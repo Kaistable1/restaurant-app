@@ -113,7 +113,7 @@ class LocationScreen extends StatelessWidget {
                             return Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 12),
                               child: Obx(() {
-                                return GestureDetector(
+                                return InkWell(
                                   onTap: () {
                                     // Handle the tap for non-dropdown items
                                     if (locationController.top[index] != 'Discount') {
@@ -254,7 +254,6 @@ class LocationScreen extends StatelessWidget {
                                                 borderRadius: BorderRadius.circular(10),
                                               ),
                                             ),
-                                            // Handle selected value
                                             value: items.contains(locationController.selectedTop.value)
                                                 ? locationController.selectedTop.value
                                                 : null, // Fallback to null if no matching item is found
@@ -273,7 +272,6 @@ class LocationScreen extends StatelessWidget {
                                               ),
                                             ),
 
-                                            // Display selected value without a checkbox when collapsed
                                             selectedItemBuilder: (BuildContext context) {
                                               return items.map((String item) {
                                                 return Padding(
@@ -291,33 +289,36 @@ class LocationScreen extends StatelessWidget {
                                               }).toList();
                                             },
 
-                                            // Dropdown items with checkboxes
                                             items: items.map((String item) {
                                               return DropdownMenuItem<String>(
                                                 value: item,
                                                 child: Row(
                                                   children: [
-                                                    // Display checkbox inside the dropdown only
                                                     Checkbox(
                                                       fillColor: MaterialStateProperty.resolveWith<Color>(
-                                                              (Set<MaterialState> states) {
-                                                            if (states.contains(MaterialState.selected)) {
-                                                              return AppColors.primaryColor;
-                                                            }
-                                                            return AppColors.whiteColor;
-                                                          }),
+                                                            (Set<MaterialState> states) {
+                                                          if (states.contains(MaterialState.selected)) {
+                                                            return AppColors.primaryColor;
+                                                          }
+                                                          return AppColors.whiteColor;
+                                                        },
+                                                      ),
                                                       side: MaterialStateBorderSide.resolveWith((Set<MaterialState> states) {
                                                         return BorderSide(color: AppColors.primaryColor);
                                                       }),
                                                       value: locationController.selectedTop.value == item, // Ensure the correct item is checked
                                                       onChanged: (bool? isSelected) {
                                                         if (isSelected == true) {
+                                                          // If the item is selected, set it as the selected value
                                                           locationController.selectedTop.value = item;
-                                                          Navigator.pop(context); // Close dropdown after selection
+                                                        } else {
+                                                          // If the item is unselected, reset the selected value
+                                                          locationController.selectedTop.value = ''; // Set to null or empty string to unselect
                                                         }
+                                                        Navigator.pop(context); // Close dropdown after selection/unselection
                                                       },
                                                     ),
-                                                    // Text inside the dropdown
+
                                                     Text(
                                                       item,
                                                       style: TextStyle(
@@ -333,13 +334,18 @@ class LocationScreen extends StatelessWidget {
                                               );
                                             }).toList(),
 
+                                            // Modified onChanged function to allow unselecting the currently selected value
                                             onChanged: (String? newValue) {
-                                              if (newValue != null) {
-                                                locationController.selectedTop.value = newValue;
+                                              if (newValue == locationController.selectedTop.value) {
+                                                // If the selected value is clicked again, unselect it
+                                                locationController.selectedTop.value = ''; // Set to null or empty string to unselect
+                                              } else {
+                                                locationController.selectedTop.value = newValue!;
                                               }
                                             },
                                           ),
                                         ),
+
 
                                       )
                                           : Padding(
@@ -412,7 +418,7 @@ class LocationScreen extends StatelessWidget {
                   itemCount: locationController.locationItem.length,
                   itemBuilder: (context, index) {
                     final item = locationController.locationItem[index];
-                    return GestureDetector(
+                    return InkWell(
                       onTap: () {
                         if (onNavigate != null) {
                           onNavigate!(

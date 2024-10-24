@@ -28,7 +28,7 @@ class CircleContainerWidget extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     bool isLargeScreen = screenWidth > 1400;
 
-    return GestureDetector(
+    return InkWell(
       onTap: ontap,
       child: Container(
         width: Responsive.isMobile(context)
@@ -94,7 +94,7 @@ class CircleContainerWidget extends StatelessWidget {
                         ? 40
                         : 30,
                 child: Obx(() {
-                  return GestureDetector(
+                  return InkWell(
                       onTap: () {
                         isFavourite.value = !isFavourite.value;
                       },

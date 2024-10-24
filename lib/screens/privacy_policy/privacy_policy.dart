@@ -94,7 +94,7 @@ class PrivacyPolicy extends StatelessWidget {
               ),
             ),
             // More terms...
-            SizedBox(height: 60,), // Add spacing at the bottom if needed
+            SizedBox(height: 2,), // Add spacing at the bottom if needed
           ],
         ),
       ),

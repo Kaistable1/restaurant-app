@@ -31,7 +31,7 @@ class _LocationStarWidgetState extends State<LocationStarWidget> {
     final String imagePath = _isTapped ? 'assets/images/star_img.png' : 'assets/images/star_img2.png';
     final Color textColor = _isTapped ? AppColors.whiteColor: AppColors.blackColor; // Change the color as desired
 
-    return GestureDetector(
+    return InkWell(
       onTap: _toggleTapped, // Handle tap
       child: Container(
         height: 120,
