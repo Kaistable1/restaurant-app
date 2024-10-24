@@ -204,7 +204,7 @@ class _TopBarWidgetState extends State<TopBarWidget> {
                       : Responsive.isTablet(context)
                           ? 20
                       : isLargeScreen
-                      ? 200
+                      ? 300
                           : 140),
               _buildNavItem('Home', 0),
               _buildNavItem('Favorites', 1),
@@ -218,7 +218,7 @@ class _TopBarWidgetState extends State<TopBarWidget> {
                       : Responsive.isTablet(context)
                           ? 10
                       : isLargeScreen
-                      ? 100
+                      ? 200
                           : 80),
               Padding(
                 padding: const EdgeInsets.only(right:18.0),
@@ -269,7 +269,9 @@ class _TopBarWidgetState extends State<TopBarWidget> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 20,)
+                    SizedBox(width: isLargeScreen
+                      ? 200
+                      : 20,)
                   ],
                 ),
               ),

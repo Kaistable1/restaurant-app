@@ -1,7 +1,9 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_toastr/flutter_toastr.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/screens/contact_us/controller/contact_us_controller.dart';
+
 
 import '../../constants/app_colors.dart';
 import '../../utils/responsive.dart';
@@ -435,22 +437,40 @@ class ContactUs extends StatelessWidget {
                           controller.emailError.value.isEmpty &&
                           controller.messageError.value.isEmpty) {
 
-                        // If validation is successful, perform navigation
-                        if (onNavigate != null) {
-                          onNavigate!(0); // Navigate to the 7th screen
-                          scrollcontroller.jumpTo(0); // Scroll to the top of the screen
 
-                          // Clear the text fields after successful navigation
-                          controller.emailController.clear(); // Clear email field
-                          controller.messagreController.clear(); // Clear message field
-                          controller.contactingUs.value = ''; // Clear dropdown selection (if needed)
-                        }
-                      } else {
-                        // Handle the case when validation fails, e.g., show a snackbar
-                        // Get.snackbar('Error', 'Please fix the errors before proceeding');
+                        // FlutterToastr.show("Your message has been sent successfully!",
+                        //     context, duration: 2, position:  FlutterToastr.bottom);
+
+                        //Show a snackbar with a success message instead of navigating
+                        Get.snackbar(
+                          'Success',
+                          'Your message has been sent successfully!',
+                          snackPosition: SnackPosition.TOP,
+                          backgroundColor: AppColors.primaryColor,
+                          colorText: Colors.white,
+                          duration: Duration(seconds: 3),
+                        );
+
+                        // Clear the text fields after showing the success message
+                        controller.emailController.clear(); // Clear email field
+                        controller.messagreController.clear(); // Clear message field
+                        controller.contactingUs.value = ''; // Clear dropdown selection (if needed)
+
                       }
+                      // else {
+                      //   // Handle the case when validation fails, e.g., show an error snackbar
+                      //   Get.snackbar(
+                      //     'Error',
+                      //     'Please fix the errors before proceeding',
+                      //     snackPosition: SnackPosition.BOTTOM,
+                      //     backgroundColor: Colors.red,
+                      //     colorText: Colors.white,
+                      //     duration: Duration(seconds: 3),
+                      //   );
+                      // }
                     },
                   ),
+
 
 
                 ],
