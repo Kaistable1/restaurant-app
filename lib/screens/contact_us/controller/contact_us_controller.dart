@@ -22,9 +22,33 @@ class ContactUsController extends GetxController {
 
   // Reactive boolean to track form errors
   final hasError = false.obs;
+  void validateFields() {
+    // Dropdown validation
+    if (contactingUs.value == null ||contactingUs.value!.isEmpty) {
+     dropdownError.value = "Please select a reason for contacting us";
+    } else {
+     dropdownError.value = '';
+    }
+
+    // Email validation
+    if (emailController.text.isEmpty) {
+      emailError.value = "Please enter your email";
+    } else if (!GetUtils.isEmail(emailController.text)) {
+      emailError.value = "Please enter a valid email";
+    } else {
+     emailError.value = '';
+    }
+
+    // Message validation
+    if (messagreController.text.isEmpty) {
+      messageError.value = "Please enter a message";
+    } else {
+    messageError.value = '';
+    }
+  }
 
   // Validation logic for fields
-  void validateFields() {
+  void validatemyFields() {
     // Dropdown validation
     if (contactingUs.value == null) {
       dropdownError.value = "Please select a reason for contacting us";

@@ -28,11 +28,9 @@ class CustomRectangleWidget extends StatelessWidget {
     bool isLargeScreen = screenWidth > 1400;
     bool isTablet = Responsive.isTablet(context);
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        double widgetWidth = constraints.maxWidth * 0.3;
+    return
 
-        return InkWell(
+         GestureDetector(
           onTap: () {
             if (onNavigate != null) {
               onNavigate!(8);
@@ -42,295 +40,244 @@ class CustomRectangleWidget extends StatelessWidget {
           child: Stack(
             children: [
               Container(
+                height: 180,
+
+
                 color: Colors.transparent,
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 80),
-                  child: AspectRatio(
-                    aspectRatio: 1.2,
-                    child: Container(
-                      height: Responsive.isMobile(context)
-                          ? 320
-                          : isLargeScreen
-                          ? 220
-                          : isTablet
-                          ? 290
-                          : 240,
-                      width: Responsive.isMobile(context)
-                          ? 230
-                          : isLargeScreen
-                          ? 350
-                          : isTablet
-                          ? 380
-                          : 300,
-                      decoration: BoxDecoration(
-                        color: AppColors.whiteColor,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            spreadRadius: 3,
-                            blurRadius: 12,
-                            offset: const Offset(0, 1),
+                  padding: const EdgeInsets.only(top: 25,),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.whiteColor,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 0,
+                          blurRadius: 22,
+                          offset: const Offset(0, 1),
+                        ),
+                      ],
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(Responsive.isMobile(context)
+                            ? 8
+                            : isLargeScreen
+                            ? 20
+                            : isTablet
+                            ? 16
+                            : 16),
+                        topRight: Radius.circular(Responsive.isMobile(context)
+                            ? 18
+                            : isLargeScreen
+                            ? 50
+                            : isTablet
+                            ? 28
+                            : 45),
+                        bottomRight:
+                        Radius.circular(Responsive.isMobile(context)
+                            ? 18
+                            : isLargeScreen
+                            ? 50
+                            : isTablet
+                            ? 28
+                            : 45),
+                        bottomLeft:
+                        Radius.circular(Responsive.isMobile(context)
+                            ? 18
+                            : isLargeScreen
+                            ? 50
+                            : isTablet
+                            ? 28
+                            : 45),
+                      ),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        // top: Responsive.isMobile(context)
+                        //     ? 20
+                        //     : isLargeScreen
+                        //         ? 80
+                        //         : isTablet
+                        //             ? 65
+                        //             : 72,
+                          left: Responsive.isMobile(context)
+                              ? 10
+                              : isLargeScreen
+                              ? 28
+                              : isTablet
+                              ? 22
+                              : 22.0
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Column(
+                            children: [
+                              Padding(
+                                padding:
+                                const EdgeInsets.only(top: 0, right: 2),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.end,
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.end,
+                                      children: List.generate(
+                                          2,
+                                              (index) => _buildStarBox(
+                                              isLargeScreen,
+                                              isTablet,
+                                              context)),
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.end,
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.end,
+                                      children: List.generate(
+                                          2,
+                                              (index) => _buildStarBox(
+                                              isLargeScreen,
+                                              isTablet,
+                                              context)),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                              height: Responsive.isMobile(context)
+                                  ? 2
+                                  : isLargeScreen
+                                  ? 0
+                                  : isTablet
+                                  ? 6
+                                  : 10),
+                          Obx(() {
+                            return InkWell(
+                              onTap: () {
+                                print('jksdb');
+                                isFavorite.value = !isFavorite.value;
+                              },
+                              child: Image.asset(
+                                'assets/images/heart_icon.png',
+                                color: isFavorite.value
+                                    ? Colors.red
+                                    : AppColors.textColor,
+                                height: Responsive.isMobile(context)
+                                    ? 16
+                                    : isLargeScreen
+                                    ? 32
+                                    : isTablet
+                                    ? 24
+                                    : 21,
+                                width: Responsive.isMobile(context)
+                                    ? 16
+                                    : isLargeScreen
+                                    ? 30
+                                    : isTablet
+                                    ? 24
+                                    : 24,
+                              ),
+                            );
+                          }),
+                          SizedBox(
+                              height: Responsive.isMobile(context)
+                                  ? 5
+                                  : isLargeScreen
+                                  ? 0
+                                  : isTablet
+                                  ? 8
+                                  : 10),
+                          Text(
+                            title, // 'Buffet',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: Responsive.isMobile(context)
+                                  ? 14
+                                  : isLargeScreen
+                                  ? 22
+                                  : isTablet
+                                  ? 12
+                                  : 14,
+                              fontFamily: 'Nunito-Regular',
+                              color: AppColors.textColor,
+                            ),
+                          ),
+                          SizedBox(
+                              height: Responsive.isMobile(context)
+                                  ? 4
+                                  : isLargeScreen
+                                  ? 0
+                                  : isTablet
+                                  ? 3
+                                  : 6),
+                          Text(
+                            description, // 'Duis aute irure dolor in reprehend voluptate velit esse cillum',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              fontSize: Responsive.isMobile(context)
+                                  ? 8
+                                  : isLargeScreen
+                                  ? 16
+                                  : isTablet
+                                  ? 10
+                                  : 16,
+                              fontFamily: 'Nunito-Regular',
+                              color: AppColors.textColor,
+                            ),
                           ),
                         ],
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(Responsive.isMobile(context)
-                              ? 8
-                              : isLargeScreen
-                              ? 20
-                              : isTablet
-                              ? 16
-                              : 16),
-                          topRight: Radius.circular(Responsive.isMobile(context)
-                              ? 12
-                              : isLargeScreen
-                              ? 50
-                              : isTablet
-                              ? 28
-                              : 45),
-                          bottomRight:
-                          Radius.circular(Responsive.isMobile(context)
-                              ? 12
-                              : isLargeScreen
-                              ? 50
-                              : isTablet
-                              ? 28
-                              : 45),
-                          bottomLeft:
-                          Radius.circular(Responsive.isMobile(context)
-                              ? 12
-                              : isLargeScreen
-                              ? 50
-                              : isTablet
-                              ? 28
-                              : 45),
-                        ),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          // top: Responsive.isMobile(context)
-                          //     ? 20
-                          //     : isLargeScreen
-                          //         ? 80
-                          //         : isTablet
-                          //             ? 65
-                          //             : 72,
-                            left: Responsive.isMobile(context)
-                                ? 10
-                                : isLargeScreen
-                                ? 28
-                                : isTablet
-                                ? 22
-                                : 22.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Column(
-                              children: [
-                                Padding(
-                                  padding:
-                                  const EdgeInsets.only(top: 9, right: 6),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.end,
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.end,
-                                        children: List.generate(
-                                            2,
-                                                (index) => _buildStarBox(
-                                                isLargeScreen,
-                                                isTablet,
-                                                context)),
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.end,
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.end,
-                                        children: List.generate(
-                                            2,
-                                                (index) => _buildStarBox(
-                                                isLargeScreen,
-                                                isTablet,
-                                                context)),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                                height: Responsive.isMobile(context)
-                                    ? 8
-                                    : isLargeScreen
-                                    ? 0
-                                    : isTablet
-                                    ? 6
-                                    : 10),
-                            Obx(() {
-                              return InkWell(
-                                onTap: () {
-                                  print('jksdb');
-                                  isFavorite.value = !isFavorite.value;
-                                },
-                                child: Image.asset(
-                                  'assets/images/heart_icon.png',
-                                  color: isFavorite.value
-                                      ? Colors.red
-                                      : AppColors.textColor,
-                                  height: Responsive.isMobile(context)
-                                      ? 12
-                                      : isLargeScreen
-                                      ? 32
-                                      : isTablet
-                                      ? 24
-                                      : 21,
-                                  width: Responsive.isMobile(context)
-                                      ? 10
-                                      : isLargeScreen
-                                      ? 30
-                                      : isTablet
-                                      ? 24
-                                      : 24,
-                                ),
-                              );
-                            }),
-                            SizedBox(
-                                height: Responsive.isMobile(context)
-                                    ? 8
-                                    : isLargeScreen
-                                    ? 0
-                                    : isTablet
-                                    ? 8
-                                    : 10),
-                            Text(
-                              title, // 'Buffet',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: Responsive.isMobile(context)
-                                    ? 14
-                                    : isLargeScreen
-                                    ? 22
-                                    : isTablet
-                                    ? 12
-                                    : 14,
-                                fontFamily: 'Nunito-Regular',
-                                color: AppColors.textColor,
-                              ),
-                            ),
-                            SizedBox(
-                                height: Responsive.isMobile(context)
-                                    ? 8
-                                    : isLargeScreen
-                                    ? 0
-                                    : isTablet
-                                    ? 3
-                                    : 6),
-                            Text(
-                              description, // 'Duis aute irure dolor in reprehend voluptate velit esse cillum',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                fontSize: Responsive.isMobile(context)
-                                    ? 8
-                                    : isLargeScreen
-                                    ? 16
-                                    : isTablet
-                                    ? 10
-                                    : 16,
-                                fontFamily: 'Nunito-Regular',
-                                color: AppColors.textColor,
-                              ),
-                            ),
-                          ],
-                        ),
                       ),
                     ),
                   ),
                 ),
               ),
-              Positioned(
-                top: Responsive.isMobile(context) ? 55 : 0,
+              Align(
+                alignment: Alignment.topLeft,
                 child: Container(
+
                   height: Responsive.isMobile(context)
-                      ? 100
+                      ? 95
                       : isLargeScreen
                       ? 190
                       : isTablet
                       ? 130
                       : 170,
                   width: Responsive.isMobile(context)
-                      ? 100
+                      ?95
                       : isLargeScreen
                       ? 190
                       : isTablet
                       ? 130
                       : 170,
                   decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        spreadRadius: 1,
-                        blurRadius: 50,
-                        offset: const Offset(0, 1),
-                      ),
-                    ],
+                    //color: Colors.t,
+                    // boxShadow: [
+                    //   BoxShadow(
+                    //     color: Colors.black.withOpacity(0.1),
+                    //     spreadRadius: 2,
+                    //     blurRadius: 222,
+                    //     offset: const Offset(0, 1),
+                    //   ),
+                    // ],
                     image: DecorationImage(
+                      //fit: BoxFit.cover,
+
                       image: AssetImage(imagePath),
                     ),
                   ),
                 ),
               ),
-              // Positioned(
-              //   top: Responsive.isMobile(context) ? 90 : 90,
-              //   right: Responsive.isMobile(context)
-              //       ? 12
-              //       : (isLargeScreen
-              //           ? 30
-              //           : isTablet
-              //               ? 1
-              //               : 10),
-              //   child: Container(
-              //     height: Responsive.isMobile(context)
-              //         ? 90
-              //         : isLargeScreen
-              //             ? 210
-              //             : isTablet
-              //                 ? 180
-              //                 : 130,
-              //     width: Responsive.isMobile(context)
-              //         ? 95
-              //         : isLargeScreen
-              //             ? 210
-              //             : isTablet
-              //                 ? 180
-              //                 : 120,
-              //     color: Colors.transparent,
-              //     child: Column(
-              //       children: [
-              //         Row(
-              //           children: List.generate(
-              //               2,
-              //               (index) => _buildStarBox(
-              //                   isLargeScreen, isTablet, context)),
-              //         ),
-              //         Row(
-              //           children: List.generate(
-              //               2,
-              //               (index) => _buildStarBox(
-              //                   isLargeScreen, isTablet, context)),
-              //         )
-              //       ],
-              //     ),
-              //   ),
-              // )
+
             ],
           ),
-        );
-      },
+
+
     );
   }
 
@@ -338,14 +285,14 @@ class CustomRectangleWidget extends StatelessWidget {
       bool isLargeScreen, bool isTablet, BuildContext context) {
     return Container(
       height: Responsive.isMobile(context)
-          ? 38
+          ? 32
           : isLargeScreen
           ? 75
           : isTablet
           ? 40
           : 50,
       width: Responsive.isMobile(context)
-          ? 38
+          ? 36
           : isLargeScreen
           ? 75
           : isTablet

@@ -21,15 +21,11 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final HomeLocationController controller = Get.put(HomeLocationController());
     final HomeThemeController themeController = Get.put(HomeThemeController());
-    final HomeRecentlyViewedController recentlyViewedController =
-        Get.put(HomeRecentlyViewedController());
-    final HomeCusinessController cusinessController =
-        Get.put(HomeCusinessController());
-    final HomeTrendingController trendingController =
-        Get.put(HomeTrendingController());
+    final HomeRecentlyViewedController recentlyViewedController = Get.put(HomeRecentlyViewedController());
+    final HomeCusinessController cusinessController = Get.put(HomeCusinessController());
+    final HomeTrendingController trendingController = Get.put(HomeTrendingController());
     final HomeNewController newController = Get.put(HomeNewController());
-    final HomeFilterController filterController =
-        Get.put(HomeFilterController());
+    final HomeFilterController filterController = Get.put(HomeFilterController());
 
     double screenWidth = MediaQuery.of(context).size.width;
     bool isLargeScreen = screenWidth > 1400;
@@ -39,23 +35,23 @@ class HomeScreen extends StatelessWidget {
           : Responsive.isTablet(context)
               ? 3
               : 4;
-      double itemWidth = (constraints.maxWidth / itemsPerRow) - 16;
+      double itemWidth = (constraints.maxWidth / itemsPerRow) - 12;
       double itemHeight =
-          Responsive.isMobile(context) ? 320 : (isLargeScreen ? 400 : 400);
-      int filterItemperRow = Responsive.isMobile(context)
-          ? 2
-          : Responsive.isTablet(context)
-              ? 2
-              : 3;
-      double filterItemWidth = (constraints.maxWidth / filterItemperRow) - 8;
-      double filterItemHeight =
-          Responsive.isMobile(context) ? 320 : (isLargeScreen ? 400 : 200);
+          Responsive.isMobile(context) ? 290 : (isLargeScreen ? 400 : 400);
+      // int filterItemperRow = Responsive.isMobile(context)
+      //     ? 2
+      //     : Responsive.isTablet(context)
+      //         ? 2
+      //         : 3;
+      // double filterItemWidth = (constraints.maxWidth / filterItemperRow) - 8;
+      // double filterItemHeight =
+      //     Responsive.isMobile(context) ? 320 : (isLargeScreen ? 400 : 200);
       return Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            height: Responsive.isMobile(context) ? 312 : 576,
+            height: Responsive.isMobile(context) ? 280 : 576,
             width: Get.width,
             decoration: const BoxDecoration(
               image: DecorationImage(
@@ -72,7 +68,7 @@ class HomeScreen extends StatelessWidget {
                     'Lorem ipsum dolor sit ame',
                     style: TextStyle(
                       fontWeight: FontWeight.w300,
-                      fontSize: Responsive.isMobile(context) ? 20 : 48,
+                      fontSize: Responsive.isMobile(context) ? 16 : 48,
                       color: AppColors.whiteColor,
                       fontFamily: 'Lemonado',
                     ),
@@ -85,7 +81,7 @@ class HomeScreen extends StatelessWidget {
                     child: Text(
                       'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore',
                       style: TextStyle(
-                        fontSize: Responsive.isMobile(context) ? 14 : 24,
+                        fontSize: Responsive.isMobile(context) ? 12 : 24,
                         fontWeight: FontWeight.w400,
                         color: AppColors.whiteColor,
                       ),
@@ -127,22 +123,22 @@ class HomeScreen extends StatelessWidget {
                                 fontFamily: "Lora-Regular",
                                 fontWeight: FontWeight.w400,
                                 fontSize:
-                                    Responsive.isMobile(context) ? 10 : 16,
+                                    Responsive.isMobile(context) ? 11 : 16,
                               ),
                               border: InputBorder.none,
                               contentPadding: EdgeInsets.only(
-                                top: Responsive.isMobile(context) ? 14 : 18,
-                                bottom: Responsive.isMobile(context) ? 20 : 12,
-                                left: Responsive.isMobile(context) ? 9 : 20,
+                                top: Responsive.isMobile(context) ? 10 : 18,
+                               // bottom: Responsive.isMobile(context) ? 20 : 12,
+                                //left: Responsive.isMobile(context) ? 9 : 20,
                               ),
                               prefixIcon: Padding(
                                 padding: EdgeInsets.all(
-                                    Responsive.isMobile(context) ? 12 : 14),
+                                    Responsive.isMobile(context) ? 13 : 14),
                                 child: Image.asset(
                                   'assets/images/search_icon.png',
                                   fit: BoxFit.contain,
-                                  height: 24,
-                                  width: 24,
+                                  height: 20,
+                                  width: 20,
                                 ),
                               ),
                             ),
@@ -150,10 +146,10 @@ class HomeScreen extends StatelessWidget {
                         ),
                         InkWell(
                           onTap: () {
-                            if (onNavigate != null) {
-                              onNavigate!(
-                                  12); scrollcontroller.jumpTo(0);// Call the callback to navigate to the 7th screen
-                            }
+                            // if (onNavigate != null) {
+                            //   onNavigate!(
+                            //       ); scrollcontroller.jumpTo(0);// Call the callback to navigate to the 7th screen
+                            // }
                           },
                           child: Container(
                             height: 55,
@@ -174,7 +170,7 @@ class HomeScreen extends StatelessWidget {
                                   color: AppColors.botomSheetColor,
                                   fontFamily: "Lora-Regular",
                                   fontSize:
-                                      Responsive.isMobile(context) ? 10 : 16,
+                                      Responsive.isMobile(context) ? 11 : 16,
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),
@@ -207,7 +203,7 @@ class HomeScreen extends StatelessWidget {
             children: [
               Padding(
                 padding: EdgeInsets.only(
-                    left: Responsive.isMobile(context) ? 32 : 42, right: 35),
+                    left: Responsive.isMobile(context) ? 28 : 42, right: 12),
                 child: SizedBox(
                   height: Responsive.isMobile(context)
                       ? 180
@@ -222,15 +218,9 @@ class HomeScreen extends StatelessWidget {
                       final item = controller
                           .circleItems[index]; // Get item from model list
                       return Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: Responsive.isMobile(context)
-                                ? 18
-                                : isLargeScreen
-                                    ? 19
-                                    : 20.30,
-                            vertical: Responsive.isMobile(context) ? 6 : 6
-
-                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                      vertical: 6),
                         child: CircleContainerWidget(
                           ontap: () {
                             if (onNavigate != null) {
@@ -250,7 +240,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
-// Left Arrow button with padding for spacing
+//Left Arrow button with padding for spacing
               Positioned(
                 left: 10, // Adjust the value to add space from the list
                 top: 0,
@@ -264,7 +254,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
-// Right Arrow button with padding for spacing
+// // Right Arrow button with padding for spacing
               Positioned(
                 right: 10, // Adjust the value to add space from the list
                 top: 0,
@@ -299,7 +289,7 @@ class HomeScreen extends StatelessWidget {
             children: [
               Padding(
                 padding: EdgeInsets.only(
-                    left: Responsive.isMobile(context) ? 32 : 42, right: 35),
+                    left: Responsive.isMobile(context) ? 28 : 42, right: 12),
                 child: SizedBox(
                   height: Responsive.isMobile(context)
                       ? 180
@@ -317,7 +307,7 @@ class HomeScreen extends StatelessWidget {
                       return Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: Responsive.isMobile(context)
-                                ? 18
+                                ? 24
                                 : isLargeScreen
                                 ? 19
                                 : 20.30,
@@ -371,7 +361,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: Responsive.isMobile(context) ? 25 : 50),
+          SizedBox(height: Responsive.isMobile(context) ? 45 : 50),
           Padding(
             padding: EdgeInsets.only(
               left: Responsive.isMobile(context) ? 18 : 48.0,
@@ -411,7 +401,7 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: Responsive.isMobile(context) ? 0 : 50),
+          SizedBox(height: Responsive.isMobile(context) ? 2 : 50),
           Obx(() {
             // Determine item count based on screen type
             int itemCount;
@@ -433,10 +423,10 @@ class HomeScreen extends StatelessWidget {
               padding: EdgeInsets.only(
 
                 left: Responsive.isMobile(context)
-                    ? 18
+                    ? 14
                     : (isLargeScreen ? 48 : 46.0),
                 right: Responsive.isMobile(context)
-                    ? 18
+                    ? 14
                     : (isLargeScreen ? 48 : 42.0),
               ),
               child: GridView.builder(
@@ -444,7 +434,7 @@ class HomeScreen extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   mainAxisExtent: Responsive.isMobile(context)
-                      ? 263
+                      ? 293
                       : (isLargeScreen ? 450 : 350),
                   crossAxisCount: Responsive.isMobile(context)
                       ? 2
@@ -474,10 +464,11 @@ class HomeScreen extends StatelessWidget {
               ),
             );
           }),
-          SizedBox(height: Responsive.isMobile(context) ? 25 : 50),
+          SizedBox(height: Responsive.isMobile(context) ? 2 : 50),
           Padding(
             padding: EdgeInsets.only(
               left: Responsive.isMobile(context) ? 18 : 48.0,
+
               right: Responsive.isMobile(context) ? 18 : 48.0,
             ),
             child: Row(
@@ -536,10 +527,10 @@ class HomeScreen extends StatelessWidget {
             return Padding(
               padding: EdgeInsets.only(
                 left: Responsive.isMobile(context)
-                    ? 18
+                    ? 14
                     : (isLargeScreen ? 48 : 46.0),
                 right: Responsive.isMobile(context)
-                    ? 18
+                    ? 14
                     : (isLargeScreen ? 48 : 42.0),
               ),
               child: GridView.builder(
@@ -547,7 +538,7 @@ class HomeScreen extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   mainAxisExtent: Responsive.isMobile(context)
-                      ? 263
+                      ? 293
                       : (isLargeScreen ? 450 : 350),
                   crossAxisCount: Responsive.isMobile(context)
                       ? 2
@@ -577,7 +568,7 @@ class HomeScreen extends StatelessWidget {
               ),
             );
           }),
-          SizedBox(height: Responsive.isMobile(context) ? 25 : 50),
+          SizedBox(height: Responsive.isMobile(context) ? 2 : 50),
           Padding(
             padding: EdgeInsets.only(
               left: Responsive.isMobile(context) ? 18 : 48.0,
@@ -639,10 +630,10 @@ class HomeScreen extends StatelessWidget {
             return Padding(
               padding: EdgeInsets.only(
                 left: Responsive.isMobile(context)
-                    ? 18
+                    ? 14
                     : (isLargeScreen ? 48 : 46.0),
                 right: Responsive.isMobile(context)
-                    ? 18
+                    ? 14
                     : (isLargeScreen ? 48 : 42.0),
               ),
               child: GridView.builder(
@@ -650,7 +641,7 @@ class HomeScreen extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   mainAxisExtent: Responsive.isMobile(context)
-                      ? 263
+                      ? 293
                       : (isLargeScreen ? 450 : 350),
                   crossAxisCount: Responsive.isMobile(context)
                       ? 2
@@ -679,7 +670,7 @@ class HomeScreen extends StatelessWidget {
               ),
             );
           }),
-          SizedBox(height: Responsive.isMobile(context) ? 25 : 50),
+          SizedBox(height: Responsive.isMobile(context) ? 2 : 50),
           Padding(
             padding: EdgeInsets.only(
               left: Responsive.isMobile(context) ? 18 : 48.0,
@@ -719,7 +710,7 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: Responsive.isMobile(context) ? 0 : 50),
+          SizedBox(height: Responsive.isMobile(context) ? 2 : 50),
           Obx(() {
             // Determine item count based on screen type
             int itemCount;
@@ -740,10 +731,10 @@ class HomeScreen extends StatelessWidget {
             return Padding(
               padding: EdgeInsets.only(
                 left: Responsive.isMobile(context)
-                    ? 18
+                    ? 14
                     : (isLargeScreen ? 48 : 46.0),
                 right: Responsive.isMobile(context)
-                    ? 18
+                    ? 14
                     : (isLargeScreen ? 48 : 42.0),
               ),
               child: GridView.builder(
@@ -751,7 +742,7 @@ class HomeScreen extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   mainAxisExtent: Responsive.isMobile(context)
-                      ? 263
+                      ? 293
                       : (isLargeScreen ? 450 : 350),
                   crossAxisCount: Responsive.isMobile(context)
                       ? 2
@@ -760,7 +751,7 @@ class HomeScreen extends StatelessWidget {
                       ? 10
                       : (Responsive.isTablet(context) ? 8 : 10),
                   mainAxisSpacing: Responsive.isMobile(context)
-                      ? 0
+                      ? 10
                       : (Responsive.isTablet(context) ? 2 : 20),
                   childAspectRatio: itemWidth / itemHeight,
                 ),
@@ -781,130 +772,130 @@ class HomeScreen extends StatelessWidget {
               ),
             );
           }),
-          SizedBox(height: Responsive.isMobile(context) ? 25 : 50),
+          SizedBox(height: Responsive.isMobile(context) ? 2 : 50),
 
-          Padding(
-            padding: EdgeInsets.only(
-              left: Responsive.isMobile(context) ? 18 : 48.0,
-              right: Responsive.isMobile(context) ? 18 : 48.0,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Filter A z',
-                  style: TextStyle(
-                    color: AppColors.botomSheetColor,
-                    fontFamily: 'aftika-regular',
-                    fontSize: Responsive.isMobile(context) ? 18 : 40,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                InkWell(
-                    onTap: () {
-                      if (onNavigate != null) {
-                        onNavigate!(
-                            12);
-                        scrollcontroller.jumpTo(0);// Call the callback to navigate to the 7th screen
-                      }
-                    },
-                    child: Text(
-                      "view all 587 results",
-                      style: TextStyle(
-                          decoration: TextDecoration.underline,
-                          decorationColor: AppColors.primaryColor,
-                          fontFamily: ',',
-                          fontSize: Responsive.isMobile(context) ? 12 : 20,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.primaryColor),
-                    ))
-              ],
-            ),
-          ),
-          SizedBox(height: Responsive.isMobile(context) ? 8 : 20),
-          Padding(
-            padding: EdgeInsets.only(
-              left: Responsive.isMobile(context) ? 18 : 48.0,
-              right: Responsive.isMobile(context) ? 18 : 48.0,
-            ),
-            child: Text(
-              '# A B C D E F G H I J K L M N O',
-              style: TextStyle(
-                color: AppColors.textColor,
-                fontFamily: 'Nunito-Regular',
-                fontSize: Responsive.isMobile(context) ? 10 : 20,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ),
-          SizedBox(height: Responsive.isMobile(context) ? 8 : 20),
-          Obx(() {
-            //Determine item count based on screen type
-            int itemCount;
-            if (Responsive.isMobile(context)) {
-              itemCount = filterController.filterItem.length > 2
-                  ? 4
-                  : filterController.filterItem.length;
-            } else if (Responsive.isTablet(context)) {
-              itemCount = filterController.filterItem.length > 3
-                  ? 6
-                  : filterController.filterItem.length;
-            } else {
-              itemCount = filterController.filterItem.length > 4
-                  ? filterController.filterItem.length
-                  : filterController.filterItem.length;
-            }
-
-            return Padding(
-              padding: EdgeInsets.only(
-                left: Responsive.isMobile(context)
-                    ? 18
-                    : (isLargeScreen ? 48 : 46.0),
-                right: Responsive.isMobile(context)
-                    ? 18
-                    : (isLargeScreen ? 48 : 42.0),
-              ),
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  mainAxisExtent: Responsive.isMobile(context)
-                      ? 50
-                      : (isLargeScreen ? 120 : 100),
-                  crossAxisCount: Responsive.isMobile(context)
-                      ? 2
-                      : (Responsive.isTablet(context) ? 2 : 3),
-                  crossAxisSpacing: Responsive.isMobile(context)
-                      ? 10
-                      : (Responsive.isTablet(context) ? 8 : 10),
-                  mainAxisSpacing: Responsive.isMobile(context)
-                      ? 12
-                      : (Responsive.isTablet(context) ? 2 : 30),
-                  childAspectRatio: filterItemWidth / filterItemHeight,
-                ),
-                itemCount: itemCount,
-                itemBuilder: (context, index) {
-                  final item = filterController.filterItem[index];
-                  return InkWell(
-                    onTap: ()
-                  {
-                  if (onNavigate != null) {
-                  onNavigate!(8);
-                  scrollcontroller.jumpTo(0);
-                  //scrollcontroller.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);// Call the callback to navigate to the 7th screen
-                  }
-                  },
-                    child: CustomFilterWidget(
-                      title: item.title,
-                      description: item.description,
-                      imgPath: item.imagePath,
-                    ),
-                  );
-                },
-              ),
-            );
-          }),
-          SizedBox(height: Responsive.isMobile(context) ? 4 : 2),
+          // Padding(
+          //   padding: EdgeInsets.only(
+          //     left: Responsive.isMobile(context) ? 18 : 48.0,
+          //     right: Responsive.isMobile(context) ? 18 : 48.0,
+          //   ),
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //     children: [
+          //       Text(
+          //         'Filter A z',
+          //         style: TextStyle(
+          //           color: AppColors.botomSheetColor,
+          //           fontFamily: 'aftika-regular',
+          //           fontSize: Responsive.isMobile(context) ? 18 : 40,
+          //           fontWeight: FontWeight.w400,
+          //         ),
+          //       ),
+          //       InkWell(
+          //           onTap: () {
+          //             if (onNavigate != null) {
+          //               onNavigate!(
+          //                   12);
+          //               scrollcontroller.jumpTo(0);// Call the callback to navigate to the 7th screen
+          //             }
+          //           },
+          //           child: Text(
+          //             "view all 587 results",
+          //             style: TextStyle(
+          //                 decoration: TextDecoration.underline,
+          //                 decorationColor: AppColors.primaryColor,
+          //                 fontFamily: ',',
+          //                 fontSize: Responsive.isMobile(context) ? 12 : 20,
+          //                 fontWeight: FontWeight.w500,
+          //                 color: AppColors.primaryColor),
+          //           ))
+          //     ],
+          //   ),
+          // ),
+          // SizedBox(height: Responsive.isMobile(context) ? 8 : 20),
+          // Padding(
+          //   padding: EdgeInsets.only(
+          //     left: Responsive.isMobile(context) ? 18 : 48.0,
+          //     right: Responsive.isMobile(context) ? 18 : 48.0,
+          //   ),
+          //   child: Text(
+          //     '# A B C D E F G H I J K L M N O',
+          //     style: TextStyle(
+          //       color: AppColors.textColor,
+          //       fontFamily: 'Nunito-Regular',
+          //       fontSize: Responsive.isMobile(context) ? 10 : 20,
+          //       fontWeight: FontWeight.w400,
+          //     ),
+          //   ),
+          // ),
+          // SizedBox(height: Responsive.isMobile(context) ? 8 : 20),
+          // Obx(() {
+          //   //Determine item count based on screen type
+          //   int itemCount;
+          //   if (Responsive.isMobile(context)) {
+          //     itemCount = filterController.filterItem.length > 2
+          //         ? 4
+          //         : filterController.filterItem.length;
+          //   } else if (Responsive.isTablet(context)) {
+          //     itemCount = filterController.filterItem.length > 3
+          //         ? 6
+          //         : filterController.filterItem.length;
+          //   } else {
+          //     itemCount = filterController.filterItem.length > 4
+          //         ? filterController.filterItem.length
+          //         : filterController.filterItem.length;
+          //   }
+          //
+          //   return Padding(
+          //     padding: EdgeInsets.only(
+          //       left: Responsive.isMobile(context)
+          //           ? 18
+          //           : (isLargeScreen ? 48 : 46.0),
+          //       right: Responsive.isMobile(context)
+          //           ? 18
+          //           : (isLargeScreen ? 48 : 42.0),
+          //     ),
+          //     child: GridView.builder(
+          //       shrinkWrap: true,
+          //       physics: const NeverScrollableScrollPhysics(),
+          //       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          //         mainAxisExtent: Responsive.isMobile(context)
+          //             ? 50
+          //             : (isLargeScreen ? 120 : 100),
+          //         crossAxisCount: Responsive.isMobile(context)
+          //             ? 2
+          //             : (Responsive.isTablet(context) ? 2 : 3),
+          //         crossAxisSpacing: Responsive.isMobile(context)
+          //             ? 10
+          //             : (Responsive.isTablet(context) ? 8 : 10),
+          //         mainAxisSpacing: Responsive.isMobile(context)
+          //             ? 12
+          //             : (Responsive.isTablet(context) ? 2 : 30),
+          //         childAspectRatio: filterItemWidth / filterItemHeight,
+          //       ),
+          //       itemCount: itemCount,
+          //       itemBuilder: (context, index) {
+          //         final item = filterController.filterItem[index];
+          //         return InkWell(
+          //           onTap: ()
+          //         {
+          //         if (onNavigate != null) {
+          //         onNavigate!(8);
+          //         scrollcontroller.jumpTo(0);
+          //         //scrollcontroller.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);// Call the callback to navigate to the 7th screen
+          //         }
+          //         },
+          //           child: CustomFilterWidget(
+          //             title: item.title,
+          //             description: item.description,
+          //             imgPath: item.imagePath,
+          //           ),
+          //         );
+          //       },
+          //     ),
+          //   );
+          // }),
+          // SizedBox(height: Responsive.isMobile(context) ? 4 : 2),
         ],
       );
     });

@@ -15,18 +15,18 @@ class Tabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return OverflowBar(
+      overflowAlignment: OverflowBarAlignment.center,
       children: [
         Container(
-          height: Responsive.isMobile(context) ? 25 :Responsive.isTablet(context) ?40 :55,
-          width: Get.width * 0.6,
+          height: Responsive.isMobile(context) ? 35 :Responsive.isTablet(context) ?40 :55,
+          width: Get.width * 0.9,
           decoration: BoxDecoration(
               color: const Color(0xFFEEEFF2),
               borderRadius: BorderRadius.circular(
                   Responsive.isMobile(context) ? 4 :Responsive.isTablet(context) ?6: 10)),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(
               controller.top.length,
                   (index) {
@@ -42,7 +42,7 @@ class Tabs extends StatelessWidget {
                           },
                           child: Container(
                             height: Responsive.isMobile(context)
-                                ? 20
+                                ? 25
                                 :Responsive.isTablet(context) ?30
 
                                 : 40,
@@ -67,10 +67,10 @@ class Tabs extends StatelessWidget {
                               child: Text(
                                 controller.top[index],
                                 style: TextStyle(
-                                    fontWeight: FontWeight.w500,
+                                    fontWeight: FontWeight.w600,
                                     fontSize: Responsive.isMobile(
                                         context)
-                                        ? 12
+                                        ? 13
                                         :Responsive.isTablet(context) ?14
                                         : 20,
                                     color: controller.selectedTop
@@ -89,31 +89,37 @@ class Tabs extends StatelessWidget {
             ),
           ),
         ),
-         Row(
-           //mainAxisAlignment: MainAxisAlignment.end,
-          //crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
+         Column(
+           children: [
+             SizedBox(height: 14,),
+             Row(
+               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
 
-            Icon(
-              Icons.access_time_filled,
-              color: AppColors.primaryColor,
-            ),
-            SizedBox(
-              width: 8,
-            ),
-            Text(
-              'choose time & discount',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Color(0xFF4F5761),
-                fontSize: Responsive.isMobile(context) ? 8 :Responsive.isTablet(context) ?10:14,
-                fontFamily: 'Nunito-Regular',
-                fontWeight: FontWeight.w400,
-                height: 0.16,
-              ),
-            ),
-          ],
-        )
+                Icon(
+                  Icons.access_time_filled,
+                  color: AppColors.primaryColor,
+                  size: 20,
+                ),
+                SizedBox(
+                  width: 8,
+                ),
+                Text(
+                  'choose time & discount',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Color(0xFF4F5761),
+                    fontSize: Responsive.isMobile(context) ? 11 :Responsive.isTablet(context) ?10:14,
+                    fontFamily: 'Nunito-Regular',
+                    fontWeight: FontWeight.w400,
+                    height: 0.16,
+                  ),
+                ),
+              ],
+                     ),
+           ],
+         )
       ],
     );
   }

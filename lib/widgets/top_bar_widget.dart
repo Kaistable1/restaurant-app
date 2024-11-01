@@ -29,71 +29,109 @@ class TopBarWidget extends StatefulWidget {
 class _TopBarWidgetState extends State<TopBarWidget> {
   int _selectedIndex = 0;
   final List<Widget> _screens = [];
+  final List<String> _titles = [
+    'Home',
+    'Favorites',
+    'Terms and conditions',
+    'Privacy policy',
+    'About app',
+    'Contact us',
+    'Recently viewed',
+    'Location',
+    'Restaurant details',
+    'Cuisines',
+    'Trending',
+    'New',
+    'Restaurants'
+  ];
+
   final scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
     _screens.addAll([
-      HomeScreen(onNavigate: _onItemTapped, scrollcontroller: scrollController,), // Pass the callback here
-      FavoriteScreen(scrollcontroller: scrollController,onNavigate: _onItemTapped),
-      const TermsAndCondition(),
-      const PrivacyPolicy(),
-      const AboutApp(),
-      ContactUs(onNavigate: _onItemTapped,scrollcontroller: scrollController,),
-      RecentlyViewed(onNavigate: _onItemTapped, scrollcontroller: scrollController,),
-      LocationScreen(onNavigate: _onItemTapped, scrollcontroller: scrollController,),
+      HomeScreen(onNavigate: _onItemTapped, scrollcontroller: scrollController), // Pass the callback here
+      FavoriteScreen(scrollcontroller: scrollController, onNavigate: _onItemTapped),
+       TermsAndCondition(onNavigate: _onItemTapped,),
+       PrivacyPolicy(onNavigate: _onItemTapped),
+       AboutApp(onNavigate: _onItemTapped),
+      ContactUs(onNavigate: _onItemTapped, scrollcontroller: scrollController),
+      RecentlyViewed(onNavigate: _onItemTapped, scrollcontroller: scrollController),
+      LocationScreen(onNavigate: _onItemTapped, scrollcontroller: scrollController),
       RestaurantDetailScreen(onNavigate: _onItemTapped),
-      CuisinesViewAll(onNavigate: _onItemTapped, scrollcontroller: scrollController,),
-      TrendingViewAll(onNavigate: _onItemTapped, scrollcontroller: scrollController,),
-      NewViewall(onNavigate: _onItemTapped, scrollcontroller: scrollController,),
-      ResturantsViewall(onNavigate: _onItemTapped)
+      CuisinesViewAll(onNavigate: _onItemTapped, scrollcontroller: scrollController),
+      TrendingViewAll(onNavigate: _onItemTapped, scrollcontroller: scrollController),
+      NewViewall(onNavigate: _onItemTapped, scrollcontroller: scrollController),
+      ResturantsViewall(onNavigate: _onItemTapped),
     ]);
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: AppColors.bgColor,
-      // Add a drawer for mobile views
       appBar: Responsive.isMobile(context)
           ? AppBar(
         centerTitle: true,
         backgroundColor: AppColors.bgColor,
         iconTheme: const IconThemeData(color: AppColors.primaryColor),
-        title: InkWell(
-          onTap: (){
-            _onItemTapped(0);
-
-
-          },
-          child: Image.asset(
-            'assets/images/topbar_logo.png',
-            height: 35,
+        // Show the back button if we're on certain screens
+        leading: (_selectedIndex != 0)
+            ? Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Container(
+            height: 16,
+            width: 16,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  spreadRadius: 1,
+                  blurRadius: 3,
+                  offset: const Offset(0, 1),
+                ),
+              ],
+            ),
+            child: GestureDetector(
+              onTap: () {
+                _onItemTapped(0); // Navigate back to the home screen
+              },
+              child: Icon(Icons.arrow_back, size: 18),
+            ),
+          ),
+        )
+            : null, // Default leading icon (drawer icon) if on Home Screen
+        title: Text(
+          _titles[_selectedIndex], // Display the title of the selected screen
+          style: const TextStyle(
+            fontSize: 20,
+            color: AppColors.primaryColor,
+            fontWeight: FontWeight.w700,
+            fontFamily: 'Nunito-Bold',
           ),
         ),
         actions: [
-          Row(
+          const SizedBox(width: 20),
+          _selectedIndex == 0 // Only show on the home screen
+              ? Row(
             children: [
-               InkWell(
-                 onTap: () {
-                   _onItemTapped(7);
-
-
-                 },
-                 child: Image(
-                    image: AssetImage('assets/images/location_icon.png'),
-                    height: 12,
-                    width:12
-                               ),
-               ),
-              const SizedBox(width: 3),
               InkWell(
-                onTap: (){
+                onTap: () {
                   _onItemTapped(7);
-
-
+                },
+                child: const Image(
+                  image: AssetImage('assets/images/location_icon.png'),
+                  height: 12,
+                  width: 12,
+                ),
+              ),
+              const SizedBox(width: 1),
+              InkWell(
+                onTap: () {
+                  _onItemTapped(7);
                 },
                 child: Text(
                   'USA.Los Vegas',
@@ -106,179 +144,38 @@ class _TopBarWidgetState extends State<TopBarWidget> {
                         : FontWeight.w600,
                     fontFamily: 'Nunito-Regular',
                     fontSize: Responsive.isMobile(context)
-                        ? 8
+                        ?9
                         : Responsive.isTablet(context)
                         ? 14
                         : 16,
                   ),
                 ),
               ),
-              const SizedBox(width: 20,),
+              const SizedBox(width: 20),
             ],
-          ),
+          )
+              : const SizedBox.shrink(), // Show nothing if not on home screen
         ],
+
       )
           : null,
-      drawer: Responsive.isMobile(context) ? _buildDrawer() : null,
+      drawer: _selectedIndex == 8 ? null : _buildDrawer(), // Disable drawer in RestaurantDetailScreen
       body: SingleChildScrollView(
         controller: scrollController,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (!Responsive.isMobile(context)) _buildTopBar(context),
             _screens[_selectedIndex],
             SizedBox(
-                height: Responsive.isMobile(context)
-                    ? 60
-                    : Responsive.isTablet(context)
-                        ? 100
-                        : 50),
-            BottomContainer(onNavigate: _onItemTapped, scrollcontroller:scrollController ,),
+              height: Responsive.isMobile(context)
+                  ? 60
+                  : Responsive.isTablet(context)
+                  ? 100
+                  : 50,
+            ),
           ],
         ),
-      )
-    );
-  }
-
-  Widget _buildTopBar(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    bool isLargeScreen = screenWidth > 1400;
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // SizedBox(
-        //     width: Responsive.isMobile(context)
-        //         ? 8
-        //         : Responsive.isTablet(context)
-        //         ? 10
-        //         : 10),
-        Container(
-          height: Responsive.isMobile(context)
-              ? 50
-              : Responsive.isTablet(context)
-                  ? 70
-                  : 90,
-          // padding: EdgeInsets.all(Responsive.isMobile(context)
-          //     ? 4
-          //     : Responsive.isTablet(context)
-          //         ? 6
-          //         : 9),
-          color: AppColors.bgColor,
-          child: Row(
-            mainAxisAlignment: Responsive.isMobile(context)
-                ? MainAxisAlignment.center
-                : MainAxisAlignment.spaceEvenly,
-            children: [
-              SizedBox(
-                  width: Responsive.isMobile(context)
-                      ? 50
-                      : Responsive.isTablet(context)
-                          ? 15
-                          :6),
-              InkWell(
-                onTap: () {
-                  _onItemTapped(0);
-                },
-                child: Image(
-                  image: const AssetImage('assets/images/topbar_logo.png'),
-                  height: Responsive.isMobile(context)
-                      ? 22
-                      : Responsive.isTablet(context)
-                          ? 35
-                          : isLargeScreen
-                              ? 100
-                              : 43,
-                  width: Responsive.isMobile(context)
-                      ? 50
-                      : Responsive.isTablet(context)
-                          ? 90
-                          : isLargeScreen
-                              ? 180
-                              : 120,
-                ),
-              ),
-              SizedBox(
-                  width: Responsive.isMobile(context)
-                      ? 8
-                      : Responsive.isTablet(context)
-                          ? 20
-                      : isLargeScreen
-                      ? 300
-                          : 140),
-              _buildNavItem('Home', 0),
-              _buildNavItem('Favorites', 1),
-              _buildNavItem('Terms and conditions', 2),
-              _buildNavItem('Privacy policy', 3),
-              _buildNavItem('About app', 4),
-              _buildNavItem('Contact us', 5),
-              SizedBox(
-                  width: Responsive.isMobile(context)
-                      ? 8
-                      : Responsive.isTablet(context)
-                          ? 10
-                      : isLargeScreen
-                      ? 200
-                          : 80),
-              Padding(
-                padding: const EdgeInsets.only(right:18.0),
-                child: Row(
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        _onItemTapped(7);
-
-
-                      },
-                      child: Image(
-                        image: const AssetImage('assets/images/location_icon.png'),
-                        height: Responsive.isMobile(context)
-                            ? 12
-                            : Responsive.isTablet(context)
-                                ? 16
-                                : 22,
-                        width: Responsive.isMobile(context)
-                            ? 12
-                            : Responsive.isTablet(context)
-                                ? 16
-                                : 22,
-                      ),
-                    ),
-                    const SizedBox(width: 3),
-                    InkWell(
-                      onTap: () {
-                        _onItemTapped(7);
-
-
-                      },
-                      child: Text(
-                        'USA.Los Vegas',
-                        style: TextStyle(
-                          color: AppColors.textColor,
-                          fontWeight: Responsive.isMobile(context)
-                              ? FontWeight.w800
-                              : Responsive.isTablet(context)
-                                  ? FontWeight.w600
-                                  : FontWeight.w600,
-                          fontFamily: 'Nunito-Regular',
-                          fontSize:  Responsive.isMobile(context)
-                              ? 8
-                              : Responsive.isTablet(context)
-                              ? 12
-                              : 16,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: isLargeScreen
-                      ? 200
-                      : 20,)
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
+      ),
     );
   }
 
@@ -321,39 +218,15 @@ class _TopBarWidgetState extends State<TopBarWidget> {
       title: Text(
         title,
         style: TextStyle(
-          decoration: _selectedIndex == index ||
-                  (_selectedIndex == 6 && index == 0) ||
-                  (_selectedIndex == 7 && index == 0) ||
-                  (_selectedIndex == 8 && index == 0)||
-              (_selectedIndex == 9 && index == 0)||
-              (_selectedIndex == 10 && index == 0)||
-              (_selectedIndex == 11 && index == 0)||
-              (_selectedIndex == 12 && index == 0)
+          decoration: _selectedIndex == index
               ? TextDecoration.underline
               : TextDecoration.none,
           decorationThickness: 1.5,
           decorationColor: AppColors.primaryColor,
           fontSize: 14,
           fontFamily: 'Nunito-Bold',
-          color: _selectedIndex == index ||
-                  (_selectedIndex == 6 && index == 0) ||
-                  (_selectedIndex == 7 && index == 0) ||
-                  (_selectedIndex == 8 && index == 0)||
-              (_selectedIndex == 9 && index == 0)||
-              (_selectedIndex == 10 && index == 0)||
-              (_selectedIndex == 11 && index == 0)||
-              (_selectedIndex == 12 && index == 0)
-              ? AppColors.primaryColor
-              : AppColors.textColor,
-          fontWeight: _selectedIndex == index ||
-                  (_selectedIndex == 6 && index == 0) ||
-                  (_selectedIndex == 8 && index == 0)||
-              (_selectedIndex == 9 && index == 0)||
-              (_selectedIndex == 10 && index == 0)||
-              (_selectedIndex == 11 && index == 0)||
-              (_selectedIndex == 12 && index == 0)
-              ? FontWeight.w700
-              : FontWeight.w700,
+          color: _selectedIndex == index ? AppColors.primaryColor : AppColors.textColor,
+          fontWeight: FontWeight.w700,
         ),
       ),
       onTap: () {
@@ -364,75 +237,5 @@ class _TopBarWidgetState extends State<TopBarWidget> {
       },
     );
   }
-
-
-  Widget _buildNavItem(String title, int index) {
-    return InkWell(
-      onTap: () {
-        setState(() {
-          _selectedIndex = index; // Update the selected index
-        });
-      },
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: Responsive.isMobile(context)
-                  ? 8
-                  : Responsive.isTablet(context)
-                  ? 12
-                  : 16,
-              fontFamily: 'Nunito-Regular',
-              color: (_selectedIndex == index ||
-                  (_selectedIndex == 6 && index == 0) ||
-                  (_selectedIndex == 7 && index == 0) ||
-                  (_selectedIndex == 8 && index == 0)||
-                  (_selectedIndex == 9 && index == 0)||
-                  (_selectedIndex == 10 && index == 0)||
-                  (_selectedIndex == 11 && index == 0)||
-                  (_selectedIndex == 12 && index == 0)
-
-
-              )
-                  ? AppColors.primaryColor
-                  : AppColors.textColor,
-              fontWeight: (_selectedIndex == index ||
-                  (_selectedIndex == 6 && index == 0) ||
-                  (_selectedIndex == 7 && index == 0) ||
-                  (_selectedIndex == 8 && index == 0)||
-                  (_selectedIndex == 9 && index == 0)||
-                  (_selectedIndex == 10 && index == 0)||
-                  (_selectedIndex == 11 && index == 0)||
-                  (_selectedIndex == 12 && index == 0))
-                  ? FontWeight.w600
-                  : FontWeight.w600,
-            ),
-          ),
-          if (_selectedIndex == index ||
-              (_selectedIndex == 6 && index == 0) ||
-              (_selectedIndex == 7 && index == 0) ||
-              (_selectedIndex == 8 && index == 0)||
-              (_selectedIndex == 9 && index == 0)||
-              (_selectedIndex == 10 && index == 0)||
-              (_selectedIndex == 11 && index == 0)||
-              (_selectedIndex == 12 && index == 0))
-            Positioned(
-
-              bottom: 3, // Adjust this value to increase or decrease the space
-              child: Container(
-                height: 1, // Thickness of the underline
-                width: title.length * (Responsive.isMobile(context) ? 8 : Responsive.isTablet(context) ? 12 : 16), // Adjust width based on font size
-                color: AppColors.primaryColor, // Underline color
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
-
-
-
 }
+

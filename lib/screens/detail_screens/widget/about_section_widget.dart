@@ -14,6 +14,7 @@ class AboutSectionWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        SizedBox(height: 20,),
         Text(
           'About XYZ ',
           style: TextStyle(
@@ -33,6 +34,7 @@ class AboutSectionWidget extends StatelessWidget {
             fontWeight: FontWeight.w400,
           ),
         ),
+        SizedBox(height: 20,),
         Text(
           'Operating hours ',
           style: TextStyle(
@@ -60,7 +62,7 @@ class AboutSectionWidget extends StatelessWidget {
                       inside: BorderSide(
                           width: 1, color: Colors.grey.withOpacity(0.5))),
                   columnWidths: {
-                    0: const FlexColumnWidth(2),
+                    0: const FlexColumnWidth(1.4),
                     1: const FlexColumnWidth(4),
                   },
                   children: [
@@ -84,6 +86,7 @@ class AboutSectionWidget extends StatelessWidget {
             ),
           ),
         ),
+        SizedBox(height: 20,)
       ],
     );
   }
@@ -99,7 +102,7 @@ class AboutSectionWidget extends StatelessWidget {
             style: TextStyle(
               fontWeight: FontWeight.w500,
               color: Color(0xFF555555),
-              fontSize: 16,
+              fontSize: 14,
               fontFamily: 'Nunito-Regular',
             ),
             textAlign: TextAlign.center,
@@ -109,7 +112,7 @@ class AboutSectionWidget extends StatelessWidget {
             style: TextStyle(
               fontWeight: FontWeight.w500,
               color: Color(0xFF555555),
-              fontSize: 16,
+              fontSize: 14,
               fontFamily: 'Nunito-Regular',
             ),
             textAlign: TextAlign.center,
@@ -119,7 +122,7 @@ class AboutSectionWidget extends StatelessWidget {
             style: TextStyle(
               fontWeight: FontWeight.w500,
               color: Color(0xFF555555),
-              fontSize: 16,
+              fontSize: 14,
               fontFamily: 'Nunito-Regular',
             ),
             textAlign: TextAlign.center,
@@ -131,20 +134,23 @@ class AboutSectionWidget extends StatelessWidget {
   TableRow tableRow(String day, String time) {
     return TableRow(
       children: [
-        Center( 
-          child: Text(
-            day,
-            style: const TextStyle(
-              fontWeight: FontWeight.w500,
-              color: Color(0xFF555555),
-              fontSize: 16,
-              fontFamily: 'Nunito-Regular',
+        Padding(
+          padding: const EdgeInsets.only(top: 18.0),
+          child: Center(
+            child: Text(
+              day,
+              style: const TextStyle(
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF555555),
+                fontSize: 13,
+                fontFamily: 'Nunito-Regular',
+              ),
+              // textAlign: TextAlign.center,
             ),
-            // textAlign: TextAlign.center,
           ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0,vertical: 12),
           child: tableCell(time, isHighlighted: true),
         ),
       ],
@@ -156,16 +162,17 @@ class AboutSectionWidget extends StatelessWidget {
   Widget tableCell(String text,
       {bool isHeader = false, bool isHighlighted = false}) {
     return Container(
-      padding: const EdgeInsets.all(16.0),
-      margin: const EdgeInsets.all(16.0),
+     // width: 140,
+      //padding: const EdgeInsets.all(4.0),
+      //margin: const EdgeInsets.all(20.0),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(4),
         color: isHighlighted ? const Color(0xFF90D26D) : Colors.white,
       ),
       child: Text(
         text,
         style: TextStyle(
-          fontSize: 16,
+          fontSize: 14,
           fontWeight: FontWeight.w700,
           fontFamily: 'Nunito-Regular',
           color: isHeader ? Colors.black : Colors.white,

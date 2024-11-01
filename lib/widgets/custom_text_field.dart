@@ -17,6 +17,7 @@ class CustomTextFormField extends StatelessWidget {
   final double? imgHeight;
   final double? imgWidth;
   final Widget? suffexWidget;
+  final double? topPadding;
   final bool isShadow;
   final FontWeight? hintfontWeight;// Add this line
 
@@ -32,7 +33,7 @@ class CustomTextFormField extends StatelessWidget {
     this.controller,
     this.onChanged,
     this.maxLines,
-    this.prefixImagePath, this.imgHeight, this.imgWidth, this.suffexWidget, this.isShadow = true, this.hintfontWeight, // Add this line
+    this.prefixImagePath, this.imgHeight, this.imgWidth, this.suffexWidget, this.isShadow = true, this.hintfontWeight, this.topPadding, // Add this line
   });
 
   @override
@@ -74,15 +75,15 @@ class CustomTextFormField extends StatelessWidget {
           ),
           border: InputBorder.none, // Removes the default border
           contentPadding: EdgeInsets.only(
-            top: Responsive.isMobile(context) ? 6 : 12,
-            bottom: Responsive.isMobile(context) ? 20 : 12,
-            left: Responsive.isMobile(context) ? 9 : 14,
-            right: Responsive.isMobile(context) ? 9 : 20,
+            top: topPadding??11,
+            // bottom: Responsive.isMobile(context) ? 20 : 12,
+            left: Responsive.isMobile(context) ? 14 : 14,
+            // right: Responsive.isMobile(context) ? 9 : 20,
           ),
           suffix: suffexWidget,
           prefixIcon: prefixImagePath != null // Add this check for prefix icon
               ? Padding(
-            padding:  EdgeInsets.all(Responsive.isMobile(context) ? 12 :14),
+            padding:  EdgeInsets.all(15),
             child: Image.asset(
               prefixImagePath!,
               fit: BoxFit.contain,

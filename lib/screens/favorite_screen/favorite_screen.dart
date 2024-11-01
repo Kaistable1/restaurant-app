@@ -20,80 +20,42 @@ class FavoriteScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     bool isLargeScreen = screenWidth > 1400;
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        int itemsPerRow = Responsive.isMobile(context)
-            ? 2
-            : Responsive.isTablet(context)
-                ? 3
-                : 4;
-        double itemWidth = (constraints.maxWidth / itemsPerRow) - 16;
-        double itemHeight = Responsive.isMobile(context)
-            ?0
-            : (isLargeScreen ? 500 : 500); // Set a fixed height for items
+    return WillPopScope(
+      onWillPop: ()async{
+        if (onNavigate != null) {
+          onNavigate!(0); // Call the callback to navigate to the 7th screen
+        }
+        return false;
 
-        return Padding(
-          padding:  EdgeInsets.only(
-
-              left:Responsive.isMobile(context)
-              ?16: 38.0,right: Responsive.isMobile(context)
-              ?10:38),
-          child: Column(
+      },
+      child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'Favorites',
-                  style: TextStyle(
-                    color: AppColors.botomSheetColor,
-                    fontFamily: 'aftika-regular',
-                    fontSize: Responsive.isMobile(context) ? 22 : 40,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ),
-               SizedBox(height: Responsive.isMobile(context) ? 0 :20),
+               SizedBox(height:  30 ),
               Obx(() {
-
 
                 return Padding(
                   padding: EdgeInsets.only(
-                    left: Responsive.isMobile(context)
-                        ? 18
-                        : (isLargeScreen ? 48 : 6.0),
-                    right: Responsive.isMobile(context)
-                        ? 18
-                        : (isLargeScreen ? 48 : 4.0),
+                    left: 8,
+                    right: 8
                   ),
                   child: GridView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      mainAxisExtent: Responsive.isMobile(context)
-                          ? 263
-                          : (isLargeScreen ? 400 : 350),
-                      crossAxisCount: Responsive.isMobile(context)
-                          ? 2
-                          : (Responsive.isTablet(context) ? 3 : 4),
-                      crossAxisSpacing: Responsive.isMobile(context)
-                          ? 10
-                          : (Responsive.isTablet(context) ? 8 : 10),
-                      mainAxisSpacing: Responsive.isMobile(context)
-                          ? 0
-                          : (Responsive.isTablet(context) ? 2 : 20),
-                      childAspectRatio: itemWidth / itemHeight,
+                      mainAxisExtent: 293,
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 10,      // Adjust this if needed for column spacing
+                      mainAxisSpacing: 5,        // Reduced mainAxisSpacing to minimize row spacing
                     ),
                     itemCount: controller.favoriteItems.length,
                     itemBuilder: (context, index) {
                       final item = controller.favoriteItems[index];
                       return InkWell(
                         onTap: () {
-
-
-
                           if (onNavigate != null) {
-                            onNavigate!(8); // Call the callback to navigate to the 7th screen
+                            onNavigate!(8);
                           }
                         },
                         child: CustomRectangleWidget(
@@ -102,11 +64,14 @@ class FavoriteScreen extends StatelessWidget {
                           description: item.description,
                           imagePath: item.imagePath,
                           timetext: item.timetext,
-                          percentText: item.percentText, isFavorite: true.obs, scrollcontroller: scrollcontroller,
+                          percentText: item.percentText,
+                          isFavorite: true.obs,
+                          scrollcontroller: scrollcontroller,
                         ),
                       );
                     },
-                  ),
+                  )
+
                 );
 
 
@@ -114,11 +79,11 @@ class FavoriteScreen extends StatelessWidget {
 
 
               ,
-              SizedBox(height: 2,)
+
             ],
           ),
-        );
-      },
     );
+
+
   }
 }

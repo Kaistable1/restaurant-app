@@ -14,7 +14,7 @@ class MapWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(4),
       child: GoogleMap(
         markers: {
           const Marker(
@@ -49,6 +49,7 @@ class MapDetailWidget extends StatelessWidget {
     return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        SizedBox(height: 20,),
         Text(
           'Address',
           style: TextStyle(
@@ -61,17 +62,21 @@ class MapDetailWidget extends StatelessWidget {
         SizedBox(
           height: 4,
         ),
-        Text(
-          'shop g31, g/f, park central 9 tong tank, tseung kwan',
-          style: TextStyle(
-            color: AppColors.darkGrey,
-            fontSize: 14,
-            fontFamily: 'Nunito-Regular',
-            fontWeight: FontWeight.w400,
+        SizedBox(
+          height:40,
+          width: 290,
+          child: Text(
+            'shop g31, g/f, park central 9 tong tank, tseung kwan',
+            style: TextStyle(
+              color: AppColors.darkGrey,
+              fontSize: 14,
+              fontFamily: 'Nunito-Regular',
+              fontWeight: FontWeight.w400,
+            ),
           ),
         ),
         SizedBox(
-          height: 50,
+          height: 30,
         ),
         Text(
           'Atmospheres',
@@ -94,7 +99,7 @@ class MapDetailWidget extends StatelessWidget {
             fontWeight: FontWeight.w400,
           ),
         )  , SizedBox(
-          height: 50,
+          height: 30,
         ),
         Text(
           'Facilities',
@@ -118,7 +123,7 @@ class MapDetailWidget extends StatelessWidget {
           ),
         ),
         SizedBox(
-          height: 50,
+          height: 30,
         ),
         Text(
           'Spoken Languages',
@@ -140,7 +145,8 @@ class MapDetailWidget extends StatelessWidget {
             fontFamily: 'Nunito-Regular',
             fontWeight: FontWeight.w400,
           ),
-        )
+        ),
+        SizedBox(height: 10,),
       ],
     );
   }

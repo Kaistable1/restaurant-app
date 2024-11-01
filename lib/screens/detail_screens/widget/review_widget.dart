@@ -18,52 +18,100 @@ class ReviewWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(
-                children: [
-                  Text(
-                    '(4.0)',
-                    style: TextStyle(
-                      fontFamily: 'Nunito-Regular',
-                      fontSize: Responsive.isMobile(
-                          context)
-                          ? 12
-                          : Responsive.isTablet(context)
-                          ? 22
-                          : isLargeScreen
-                          ? 54
-                          : 44,
-                      fontWeight: FontWeight.w500,
-                      color: const Color(0xFF281717),
-                    ),
+        SizedBox(height: 14,),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+
+            Column(
+              children: [
+
+                Text(
+                  '(4.0)',
+                  style: TextStyle(
+                    fontFamily: 'Nunito-Regular',
+                    fontSize: Responsive.isMobile(
+                        context)
+                        ? 20
+                        : Responsive.isTablet(context)
+                        ? 22
+                        : isLargeScreen
+                        ? 54
+                        : 44,
+                    fontWeight: FontWeight.w500,
+                    color: const Color(0xFF281717),
                   ),
-                  SizedBox(
-                    height: Responsive.isMobile(context)
-                        ? 7
+                ),
+                SizedBox(
+                  height: Responsive.isMobile(context)
+                      ? 8
+                      : Responsive.isTablet(context)
+                      ? 10
+                      : isLargeScreen
+                      ? 24
+                      : 14,
+                  child: RatingBar(
+                    itemSize: Responsive.isMobile(
+                        context)
+                        ? 8
                         : Responsive.isTablet(context)
                         ? 10
                         : isLargeScreen
                         ? 24
                         : 14,
-                    child: RatingBar(
+                    ignoreGestures: true,
+                    initialRating: 4,
+                    minRating: 1,
+                    direction: Axis.horizontal,
+                    allowHalfRating: true,
+                    itemCount: 5,
+                    ratingWidget: RatingWidget(
+                      full: Image.asset(
+                        'assets/images/star yellow.png',
+                        height: 14,
+                      ),
+                      half: Image.asset(
+                        'assets/images/star yellow.png',
+                        height: 14,
+                      ),
+                      empty: Image.asset(
+                        'assets/images/star_empty.png',
+                        height: 14,
+                      ),
+                    ),
+                    itemPadding: const EdgeInsets.only(
+                        left: 2.0),
+                    onRatingUpdate: (rating) {
+                      print(rating);
+                    },
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              width: Responsive.isMobile(context)
+                  ? 14
+                  : 32,
+            ),
+            Column(
+              children: List.generate(5, (index) {
+                return Row(
+                  children: [
+                    RatingBar(
                       itemSize: Responsive.isMobile(
                           context)
-                          ? 7
+                          ? 16
                           : Responsive.isTablet(context)
-                          ? 10
+                          ? 16
                           : isLargeScreen
-                          ? 24
-                          : 14,
-                      ignoreGestures: true,
-                      initialRating: 4,
+                          ? 38
+                          : 28,
+                      ignoreGestures: false,
+                      initialRating: 5 - index.toDouble(),
                       minRating: 1,
                       direction: Axis.horizontal,
                       allowHalfRating: true,
@@ -71,155 +119,113 @@ class ReviewWidget extends StatelessWidget {
                       ratingWidget: RatingWidget(
                         full: Image.asset(
                           'assets/images/star yellow.png',
-                          height: 14,
+                          height: Responsive.isMobile(
+                              context)
+                              ? 32
+                              : 56,
+                          width: Responsive.isMobile(
+                              context)
+                              ? 32
+                              : 56,
                         ),
                         half: Image.asset(
                           'assets/images/star yellow.png',
-                          height: 14,
+                          height: Responsive.isMobile(
+                              context)
+                              ? 32
+                              : 56,
+                          width: Responsive.isMobile(
+                              context)
+                              ? 32
+                              : 56,
                         ),
                         empty: Image.asset(
                           'assets/images/star_empty.png',
-                          height: 14,
+                          color:
+                          const Color(0xFFBBBBBB),
+                          height: Responsive.isMobile(
+                              context)
+                              ? 32
+                              : 56,
+                          width: Responsive.isMobile(
+                              context)
+                              ? 32
+                              : 56,
                         ),
                       ),
-                      itemPadding: const EdgeInsets.only(
+                      itemPadding:
+                      const EdgeInsets.only(
                           left: 2.0),
                       onRatingUpdate: (rating) {
                         print(rating);
                       },
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                width: Responsive.isMobile(context)
-                    ? 14
-                    : 32,
-              ),
-              Column(
-                children: List.generate(5, (index) {
-                  return Row(
-                    children: [
-                      RatingBar(
-                        itemSize: Responsive.isMobile(
-                            context)
-                            ? 10
-                            : Responsive.isTablet(context)
-                            ? 16
-                            : isLargeScreen
-                            ? 38
-                            : 28,
-                        ignoreGestures: false,
-                        initialRating: 5 - index.toDouble(),
-                        minRating: 1,
-                        direction: Axis.horizontal,
-                        allowHalfRating: true,
-                        itemCount: 5,
-                        ratingWidget: RatingWidget(
-                          full: Image.asset(
-                            'assets/images/star yellow.png',
-                            height: Responsive.isMobile(
-                                context)
-                                ? 32
-                                : 56,
-                            width: Responsive.isMobile(
-                                context)
-                                ? 32
-                                : 56,
-                          ),
-                          half: Image.asset(
-                            'assets/images/star yellow.png',
-                            height: Responsive.isMobile(
-                                context)
-                                ? 32
-                                : 56,
-                            width: Responsive.isMobile(
-                                context)
-                                ? 32
-                                : 56,
-                          ),
-                          empty: Image.asset(
-                            'assets/images/star_empty.png',
-                            color:
-                            const Color(0xFFBBBBBB),
-                            height: Responsive.isMobile(
-                                context)
-                                ? 32
-                                : 56,
-                            width: Responsive.isMobile(
-                                context)
-                                ? 32
-                                : 56,
-                          ),
-                        ),
-                        itemPadding:
-                        const EdgeInsets.only(
-                            left: 2.0),
-                        onRatingUpdate: (rating) {
-                          print(rating);
-                        },
-                      ),
-                      const SizedBox(
-                        width: 4,
-                      ),
-                      SizedBox(
-                        width: Responsive.isMobile(
-                            context)
-                            ? 60
-                            : Responsive.isTablet(context)
-                            ? 90
-                            : 232,
-                        child: const Divider(
-                            thickness: 2,
-                            color: Color(0xFFBBBBBB)),
-                      ),
-                      const SizedBox(
-                        width: 4,
-                      ),
-                      Text(
-                  '(${5-index})',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: Responsive.isMobile(
-                                context)
-                                ? 7
-                                : Responsive.isTablet(
-                                context)
-                                ? 10
-                                : isLargeScreen
-                                ? 18
-                                : 14,
-                            color: AppColors
-                                .botomSheetColor),
-                      ),
-                    ],
-                  );
-                }),
-              )
-            ],
-          ),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    SizedBox(
+                      width: Responsive.isMobile(
+                          context)
+                          ? 80
+                          : Responsive.isTablet(context)
+                          ? 90
+                          : 232,
+                      child: const Divider(
+                          thickness: 2,
+                          color: Color(0xFFBBBBBB)),
+                    ),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    Text(
+                '(${5-index})',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontFamily: 'Nunito-Regular',
+                          fontSize: Responsive.isMobile(
+                              context)
+                              ? 12
+                              : Responsive.isTablet(
+                              context)
+                              ? 10
+                              : isLargeScreen
+                              ? 18
+                              : 14,
+                          color: AppColors
+                              .botomSheetColor),
+                    ),
+                  ],
+                );
+              }),
+            )
+          ],
         ),
+        SizedBox(height: 14,),
         const Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Padding(
-              padding: EdgeInsets.all(12.0),
-              child: RatingRowWidget(
-                isImage: false,
-              ),
+            SizedBox(height: 20,),
+            RatingRowWidget(
+              isImage: false, imagePaths: [
+
+            ],
             ),
-            Padding(
-              padding: EdgeInsets.all(12.0),
-              child: RatingRowWidget(
-                isImage: true,
-              ),
+            SizedBox(height: 14,),
+            RatingRowWidget(
+              isImage: true, imagePaths: [
+                "assets/images/img1.png",
+              "assets/images/img1.png",
+              "assets/images/img1.png",
+              "assets/images/img1.png",
+              "assets/images/img1.png",
+              "assets/images/img1.png",
+
+            ],
             ),
-            Padding(
-              padding: EdgeInsets.all(12.0),
-              child: RatingRowWidget(
-                isImage: false,
-              ),
+            SizedBox(height: 14,),
+            RatingRowWidget(
+              isImage: false, imagePaths: [],
             ),
           ],
         ),
@@ -227,23 +233,29 @@ class ReviewWidget extends StatelessWidget {
           padding: const EdgeInsets.all(12.0),
           child: CustomButton(
             ontapp: () {
-              Get.dialog(Dialog(
-                  child: UploadImageSection()));
+              Get.dialog(
+
+                     Material(type: MaterialType.transparency,child:
+                     Container(
+                         child: Padding(
+                       padding: const EdgeInsets.only(top: 110.0,bottom: 130,left: 12,right: 12),
+                       child: UploadImageSection(),
+                     ))));
             },
             laBelText: 'Write a review',
             height: Responsive.isMobile(context)
-                ? 28
+                ? 32
                 : isLargeScreen
                 ? 58
                 : 48,
             width: Responsive.isMobile(context)
-                ? 130
+                ? 140
                 : isLargeScreen
                 ? 300
                 : 265,
             textColor: AppColors.whiteColor,
             fontSize: Responsive.isMobile(context)
-                ? 12
+                ? 13
                 : isLargeScreen
                 ? 24
                 : 20,

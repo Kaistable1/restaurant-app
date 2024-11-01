@@ -70,7 +70,7 @@ class CircleContainerWidget extends StatelessWidget {
                         ? 230
                         : 170,
                 width: Responsive.isMobile(context)
-                    ? 95
+                    ? 94
                     : isLargeScreen
                         ? 230
                         : 180,
@@ -82,51 +82,72 @@ class CircleContainerWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              Positioned(
-                left: Responsive.isMobile(context)
-                    ? 20
-                    : isLargeScreen
-                        ? 40
-                        : 30,
-                top: Responsive.isMobile(context)
-                    ? 20
-                    : isLargeScreen
-                        ? 40
-                        : 30,
-                child: Obx(() {
-                  return InkWell(
-                      onTap: () {
-                        isFavourite.value = !isFavourite.value;
-                      },
-                      child: isFavourite.value
-                          ? Icon(
-                              Icons.favorite,
-                              color: Colors.red,
-                            )
-                          : Icon(
-                        Icons.favorite,
-                        color: Colors.white,
-                      ));
-                }),
-                height: Responsive.isMobile(context)
-                    ? 10
-                    : isLargeScreen
-                        ? 24
-                        : 20,
-                width: Responsive.isMobile(context)
-                    ? 10
-                    : isLargeScreen
-                        ? 24
-                        : 20,
-              )
+              // Positioned(
+              //   left: Responsive.isMobile(context)
+              //       ? 10
+              //       : isLargeScreen
+              //           ? 40
+              //           : 30,
+              //   top: Responsive.isMobile(context)
+              //       ? 20
+              //       : isLargeScreen
+              //           ? 40
+              //           : 30,
+              //   child: Obx(() {
+              //     return InkWell(
+              //         onTap: () {
+              //           isFavourite.value = !isFavourite.value;
+              //         },
+              //         child: isFavourite.value
+              //             ? Icon(
+              //                 Icons.favorite,
+              //                 color: Colors.red,
+              //               )
+              //             : Icon(
+              //           Icons.favorite,
+              //           color: Colors.white,
+              //         ));
+              //   }
+              //   ),
+              //   height: Responsive.isMobile(context)
+              //       ? 10
+              //       : isLargeScreen
+              //           ? 24
+              //           : 20,
+              //   width: Responsive.isMobile(context)
+              //       ? 10
+              //       : isLargeScreen
+              //           ? 24
+              //           : 20,
+              // )
             ]),
+            Align(
+              alignment: Alignment.center,
+              child: Obx(() {
+                return InkWell(
+                    onTap: () {
+                      isFavourite.value = !isFavourite.value;
+                    },
+                    child: isFavourite.value
+                        ? Icon(
+                      Icons.favorite,
+                      color: Colors.red,size: 20,
+                    )
+                        : Icon(
+                      Icons.favorite,
+                      color: AppColors.textColor,size: 20,
+                    ));
+              }),
+            ),
             SizedBox(
               height: Responsive.isMobile(context)
-                  ? 20
+                  ? 2
                   : isLargeScreen
                       ? 25
                       : 10,
             ),
+
+
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -146,7 +167,7 @@ class CircleContainerWidget extends StatelessWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: Responsive.isMobile(context)
-                        ? 8
+                        ? 9
                         : isLargeScreen
                             ? 22
                             : 16,
@@ -168,7 +189,7 @@ class CircleContainerWidget extends StatelessWidget {
               style: TextStyle(
                 fontWeight: FontWeight.w500,
                 fontSize: Responsive.isMobile(context)
-                    ? 8
+                    ? 9
                     : isLargeScreen
                         ? 18
                         : 14,

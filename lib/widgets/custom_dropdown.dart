@@ -83,12 +83,12 @@ class DropDownButton extends StatelessWidget {
           icon: Image.asset(
             'assets/images/drop_down_img.png',
             width: Responsive.isMobile(context)
-                ? 8
+                ? 12
                 : Responsive.isTablet(context)
                 ? 12
                 : 18,
             height: Responsive.isMobile(context)
-                ? 8
+                ?12
                 : Responsive.isTablet(context)
                 ? 12
                 : 18,
