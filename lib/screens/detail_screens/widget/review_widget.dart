@@ -207,8 +207,8 @@ class ReviewWidget extends StatelessWidget {
           children: [
             SizedBox(height: 20,),
             RatingRowWidget(
-              isImage: false, imagePaths: [
-
+              isImage: false, imagePaths:
+            [
             ],
             ),
             SizedBox(height: 14,),
@@ -220,7 +220,6 @@ class ReviewWidget extends StatelessWidget {
               "assets/images/img1.png",
               "assets/images/img1.png",
               "assets/images/img1.png",
-
             ],
             ),
             SizedBox(height: 14,),
@@ -234,13 +233,14 @@ class ReviewWidget extends StatelessWidget {
           child: CustomButton(
             ontapp: () {
               Get.dialog(
-
-                     Material(type: MaterialType.transparency,child:
-                     Container(
-                         child: Padding(
-                       padding: const EdgeInsets.only(top: 110.0,bottom: 130,left: 12,right: 12),
-                       child: UploadImageSection(),
-                     ))));
+                     const Material(
+                         type: MaterialType.transparency,child:
+                     Padding(
+                                            padding: EdgeInsets.only(
+                       top: 110.0,bottom: 130,left: 12,right: 12
+                                            ),
+                                            child: UploadImageSection(),
+                                          )));
             },
             laBelText: 'Write a review',
             height: Responsive.isMobile(context)

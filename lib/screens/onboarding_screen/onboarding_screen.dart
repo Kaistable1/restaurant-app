@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
+import 'package:kaistable_website/screens/home_screen/my_home_screen.dart';
 import 'package:kaistable_website/screens/onboarding_screen/onboarding_controller/onboarding_controller.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../utils/responsive.dart';
@@ -607,12 +608,13 @@ class ChooseLocationWidget extends StatelessWidget {
                 } else {
                   // Proceed with the next step
                   controller.hasError.value = false;
-                  Get.to(() => TopBarWidget());
+                  Get.offAll(() => MyHomeScreen());
                   // Your next logic here
                 }
               },
             ),
           ),
+          SizedBox(height: 50,)
         ],
       ),
     );

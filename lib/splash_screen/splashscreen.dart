@@ -4,40 +4,61 @@ import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
 import 'package:kaistable_website/screens/onboarding_screen/onboarding_screen.dart';
 
-import 'controller/splash_controller.dart';
-
 class SplashScreen extends StatefulWidget {
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
   @override
   void initState() {
     super.initState();
-    // Start the timer to navigate to the HomeScreen
+
+    // Initialize AnimationController
+    _controller = AnimationController(
+      duration: Duration(seconds: 1),
+      vsync: this,
+    );
+
+    // Create a Tween for scaling the image
+    _animation = Tween<double>(begin: 0.5, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOut,
+      ),
+    );
+
+    // Start the animation
+    _controller.forward();
+
+    // Start the timer to navigate to the OnboardingScreen
     Timer(Duration(seconds: 3), () {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => OnboardingScreen()),
-      );
+      Get.offAll(OnboardingScreen()) ;
+
     });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose(); // Dispose the controller
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primaryColor, // Change to your preferred background color
+      backgroundColor: AppColors.primaryColor,
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(32.0),
-              child: Image.asset('assets/images/botomsheet_logo.png'),
-            ), // Your splash image
-            SizedBox(height: 20),
-            // Optional loading indicator
-          ],
+        child: ScaleTransition(
+          scale: _animation,
+          child: Padding(
+            padding: const EdgeInsets.all(55.0),
+            child: Image.asset('assets/images/botomsheet_logo.png'),
+          ),
         ),
       ),
     );

@@ -458,7 +458,7 @@ class HomeScreen extends StatelessWidget {
                     timetext: item.timetext,
                     percentText: item.percentText,
                     isFavorite: false.obs,
-                    scrollcontroller: scrollcontroller,
+                   // scrollcontroller: scrollcontroller,
                   );
                 },
               ),
@@ -562,7 +562,7 @@ class HomeScreen extends StatelessWidget {
                     timetext: item.timetext,
                     percentText: item.percentText,
                     isFavorite: false.obs,
-                    scrollcontroller: scrollcontroller,
+                   // scrollcontroller: scrollcontroller,
                   );
                 },
               ),
@@ -664,7 +664,7 @@ class HomeScreen extends StatelessWidget {
                     imagePath: item.imagePath,
                     timetext: item.timetext,
                     percentText: item.percentText,
-                    isFavorite: false.obs, scrollcontroller: scrollcontroller,
+                    isFavorite: false.obs,// scrollcontroller: scrollcontroller,
                   );
                 },
               ),
@@ -766,7 +766,7 @@ class HomeScreen extends StatelessWidget {
                     imagePath: item.imagePath,
                     timetext: item.timetext,
                     percentText: item.percentText,
-                    isFavorite: false.obs, scrollcontroller: scrollcontroller,
+                    isFavorite: false.obs, //scrollcontroller: scrollcontroller,
                   );
                 },
               ),

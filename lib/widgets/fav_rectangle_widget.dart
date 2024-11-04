@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
 import '../../utils/responsive.dart';
+import '../screens/detail_screens/restaurant_detail_screen.dart';
 
 class CustomRectangleWidget extends StatelessWidget {
-  final ScrollController scrollcontroller;
+ // final ScrollController scrollcontroller;
   final String title;
   final String imagePath;
   final String description;
@@ -20,7 +21,9 @@ class CustomRectangleWidget extends StatelessWidget {
         required this.description,
         required this.timetext,
         required this.percentText,
-        this.onNavigate, required this.scrollcontroller});
+        this.onNavigate,
+        //required this.scrollcontroller
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -32,10 +35,7 @@ class CustomRectangleWidget extends StatelessWidget {
 
          GestureDetector(
           onTap: () {
-            if (onNavigate != null) {
-              onNavigate!(8);
-              scrollcontroller.jumpTo(0);// Call the callback to navigate to the 7th screen
-            }
+            Get.to(RestaurantDetailScreen());
           },
           child: Stack(
             children: [

@@ -11,7 +11,11 @@ class ContactUsController extends GetxController {
   // Controllers for email and message text fields
   var emailController = TextEditingController();
   var messagreController = TextEditingController();
-
+  void resetErrors() {
+    emailError.value = '';
+    messageError.value = '';
+    dropdownError.value = '';
+  }
   // Reactive variables for error handling
   var dropdownError = "".obs;
   var emailError = "".obs;

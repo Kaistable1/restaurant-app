@@ -9,7 +9,8 @@ import 'package:kaistable_website/splash_screen/splashscreen.dart';
 import 'package:kaistable_website/widgets/top_bar_widget.dart';
 
 import 'firebase_options.dart';
-
+import 'screens/home_screen/my_home_screen.dart';
+bool myFlag = false;
 Future<void> main() async {
   // WidgetsFlutterBinding.ensureInitialized();
   // await Firebase.initializeApp(
@@ -36,9 +37,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Kaistable',
 
-        home: SplashScreen(),
-        // OnboardingScreen(),
-      //home:TopBarWidget()
+
+        //home: SplashScreen(),
+        //home:MyHomeScreen(),
+      home:SplashScreen()
     );
   }
 }
