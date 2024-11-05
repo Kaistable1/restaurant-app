@@ -35,13 +35,13 @@ class RestaurantDetailScreen extends StatelessWidget {
     return WillPopScope(
       onWillPop: ()async{
         Get.back();
-        return false;
+        return false ;
 
       },
       child:
            Scaffold(
              appBar: AppBar(
-               iconTheme: IconThemeData(
+               iconTheme:  const IconThemeData(
                  color: AppColors.primaryColor, // Set your desired color for the drawer icon
                ),
                centerTitle: true,
@@ -65,15 +65,15 @@ class RestaurantDetailScreen extends StatelessWidget {
                    ),
                    child: GestureDetector(
                      onTap: () {
-                       Get.offAll(MyHomeScreen()); // Navigate back to the home screen
+                       Get.back(); // Navigate back to the home screen
                      },
                      child: Icon(Icons.arrow_back, size: 18),
                    ),
                  ),
                ),
 
-               title: Text('Resturant details',
-                 style: const TextStyle(
+               title: const Text('Resturant details',
+                 style: TextStyle(
                    fontSize: 20,
                    color: AppColors.primaryColor,
                    fontWeight: FontWeight.w700,

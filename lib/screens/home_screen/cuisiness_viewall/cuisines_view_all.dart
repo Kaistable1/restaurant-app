@@ -132,23 +132,13 @@ class CuisinesViewAll extends StatelessWidget {
                         itemCount: cusinessController.cusinessItem.length,
                         itemBuilder: (context, index) {
                           final item = cusinessController.cusinessItem[index];
-                          return InkWell(
-                            onTap: () {
-
-
-
-                              if (onNavigate != null) {
-                                onNavigate!(8); // Call the callback to navigate to the 7th screen
-                              }
-                            },
-                            child: CustomRectangleWidget(
-                              onNavigate: onNavigate,
-                              title: item.title,
-                              description: item.description,
-                              imagePath: item.imagePath,
-                              timetext: item.timetext,
-                              percentText: item.percentText, isFavorite: false.obs,
-                            ),
+                          return CustomRectangleWidget(
+                            onNavigate: onNavigate,
+                            title: item.title,
+                            description: item.description,
+                            imagePath: item.imagePath,
+                            timetext: item.timetext,
+                            percentText: item.percentText, isFavorite: false.obs,
                           );
                         },
                       ),

@@ -3,12 +3,10 @@ import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
 import 'package:kaistable_website/screens/home_screen/my_home_screen.dart';
 import 'package:kaistable_website/screens/onboarding_screen/onboarding_controller/onboarding_controller.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../utils/responsive.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_dropdown.dart';
-import '../../widgets/dropdown.dart';
-import '../../widgets/top_bar_widget.dart';
+
 
 class OnboardingScreen extends StatelessWidget {
   final controller = Get.put(OnboardingController());
@@ -30,7 +28,7 @@ class OnboardingScreen extends StatelessWidget {
                 decoration: const BoxDecoration(
                   image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: AssetImage("assets/images/onboarding_background.png"),
+                    image:AssetImage("assets/images/onboarding_background.png"),
                   ),
                 ),
                 child: Center(
@@ -43,7 +41,7 @@ class OnboardingScreen extends StatelessWidget {
               ),
               SizedBox(height: Responsive.isMobile(context) ? 14 : 40),
               Padding(
-                padding: EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16.0),
                 child: Text(
                   "Lorem ipsum dolor sit amet",
                   style: TextStyle(
@@ -59,7 +57,7 @@ class OnboardingScreen extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(left: 16, right: 16),
+                padding: const EdgeInsets.only(left: 16, right: 16),
                 child: Text(
                   "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
                   textAlign: TextAlign.justify,
@@ -75,18 +73,11 @@ class OnboardingScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(
-                  height:
-                      Responsive.isMobile(context) || Responsive.isTablet(context)
-                          ? 0
-                          : 50),
+              const SizedBox(
+                  height:0),
               Container(
                 color: AppColors.whiteColor,
                 width: Get.width,
-                // height:
-                //     Responsive.isMobile(context) || Responsive.isTablet(context)
-                //         ? Get.width
-                //         : 800,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -94,7 +85,7 @@ class OnboardingScreen extends StatelessWidget {
                     SizedBox(
                       height: Responsive.isMobile(context) ? 20 : 90,
                     ),
-                    Responsive.isMobile(context) || Responsive.isTablet(context)
+                    Responsive.isMobile(context)||Responsive.isTablet(context)
                         ? Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -108,8 +99,13 @@ class OnboardingScreen extends StatelessWidget {
                                 height:30,
                               ),
                               Padding(
-                                padding:  EdgeInsets.only(left:Responsive.isMobile(context) || Responsive.isTablet(context)?0.0:0),
-                                child: ChooseLocationWidget(controller: controller),
+                                padding:  EdgeInsets.only(
+                                    left:Responsive.isMobile(context)
+                                        ||Responsive.isTablet(context)? 0.0:0
+                                ),
+                                child: ChooseLocationWidget(
+                                    controller: controller
+                                ),
                               ),
                             ],
                           )
@@ -129,8 +125,8 @@ class OnboardingScreen extends StatelessWidget {
       
                               Image.asset(
                                 'assets/images/off image.png',
-                                width: Responsive.isMobile(context) ? 390 : 464,
-                                height: Responsive.isMobile(context) ? 300 : 540,
+                                width:Responsive.isMobile(context)?390:464,
+                                height:Responsive.isMobile(context)?300:540,
                               )
                               // Container(
                               //   width: Responsive.isMobile(context)? 170 :Responsive.isTablet(context)?250:475,
@@ -435,15 +431,12 @@ class OnboardingScreen extends StatelessWidget {
     );
   }
 }
-
 class ChooseLocationWidget extends StatelessWidget {
   const ChooseLocationWidget({
     super.key,
     required this.controller,
   });
-
   final OnboardingController controller;
-
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -469,13 +462,11 @@ class ChooseLocationWidget extends StatelessWidget {
           Obx(() => Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
-
                 children: [
-
                   DropDownButton(
                     hintText: 'Country',
-                    items: ["Pakistan", "USA", "UK"],
-                    containerColor: Color(0xFFFFFFFF),
+                    items: const ["Pakistan", "USA", "UAE","Turkey","Thailand"],
+                    containerColor: const Color(0xFFFFFFFF),
                     textColor: Colors.grey,
                     onChanged: (value) {
                       controller.selectedCountry.value = value!;
@@ -517,23 +508,23 @@ class ChooseLocationWidget extends StatelessWidget {
                         ? 14
                         : 18,
                     dropdownItemWidth: Responsive.isMobile(context)
-                        ? 200
+                        ? 100
                         : Responsive.isTablet(context)
                         ? 320
                         : 101,
-                    items: ["Islamabad", "Lahore", "Karachi"],
+                    items: const ["Islamabad", "London", "New York","Washington","Dubai","Istanbul","Bangkok"],
                     selectedValue: controller.selectedCity.value,
                     onChanged: (value) {
                       controller.selectedCity.value = value!;
                       controller.hasError.value = false;
                     },
-                    containerColor: Color(0xFFFFFFFF),
+                    containerColor: const Color(0xFFFFFFFF),
                     textColor: Colors.grey,),
-                  SizedBox(height: 20,),
+                  const SizedBox(height: 20,),
 
                   if (controller.hasError.value)
                     Padding(
-                      padding: EdgeInsets.only(
+                      padding: const EdgeInsets.only(
                         // left: Responsive.isMobile(context)
                         //     ? 90
                         //     : Responsive.isTablet(context)
@@ -553,7 +544,7 @@ class ChooseLocationWidget extends StatelessWidget {
                                 ? 16
                                 : 16 ,
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 5,
                           ),
                           Text(
@@ -614,7 +605,7 @@ class ChooseLocationWidget extends StatelessWidget {
               },
             ),
           ),
-          SizedBox(height: 50,)
+          const SizedBox(height: 100,)
         ],
       ),
     );

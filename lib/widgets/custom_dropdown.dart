@@ -32,6 +32,9 @@ class DropDownButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Determine whether the list of items should be scrollable
+    final isScrollable = items.length > 3;
+
     return DropdownButtonHideUnderline(
       child: DropdownButton2<String>(
         isExpanded: true,
@@ -66,45 +69,39 @@ class DropDownButton extends StatelessWidget {
           width: width,
           padding: EdgeInsets.only(left: 22, right: 22),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(Responsive.isMobile(context)? 4 :10),
+            borderRadius: BorderRadius.circular(Responsive.isMobile(context) ? 4 : 10),
             color: containerColor,
-           boxShadow: [
-          BoxShadow(
-          color: Colors.black.withOpacity(0.1),
-          spreadRadius: 3,
-          blurRadius: 12,
-          offset: const Offset(0, 1),
-        ),
-        ],
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                spreadRadius: 3,
+                blurRadius: 12,
+                offset: const Offset(0, 1),
+              ),
+            ],
           ),
-          elevation:0
+          elevation: 0,
         ),
         iconStyleData: IconStyleData(
           icon: Image.asset(
             'assets/images/drop_down_img.png',
-            width: Responsive.isMobile(context)
-                ? 12
-                : Responsive.isTablet(context)
-                ? 12
-                : 18,
-            height: Responsive.isMobile(context)
-                ?12
-                : Responsive.isTablet(context)
-                ? 12
-                : 18,
+            width: Responsive.isMobile(context) ? 12 : Responsive.isTablet(context) ? 12 : 18,
+            height: Responsive.isMobile(context) ? 12 : Responsive.isTablet(context) ? 12 : 18,
           ),
         ),
         dropdownStyleData: DropdownStyleData(
           width: width,
           decoration: BoxDecoration(
-            borderRadius:BorderRadius.circular(Responsive.isMobile(context)? 4 :10),
+            borderRadius: BorderRadius.circular(Responsive.isMobile(context) ? 4 : 10),
           ),
-          offset: const Offset(-0, 0),
+          offset: const Offset(0, 0),
           scrollbarTheme: ScrollbarThemeData(
-            radius:  Radius.circular(Responsive.isMobile(context)? 4 :10),
+            radius: Radius.circular(Responsive.isMobile(context) ? 4 : 10),
             thickness: MaterialStateProperty.all<double>(2),
             thumbVisibility: MaterialStateProperty.all<bool>(true),
           ),
+          // Apply a fixed height if the list is large
+          maxHeight: isScrollable ? 140.0 : null, // 200.0 is the max height to trigger scrolling
         ),
         menuItemStyleData: const MenuItemStyleData(
           height: 40,
