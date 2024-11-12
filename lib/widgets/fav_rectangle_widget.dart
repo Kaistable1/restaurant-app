@@ -40,7 +40,7 @@ class CustomRectangleWidget extends StatelessWidget {
           child: Stack(
             children: [
               Container(
-                height: 180,
+                height: 168,
 
 
                 color: Colors.transparent,
@@ -92,13 +92,8 @@ class CustomRectangleWidget extends StatelessWidget {
                     ),
                     child: Padding(
                       padding: EdgeInsets.only(
-                        // top: Responsive.isMobile(context)
-                        //     ? 20
-                        //     : isLargeScreen
-                        //         ? 80
-                        //         : isTablet
-                        //             ? 65
-                        //             : 72,
+                        top: 2,
+
                           left: Responsive.isMobile(context)
                               ? 10
                               : isLargeScreen
@@ -115,35 +110,39 @@ class CustomRectangleWidget extends StatelessWidget {
                             children: [
                               Padding(
                                 padding:
-                                const EdgeInsets.only(top: 0, right: 2),
+                                const EdgeInsets.only(top: 0, right: 12),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     Row(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.end,
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.end,
-                                      children: List.generate(
-                                          2,
-                                              (index) => _buildStarBox(
-                                              isLargeScreen,
-                                              isTablet,
-                                              context)),
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: List.generate(2, (index) {
+                                        return Row(
+                                          children: [
+                                            _buildStarBox(isLargeScreen, isTablet, context),
+                                            if (index < 1) // Add space only if it's not the last item
+                                              SizedBox(width: 4), // Adjust width to your desired spacing
+                                          ],
+                                        );
+                                      }),
                                     ),
+
+                                    SizedBox(height: 4,),
                                     Row(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.end,
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.end,
-                                      children: List.generate(
-                                          2,
-                                              (index) => _buildStarBox(
-                                              isLargeScreen,
-                                              isTablet,
-                                              context)),
-                                    )
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: List.generate(2, (index) {
+                                        return Row(
+                                          children: [
+                                            _buildStarBox(isLargeScreen, isTablet, context),
+                                            if (index < 1) // Add space only if it's not the last item
+                                              SizedBox(width: 4), // Adjust width to your desired spacing
+                                          ],
+                                        );
+                                      }),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -151,7 +150,7 @@ class CustomRectangleWidget extends StatelessWidget {
                           ),
                           SizedBox(
                               height: Responsive.isMobile(context)
-                                  ? 2
+                                  ? 0
                                   : isLargeScreen
                                   ? 0
                                   : isTablet
@@ -163,31 +162,19 @@ class CustomRectangleWidget extends StatelessWidget {
                                 print('jksdb');
                                 isFavorite.value = !isFavorite.value;
                               },
-                              child: Image.asset(
+                              child:
+                              isFavorite.value ?Image.asset(
                                 'assets/images/heart_icon.png',
-                                color: isFavorite.value
-                                    ? Colors.red
-                                    : AppColors.textColor,
-                                height: Responsive.isMobile(context)
-                                    ? 16
-                                    : isLargeScreen
-                                    ? 32
-                                    : isTablet
-                                    ? 24
-                                    : 21,
-                                width: Responsive.isMobile(context)
-                                    ? 16
-                                    : isLargeScreen
-                                    ? 30
-                                    : isTablet
-                                    ? 24
-                                    : 24,
-                              ),
+                                color: AppColors.primaryColor,
+                                height:16,
+                                width: 16,
+                              ):Icon(Icons.favorite_border_outlined,size: 18,color: AppColors.primaryColor,)
+
                             );
                           }),
                           SizedBox(
                               height: Responsive.isMobile(context)
-                                  ? 5
+                                  ? 3
                                   : isLargeScreen
                                   ? 0
                                   : isTablet
@@ -210,7 +197,7 @@ class CustomRectangleWidget extends StatelessWidget {
                           ),
                           SizedBox(
                               height: Responsive.isMobile(context)
-                                  ? 4
+                                  ? 2
                                   : isLargeScreen
                                   ? 0
                                   : isTablet
@@ -231,6 +218,7 @@ class CustomRectangleWidget extends StatelessWidget {
                               color: AppColors.textColor,
                             ),
                           ),
+                          SizedBox(height: 6,)
                         ],
                       ),
                     ),
@@ -242,14 +230,14 @@ class CustomRectangleWidget extends StatelessWidget {
                 child: Container(
 
                   height: Responsive.isMobile(context)
-                      ? 95
+                      ? 68
                       : isLargeScreen
                       ? 190
                       : isTablet
                       ? 130
                       : 170,
                   width: Responsive.isMobile(context)
-                      ?95
+                      ?68
                       : isLargeScreen
                       ? 190
                       : isTablet
@@ -285,14 +273,14 @@ class CustomRectangleWidget extends StatelessWidget {
       bool isLargeScreen, bool isTablet, BuildContext context) {
     return Container(
       height: Responsive.isMobile(context)
-          ? 32
+          ? 30
           : isLargeScreen
           ? 75
           : isTablet
           ? 40
           : 50,
       width: Responsive.isMobile(context)
-          ? 36
+          ? 30
           : isLargeScreen
           ? 75
           : isTablet

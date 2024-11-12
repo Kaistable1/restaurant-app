@@ -35,8 +35,8 @@ class TrendingViewAll extends StatelessWidget {
           double itemHeight = Responsive.isMobile(context)
               ? 320:(isLargeScreen ?500:500); // Set a fixed height for items
 
-          return Scaffold(
-            appBar: AppBar(
+          return Scaffold(  backgroundColor: AppColors.bgColor,
+            appBar: AppBar(  backgroundColor: AppColors.bgColor,
               iconTheme: IconThemeData(
                 color: AppColors.primaryColor, // Set your desired color for the drawer icon
               ),
@@ -63,7 +63,7 @@ class TrendingViewAll extends StatelessWidget {
                     onTap: () {
                       Get.offAll(MyHomeScreen()); // Navigate back to the home screen
                     },
-                    child: Icon(Icons.arrow_back, size: 18),
+                    child: Icon(Icons.arrow_back, size: 18,color: AppColors.primaryColor,),
                   ),
                 ),
               ),
@@ -71,7 +71,7 @@ class TrendingViewAll extends StatelessWidget {
               title: Text('Trending',
                 style: const TextStyle(
                   fontSize: 20,
-                  color: AppColors.primaryColor,
+                  color: AppColors.botomSheetColor,
                   fontWeight: FontWeight.w700,
                   fontFamily: 'Nunito-Bold',
                 ),),
@@ -118,7 +118,7 @@ class TrendingViewAll extends StatelessWidget {
                         physics: const NeverScrollableScrollPhysics(),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           mainAxisExtent: Responsive.isMobile(context)
-                              ? 263
+                              ? 180
                               : (isLargeScreen ? 400 : 350),
                           crossAxisCount: Responsive.isMobile(context)
                               ? 2
@@ -157,7 +157,8 @@ class TrendingViewAll extends StatelessWidget {
                     );
 
 
-                  })
+                  }),
+                  const SizedBox(height: 30),
                 ],
               ),
             ),

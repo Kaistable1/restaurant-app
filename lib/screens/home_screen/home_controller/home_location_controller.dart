@@ -7,6 +7,9 @@ import '../model/home-model.dart';
 class HomeLocationController extends GetxController {
   // ScrollController to control the ListView scroll position
   ScrollController scrollController = ScrollController();
+  var selectedLetter = ''.obs; // Observable variable to store selected index
+
+  // Define the selectIndex method
 
   // List of CircleContainerModel objects
   final List<CircleContainerModel> circleItems = [
@@ -83,3 +86,37 @@ class HomeLocationController extends GetxController {
     super.onClose();
   }
 }
+// Padding(
+//   padding: EdgeInsets.only(
+//       left: Responsive.isMobile(context) ? 8 : 42, right: 6),
+//   child: SizedBox(
+//     height: Get.height,
+//     child: GridView.builder(
+//       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+//         crossAxisCount: 3, // Number of items per row
+//         crossAxisSpacing: 6, // Horizontal spacing between items
+//         mainAxisSpacing: 6, // Vertical spacing between items
+//         childAspectRatio: 1, // Aspect ratio for each item
+//       ),
+//       itemCount: controller.circleItems.length, // Number of items
+//       itemBuilder: (context, index) {
+//         final item = controller.circleItems[index]; // Get item from model list
+//         return Padding(
+//           padding: const EdgeInsets.symmetric(
+//               horizontal: 6,
+//               vertical: 6),
+//           child: CircleContainerWidget(
+//             ontap: () {
+//               Get.to(LocationScreen());
+//             },
+//             isFavourite: false.obs,
+//             isLocation: true,
+//             imgPath: item.imgPath,
+//             titleText: item.titleText,
+//             descriptionText: item.descriptionText,
+//           ),
+//         );
+//       },
+//     ),
+//   ),
+// ),

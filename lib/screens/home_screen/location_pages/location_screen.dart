@@ -33,7 +33,7 @@ class LocationScreen extends StatelessWidget {
     bool isLargeScreen = screenWidth > 1400;
     return WillPopScope(
       onWillPop: ()async{
-        Get.offAll(MyHomeScreen());
+         Get.back();
         return false;
 
       },
@@ -50,7 +50,8 @@ class LocationScreen extends StatelessWidget {
               : (isLargeScreen ? 500 : 500); // Set a fixed height for items
 
           return Scaffold(
-            appBar: AppBar(
+            backgroundColor: AppColors.bgColor,
+            appBar: AppBar(backgroundColor: AppColors.bgColor,
               iconTheme: IconThemeData(
                 color: AppColors.primaryColor, // Set your desired color for the drawer icon
               ),
@@ -75,17 +76,17 @@ class LocationScreen extends StatelessWidget {
                   ),
                   child: GestureDetector(
                     onTap: () {
-                      Get.offAll(MyHomeScreen()); // Navigate back to the home screen
+                      Get.back(); // Navigate back to the home screen
                     },
-                    child: Icon(Icons.arrow_back, size: 18),
+                    child: Icon(Icons.arrow_back, size: 18,color: AppColors.primaryColor,),
                   ),
                 ),
               ),
 
-              title: Text('Location',
+              title: Text('Available restaurents',
                 style: const TextStyle(
                   fontSize: 20,
-                  color: AppColors.primaryColor,
+                  color: AppColors.botomSheetColor,
                   fontWeight: FontWeight.w700,
                   fontFamily: 'Nunito-Bold',
                 ),),
@@ -334,7 +335,7 @@ class LocationScreen extends StatelessWidget {
                     ),
                   ),
 
-                  SizedBox(height: Responsive.isMobile(context) ? 2 : 22),
+                  SizedBox(height: Responsive.isMobile(context) ? 20 : 22),
                   Obx(() {
                     return Padding(
                       padding: EdgeInsets.only(
@@ -350,7 +351,7 @@ class LocationScreen extends StatelessWidget {
                         physics: const NeverScrollableScrollPhysics(),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           mainAxisExtent: Responsive.isMobile(context)
-                              ? 293
+                              ? 173
                               : (isLargeScreen ? 430 : 350),
                           crossAxisCount: Responsive.isMobile(context)
                               ? 2
@@ -384,7 +385,8 @@ class LocationScreen extends StatelessWidget {
                         },
                       ),
                     );
-                  })
+                  }),
+                  const SizedBox(height: 30),
                 ],
               ),
             ),

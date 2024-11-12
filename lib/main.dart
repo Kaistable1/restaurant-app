@@ -3,12 +3,15 @@ import 'dart:ui';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:kaistable_website/screens/detail_screens/restaurant_detail_screen.dart';
 import 'package:kaistable_website/screens/home_screen/home_screen.dart';
 import 'package:kaistable_website/screens/onboarding_screen/onboarding_screen.dart';
+import 'package:kaistable_website/screens/profile_screens/profile_screen.dart';
 import 'package:kaistable_website/splash_screen/splashscreen.dart';
 import 'package:kaistable_website/widgets/top_bar_widget.dart';
 
 import 'firebase_options.dart';
+import 'landing_screen.dart';
 import 'screens/home_screen/my_home_screen.dart';
 bool myFlag = false;
 Future<void> main() async {
@@ -26,7 +29,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      // scrollBehavior: const MaterialScrollBehavior().copyWith(dragDevices: {
+      // scrollBehavior:const MaterialScrollBehavior().copyWith(dragDevices:{
       //   PointerDeviceKind.invertedStylus,
       //   PointerDeviceKind.mouse,
       //   PointerDeviceKind.stylus,
@@ -38,9 +41,9 @@ class MyApp extends StatelessWidget {
       title: 'Kaistable',
 
 
-        //home: SplashScreen(),
-        //home:MyHomeScreen(),
-       home:SplashScreen()
+      home: SplashScreen(),
+        //  home:LandingScreen(),
+      //home:MyHomeScreen()
     );
   }
 }

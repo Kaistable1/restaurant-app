@@ -30,8 +30,8 @@ class RecentlyViewed extends StatelessWidget {
            double itemHeight = Responsive.isMobile(context)
                ? 320:(isLargeScreen ?500:500); // Set a fixed height for items
 
-           return Scaffold(
-             appBar: AppBar(
+           return Scaffold(  backgroundColor: AppColors.bgColor,
+             appBar: AppBar(  backgroundColor: AppColors.bgColor,
                iconTheme: IconThemeData(
                  color: AppColors.primaryColor, // Set your desired color for the drawer icon
                ),
@@ -58,7 +58,7 @@ class RecentlyViewed extends StatelessWidget {
                      onTap: () {
                        Get.offAll(MyHomeScreen()); // Navigate back to the home screen
                      },
-                     child: Icon(Icons.arrow_back, size: 18),
+                     child: Icon(Icons.arrow_back, size: 18,color: AppColors.primaryColor,),
                    ),
                  ),
                ),
@@ -66,7 +66,7 @@ class RecentlyViewed extends StatelessWidget {
                title: Text('Recently Viewed',
                  style: const TextStyle(
                    fontSize: 20,
-                   color: AppColors.primaryColor,
+                   color: AppColors.botomSheetColor,
                    fontWeight: FontWeight.w700,
                    fontFamily: 'Nunito-Bold',
                  ),),
@@ -76,75 +76,75 @@ class RecentlyViewed extends StatelessWidget {
                  crossAxisAlignment: CrossAxisAlignment.start,
                  children: [
                    SizedBox(height: 30,),
-                   Padding(
-                     padding: EdgeInsets.only(left: Responsive.isMobile(context) ? 18 : 48.0,right: Responsive.isMobile(context) ? 18 : 48.0),
-                     child: Row(
-                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                       children: [
-                         // Text(
-                         //   'Recently viewed',
-                         //   style: TextStyle(
-                         //     color: AppColors.botomSheetColor,
-                         //     fontFamily: 'aftika-regular',
-                         //     fontSize: Responsive.isMobile(context) ? 22 : 40,
-                         //     fontWeight: FontWeight.w400,
-                         //   ),
-                         // ),
-                         // Spacer(),
+                   // Padding(
+                   //   padding: EdgeInsets.only(left: Responsive.isMobile(context) ? 18 : 48.0,right: Responsive.isMobile(context) ? 18 : 48.0),
+                   //   child: Row(
+                   //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                   //     children: [
+                   //       // Text(
+                   //       //   'Recently viewed',
+                   //       //   style: TextStyle(
+                   //       //     color: AppColors.botomSheetColor,
+                   //       //     fontFamily: 'aftika-regular',
+                   //       //     fontSize: Responsive.isMobile(context) ? 22 : 40,
+                   //       //     fontWeight: FontWeight.w400,
+                   //       //   ),
+                   //       // ),
+                   //       // Spacer(),
+                   //
+                   //       // Expanded(
+                   //       //   child: Container(
+                   //       //     height: Responsive.isMobile(context) ?38:Responsive.isTablet(context) ? 36:60,
+                   //       //     width: Responsive.isMobile(context) ?160:Responsive.isTablet(context) ? 170:200,
+                   //       //     decoration: BoxDecoration(
+                   //       //       color: Color(0xFFE4E7EC),
+                   //       //       borderRadius: BorderRadius.circular(Responsive.isMobile(context) ? 4:Responsive.isTablet(context) ? 5:6)
+                   //       //     ),
+                   //       //     child: TextFormField(
+                   //       //       maxLines: 1,
+                   //       //
+                   //       //       style: TextStyle(
+                   //       //         color: AppColors.blackColor,
+                   //       //         fontWeight: FontWeight.w500,
+                   //       //         fontFamily: "Lora-Regular",
+                   //       //         fontSize: Responsive.isMobile(context) ? 14 :Responsive.isTablet(context) ? 12: 18,
+                   //       //       ),
+                   //       //       cursorColor: AppColors.textColor,
+                   //       //       decoration: InputDecoration(
+                   //       //
+                   //       //         hintText: 'Search',
+                   //       //         hintStyle: TextStyle(
+                   //       //           color: AppColors.blackColor,
+                   //       //           fontFamily: "Lora-Regular",
+                   //       //           fontWeight: FontWeight.w500,
+                   //       //
+                   //       //           fontSize: Responsive.isMobile(context) ? 14 :Responsive.isTablet(context) ? 12: 18,
+                   //       //         ),
+                   //       //         border: InputBorder.none,
+                   //       //         contentPadding: EdgeInsets.only(
+                   //       //           top: Responsive.isMobile(context) ? 4:Responsive.isTablet(context) ? 17: 18,
+                   //       //           //bottom: Responsive.isMobile(context) ? 8 :Responsive.isTablet(context) ? 17: 12,
+                   //       //           //left: Responsive.isMobile(context) ? 2 : 20,
+                   //       //         ),
+                   //       //         prefixIcon: Padding(
+                   //       //           padding:  EdgeInsets.all(Responsive.isMobile(context) ? 11 :Responsive.isTablet(context) ? 14:18.0),
+                   //       //           child: Image.asset(
+                   //       //             'assets/images/search_black_icon.png',
+                   //       //             fit: BoxFit.contain,
+                   //       //             height: Responsive.isMobile(context) ?6:20,
+                   //       //             width: Responsive.isMobile(context) ?6:20,
+                   //       //           ),
+                   //       //         ),
+                   //       //       ),
+                   //       //     ),
+                   //       //   ),
+                   //       // ),
+                   //
+                   //
+                   //     ],
+                   //   ),
+                   // ),
 
-                         Expanded(
-                           child: Container(
-                             height: Responsive.isMobile(context) ?38:Responsive.isTablet(context) ? 36:60,
-                             width: Responsive.isMobile(context) ?160:Responsive.isTablet(context) ? 170:200,
-                             decoration: BoxDecoration(
-                               color: Color(0xFFE4E7EC),
-                               borderRadius: BorderRadius.circular(Responsive.isMobile(context) ? 4:Responsive.isTablet(context) ? 5:6)
-                             ),
-                             child: TextFormField(
-                               maxLines: 1,
-
-                               style: TextStyle(
-                                 color: AppColors.blackColor,
-                                 fontWeight: FontWeight.w500,
-                                 fontFamily: "Lora-Regular",
-                                 fontSize: Responsive.isMobile(context) ? 14 :Responsive.isTablet(context) ? 12: 18,
-                               ),
-                               cursorColor: AppColors.textColor,
-                               decoration: InputDecoration(
-
-                                 hintText: 'Search',
-                                 hintStyle: TextStyle(
-                                   color: AppColors.blackColor,
-                                   fontFamily: "Lora-Regular",
-                                   fontWeight: FontWeight.w500,
-
-                                   fontSize: Responsive.isMobile(context) ? 14 :Responsive.isTablet(context) ? 12: 18,
-                                 ),
-                                 border: InputBorder.none,
-                                 contentPadding: EdgeInsets.only(
-                                   top: Responsive.isMobile(context) ? 4:Responsive.isTablet(context) ? 17: 18,
-                                   //bottom: Responsive.isMobile(context) ? 8 :Responsive.isTablet(context) ? 17: 12,
-                                   //left: Responsive.isMobile(context) ? 2 : 20,
-                                 ),
-                                 prefixIcon: Padding(
-                                   padding:  EdgeInsets.all(Responsive.isMobile(context) ? 11 :Responsive.isTablet(context) ? 14:18.0),
-                                   child: Image.asset(
-                                     'assets/images/search_black_icon.png',
-                                     fit: BoxFit.contain,
-                                     height: Responsive.isMobile(context) ?6:20,
-                                     width: Responsive.isMobile(context) ?6:20,
-                                   ),
-                                 ),
-                               ),
-                             ),
-                           ),
-                         ),
-
-
-                       ],
-                     ),
-                   ),
-                    SizedBox(height: Responsive.isMobile(context) ?30:20),
                    Obx(() {
 
 
@@ -162,7 +162,7 @@ class RecentlyViewed extends StatelessWidget {
                          physics: const NeverScrollableScrollPhysics(),
                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                            mainAxisExtent: Responsive.isMobile(context)
-                               ? 263
+                               ? 180
                                : (isLargeScreen ? 400 : 350),
                            crossAxisCount: Responsive.isMobile(context)
                                ? 2
@@ -191,7 +191,8 @@ class RecentlyViewed extends StatelessWidget {
                      );
 
 
-                   })
+                   }),
+                   const SizedBox(height: 30),
                  ],
                ),
              ),

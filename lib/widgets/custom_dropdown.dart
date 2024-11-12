@@ -44,7 +44,7 @@ class DropDownButton extends StatelessWidget {
             color: Color(0xFF4F5762),
             fontFamily: fontfamily ?? "Lora-Regular",
             fontWeight: FontWeight.w400,
-            fontSize: hintfontsize ?? 16,
+            fontSize: 14,
           ),
         ),
         items: items
@@ -56,7 +56,7 @@ class DropDownButton extends StatelessWidget {
               color: Color(0xFF4F5762),
               fontFamily: fontfamily ?? "Lora-Regular",
               fontWeight: FontWeight.w400,
-              fontSize: hintfontsize ?? 16,
+              fontSize:14,
             ),
             overflow: TextOverflow.ellipsis,
           ),

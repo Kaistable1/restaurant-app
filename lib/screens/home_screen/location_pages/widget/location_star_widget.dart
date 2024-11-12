@@ -34,10 +34,8 @@ class _LocationStarWidgetState extends State<LocationStarWidget> {
     return InkWell(
       onTap: _toggleTapped, // Handle tap
       child: Container(
-        height: 120,
-        width:  Responsive.isMobile(context) ?Get.width *0.14
-            :Responsive.isTablet(context) ?Get.width *0.09
-            :Get.width *0.08,
+        height: 150,
+        width: Get.width *0.18,
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage(imagePath),
@@ -50,8 +48,8 @@ class _LocationStarWidgetState extends State<LocationStarWidget> {
               Text(
                 widget.timeText,
                 style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize:  Responsive.isMobile(context) ? 10 :Responsive.isTablet(context) ?10:18,
+                  fontWeight: FontWeight.w600,
+                  fontSize:  Responsive.isMobile(context) ? 14 :Responsive.isTablet(context) ?10:18,
                   color: textColor,
                   fontFamily: 'Nunito-Regular'
                 ),
@@ -59,8 +57,8 @@ class _LocationStarWidgetState extends State<LocationStarWidget> {
               Text(
                 widget.persentText,
                 style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize:  Responsive.isMobile(context) ? 10 :Responsive.isTablet(context) ?10:18,
+                  fontWeight: FontWeight.w600,
+                  fontSize:  Responsive.isMobile(context) ? 14 :Responsive.isTablet(context) ?10:18,
                   color: textColor,
                     fontFamily: 'Nunito-Regular'
                 ),

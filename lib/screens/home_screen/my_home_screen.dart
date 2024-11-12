@@ -13,8 +13,10 @@ import 'package:kaistable_website/screens/home_screen/home_controller/home_theme
 import 'package:kaistable_website/screens/home_screen/home_controller/home_trending_controller.dart';
 import 'package:kaistable_website/screens/home_screen/home_screen.dart';
 import 'package:kaistable_website/screens/home_screen/location_pages/location_screen.dart';
+import 'package:kaistable_website/screens/home_screen/location_pages/location_view_all/location_view_all.dart';
 import 'package:kaistable_website/screens/home_screen/new_view_all/new_viewall.dart';
 import 'package:kaistable_website/screens/home_screen/recently_viewed/recently_viewed.dart';
+import 'package:kaistable_website/screens/home_screen/theme/theme_view_all.dart';
 import 'package:kaistable_website/screens/home_screen/trendind_all/trending_view_all.dart';
 import 'package:kaistable_website/screens/privacy_policy/privacy_policy.dart';
 import 'package:kaistable_website/screens/terms_and_condition/terms_and_condition.dart';
@@ -24,6 +26,7 @@ import 'package:kaistable_website/widgets/fav_rectangle_widget.dart';
 
 import '../../constants/app_colors.dart';
 import '../detail_screens/restaurant_detail_screen.dart';
+import 'filter_screen/filter_screen.dart';
 
 class MyHomeScreen extends StatefulWidget {
 
@@ -33,6 +36,10 @@ class MyHomeScreen extends StatefulWidget {
 }
 
 class _MyHomeScreenState extends State<MyHomeScreen> {
+  final List<String> letters = ['#', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+  final RxBool isTapped = false.obs;
+
+  final RxBool showFilterOptions = false.obs;
 
   final HomeLocationController controller = Get.put(HomeLocationController());
   final HomeThemeController themeController = Get.put(HomeThemeController());
@@ -45,10 +52,11 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
   int _selectedIndex = 0; // Track the selected index
   Color decorationLineColor = Colors.transparent; // Default color for decoration line
 
-  void _onItemTapped(int index) {
+  void _onItemTapped(int index,{isHome}) {
     setState(() {
       _selectedIndex = index; // Update selected index
-      decorationLineColor = Theme.of(context).primaryColor; // Set decoration line color to primary
+      decorationLineColor = Theme.of(context).primaryColor;
+     if(isHome) Get.back();// Set decoration line color to primary
     });
 
     // Navigate to the corresponding screen based on the index
@@ -57,7 +65,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
         Get.to(MyHomeScreen());
         break;
       case 1:
-        Get.to(FavoriteScreen(scrollcontroller: scrollController,));
+        Get.to(FavoriteScreen());
         break;
       case 2:
         Get.to(TermsAndCondition());
@@ -81,7 +89,9 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
     double screenWidth = MediaQuery.of(context).size.width;
     bool isLargeScreen = screenWidth > 1400;
     return Scaffold(
+      backgroundColor: AppColors.bgColor,
       appBar: AppBar(
+        backgroundColor: AppColors.bgColor,
         iconTheme: IconThemeData(
           color: AppColors.primaryColor, // Set your desired color for the drawer icon
         ),
@@ -89,7 +99,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
           title: Text('Home',
         style: const TextStyle(
           fontSize: 20,
-          color: AppColors.primaryColor,
+          color: AppColors.botomSheetColor,
           fontWeight: FontWeight.w700,
           fontFamily: 'Nunito-Bold',
         ),),
@@ -161,174 +171,232 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
           ],
         ),
       ),
-      body: LayoutBuilder(builder: (context, constraints) {
-        int itemsPerRow = Responsive.isMobile(context)
-            ? 2
-            : Responsive.isTablet(context)
-            ? 3
-            : 4;
-        double itemWidth = (constraints.maxWidth / itemsPerRow) - 12;
-        double itemHeight =
-        Responsive.isMobile(context) ? 290 : (isLargeScreen ? 400 : 400);
-        // int filterItemperRow = Responsive.isMobile(context)
-        //     ? 2
-        //     : Responsive.isTablet(context)
-        //         ? 2
-        //         : 3;
-        // double filterItemWidth = (constraints.maxWidth / filterItemperRow) - 8;
-        // double filterItemHeight =
-        //     Responsive.isMobile(context) ? 320 : (isLargeScreen ? 400 : 200);
-        return SingleChildScrollView(
+      body:  SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                height: Responsive.isMobile(context) ? 280 : 576,
-                width: Get.width,
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: AssetImage('assets/images/home_background_img.png'),
-                  ),
-                ),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Lorem ipsum dolor sit ame',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w300,
-                          fontSize: Responsive.isMobile(context) ? 16 : 48,
-                          color: AppColors.whiteColor,
-                          fontFamily: 'Lemonado',
+
+              Padding(
+                padding: const EdgeInsets.only(left: 16,top: 8,right: 14),
+                child: Row(
+                  children: [
+                    Container(
+                      height: Responsive.isMobile(context) ? 44 : 55,
+                      width: Responsive.isMobile(context) ? 285 : 639,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(
+                          Responsive.isMobile(context) ? 10 : 10,
                         ),
+                        boxShadow: [
+
+                        ],
                       ),
-                      SizedBox(
-                        height: Responsive.isMobile(context) ? 12 : 16,
-                      ),
-                      SizedBox(
-                        width: Responsive.isMobile(context) ? 320 : 639,
-                        child: Text(
-                          'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore',
-                          style: TextStyle(
-                            fontSize: Responsive.isMobile(context) ? 12 : 24,
-                            fontWeight: FontWeight.w400,
-                            color: AppColors.whiteColor,
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: Responsive.isMobile(context) ? 22 : 33),
-                      Container(
-                        height: Responsive.isMobile(context) ? 44 : 55,
-                        width: Responsive.isMobile(context) ? 320 : 639,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(
-                            Responsive.isMobile(context) ? 4 : 10,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              spreadRadius: 2,
-                              blurRadius: 12,
-                              offset: const Offset(0, 1),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: TextFormField(
-                                maxLines: 1,
-                                style: TextStyle(
-                                  color: AppColors.textColor,
-                                  fontFamily: "Lora-Regular",
-                                  fontSize: Responsive.isMobile(context) ? 12 : 16,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              maxLines: 1,
+                              style: TextStyle(
+                                color: AppColors.textColor,
+                                fontFamily: "Lora-Regular",
+                                fontSize: Responsive.isMobile(context) ? 12 : 16,
+                              ),
+                              cursorColor: AppColors.textColor,
+                              decoration: InputDecoration(
+                                hintText: 'Try searching for restaurant name',
+                                hintStyle: TextStyle(
+                                  color: const Color(0xFF4F5762),
+                                  fontFamily: "Nunito-Regular",
+                                  fontWeight: FontWeight.w400,
+                                  fontSize:
+                                  Responsive.isMobile(context) ? 10 : 16,
                                 ),
-                                cursorColor: AppColors.textColor,
-                                decoration: InputDecoration(
-                                  hintText: 'Try searching for restaurant name',
-                                  hintStyle: TextStyle(
-                                    color: const Color(0xFF4F5762),
-                                    fontFamily: "Lora-Regular",
-                                    fontWeight: FontWeight.w400,
+                                border: InputBorder.none,
+                                contentPadding: EdgeInsets.only(
+                                  top: Responsive.isMobile(context) ? 10 : 18,
+                                  // bottom: Responsive.isMobile(context) ? 20 : 12,
+                                  //left: Responsive.isMobile(context) ? 9 : 20,
+                                ),
+                                prefixIcon: Padding(
+                                  padding: EdgeInsets.all(
+                                      Responsive.isMobile(context) ? 13 : 14),
+                                  child: Image.asset(
+                                    'assets/images/search_icon.png',
+                                    fit: BoxFit.contain,
+                                    height: 20,
+                                    width: 20,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+
+                            Container(
+                              height: 55,
+                              width: Responsive.isMobile(context) ? 66 : 106,
+                              decoration: BoxDecoration(
+                                color: AppColors.primaryColor,
+                                borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(
+                                      Responsive.isMobile(context) ? 10 : 10),
+                                  bottomRight: Radius.circular(
+                                      Responsive.isMobile(context) ? 10 : 10),
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'Search',
+                                  style: TextStyle(
+                                    color: AppColors.botomSheetColor,
+                                    fontFamily: "Nunito-Bold",
                                     fontSize:
-                                    Responsive.isMobile(context) ? 11 : 16,
-                                  ),
-                                  border: InputBorder.none,
-                                  contentPadding: EdgeInsets.only(
-                                    top: Responsive.isMobile(context) ? 10 : 18,
-                                    // bottom: Responsive.isMobile(context) ? 20 : 12,
-                                    //left: Responsive.isMobile(context) ? 9 : 20,
-                                  ),
-                                  prefixIcon: Padding(
-                                    padding: EdgeInsets.all(
-                                        Responsive.isMobile(context) ? 13 : 14),
-                                    child: Image.asset(
-                                      'assets/images/search_icon.png',
-                                      fit: BoxFit.contain,
-                                      height: 20,
-                                      width: 20,
-                                    ),
+                                    Responsive.isMobile(context) ? 12 : 16,
+                                    fontWeight: FontWeight.w400,
                                   ),
                                 ),
                               ),
                             ),
-                            InkWell(
-                              onTap: () {
-                                // if (onNavigate != null) {
-                                //   onNavigate!(
-                                //       ); scrollcontroller.jumpTo(0);// Call the callback to navigate to the 7th screen
-                                // }
-                              },
-                              child: Container(
-                                height: 55,
-                                width: Responsive.isMobile(context) ? 66 : 106,
-                                decoration: BoxDecoration(
-                                  color: AppColors.primaryColor,
-                                  borderRadius: BorderRadius.only(
-                                    topRight: Radius.circular(
-                                        Responsive.isMobile(context) ? 4 : 10),
-                                    bottomRight: Radius.circular(
-                                        Responsive.isMobile(context) ? 4 : 10),
-                                  ),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    'Search',
-                                    style: TextStyle(
-                                      color: AppColors.botomSheetColor,
-                                      fontFamily: "Lora-Regular",
-                                      fontSize:
-                                      Responsive.isMobile(context) ? 11 : 16,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ),
-                              ),
+
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 4,),
+                    GestureDetector(
+                      onTap: () {
+                        isTapped.value = !isTapped.value;
+                        showFilterOptions.value = !showFilterOptions.value; // Toggle visibility of filter options
+                      },
+                      child: Obx(
+                            () => Container(
+                          height: 44,
+                          width: 38,
+                          decoration: BoxDecoration(
+                            color: isTapped.value ? AppColors.primaryColor : AppColors.whiteColor,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Center(
+                            child: Image.asset(
+                              "assets/images/filter_white.png",
+                              height: 24,
+                              width: 24,
+                              color: isTapped.value ? AppColors.whiteColor : AppColors.primaryColor,
                             ),
-                          ],
+                          ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+
+                  ],
                 ),
               ),
-              SizedBox(height: Responsive.isMobile(context) ? 25 : 50),
-              Padding(
-                padding:
-                EdgeInsets.only(left: Responsive.isMobile(context) ? 18 : 48.0),
-                child: Text(
-                  'Location',
-                  style: TextStyle(
-                    color: AppColors.botomSheetColor,
-                    fontFamily: 'aftika-regular',
-                    fontSize: Responsive.isMobile(context) ? 18 : 40,
-                    fontWeight: FontWeight.w400,
+              SizedBox(height: 10),
+              Obx(
+                    () => showFilterOptions.value
+                    ? Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Container(
+                    height: 109,
+                    width: 358,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                          bottomRight: Radius.circular(20),
+                      bottomLeft: Radius.circular(20)),
+
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Filter restaurants A to Z",
+                        style: TextStyle(
+                          fontFamily: "Nunito-Bold",
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.botomSheetColor
+                        ),),
+                    SizedBox(height: 10,),
+
+                    Expanded(
+                      child: GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 12,
+                          childAspectRatio: 1.5,
+                        ),
+                        itemCount: letters.length,  // Assume letters is a list of alphabets like ['A', 'B', 'C', ...]
+                        itemBuilder: (context, index) {
+                          String letter = letters[index];
+
+                          return GestureDetector(
+                            onTap: () {
+                              controller.selectedLetter.value = letter;
+                              Get.to(FilterScreen(),arguments: letter); // Update selected letter
+                              print('Filter by $letter');
+                            },
+                            child: Obx(() {
+                              // Listen to the changes in selectedLetter
+                              return Text(
+                                letter,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: controller.selectedLetter.value == letter
+                                      ? AppColors.primaryColor
+                                      : AppColors.textColor,
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: "Nunito-Regular",
+                                ),
+                              );
+                            }),
+                          );
+                        },
+                      ),
+                    )
+
+
+                      ],
+                    ),
                   ),
+                )
+                    : SizedBox.shrink(),
+              ),
+              SizedBox(height: Responsive.isMobile(context) ? 15 : 50),
+              Padding(
+                padding: EdgeInsets.only(
+                  left: Responsive.isMobile(context) ? 16 : 48.0,
+                  right: Responsive.isMobile(context) ? 18 : 48.0,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Location',
+                      style: TextStyle(
+                        color: AppColors.botomSheetColor,
+                        fontFamily: 'aftika-regular',
+                        fontSize: Responsive.isMobile(context) ? 18 : 40,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    InkWell(
+                        onTap: () {
+                          Get.to(LocationViewAll( ));
+                        },
+                        child: Text(
+
+                          "view all",
+                          style: TextStyle(
+
+                              decoration: TextDecoration.underline,
+
+                              decorationColor: AppColors.primaryColor,
+                              fontFamily: 'Nunito-Regular',
+                              fontSize: Responsive.isMobile(context) ? 12 : 20,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.primaryColor),
+                        ))
+                  ],
                 ),
               ),
               SizedBox(height: 20),
@@ -336,13 +404,9 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                 children: [
                   Padding(
                     padding: EdgeInsets.only(
-                        left: Responsive.isMobile(context) ? 28 : 42, right: 12),
+                        left: Responsive.isMobile(context) ? 8 : 42, right: 6),
                     child: SizedBox(
-                      height: Responsive.isMobile(context)
-                          ? 180
-                          : isLargeScreen
-                          ? 364
-                          : 270,
+                      height: 180,
                       child: ListView.builder(
                         controller: controller.scrollController,
                         scrollDirection: Axis.horizontal,
@@ -352,7 +416,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                               .circleItems[index]; // Get item from model list
                           return Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 24,
+                                horizontal: 6,
                                 vertical: 6),
                             child: CircleContainerWidget(
                               ontap: () {
@@ -370,47 +434,71 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                     ),
                   ),
           //Left Arrow button with padding for spacing
-                  Positioned(
-                    left: 10, // Adjust the value to add space from the list
-                    top: 0,
-                    bottom: 0,
-                    child: InkWell(
-                      onTap: () => controller.scrollLeft(),
-                      child: Image.asset(
-                        'assets/images/arrow_back.png',
-                        height: Responsive.isMobile(context) ? 32 : 52,
-                        width: Responsive.isMobile(context) ? 32 : 52,
-                      ),
-                    ),
-                  ),
-          // // Right Arrow button with padding for spacing
-                  Positioned(
-                    right: 10, // Adjust the value to add space from the list
-                    top: 0,
-                    bottom: 0,
-                    child: InkWell(
-                      onTap: () => controller.scrollRight(),
-                      child: Image.asset(
-                        'assets/images/arrow_forward.png',
-                        height: Responsive.isMobile(context) ? 32 : 52,
-                        width: Responsive.isMobile(context) ? 32 : 52,
-                      ),
-                    ),
-                  ),
+          //         Positioned(
+          //           left: 10, // Adjust the value to add space from the list
+          //           top: 0,
+          //           bottom: 0,
+          //           child: InkWell(
+          //             onTap: () => controller.scrollLeft(),
+          //             child: Image.asset(
+          //               'assets/images/arrow_back.png',
+          //               height: Responsive.isMobile(context) ? 32 : 52,
+          //               width: Responsive.isMobile(context) ? 32 : 52,
+          //             ),
+          //           ),
+          //         ),
+          // // // Right Arrow button with padding for spacing
+          //         Positioned(
+          //           right: 10, // Adjust the value to add space from the list
+          //           top: 0,
+          //           bottom: 0,
+          //           child: InkWell(
+          //             onTap: () => controller.scrollRight(),
+          //             child: Image.asset(
+          //               'assets/images/arrow_forward.png',
+          //               height: Responsive.isMobile(context) ? 32 : 52,
+          //               width: Responsive.isMobile(context) ? 32 : 52,
+          //             ),
+          //           ),
+          //         ),
                 ],
               ),
               SizedBox(height: Responsive.isMobile(context) ? 25 : 50),
               Padding(
-                padding:
-                EdgeInsets.only(left: Responsive.isMobile(context) ? 18 : 48.0),
-                child: Text(
-                  'Theme',
-                  style: TextStyle(
-                    color: AppColors.botomSheetColor,
-                    fontFamily: 'aftika-regular',
-                    fontSize: Responsive.isMobile(context) ? 18 : 40,
-                    fontWeight: FontWeight.w400,
-                  ),
+                padding: EdgeInsets.only(
+                  left: Responsive.isMobile(context) ? 14 : 48.0,
+                  right: Responsive.isMobile(context) ? 18 : 48.0,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Theme',
+                      style: TextStyle(
+                        color: AppColors.botomSheetColor,
+                        fontFamily: 'aftika-regular',
+                        fontSize: Responsive.isMobile(context) ? 18 : 40,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    InkWell(
+                        onTap: () {
+                          Get.to(ThemeViewAll( ));
+                        },
+                        child: Text(
+
+                          "view all",
+                          style: TextStyle(
+
+                              decoration: TextDecoration.underline,
+
+                              decorationColor: AppColors.primaryColor,
+                              fontFamily: 'Nunito-Regular',
+                              fontSize: Responsive.isMobile(context) ? 12 : 20,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.primaryColor),
+                        ))
+                  ],
                 ),
               ),
               SizedBox(height: Responsive.isMobile(context) ? 15 : 50),
@@ -418,7 +506,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                 children: [
                   Padding(
                     padding: EdgeInsets.only(
-                        left: Responsive.isMobile(context) ? 28 : 42, right: 12),
+                        left: Responsive.isMobile(context) ? 8 : 42, right: 6),
                     child: SizedBox(
                       height: Responsive.isMobile(context)
                           ? 180
@@ -436,7 +524,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                           return Padding(
                             padding: EdgeInsets.symmetric(
                                 horizontal: Responsive.isMobile(context)
-                                    ? 24
+                                    ? 6
                                     : isLargeScreen
                                     ? 19
                                     : 20.30,
@@ -457,33 +545,33 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                     ),
                   ),
           // Left Arrow button with padding for spacing
-                  Positioned(
-                    left: 10, // Adjust the value to add space from the list
-                    top: 0,
-                    bottom: 0,
-                    child: InkWell(
-                      onTap: () => themeController.scrollLeft(),
-                      child: Image.asset(
-                        'assets/images/arrow_back.png',
-                        height: Responsive.isMobile(context) ? 32 : 52,
-                        width: Responsive.isMobile(context) ? 32 : 52,
-                      ),
-                    ),
-                  ),
-          // Right Arrow button with padding for spacing
-                  Positioned(
-                    right: 10, // Adjust the value to add space from the list
-                    top: 0,
-                    bottom: 0,
-                    child: InkWell(
-                      onTap: () => themeController.scrollRight(),
-                      child: Image.asset(
-                          'assets/images/arrow_forward.png',
-                        height: Responsive.isMobile(context) ? 32 : 52,
-                        width: Responsive.isMobile(context) ? 32 : 52,
-                      ),
-                    ),
-                  ),
+          //         Positioned(
+          //           left: 10, // Adjust the value to add space from the list
+          //           top: 0,
+          //           bottom: 0,
+          //           child: InkWell(
+          //             onTap: () => themeController.scrollLeft(),
+          //             child: Image.asset(
+          //               'assets/images/arrow_back.png',
+          //               height: Responsive.isMobile(context) ? 32 : 52,
+          //               width: Responsive.isMobile(context) ? 32 : 52,
+          //             ),
+          //           ),
+          //         ),
+          // // Right Arrow button with padding for spacing
+          //         Positioned(
+          //           right: 10, // Adjust the value to add space from the list
+          //           top: 0,
+          //           bottom: 0,
+          //           child: InkWell(
+          //             onTap: () => themeController.scrollRight(),
+          //             child: Image.asset(
+          //                 'assets/images/arrow_forward.png',
+          //               height: Responsive.isMobile(context) ? 32 : 52,
+          //               width: Responsive.isMobile(context) ? 32 : 52,
+          //             ),
+          //           ),
+          //         ),
                 ],
               ),
               SizedBox(height: Responsive.isMobile(context) ? 45 : 50),
@@ -538,10 +626,10 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                       ? 4
                       : cusinessController.cusinessItem.length;
                 }
-          
+
                 return Padding(
                   padding: EdgeInsets.only(
-          
+
                     left: Responsive.isMobile(context)
                         ? 14
                         : (isLargeScreen ? 48 : 46.0),
@@ -554,7 +642,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                     physics: const NeverScrollableScrollPhysics(),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       mainAxisExtent: Responsive.isMobile(context)
-                          ? 293
+                          ? 223
                           : (isLargeScreen ? 450 : 350),
                       crossAxisCount: Responsive.isMobile(context)
                           ? 2
@@ -565,7 +653,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                       mainAxisSpacing: Responsive.isMobile(context)
                           ? 0
                           : (Responsive.isTablet(context) ? 2 : 20),
-                      childAspectRatio: itemWidth / itemHeight,
+
                     ),
                     itemCount: itemCount,
                     itemBuilder: (context, index) {
@@ -588,7 +676,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
               Padding(
                 padding: EdgeInsets.only(
                   left: Responsive.isMobile(context) ? 18 : 48.0,
-          
+
                   right: Responsive.isMobile(context) ? 18 : 48.0,
                 ),
                 child: Row(
@@ -608,7 +696,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                           Get.to(TrendingViewAll());
                         },
                         child: Text("view all",
-          
+
                           style: TextStyle(
                               decoration: TextDecoration.underline,
                               decorationColor: AppColors.primaryColor,
@@ -617,7 +705,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                               fontWeight: FontWeight.w500,
                               color: AppColors.primaryColor
                           ),
-          
+
                         ))
                   ],
                 ),
@@ -639,7 +727,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                       ? 4
                       : trendingController.trendingItem.length;
                 }
-          
+
                 return Padding(
                   padding: EdgeInsets.only(
                     left: Responsive.isMobile(context)
@@ -654,7 +742,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                     physics: const NeverScrollableScrollPhysics(),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       mainAxisExtent: Responsive.isMobile(context)
-                          ? 293
+                          ? 223
                           : (isLargeScreen ? 450 : 350),
                       crossAxisCount: Responsive.isMobile(context)
                           ? 2
@@ -665,7 +753,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                       mainAxisSpacing: Responsive.isMobile(context)
                           ? 0
                           : (Responsive.isTablet(context) ? 2 : 20),
-                      childAspectRatio: itemWidth / itemHeight,
+
                     ),
                     itemCount: itemCount,
                     itemBuilder: (context, index) {
@@ -707,7 +795,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                         Get.to(NewViewall());
                         },
                         child: Text("view all",
-          
+
                           style: TextStyle(
                               decoration: TextDecoration.underline,
                               decorationColor: AppColors.primaryColor,
@@ -716,7 +804,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                               fontWeight: FontWeight.w500,
                               color: AppColors.primaryColor
                           ),
-          
+
                         ))
                   ],
                 ),
@@ -738,7 +826,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                       ? 4
                       : newController.newItem.length;
                 }
-          
+
                 return Padding(
                   padding: EdgeInsets.only(
                     left: Responsive.isMobile(context)
@@ -753,7 +841,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                     physics: const NeverScrollableScrollPhysics(),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       mainAxisExtent: Responsive.isMobile(context)
-                          ? 293
+                          ? 223
                           : (isLargeScreen ? 450 : 350),
                       crossAxisCount: Responsive.isMobile(context)
                           ? 2
@@ -764,7 +852,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                       mainAxisSpacing: Responsive.isMobile(context)
                           ? 0
                           : (Responsive.isTablet(context) ? 2 : 20),
-                      childAspectRatio: itemWidth / itemHeight,
+
                     ),
                     itemCount: itemCount,
                     itemBuilder: (context, index) {
@@ -834,7 +922,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                       ? 4
                       : recentlyViewedController.recentlyViewedItem.length;
                 }
-          
+
                 return Padding(
                   padding: EdgeInsets.only(
                     left: Responsive.isMobile(context)
@@ -849,7 +937,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                     physics: const NeverScrollableScrollPhysics(),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       mainAxisExtent: Responsive.isMobile(context)
-                          ? 293
+                          ? 223
                           : (isLargeScreen ? 450 : 350),
                       crossAxisCount: Responsive.isMobile(context)
                           ? 2
@@ -860,7 +948,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                       mainAxisSpacing: Responsive.isMobile(context)
                           ? 10
                           : (Responsive.isTablet(context) ? 2 : 20),
-                      childAspectRatio: itemWidth / itemHeight,
+
                     ),
                     itemCount: itemCount,
                     itemBuilder: (context, index) {
@@ -880,7 +968,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                 );
               }),
               SizedBox(height: Responsive.isMobile(context) ? 2 : 50),
-          
+
               // Padding(
               //   padding: EdgeInsets.only(
               //     left: Responsive.isMobile(context) ? 18 : 48.0,
@@ -1005,8 +1093,8 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
               // SizedBox(height: Responsive.isMobile(context) ? 4 : 2),
             ],
           ),
-        );
-      }),
+        )
+
     );
   }
 
@@ -1029,7 +1117,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
               fontWeight: FontWeight.w700,
             ),
           ),
-          onTap: () => _onItemTapped(index),
+          onTap: () => _onItemTapped(index,isHome: title =='Home' ? true: false),
 
         ),
 

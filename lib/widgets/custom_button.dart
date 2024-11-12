@@ -61,7 +61,7 @@ class CustomButton extends StatelessWidget {
               width: borderwidth ?? 1)
               : null,
           color: containerColor ?? AppColors.primaryColor,
-          borderRadius: radius ?? BorderRadius.circular(Responsive.isMobile(context)? 4:Responsive.isTablet(context)? 6 :10),
+          borderRadius: radius ?? BorderRadius.circular(10),
           boxShadow: shadow ??
               [
                 BoxShadow(

@@ -55,7 +55,7 @@ class ResturantsViewall extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
-                      'Resturants',
+                      'Restaurants',
                       style: TextStyle(
                         color: AppColors.botomSheetColor,
                         fontFamily: 'aftika-regular',

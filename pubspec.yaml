@@ -114,10 +114,10 @@ flutter:
         - asset: assets/fonts/Lemonado.otf
     - family: Nunito-Bold
       fonts:
-        - asset: assets/fonts/NunitoSans-Bold.ttf
+        - asset: assets/fonts/Nunito-Bold.ttf
     - family: Nunito-Regular
       fonts:
-        - asset: assets/fonts/NunitoSans-Regular.ttf
+        - asset: assets/fonts/Nunito-Regular.ttf
     - family: Nunito-ExtraLight
       fonts:
         - asset: assets/fonts/NunitoSans-ExtraLight.ttf

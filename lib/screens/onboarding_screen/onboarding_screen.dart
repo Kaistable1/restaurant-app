@@ -474,12 +474,12 @@ class ChooseLocationWidget extends StatelessWidget {
                     },
                     selectedValue: controller.selectedCountry.value,
                     height: Responsive.isMobile(context)
-                        ? 44
+                        ? 52
                         : Responsive.isTablet(context)
                         ? 44
                         : 60,
                     width: Responsive.isMobile(context)
-                        ? 300
+                        ? 320
                         : Responsive.isTablet(context)
                         ? 320
                         : 501,
@@ -492,18 +492,18 @@ class ChooseLocationWidget extends StatelessWidget {
                       ? 10: 22),
                   DropDownButton(
                     height: Responsive.isMobile(context)
-                        ? 44
+                        ? 52
                         : Responsive.isTablet(context)
                         ? 44
                         : 60,
                     width: Responsive.isMobile(context)
-                        ? 300
+                        ? 320
                         : Responsive.isTablet(context)
                         ? 320
                         : 501,
                     hintText: "City",
                     hintfontsize: Responsive.isMobile(context)
-                        ? 12
+                        ? 14
                         : Responsive.isTablet(context)
                         ? 14
                         : 18,
@@ -575,18 +575,18 @@ class ChooseLocationWidget extends StatelessWidget {
             child: CustomButton(
               laBelText: 'Next',
               height: Responsive.isMobile(context)
-                  ? 34
+                  ? 48
                   : Responsive.isTablet(context)
                       ? 32
                       : 50,
               width: Responsive.isMobile(context)
-                  ? 155
+                  ? 200
                   : Responsive.isTablet(context)
                       ? 170
                       : 250,
               textColor: AppColors.whiteColor,
               fontSize: Responsive.isMobile(context)
-                  ? 14
+                  ? 20
                   : Responsive.isTablet(context)
                       ? 18
                       : 24,

@@ -19,12 +19,12 @@ class Tabs extends StatelessWidget {
       overflowAlignment: OverflowBarAlignment.center,
       children: [
         Container(
-          height: Responsive.isMobile(context) ? 35 :Responsive.isTablet(context) ?40 :55,
+          height:40,
           width: Get.width * 0.9,
           decoration: BoxDecoration(
               color: const Color(0xFFEEEFF2),
               borderRadius: BorderRadius.circular(
-                  Responsive.isMobile(context) ? 4 :Responsive.isTablet(context) ?6: 10)),
+                  Responsive.isMobile(context) ? 10 :Responsive.isTablet(context) ?6: 10)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(
@@ -47,7 +47,7 @@ class Tabs extends StatelessWidget {
 
                                 : 40,
                             width: Responsive.isMobile(context)
-                                ? 60
+                                ? 70
                                 :Responsive.isTablet(context) ?80
 
                                 : 121,
@@ -58,10 +58,7 @@ class Tabs extends StatelessWidget {
                                   ? Colors.transparent
                                   : AppColors.whiteColor,
                               borderRadius: BorderRadius.circular(
-                                  Responsive.isMobile(context)
-                                      ? 4
-                                      :Responsive.isTablet(context) ?6
-                                      : 10),
+                                  5),
                             ),
                             child: Center(
                               child: Text(
@@ -92,32 +89,7 @@ class Tabs extends StatelessWidget {
          Column(
            children: [
              SizedBox(height: 14,),
-             Row(
-               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
 
-                Icon(
-                  Icons.access_time_filled,
-                  color: AppColors.primaryColor,
-                  size: 20,
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                Text(
-                  'choose time & discount',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Color(0xFF4F5761),
-                    fontSize: Responsive.isMobile(context) ? 11 :Responsive.isTablet(context) ?10:14,
-                    fontFamily: 'Nunito-Regular',
-                    fontWeight: FontWeight.w400,
-                    height: 0.16,
-                  ),
-                ),
-              ],
-                     ),
            ],
          )
       ],

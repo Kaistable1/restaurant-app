@@ -12,10 +12,10 @@ import 'controller/favorite_controller.dart';
 
 class FavoriteScreen extends StatelessWidget {
   final Function(int)? onNavigate;
-  final ScrollController scrollcontroller;
+
   final controller = Get.put(FavoriteController());
 
-  FavoriteScreen({super.key, required this.scrollcontroller, this.onNavigate});
+  FavoriteScreen({super.key, this.onNavigate});
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +24,12 @@ class FavoriteScreen extends StatelessWidget {
     return WillPopScope(
       onWillPop: () async {
         // Clear any errors before popping the screen
-        Get.offAll(MyHomeScreen()); // Navigate back to the home screen
+        Get.back(); // Navigate back to the home screen
         return false; // Prevent the default back navigation
       },
-      child: Scaffold(
+      child: Scaffold( backgroundColor: AppColors.bgColor,
         appBar: AppBar(
+          backgroundColor: AppColors.bgColor,
           iconTheme: IconThemeData(
             color: AppColors.primaryColor, // Set your desired color for the drawer icon
           ),
@@ -53,7 +54,7 @@ class FavoriteScreen extends StatelessWidget {
               ),
               child: GestureDetector(
                 onTap: () {
-                  Get.offAll(MyHomeScreen()); // Navigate back to the home screen
+                  Get.back();; // Navigate back to the home screen
                 },
                 child: Icon(Icons.arrow_back, size: 18),
               ),
@@ -61,9 +62,9 @@ class FavoriteScreen extends StatelessWidget {
           ),
 
           title: Text('Favorites',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 20,
-              color: AppColors.primaryColor,
+              color: AppColors.botomSheetColor,
               fontWeight: FontWeight.w700,
               fontFamily: 'Nunito-Bold',
             ),),
@@ -85,7 +86,7 @@ class FavoriteScreen extends StatelessWidget {
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          mainAxisExtent: 293,
+                          mainAxisExtent: 193,
                           crossAxisCount: 2,
                           crossAxisSpacing: 10,      // Adjust this if needed for column spacing
                           mainAxisSpacing: 5,        // Reduced mainAxisSpacing to minimize row spacing

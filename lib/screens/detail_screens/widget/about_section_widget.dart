@@ -15,77 +15,92 @@ class AboutSectionWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: 20,),
-        Text(
-          'About XYZ ',
-          style: TextStyle(
-            color: AppColors.headingTextColor,
-            fontSize: Responsive.isMobile(context) ? 16 : 28,
-            fontFamily: 'aftika-regular',
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-        const SizedBox(height: 20),
-        Text(
-          'The modern and elegant Flava Lite Rooftop Pool Bar & Cafe, located on the 11th floor, offers stunning views of the city\'s skyline. Guests can unwind and enjoy a drink or a meal in a serene and relaxing atmosphere from morning until late at night. Whether you choose to sit outdoors and soak in the panoramic views or dine indoors surrounded by chic and minimalistic decor, this rooftop pool bar provides a comfortable environment. Thai-style marinated beef skewers with coriander seed are great to pair with any of your favorite drinks, while salt and pepper kurobuta crispy pork with steamed jasmine rice and Thai-style fried eggs may be more suitable for the hungrier patrons.',
-          style: TextStyle(
-            color: const Color(0xFF555555),
-            fontSize: Responsive.isMobile(context) ? 14 : 18,
-            fontFamily: 'Nunito-Regular',
-            fontWeight: FontWeight.w400,
+        Padding(
+          padding: const EdgeInsets.only(left: 16.0,right: 16),
+          child: Text(
+            'Operating hours ',
+            style: TextStyle(
+              color: AppColors.headingTextColor,
+              fontSize: Responsive.isMobile(context) ? 20 : 28,
+              fontFamily: 'aftika-regular',
+              fontWeight: FontWeight.w400,
+            ),
           ),
         ),
         SizedBox(height: 20,),
-        Text(
-          'Operating hours ',
-          style: TextStyle(
-            color: AppColors.headingTextColor,
-            fontSize: Responsive.isMobile(context) ? 16 : 28,
-            fontFamily: 'aftika-regular',
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-        const SizedBox(height: 20),
-        Center(
-          child: Container(
-            width: Responsive.isMobile(context) || Responsive.isTablet(context)
-                ? Get.width
-                : Get.width * 0.7,
+        Padding(
+          padding: const EdgeInsets.only(left: 16.0,right: 16),
+          child: Center(
             child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Table(
-                  border: TableBorder.symmetric(
-                      inside: BorderSide(
-                          width: 1, color: Colors.grey.withOpacity(0.5))),
-                  columnWidths: {
-                    0: const FlexColumnWidth(1.4),
-                    1: const FlexColumnWidth(4),
-                  },
-                  children: [
-                    TableRow(
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
+              width: Responsive.isMobile(context) || Responsive.isTablet(context)
+                  ? Get.width
+                  : Get.width * 0.7,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Table(
+                    border: TableBorder.symmetric(
+                        inside: BorderSide(
+                            width: 1, color: Colors.grey.withOpacity(0.5))),
+                    columnWidths: {
+                      0: const FlexColumnWidth(1.4),
+                      1: const FlexColumnWidth(4),
+                    },
+                    children: [
+                      TableRow(
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                        ),
+                        children: [
+                          tableCell('', isHeader: true),
+                          headerText(),
+                        ],
                       ),
-                      children: [
-                        tableCell('', isHeader: true),
-                        headerText(),
-                      ],
-                    ),
-                    tableRow('Monday', 'Open all day from 11:00-22:00'),
-                    tableRow('Tuesday', 'Open all day from 11:00-22:00'),
-                    tableRow('Wednesday', 'Open all day from 11:00-22:00'),
-                    tableRow('Thursday', 'Open all day from 11:00-22:00'),
-                    tableRow('Friday', 'Open all day from 11:00-22:00'),
-                  ],
+                      tableRow('Monday', 'Open all day from 11:00-22:00'),
+                      tableRow('Tuesday', 'Open all day from 11:00-22:00'),
+                      tableRow('Wednesday', 'Open all day from 11:00-22:00'),
+                      tableRow('Thursday', 'Open all day from 11:00-22:00'),
+                      tableRow('Friday', 'Open all day from 11:00-22:00'),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
         ),
+        SizedBox(height: 20,),
+        Padding(
+          padding: const EdgeInsets.only(left: 16.0,right: 16),
+          child: Text(
+            'About XYZ ',
+            style: TextStyle(
+              color: AppColors.headingTextColor,
+              fontSize: Responsive.isMobile(context) ? 20 : 28,
+              fontFamily: 'aftika-regular',
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+        Padding(
+          padding: const EdgeInsets.only(left: 16.0,right: 16),
+          child: Text(
+            'The modern and elegant Flava Lite Rooftop Pool Bar & Cafe, located on the 11th floor, offers stunning views of the city\'s skyline. Guests can unwind and enjoy a drink or a meal in a serene and relaxing atmosphere from morning until late at night. Whether you choose to sit outdoors and soak in the panoramic views or dine indoors surrounded by chic and minimalistic decor, this rooftop pool bar provides a comfortable environment. Thai-style marinated beef skewers with coriander seed are great to pair with any of your favorite drinks, while salt and pepper kurobuta crispy pork with steamed jasmine rice and Thai-style fried eggs may be more suitable for the hungrier patrons.',
+            style: TextStyle(
+              color: const Color(0xFF555555),
+              fontSize: Responsive.isMobile(context) ? 14 : 18,
+              fontFamily: 'Nunito-Regular',
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 20),
+
         SizedBox(height: 20,)
       ],
     );

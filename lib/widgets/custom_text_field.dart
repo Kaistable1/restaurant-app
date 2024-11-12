@@ -43,7 +43,7 @@ class CustomTextFormField extends StatelessWidget {
       width: width,
       decoration: BoxDecoration(
         color: containerColor ?? Colors.white, // Set container color
-        borderRadius: BorderRadius.circular(Responsive.isMobile(context) ? 4 : 10),
+        borderRadius: BorderRadius.circular(Responsive.isMobile(context) ? 10: 10),
         boxShadow: isShadow // Conditional expression
             ? [
           BoxShadow(

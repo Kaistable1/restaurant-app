@@ -14,7 +14,9 @@ class MapWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(4),
+      borderRadius: BorderRadius.only(topRight: Radius.circular(10),
+        topLeft:  Radius.circular(10)
+          ),
       child: GoogleMap(
         markers: {
           const Marker(
@@ -138,7 +140,7 @@ class MapDetailWidget extends StatelessWidget {
         ),
 
         Text(
-          'chinese',
+          '1. chinese',
           style: TextStyle(
             color: AppColors.darkGrey,
             fontSize: 14,

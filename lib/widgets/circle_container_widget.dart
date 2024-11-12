@@ -32,12 +32,12 @@ class CircleContainerWidget extends StatelessWidget {
       onTap: ontap,
       child: Container(
         width: Responsive.isMobile(context)
-            ? 110
+            ? 113
             : isLargeScreen
                 ? 270
                 : 200,
         height: Responsive.isMobile(context)
-            ? 180
+            ? 144
             : isLargeScreen
                 ? 365
                 : 280,
@@ -46,8 +46,8 @@ class CircleContainerWidget extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
-              spreadRadius: 3,
-              blurRadius: 12,
+              spreadRadius: 0,
+              blurRadius: 2,
               offset: const Offset(0, 1),
             ),
           ],
@@ -62,18 +62,12 @@ class CircleContainerWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Stack(children: [
+            Stack(
+                children: [
+
               Container(
-                height: Responsive.isMobile(context)
-                    ? 105
-                    : isLargeScreen
-                        ? 230
-                        : 170,
-                width: Responsive.isMobile(context)
-                    ? 94
-                    : isLargeScreen
-                        ? 230
-                        : 180,
+                height: 95,
+                width:95,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
@@ -82,66 +76,46 @@ class CircleContainerWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              // Positioned(
-              //   left: Responsive.isMobile(context)
-              //       ? 10
-              //       : isLargeScreen
-              //           ? 40
-              //           : 30,
-              //   top: Responsive.isMobile(context)
-              //       ? 20
-              //       : isLargeScreen
-              //           ? 40
-              //           : 30,
-              //   child: Obx(() {
-              //     return InkWell(
-              //         onTap: () {
-              //           isFavourite.value = !isFavourite.value;
-              //         },
-              //         child: isFavourite.value
-              //             ? Icon(
-              //                 Icons.favorite,
-              //                 color: Colors.red,
-              //               )
-              //             : Icon(
-              //           Icons.favorite,
-              //           color: Colors.white,
-              //         ));
-              //   }
-              //   ),
-              //   height: Responsive.isMobile(context)
-              //       ? 10
-              //       : isLargeScreen
-              //           ? 24
-              //           : 20,
-              //   width: Responsive.isMobile(context)
-              //       ? 10
-              //       : isLargeScreen
-              //           ? 24
-              //           : 20,
-              // )
+              Positioned(
+                left: Responsive.isMobile(context)
+                    ? 12
+                    : isLargeScreen
+                        ? 40
+                        : 30,
+                top: Responsive.isMobile(context)
+                    ? 16
+                    : isLargeScreen
+                        ? 40
+                        : 30,
+                child: Obx(() {
+                  return InkWell(
+                      onTap: () {
+                        isFavourite.value = !isFavourite.value;
+                      },
+                      child: isFavourite.value
+                          ? Icon(size: 18 ,
+                              Icons.favorite,
+                              color: AppColors.primaryColor,
+                            )
+                          : Icon(Icons.favorite,size: 18,color: AppColors.whiteColor   ,));
+                }
+                ),
+                height: Responsive.isMobile(context)
+                    ? 10
+                    : isLargeScreen
+                        ? 24
+                        : 20,
+                width: Responsive.isMobile(context)
+                    ? 10
+                    : isLargeScreen
+                        ? 24
+                        : 20,
+              )
             ]),
-            Align(
-              alignment: Alignment.center,
-              child: Obx(() {
-                return InkWell(
-                    onTap: () {
-                      isFavourite.value = !isFavourite.value;
-                    },
-                    child: isFavourite.value
-                        ? Icon(
-                      Icons.favorite,
-                      color: Colors.red,size: 20,
-                    )
-                        : Icon(
-                      Icons.favorite,
-                      color: AppColors.textColor,size: 20,
-                    ));
-              }),
-            ),
+
             SizedBox(
               height: Responsive.isMobile(context)
-                  ? 2
+                  ?16
                   : isLargeScreen
                       ? 25
                       : 10,
@@ -165,13 +139,13 @@ class CircleContainerWidget extends StatelessWidget {
                 Text(
                   titleText, // 'Super mega sale'
                   style: TextStyle(
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w700,
                     fontSize: Responsive.isMobile(context)
                         ? 9
                         : isLargeScreen
                             ? 22
                             : 16,
-                    fontFamily: 'Nunito-Regular',
+                    fontFamily: 'Nunito-Bold',
                     color: AppColors.botomSheetColor,
                   ),
                 ),
@@ -179,7 +153,7 @@ class CircleContainerWidget extends StatelessWidget {
             ),
             SizedBox(
               height: Responsive.isMobile(context)
-                  ? 2
+                  ? 6
                   : isLargeScreen
                       ? 10
                       : 10,
