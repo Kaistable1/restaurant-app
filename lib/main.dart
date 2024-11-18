@@ -41,9 +41,9 @@ class MyApp extends StatelessWidget {
       title: 'Kaistable',
 
 
-        // home: SplashScreen(),
+        home: SplashScreen(),
         //  home:LandingScreen(),
-      home:MyHomeScreen()
+      // home:MyHomeScreen()
     );
   }
 }
