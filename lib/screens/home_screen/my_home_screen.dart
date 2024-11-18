@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/screens/about_app/about_app.dart';
@@ -40,6 +41,11 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
   final RxBool isTapped = false.obs;
 
   final RxBool showFilterOptions = false.obs;
+  final List<String> imagePaths = [
+    "assets/images/banner.png",
+    "assets/images/banner.png",
+    "assets/images/banner.png",
+  ];
 
   final HomeLocationController controller = Get.put(HomeLocationController());
   final HomeThemeController themeController = Get.put(HomeThemeController());
@@ -361,7 +367,36 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                 )
                     : SizedBox.shrink(),
               ),
-              SizedBox(height: Responsive.isMobile(context) ? 15 : 50),
+              SizedBox(height: Responsive.isMobile(context) ? 8 : 50),
+        Padding(
+          padding: EdgeInsets.only(
+            left: Responsive.isMobile(context) ? 16 : 48.0,
+            right: Responsive.isMobile(context) ? 16 : 48.0,
+          ),
+          child: CarouselSlider.builder(
+            itemCount: imagePaths.length,
+            itemBuilder: (BuildContext context, int index, int realIndex) {
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(10), // Set the border radius
+                child: Image.asset(
+                  imagePaths[index],
+                  fit: BoxFit.cover,
+                ),
+              );
+            },
+            options: CarouselOptions(
+              height: 172,
+              // Height of the carousel
+              viewportFraction: .9, // Adjusts the width of the carousel items
+              autoPlay: true, // Enable auto sliding
+              autoPlayInterval: Duration(seconds: 3), // Interval between slides
+              autoPlayAnimationDuration: Duration(seconds: 1), // Animation duration
+              autoPlayCurve: Curves.easeInOut, // Curve for the sliding transition
+              enlargeCenterPage: true, // Enlarge the center image
+            ),
+          ),
+        ),
+              SizedBox(height: Responsive.isMobile(context) ? 20 : 50),
               Padding(
                 padding: EdgeInsets.only(
                   left: Responsive.isMobile(context) ? 16 : 48.0,

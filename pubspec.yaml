@@ -48,6 +48,7 @@ dependencies:
   dropdown_button2: ^2.3.9
   multiselect_dropdown_flutter: ^0.0.7
   flutter_toastr: ^1.0.3
+  carousel_slider: ^5.0.0
 
 dev_dependencies:
   flutter_test:
