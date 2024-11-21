@@ -210,33 +210,41 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
             children: [
               FilterWidget(),
               Padding(
-          padding: EdgeInsets.only(
-            left: Responsive.isMobile(context) ? 16 : 48.0,
-            right: Responsive.isMobile(context) ? 16 : 48.0,
-          ),
-          child: CarouselSlider.builder(
-            itemCount: imagePaths.length,
-            itemBuilder: (BuildContext context, int index, int realIndex) {
-              return ClipRRect(
-                borderRadius: BorderRadius.circular(10), // Set the border radius
-                child: Image.asset(
-                  imagePaths[index],
-                  fit: BoxFit.cover,
+                padding: EdgeInsets.only(
+                  left: Responsive.isMobile(context) ? 16 : 48.0,
+                  right: Responsive.isMobile(context) ? 16 : 48.0,
                 ),
-              );
-            },
-            options: CarouselOptions(
-              height: 172,
-              // Height of the carousel
-              viewportFraction: .9, // Adjusts the width of the carousel items
-              autoPlay: true, // Enable auto sliding
-              autoPlayInterval: Duration(seconds: 3), // Interval between slides
-              autoPlayAnimationDuration: Duration(seconds: 1), // Animation duration
-              autoPlayCurve: Curves.easeInOut, // Curve for the sliding transition
-              enlargeCenterPage: true, // Enlarge the center image
-            ),
-          ),
-        ),
+                child: CarouselSlider.builder(
+
+                  itemCount: imagePaths.length,
+                  itemBuilder: (BuildContext context, int index, int realIndex) {
+                    return GestureDetector(
+                      onTap: (){
+                        Get.to(RestaurantDetailScreen());
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10), // Set the border radius
+                        child: Image.asset(
+                          imagePaths[index],
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    );
+                  },
+                  options: CarouselOptions(
+
+                    height: 172,
+                    // Height of the carousel
+                    viewportFraction: .9, // Adjusts the width of the carousel items
+                    autoPlay: true, // Enable auto sliding
+                    autoPlayInterval: Duration(seconds: 3), // Interval between slides
+                    autoPlayAnimationDuration: Duration(seconds: 1), // Animation duration
+                    autoPlayCurve: Curves.easeInOut, // Curve for the sliding transition
+                    enlargeCenterPage: true, // Enlarge the center image
+                  ),
+                ),
+              ),
+
               SizedBox(height: Responsive.isMobile(context) ? 20 : 50),
               Padding(
                 padding: EdgeInsets.only(
