@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:kaistable_website/screens/home_screen/my_home_screen.dart';
+import 'package:kaistable_website/widgets/rectangle_widget.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../utils/responsive.dart';
@@ -24,7 +25,7 @@ class NewViewall extends StatelessWidget {
     bool isLargeScreen = screenWidth > 1400;
     return WillPopScope(
       onWillPop: ()async{
-        Get.offAll(MyHomeScreen());
+        Get.back();
         return false;
 
       },
@@ -61,7 +62,7 @@ class NewViewall extends StatelessWidget {
                   ),
                   child: GestureDetector(
                     onTap: () {
-                      Get.offAll(MyHomeScreen()); // Navigate back to the home screen
+                      Get.back(); // Navigate back to the home screen
                     },
                     child: Icon(Icons.arrow_back, size: 18,color: AppColors.primaryColor,),
                   ),
@@ -118,7 +119,7 @@ class NewViewall extends StatelessWidget {
                         physics: const NeverScrollableScrollPhysics(),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           mainAxisExtent: Responsive.isMobile(context)
-                              ? 180
+                              ? 220
                               : (isLargeScreen ? 400 : 350),
                           crossAxisCount: Responsive.isMobile(context)
                               ? 2
@@ -143,7 +144,7 @@ class NewViewall extends StatelessWidget {
                                 onNavigate!(8); // Call the callback to navigate to the 7th screen
                               }
                             },
-                            child: CustomRectangleWidget(
+                            child: RectangleWidget (
                               onNavigate: onNavigate,
                               title: item.title,
                               description: item.description,

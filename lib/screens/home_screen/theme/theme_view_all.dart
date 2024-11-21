@@ -48,7 +48,7 @@ class ThemeViewAll extends StatelessWidget {
             ),
             child: GestureDetector(
               onTap: () {
-                Get.offAll(MyHomeScreen()); // Navigate back to the home screen
+                Get.back(); // Navigate back to the home screen
               },
               child: Icon(
                 Icons.arrow_back,

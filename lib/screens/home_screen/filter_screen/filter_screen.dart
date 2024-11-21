@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/screens/home_screen/my_home_screen.dart';
+import 'package:kaistable_website/widgets/rectangle_widget.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../utils/responsive.dart';
@@ -214,7 +215,7 @@ class FilterScreen extends StatelessWidget {
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          mainAxisExtent: 173,
+                          mainAxisExtent: 220,
                           crossAxisCount: Responsive.isMobile(context)
                               ? 2
                               : (Responsive.isTablet(context) ? 3 : 4),
@@ -233,7 +234,7 @@ class FilterScreen extends StatelessWidget {
                             onTap: () {
                               Get.to(RestaurantDetailScreen());
                             },
-                            child: CustomRectangleWidget(
+                            child: RectangleWidget(
                               onNavigate: onNavigate,
                               title: item.title,
                               description: item.description,

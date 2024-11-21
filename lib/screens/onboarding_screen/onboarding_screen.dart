@@ -128,39 +128,7 @@ class OnboardingScreen extends StatelessWidget {
                                 width:Responsive.isMobile(context)?390:464,
                                 height:Responsive.isMobile(context)?300:540,
                               )
-                              // Container(
-                              //   width: Responsive.isMobile(context)? 170 :Responsive.isTablet(context)?250:475,
-                              //   height: Responsive.isMobile(context)? 300 :Responsive.isTablet(context)?550:610,
-                              //   color: AppColors.whiteColor,
-                              //
-                              //   child: Stack(
-                              //     children: [
-                              //       Padding(
-                              //         padding: const EdgeInsets.only(top: 8.0),
-                              //         child: Image.asset('assets/images/onboarding_container_img.png',
-                              //           width: Responsive.isMobile(context)? 390 :464,
-                              //
-                              //           height: Responsive.isMobile(context)? 300 :540,),
-                              //       ),
-                              //       Positioned(
-                              //           bottom: Responsive.isMobile(context)? 153 :Responsive.isTablet(context)?298:368,
-                              //           left: Responsive.isMobile(context)? 90 :Responsive.isTablet(context)?110:207,
-                              //           child: Image.asset('assets/images/corner_image.png',
-                              //             height: Responsive.isMobile(context)? 120 :Responsive.isTablet(context)?130:240,
-                              //             width:Responsive.isMobile(context)? 80 :Responsive.isTablet(context)?147: 247,)
-                              //       ),
-                              //       Positioned(
-                              //           top: Responsive.isMobile(context)? 160 :Responsive.isTablet(context)?302:312,
-                              //           right: Responsive.isMobile(context)? 91 :Responsive.isTablet(context)?110:220,
-                              //
-                              //           child:
-                              //           Image.asset('assets/images/botm_corner_img.png',
-                              //             height: Responsive.isMobile(context)? 120 :Responsive.isTablet(context)?130:240,
-                              //             width:Responsive.isMobile(context)? 80 :Responsive.isTablet(context)?147: 247,)),
-                              //
-                              //     ],
-                              //   ),
-                              // ),
+
                             ],
                           ),
                     SizedBox(
@@ -169,261 +137,7 @@ class OnboardingScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              // Center(
-              //   child: Stack(
-              //     children: [
-              //       Container(
-              //         height: Responsive.isMobile(context)
-              //             ? 400
-              //             : Responsive.isTablet(context)
-              //                 ? 600
-              //                 : 730,
-              //         child: Image.asset(
-              //           'assets/images/botm_rectangle.png',
-              //           height: Responsive.isMobile(context)
-              //               ? 300
-              //               : Responsive.isTablet(context)
-              //                   ? 500
-              //                   : 600,
-              //           width: Responsive.isMobile(context)
-              //               ? 400
-              //               : Responsive.isTablet(context)
-              //                   ? 1000
-              //                   : 1400,
-              //         ),
-              //       ),
-              //       Positioned(
-              //           left: Responsive.isMobile(context)
-              //               ? 12
-              //               : Responsive.isTablet(context)
-              //                   ? 60
-              //                   : 120,
-              //           bottom: Responsive.isMobile(context) ? 134 : 122,
-              //           child: Image.asset(
-              //             'assets/images/mobile_screen_img.png',
-              //             height: Responsive.isMobile(context)
-              //                 ? 205
-              //                 : Responsive.isTablet(context)
-              //                     ? 480
-              //                     : 605,
-              //             width: Responsive.isMobile(context)
-              //                 ? 130
-              //                 : Responsive.isTablet(context)
-              //                     ? 190
-              //                     : 303,
-              //           )),
-              //       Positioned(
-              //           left: Responsive.isMobile(context)
-              //               ? 150
-              //               : Responsive.isTablet(context)
-              //                   ? 280
-              //                   : 500,
-              //           top: Responsive.isMobile(context)
-              //               ? 140
-              //               : Responsive.isTablet(context)
-              //                   ? 200
-              //                   : 280,
-              //           child: Column(
-              //             mainAxisAlignment: MainAxisAlignment.start,
-              //             crossAxisAlignment: CrossAxisAlignment.start,
-              //             children: [
-              //               Text(
-              //                 'DOWNLOAD MOBILE APP',
-              //                 style: TextStyle(
-              //                     fontSize: Responsive.isMobile(context)
-              //                         ? 20
-              //                         : Responsive.isTablet(context)
-              //                             ? 26
-              //                             : 40,
-              //                     fontWeight: FontWeight.w300,
-              //                     color: Color(0xFF213539),
-              //                     fontFamily: 'Lemonado'),
-              //               ),
-              //               SizedBox(
-              //                 height: Responsive.isMobile(context) ? 12 : 20,
-              //               ),
-              //               SizedBox(
-              //                 height: Responsive.isMobile(context)
-              //                     ? 35
-              //                     : Responsive.isTablet(context)
-              //                         ? 60
-              //                         : 70,
-              //                 width: Responsive.isMobile(context)
-              //                     ? 220
-              //                     : Responsive.isTablet(context)
-              //                         ? 500
-              //                         : 700,
-              //                 child: Text(
-              //                   'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-              //                   maxLines: 4,
-              //                   textAlign: TextAlign.start,
-              //                   style: TextStyle(
-              //                     fontFamily: 'Lora-Regular',
-              //                     fontWeight: FontWeight.w400,
-              //                     fontSize: Responsive.isMobile(context)
-              //                         ? 8
-              //                         : Responsive.isTablet(context)
-              //                             ? 16
-              //                             : 24,
-              //                     color: Color(0xFF213539),
-              //                   ),
-              //                 ),
-              //               ),
-              //               SizedBox(
-              //                 height: Responsive.isMobile(context)
-              //                     ? 4
-              //                     : Responsive.isTablet(context)
-              //                         ? 14
-              //                         : 30,
-              //               ),
-              //               Row(
-              //                 children: [
-              //                   InkWell(
-              //                       onTap: () async{
-              //                         if (!await launchUrl(
-              //                         Uri.parse('https://play.google.com/store'))) {
-              //                         throw Exception('Could not launch ');
-              //                         }
-              //                       },
-              //                       child: Image(
-              //                         image: AssetImage(
-              //                           'assets/images/googleplay_img.png',
-              //                         ),
-              //                         height:
-              //                             Responsive.isMobile(context) ? 18 : 36,
-              //                         width:
-              //                             Responsive.isMobile(context) ? 70 : 149,
-              //                       )),
-              //                   SizedBox(
-              //                     width: 40,
-              //                   ),
-              //                   InkWell(
-              //                       onTap: () async {
-              //                         if (!await launchUrl(
-              //                             Uri.parse('https://www.apple.com/app-store'))) {
-              //                           throw Exception('Could not launch ');
-              //                         }
-              //                       },
-              //
-              //                       child: Image(
-              //                         image: AssetImage(
-              //                           'assets/images/appstore_img.png',
-              //                         ),
-              //                         height:
-              //                             Responsive.isMobile(context) ? 18 : 36,
-              //                         width:
-              //                             Responsive.isMobile(context) ? 70 : 149,
-              //                       )),
-              //                 ],
-              //               )
-              //             ],
-              //           ))
-              //     ],
-              //   ),
-              // ),
-              // SizedBox(
-              //   height: Responsive.isMobile(context) ? 20 : 70,
-              // ),
-              // Container(
-              //   height: Responsive.isMobile(context)
-              //       ? 60
-              //       : Responsive.isTablet(context)
-              //           ? 90
-              //           : 153,
-              //   color: AppColors.botomSheetColor,
-              //   child: Center(
-              //     child: Column(
-              //       mainAxisAlignment: MainAxisAlignment.center,
-              //       children: [
-              //         Row(
-              //           mainAxisAlignment: MainAxisAlignment.center,
-              //           crossAxisAlignment: CrossAxisAlignment.center,
-              //           children: [
-              //             InkWell(
-              //                 onTap: () async {
-              //                   if (!await launchUrl(
-              //                       Uri.parse('https://www.instagram.com'))) {
-              //                     throw Exception('Could not launch ');
-              //                   }
-              //                 },
-              //
-              //
-              //                 child: Image(
-              //                   image: AssetImage(
-              //                     'assets/images/insta_img.png',
-              //                   ),
-              //                   height: Responsive.isMobile(context) ? 20 : 40,
-              //                   width: Responsive.isMobile(context)
-              //                       ? 20
-              //                       : Responsive.isTablet(context)
-              //                           ? 30
-              //                           : 40,
-              //                 )),
-              //             SizedBox(
-              //               width: 8,
-              //             ),
-              //             InkWell(
-              //                 onTap: () async {
-              //                   if (!await launchUrl(
-              //                       Uri.parse('https://www.linkedin.com'))) {
-              //                     throw Exception('Could not launch ');
-              //                   }
-              //                 },
-              //                 child: Image(
-              //                   image: AssetImage(
-              //                     'assets/images/linkedin_img.png',
-              //                   ),
-              //                   height: Responsive.isMobile(context) ? 20 : 40,
-              //                   width: Responsive.isMobile(context)
-              //                       ? 20
-              //                       : Responsive.isTablet(context)
-              //                           ? 30
-              //                           : 40,
-              //                 )),
-              //             SizedBox(
-              //               width: 8,
-              //             ),
-              //             InkWell(
-              //                 onTap: () async{
-              //                   if (!await launchUrl(
-              //                       Uri.parse('https://www.facebook.com'))) {
-              //                     throw Exception('Could not launch ');
-              //                   }
-              //
-              //                 },
-              //
-              //                 child: Image(
-              //                   image: AssetImage(
-              //                     'assets/images/facebook_img.png',
-              //                   ),
-              //                   height: Responsive.isMobile(context) ? 20 : 40,
-              //                   width: Responsive.isMobile(context)
-              //                       ? 20
-              //                       : Responsive.isTablet(context)
-              //                           ? 30
-              //                           : 40,
-              //                 )),
-              //           ],
-              //         ),
-              //         SizedBox(
-              //           height: 10,
-              //         ),
-              //         Text(
-              //           'Copyright ©️ 2024. All rights reserved.',
-              //           style: TextStyle(
-              //               fontSize: Responsive.isMobile(context)
-              //                   ? 8
-              //                   : Responsive.isTablet(context)
-              //                       ? 12
-              //                       : 16,
-              //               fontWeight: FontWeight.w500,
-              //               fontFamily: 'Lora-Regular',
-              //               color: AppColors.whiteColor),
-              //         )
-              //       ],
-              //     ),
-              //   ),
-              // )
+
             ],
           ),
         ),
@@ -599,10 +313,14 @@ class ChooseLocationWidget extends StatelessWidget {
                 } else {
                   // Proceed with the next step
                   controller.hasError.value = false;
-                  Get.offAll(() => MyHomeScreen());
-                  // Your next logic here
+                  Get.offAll(
+                        () => MyHomeScreen(
+                      countryName: controller.selectedCity.value,
+                    ),
+                  );
                 }
               },
+
             ),
           ),
           const SizedBox(height: 100,)
@@ -611,11 +329,4 @@ class ChooseLocationWidget extends StatelessWidget {
     );
   }
 }
-// Positioned(
-//
-// bottom:480,
-// left: 560,
-// child: Image.asset('assets/images/star_img.png',
-// height: Responsive.isMobile(context)? 120 :150,width:Responsive.isMobile(context)? 80 : 155,),
-//
-// ),
+

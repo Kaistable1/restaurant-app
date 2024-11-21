@@ -10,6 +10,7 @@ import 'package:kaistable_website/screens/home_screen/my_home_screen.dart';
 import '../../../constants/app_colors.dart';
 import '../../../utils/responsive.dart';
 import '../../../widgets/fav_rectangle_widget.dart';
+import '../../../widgets/rectangle_widget.dart';
 import '../../detail_screens/restaurant_detail_screen.dart';
 import 'location_controller/location_controller.dart';
 
@@ -351,7 +352,7 @@ class LocationScreen extends StatelessWidget {
                         physics: const NeverScrollableScrollPhysics(),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           mainAxisExtent: Responsive.isMobile(context)
-                              ? 173
+                              ? 220
                               : (isLargeScreen ? 430 : 350),
                           crossAxisCount: Responsive.isMobile(context)
                               ? 2
@@ -371,7 +372,7 @@ class LocationScreen extends StatelessWidget {
                             onTap: () {
                               Get.to(RestaurantDetailScreen());
                             },
-                            child: CustomRectangleWidget(
+                            child: RectangleWidget(
                               onNavigate: onNavigate,
                               title: item.title,
                               description: item.description,

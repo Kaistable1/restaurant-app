@@ -40,10 +40,11 @@ class CustomRectangleWidget extends StatelessWidget {
           child: Stack(
             children: [
               Container(
-                height: 168,
+                height: 173,
 
 
-                color: Colors.transparent,
+
+                color: Colors.black ,
                 child: Padding(
                   padding: const EdgeInsets.only(top: 25,),
                   child: Container(
@@ -66,7 +67,7 @@ class CustomRectangleWidget extends StatelessWidget {
                             ? 16
                             : 16),
                         topRight: Radius.circular(Responsive.isMobile(context)
-                            ? 18
+                            ? 8
                             : isLargeScreen
                             ? 50
                             : isTablet
@@ -74,7 +75,7 @@ class CustomRectangleWidget extends StatelessWidget {
                             : 45),
                         bottomRight:
                         Radius.circular(Responsive.isMobile(context)
-                            ? 18
+                            ? 8
                             : isLargeScreen
                             ? 50
                             : isTablet
@@ -82,7 +83,7 @@ class CustomRectangleWidget extends StatelessWidget {
                             : 45),
                         bottomLeft:
                         Radius.circular(Responsive.isMobile(context)
-                            ? 18
+                            ? 8
                             : isLargeScreen
                             ? 50
                             : isTablet
@@ -100,54 +101,14 @@ class CustomRectangleWidget extends StatelessWidget {
                               ? 28
                               : isTablet
                               ? 22
-                              : 22.0
+                              : 22.0,
+                        right: 10
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Column(
-                            children: [
-                              Padding(
-                                padding:
-                                const EdgeInsets.only(top: 0, right: 12),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                      children: List.generate(2, (index) {
-                                        return Row(
-                                          children: [
-                                            _buildStarBox(isLargeScreen, isTablet, context),
-                                            if (index < 1) // Add space only if it's not the last item
-                                              SizedBox(width: 4), // Adjust width to your desired spacing
-                                          ],
-                                        );
-                                      }),
-                                    ),
 
-                                    SizedBox(height: 4,),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                      children: List.generate(2, (index) {
-                                        return Row(
-                                          children: [
-                                            _buildStarBox(isLargeScreen, isTablet, context),
-                                            if (index < 1) // Add space only if it's not the last item
-                                              SizedBox(width: 4), // Adjust width to your desired spacing
-                                          ],
-                                        );
-                                      }),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
                           SizedBox(
                               height: Responsive.isMobile(context)
                                   ? 0
@@ -156,6 +117,7 @@ class CustomRectangleWidget extends StatelessWidget {
                                   : isTablet
                                   ? 6
                                   : 10),
+                          Image.asset("assets/images/menu1.png"),
                           Obx(() {
                             return InkWell(
                               onTap: () {
@@ -218,49 +180,66 @@ class CustomRectangleWidget extends StatelessWidget {
                               color: AppColors.textColor,
                             ),
                           ),
-                          SizedBox(height: 6,)
+                          SizedBox(height: 6,),
+
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: List.generate(4, (index) {
+                                  return Row(
+                                    children: [
+                                      _buildStarBox(isLargeScreen, isTablet, context),
+                                      if (index < 1) // Add space only if it's not the last item
+                                        SizedBox(width: 4), // Adjust width to your desired spacing
+                                    ],
+                                  );
+                                }),
+                              ),
+
+
+
                         ],
                       ),
                     ),
                   ),
                 ),
               ),
-              Align(
-                alignment: Alignment.topLeft,
-                child: Container(
-
-                  height: Responsive.isMobile(context)
-                      ? 68
-                      : isLargeScreen
-                      ? 190
-                      : isTablet
-                      ? 130
-                      : 170,
-                  width: Responsive.isMobile(context)
-                      ?68
-                      : isLargeScreen
-                      ? 190
-                      : isTablet
-                      ? 130
-                      : 170,
-                  decoration: BoxDecoration(
-                    //color: Colors.t,
-                    // boxShadow: [
-                    //   BoxShadow(
-                    //     color: Colors.black.withOpacity(0.1),
-                    //     spreadRadius: 2,
-                    //     blurRadius: 222,
-                    //     offset: const Offset(0, 1),
-                    //   ),
-                    // ],
-                    image: DecorationImage(
-                      //fit: BoxFit.cover,
-
-                      image: AssetImage(imagePath),
-                    ),
-                  ),
-                ),
-              ),
+              // Align(
+              //   alignment: Alignment.topLeft,
+              //   child: Container(
+              //
+              //     height: Responsive.isMobile(context)
+              //         ? 68
+              //         : isLargeScreen
+              //         ? 190
+              //         : isTablet
+              //         ? 130
+              //         : 170,
+              //     width: Responsive.isMobile(context)
+              //         ?68
+              //         : isLargeScreen
+              //         ? 190
+              //         : isTablet
+              //         ? 130
+              //         : 170,
+              //     decoration: BoxDecoration(
+              //       //color: Colors.t,
+              //       // boxShadow: [
+              //       //   BoxShadow(
+              //       //     color: Colors.black.withOpacity(0.1),
+              //       //     spreadRadius: 2,
+              //       //     blurRadius: 222,
+              //       //     offset: const Offset(0, 1),
+              //       //   ),
+              //       // ],
+              //       image: DecorationImage(
+              //         //fit: BoxFit.cover,
+              //
+              //         image: AssetImage(imagePath),
+              //       ),
+              //     ),
+              //   ),
+              // ),
 
             ],
           ),

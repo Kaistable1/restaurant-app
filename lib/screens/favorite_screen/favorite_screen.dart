@@ -4,6 +4,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/get_instance.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
+import 'package:kaistable_website/widgets/rectangle_widget.dart';
 
 import '../home_screen/my_home_screen.dart';
 import '../../utils/responsive.dart';
@@ -70,60 +71,64 @@ class FavoriteScreen extends StatelessWidget {
             ),),
         ),
         body: SingleChildScrollView(
-          child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                   SizedBox(height:  30 ),
-                  Obx(() {
+          child: Padding(
+            padding: const EdgeInsets.only(left: 8.0,right: 8),
+            child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                     SizedBox(height:  30 ),
+                    Obx(() {
 
-                    return Padding(
-                      padding: EdgeInsets.only(
-                        left: 8,
-                        right: 8
-                      ),
-                      child: GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          mainAxisExtent: 193,
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 10,      // Adjust this if needed for column spacing
-                          mainAxisSpacing: 5,        // Reduced mainAxisSpacing to minimize row spacing
+                      return Padding(
+                        padding: EdgeInsets.only(
+                          left: 8,
+                          right: 8
                         ),
-                        itemCount: controller.favoriteItems.length,
-                        itemBuilder: (context, index) {
-                          final item = controller.favoriteItems[index];
-                          return InkWell(
-                            onTap: () {
-                              if (onNavigate != null) {
-                                onNavigate!(8);
-                              }
-                            },
-                            child: CustomRectangleWidget(
-                              onNavigate: onNavigate,
-                              title: item.title,
-                              description: item.description,
-                              imagePath: item.imagePath,
-                              timetext: item.timetext,
-                              percentText: item.percentText,
-                              isFavorite: true.obs,
+                        child: GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            mainAxisExtent: 220,
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 10,      // Adjust this if needed for column spacing
+                            mainAxisSpacing: 5,        // Reduced mainAxisSpacing to minimize row spacing
+                          ),
+                          itemCount: controller.favoriteItems.length,
+                          itemBuilder: (context, index) {
+                            final item = controller.favoriteItems[index];
+                            return InkWell(
+                              onTap: () {
+                                if (onNavigate != null) {
+                                  onNavigate!(8);
+                                }
+                              },
+                              child: RectangleWidget(
+                                onNavigate: onNavigate,
+                                title: item.title,
+                                description: item.description,
+                                imagePath: item.imagePath,
+                                timetext: item.timetext,
+                                percentText: item.percentText,
+                                isFavorite: true.obs,
 
-                            ),
-                          );
-                        },
-                      )
+                              ),
+                            );
+                          },
+                        )
 
-                    );
-
-
-                  })
+                      );
 
 
-                  ,
+                    }),
+              SizedBox(height:  30 ),
 
-                ],
-              ),
+
+
+
+                  ],
+                ),
+          ),
         ),
       ),
     );
