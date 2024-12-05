@@ -8,12 +8,17 @@ import 'package:kaistable_website/widgets/rectangle_widget.dart';
 import '../../../constants/app_colors.dart';
 import '../../../utils/responsive.dart';
 import '../../../widgets/fav_rectangle_widget.dart';
+import '../../../widgets/home_widgets/filter_widget.dart';
+import '../home_controller/home_location_controller.dart';
 import '../home_controller/home_recently_viewed_controller.dart';
 class RecentlyViewed extends StatelessWidget {
 
   final Function(int)? onNavigate;
   final HomeRecentlyViewedController recentlyViewedController = Get.put(HomeRecentlyViewedController());
-   RecentlyViewed({super.key, this.onNavigate, });
+  final HomeLocationController controller = Get.put(HomeLocationController());
+   RecentlyViewed({super.key, this.onNavigate, }){
+     controller.selectedTop.value = '';
+   }
 
   @override
   Widget build(BuildContext context) {
@@ -76,75 +81,9 @@ class RecentlyViewed extends StatelessWidget {
                child: Column(
                  crossAxisAlignment: CrossAxisAlignment.start,
                  children: [
-                   SizedBox(height: 30,),
-                   // Padding(
-                   //   padding: EdgeInsets.only(left: Responsive.isMobile(context) ? 18 : 48.0,right: Responsive.isMobile(context) ? 18 : 48.0),
-                   //   child: Row(
-                   //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                   //     children: [
-                   //       // Text(
-                   //       //   'Recently viewed',
-                   //       //   style: TextStyle(
-                   //       //     color: AppColors.botomSheetColor,
-                   //       //     fontFamily: 'aftika-regular',
-                   //       //     fontSize: Responsive.isMobile(context) ? 22 : 40,
-                   //       //     fontWeight: FontWeight.w400,
-                   //       //   ),
-                   //       // ),
-                   //       // Spacer(),
-                   //
-                   //       // Expanded(
-                   //       //   child: Container(
-                   //       //     height: Responsive.isMobile(context) ?38:Responsive.isTablet(context) ? 36:60,
-                   //       //     width: Responsive.isMobile(context) ?160:Responsive.isTablet(context) ? 170:200,
-                   //       //     decoration: BoxDecoration(
-                   //       //       color: Color(0xFFE4E7EC),
-                   //       //       borderRadius: BorderRadius.circular(Responsive.isMobile(context) ? 4:Responsive.isTablet(context) ? 5:6)
-                   //       //     ),
-                   //       //     child: TextFormField(
-                   //       //       maxLines: 1,
-                   //       //
-                   //       //       style: TextStyle(
-                   //       //         color: AppColors.blackColor,
-                   //       //         fontWeight: FontWeight.w500,
-                   //       //         fontFamily: "Lora-Regular",
-                   //       //         fontSize: Responsive.isMobile(context) ? 14 :Responsive.isTablet(context) ? 12: 18,
-                   //       //       ),
-                   //       //       cursorColor: AppColors.textColor,
-                   //       //       decoration: InputDecoration(
-                   //       //
-                   //       //         hintText: 'Search',
-                   //       //         hintStyle: TextStyle(
-                   //       //           color: AppColors.blackColor,
-                   //       //           fontFamily: "Lora-Regular",
-                   //       //           fontWeight: FontWeight.w500,
-                   //       //
-                   //       //           fontSize: Responsive.isMobile(context) ? 14 :Responsive.isTablet(context) ? 12: 18,
-                   //       //         ),
-                   //       //         border: InputBorder.none,
-                   //       //         contentPadding: EdgeInsets.only(
-                   //       //           top: Responsive.isMobile(context) ? 4:Responsive.isTablet(context) ? 17: 18,
-                   //       //           //bottom: Responsive.isMobile(context) ? 8 :Responsive.isTablet(context) ? 17: 12,
-                   //       //           //left: Responsive.isMobile(context) ? 2 : 20,
-                   //       //         ),
-                   //       //         prefixIcon: Padding(
-                   //       //           padding:  EdgeInsets.all(Responsive.isMobile(context) ? 11 :Responsive.isTablet(context) ? 14:18.0),
-                   //       //           child: Image.asset(
-                   //       //             'assets/images/search_black_icon.png',
-                   //       //             fit: BoxFit.contain,
-                   //       //             height: Responsive.isMobile(context) ?6:20,
-                   //       //             width: Responsive.isMobile(context) ?6:20,
-                   //       //           ),
-                   //       //         ),
-                   //       //       ),
-                   //       //     ),
-                   //       //   ),
-                   //       // ),
-                   //
-                   //
-                   //     ],
-                   //   ),
-                   // ),
+                   SizedBox(height:  10 ),
+                   FilterBox(),
+                   SizedBox(height:  10 ),
 
                    Obx(() {
 

@@ -12,6 +12,7 @@ import 'package:kaistable_website/screens/detail_screens/widget/map_widget.dart'
 import 'package:kaistable_website/screens/detail_screens/widget/number_text_widget.dart';
 import 'package:kaistable_website/screens/detail_screens/widget/review_widget.dart';
 import 'package:kaistable_website/screens/detail_screens/widget/tabs_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../utils/responsive.dart';
@@ -23,10 +24,12 @@ import '../home_screen/my_home_screen.dart';
 import 'widget/about_section_widget.dart';
 
 class RestaurantDetailScreen extends StatelessWidget {
+   List<String>? happyList;
 
   final controller = Get.put(RestaurantDetailController());
   final LocationListController locationController = LocationListController();
-  RestaurantDetailScreen({super.key,});
+  RestaurantDetailScreen({super.key,this.happyList});
+
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +119,86 @@ class RestaurantDetailScreen extends StatelessWidget {
                        ),
 
 
-                       SizedBox(height: Responsive.isMobile(context) ? 120 : 18),
+                       SizedBox(height: Responsive.isMobile(context) ? 130 : 18),
+
+                       Center(
+                         child: Container(
+                           width: 264,
+                           height: 36,
+                           decoration: BoxDecoration(
+                             color: Colors.white,
+                             borderRadius: BorderRadius.circular(10),
+
+                           ),
+                           child: Row(
+                             mainAxisAlignment: MainAxisAlignment.center,
+                             children: [
+                               SizedBox(width: 22),
+                               // Facebook Icon
+                               GestureDetector(
+                                 onTap: () async{
+                                   if (!await launchUrl(
+                                       Uri.parse('https://facebook.com/'))) {
+                                     throw Exception('Could not launch ');
+                                   }
+                                 }, // URL to open
+                                 child: Image.asset(
+                                   "assets/images/facebook.png",
+                                   height: 20,
+                                   width: 20,
+                                 ),
+                               ),
+                               Spacer(),
+                               // Instagram Icon
+                               GestureDetector(
+                                 onTap: () async{
+                                   if (!await launchUrl(
+                                       Uri.parse('https://instagram.com/'))) {
+                                     throw Exception('Could not launch ');
+                                   }
+                                 }, // URL to open
+                                 child: Image.asset(
+                                   "assets/images/instagram.png",
+                                   height: 20,
+                                   width: 20,
+                                 ),
+                               ),
+                               Spacer(),
+                               // YouTube Icon
+                               GestureDetector(
+                                 onTap: () async{
+                                   if (!await launchUrl(
+                                       Uri.parse('https://youtube.com/'))) {
+                                     throw Exception('Could not launch ');
+                                   }
+                                 }, // URL to open
+                                 child: Image.asset(
+                                   "assets/images/youtube.png",
+                                   height: 22,
+                                   width: 22,
+                                 ),
+                               ),
+                               Spacer(),
+                               // X (Twitter) Icon
+                               GestureDetector(
+                                 onTap: () async{
+                                   if (!await launchUrl(
+                                       Uri.parse('https://twitter.com/'))) {
+                                     throw Exception('Could not launch ');
+                                   }
+                                 }, // URL to open
+                                 child: Image.asset(
+                                   "assets/images/X.png", // Assume this is for X (formerly Twitter)
+                                   height: 20,
+                                   width: 20,
+                                 ),
+                               ),
+                               SizedBox(width: 22),
+                             ],
+                           ),
+                         ),
+                       ),
+                       SizedBox(height: Responsive.isMobile(context) ? 10 : 18),
                        Column(
                          children: [
                            Padding(
@@ -401,7 +483,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                    children: [
                                      Container(
                                        width:328,
-                                       height: 400,
+                                       height:500,
                                        decoration: BoxDecoration(
                                            borderRadius: BorderRadius.circular(16)),
                                        child: MapWidget(controller: controller),

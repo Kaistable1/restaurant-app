@@ -8,7 +8,9 @@ import 'package:kaistable_website/widgets/rectangle_widget.dart';
 import '../../../constants/app_colors.dart';
 import '../../../utils/responsive.dart';
 import '../../../widgets/fav_rectangle_widget.dart';
+import '../../../widgets/home_widgets/filter_widget.dart';
 import '../home_controller/home_cusiness_controller.dart';
+import '../home_controller/home_location_controller.dart';
 import '../home_controller/home_new_controller.dart';
 import '../home_controller/home_recently_viewed_controller.dart';
 import '../home_controller/home_trending_controller.dart';
@@ -17,10 +19,14 @@ class NewViewall extends StatelessWidget {
 
   final Function(int)? onNavigate;
   final HomeNewController newController = Get.put(HomeNewController());
-  NewViewall({super.key, this.onNavigate, });
+  final HomeLocationController controller = Get.put(HomeLocationController());
+  NewViewall({super.key, this.onNavigate, }){
+    controller.selectedTop.value = '';
+  }
 
   @override
   Widget build(BuildContext context) {
+
     double screenWidth = MediaQuery.of(context).size.width;
     bool isLargeScreen = screenWidth > 1400;
     return WillPopScope(
@@ -101,7 +107,9 @@ class NewViewall extends StatelessWidget {
                   //     ],
                   //   ),
                   // ),
-                  const SizedBox(height: 30),
+                  SizedBox(height:  10 ),
+                  FilterBox(),
+                  SizedBox(height:  10 ),
                   Obx(() {
 
 

@@ -9,10 +9,13 @@ import '../screens/detail_screens/restaurant_detail_screen.dart';
 import '../utils/responsive.dart';
 
 class RectangleWidget extends StatelessWidget {
+  final bool? isFromHappy;
+  final bool isHappy;
   final String title;
   final String imagePath;
   final String description;
   final String timetext;
+  final String? endTimeText;
   final String percentText;
   final RxBool isFavorite;
   final Function(int)? onNavigate;
@@ -24,7 +27,8 @@ class RectangleWidget extends StatelessWidget {
     required this.timetext,
     required this.percentText,
     required this.isFavorite,
-    this.onNavigate});
+    this.onNavigate,
+    this.isHappy = false, this.endTimeText, this.isFromHappy});
 
   @override
   Widget build(BuildContext context) {
@@ -109,10 +113,10 @@ class RectangleWidget extends StatelessWidget {
                 _buildStarBox( context),
                 SizedBox(width: 2,),
                 _buildStarBox( context),
-                SizedBox(width: 2,),
-                _buildStarBox( context),
-                SizedBox(width: 2,),
-                _buildStarBox( context),
+                // SizedBox(width: 2,),
+                // _buildStarBox( context),
+                // SizedBox(width: 2,),
+                // _buildStarBox( context),
               ]
 
               // List.generate(4, (index) {
@@ -136,40 +140,67 @@ class RectangleWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildStarBox(
-       BuildContext context) {
+  Widget _buildStarBox(BuildContext context) {
     return Container(
-      height: 30,
-      width: 30,
+      height: (isHappy ?? false) ? 55 : 40,
+      width: (isHappy ?? false) ? 55 : 40,
       decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/images/star_img.png'),
         ),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            timetext,
-            style: TextStyle(
-              fontFamily: 'Nunito-Regular',
-              fontSize:7,
-              fontWeight: FontWeight.w700,
-              color: AppColors.whiteColor,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 4.0,bottom: 4),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(height: isHappy ? 2:0,),
+            Text(
+              "$timetext",
+              style: TextStyle(
+                fontFamily: 'Nunito-Regular',
+                fontSize: 7,
+                fontWeight: FontWeight.bold,
+                color: AppColors.whiteColor,
+              ),
             ),
-          ),
-          Text(
-            percentText,
-            style: TextStyle(
-              fontFamily: 'Nunito-Regular',
-              fontSize: 7,
-              fontWeight: FontWeight.w700,
-              color: AppColors.whiteColor,
+            // Show the second and third text widgets only if isHappy is true
+            if (isHappy ?? true) ...[
+
+              Text(
+                "to",
+                style: TextStyle(
+                  fontFamily: 'Nunito-Regular',
+                  fontSize: 7,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.whiteColor,
+                ),
+              ),
+              Text(
+                "$endTimeText",
+                style: TextStyle(
+                  fontFamily: 'Nunito-Regular',
+                  fontSize: 7,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.whiteColor,
+                ),
+              ),
+            ],
+            // Last text widget (always visible)
+            Text(
+              percentText,
+              style: TextStyle(
+                fontFamily: 'Nunito-Regular',
+                fontSize: 7,
+                fontWeight: FontWeight.bold,
+                color: AppColors.whiteColor,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
+
 }

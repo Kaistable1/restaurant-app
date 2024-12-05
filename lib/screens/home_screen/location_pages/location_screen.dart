@@ -6,12 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:kaistable_website/screens/home_screen/my_home_screen.dart';
+import 'package:kaistable_website/widgets/home_widgets/filter_widget.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../utils/responsive.dart';
 import '../../../widgets/fav_rectangle_widget.dart';
 import '../../../widgets/rectangle_widget.dart';
 import '../../detail_screens/restaurant_detail_screen.dart';
+import '../home_controller/home_location_controller.dart';
 import 'location_controller/location_controller.dart';
 
 class LocationScreen extends StatelessWidget {
@@ -26,7 +28,11 @@ class LocationScreen extends StatelessWidget {
 
   ];
   final LocationController locationController = Get.put(LocationController());
-  LocationScreen({super.key, this.onNavigate,});
+  final HomeLocationController mycontroller = Get.put(HomeLocationController());
+  LocationScreen({super.key, this.onNavigate,})
+  {
+    mycontroller.selectedTop.value='';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +90,7 @@ class LocationScreen extends StatelessWidget {
                 ),
               ),
 
-              title: Text('Available restaurents',
+              title: Text('Available restaurants',
                 style: const TextStyle(
                   fontSize: 20,
                   color: AppColors.botomSheetColor,
@@ -126,215 +132,7 @@ class LocationScreen extends StatelessWidget {
                   ),
                   SizedBox(height: Responsive.isMobile(context) ? 10 : 18),
 
-                  Padding(
-                    padding: EdgeInsets.only(
-                      left: Responsive.isMobile(context) ? 16 : 46.0,
-                      right: 22,
-                    ),
-                    child: Container(
-                      height: Responsive.isMobile(context) ? 38: 55,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFEEEFF2),
-                        borderRadius: BorderRadius.circular(
-                          Responsive.isMobile(context) ? 4 : 10,
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: Responsive.isMobile(context) ? 12 : Get.width * 0.03,
-                          ),
-                          Text(
-                            'sort:',
-                            style: TextStyle(
-                              fontFamily: 'Nunito-Regular',
-                              fontSize: Responsive.isMobile(context) ? 10 : 14,
-                              fontWeight: FontWeight.w400,
-                              color: AppColors.textColor,
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 4,
-                          ),
-                          Expanded(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: List.generate(
-                                locationController.top.length,
-                                    (index) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 6),
-                                    child: Obx(() {
-                                      return InkWell(
-                                        onTap: () {
-                                          // Handle the tap for non-dropdown items
-                                          if (locationController.top[index] != 'Discount') {
-                                            locationController.selectedTop.value =
-                                            locationController.top[index];
-                                          }
-                                        },
-                                        child: Container(
-                                          height: Responsive.isMobile(context) ? 26 : 40,
-                                          decoration: BoxDecoration(
-                                            color: locationController.selectedTop.value ==
-                                                locationController.top[index] ||
-                                                (locationController.top[index] == 'Discount' &&
-                                                    items.contains(locationController.selectedTop.value))
-                                                ? AppColors.whiteColor // White background if selected
-                                                : Colors.transparent, // Transparent background if not selected
-                                            borderRadius: BorderRadius.circular(
-                                                Responsive.isMobile(context) ? 4 : 10),
-                                          ),
-                                          child: Center(
-                                            child: locationController.top[index] == 'Discount'
-                                                ? Padding(
-                                              padding: EdgeInsets.all(
-                                                  Responsive.isMobile(context) ? 4 : 8.0),
-                                              child:DropdownButtonHideUnderline(
-                                                child: DropdownButton2<String>(
-                                                  iconStyleData: IconStyleData(
-                                                    icon: Image.asset(
-                                                      'assets/images/drop_down_img.png', // Path to your image asset
-                                                      width: Responsive.isMobile(context) ? 8 : 12, // Adjust width of the image as per your requirement
-                                                      height: Responsive.isMobile(context) ? 8 : 12,
-                                                    ),
-                                                  ),
-                                                  dropdownStyleData: DropdownStyleData(
-                                                    width: 200,
-                                                    maxHeight: 200,
-                                                    decoration: BoxDecoration(
-                                                      color: AppColors.whiteColor,
-                                                      borderRadius: BorderRadius.circular(10),
-                                                    ),
-                                                  ),
-                                                  value: items.contains(locationController.selectedTop.value)
-                                                      ? locationController.selectedTop.value
-                                                      : null, // Fallback to null if no matching item is found
-
-                                                  // Hint when nothing is selected
-                                                  hint: Padding(
-                                                    padding: EdgeInsets.only(right: Responsive.isMobile(context) ? 10 : 8.0),
-                                                    child: Text(
-                                                      'Discount',
-                                                      style: TextStyle(
-                                                        fontSize: Responsive.isMobile(context) ? 10 : 14,
-                                                        fontWeight: FontWeight.w500,
-                                                        color: AppColors.darkGrey,
-                                                        fontFamily: 'Nunito-Regular',
-                                                      ),
-                                                    ),
-                                                  ),
-
-                                                  selectedItemBuilder: (BuildContext context) {
-                                                    return items.map((String item) {
-                                                      return Text(
-                                                        item,
-                                                        style: TextStyle(
-                                                          color: AppColors.darkGrey,
-                                                          fontWeight: FontWeight.w500,
-                                                          fontSize: Responsive.isMobile(context) ? 12 : 14,
-                                                          fontFamily: 'Nunito-Regular',
-                                                        ),
-                                                      );
-                                                    }).toList();
-                                                  },
-
-                                                  items: items.map((String item) {
-                                                    return DropdownMenuItem<String>(
-                                                      value: item,
-                                                      child: Row(
-                                                        children: [
-                                                          Checkbox(
-                                                            fillColor: MaterialStateProperty.resolveWith<Color>(
-                                                                  (Set<MaterialState> states) {
-                                                                if (states.contains(MaterialState.selected)) {
-                                                                  return AppColors.primaryColor;
-                                                                }
-                                                                return AppColors.whiteColor;
-                                                              },
-                                                            ),
-                                                            side: MaterialStateBorderSide.resolveWith((Set<MaterialState> states) {
-                                                              return BorderSide(color: AppColors.primaryColor);
-                                                            }),
-                                                            value: locationController.selectedTop.value == item, // Ensure the correct item is checked
-                                                            onChanged: (bool? isSelected) {
-                                                              if (isSelected == true) {
-                                                                // If the item is selected, set it as the selected value
-                                                                locationController.selectedTop.value = item;
-                                                              } else {
-                                                                // If the item is unselected, reset the selected value
-                                                                locationController.selectedTop.value = ''; // Set to null or empty string to unselect
-                                                              }
-                                                              Navigator.pop(context); // Close dropdown after selection/unselection
-                                                            },
-                                                          ),
-
-                                                          Text(
-                                                            item,
-                                                            style: TextStyle(
-                                                              color: AppColors.darkGrey,
-                                                              fontWeight: FontWeight.w500,
-                                                              fontSize: Responsive.isMobile(context) ? 10 : 14,
-                                                              fontFamily: 'Nunito-Regular',
-                                                            ),
-                                                            overflow: TextOverflow.ellipsis,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    );
-                                                  }).toList(),
-
-                                                  // Modified onChanged function to allow unselecting the currently selected value
-                                                  onChanged: (String? newValue) {
-                                                    if (newValue == locationController.selectedTop.value) {
-                                                      // If the selected value is clicked again, unselect it
-                                                      locationController.selectedTop.value = ''; // Set to null or empty string to unselect
-                                                    } else {
-                                                      locationController.selectedTop.value = newValue!;
-                                                    }
-                                                  },
-                                                ),
-                                              ),
-
-
-                                            )
-                                                : Padding(
-                                              padding: EdgeInsets.all(
-                                                  Responsive.isMobile(context) ? 2 : 18.0),
-                                              // Text outside the dropdown without checkboxes
-                                              child: Text(
-                                                locationController.top[index],
-                                                style: TextStyle(
-                                                  fontWeight: locationController.selectedTop.value !=
-                                                      locationController.top[index]
-                                                      ? FontWeight.w500
-                                                      : FontWeight.w700,
-                                                  fontSize: Responsive.isMobile(context) ? 10 : 14,
-                                                  color: locationController.selectedTop.value !=
-                                                      locationController.top[index]
-                                                      ? AppColors.darkGrey
-                                                      : AppColors.primaryColor,
-                                                  fontFamily: 'Nunito-Regular',
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    }),
-                                  );
-                                },
-                              ),
-                            ),
-                          )
-
-
-
-
-                        ],
-                      ),
-                    ),
-                  ),
+                  FilterBox(),
 
                   SizedBox(height: Responsive.isMobile(context) ? 20 : 22),
                   Obx(() {

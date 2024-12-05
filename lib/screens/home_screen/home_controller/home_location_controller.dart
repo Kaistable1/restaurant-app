@@ -8,10 +8,10 @@ class HomeLocationController extends GetxController {
   // ScrollController to control the ListView scroll position
   ScrollController scrollController = ScrollController();
   var selectedLetter = ''.obs; // Observable variable to store selected index
-  List top = ['most reviewed', 'Discount', 'minimum', 'maximum', ];
-  RxString selectedTop = 'most reviewed'.obs;
+  List top = ['Most Reviewed', 'Discount', 'Dining',  ];
+  RxString selectedTop = ''.obs;
   var selectedDiscount = '10%'.obs;
-  // Define the selectIndex method
+  // Define the selectIndex methodi
 
   // List of CircleContainerModel objects
   final List<CircleContainerModel> circleItems = [

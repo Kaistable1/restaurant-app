@@ -8,7 +8,9 @@ import 'package:kaistable_website/widgets/rectangle_widget.dart';
 import '../../../constants/app_colors.dart';
 import '../../../utils/responsive.dart';
 import '../../../widgets/fav_rectangle_widget.dart';
+import '../../../widgets/home_widgets/filter_widget.dart';
 import '../home_controller/home_cusiness_controller.dart';
+import '../home_controller/home_location_controller.dart';
 import '../home_controller/home_recently_viewed_controller.dart';
 import '../home_controller/home_trending_controller.dart';
 
@@ -17,7 +19,11 @@ class TrendingViewAll extends StatelessWidget {
   final Function(int)? onNavigate;
   final HomeTrendingController trendingController =
   Get.put(HomeTrendingController());
-   TrendingViewAll({super.key, this.onNavigate,});
+  final HomeLocationController controller = Get.put(HomeLocationController());
+   TrendingViewAll({super.key, this.onNavigate,})
+   {
+     controller.selectedTop.value='';
+   }
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +107,9 @@ class TrendingViewAll extends StatelessWidget {
                   //     ],
                   //   ),
                   // ),
-                  const SizedBox(height: 30),
+                  SizedBox(height:  10 ),
+                  FilterBox(),
+                  SizedBox(height:  10 ),
                   Obx(() {
 
 

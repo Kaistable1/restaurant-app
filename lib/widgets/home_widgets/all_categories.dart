@@ -69,77 +69,77 @@ class AllCategories extends StatelessWidget {
           ),
         ),
         SizedBox(height: Responsive.isMobile(context) ? 10 : 50),
-        Padding(
-          padding: EdgeInsets.only(
-            left: Responsive.isMobile(context) ? 14 : 48.0,
-            right: Responsive.isMobile(context) ? 18 : 48.0,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Theme',
-                style: TextStyle(
-                  color: AppColors.botomSheetColor,
-                  fontFamily: 'aftika-regular',
-                  fontSize: Responsive.isMobile(context) ? 18 : 40,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-              InkWell(
-                  onTap: () {
-                    Get.to(ThemeViewAll( ));
-                  },
-                  child: Text(
-
-                    "view all",
-                    style: TextStyle(
-
-                        decoration: TextDecoration.underline,
-
-                        decorationColor: AppColors.primaryColor,
-                        fontFamily: 'Nunito-Regular',
-                        fontSize: Responsive.isMobile(context) ? 12 : 20,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.primaryColor),
-                  ))
-            ],
-          ),
-        ),
-        SizedBox(height: Responsive.isMobile(context) ? 10 : 50),
-        Padding(
-          padding: EdgeInsets.only(
-              left: Responsive.isMobile(context) ? 8 : 42, right: 6),
-          child: SizedBox(
-            height: 180,
-            child: ListView.builder(
-              controller: themeController.scrothemellController,
-              scrollDirection: Axis.horizontal,
-              itemCount:
-              themeController.circleItems.length, // Number of items
-              itemBuilder: (context, index) {
-                final item = themeController
-                    .circleItems[index]; // Get item from model list
-                return Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: Responsive.isMobile(context) ? 6 : 6),
-                  child: CircleContainerWidget(
-                    ontap: (){
-                      Get.to(RestaurantDetailScreen());
-                    },
-                    isLocation: false,
-                    imgPath: item.imgPath,
-                    titleText: item.titleText,
-                    descriptionText: item.descriptionText,
-                    isFavourite: false.obs,
-                  ),
-                );
-              },
-            ),
-          ),
-        ),
-        SizedBox(height: Responsive.isMobile(context) ? 10 : 50),
+        // Padding(
+        //   padding: EdgeInsets.only(
+        //     left: Responsive.isMobile(context) ? 14 : 48.0,
+        //     right: Responsive.isMobile(context) ? 18 : 48.0,
+        //   ),
+        //   child: Row(
+        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //     children: [
+        //       Text(
+        //         'Theme',
+        //         style: TextStyle(
+        //           color: AppColors.botomSheetColor,
+        //           fontFamily: 'aftika-regular',
+        //           fontSize: Responsive.isMobile(context) ? 18 : 40,
+        //           fontWeight: FontWeight.w400,
+        //         ),
+        //       ),
+        //       InkWell(
+        //           onTap: () {
+        //             Get.to(ThemeViewAll( ));
+        //           },
+        //           child: Text(
+        //
+        //             "view all",
+        //             style: TextStyle(
+        //
+        //                 decoration: TextDecoration.underline,
+        //
+        //                 decorationColor: AppColors.primaryColor,
+        //                 fontFamily: 'Nunito-Regular',
+        //                 fontSize: Responsive.isMobile(context) ? 12 : 20,
+        //                 fontWeight: FontWeight.w500,
+        //                 color: AppColors.primaryColor),
+        //           ))
+        //     ],
+        //   ),
+        // ),
+        // SizedBox(height: Responsive.isMobile(context) ? 10 : 50),
+        // Padding(
+        //   padding: EdgeInsets.only(
+        //       left: Responsive.isMobile(context) ? 8 : 42, right: 6),
+        //   child: SizedBox(
+        //     height: 180,
+        //     child: ListView.builder(
+        //       controller: themeController.scrothemellController,
+        //       scrollDirection: Axis.horizontal,
+        //       itemCount:
+        //       themeController.circleItems.length, // Number of items
+        //       itemBuilder: (context, index) {
+        //         final item = themeController
+        //             .circleItems[index]; // Get item from model list
+        //         return Padding(
+        //           padding: EdgeInsets.symmetric(
+        //               horizontal: 6,
+        //               vertical: Responsive.isMobile(context) ? 6 : 6),
+        //           child: CircleContainerWidget(
+        //             ontap: (){
+        //               Get.to(RestaurantDetailScreen());
+        //             },
+        //             isLocation: false,
+        //             imgPath: item.imgPath,
+        //             titleText: item.titleText,
+        //             descriptionText: item.descriptionText,
+        //             isFavourite: false.obs,
+        //           ),
+        //         );
+        //       },
+        //     ),
+        //   ),
+        // ),
+        // SizedBox(height: Responsive.isMobile(context) ? 10 : 50),
         Padding(
           padding: EdgeInsets.only(
             left: Responsive.isMobile(context) ? 14 : 48.0,
@@ -225,6 +225,7 @@ class AllCategories extends StatelessWidget {
                   timetext: item.timetext,
                   percentText: item.percentText,
                   isFavorite: false.obs,
+
 
                 );
               },

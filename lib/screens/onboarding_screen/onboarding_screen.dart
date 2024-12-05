@@ -179,7 +179,7 @@ class ChooseLocationWidget extends StatelessWidget {
                 children: [
                   DropDownButton(
                     hintText: 'Country',
-                    items: const ["Pakistan", "USA", "UAE","Turkey","Thailand"],
+                    items: const ["USA","France"],
                     containerColor: const Color(0xFFFFFFFF),
                     textColor: Colors.grey,
                     onChanged: (value) {
@@ -226,7 +226,7 @@ class ChooseLocationWidget extends StatelessWidget {
                         : Responsive.isTablet(context)
                         ? 320
                         : 101,
-                    items: const ["Islamabad", "London", "New York","Washington","Dubai","Istanbul","Bangkok"],
+                    items: const ["New York","Los Angeles","Paris",],
                     selectedValue: controller.selectedCity.value,
                     onChanged: (value) {
                       controller.selectedCity.value = value!;

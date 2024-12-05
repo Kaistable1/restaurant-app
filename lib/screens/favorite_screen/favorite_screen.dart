@@ -4,8 +4,10 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/get_instance.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
+import 'package:kaistable_website/widgets/home_widgets/filter_widget.dart';
 import 'package:kaistable_website/widgets/rectangle_widget.dart';
 
+import '../home_screen/home_controller/home_location_controller.dart';
 import '../home_screen/my_home_screen.dart';
 import '../../utils/responsive.dart';
 import '../../widgets/fav_rectangle_widget.dart';
@@ -15,8 +17,11 @@ class FavoriteScreen extends StatelessWidget {
   final Function(int)? onNavigate;
 
   final controller = Get.put(FavoriteController());
+  final HomeLocationController mycontroller = Get.put(HomeLocationController());
 
-  FavoriteScreen({super.key, this.onNavigate});
+  FavoriteScreen({super.key, this.onNavigate}) {
+    mycontroller.selectedTop.value='';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +82,9 @@ class FavoriteScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                     SizedBox(height:  30 ),
+                     SizedBox(height:  10 ),
+                    FilterBox(),
+                    SizedBox(height:  10 ),
                     Obx(() {
 
                       return Padding(

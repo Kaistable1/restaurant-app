@@ -24,7 +24,7 @@ class UploadImageSectionState extends State<UploadImageSection> {
   final TextEditingController _reviewController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   String? _errorMessage;
-
+  final PageController _pageController = PageController();
   Future<void> _pickImages() async {
     if (kIsWeb) {
       // Use file_picker for web
@@ -160,6 +160,7 @@ class UploadImageSectionState extends State<UploadImageSection> {
                         onTap: _pickImages,
                         child: _selectedImages.isNotEmpty
                             ? PageView.builder(
+                          controller: _pageController,
                           itemCount: _selectedImages.length,
                           itemBuilder: (context, index) {
                             return Stack(
@@ -169,7 +170,7 @@ class UploadImageSectionState extends State<UploadImageSection> {
                                   _selectedImages[index],
                                   width: 326, // Matches dotted border width
                                   height: 150, // Matches dotted border height
-                                  fit: BoxFit.cover, // Ensures image covers the area fully
+                                  fit: BoxFit.fitHeight  , // Ensures image covers the area fully
                                 ),
                                 // Delete Icon
                                 Positioned(
@@ -199,6 +200,46 @@ class UploadImageSectionState extends State<UploadImageSection> {
                                         color: Colors.red,
                                         size: 18,
                                       ),
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 50,
+                                  left: 6 ,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      if (_pageController.page! > 0) {
+                                        _pageController.previousPage(
+                                          duration: Duration(milliseconds: 300),
+                                          curve: Curves.easeInOut,
+                                        );
+                                      }
+                                    },
+                                    child: CircleAvatar(
+                                      radius:14,
+
+                                      backgroundColor: Colors.white.withOpacity(0.7),
+                                      child: Icon(Icons.arrow_back_ios_rounded, color: AppColors.primaryColor,size: 14,),
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 50,
+                                  right: 6,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      if (_pageController.page! < _selectedImages.length - 1) {
+                                        _pageController.nextPage(
+                                          duration: Duration(milliseconds: 300),
+                                          curve: Curves.easeInOut,
+                                        );
+                                      }
+                                    },
+                                    child: CircleAvatar(
+                                      radius:14,
+
+                                      backgroundColor: Colors.white.withOpacity(0.7),
+                                      child: Icon(Icons.arrow_forward_ios_rounded, color: AppColors.primaryColor,size: 14,),
                                     ),
                                   ),
                                 ),
@@ -234,8 +275,8 @@ class UploadImageSectionState extends State<UploadImageSection> {
                   ),
                 ),
               ),
-          
-          
+
+
               SizedBox(height: Responsive.isMobile(context) ? 14 : 20),
               if (_errorMessage != null)
                 Padding(

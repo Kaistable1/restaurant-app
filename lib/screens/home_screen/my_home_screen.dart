@@ -44,7 +44,6 @@ class MyHomeScreen extends StatefulWidget {
 }
 
 class _MyHomeScreenState extends State<MyHomeScreen> {
-  final List<String> letters = ['#', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
   final RxBool isTapped = false.obs;
 
   final RxBool showFilterOptions = false.obs;
@@ -53,15 +52,8 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
     "assets/images/banner.png",
     "assets/images/banner.png",
   ];
-  final List<String> items = [
-    '10%',
-    '20%',
-    '30%',
-    '40%',
-    '50%',
 
-  ];
-  List<String> countries = ["Islamabad", "London", "New York","Washington","Dubai","Istanbul","Bangkok"];
+  List<String> countries = ["New York","Los Angeles","Paris",];
 
   // Selected country
 
@@ -117,6 +109,8 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
   }
   @override
   Widget build(BuildContext context) {
+
+
 
     double screenWidth = MediaQuery.of(context).size.width;
     bool isLargeScreen = screenWidth > 1400;
@@ -209,43 +203,43 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               FilterWidget(),
-              Padding(
-                padding: EdgeInsets.only(
-                  left: Responsive.isMobile(context) ? 16 : 48.0,
-                  right: Responsive.isMobile(context) ? 16 : 48.0,
-                ),
-                child: CarouselSlider.builder(
+              // Padding(
+              //   padding: EdgeInsets.only(
+              //     left: Responsive.isMobile(context) ? 16 : 48.0,
+              //     right: Responsive.isMobile(context) ? 16 : 48.0,
+              //   ),
+              //   child: CarouselSlider.builder(
+              //
+              //     itemCount: imagePaths.length,
+              //     itemBuilder: (BuildContext context, int index, int realIndex) {
+              //       return GestureDetector(
+              //         onTap: (){
+              //           Get.to(RestaurantDetailScreen());
+              //         },
+              //         child: ClipRRect(
+              //           borderRadius: BorderRadius.circular(10), // Set the border radius
+              //           child: Image.asset(
+              //             imagePaths[index],
+              //             fit: BoxFit.cover,
+              //           ),
+              //         ),
+              //       );
+              //     },
+              //     options: CarouselOptions(
+              //
+              //       height: 172,
+              //       // Height of the carousel
+              //       viewportFraction: .9, // Adjusts the width of the carousel items
+              //       autoPlay: true, // Enable auto sliding
+              //       autoPlayInterval: Duration(seconds: 3), // Interval between slides
+              //       autoPlayAnimationDuration: Duration(seconds: 1), // Animation duration
+              //       autoPlayCurve: Curves.easeInOut, // Curve for the sliding transition
+              //       enlargeCenterPage: true, // Enlarge the center image
+              //     ),
+              //   ),
+              // ),
 
-                  itemCount: imagePaths.length,
-                  itemBuilder: (BuildContext context, int index, int realIndex) {
-                    return GestureDetector(
-                      onTap: (){
-                        Get.to(RestaurantDetailScreen());
-                      },
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10), // Set the border radius
-                        child: Image.asset(
-                          imagePaths[index],
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    );
-                  },
-                  options: CarouselOptions(
-
-                    height: 172,
-                    // Height of the carousel
-                    viewportFraction: .9, // Adjusts the width of the carousel items
-                    autoPlay: true, // Enable auto sliding
-                    autoPlayInterval: Duration(seconds: 3), // Interval between slides
-                    autoPlayAnimationDuration: Duration(seconds: 1), // Animation duration
-                    autoPlayCurve: Curves.easeInOut, // Curve for the sliding transition
-                    enlargeCenterPage: true, // Enlarge the center image
-                  ),
-                ),
-              ),
-
-              SizedBox(height: Responsive.isMobile(context) ? 20 : 50),
+              SizedBox(height: Responsive.isMobile(context) ? 4 : 50),
               Padding(
                 padding: EdgeInsets.only(
                   left: Responsive.isMobile(context) ? 16 : 48.0,
@@ -290,7 +284,13 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                      items: countries.map((String country) {
                        return DropdownMenuItem<String>(
                          value: country,
-                         child: Text(country),
+                         child: Text(country,
+                           style: TextStyle(
+                             color: AppColors.botomSheetColor,
+                             fontFamily: 'aftika-regular',
+                             fontSize: Responsive.isMobile(context) ? 12 : 40,
+                             fontWeight: FontWeight.w400,
+                           ),),
                        );
                      }).toList(),),
                     Spacer(),

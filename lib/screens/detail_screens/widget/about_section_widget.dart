@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
 import 'package:kaistable_website/utils/responsive.dart';
@@ -16,7 +17,7 @@ class AboutSectionWidget extends StatelessWidget {
       children: [
         SizedBox(height: 20,),
         Padding(
-          padding: const EdgeInsets.only(left: 16.0,right: 16),
+          padding: const EdgeInsets.only(left: 16.0, right: 16),
           child: Text(
             'Operating hours ',
             style: TextStyle(
@@ -27,54 +28,11 @@ class AboutSectionWidget extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(height: 20,),
+        SizedBox(height: 10,),
+        MyAbout(),
+        SizedBox(height: 10,),
         Padding(
-          padding: const EdgeInsets.only(left: 16.0,right: 16),
-          child: Center(
-            child: Container(
-              width: Responsive.isMobile(context) || Responsive.isTablet(context)
-                  ? Get.width
-                  : Get.width * 0.7,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Table(
-                    border: TableBorder.symmetric(
-                        inside: BorderSide(
-                            width: 1, color: Colors.grey.withOpacity(0.5))),
-                    columnWidths: {
-                      0: const FlexColumnWidth(1.4),
-                      1: const FlexColumnWidth(4),
-                    },
-                    children: [
-                      TableRow(
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                        ),
-                        children: [
-                          tableCell('', isHeader: true),
-                          headerText(),
-                        ],
-                      ),
-                      tableRow('Monday', 'Open all day from 11:00-22:00'),
-                      tableRow('Tuesday', 'Open all day from 11:00-22:00'),
-                      tableRow('Wednesday', 'Open all day from 11:00-22:00'),
-                      tableRow('Thursday', 'Open all day from 11:00-22:00'),
-                      tableRow('Friday', 'Open all day from 11:00-22:00'),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-        SizedBox(height: 20,),
-        Padding(
-          padding: const EdgeInsets.only(left: 16.0,right: 16),
+          padding: const EdgeInsets.only(left: 16.0, right: 16),
           child: Text(
             'About XYZ ',
             style: TextStyle(
@@ -85,9 +43,9 @@ class AboutSectionWidget extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 10),
         Padding(
-          padding: const EdgeInsets.only(left: 16.0,right: 16),
+          padding: const EdgeInsets.only(left: 16.0, right: 16),
           child: Text(
             'The modern and elegant Flava Lite Rooftop Pool Bar & Cafe, located on the 11th floor, offers stunning views of the city\'s skyline. Guests can unwind and enjoy a drink or a meal in a serene and relaxing atmosphere from morning until late at night. Whether you choose to sit outdoors and soak in the panoramic views or dine indoors surrounded by chic and minimalistic decor, this rooftop pool bar provides a comfortable environment. Thai-style marinated beef skewers with coriander seed are great to pair with any of your favorite drinks, while salt and pepper kurobuta crispy pork with steamed jasmine rice and Thai-style fried eggs may be more suitable for the hungrier patrons.',
             style: TextStyle(
@@ -101,99 +59,185 @@ class AboutSectionWidget extends StatelessWidget {
 
         const SizedBox(height: 20),
 
-        SizedBox(height: 20,)
+
       ],
-    );
-  }
-  Widget headerText() {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      color: Colors.white,
-      child: const Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'Breakfast',
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              color: Color(0xFF555555),
-              fontSize: 14,
-              fontFamily: 'Nunito-Regular',
-            ),
-            textAlign: TextAlign.center,
-          ),
-          Text(
-            'Lunch',
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              color: Color(0xFF555555),
-              fontSize: 14,
-              fontFamily: 'Nunito-Regular',
-            ),
-            textAlign: TextAlign.center,
-          ),
-          Text(
-            'Dinner',
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              color: Color(0xFF555555),
-              fontSize: 14,
-              fontFamily: 'Nunito-Regular',
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-  TableRow tableRow(String day, String time) {
-    return TableRow(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 18.0),
-          child: Center(
-            child: Text(
-              day,
-              style: const TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF555555),
-                fontSize: 13,
-                fontFamily: 'Nunito-Regular',
-              ),
-              // textAlign: TextAlign.center,
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0,vertical: 12),
-          child: tableCell(time, isHighlighted: true),
-        ),
-      ],
-    );
-  }
-
-
-
-  Widget tableCell(String text,
-      {bool isHeader = false, bool isHighlighted = false}) {
-    return Container(
-     // width: 140,
-      //padding: const EdgeInsets.all(4.0),
-      //margin: const EdgeInsets.all(20.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(4),
-        color: isHighlighted ? const Color(0xFF90D26D) : Colors.white,
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-          fontFamily: 'Nunito-Regular',
-          color: isHeader ? Colors.black : Colors.white,
-        ),
-        textAlign: TextAlign.center,
-      ),
     );
   }
 }
+
+
+class MyAbout extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(6)
+        ),
+        width: 358, // Fixed width
+        child: Padding(
+          padding: const EdgeInsets.only(left: 4.0,right: 4,top: 22,bottom: 10),
+          child: DataTable(
+            dividerThickness: 1,
+            columnSpacing: 4, // Reduces spacing between columns
+            horizontalMargin: 4, // Removes extra horizontal margins
+            dataRowMinHeight: 12, // Adjust row height to fit better
+            headingRowHeight: 32,
+            // Adjust heading row height
+            columns:  [
+
+              DataColumn(
+                  label: Expanded(
+                    child: Row(
+                      children: [
+                        Text('',
+                        style: TextStyle(fontSize: 12,
+                        color: Color(0xFF555555),
+                        fontWeight: FontWeight.w500,
+                        fontFamily: "Nunito-Bold")),
+                        Spacer(),
+                        Container(
+                          height:52,
+                          width: 1,
+                          color: Color(0xFF98A2B3),
+                        )
+                      ],
+                    ),
+                  )),
+              DataColumn(label: Text('Breakfast',
+                  style: TextStyle(fontSize: 12,
+                      color: Color(0xFF555555),
+                      fontWeight: FontWeight.w500,
+                      fontFamily: "Nunito-Bold"))),
+              DataColumn(label: Text('Brunch',
+                  style: TextStyle(fontSize: 12,
+                      color: Color(0xFF555555),
+                      fontWeight: FontWeight.w500,
+                      fontFamily: "Nunito-Bold"))),
+              DataColumn(label: Text('Lunch',
+                  style: TextStyle(fontSize: 12,
+                      color: Color(0xFF555555),
+                      fontWeight: FontWeight.w500,
+                      fontFamily: "Nunito-Bold"))),
+              DataColumn(label: Text('Dinner',
+                  style: TextStyle(fontSize: 12,
+                  color: Color(0xFF555555),
+                  fontWeight: FontWeight.w500,
+                  fontFamily: "Nunito-Bold"))),
+            ],
+            rows: [
+              _buildRow('Monday', '11:00-22:00', '11:00-22:00', '11:00-22:00', '11:00-22:00'),
+              _buildRow('Tuesday', '11:00-22:00', '11:00-22:00', '11:00-22:00', '11:00-22:00'),
+              _buildRow('Wednesday', '11:00-22:00', '11:00-22:00', '11:00-22:00', 'Closed'),
+              _buildRow('Thursday', '11:00-22:00', '11:00-22:00', 'Closed', 'Closed'),
+              _buildRow('Friday', '11:00-22:00', 'Closed', 'Closed', 'Closed'),
+              _buildRow('Saturday', 'Closed', 'Closed', 'Closed', 'Closed'),
+              _buildRow('Sunday', 'Closed', 'Closed', 'Closed', 'Closed'),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  DataRow _buildRow(String day, String breakfast, String brunch, String lunch, String dinner) {
+    Color availableColor = Color(0xFF90D26D).withOpacity(.9);
+    Color closedColor = Color(0xFF98A2B3).withOpacity(.8);
+
+    return DataRow(
+
+      cells: [
+        DataCell(
+            Row(
+              children: [
+
+                Text(day,
+                  style: const TextStyle(
+                fontSize: 10,
+                color: Color(0xFF555555),
+                fontWeight: FontWeight.w500,
+                fontFamily: "Nunito-Bold"),),
+                Spacer(),
+                Container(
+                  height: Get.height,
+                  width: 1,
+                  color: Color(0xFF98A2B3),
+                )
+              ],
+            ),
+
+        ),
+        DataCell(Container(
+          width: 62,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(3),
+            color: breakfast == 'Closed' ? closedColor : availableColor,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+            child: Text(breakfast,
+                style: TextStyle(
+                    fontSize: 9,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontFamily: "Nunito-Regular"),
+                textAlign: TextAlign.center),
+          ),
+        )),
+        DataCell(Container(
+          width: 62,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(3),
+            color: brunch == 'Closed' ? closedColor : availableColor,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+            child: Text(brunch,
+                style: TextStyle(
+                    fontSize: 9,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontFamily: "Nunito-Regular"), textAlign: TextAlign.center),
+          ),
+        )),
+        DataCell(Container(
+          width: 62,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(3),
+            color: lunch == 'Closed' ? closedColor : availableColor,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+            child: Text(lunch,
+                style: TextStyle(
+                    fontSize: 9,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontFamily: "Nunito-Regular"),textAlign: TextAlign.center),
+          ),
+        )),
+        DataCell(Container(
+          width: 62,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(3),
+            color: dinner == 'Closed' ? closedColor : availableColor,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+            child: Text(dinner,
+                style: TextStyle(
+                    fontSize: 9,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontFamily: "Nunito-Regular"),textAlign: TextAlign.center),
+          ),
+        )),
+      ],
+    );
+  }
+}
+
+
+
