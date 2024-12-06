@@ -72,7 +72,7 @@ class RecentlyViewed extends StatelessWidget {
                title: Text('Recently Viewed',
                  style: const TextStyle(
                    fontSize: 20,
-                   color: AppColors.botomSheetColor,
+                   color: AppColors.bottomSheetColor,
                    fontWeight: FontWeight.w700,
                    fontFamily: 'Nunito-Bold',
                  ),),

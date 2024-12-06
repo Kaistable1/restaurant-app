@@ -13,7 +13,7 @@ class BottomContainer extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     bool isLargeScreen = screenWidth > 1400;
     return Container(
-      color: AppColors.botomSheetColor,
+      color: AppColors.bottomSheetColor,
       height: Responsive.isMobile(context) ? 210 : 390,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

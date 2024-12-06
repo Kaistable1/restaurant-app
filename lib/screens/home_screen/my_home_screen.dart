@@ -125,7 +125,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
           title: const Text('Home',
         style: TextStyle(
           fontSize: 20,
-          color: AppColors.botomSheetColor,
+          color: AppColors.bottomSheetColor,
           fontWeight: FontWeight.w700,
           fontFamily: 'Nunito-Bold',
         ),),
@@ -153,17 +153,9 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                   'USA.Los Vegas',
                   style: TextStyle(
                     color: AppColors.textColor,
-                    fontWeight: Responsive.isMobile(context)
-                        ? FontWeight.w800
-                        : Responsive.isTablet(context)
-                        ? FontWeight.w600
-                        : FontWeight.w600,
+                    fontWeight:  FontWeight.w800,
                     fontFamily: 'Nunito-Regular',
-                    fontSize: Responsive.isMobile(context)
-                        ?9
-                        : Responsive.isTablet(context)
-                        ? 14
-                        : 16,
+                    fontSize:9,
                   ),
                 ),
               ),
@@ -255,7 +247,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                      hint: Text(
                        selectedCountry,
                        style: TextStyle(
-                         color: AppColors.botomSheetColor,
+                         color: AppColors.bottomSheetColor,
                          fontFamily: 'aftika-regular',
                          fontSize: Responsive.isMobile(context) ? 18 : 40,
                          fontWeight: FontWeight.w400,
@@ -286,7 +278,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                          value: country,
                          child: Text(country,
                            style: TextStyle(
-                             color: AppColors.botomSheetColor,
+                             color: AppColors.bottomSheetColor,
                              fontFamily: 'aftika-regular',
                              fontSize: Responsive.isMobile(context) ? 12 : 40,
                              fontWeight: FontWeight.w400,

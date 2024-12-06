@@ -86,7 +86,7 @@ class UploadImageSectionState extends State<UploadImageSection> {
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 14,
-                  color: AppColors.botomSheetColor,
+                  color: AppColors.bottomSheetColor,
                   fontFamily: 'Nunito-Regular',
                 ),
               ),

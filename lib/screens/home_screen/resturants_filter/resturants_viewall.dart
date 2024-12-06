@@ -57,7 +57,7 @@ class ResturantsViewall extends StatelessWidget {
                     Text(
                       'Restaurants',
                       style: TextStyle(
-                        color: AppColors.botomSheetColor,
+                        color: AppColors.bottomSheetColor,
                         fontFamily: 'aftika-regular',
                         fontSize: Responsive.isMobile(context) ? 22 : 40,
                         fontWeight: FontWeight.w400,

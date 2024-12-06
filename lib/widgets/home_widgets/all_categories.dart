@@ -151,7 +151,7 @@ class AllCategories extends StatelessWidget {
               Text(
                 'Cuisines',
                 style: TextStyle(
-                  color: AppColors.botomSheetColor,
+                  color: AppColors.bottomSheetColor,
                   fontFamily: 'aftika-regular',
                   fontSize: Responsive.isMobile(context) ? 18 : 40,
                   fontWeight: FontWeight.w400,
@@ -245,7 +245,7 @@ class AllCategories extends StatelessWidget {
               Text(
                 'Trending',
                 style: TextStyle(
-                  color: AppColors.botomSheetColor,
+                  color: AppColors.bottomSheetColor,
                   fontFamily: 'aftika-regular',
                   fontSize: Responsive.isMobile(context) ? 18 : 40,
                   fontWeight: FontWeight.w400,
@@ -338,7 +338,7 @@ class AllCategories extends StatelessWidget {
               Text(
                 'New',
                 style: TextStyle(
-                  color: AppColors.botomSheetColor,
+                  color: AppColors.bottomSheetColor,
                   fontFamily: 'aftika-regular',
                   fontSize: Responsive.isMobile(context) ? 18 : 40,
                   fontWeight: FontWeight.w400,
@@ -430,7 +430,7 @@ class AllCategories extends StatelessWidget {
               Text(
                 'Recently Viewed',
                 style: TextStyle(
-                  color: AppColors.botomSheetColor,
+                  color: AppColors.bottomSheetColor,
                   fontFamily: 'aftika-regular',
                   fontSize: Responsive.isMobile(context) ? 18 : 40,
                   fontWeight: FontWeight.w400,

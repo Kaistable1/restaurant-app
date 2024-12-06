@@ -5,6 +5,8 @@ import 'package:kaistable_website/constants/app_colors.dart';
 import 'package:kaistable_website/screens/onboarding_screen/onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }

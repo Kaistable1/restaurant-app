@@ -93,7 +93,7 @@ class LocationScreen extends StatelessWidget {
               title: Text('Available restaurants',
                 style: const TextStyle(
                   fontSize: 20,
-                  color: AppColors.botomSheetColor,
+                  color: AppColors.bottomSheetColor,
                   fontWeight: FontWeight.w700,
                   fontFamily: 'Nunito-Bold',
                 ),),

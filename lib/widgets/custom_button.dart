@@ -1,9 +1,7 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
-
-import '../utils/responsive.dart';
 
 
 class CustomButton extends StatelessWidget {

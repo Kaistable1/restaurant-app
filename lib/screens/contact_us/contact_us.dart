@@ -81,7 +81,7 @@ class ContactUs extends StatelessWidget {
           title: Text('Contact us',
             style: const TextStyle(
               fontSize: 20,
-              color: AppColors.botomSheetColor,
+              color: AppColors.bottomSheetColor,
               fontWeight: FontWeight.w700,
               fontFamily: 'Nunito-Bold',
             ),),
@@ -135,12 +135,12 @@ class ContactUs extends StatelessWidget {
                           fontSize: 14,
                           fontFamily: "Nunito-Regulr",
                           fontWeight: FontWeight.w600,
-                          color: AppColors.botomSheetColor
+                          color: AppColors.bottomSheetColor
                         ),),
                         Text("Support@example.com",style: TextStyle(
                           fontWeight: FontWeight.w400,
                           fontFamily: "Nunito-Regular",
-                          color: AppColors.botomSheetColor,
+                          color: AppColors.bottomSheetColor,
                           fontSize: 12
                         ),)
                         
@@ -167,12 +167,12 @@ class ContactUs extends StatelessWidget {
                               fontSize: 14,
                               fontFamily: "Nunito-Regular",
                               fontWeight: FontWeight.w600,
-                              color: AppColors.botomSheetColor
+                              color: AppColors.bottomSheetColor
                           ),),
                         Text("(704) 555-0127",style: TextStyle(
                             fontWeight: FontWeight.w400,
                             fontFamily: "Nunito-Regular",
-                            color: AppColors.botomSheetColor,
+                            color: AppColors.bottomSheetColor,
                             fontSize: 12
                         ),)
           
@@ -198,7 +198,7 @@ class ContactUs extends StatelessWidget {
                                   fontSize: 16,
                                   fontFamily: "Nunito-Regular",
                                   fontWeight: FontWeight.w600,
-                                  color: AppColors.botomSheetColor
+                                  color: AppColors.bottomSheetColor
                               ),),
                           ),
                           SizedBox(height: 12,),
@@ -358,14 +358,14 @@ class ContactUs extends StatelessWidget {
                                   fontSize: 16,
                                   fontFamily: "Nunito-Regular",
                                   fontWeight: FontWeight.w600,
-                                  color: AppColors.botomSheetColor
+                                  color: AppColors.bottomSheetColor
                               ),),
                           ),
                           SizedBox(height: 12,),
                           Padding(
                             padding: const EdgeInsets.only(left: 16.0,right: 16),
                             child: CustomTextFormField(
-                              topPadding: -3,
+                              // topPadding: -3,
                               isShadow: false,
           
                               height: Responsive.isMobile(context) ? 44 : 44,
@@ -404,7 +404,7 @@ class ContactUs extends StatelessWidget {
                                   fontSize: 16,
                                   fontFamily: "Nunito-Regular",
                                   fontWeight: FontWeight.w600,
-                                  color: AppColors.botomSheetColor
+                                  color: AppColors.bottomSheetColor
                               ),),
                           ),
                           SizedBox(height: 12,),
@@ -415,7 +415,7 @@ class ContactUs extends StatelessWidget {
           
                               height: Responsive.isMobile(context) ? 134 : 89,
                               hintText: 'Message note',
-                              topPadding: 2,
+                              // topPadding: 2,
                               controller: controller.messagreController,
                               containerColor: AppColors.whiteColor,
                               fontfamily: 'Nunito-Regular',

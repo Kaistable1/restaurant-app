@@ -24,7 +24,7 @@ class ThemeViewAll extends StatelessWidget {
           'Theme',
           style: TextStyle(
             fontSize: 20,
-            color: AppColors.botomSheetColor,
+            color: AppColors.bottomSheetColor,
             fontWeight: FontWeight.w700,
             fontFamily: 'Nunito-Bold',
           ),

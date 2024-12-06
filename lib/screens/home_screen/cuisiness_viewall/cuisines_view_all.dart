@@ -83,7 +83,7 @@ class CuisinesViewAll extends StatelessWidget {
                 'Cuisines',
                 style: TextStyle(
                   fontSize: 20,
-                  color: AppColors.botomSheetColor,
+                  color: AppColors.bottomSheetColor,
                   fontWeight: FontWeight.w700,
                   fontFamily: 'Nunito-Bold',
                 ),

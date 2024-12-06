@@ -77,7 +77,7 @@ class FilterScreen extends StatelessWidget {
               title: Text('Available restaurants',
                 style: const TextStyle(
                   fontSize: 20,
-                  color: AppColors.botomSheetColor,
+                  color: AppColors.bottomSheetColor,
                   fontWeight: FontWeight.w700,
                   fontFamily: 'Nunito-Bold',
                 ),),
@@ -193,7 +193,7 @@ class FilterScreen extends StatelessWidget {
                     child: Text(
                       'Showing results for \'$selectedLetter\'',
                       style: TextStyle(
-                        color: AppColors.botomSheetColor,
+                        color: AppColors.bottomSheetColor,
                         fontFamily: 'Nunito-Bold',
                         fontSize: Responsive.isMobile(context) ? 18: 16,
                         fontWeight: FontWeight.w400,

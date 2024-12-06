@@ -95,7 +95,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                title: const Text('Restaurant details',
                  style: const TextStyle(
                    fontSize: 20,
-                   color: AppColors.botomSheetColor,
+                   color: AppColors.bottomSheetColor,
                    fontWeight: FontWeight.w700,
                    fontFamily: 'Nunito-Bold',
                  ),),
@@ -715,8 +715,8 @@ class RestaurantDetailScreen extends StatelessWidget {
               child: Text(beforePrice,
                   style: TextStyle(
                     decoration: TextDecoration.lineThrough,
-                    decorationColor: AppColors.botomSheetColor,
-                    color: AppColors.botomSheetColor,
+                    decorationColor: AppColors.bottomSheetColor,
+                    color: AppColors.bottomSheetColor,
                     fontSize: Responsive.isMobile(context) ? 10 : 14,
                     fontFamily: 'Nunito-Regular',
                     fontWeight: FontWeight.w700,
@@ -801,7 +801,7 @@ class RestaurantDetailScreen extends StatelessWidget {
               child: Text(
                 afterPrice,
                 style: TextStyle(
-                  color: AppColors.botomSheetColor,
+                  color: AppColors.bottomSheetColor,
                   fontSize: Responsive.isMobile(context) ? 10 : 14,
                   fontFamily: 'Nunito-Bold',
                   fontWeight: FontWeight.w700,
@@ -873,7 +873,7 @@ class RatingRowWidget extends StatelessWidget {
                     Text(
                       'June 30, 2024',
                       style: TextStyle(
-                        color: AppColors.botomSheetColor,
+                        color: AppColors.bottomSheetColor,
                         fontFamily: 'Nunito-Bold',
                         fontWeight: FontWeight.w500,
                         fontSize: Responsive.isMobile(context) ? 10 : isLargeScreen ? 18 : 14,
@@ -931,7 +931,7 @@ class RatingRowWidget extends StatelessWidget {
                       fontFamily: 'Nunito-Regular',
                       fontSize: Responsive.isMobile(context) ? 12 : isLargeScreen ? 18 : 14,
                       fontWeight: FontWeight.w400,
-                      color: AppColors.botomSheetColor,
+                      color: AppColors.bottomSheetColor,
                     ),
                   ),
                 ),

@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:kaistable_website/screens/auth_screens/login/login_screen.dart';
 import 'package:kaistable_website/screens/detail_screens/restaurant_detail_screen.dart';
 
 import 'package:kaistable_website/screens/onboarding_screen/onboarding_screen.dart';
@@ -13,9 +14,10 @@ import 'package:kaistable_website/widgets/top_bar_widget.dart';
 import 'firebase_options.dart';
 import 'landing_screen.dart';
 import 'screens/home_screen/my_home_screen.dart';
+
 bool myFlag = false;
 Future<void> main() async {
-  // WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   // await Firebase.initializeApp(
   //   options: DefaultFirebaseOptions.currentPlatform,
   // );
@@ -40,9 +42,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Kaistable',
 
-
-        home: SplashScreen(),
-        //  home:LandingScreen(),
+      // home: SplashScreen(),
+       home:LoginScreen(),
       // home:MyHomeScreen()
     );
   }

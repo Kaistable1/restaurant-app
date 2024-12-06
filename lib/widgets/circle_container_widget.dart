@@ -146,7 +146,7 @@ class CircleContainerWidget extends StatelessWidget {
                             ? 22
                             : 16,
                     fontFamily: 'Nunito-Bold',
-                    color: AppColors.botomSheetColor,
+                    color: AppColors.bottomSheetColor,
                   ),
                 ),
               ],

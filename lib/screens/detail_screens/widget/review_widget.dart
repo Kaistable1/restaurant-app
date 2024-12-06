@@ -195,7 +195,7 @@ class ReviewWidget extends StatelessWidget {
                                   ? 18
                                   : 14,
                               color: AppColors
-                                  .botomSheetColor),
+                                  .bottomSheetColor),
                         ),
                       ],
                     ),

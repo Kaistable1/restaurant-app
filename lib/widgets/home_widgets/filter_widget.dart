@@ -93,7 +93,7 @@ class FilterWidget extends StatelessWidget {
                     child: Text(
                       'Search',
                       style: TextStyle(
-                        color: AppColors.botomSheetColor,
+                        color: AppColors.bottomSheetColor,
                         fontFamily: "Nunito-Bold",
                         fontSize:
                         Responsive.isMobile(context) ? 12 : 16,
