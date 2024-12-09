@@ -73,7 +73,7 @@ class HappyHours extends StatelessWidget {
         ),
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.only(left: 8.0,right: 8),
+            padding: const EdgeInsets.only(left: 6,right: 6),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -82,7 +82,6 @@ class HappyHours extends StatelessWidget {
                 FilterBox(),
                 SizedBox(height:  10 ),
                 Obx(() {
-
                   return Padding(
                       padding: EdgeInsets.only(
                           left: 8,
@@ -110,7 +109,6 @@ class HappyHours extends StatelessWidget {
                             percentText: item.percentText,
                             isFavorite: false.obs,
                             endTimeText: item.endTimeText,
-
                           );
                         },
                       )

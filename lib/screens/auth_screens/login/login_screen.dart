@@ -189,7 +189,7 @@ class LoginScreen extends StatelessWidget {
                     width: 200,
                     height: 48,
                     ontapp: () {
-                      Get.to(() => MyHomeScreen());
+                      Get.to(() => MyHomeScreen(countryName: 'USA',));
                     },
                   ),
                 ),

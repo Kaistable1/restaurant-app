@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:kaistable_website/screens/home_screen/my_home_screen.dart';
 import 'package:kaistable_website/widgets/rectangle_widget.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../utils/responsive.dart';
-import '../../../widgets/fav_rectangle_widget.dart';
 import '../../detail_screens/restaurant_detail_screen.dart';
 import '../home_controller/home_location_controller.dart';
 import '../location_pages/location_controller/location_controller.dart';
@@ -33,18 +31,14 @@ class FilterScreen extends StatelessWidget {
       },
       child: LayoutBuilder(
         builder: (context, constraints) {
-          int itemsPerRow = Responsive.isMobile(context)
-              ? 2
-              : Responsive.isTablet(context)
-              ? 3
-              : 4;
+          int itemsPerRow = 2;
           double itemWidth = (constraints.maxWidth / itemsPerRow) - 16;
-          double itemHeight = 320; // Set a fixed height for items
+          double itemHeight = 320;
 
           return Scaffold(backgroundColor: AppColors.bgColor,
             appBar: AppBar(backgroundColor: AppColors.bgColor,
               iconTheme: IconThemeData(
-                color: AppColors.primaryColor, // Set your desired color for the drawer icon
+                color: AppColors.primaryColor,
               ),
               centerTitle: true,
               automaticallyImplyLeading: true,
@@ -67,7 +61,7 @@ class FilterScreen extends StatelessWidget {
                   ),
                   child: GestureDetector(
                     onTap: () {
-                      Get.back(); // Navigate back to the home screen
+                      Get.back();
                     },
                     child: Icon(Icons.arrow_back, size: 18),
                   ),
