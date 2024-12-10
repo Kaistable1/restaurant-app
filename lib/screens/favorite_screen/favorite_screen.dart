@@ -37,7 +37,7 @@ class FavoriteScreen extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: AppColors.bgColor,
           iconTheme: IconThemeData(
-            color: AppColors.primaryColor, // Set your desired color for the drawer icon
+            color: AppColors.primaryColor,
           ),
           centerTitle: true,
           automaticallyImplyLeading: true,
@@ -60,7 +60,7 @@ class FavoriteScreen extends StatelessWidget {
               ),
               child: GestureDetector(
                 onTap: () {
-                  Get.back();; // Navigate back to the home screen
+                  Get.back();
                 },
                 child: Icon(Icons.arrow_back, size: 18),
               ),

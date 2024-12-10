@@ -7,6 +7,7 @@ import 'package:kaistable_website/screens/auth_screens/signup/controller/signup_
 
 import '../../../custom_widget/TextAndWidget.dart';
 import '../../../custom_widget/separate_text_field.dart';
+import '../../../utils/validations.dart';
 import '../../../widgets/custom_button.dart';
 import '../../../widgets/custom_text_field.dart';
 import '../login/login_screen.dart';
@@ -19,6 +20,7 @@ class SignupScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _formKey = GlobalKey<FormState>();
     return GestureDetector(
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
@@ -28,244 +30,267 @@ class SignupScreen extends StatelessWidget {
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: 50,
-                ),
-                Center(
-                  child: Image.asset(
-                    'assets/images/botomsheet_logo.png',
-                    height: 74,
-                    width: 196,
-                    color: AppColors.primaryColor,
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 50,
                   ),
-                ),
-                SizedBox(
-                  height: 73,
-                ),
-                Text(
-                  'Welcome',
-                  style: TextStyle(
-                    color: AppColors.blackColor,
-                    fontWeight: FontWeight.w700,
-                    fontFamily: 'Nunito-Sans',
-                    fontSize: 28,
-                  ),
-                ),
-                SizedBox(
-                  height: 14,
-                ),
-                Text(
-                  'Signup to Continue!',
-                  style: TextStyle(
-                    color: AppColors.blackColor,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Nunito-Sans',
-                    fontSize: 18,
-                  ),
-                ),
-                SizedBox(
-                  height: 30,
-                ),
-                TextAndFieldWidget(
-                  labelText: 'User Name',
-                  hintText: 'Harold Richards',
-                  controller: TextEditingController(),
-                  isSuffixIcon: true,
-                  suffixIcon: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 10, bottom: 10, top: 10, right: 12),
+                  Center(
                     child: Image.asset(
-                      'assets/images/user_icon.png',
-                      height: 20,
-                      width: 20,
+                      'assets/images/botomsheet_logo.png',
+                      height: 74,
+                      width: 196,
+                      color: AppColors.primaryColor,
                     ),
                   ),
-                ),
-                TextAndFieldWidget(
-                  labelText: 'Email',
-                  hintText: 'deanna.curtis@example.com',
-                  controller: TextEditingController(),
-                  isSuffixIcon: true,
-                  suffixIcon: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 8.0, bottom: 8, top: 8, right: 12),
-                    child: Image.asset(
-                      'assets/images/email.icon.png',
-                      height: 20,
-                      width: 20,
+                  SizedBox(
+                    height: 73,
+                  ),
+                  Text(
+                    'Welcome',
+                    style: TextStyle(
+                      color: AppColors.blackColor,
+                      fontWeight: FontWeight.w700,
+                      fontFamily: 'Nunito-Sans',
+                      fontSize: 28,
                     ),
                   ),
-                ),
-                Obx(
-                  () => TextAndFieldWidget(
-                    labelText: 'Password',
-                    hintText: 'Password ',
-                    controller: controller.passwordController,
-                    obscureText: controller.isPasswordHidden.value,
+                  SizedBox(
+                    height: 14,
+                  ),
+                  Text(
+                    'Signup to Continue!',
+                    style: TextStyle(
+                      color: AppColors.blackColor,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'Nunito-Sans',
+                      fontSize: 18,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  TextAndFieldWidget(
+                    labelText: 'User Name',
+                    hintText: 'Harold Richards',
+                    controller: controller.userNameController,
                     isSuffixIcon: true,
-                    suffixIcon: GestureDetector(
-                      onTap: () {
-                        controller.isPasswordHidden.value =
-                            !controller.isPasswordHidden.value;
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 12.0, bottom: 13, top: 13, right: 12),
-                        child: controller.isPasswordHidden.value == true
-                            ? Image.asset(
-                                'assets/images/open_eye.png',
-                                height: 16,
-                                width: 22,
-                              )
-                            : Image.asset(
-                                'assets/images/closed_eye.png',
-                                height: 16,
-                                width: 22,
-                              ),
+                    suffixIcon: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 12, bottom: 12, top: 12, right: 8),
+                      child: Image.asset(
+                        'assets/images/user_icon.png',
+                        height: 20,
+                        width: 20,
                       ),
                     ),
                   ),
-                ),
-                Obx(
-                  () => TextAndFieldWidget(
-                    labelText: 'Confirm Password',
-                    hintText: 'Password ',
-                    controller: controller.confirmPasswordController,
-                    obscureText: controller.isConfirmPasswordHidden.value,
+                  TextAndFieldWidget(
+                    labelText: 'Email',
+                    hintText: 'deanna.curtis@example.com',
+                    controller: controller.emailController,
                     isSuffixIcon: true,
-                    suffixIcon: GestureDetector(
-                      onTap: () {
-                        controller.isConfirmPasswordHidden.value =
-                            !controller.isConfirmPasswordHidden.value;
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 12.0, bottom: 13, top: 13, right: 12),
-                        child: controller.isConfirmPasswordHidden.value == true
-                            ? Image.asset(
-                                'assets/images/open_eye.png',
-                                height: 16,
-                                width: 22,
-                              )
-                            : Image.asset(
-                                'assets/images/closed_eye.png',
-                                height: 16,
-                                width: 22,
-                              ),
+                    suffixIcon: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 13.0, bottom: 8, top: 8, right: 13),
+                      child: Image.asset(
+                        'assets/images/email.icon.png',
+                        height: 20,
+                        width: 20,
                       ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        controller.rememberMe.value =
-                            !controller.rememberMe.value;
+                  Obx(
+                    () => TextAndFieldWidget(
+                      labelText: 'Password',
+                      hintText: 'Password ',
+                      controller: controller.passwordController,
+                      obscureText: controller.isPasswordHidden.value,
+                      validator: (value) {
+                        return isPasswordValid(value!);
                       },
-                      child: Obx(
-                        () => Container(
-                          height: 24,
-                          width: 24,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(6),
-                            border: Border.all(
-                                color: AppColors.primaryColor, width: 2),
-                            shape: BoxShape.rectangle,
-                          ),
-                          child: controller.rememberMe.value == true
-                              ? const Center(
-                                  child: Icon(
-                                    Icons.done,
-                                    color: AppColors.primaryColor,
-                                    size: 16,
-                                  ),
+                      isSuffixIcon: true,
+                      suffixIcon: GestureDetector(
+                        onTap: () {
+                          controller.isPasswordHidden.value =
+                              !controller.isPasswordHidden.value;
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 13.0, bottom: 13, top: 13, right: 13),
+                          child: controller.isPasswordHidden.value == true
+                              ? Image.asset(
+                                  'assets/images/open_eye.png',
+                                  height: 16,
+                                  width: 22,
                                 )
-                              : null,
+                              : Image.asset(
+                                  'assets/images/closed_eye.png',
+                                  height: 16,
+                                  width: 22,
+                                ),
                         ),
                       ),
                     ),
-                    SizedBox(width: 8),
-                    Text(
-                      'I agree with ',
-                      style: TextStyle(
-                        color: AppColors.headingTextColor,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'Nunito-Sans',
-                        fontSize: 16,
-                      ),
-                    ),
-                    Text(
-                      'Terms & Conditions',
-                      style: TextStyle(
-                        color: AppColors.primaryColor,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'Nunito-Sans',
-                        decoration: TextDecoration.underline,
-                        decorationColor: AppColors.primaryColor,
-                        fontSize: 16,
-                      ),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 40,
-                ),
-                Center(
-                  child: CustomButton(
-                    laBelText: 'Sign-up',
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Nunito-Sans',
-                    textColor: Colors.white,
-                    width: 200,
-                    height: 48,
-                    ontapp: () {
-                      Get.to(() => VerifyPage());
-                    },
                   ),
-                ),
-                SizedBox(
-                  height: 24,
-                ),
-                Center(
-                  child: RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'Already  have an account?',
-                          style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'Nunito-Regular',
-                              color: AppColors.headingTextColor),
+                  Obx(
+                    () => TextAndFieldWidget(
+                      labelText: 'Confirm Password',
+                      hintText: 'Password ',
+                      controller: controller.confirmPasswordController,
+                      obscureText: controller.isConfirmPasswordHidden.value,
+                      isSuffixIcon: true,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a confirm password';
+                        }
+                        if (value != controller.passwordController.text) {
+                          return 'Passwords do not match';
+                        }
+                        return null;
+                      },
+                      suffixIcon: GestureDetector(
+                        onTap: () {
+                          controller.isConfirmPasswordHidden.value =
+                              !controller.isConfirmPasswordHidden.value;
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 13.0, bottom: 13, top: 13, right: 13),
+                          child:
+                              controller.isConfirmPasswordHidden.value == true
+                                  ? Image.asset(
+                                      'assets/images/open_eye.png',
+                                      height: 16,
+                                      width: 22,
+                                    )
+                                  : Image.asset(
+                                      'assets/images/closed_eye.png',
+                                      height: 16,
+                                      width: 22,
+                                    ),
                         ),
-                        TextSpan(
-                          text: ' Login',
-                          style: TextStyle(
-                            color: AppColors.primaryColor,
-                            fontSize: 16,
-                            fontFamily: 'Nunito-Regular',
-                            fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          controller.termsAndConditions.value =
+                              !controller.termsAndConditions.value;
+                        },
+                        child: Obx(
+                          () => Container(
+                            height: 24,
+                            width: 24,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(
+                                  color: AppColors.primaryColor, width: 2),
+                              shape: BoxShape.rectangle,
+                            ),
+                            child: controller.termsAndConditions.value == true
+                                ? const Center(
+                                    child: Icon(
+                                      Icons.done,
+                                      color: AppColors.primaryColor,
+                                      size: 16,
+                                    ),
+                                  )
+                                : null,
                           ),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () => Get.to(() => LoginScreen()),
                         ),
-                      ],
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        'I agree with ',
+                        style: TextStyle(
+                          color: AppColors.headingTextColor,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'Nunito-Sans',
+                          fontSize: 16,
+                        ),
+                      ),
+                      Text(
+                        'Terms & Conditions',
+                        style: TextStyle(
+                          color: AppColors.primaryColor,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'Nunito-Sans',
+                          decoration: TextDecoration.underline,
+                          decorationColor: AppColors.primaryColor,
+                          fontSize: 16,
+                        ),
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    height: 40,
+                  ),
+                  Center(
+                    child: CustomButton(
+                      laBelText: 'Sign-up',
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'Nunito-Sans',
+                      textColor: Colors.white,
+                      width: 200,
+                      height: 48,
+                      ontapp: () {
+                        if (_formKey.currentState!.validate()) {
+                          controller.emailController.clear();
+                          controller.userNameController.clear();
+                          controller.passwordController.clear();
+                          controller.confirmPasswordController.clear();
+                          controller.termsAndConditions.value = false;
+                          Get.to(() => VerifyPage());
+                        }
+                      },
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 16,
-                ),
-              ],
+                  SizedBox(
+                    height: 24,
+                  ),
+                  Center(
+                    child: RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'Already  have an account?',
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'Nunito-Regular',
+                                color: AppColors.headingTextColor),
+                          ),
+                          TextSpan(
+                            text: ' Login',
+                            style: TextStyle(
+                              color: AppColors.primaryColor,
+                              fontSize: 16,
+                              fontFamily: 'Nunito-Regular',
+                              fontWeight: FontWeight.w600,
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () => Get.to(() => LoginScreen()),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 16,
+                  ),
+                ],
+              ),
             ),
           ),
         ),

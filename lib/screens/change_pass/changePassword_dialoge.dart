@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../../constants/app_colors.dart';
 import '../../custom_widget/TextAndWidget.dart';
+import '../../utils/validations.dart';
 import '../../widgets/custom_button.dart';
 import '../edit_profile/controller/profile_controller.dart';
 
@@ -56,12 +57,12 @@ void changePasswordDialogBox() {
                           labelText: 'Password',
                           isSuffixIcon: true,
                           validator: (value) {
-                            // return isPasswordValid(value!);
+                            return isPasswordValid(value!);
                           },
                           obscureText: controller.isPasswordHidden.value,
                           suffixIcon: Padding(
                             padding: const EdgeInsets.only(
-                                top: 12, bottom: 12, right: 16, left: 12),
+                                top: 13, bottom: 13, right: 13, left: 13),
                             child: GestureDetector(
                               onTap: () {
                                 controller.isPasswordHidden.value =
@@ -110,7 +111,7 @@ void changePasswordDialogBox() {
                           obscureText: controller.isNewPasswordHidden.value,
                           suffixIcon: Padding(
                             padding: const EdgeInsets.only(
-                                top: 12, bottom: 12, right: 16, left: 12),
+                                top: 13, bottom: 13, right: 13, left: 13),
                             child: GestureDetector(
                               onTap: () {
                                 controller.isNewPasswordHidden.value =
@@ -150,7 +151,7 @@ void changePasswordDialogBox() {
                           obscureText: controller.isConfirmPasswordHidden.value,
                           suffixIcon: Padding(
                             padding: const EdgeInsets.only(
-                                top: 12, bottom: 12, right: 16, left: 12),
+                                top: 13, bottom: 13, right: 13, left: 13),
                             child: GestureDetector(
                               onTap: () {
                                 controller.isConfirmPasswordHidden.value =

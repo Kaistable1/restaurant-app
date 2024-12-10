@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
+import 'package:kaistable_website/screens/auth_screens/login/login_screen.dart';
 import 'package:kaistable_website/screens/onboarding_screen/onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -39,8 +40,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     // Start the timer to navigate to the OnboardingScreen
     Timer(Duration(seconds: 3), () {
-      Get.offAll(OnboardingScreen()) ;
-
+      Get.offAll(() => LoginScreen());
     });
   }
 

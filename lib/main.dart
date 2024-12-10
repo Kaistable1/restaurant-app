@@ -5,6 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:kaistable_website/screens/auth_screens/login/login_screen.dart';
 import 'package:kaistable_website/screens/detail_screens/restaurant_detail_screen.dart';
+import 'package:kaistable_website/screens/general_preferences/screens_general/preference_1.dart';
+import 'package:kaistable_website/screens/general_preferences/screens_general/preference_10.dart';
+import 'package:kaistable_website/screens/general_preferences/screens_general/preference_3.dart';
+import 'package:kaistable_website/screens/general_preferences/screens_general/preference_4.dart';
+import 'package:kaistable_website/screens/general_preferences/screens_general/preference_5.dart';
+import 'package:kaistable_website/screens/general_preferences/screens_general/preference_6.dart';
+import 'package:kaistable_website/screens/general_preferences/screens_general/preference_7.dart';
+import 'package:kaistable_website/screens/general_preferences/screens_general/preference_9.dart';
 
 import 'package:kaistable_website/screens/onboarding_screen/onboarding_screen.dart';
 import 'package:kaistable_website/screens/profile_screens/profile_screen.dart';
@@ -16,6 +24,7 @@ import 'landing_screen.dart';
 import 'screens/home_screen/my_home_screen.dart';
 
 bool myFlag = false;
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // await Firebase.initializeApp(
@@ -42,8 +51,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Kaistable',
 
-      // home: SplashScreen(),
-       home:LoginScreen(),
+      home: SplashScreen(),
+      // home: LoginScreen(),
       // home:MyHomeScreen()
     );
   }

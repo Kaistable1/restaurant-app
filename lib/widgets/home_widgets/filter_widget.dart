@@ -141,7 +141,7 @@ class FilterBox extends StatelessWidget {
         child: Row(
           children: [
             SizedBox(
-              width: 12,
+              width: 11,
             ),
             InkWell(
               onTap: () {
@@ -158,7 +158,7 @@ class FilterBox extends StatelessWidget {
               ),
             ),
             const SizedBox(
-              width: 4,
+              width: 3,
             ),
             Expanded(
               child: Row(
@@ -200,7 +200,7 @@ class FilterBox extends StatelessWidget {
                                           top: 4,
                                           bottom: 4,
                                           right: 4,
-                                          left: 24),
+                                          left: 20),
                                       child: DropdownButtonHideUnderline(
                                         child: DropdownButton2<String>(
                                           iconStyleData: IconStyleData(

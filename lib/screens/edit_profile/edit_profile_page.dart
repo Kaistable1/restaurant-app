@@ -168,7 +168,7 @@ class EditProfilePage extends StatelessWidget {
                   isSuffixIcon: true,
                   suffixIcon: Padding(
                     padding: const EdgeInsets.only(
-                        left: 8.0, bottom: 8, top: 8, right: 12),
+                        left: 12, bottom: 12, top: 12, right: 8),
                     child: Image.asset(
                       'assets/images/user_icon.png',
                       height: 20,
@@ -183,7 +183,7 @@ class EditProfilePage extends StatelessWidget {
                   isSuffixIcon: true,
                   suffixIcon: Padding(
                     padding: const EdgeInsets.only(
-                        left: 8.0, bottom: 8, top: 8, right: 12),
+                        left: 13.0, bottom: 8, top: 8, right: 13),
                     child: Image.asset(
                       'assets/images/email.icon.png',
                       height: 20,

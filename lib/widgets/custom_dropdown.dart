@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import '../utils/responsive.dart';
+import 'package:get/get.dart';
+import 'package:kaistable_website/constants/app_colors.dart';
 
 class DropDownButton extends StatelessWidget {
+  RxBool isExpanded = false.obs;
   final String hintText;
   final double? height;
   final double? width;
@@ -15,7 +17,7 @@ class DropDownButton extends StatelessWidget {
   final String? fontfamily;
   final double? dropdownItemWidth;
 
-  const DropDownButton({
+  DropDownButton({
     super.key,
     required this.hintText,
     this.height,
@@ -32,80 +34,92 @@ class DropDownButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Determine whether the list of items should be scrollable
     final isScrollable = items.length > 3;
 
-    return DropdownButtonHideUnderline(
-      child: DropdownButton2<String>(
-        isExpanded: true,
-        hint: Text(
-          hintText,
-          style: TextStyle(
-            color: Color(0xFF4F5762),
-            fontFamily: fontfamily ?? "Lora-Regular",
-            fontWeight: FontWeight.w400,
-            fontSize: 14,
-          ),
-        ),
-        items: items
-            .map((String value) => DropdownMenuItem<String>(
-          value: value,
-          child: Text(
-            value,
+    return Obx(
+      () => DropdownButtonHideUnderline(
+        child: DropdownButton2<String>(
+          isExpanded: true,
+          onMenuStateChange: (isOpen) {
+            isExpanded.value = isOpen;
+          },
+          hint: Text(
+            hintText,
             style: TextStyle(
               color: Color(0xFF4F5762),
               fontFamily: fontfamily ?? "Lora-Regular",
               fontWeight: FontWeight.w400,
-              fontSize:14,
+              fontSize: 14,
             ),
-            overflow: TextOverflow.ellipsis,
           ),
-        ))
-            .toList(),
-        value: items.contains(selectedValue) ? selectedValue : null,
-        onChanged: onChanged,
-        buttonStyleData: ButtonStyleData(
-          height: height,
-          width: width,
-          padding: EdgeInsets.only(left: 22, right: 22),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(Responsive.isMobile(context) ? 4 : 10),
-            color: containerColor,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                spreadRadius: 3,
-                blurRadius: 12,
-                offset: const Offset(0, 1),
-              ),
-            ],
+          items: items
+              .map((String value) => DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(
+                      value,
+                      style: TextStyle(
+                        color: Color(0xFF4F5762),
+                        fontFamily: fontfamily ?? "Lora-Regular",
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ))
+              .toList(),
+          value: items.contains(selectedValue) ? selectedValue : null,
+          onChanged: onChanged,
+          buttonStyleData: ButtonStyleData(
+            height: height,
+            width: width,
+            padding: EdgeInsets.only(left: 22, right: 22),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: containerColor,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  spreadRadius: 3,
+                  blurRadius: 12,
+                  offset: const Offset(0, 1),
+                ),
+              ],
+            ),
+            elevation: 0,
           ),
-          elevation: 0,
-        ),
-        iconStyleData: IconStyleData(
-          icon: Image.asset(
-            'assets/images/drop_down_img.png',
-            width: Responsive.isMobile(context) ? 12 : Responsive.isTablet(context) ? 12 : 18,
-            height: Responsive.isMobile(context) ? 12 : Responsive.isTablet(context) ? 12 : 18,
+          iconStyleData: IconStyleData(
+            icon: isExpanded.value
+                ? Icon(
+                    Icons.expand_less_rounded,
+                    color: AppColors.primaryColor,
+                  )
+                : Icon(
+                    Icons.expand_more,
+                    color: AppColors.primaryColor,
+                  ),
+            iconSize: 30,
           ),
-        ),
-        dropdownStyleData: DropdownStyleData(
-          width: width,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(Responsive.isMobile(context) ? 4 : 10),
+          dropdownStyleData: DropdownStyleData(
+            width: width,
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            offset: const Offset(0, 0),
+            scrollbarTheme: ScrollbarThemeData(
+              radius: Radius.circular(8),
+              thickness: MaterialStateProperty.all<double>(2),
+              thumbVisibility: MaterialStateProperty.all<bool>(true),
+            ),
+            maxHeight: isScrollable
+                ? 140.0
+                : null,
           ),
-          offset: const Offset(0, 0),
-          scrollbarTheme: ScrollbarThemeData(
-            radius: Radius.circular(Responsive.isMobile(context) ? 4 : 10),
-            thickness: MaterialStateProperty.all<double>(2),
-            thumbVisibility: MaterialStateProperty.all<bool>(true),
+          menuItemStyleData: const MenuItemStyleData(
+            // height: 40,
+            padding: EdgeInsets.only(left: 16, right: 16),
           ),
-          // Apply a fixed height if the list is large
-          maxHeight: isScrollable ? 140.0 : null, // 200.0 is the max height to trigger scrolling
-        ),
-        menuItemStyleData: const MenuItemStyleData(
-          height: 40,
-          padding: EdgeInsets.only(left: 14, right: 14),
         ),
       ),
     );

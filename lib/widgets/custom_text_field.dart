@@ -52,7 +52,7 @@ class CustomTextFormField extends StatelessWidget {
       decoration: BoxDecoration(
         color: containerColor ?? Colors.white, // Set container color
         borderRadius:
-            BorderRadius.circular(Responsive.isMobile(context) ? 10 : 10),
+            BorderRadius.circular( 10 ),
         boxShadow: isShadow // Conditional expression
             ? [
                 BoxShadow(
@@ -84,12 +84,12 @@ class CustomTextFormField extends StatelessWidget {
           ),
           border: InputBorder.none,
           // Removes the default border
-          // contentPadding: EdgeInsets.only(
-          //   top: topPadding ?? 11,
-          //   // bottom: Responsive.isMobile(context) ? 20 : 12,
-          //   left: Responsive.isMobile(context) ? 14 : 14,
-          //   // right: Responsive.isMobile(context) ? 9 : 20,
-          // ),
+          contentPadding: EdgeInsets.only(
+            top:  11,
+            // bottom: Responsive.isMobile(context) ? 20 : 12,
+            left:  14 ,
+            // right: Responsive.isMobile(context) ? 9 : 20,
+          ),
           suffix: suffexWidget,
           suffixIcon: suffixIcon,
           prefixIcon: prefixImagePath != null // Add this check for prefix icon

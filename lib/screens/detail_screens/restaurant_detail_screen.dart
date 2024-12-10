@@ -45,7 +45,7 @@ class RestaurantDetailScreen extends StatelessWidget {
            Scaffold(backgroundColor: AppColors.bgColor,
              appBar: AppBar(backgroundColor: AppColors.bgColor,
                iconTheme:  const IconThemeData(
-                 color: AppColors.primaryColor, // Set your desired color for the drawer icon
+                 color: AppColors.primaryColor,
                ),
                centerTitle: true,
                automaticallyImplyLeading: true,
@@ -68,7 +68,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                    ),
                    child: GestureDetector(
                      onTap: () {
-                       Get.back(); // Navigate back to the home screen
+                       Get.back();
                      },
                      child: Icon(Icons.arrow_back, size: 18),
                    ),
@@ -79,7 +79,6 @@ class RestaurantDetailScreen extends StatelessWidget {
                    return InkWell(
                        onTap: () {
                          controller.isFavorite.value = !controller.isFavorite.value;
-
                        },
                        child:
                        controller.isFavorite.value ?Icon(size: 24 ,
@@ -134,14 +133,13 @@ class RestaurantDetailScreen extends StatelessWidget {
                              mainAxisAlignment: MainAxisAlignment.center,
                              children: [
                                SizedBox(width: 22),
-                               // Facebook Icon
                                GestureDetector(
                                  onTap: () async{
                                    if (!await launchUrl(
                                        Uri.parse('https://facebook.com/'))) {
                                      throw Exception('Could not launch ');
                                    }
-                                 }, // URL to open
+                                 },
                                  child: Image.asset(
                                    "assets/images/facebook.png",
                                    height: 20,
@@ -156,7 +154,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                        Uri.parse('https://instagram.com/'))) {
                                      throw Exception('Could not launch ');
                                    }
-                                 }, // URL to open
+                                 },
                                  child: Image.asset(
                                    "assets/images/instagram.png",
                                    height: 20,
@@ -164,7 +162,6 @@ class RestaurantDetailScreen extends StatelessWidget {
                                  ),
                                ),
                                Spacer(),
-                               // YouTube Icon
                                GestureDetector(
                                  onTap: () async{
                                    if (!await launchUrl(
@@ -188,7 +185,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                    }
                                  }, // URL to open
                                  child: Image.asset(
-                                   "assets/images/X.png", // Assume this is for X (formerly Twitter)
+                                   "assets/images/X.png",
                                    height: 20,
                                    width: 20,
                                  ),
@@ -531,8 +528,8 @@ class RestaurantDetailScreen extends StatelessWidget {
                              borderRadius: BorderRadius.circular(10),
                              gradient: LinearGradient(
                                colors: [
-                                 const Color(0xFFFFFFFF).withOpacity(0.4),  // Start color with opacity
-                                 const Color(0xFF4ECCA3).withOpacity(0.4),  // End color with opacity
+                                 const Color(0xFFFFFFFF).withOpacity(0.4),
+                                 const Color(0xFF4ECCA3).withOpacity(0.3),
                                ],
                                begin: Alignment.topCenter,  // Starting point of the gradient
                                end: Alignment.bottomCenter,  // Ending point of the gradient
@@ -650,7 +647,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                        Image.asset("assets/images/image2_resturant.png",height: 41,width: 46,) ,
                                        Image.asset("assets/images/image3_resturant.png",height: 41,width: 46,),
                                        Image.asset("assets/images/image4_resturant.png",height: 41,width: 46,),
-                                       Image.asset("assets/images/image5_resturant.png",height: 41,width: 46,)//image2_resturant.png
+                                       Image.asset("assets/images/image5_resturant.png",height: 41,width: 46,)
                                      ],
                                    ),
                                  )

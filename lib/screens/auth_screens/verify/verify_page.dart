@@ -3,7 +3,9 @@ import 'package:get/get.dart';
 import 'package:pinput/pinput.dart';
 import '../../../constants/app_colors.dart';
 import '../../../dialoges/reset_dialog.dart';
+import '../../../utils/validations.dart';
 import '../../../widgets/custom_button.dart';
+import '../../general_preferences/screens_general/preference_1.dart';
 import 'controller/verify_controller.dart';
 
 class VerifyPage extends StatelessWidget {
@@ -71,7 +73,7 @@ class VerifyPage extends StatelessWidget {
                   controller: controller.verifyController,
                   autofillHints: const [AutofillHints.oneTimeCode],
                   validator: (val) {
-                    // return isPinputValid(val!);
+                    return isPinputValid(val!);
                   },
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -133,7 +135,7 @@ class VerifyPage extends StatelessWidget {
                         controller.onClick.value = false;
                       } else if (enteredCode.length == 6) {
                         controller.verifyController.clear();
-                        Get.to(() => SizedBox());
+                        Get.to(() => Preference1());
                       }
                     }
                   },
