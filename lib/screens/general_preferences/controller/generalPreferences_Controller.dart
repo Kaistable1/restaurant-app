@@ -15,11 +15,11 @@ class GeneralPreferencesController extends GetxController {
 
   final preferences = [
     {
-      "name": "Private dining rooms",
+      "name": "Private Dining Rooms",
       "image": "assets/images/dinning_image..png"
     },
-    {"name": "Outdoor seating", "image": "assets/images/dinning_image..png"},
-    {"name": "Family friendly", "image": "assets/images/dinning_image..png"},
+    {"name": "Outdoor Seating", "image": "assets/images/dinning_image..png"},
+    {"name": "Family F riendly", "image": "assets/images/dinning_image..png"},
     {"name": "Other", "image": "assets/images/dinning_image..png"},
   ];
 
@@ -68,19 +68,19 @@ class GeneralPreferencesController extends GetxController {
 
   final preferences3 = [
     {
-      "name": "Discounts off the Bill",
+      "name": "Discounts Off The Bill",
       "image": "assets/images/dinning_image..png"
     },
     {
-      "name": "Buy one, get one free",
+      "name": "Buy One, Get One Free",
       "image": "assets/images/dinning_image..png"
     },
     {
-      "name": "Happy hour specials",
+      "name": "Happy Hour Specials",
       "image": "assets/images/dinning_image..png"
     },
     {
-      "name": "Set menus or combo deals",
+      "name": "Set Menus Or Combo Deals",
       "image": "assets/images/dinning_image..png"
     },
   ];
@@ -107,7 +107,7 @@ class GeneralPreferencesController extends GetxController {
     },
     {"name": "Group Dinning", "image": "assets/images/dinning_image..png"},
     {
-      "name": "Themed or unique dining experiences",
+      "name": "Themed Or Unique Dining Experiences",
       "image": "assets/images/dinning_image..png"
     },
   ];
@@ -199,7 +199,7 @@ class GeneralPreferencesController extends GetxController {
   }
 
   final preferences9 = [
-    {"name": "Yes, I Love them", "image": "assets/images/dinning_image..png"},
+    {"name": "Yes, I Love Them", "image": "assets/images/dinning_image..png"},
     {"name": "Occasionally, For Major Holidays", "image": "assets/images/dinning_image..png"},
     {"name": "No, I Prefer Regular Dinning Experiences", "image": "assets/images/dinning_image..png"},
   ];
@@ -216,7 +216,7 @@ class GeneralPreferencesController extends GetxController {
   }
 
   final preferences10 = [
-    {"name": "Yes, I Love them", "image": "assets/images/dinning_image..png"},
+    {"name": "Yes, I Love Them", "image": "assets/images/dinning_image..png"},
     {"name": "Occasionally", "image": "assets/images/dinning_image..png"},
     {"name": "No, I Prefer Low-Key Dinning", "image": "assets/images/dinning_image..png"},
   ];
@@ -234,8 +234,8 @@ class GeneralPreferencesController extends GetxController {
 
   final preferences11 = [
     {"name": "Yes, Definitely", "image": "assets/images/dinning_image..png"},
-    {"name": "Maybe, If it fits my schedule", "image": "assets/images/dinning_image..png"},
-    {"name": "No, I prefer happy hours without entertainment", "image": "assets/images/dinning_image..png"},
+    {"name": "Maybe, If It Fits My Schedule", "image": "assets/images/dinning_image..png"},
+    {"name": "No, I Prefer Happy Hours Without Entertainment", "image": "assets/images/dinning_image..png"},
   ];
   ///------------------------------------------------------------------------///
 

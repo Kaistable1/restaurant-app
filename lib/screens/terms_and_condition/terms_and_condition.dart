@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
-import 'package:kaistable_website/screens/home_screen/my_home_screen.dart';
-
-import '../../utils/responsive.dart';
 
 class TermsAndCondition extends StatelessWidget {
   final Function(int)? onNavigate;
@@ -21,7 +18,7 @@ class TermsAndCondition extends StatelessWidget {
       child: Scaffold( backgroundColor: AppColors.bgColor,
         appBar: AppBar( backgroundColor: AppColors.bgColor,
           iconTheme: IconThemeData(
-            color: AppColors.primaryColor, // Set your desired color for the drawer icon
+            color: AppColors.primaryColor,
           ),
           centerTitle: true,
           automaticallyImplyLeading: true,

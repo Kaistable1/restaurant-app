@@ -40,7 +40,7 @@ class VerifyPage extends StatelessWidget {
                 height: 53,
               ),
               Text(
-                'Forget Password',
+                'Verify Email',
                 style: TextStyle(
                   color: AppColors.blackColor,
                   fontWeight: FontWeight.w700,
@@ -68,6 +68,7 @@ class VerifyPage extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 16.0),
                 child: Pinput(
                   keyboardType: TextInputType.phone,
+                  animationCurve: Curves.bounceOut,
                   errorTextStyle: const TextStyle(color: Colors.red),
                   length: 6,
                   controller: controller.verifyController,

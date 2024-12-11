@@ -175,6 +175,12 @@ class EditProfilePage extends StatelessWidget {
                       width: 20,
                     ),
                   ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter user name.';
+                    }
+                    return null;
+                  },
                 ),
                 TextAndFieldWidget(
                   labelText: 'Email',
@@ -190,6 +196,19 @@ class EditProfilePage extends StatelessWidget {
                       width: 20,
                     ),
                   ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter email.';
+                    }
+                    String pattern =
+                        r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
+                    RegExp regex = RegExp(pattern);
+
+                    if (!regex.hasMatch(value)) {
+                      return 'Please enter a valid email.';
+                    }
+                    return null;
+                  },
                 ),
                 SizedBox(
                   height: 40,

@@ -143,7 +143,7 @@ void changePasswordDialogBox() {
                             if (value == null || value.isEmpty) {
                               return 'Please enter a confirm password';
                             }
-                            if (value != controller.passwordController.text) {
+                            if (value != controller.newPasswordController.text) {
                               return 'Passwords do not match';
                             }
                             return null;

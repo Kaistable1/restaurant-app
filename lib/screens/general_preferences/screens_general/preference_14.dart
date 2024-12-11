@@ -79,12 +79,13 @@ class Preference14 extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
                 height: 16,
               ),
               Text(
-                'What ZIP code should we use to find dining deals for you?',
+                'Which Location do you prefer?',
                 style: TextStyle(
                   fontFamily: 'Nunito-Sans',
                   color: AppColors.lightGrey,
@@ -152,8 +153,8 @@ class Preference14 extends StatelessWidget {
                   textColor: Colors.white,
                   ontapp: () {
                     print(controller.selectedCountry.value);
-                    if (controller.selectedCountry.value!.isEmpty ||
-                        controller.selectedCity.value!.isEmpty) {
+                    if (controller.selectedCountry.value.isEmpty ||
+                        controller.selectedCity.value.isEmpty) {
                       Get.snackbar(
                         'Missing Information',
                         'Please select both country and city.',

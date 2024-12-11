@@ -205,7 +205,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
               _buildDrawerItem('About app', 6),
               _buildDrawerItem('Contact us', 7),
               SizedBox(
-                height: 60,
+                height: 30,
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 75),
@@ -220,6 +220,9 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                     Get.offAll(() => LoginScreen());
                   },
                 ),
+              ),
+              SizedBox(
+                height: 30,
               ),
             ],
           ),

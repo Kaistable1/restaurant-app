@@ -45,7 +45,7 @@ class ForgotPassScreen extends StatelessWidget {
                     height: 53,
                   ),
                   Text(
-                    'Forget Password',
+                    'Forgot Password',
                     style: TextStyle(
                       color: AppColors.blackColor,
                       fontWeight: FontWeight.w700,

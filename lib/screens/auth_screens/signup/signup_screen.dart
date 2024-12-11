@@ -10,6 +10,7 @@ import '../../../custom_widget/separate_text_field.dart';
 import '../../../utils/validations.dart';
 import '../../../widgets/custom_button.dart';
 import '../../../widgets/custom_text_field.dart';
+import '../../terms_and_condition/terms_and_condition.dart';
 import '../login/login_screen.dart';
 import '../verify/verify_page.dart';
 
@@ -54,7 +55,7 @@ class SignupScreen extends StatelessWidget {
                     style: TextStyle(
                       color: AppColors.blackColor,
                       fontWeight: FontWeight.w700,
-                      fontFamily: 'Nunito-Sans',
+                      fontFamily: 'Nunito-Bold',
                       fontSize: 28,
                     ),
                   ),
@@ -78,6 +79,12 @@ class SignupScreen extends StatelessWidget {
                     hintText: 'Harold Richards',
                     controller: controller.userNameController,
                     isSuffixIcon: true,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter user name.';
+                      }
+                      return null;
+                    },
                     suffixIcon: Padding(
                       padding: const EdgeInsets.only(
                           left: 12, bottom: 12, top: 12, right: 8),
@@ -93,6 +100,19 @@ class SignupScreen extends StatelessWidget {
                     hintText: 'deanna.curtis@example.com',
                     controller: controller.emailController,
                     isSuffixIcon: true,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter email.';
+                      }
+                      String pattern =
+                          r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
+                      RegExp regex = RegExp(pattern);
+
+                      if (!regex.hasMatch(value)) {
+                        return 'Please enter a valid email.';
+                      }
+                      return null;
+                    },
                     suffixIcon: Padding(
                       padding: const EdgeInsets.only(
                           left: 13.0, bottom: 8, top: 8, right: 13),
@@ -219,15 +239,20 @@ class SignupScreen extends StatelessWidget {
                           fontSize: 16,
                         ),
                       ),
-                      Text(
-                        'Terms & Conditions',
-                        style: TextStyle(
-                          color: AppColors.primaryColor,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: 'Nunito-Sans',
-                          decoration: TextDecoration.underline,
-                          decorationColor: AppColors.primaryColor,
-                          fontSize: 16,
+                      GestureDetector(
+                        onTap: () {
+                          Get.to(() => TermsAndCondition());
+                        },
+                        child: Text(
+                          'Terms & Conditions',
+                          style: TextStyle(
+                            color: AppColors.primaryColor,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'Nunito-Sans',
+                            decoration: TextDecoration.underline,
+                            decorationColor: AppColors.primaryColor,
+                            fontSize: 16,
+                          ),
                         ),
                       )
                     ],
@@ -246,6 +271,17 @@ class SignupScreen extends StatelessWidget {
                       height: 48,
                       ontapp: () {
                         if (_formKey.currentState!.validate()) {
+                          if (!controller.termsAndConditions.value) {
+                            Get.snackbar(
+                              "Terms and Conditions",
+                              "You must agree to the Terms and Conditions to continue.",
+                              snackPosition: SnackPosition.TOP,
+                              backgroundColor: AppColors.primaryColor,
+                              colorText: Colors.white,
+                            );
+                            return;
+                          }
+
                           controller.emailController.clear();
                           controller.userNameController.clear();
                           controller.passwordController.clear();

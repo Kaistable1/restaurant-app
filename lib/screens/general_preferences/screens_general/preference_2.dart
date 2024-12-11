@@ -15,6 +15,7 @@ class Preference2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final formKey = GlobalKey<FormState>();
     return Scaffold(
       backgroundColor: AppColors.bgColor,
       appBar: AppBar(
@@ -78,107 +79,132 @@ class Preference2 extends StatelessWidget {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 8,
-              ),
-              Text(
-                'Do you follow any specific dietary preferences or restrictions?',
-                style: TextStyle(
-                  fontFamily: 'Nunito-Sans',
-                  color: AppColors.lightGrey,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
+          child: Form(
+            key: formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 8,
                 ),
-              ),
-              SizedBox(
-                height: 16,
-              ),
-              ListView.builder(
-                padding: EdgeInsets.zero,
-                shrinkWrap: true,
-                primary: false,
-                itemCount: controller.preferences2.length,
-                itemBuilder: (context, index) {
-                  final preference = controller.preferences2[index];
-                  return Obx(() {
-                    final isSelected = controller.selectedPreferences2
-                        .contains(preference["name"]);
-                    final isOther = preference["name"] == "Other";
+                Text(
+                  'Do you follow any specific dietary preferences or restrictions?',
+                  style: TextStyle(
+                    fontFamily: 'Nunito-Sans',
+                    color: AppColors.lightGrey,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                ListView.builder(
+                  padding: EdgeInsets.zero,
+                  shrinkWrap: true,
+                  primary: false,
+                  itemCount: controller.preferences2.length,
+                  itemBuilder: (context, index) {
+                    final preference = controller.preferences2[index];
+                    return Obx(() {
+                      final isSelected = controller.selectedPreferences2
+                          .contains(preference["name"]);
+                      final isOther = preference["name"] == "Other";
 
-                    return GestureDetector(
-                      onTap: () =>
-                          controller.toggleSelection2(preference["name"]!),
-                      child: isOther && isSelected
-                          ? Container(
-                        height: 66,
-                        width: Get.width,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              spreadRadius: 1,
-                              blurRadius: 6,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Center(
-                          child: CustomSeparateTextField(
-                            hintText: 'Enter text',
-                            controller: controller.screen2Controller,
-                            keyboardType: TextInputType.name,
-                            isShadow: false,
-                          ),
-                        ),
-                      )
-                          : PreferencesSelectionWidget(
-                        name: preference["name"]!,
-                        dinningImage: preference["image"]!,
-                        isSelected: isSelected,
-                      ),
-                    );
-                  });
-                },
-              ),
-              SizedBox(
-                height: 24,
-              ),
-              Center(
-                child: CustomButton(
-                  laBelText: 'Next',
-                  height: 43,
-                  width: 190,
-                  fontFamily: 'Nunito-Sans',
-                  fontWeight: FontWeight.w600,
-                  fontSize: 20,
-                  textColor: Colors.white,
-                  ontapp: () {
-                    if (controller.selectedPreferences2.length < 1) {
-                      Get.snackbar(
-                        'Selection Incomplete',
-                        'Please select at least 1 preference to proceed.',
-                        backgroundColor: AppColors.primaryColor,
-                        colorText: Colors.white,
-                        snackPosition: SnackPosition.TOP,
-                        margin: EdgeInsets.all(16),
-                        borderRadius: 10,
+                      return GestureDetector(
+                        onTap: () =>
+                            controller.toggleSelection2(preference["name"]!),
+                        child: isOther && isSelected
+                            ? Container(
+                                height: 66,
+                                width: Get.width,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      spreadRadius: 1,
+                                      blurRadius: 6,
+                                      offset: Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      width: 270,
+                                      child: CustomSeparateTextField(
+                                        hintText: 'Enter text',
+                                        controller:
+                                            controller.screen2Controller,
+                                        keyboardType: TextInputType.name,
+                                        isShadow: false,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : PreferencesSelectionWidget(
+                                name: preference["name"]!,
+                                dinningImage: preference["image"]!,
+                                isSelected: isSelected,
+                              ),
                       );
-                    } else {
-                      // controller.screen1Controller.clear();
-                      Get.to(() => Preference3());
-                    }
+                    });
                   },
                 ),
-              ),
-              SizedBox(
-                height: 30,
-              ),
-            ],
+                SizedBox(
+                  height: 24,
+                ),
+                Center(
+                  child: CustomButton(
+                    laBelText: 'Next',
+                    height: 43,
+                    width: 190,
+                    fontFamily: 'Nunito-Sans',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 20,
+                    textColor: Colors.white,
+                    ontapp: () {
+                      if (formKey.currentState!.validate()) {
+                        if (controller.selectedPreferences2.contains("Other") &&
+                            controller.screen2Controller.text.isEmpty) {
+                          Get.snackbar(
+                            'Error',
+                            'Enter any specific dietary preferences or restrictions.',
+                            backgroundColor: AppColors.primaryColor,
+                            colorText: Colors.white,
+                            snackPosition: SnackPosition.TOP,
+                            margin: EdgeInsets.all(16),
+                            borderRadius: 10,
+                          );
+                          return;
+                        }
+                        if (controller.selectedPreferences2.length < 1) {
+                          Get.snackbar(
+                            'Selection Incomplete',
+                            'Please select at least 1 preference to proceed.',
+                            backgroundColor: AppColors.primaryColor,
+                            colorText: Colors.white,
+                            snackPosition: SnackPosition.TOP,
+                            margin: EdgeInsets.all(16),
+                            borderRadius: 10,
+                          );
+                          return;
+                        }
+                        Get.to(() => Preference3());
+                      }
+                    },
+                  ),
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+              ],
+            ),
           ),
         ),
       ),

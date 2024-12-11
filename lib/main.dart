@@ -7,11 +7,14 @@ import 'package:kaistable_website/screens/auth_screens/login/login_screen.dart';
 import 'package:kaistable_website/screens/detail_screens/restaurant_detail_screen.dart';
 import 'package:kaistable_website/screens/general_preferences/screens_general/preference_1.dart';
 import 'package:kaistable_website/screens/general_preferences/screens_general/preference_10.dart';
+import 'package:kaistable_website/screens/general_preferences/screens_general/preference_12.dart';
+import 'package:kaistable_website/screens/general_preferences/screens_general/preference_14.dart';
 import 'package:kaistable_website/screens/general_preferences/screens_general/preference_3.dart';
 import 'package:kaistable_website/screens/general_preferences/screens_general/preference_4.dart';
 import 'package:kaistable_website/screens/general_preferences/screens_general/preference_5.dart';
 import 'package:kaistable_website/screens/general_preferences/screens_general/preference_6.dart';
 import 'package:kaistable_website/screens/general_preferences/screens_general/preference_7.dart';
+import 'package:kaistable_website/screens/general_preferences/screens_general/preference_8.dart';
 import 'package:kaistable_website/screens/general_preferences/screens_general/preference_9.dart';
 
 import 'package:kaistable_website/screens/onboarding_screen/onboarding_screen.dart';
@@ -52,7 +55,7 @@ class MyApp extends StatelessWidget {
       title: 'Kaistable',
 
       home: SplashScreen(),
-      // home: LoginScreen(),
+      // home:  Preference14(),
       // home:MyHomeScreen()
     );
   }
