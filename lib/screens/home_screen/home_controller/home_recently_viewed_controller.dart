@@ -17,57 +17,65 @@ class HomeRecentlyViewedController extends GetxController {
           description:
               'Duis aute irure dolor in reprehend voluptate velit esse cillum',
           imagePath: 'assets/images/a1.png',
-          timetext: '09:00',
+          timeText: '09:00',
+          endTimeText: '08:00',
           percentText: '50%'),
       RecentlyViewedItem(
           title: 'Buffet',
           description:
               'Duis aute irure dolor in reprehend voluptate velit esse cillum',
           imagePath: 'assets/images/a3.png',
-          timetext: '06:00',
+          timeText: '06:00',
+          endTimeText: '08:00',
           percentText: '80%'),
       RecentlyViewedItem(
           title: 'Pizza',
           description:
               'Duis aute irure dolor in reprehend voluptate velit esse cillum',
           imagePath: 'assets/images/a2.png',
-          timetext: '12:00',
+          timeText: '12:00',
+          endTimeText: '08:00',
           percentText: '60%'),
       RecentlyViewedItem(
           title: 'Salad',
           description:
               'Duis aute irure dolor in reprehend voluptate velit esse cillum',
           imagePath: 'assets/images/a1.png',
-          timetext: '01:00',
+          timeText: '01:00',
+          endTimeText: '08:00',
           percentText: '40%'),
       RecentlyViewedItem(
           title: 'Buffet',
           description:
               'Duis aute irure dolor in reprehend voluptate velit esse cillum',
           imagePath: 'assets/images/a2.png',
-          timetext: '18:00',
+          timeText: '18:00',
+          endTimeText: '08:00',
           percentText: '20%'),
       RecentlyViewedItem(
           title: 'Pasta',
           description:
               'Duis aute irure dolor in reprehend voluptate velit esse cillum',
           imagePath: 'assets/images/a3.png',
-          timetext: '16:00',
+          timeText: '16:00',
+          endTimeText: '08:00',
           percentText: '50%'),
       RecentlyViewedItem(
           title: 'Pizza',
           description:
               'Duis aute irure dolor in reprehend voluptate velit esse cillum',
           imagePath: 'assets/images/a1.png',
-          timetext: '03:00',
+          timeText: '03:00',
+          endTimeText: '08:00',
           percentText: '56%'),
       RecentlyViewedItem(
         title: 'Salad',
         description:
             'Duis aute irure dolor in reprehend voluptate velit esse cillum',
         imagePath: 'assets/images/a2.png',
-        timetext: '06:00',
+        timeText: '06:00',
         percentText: '07%',
+        endTimeText: '08:00',
       ),
     ]);
   }
@@ -77,13 +85,15 @@ class RecentlyViewedItem {
   String title;
   String description;
   String imagePath;
-  String timetext;
+  String timeText;
+  String endTimeText;
   String percentText;
 
   RecentlyViewedItem(
       {required this.title,
       required this.description,
       required this.imagePath,
-      required this.timetext,
+      required this.timeText,
+      required this.endTimeText,
       required this.percentText});
 }

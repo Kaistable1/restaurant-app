@@ -86,7 +86,7 @@ class Preference10 extends StatelessWidget {
                 height: 8,
               ),
               Text(
-                'Do you enjoy social dining activities, like trivia nights or group games?',
+                'Do You Enjoy Social Dining Activities, Like Trivia Nights Or Group Games?',
                 style: TextStyle(
                   fontFamily: 'Nunito-Sans',
                   color: AppColors.lightGrey,

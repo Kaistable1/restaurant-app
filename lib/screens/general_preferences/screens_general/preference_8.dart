@@ -89,7 +89,7 @@ class Preference8 extends StatelessWidget {
                   height: 8,
                 ),
                 Text(
-                  'What type of live entertainment would you like to be notified about?',
+                  'What Type Of Live Entertainment Would You Like To Be Notified About?',
                   style: TextStyle(
                     fontFamily: 'Nunito-Sans',
                     color: AppColors.lightGrey,

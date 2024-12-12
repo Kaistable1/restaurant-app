@@ -88,7 +88,7 @@ class Preference13 extends StatelessWidget {
                   height: 16,
                 ),
                 Text(
-                  'What ZIP code should we use to find dining deals for you?',
+                  'What ZIP Code Should We Use To Find Dining Deals For You?',
                   style: TextStyle(
                     fontFamily: 'Nunito-Sans',
                     color: AppColors.lightGrey,

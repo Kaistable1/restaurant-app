@@ -85,7 +85,7 @@ class Preference4 extends StatelessWidget {
                 height: 8,
               ),
               Text(
-                'What type of restaurant settings do you prefer?',
+                'What Type Of Restaurant Settings Do You Prefer?',
                 style: TextStyle(
                   fontFamily: 'Nunito-Sans',
                   color: AppColors.lightGrey,

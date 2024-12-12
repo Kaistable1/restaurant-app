@@ -86,7 +86,7 @@ class Preference9 extends StatelessWidget {
                 height: 8,
               ),
               Text(
-                'Do you enjoy attending seasonal or holiday events at restaurants?',
+                'Do You Enjoy Attending Seasonal Or Holiday Events At Restaurants?',
                 style: TextStyle(
                   fontFamily: 'Nunito-Sans',
                   color: AppColors.lightGrey,

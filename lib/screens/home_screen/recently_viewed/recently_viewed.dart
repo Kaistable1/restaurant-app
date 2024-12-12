@@ -123,7 +123,7 @@ class RecentlyViewed extends StatelessWidget {
                              title: item.title,
                              description: item.description,
                              imagePath: item.imagePath,
-                             timetext: item.timetext,
+                             timetext: item.timeText,
                              percentText: item.percentText, isFavorite: false.obs,
                            );
                          },

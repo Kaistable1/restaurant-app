@@ -19,7 +19,7 @@ class GeneralPreferencesController extends GetxController {
       "image": "assets/images/dinning_image..png"
     },
     {"name": "Outdoor Seating", "image": "assets/images/dinning_image..png"},
-    {"name": "Family F riendly", "image": "assets/images/dinning_image..png"},
+    {"name": "Family Friendly", "image": "assets/images/dinning_image..png"},
     {"name": "Other", "image": "assets/images/dinning_image..png"},
   ];
 

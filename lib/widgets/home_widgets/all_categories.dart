@@ -222,7 +222,7 @@ class AllCategories extends StatelessWidget {
                   title: item.title,
                   description: item.description,
                   imagePath: item.imagePath,
-                  timetext: item.timetext,
+                  timetext: item.timeText,
                   percentText: item.percentText,
                   isFavorite: false.obs,
 
@@ -501,8 +501,9 @@ class AllCategories extends StatelessWidget {
                   title: item.title,
                   description: item.description,
                   imagePath: item.imagePath,
-                  timetext: item.timetext,
+                  timetext: item.timeText,
                   percentText: item.percentText,
+                  endTimeText: item.endTimeText,
                   isFavorite: false.obs,
                 );
               },

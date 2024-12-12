@@ -85,7 +85,7 @@ class Preference14 extends StatelessWidget {
                 height: 16,
               ),
               Text(
-                'Which Location do you prefer?',
+                'Which Location Do You Prefer?',
                 style: TextStyle(
                   fontFamily: 'Nunito-Sans',
                   color: AppColors.lightGrey,

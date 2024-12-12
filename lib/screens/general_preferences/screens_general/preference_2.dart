@@ -88,7 +88,7 @@ class Preference2 extends StatelessWidget {
                   height: 8,
                 ),
                 Text(
-                  'Do you follow any specific dietary preferences or restrictions?',
+                  'Do You Follow Any Specific Dietary Preferences Or Restrictions?',
                   style: TextStyle(
                     fontFamily: 'Nunito-Sans',
                     color: AppColors.lightGrey,

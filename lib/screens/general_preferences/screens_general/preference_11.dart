@@ -86,7 +86,7 @@ class Preference11 extends StatelessWidget {
                 height: 8,
               ),
               Text(
-                'Would you like to be notified about happy hours with entertainment?',
+                'Would You Like To Be Notified About Happy Hours With Entertainment?',
                 style: TextStyle(
                   fontFamily: 'Nunito-Sans',
                   color: AppColors.lightGrey,

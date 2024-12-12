@@ -85,7 +85,7 @@ class Preference6 extends StatelessWidget {
                 height: 8,
               ),
               Text(
-                'How important are restaurant reviews in your decision-making?',
+                'How Important Are Restaurant Reviews In Your Decision-Making?',
                 style: TextStyle(
                   fontFamily: 'Nunito-Sans',
                   color: AppColors.lightGrey,

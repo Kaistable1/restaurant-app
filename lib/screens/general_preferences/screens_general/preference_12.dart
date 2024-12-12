@@ -89,7 +89,7 @@ class Preference12 extends StatelessWidget {
                   height: 8,
                 ),
                 Text(
-                  'What’s your favorite type of live music?',
+                  'What’s Your Favorite Type Of Live Music?',
                   style: TextStyle(
                     fontFamily: 'Nunito-Sans',
                     color: AppColors.lightGrey,

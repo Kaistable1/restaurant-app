@@ -54,9 +54,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Kaistable',
 
-      home: SplashScreen(),
-      // home:  Preference14(),
-      // home:MyHomeScreen()
+      // home: SplashScreen(),
+      // home:  Preference1 4(),
+      home:MyHomeScreen(countryName: 'see',)
     );
   }
 }

@@ -85,7 +85,7 @@ class Preference3 extends StatelessWidget {
                 height: 8,
               ),
               Text(
-                'What types of deals are you most interested in?',
+                'What Types Of Deals Are You Most Interested In?',
                 style: TextStyle(
                   fontFamily: 'Nunito-Sans',
                   color: AppColors.lightGrey,

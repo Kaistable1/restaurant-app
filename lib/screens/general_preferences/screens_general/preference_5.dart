@@ -85,7 +85,7 @@ class Preference5 extends StatelessWidget {
                 height: 8,
               ),
               Text(
-                'How often would you like to be notified about dining opportunities?',
+                'How Often Would You Like To Be Notified About Dining Opportunities?',
                 style: TextStyle(
                   fontFamily: 'Nunito-Sans',
                   color: AppColors.lightGrey,

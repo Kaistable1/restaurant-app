@@ -88,7 +88,7 @@ class Preference1 extends StatelessWidget {
                   height: 8,
                 ),
                 Text(
-                  'What are your top three favorite cuisines?',
+                  'What Are Your Top Three Favorite Cuisines?',
                   style: TextStyle(
                     fontFamily: 'Nunito-Sans',
                     color: AppColors.lightGrey,

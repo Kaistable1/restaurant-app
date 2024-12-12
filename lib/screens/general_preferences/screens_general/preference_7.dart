@@ -86,7 +86,7 @@ class Preference7 extends StatelessWidget {
                 height: 8,
               ),
               Text(
-                'Do you enjoy dining at restaurants entertainment?',
+                'Do You Enjoy Dining At Restaurants Entertainment?',
                 style: TextStyle(
                   fontFamily: 'Nunito-Sans',
                   color: AppColors.lightGrey,

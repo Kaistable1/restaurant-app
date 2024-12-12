@@ -5,39 +5,48 @@ class LocationListController extends GetxController {
   final List<LocationListModel> circleItems = [
     LocationListModel(
       timeText: '20:20',
-      persentText: '14%',
+      timeText2: '22:20',
+      percentageText: '12%',
     ),
     LocationListModel(
       timeText: '20:20',
-      persentText: '14%',
+      timeText2: '22:20',
+      percentageText: '12%',
     ),
     LocationListModel(
       timeText: '20:20',
-      persentText: '14%',
+      timeText2: '22:20',
+      percentageText: '12%',
     ),
     LocationListModel(
       timeText: '20:20',
-      persentText: '14%',
+      timeText2: '22:20',
+      percentageText: '12%',
     ),
     LocationListModel(
       timeText: '20:20',
-      persentText: '14%',
+      timeText2: '22:20',
+      percentageText: '12%',
     ),
     LocationListModel(
       timeText: '20:20',
-      persentText: '14%',
+      timeText2: '22:20',
+      percentageText: '12% ',
     ),
     LocationListModel(
       timeText: '20:20',
-      persentText: '14%',
+      timeText2: '22:20',
+      percentageText: '12%',
     ),
     LocationListModel(
       timeText: '20:20',
-      persentText: '14%',
+      timeText2: '22:20',
+      percentageText: '12%',
     ),
     LocationListModel(
       timeText: '20:20',
-      persentText: '14%',
+      timeText2: '22:20',
+      percentageText: '12%',
     ),
   ];
   void scrollLeft() {
@@ -62,9 +71,11 @@ class LocationListController extends GetxController {
 }
 class LocationListModel {
   final String timeText;
-  final String persentText;
+  final String timeText2;
+  final String percentageText;
   LocationListModel({
     required this.timeText,
-    required this.persentText,
+    required this.timeText2,
+    required this.percentageText,
   });
 }
