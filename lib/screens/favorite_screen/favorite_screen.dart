@@ -116,6 +116,7 @@ class FavoriteScreen extends StatelessWidget {
                                 description: item.description,
                                 imagePath: item.imagePath,
                                 timetext: item.timetext,
+                                endTimeText: item.endTimeText,
                                 percentText: item.percentText,
                                 isFavorite: true.obs,
 

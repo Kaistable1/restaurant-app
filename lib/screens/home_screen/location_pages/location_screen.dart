@@ -177,6 +177,7 @@ class LocationScreen extends StatelessWidget {
                               imagePath: item.imagePath,
                               timetext: item.timetext,
                               percentText: item.percentText,
+                              endTimeText: item.endTimeText,
                               isFavorite: false.obs,
                               //scrollcontroller: scrollcontroller,
                             ),

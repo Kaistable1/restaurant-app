@@ -133,6 +133,7 @@ class CuisinesViewAll extends StatelessWidget {
                             description: item.description,
                             imagePath: item.imagePath,
                             timetext: item.timeText,
+                            endTimeText: item.endTimeText,
                             percentText: item.percentText,
                             isFavorite: false.obs,
                           );

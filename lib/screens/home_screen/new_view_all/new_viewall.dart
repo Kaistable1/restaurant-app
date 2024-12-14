@@ -157,7 +157,7 @@ class NewViewall extends StatelessWidget {
                               title: item.title,
                               description: item.description,
                               imagePath: item.imagePath,
-                              timetext: item.timetext,
+                              timetext: item.timetext,endTimeText: item.endTimeText,
                               percentText: item.percentText, isFavorite: false.obs,
                             ),
                           );

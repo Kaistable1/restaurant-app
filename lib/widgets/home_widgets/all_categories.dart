@@ -25,13 +25,17 @@ import '../../screens/home_screen/trendind_all/trending_view_all.dart';
 class AllCategories extends StatelessWidget {
   final HomeLocationController controller = Get.put(HomeLocationController());
   final HomeThemeController themeController = Get.put(HomeThemeController());
-  final HomeRecentlyViewedController recentlyViewedController = Get.put(HomeRecentlyViewedController());
-  final HomeCusinessController cusinessController = Get.put(HomeCusinessController());
-  final HomeTrendingController trendingController = Get.put(HomeTrendingController());
+  final HomeRecentlyViewedController recentlyViewedController =
+      Get.put(HomeRecentlyViewedController());
+  final HomeCusinessController cusinessController =
+      Get.put(HomeCusinessController());
+  final HomeTrendingController trendingController =
+      Get.put(HomeTrendingController());
   final HomeNewController newController = Get.put(HomeNewController());
   final HomeFilterController filterController = Get.put(HomeFilterController());
   final scrollController = ScrollController();
-   AllCategories({super.key});
+
+  AllCategories({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -47,12 +51,11 @@ class AllCategories extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               itemCount: controller.circleItems.length, // Number of items
               itemBuilder: (context, index) {
-                final item = controller
-                    .circleItems[index]; // Get item from model list
+                final item =
+                    controller.circleItems[index]; // Get item from model list
                 return Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
                   child: CircleContainerWidget(
                     ontap: () {
                       Get.to(LocationScreen());
@@ -194,9 +197,8 @@ class AllCategories extends StatelessWidget {
 
           return Padding(
             padding: EdgeInsets.only(
-
-              left:14,
-              right:14,
+              left: 14,
+              right: 14,
             ),
             child: GridView.builder(
               shrinkWrap: true,
@@ -212,7 +214,6 @@ class AllCategories extends StatelessWidget {
                 mainAxisSpacing: Responsive.isMobile(context)
                     ? 0
                     : (Responsive.isTablet(context) ? 2 : 20),
-
               ),
               itemCount: itemCount,
               itemBuilder: (context, index) {
@@ -224,9 +225,8 @@ class AllCategories extends StatelessWidget {
                   imagePath: item.imagePath,
                   timetext: item.timeText,
                   percentText: item.percentText,
+                  endTimeText: item.endTimeText,
                   isFavorite: false.obs,
-
-
                 );
               },
             ),
@@ -236,7 +236,6 @@ class AllCategories extends StatelessWidget {
         Padding(
           padding: EdgeInsets.only(
             left: Responsive.isMobile(context) ? 14 : 48.0,
-
             right: Responsive.isMobile(context) ? 18 : 48.0,
           ),
           child: Row(
@@ -255,17 +254,15 @@ class AllCategories extends StatelessWidget {
                   onTap: () {
                     Get.to(TrendingViewAll());
                   },
-                  child: Text("view all",
-
+                  child: Text(
+                    "view all",
                     style: TextStyle(
                         decoration: TextDecoration.underline,
                         decorationColor: AppColors.primaryColor,
                         fontFamily: 'Nunito-Regular',
-                        fontSize:  Responsive.isMobile(context) ? 12 : 20,
+                        fontSize: Responsive.isMobile(context) ? 12 : 20,
                         fontWeight: FontWeight.w500,
-                        color: AppColors.primaryColor
-                    ),
-
+                        color: AppColors.primaryColor),
                   ))
             ],
           ),
@@ -291,7 +288,7 @@ class AllCategories extends StatelessWidget {
           return Padding(
             padding: EdgeInsets.only(
               left: 14,
-              right:14,
+              right: 14,
             ),
             child: GridView.builder(
               shrinkWrap: true,
@@ -307,7 +304,6 @@ class AllCategories extends StatelessWidget {
                 mainAxisSpacing: Responsive.isMobile(context)
                     ? 0
                     : (Responsive.isTablet(context) ? 2 : 20),
-
               ),
               itemCount: itemCount,
               itemBuilder: (context, index) {
@@ -318,9 +314,8 @@ class AllCategories extends StatelessWidget {
                   description: item.description,
                   imagePath: item.imagePath,
                   timetext: item.timetext,
-                  percentText: item.percentText,
+                  percentText: item.percentText,endTimeText: item.endTimeText,
                   isFavorite: false.obs,
-
                 );
               },
             ),
@@ -348,17 +343,15 @@ class AllCategories extends StatelessWidget {
                   onTap: () {
                     Get.to(NewViewall());
                   },
-                  child: Text("view all",
-
+                  child: Text(
+                    "view all",
                     style: TextStyle(
                         decoration: TextDecoration.underline,
                         decorationColor: AppColors.primaryColor,
                         fontFamily: 'Nunito-Regular',
-                        fontSize:  Responsive.isMobile(context) ? 12 : 20,
+                        fontSize: Responsive.isMobile(context) ? 12 : 20,
                         fontWeight: FontWeight.w500,
-                        color: AppColors.primaryColor
-                    ),
-
+                        color: AppColors.primaryColor),
                   ))
             ],
           ),
@@ -400,7 +393,6 @@ class AllCategories extends StatelessWidget {
                 mainAxisSpacing: Responsive.isMobile(context)
                     ? 0
                     : (Responsive.isTablet(context) ? 2 : 20),
-
               ),
               itemCount: itemCount,
               itemBuilder: (context, index) {
@@ -411,7 +403,7 @@ class AllCategories extends StatelessWidget {
                   description: item.description,
                   imagePath: item.imagePath,
                   timetext: item.timetext,
-                  percentText: item.percentText,
+                  percentText: item.percentText,endTimeText: item.endTimeText,
                   isFavorite: false.obs,
                 );
               },
@@ -490,12 +482,10 @@ class AllCategories extends StatelessWidget {
                 mainAxisSpacing: Responsive.isMobile(context)
                     ? 10
                     : (Responsive.isTablet(context) ? 2 : 20),
-
               ),
               itemCount: itemCount,
               itemBuilder: (context, index) {
-                final item =
-                recentlyViewedController.recentlyViewedItem[index];
+                final item = recentlyViewedController.recentlyViewedItem[index];
                 return RectangleWidget(
                   //   onNavigate: onNavigate,
                   title: item.title,
