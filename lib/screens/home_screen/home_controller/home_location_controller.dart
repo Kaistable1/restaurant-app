@@ -5,6 +5,7 @@ import '../model/home-model.dart';
  // Import your model
 
 class HomeLocationController extends GetxController {
+  final searchController = TextEditingController();
   // ScrollController to control the ListView scroll position
   ScrollController scrollController = ScrollController();
   var selectedLetter = ''.obs; // Observable variable to store selected index

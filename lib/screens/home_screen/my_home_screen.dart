@@ -167,7 +167,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                         child: Text(
                           'USA.Los Vegas',
                           style: TextStyle(
-                            color: AppColors.textColor,
+                             color: AppColors.textColor,
                             fontWeight: FontWeight.w800,
                             fontFamily: 'Nunito-Regular',
                             fontSize: 9,

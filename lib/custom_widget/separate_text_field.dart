@@ -114,7 +114,7 @@ class CustomSeparateTextField extends StatelessWidget {
           enabled: enabled,
           fillColor: fillColor,
           filled: filled,
-          contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          contentPadding:  EdgeInsets.symmetric(vertical: 16, horizontal: 16),
           suffixText: suffixText,
           suffixStyle: TextStyle(
             fontWeight: fontWeight,

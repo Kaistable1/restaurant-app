@@ -53,10 +53,9 @@ class MyApp extends StatelessWidget {
       // }),
       debugShowCheckedModeBanner: false,
       title: 'Kaistable',
-
-      home: SplashScreen(),
+      // home: SplashScreen(),
       // home:  Preference1 4(),
-      // home:MyHomeScreen(countryName: 'see',)
+      home:MyHomeScreen(countryName: 'see',)
     );
   }
 }

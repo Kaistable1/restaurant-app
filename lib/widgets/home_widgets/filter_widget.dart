@@ -6,11 +6,16 @@ import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import '../../../constants/app_colors.dart';
 import '../../../utils/responsive.dart';
+import '../../custom_widget/separate_text_field.dart';
+import '../../dialoges/filter_dialog.dart';
 import '../../screens/home_screen/happy_hours/happy_hours.dart';
+import '../../screens/home_screen/home_controller/filter_selection_controller.dart';
 import '../../screens/home_screen/home_controller/home_location_controller.dart';
 
 class FilterWidget extends StatelessWidget {
   final HomeLocationController controller = Get.put(HomeLocationController());
+  final FilterSelectionController filterController =
+      Get.put(FilterSelectionController());
   final List<String> items = [
     'Happy Hours',
   ];
@@ -28,86 +33,206 @@ class FilterWidget extends StatelessWidget {
       children: [
         Padding(
           padding:
-              const EdgeInsets.only(top: 12.0, left: 12, right: 12, bottom: 6),
-          child: Container(
-            height: Responsive.isMobile(context) ? 44 : 55,
-            width: 358,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(
-                Responsive.isMobile(context) ? 10 : 10,
+              const EdgeInsets.only(top: 10.0, left: 12, right: 10, bottom: 6),
+          child: Row(
+            children: [
+              Expanded(
+                  child: SizedBox(
+                height: 38,
+                child: CustomSeparateTextField(
+                  controller: controller.searchController,
+                  hintText: 'Try searching for restaurant name',
+                  hintStyle: TextStyle(
+                    color: AppColors.hintText,
+                    fontFamily: "Nunito-Regular",
+                    fontWeight: FontWeight.w400,
+                    fontSize: 12,
+                  ),
+                  isPrefixIcon: true,
+                  isShadow: true,
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 4, top: 8, bottom: 8, right: 0),
+                    child: Image.asset(
+                      'assets/images/search_icon.png',
+                      fit: BoxFit.contain,
+                      height: 20,
+                      width: 20,
+                    ),
+                  ),
+                  isSuffixIcon: true,
+                  suffixIcon: Container(
+                    height: 38,
+                    width: 66,
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryColor,
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(10),
+                        bottomRight: Radius.circular(10),
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        'Search',
+                        style: TextStyle(
+                          color: AppColors.bottomSheetColor,
+                          fontFamily: "Nunito-Bold",
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              )),
+              SizedBox(
+                width: 4,
               ),
-              boxShadow: [],
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    maxLines: 1,
-                    style: TextStyle(
-                      color: AppColors.textColor,
-                      fontFamily: "Lora-Regular",
-                      fontSize: Responsive.isMobile(context) ? 12 : 16,
-                    ),
-                    cursorColor: AppColors.textColor,
-                    decoration: InputDecoration(
-                      hintText: 'Try searching for restaurant name',
-                      hintStyle: TextStyle(
-                        color: const Color(0xFF4F5762),
-                        fontFamily: "Nunito-Regular",
-                        fontWeight: FontWeight.w400,
-                        fontSize: Responsive.isMobile(context) ? 12 : 16,
-                      ),
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.only(
-                        top: Responsive.isMobile(context) ? 12 : 18,
-                      ),
-                      prefixIcon: Padding(
-                        padding: EdgeInsets.all(
-                          Responsive.isMobile(context) ? 13 : 14,
-                        ),
-                        child: Image.asset(
-                          'assets/images/search_icon.png',
-                          fit: BoxFit.contain,
-                          height: 20,
-                          width: 20,
-                        ),
-                      ),
-                    ),
-                  ),
+              GestureDetector(
+                onTap: () {
+                  filterSelectionDialogueBox();
+                  filterController.toggleFilterListVisibility();
+                },
+                child: Image.asset(
+                  'assets/images/filter_image__.png',
+                  width: 32,
+                  height: 30,
                 ),
-                Container(
-                  height: 55,
-                  width: Responsive.isMobile(context) ? 66 : 106,
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryColor,
-                    borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(
-                          Responsive.isMobile(context) ? 10 : 10),
-                      bottomRight: Radius.circular(
-                          Responsive.isMobile(context) ? 10 : 10),
-                    ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      'Search',
-                      style: TextStyle(
-                        color: AppColors.bottomSheetColor,
-                        fontFamily: "Nunito-Bold",
-                        fontSize: Responsive.isMobile(context) ? 12 : 16,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-        SizedBox(height: 10),
-        FilterBox(),
-        SizedBox(height:8),
+        Obx(
+              () => filterController.isFilterListVisible.value &&
+              filterController.aggregatedFilters.isNotEmpty
+              ? Column(
+            children: [
+              SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        width: 280,
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            double availableWidth = constraints.maxWidth;
+                            return Obx(
+                                  () => Wrap(
+                                direction: Axis.horizontal,
+                                spacing: 7,
+                                runSpacing: 10,
+                                children: [
+                                  ...filterController.aggregatedFilters
+                                      .map((filterName) {
+                                    return ConstrainedBox(
+                                      constraints: BoxConstraints(
+                                        maxWidth: availableWidth / 1,
+                                      ),
+                                      child: SelectedFilterWidgets(
+                                        filterName: filterName,
+                                        onTap: () {
+                                          filterController.aggregatedFilters
+                                              .remove(filterName);
+                                          // Hide the filter list if it's empty after removal
+                                          if (filterController
+                                              .aggregatedFilters.isEmpty) {
+                                            filterController
+                                                .isFilterListVisible
+                                                .value = false;
+                                          }
+                                        },
+                                      ),
+                                    );
+                                  }).toList(),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        filterController.aggregatedFilters.clear();
+                        filterController.isFilterListVisible.value = false;
+                      },
+                      child: Text(
+                        'clear all',
+                        style: TextStyle(
+                          color: AppColors.primaryColor,
+                          fontFamily: "Nunito-Sans",
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          decoration: TextDecoration.underline,
+                          decorationColor: AppColors.primaryColor,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 8),
+            ],
+          )
+              : SizedBox.shrink(),
+        ),
       ],
+    );
+  }
+}
+
+class SelectedFilterWidgets extends StatelessWidget {
+  final String filterName;
+  final void Function()? onTap;
+
+  const SelectedFilterWidgets({
+    super.key,
+    required this.filterName,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: AppColors.primaryColor.withOpacity(0.7),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: AppColors.primaryColor, width: 1),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Center(
+            child: Text(
+              filterName,
+              style: TextStyle(
+                color: AppColors.textColor,
+                fontFamily: "Nunito-Sans",
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 6,
+          ),
+          GestureDetector(
+            onTap: onTap,
+            child: Icon(
+              Icons.close,
+              color: AppColors.textColor,
+              size: 14,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -151,7 +276,7 @@ class FilterBox extends StatelessWidget {
                 'Filter:',
                 style: TextStyle(
                   fontFamily: 'Nunito-Regular',
-                  fontSize:  10,
+                  fontSize: 10,
                   fontWeight: FontWeight.w600,
                   color: AppColors.textColor,
                 ),
