@@ -6,6 +6,7 @@ import 'package:kaistable_website/screens/home_screen/my_home_screen.dart';
 import 'package:kaistable_website/widgets/rectangle_widget.dart';
 
 import '../../../constants/app_colors.dart';
+import '../../../custom_widget/separate_text_field.dart';
 import '../../../utils/responsive.dart';
 import '../../../widgets/fav_rectangle_widget.dart';
 import '../../../widgets/home_widgets/filter_widget.dart';
@@ -84,60 +85,79 @@ class NewViewall extends StatelessWidget {
                 ),),
             ),
             body: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Padding(
-                  //   padding: EdgeInsets.only(left: Responsive.isMobile(context) ? 18 : 48.0,right: Responsive.isMobile(context) ? 18 : 48.0),
-                  //   child: Row(
-                  //     mainAxisAlignment: MainAxisAlignment.start,
-                  //     children: [
-                  //       Text(
-                  //         'New',
-                  //         style: TextStyle(
-                  //           color: AppColors.botomSheetColor,
-                  //           fontFamily: 'aftika-regular',
-                  //           fontSize: Responsive.isMobile(context) ? 22 : 40,
-                  //           fontWeight: FontWeight.w400,
-                  //         ),
-                  //       ),
-                  //
-                  //
-                  //
-                  //     ],
-                  //   ),
-                  // ),
-                  SizedBox(height:  10 ),
-                  FilterBox(),
-                  SizedBox(height:  10 ),
-                  Obx(() {
-
-
-                    return Padding(
-                      padding: EdgeInsets.only(
-                        left: Responsive.isMobile(context)
-                            ? 18
-                            : (isLargeScreen ? 48 : 46.0),
-                        right: Responsive.isMobile(context)
-                            ? 18
-                            : (isLargeScreen ? 48 : 42.0),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 38,
+                      child: CustomSeparateTextField(
+                        controller: controller.searchController,
+                        hintText: 'Try searching for restaurant name',
+                        hintStyle: TextStyle(
+                          color: AppColors.hintText,
+                          fontFamily: "Nunito-Regular",
+                          fontWeight: FontWeight.w400,
+                          fontSize: 12,
+                        ),
+                        isPrefixIcon: true,
+                        isShadow: true,
+                        prefixIcon: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 4, top: 8, bottom: 8, right: 0),
+                          child: Image.asset(
+                            'assets/images/search_icon.png',
+                            fit: BoxFit.contain,
+                            height: 20,
+                            width: 20,
+                          ),
+                        ),
+                        isSuffixIcon: true,
+                        suffixIcon: Container(
+                          height: 38,
+                          width: 66,
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryColor,
+                            borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(10),
+                              bottomRight: Radius.circular(10),
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'Search',
+                              style: TextStyle(
+                                color: AppColors.bottomSheetColor,
+                                fontFamily: "Nunito-Bold",
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
-                      child: GridView.builder(
+                    ),
+                    SizedBox(height:  16),
+                    Text(
+                      'Explore Restaurants',
+                      style: TextStyle(
+                        color: AppColors.bottomSheetColor,
+                        fontFamily: 'aftika-regular',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    SizedBox(height:  12),
+                    Obx(() {
+                      return GridView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          mainAxisExtent: Responsive.isMobile(context)
-                              ? 220
-                              : (isLargeScreen ? 400 : 350),
-                          crossAxisCount: Responsive.isMobile(context)
-                              ? 2
-                              : (Responsive.isTablet(context) ? 3 : 4),
-                          crossAxisSpacing: Responsive.isMobile(context)
-                              ? 10
-                              : (Responsive.isTablet(context) ? 8 : 10),
-                          mainAxisSpacing: Responsive.isMobile(context)
-                              ? 0
-                              : (Responsive.isTablet(context) ? 2 : 20),
+                          mainAxisExtent: 220,
+                          crossAxisCount:  2,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10 ,
                           childAspectRatio: itemWidth / itemHeight,
                         ),
                         itemCount: newController.newItem.length,
@@ -145,8 +165,6 @@ class NewViewall extends StatelessWidget {
                           final item = newController.newItem[index];
                           return InkWell(
                             onTap: () {
-
-
 
                               if (onNavigate != null) {
                                 onNavigate!(8); // Call the callback to navigate to the 7th screen
@@ -162,13 +180,13 @@ class NewViewall extends StatelessWidget {
                             ),
                           );
                         },
-                      ),
-                    );
+                      );
 
 
-                  }),
-                  const SizedBox(height: 30),
-                ],
+                    }),
+                    const SizedBox(height: 30),
+                  ],
+                ),
               ),
             ),
           );

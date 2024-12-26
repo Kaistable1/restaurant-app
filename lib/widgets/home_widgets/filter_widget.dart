@@ -108,7 +108,7 @@ class FilterWidget extends StatelessWidget {
               ? Column(
             children: [
               SizedBox(height: 10),
-              Padding(
+              Padding( 
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

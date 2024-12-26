@@ -9,6 +9,7 @@ import 'package:kaistable_website/screens/home_screen/my_home_screen.dart';
 import 'package:kaistable_website/widgets/home_widgets/filter_widget.dart';
 
 import '../../../constants/app_colors.dart';
+import '../../../custom_widget/separate_text_field.dart';
 import '../../../utils/responsive.dart';
 import '../../../widgets/fav_rectangle_widget.dart';
 import '../../../widgets/rectangle_widget.dart';
@@ -99,68 +100,100 @@ class LocationScreen extends StatelessWidget {
                 ),),
             ),
             body: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(
-                        left: Responsive.isMobile(context) ? 16 : 46.0),
-                    child: Text(
-                      'New york ',
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      'New york',
                       style: TextStyle(
                         color: AppColors.primaryColor,
                         fontFamily: 'aftika-regular',
-                        fontSize: Responsive.isMobile(context) ? 26 : 40,
+                        fontSize: 26,
                         fontWeight: FontWeight.w400,
                       ),
                     ),
-                  ),
-                  SizedBox(height: Responsive.isMobile(context) ? 8 : 18),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: Responsive.isMobile(context) ? 16 : 46.0),
-                    child: Text(
+                    SizedBox(height:  8),
+                    Text(
                       'The area is lively with restaurants, bars and nightlife.',
                       style: TextStyle(
                         color: Color(0xFF1E0E0E),
                         fontFamily: 'Nunito-Regular',
-                        fontSize: Responsive.isMobile(context) ? 10 : 16,
+                        fontSize: 10,
                         fontWeight: FontWeight.w400,
                       ),
                     ),
-                  ),
-                  SizedBox(height: Responsive.isMobile(context) ? 10 : 18),
-
-                  FilterBox(),
-
-                  SizedBox(height: Responsive.isMobile(context) ? 20 : 22),
-                  Obx(() {
-                    return Padding(
-                      padding: EdgeInsets.only(
-                        left: Responsive.isMobile(context)
-                            ? 14
-                            : (isLargeScreen ? 48 : 30.0),
-                        right: Responsive.isMobile(context)
-                            ? 14
-                            : (isLargeScreen ? 48 : 30.0),
+                    SizedBox(height:  10),
+                    SizedBox(
+                      height: 38,
+                      child: CustomSeparateTextField(
+                        controller: mycontroller.searchController,
+                        hintText: 'Try searching for restaurant name',
+                        hintStyle: TextStyle(
+                          color: AppColors.hintText,
+                          fontFamily: "Nunito-Regular",
+                          fontWeight: FontWeight.w400,
+                          fontSize: 12,
+                        ),
+                        isPrefixIcon: true,
+                        isShadow: true,
+                        prefixIcon: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 4, top: 8, bottom: 8, right: 0),
+                          child: Image.asset(
+                            'assets/images/search_icon.png',
+                            fit: BoxFit.contain,
+                            height: 20,
+                            width: 20,
+                          ),
+                        ),
+                        isSuffixIcon: true,
+                        suffixIcon: Container(
+                          height: 38,
+                          width: 66,
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryColor,
+                            borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(10),
+                              bottomRight: Radius.circular(10),
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'Search',
+                              style: TextStyle(
+                                color: AppColors.bottomSheetColor,
+                                fontFamily: "Nunito-Bold",
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
-                      child: GridView.builder(
+                    ),
+                    SizedBox(height:  16),
+                    Text(
+                      'Explore Restaurants',
+                      style: TextStyle(
+                        color: AppColors.bottomSheetColor,
+                        fontFamily: 'aftika-regular',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    SizedBox(height:  12),
+                    Obx(() {
+                      return GridView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          mainAxisExtent: Responsive.isMobile(context)
-                              ? 220
-                              : (isLargeScreen ? 430 : 350),
-                          crossAxisCount: Responsive.isMobile(context)
-                              ? 2
-                              : (Responsive.isTablet(context) ? 3 : 4),
-                          crossAxisSpacing: Responsive.isMobile(context)
-                              ? 10
-                              : (Responsive.isTablet(context) ? 8 : 10),
-                          mainAxisSpacing: Responsive.isMobile(context)
-                              ? 0
-                              : (Responsive.isTablet(context) ? 2 : 20),
+                          mainAxisExtent: 220,
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
                           childAspectRatio: itemWidth / itemHeight,
                         ),
                         itemCount: locationController.locationItem.length,
@@ -179,15 +212,14 @@ class LocationScreen extends StatelessWidget {
                               percentText: item.percentText,
                               endTimeText: item.endTimeText,
                               isFavorite: false.obs,
-                              //scrollcontroller: scrollcontroller,
                             ),
                           );
                         },
-                      ),
-                    );
-                  }),
-                  const SizedBox(height: 30),
-                ],
+                      );
+                    }),
+                    const SizedBox(height: 30),
+                  ],
+                ),
               ),
             ),
           );

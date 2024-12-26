@@ -42,8 +42,7 @@ class AllCategories extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding: EdgeInsets.only(
-              left: Responsive.isMobile(context) ? 8 : 42, right: 6),
+          padding: EdgeInsets.only(left: 8, right: 6),
           child: SizedBox(
             height: 180,
             child: ListView.builder(
@@ -71,82 +70,11 @@ class AllCategories extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(height: Responsive.isMobile(context) ? 10 : 50),
-        // Padding(
-        //   padding: EdgeInsets.only(
-        //     left: Responsive.isMobile(context) ? 14 : 48.0,
-        //     right: Responsive.isMobile(context) ? 18 : 48.0,
-        //   ),
-        //   child: Row(
-        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //     children: [
-        //       Text(
-        //         'Theme',
-        //         style: TextStyle(
-        //           color: AppColors.botomSheetColor,
-        //           fontFamily: 'aftika-regular',
-        //           fontSize: Responsive.isMobile(context) ? 18 : 40,
-        //           fontWeight: FontWeight.w400,
-        //         ),
-        //       ),
-        //       InkWell(
-        //           onTap: () {
-        //             Get.to(ThemeViewAll( ));
-        //           },
-        //           child: Text(
-        //
-        //             "view all",
-        //             style: TextStyle(
-        //
-        //                 decoration: TextDecoration.underline,
-        //
-        //                 decorationColor: AppColors.primaryColor,
-        //                 fontFamily: 'Nunito-Regular',
-        //                 fontSize: Responsive.isMobile(context) ? 12 : 20,
-        //                 fontWeight: FontWeight.w500,
-        //                 color: AppColors.primaryColor),
-        //           ))
-        //     ],
-        //   ),
-        // ),
-        // SizedBox(height: Responsive.isMobile(context) ? 10 : 50),
-        // Padding(
-        //   padding: EdgeInsets.only(
-        //       left: Responsive.isMobile(context) ? 8 : 42, right: 6),
-        //   child: SizedBox(
-        //     height: 180,
-        //     child: ListView.builder(
-        //       controller: themeController.scrothemellController,
-        //       scrollDirection: Axis.horizontal,
-        //       itemCount:
-        //       themeController.circleItems.length, // Number of items
-        //       itemBuilder: (context, index) {
-        //         final item = themeController
-        //             .circleItems[index]; // Get item from model list
-        //         return Padding(
-        //           padding: EdgeInsets.symmetric(
-        //               horizontal: 6,
-        //               vertical: Responsive.isMobile(context) ? 6 : 6),
-        //           child: CircleContainerWidget(
-        //             ontap: (){
-        //               Get.to(RestaurantDetailScreen());
-        //             },
-        //             isLocation: false,
-        //             imgPath: item.imgPath,
-        //             titleText: item.titleText,
-        //             descriptionText: item.descriptionText,
-        //             isFavourite: false.obs,
-        //           ),
-        //         );
-        //       },
-        //     ),
-        //   ),
-        // ),
-        // SizedBox(height: Responsive.isMobile(context) ? 10 : 50),
+        SizedBox(height: 16),
         Padding(
           padding: EdgeInsets.only(
-            left: Responsive.isMobile(context) ? 14 : 48.0,
-            right: Responsive.isMobile(context) ? 18 : 48.0,
+            left: 14,
+            right: 18,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -156,7 +84,7 @@ class AllCategories extends StatelessWidget {
                 style: TextStyle(
                   color: AppColors.bottomSheetColor,
                   fontFamily: 'aftika-regular',
-                  fontSize: Responsive.isMobile(context) ? 18 : 40,
+                  fontSize: 18,
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -170,14 +98,14 @@ class AllCategories extends StatelessWidget {
                         decoration: TextDecoration.underline,
                         decorationColor: AppColors.primaryColor,
                         fontFamily: 'Nunito-Regular',
-                        fontSize: Responsive.isMobile(context) ? 12 : 20,
+                        fontSize: 12,
                         fontWeight: FontWeight.w500,
                         color: AppColors.primaryColor),
                   ))
             ],
           ),
         ),
-        SizedBox(height: Responsive.isMobile(context) ? 2 : 50),
+        SizedBox(height:12),
         Obx(() {
           // Determine item count based on screen type
           int itemCount;
@@ -205,15 +133,9 @@ class AllCategories extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 mainAxisExtent: 220,
-                crossAxisCount: Responsive.isMobile(context)
-                    ? 2
-                    : (Responsive.isTablet(context) ? 3 : 4),
-                crossAxisSpacing: Responsive.isMobile(context)
-                    ? 10
-                    : (Responsive.isTablet(context) ? 8 : 10),
-                mainAxisSpacing: Responsive.isMobile(context)
-                    ? 0
-                    : (Responsive.isTablet(context) ? 2 : 20),
+                crossAxisCount: 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
               ),
               itemCount: itemCount,
               itemBuilder: (context, index) {
@@ -232,11 +154,11 @@ class AllCategories extends StatelessWidget {
             ),
           );
         }),
-        SizedBox(height: Responsive.isMobile(context) ? 2 : 50),
+        SizedBox(height: 16),
         Padding(
           padding: EdgeInsets.only(
-            left: Responsive.isMobile(context) ? 14 : 48.0,
-            right: Responsive.isMobile(context) ? 18 : 48.0,
+            left: 14,
+            right: 18,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -246,7 +168,7 @@ class AllCategories extends StatelessWidget {
                 style: TextStyle(
                   color: AppColors.bottomSheetColor,
                   fontFamily: 'aftika-regular',
-                  fontSize: Responsive.isMobile(context) ? 18 : 40,
+                  fontSize: 18,
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -260,14 +182,14 @@ class AllCategories extends StatelessWidget {
                         decoration: TextDecoration.underline,
                         decorationColor: AppColors.primaryColor,
                         fontFamily: 'Nunito-Regular',
-                        fontSize: Responsive.isMobile(context) ? 12 : 20,
+                        fontSize: 12,
                         fontWeight: FontWeight.w500,
                         color: AppColors.primaryColor),
                   ))
             ],
           ),
         ),
-        SizedBox(height: Responsive.isMobile(context) ? 0 : 50),
+        SizedBox(height: 12),
         Obx(() {
           // Determine item count based on screen type
           int itemCount;
@@ -295,15 +217,9 @@ class AllCategories extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 mainAxisExtent: 220,
-                crossAxisCount: Responsive.isMobile(context)
-                    ? 2
-                    : (Responsive.isTablet(context) ? 3 : 4),
-                crossAxisSpacing: Responsive.isMobile(context)
-                    ? 10
-                    : (Responsive.isTablet(context) ? 8 : 10),
-                mainAxisSpacing: Responsive.isMobile(context)
-                    ? 0
-                    : (Responsive.isTablet(context) ? 2 : 20),
+                crossAxisCount: 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
               ),
               itemCount: itemCount,
               itemBuilder: (context, index) {
@@ -314,18 +230,19 @@ class AllCategories extends StatelessWidget {
                   description: item.description,
                   imagePath: item.imagePath,
                   timetext: item.timetext,
-                  percentText: item.percentText,endTimeText: item.endTimeText,
+                  percentText: item.percentText,
+                  endTimeText: item.endTimeText,
                   isFavorite: false.obs,
                 );
               },
             ),
           );
         }),
-        SizedBox(height: Responsive.isMobile(context) ? 2 : 50),
+        SizedBox(height: 16),
         Padding(
           padding: EdgeInsets.only(
-            left: Responsive.isMobile(context) ? 14 : 48.0,
-            right: Responsive.isMobile(context) ? 18 : 48.0,
+            left: 14,
+            right: 18,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -335,7 +252,7 @@ class AllCategories extends StatelessWidget {
                 style: TextStyle(
                   color: AppColors.bottomSheetColor,
                   fontFamily: 'aftika-regular',
-                  fontSize: Responsive.isMobile(context) ? 18 : 40,
+                  fontSize: 18,
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -356,7 +273,7 @@ class AllCategories extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: Responsive.isMobile(context) ? 0 : 50),
+        SizedBox(height: 12),
         Obx(() {
           // Determine item count based on screen type
           int itemCount;
@@ -384,15 +301,9 @@ class AllCategories extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 mainAxisExtent: 220,
-                crossAxisCount: Responsive.isMobile(context)
-                    ? 2
-                    : (Responsive.isTablet(context) ? 3 : 4),
-                crossAxisSpacing: Responsive.isMobile(context)
-                    ? 10
-                    : (Responsive.isTablet(context) ? 8 : 10),
-                mainAxisSpacing: Responsive.isMobile(context)
-                    ? 0
-                    : (Responsive.isTablet(context) ? 2 : 20),
+                crossAxisCount: 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
               ),
               itemCount: itemCount,
               itemBuilder: (context, index) {
@@ -403,18 +314,19 @@ class AllCategories extends StatelessWidget {
                   description: item.description,
                   imagePath: item.imagePath,
                   timetext: item.timetext,
-                  percentText: item.percentText,endTimeText: item.endTimeText,
+                  percentText: item.percentText,
+                  endTimeText: item.endTimeText,
                   isFavorite: false.obs,
                 );
               },
             ),
           );
         }),
-        SizedBox(height: Responsive.isMobile(context) ? 2 : 50),
+        SizedBox(height: 16),
         Padding(
           padding: EdgeInsets.only(
-            left: Responsive.isMobile(context) ? 14 : 48.0,
-            right: Responsive.isMobile(context) ? 18 : 48.0,
+            left: 14,
+            right: 18,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -424,7 +336,7 @@ class AllCategories extends StatelessWidget {
                 style: TextStyle(
                   color: AppColors.bottomSheetColor,
                   fontFamily: 'aftika-regular',
-                  fontSize: Responsive.isMobile(context) ? 18 : 40,
+                  fontSize: 18,
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -438,14 +350,14 @@ class AllCategories extends StatelessWidget {
                         decoration: TextDecoration.underline,
                         decorationColor: AppColors.primaryColor,
                         fontFamily: 'Nunito-Regular',
-                        fontSize: Responsive.isMobile(context) ? 12 : 20,
+                        fontSize: 12,
                         fontWeight: FontWeight.w500,
                         color: AppColors.primaryColor),
                   ))
             ],
           ),
         ),
-        SizedBox(height: Responsive.isMobile(context) ? 2 : 50),
+        SizedBox(height: 12),
         Obx(() {
           // Determine item count based on screen type
           int itemCount;
@@ -473,15 +385,9 @@ class AllCategories extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 mainAxisExtent: 220,
-                crossAxisCount: Responsive.isMobile(context)
-                    ? 2
-                    : (Responsive.isTablet(context) ? 3 : 4),
-                crossAxisSpacing: Responsive.isMobile(context)
-                    ? 10
-                    : (Responsive.isTablet(context) ? 8 : 10),
-                mainAxisSpacing: Responsive.isMobile(context)
-                    ? 10
-                    : (Responsive.isTablet(context) ? 2 : 20),
+                crossAxisCount: 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
               ),
               itemCount: itemCount,
               itemBuilder: (context, index) {
@@ -500,7 +406,7 @@ class AllCategories extends StatelessWidget {
             ),
           );
         }),
-        SizedBox(height: Responsive.isMobile(context) ? 10 : 50),
+        SizedBox(height: 16),
       ],
     );
   }

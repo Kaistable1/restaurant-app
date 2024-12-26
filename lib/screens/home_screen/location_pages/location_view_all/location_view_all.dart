@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 import '../../../../constants/app_colors.dart';
+import '../../../../custom_widget/separate_text_field.dart';
 import '../../../../widgets/circle_container_widget.dart';
 import '../../home_controller/home_location_controller.dart';
-import '../../my_home_screen.dart';
 import '../location_screen.dart';
 
 class LocationViewAll extends StatelessWidget {
@@ -47,7 +46,7 @@ class LocationViewAll extends StatelessWidget {
             ),
             child: GestureDetector(
               onTap: () {
-                Get.back(); // Navigate back to the home screen
+                Get.back();
               },
               child: Icon(
                 Icons.arrow_back,
@@ -59,31 +58,97 @@ class LocationViewAll extends StatelessWidget {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.only(left: 16.0,right: 16),
-        child: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            mainAxisExtent: 165,
-            crossAxisCount: 3, // 3 items per row
-            crossAxisSpacing: 10.0, // Space between columns
-            mainAxisSpacing: 10.0, // Space between rows
-           // childAspectRatio: 18.0, // Ratio to control the size of the items
-          ),
-          itemCount: controller.circleItems.length, // Number of items (3 rows * 3 columns = 9)
-          itemBuilder: (context, index) {
-            final item = controller.circleItems[index];
-            return CircleContainerWidget(
-              ontap: () {
-                Get.to(LocationScreen());
-              },
-              isFavourite: false.obs,
-             isLocation: true,
-              imgPath: item.imgPath,
-             titleText: item.titleText,
-             descriptionText: item.descriptionText,// Example dynamic description
-            );
-          },
+        padding: const EdgeInsets.only(left: 16.0, right: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 38,
+              child: CustomSeparateTextField(
+                controller: controller.searchController,
+                hintText: 'Try searching for restaurant locations',
+                hintStyle: TextStyle(
+                  color: AppColors.hintText,
+                  fontFamily: "Nunito-Regular",
+                  fontWeight: FontWeight.w400,
+                  fontSize: 12,
+                ),
+                isPrefixIcon: true,
+                isShadow: true,
+                prefixIcon: Padding(
+                  padding: const EdgeInsets.only(
+                      left: 4, top: 8, bottom: 8, right: 0),
+                  child: Image.asset(
+                    'assets/images/search_icon.png',
+                    fit: BoxFit.contain,
+                    height: 20,
+                    width: 20,
+                  ),
+                ),
+                isSuffixIcon: true,
+                suffixIcon: Container(
+                  height: 38,
+                  width: 66,
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryColor,
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(10),
+                      bottomRight: Radius.circular(10),
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Search',
+                      style: TextStyle(
+                        color: AppColors.bottomSheetColor,
+                        fontFamily: "Nunito-Bold",
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 16,),
+            Text(
+              'Explore Location',
+              style: TextStyle(
+                color: AppColors.bottomSheetColor,
+                fontFamily: 'aftika-regular',
+                fontSize: 18,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            SizedBox(height: 16),
+            Expanded(
+              child: GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  mainAxisExtent: 165,
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 10.0,
+                  mainAxisSpacing: 10.0,
+                ),
+                itemCount: controller.circleItems.length,
+                itemBuilder: (context, index) {
+                  final item = controller.circleItems[index];
+                  return CircleContainerWidget(
+                    ontap: () {
+                      Get.to(LocationScreen());
+                    },
+                    isFavourite: false.obs,
+                    isLocation: true,
+                    imgPath: item.imgPath,
+                    titleText: item.titleText,
+                    descriptionText: item.descriptionText,
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
+

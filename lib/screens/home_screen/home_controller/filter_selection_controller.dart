@@ -22,8 +22,6 @@ class FilterSelectionController extends GetxController {
 
   final discountType = [
     'percentage off',
-    'buy one get one (bogo)',
-    'limited-time offers',
     'happy hour specials',
   ];
   final selectedDiscounts = <String>[].obs;
@@ -92,6 +90,56 @@ class FilterSelectionController extends GetxController {
     }
   }
 
+  final entertainment = [
+    'live music',
+    'dj nights',
+    'karaoke',
+    'trivia nights',
+    'sports screenings',
+    'hookah',
+  ];
+  final selectedEntertainment = <String>[].obs;
+
+  void toggleEntertainment(String name) {
+    if (selectedEntertainment.contains(name)) {
+      selectedEntertainment.remove(name);
+    } else {
+      selectedEntertainment.add(name);
+    }
+  }
+  final dietaryPreferences = [
+    'vegetarian',
+    'vegan',
+    'gluten-free',
+    'dairy-free',
+    'keto-friendly',
+  ];
+  final selectedDietary = <String>[].obs;
+
+  void toggleDietary(String name) {
+    if (selectedDietary.contains(name)) {
+      selectedDietary.remove(name);
+    } else {
+      selectedDietary.add(name);
+    }
+  }
+  final priceRange = [
+    '\$ {budget-friendly}',
+    '\$\$ {moderate}',
+    '\$\$\$ {premium}',
+    '\$\$\$\$ {luxury}',
+  ];
+  final selectedPriceRange= <String>[].obs;
+
+  void togglePriceRange(String name) {
+    if (selectedPriceRange.contains(name)) {
+      selectedPriceRange.remove(name);
+    } else {
+      selectedPriceRange.add(name);
+    }
+  }
+
+///-----------------------------------------------------///
   var aggregatedFilters = <String>[].obs;
 
   void aggregateSelectedFilters() {
@@ -111,6 +159,9 @@ class FilterSelectionController extends GetxController {
     aggregatedFilters.addAll(selectedTimeOfDay);
     aggregatedFilters.addAll(selectedAtmosphere);
     aggregatedFilters.addAll(selectedFacilities);
+    aggregatedFilters.addAll(selectedDietary);
+    aggregatedFilters.addAll(selectedEntertainment);
+    aggregatedFilters.addAll(selectedPriceRange);
   }
 
   var isFilterListVisible = false.obs;

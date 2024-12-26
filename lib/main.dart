@@ -55,7 +55,7 @@ class MyApp extends StatelessWidget {
       title: 'Kaistable',
       // home: SplashScreen(),
       // home:  Preference1 4(),
-      home:MyHomeScreen(countryName: 'see',)
+      home:MyHomeScreen(countryName: 'New York',)
     );
   }
 }

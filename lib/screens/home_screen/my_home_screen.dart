@@ -17,24 +17,17 @@ import 'package:kaistable_website/screens/home_screen/home_controller/home_trend
 
 import 'package:kaistable_website/screens/home_screen/location_pages/location_screen.dart';
 import 'package:kaistable_website/screens/home_screen/location_pages/location_view_all/location_view_all.dart';
-import 'package:kaistable_website/screens/home_screen/new_view_all/new_viewall.dart';
-import 'package:kaistable_website/screens/home_screen/recently_viewed/recently_viewed.dart';
-import 'package:kaistable_website/screens/home_screen/theme/theme_view_all.dart';
-import 'package:kaistable_website/screens/home_screen/trendind_all/trending_view_all.dart';
 import 'package:kaistable_website/screens/privacy_policy/privacy_policy.dart';
 import 'package:kaistable_website/screens/terms_and_condition/terms_and_condition.dart';
-import 'package:kaistable_website/utils/responsive.dart';
-import 'package:kaistable_website/widgets/circle_container_widget.dart';
 import 'package:kaistable_website/widgets/custom_button.dart';
-import 'package:kaistable_website/widgets/fav_rectangle_widget.dart';
 
 import '../../constants/app_colors.dart';
 import '../../widgets/home_widgets/all_categories.dart';
 import '../../widgets/home_widgets/filter_widget.dart';
 import '../../widgets/rectangle_widget.dart';
 import '../change_pass/changePassword_dialoge.dart';
-import '../detail_screens/restaurant_detail_screen.dart';
 import '../edit_profile/edit_profile_page.dart';
+import 'home_controller/filter_selection_controller.dart';
 
 class MyHomeScreen extends StatefulWidget {
   final String? countryName;
@@ -65,6 +58,8 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
 
   final HomeLocationController controller = Get.put(HomeLocationController());
   final HomeThemeController themeController = Get.put(HomeThemeController());
+  final FilterSelectionController filterSelectionController =
+      Get.put(FilterSelectionController());
   final HomeRecentlyViewedController recentlyViewedController =
       Get.put(HomeRecentlyViewedController());
   final HomeCusinessController cusinessController =
@@ -167,7 +162,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                         child: Text(
                           'USA.Los Vegas',
                           style: TextStyle(
-                             color: AppColors.textColor,
+                            color: AppColors.textColor,
                             fontWeight: FontWeight.w800,
                             fontFamily: 'Nunito-Regular',
                             fontSize: 9,
@@ -233,113 +228,104 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               FilterWidget(),
-              // Padding(
-              //   padding: EdgeInsets.only(
-              //     left: Responsive.isMobile(context) ? 16 : 48.0,
-              //     right: Responsive.isMobile(context) ? 16 : 48.0,
-              //   ),
-              //   child: CarouselSlider.builder(
-              //
-              //     itemCount: imagePaths.length,
-              //     itemBuilder: (BuildContext context, int index, int realIndex) {
-              //       return GestureDetector(
-              //         onTap: (){
-              //           Get.to(RestaurantDetailScreen());
-              //         },
-              //         child: ClipRRect(
-              //           borderRadius: BorderRadius.circular(10), // Set the border radius
-              //           child: Image.asset(
-              //             imagePaths[index],
-              //             fit: BoxFit.cover,
-              //           ),
-              //         ),
-              //       );
-              //     },
-              //     options: CarouselOptions(
-              //
-              //       height: 172,
-              //       // Height of the carousel
-              //       viewportFraction: .9, // Adjusts the width of the carousel items
-              //       autoPlay: true, // Enable auto sliding
-              //       autoPlayInterval: Duration(seconds: 3), // Interval between slides
-              //       autoPlayAnimationDuration: Duration(seconds: 1), // Animation duration
-              //       autoPlayCurve: Curves.easeInOut, // Curve for the sliding transition
-              //       enlargeCenterPage: true, // Enlarge the center image
-              //     ),
-              //   ),
-              // ),
-
-              SizedBox(height: 4),
-              Padding(
-                padding: EdgeInsets.only(
-                  left: 16,
-                  right: 18,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    DropdownButton2(
-                      hint: Text(
-                        selectedCountry,
-                        style: TextStyle(
-                          color: AppColors.bottomSheetColor,
-                          fontFamily: 'aftika-regular',
-                          fontSize: 18,
-                          fontWeight: FontWeight.w400,
+              Obx(
+                () => filterSelectionController.isFilterListVisible.value &&
+                        filterSelectionController.aggregatedFilters.isNotEmpty
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Explore Restaurants',
+                              style: TextStyle(
+                                color: AppColors.bottomSheetColor,
+                                fontFamily: 'aftika-regular',
+                                fontSize: 18,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 16,
+                            ),
+                            Obx(() {
+                              return GridView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  mainAxisExtent: 220,
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 10,
+                                  mainAxisSpacing: 10,
+                                ),
+                                itemCount:
+                                    cusinessController.cusinessItem.length,
+                                itemBuilder: (context, index) {
+                                  final item =
+                                      cusinessController.cusinessItem[index];
+                                  return RectangleWidget(
+                                    title: item.title,
+                                    description: item.description,
+                                    imagePath: item.imagePath,
+                                    timetext: item.timeText,
+                                    percentText: item.percentText,
+                                    endTimeText: item.endTimeText,
+                                    isFavorite: false.obs,
+                                  );
+                                },
+                              );
+                            }),
+                            SizedBox(height: 16,),
+                          ],
                         ),
-                      ),
-                      dropdownStyleData: DropdownStyleData(width: 150),
-                      iconStyleData: IconStyleData(
-                        icon: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Image.asset(
-                            'assets/images/drop_down_img.png',
-                            width: 12,
-                            height: 12,
-                          ),
-                        ),
-                      ),
-                      underline: SizedBox(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          selectedCountry = newValue!;
-                        });
-                      },
-                      items: countries.map((String country) {
-                        return DropdownMenuItem<String>(
-                          value: country,
-                          child: Text(
-                            country,
-                            style: TextStyle(
-                              color: AppColors.bottomSheetColor,
-                              fontFamily: 'aftika-regular',
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
+                      )
+                    : Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(
+                              left: 16,
+                              right: 18,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  selectedCountry,
+                                  style: TextStyle(
+                                    color: AppColors.bottomSheetColor,
+                                    fontFamily: 'aftika-regular',
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                Spacer(),
+                                InkWell(
+                                    onTap: () {
+                                      Get.to(LocationViewAll());
+                                    },
+                                    child: Text(
+                                      "view all",
+                                      style: TextStyle(
+                                          decoration: TextDecoration.underline,
+                                          decorationColor:
+                                              AppColors.primaryColor,
+                                          fontFamily: 'Nunito-Regular',
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                          color: AppColors.primaryColor),
+                                    ))
+                              ],
                             ),
                           ),
-                        );
-                      }).toList(),
-                    ),
-                    Spacer(),
-                    InkWell(
-                        onTap: () {
-                          Get.to(LocationViewAll());
-                        },
-                        child: Text(
-                          "view all",
-                          style: TextStyle(
-                              decoration: TextDecoration.underline,
-                              decorationColor: AppColors.primaryColor,
-                              fontFamily: 'Nunito-Regular',
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.primaryColor),
-                        ))
-                  ],
-                ),
+                          const SizedBox(height: 1),
+                          AllCategories(),
+                        ],
+                      ),
               ),
-              const SizedBox(height: 1),
-              AllCategories(),
             ],
           ),
         ));

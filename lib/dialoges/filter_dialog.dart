@@ -412,6 +412,162 @@ void filterSelectionDialogueBox() {
                             ),
                           ),
                           SizedBox(
+                            height: 16,
+                          ),
+                          Text(
+                            'Dietary Preferences',
+                            style: TextStyle(
+                              color: AppColors.bottomSheetColor,
+                              fontFamily: "Nunito-Bold",
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 12,
+                          ),
+                          SizedBox(
+                            width: 350,
+                            child: LayoutBuilder(
+                              builder: (context, constraints) {
+                                double availableWidth = constraints.maxWidth;
+                                return Obx(
+                                      () => Wrap(
+                                      direction: Axis.horizontal,
+                                      spacing: 10,
+                                      runSpacing: 10,
+                                      children: [
+                                        ...List.generate(
+                                          controller.dietaryPreferences.length,
+                                              (index) {
+                                            final name =
+                                            controller.dietaryPreferences[index];
+                                            final isSelected = controller
+                                                .selectedDietary
+                                                .contains(name);
+                                            return ConstrainedBox(
+                                              constraints: BoxConstraints(
+                                                maxWidth: availableWidth / 1,
+                                              ),
+                                              child: FilterSelectionWidgetForHome(
+                                                name: name,
+                                                isSelected: isSelected,
+                                                onTap: () => controller
+                                                    .toggleDietary(name),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ]),
+                                );
+                              },
+                            ),
+                          ),
+                          SizedBox(
+                            height: 16,
+                          ),
+                          Text(
+                            'Entertainment',
+                            style: TextStyle(
+                              color: AppColors.bottomSheetColor,
+                              fontFamily: "Nunito-Bold",
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 12,
+                          ),
+                          SizedBox(
+                            width: 350,
+                            child: LayoutBuilder(
+                              builder: (context, constraints) {
+                                double availableWidth = constraints.maxWidth;
+                                return Obx(
+                                      () => Wrap(
+                                      direction: Axis.horizontal,
+                                      spacing: 10,
+                                      runSpacing: 10,
+                                      children: [
+                                        ...List.generate(
+                                          controller.entertainment.length,
+                                              (index) {
+                                            final name =
+                                            controller.entertainment[index];
+                                            final isSelected = controller
+                                                .selectedEntertainment
+                                                .contains(name);
+                                            return ConstrainedBox(
+                                              constraints: BoxConstraints(
+                                                maxWidth: availableWidth / 1,
+                                              ),
+                                              child: FilterSelectionWidgetForHome(
+                                                name: name,
+                                                isSelected: isSelected,
+                                                onTap: () => controller
+                                                    .toggleEntertainment(name),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ]),
+                                );
+                              },
+                            ),
+                          ),
+                          SizedBox(
+                            height: 16,
+                          ),
+                          Text(
+                            'Price Range',
+                            style: TextStyle(
+                              color: AppColors.bottomSheetColor,
+                              fontFamily: "Nunito-Bold",
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 12,
+                          ),
+                          SizedBox(
+                            width: 350,
+                            child: LayoutBuilder(
+                              builder: (context, constraints) {
+                                double availableWidth = constraints.maxWidth;
+                                return Obx(
+                                      () => Wrap(
+                                      direction: Axis.horizontal,
+                                      spacing: 10,
+                                      runSpacing: 10,
+                                      children: [
+                                        ...List.generate(
+                                          controller.priceRange.length,
+                                              (index) {
+                                            final name =
+                                            controller.priceRange[index];
+                                            final isSelected = controller
+                                                .selectedPriceRange
+                                                .contains(name);
+                                            return ConstrainedBox(
+                                              constraints: BoxConstraints(
+                                                maxWidth: availableWidth / 1,
+                                              ),
+                                              child: FilterSelectionWidgetForHome(
+                                                name: name,
+                                                isSelected: isSelected,
+                                                onTap: () => controller
+                                                    .togglePriceRange(name),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ]),
+                                );
+                              },
+                            ),
+                          ),
+                          SizedBox(
                             height: 30,
                           ),
                           Center(
@@ -424,6 +580,7 @@ void filterSelectionDialogueBox() {
                               fontFamily: 'Nunito-Sans',
                               textColor: Colors.white,
                               ontapp: () {
+
                                 controller.aggregateSelectedFilters();
                                 Get.back();
                               },

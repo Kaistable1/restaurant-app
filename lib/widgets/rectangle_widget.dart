@@ -9,8 +9,6 @@ import '../screens/detail_screens/restaurant_detail_screen.dart';
 import '../utils/responsive.dart';
 
 class RectangleWidget extends StatelessWidget {
-  // final bool? isFromHappy;
-  // final bool isHappy;
   final String title;
   final String imagePath;
   final String description;
@@ -40,7 +38,18 @@ class RectangleWidget extends StatelessWidget {
       },
       child: Container(
         height: 173,
-        color: Colors.transparent,
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.4),
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 6,
+              spreadRadius: 1,
+              offset: Offset(2, 2),
+            ),
+          ],
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
