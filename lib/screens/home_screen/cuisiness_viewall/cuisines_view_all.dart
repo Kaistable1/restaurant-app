@@ -8,8 +8,11 @@ import 'package:kaistable_website/widgets/rectangle_widget.dart';
 import '../../../constants/app_colors.dart';
 import '../../../custom_widget/separate_text_field.dart';
 import '../../../utils/responsive.dart';
+import '../../../widgets/circle_container_widget.dart';
 import '../../../widgets/fav_rectangle_widget.dart';
 import '../../../widgets/home_widgets/filter_widget.dart';
+import '../../detail_screens/restaurant_detail_screen.dart';
+import '../explore_restaurants/explore_restaurant.dart';
 import '../home_controller/home_cusiness_controller.dart';
 import '../home_controller/home_location_controller.dart';
 import '../home_controller/home_recently_viewed_controller.dart';
@@ -27,8 +30,6 @@ class CuisinesViewAll extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    bool isLargeScreen = screenWidth > 1400;
 
     return WillPopScope(
       onWillPop: () async {
@@ -37,16 +38,6 @@ class CuisinesViewAll extends StatelessWidget {
       },
       child: LayoutBuilder(
         builder: (context, constraints) {
-          int itemsPerRow = Responsive.isMobile(context)
-              ? 2
-              : Responsive.isTablet(context)
-                  ? 3
-                  : 4;
-          double itemWidth = (constraints.maxWidth / itemsPerRow) - 16;
-          double itemHeight = Responsive.isMobile(context)
-              ? 320
-              : (isLargeScreen ? 500 : 500); // Set a fixed height for items
-
           return Scaffold(
             backgroundColor: AppColors.bgColor,
             appBar: AppBar(
@@ -93,101 +84,100 @@ class CuisinesViewAll extends StatelessWidget {
                 ),
               ),
             ),
-            body: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 38,
-                      child: CustomSeparateTextField(
-                        controller: controller.searchController,
-                        hintText: 'Try searching for restaurant name',
-                        hintStyle: TextStyle(
-                          color: AppColors.hintText,
-                          fontFamily: "Nunito-Regular",
-                          fontWeight: FontWeight.w400,
-                          fontSize: 12,
-                        ),
-                        isPrefixIcon: true,
-                        isShadow: true,
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 4, top: 8, bottom: 8, right: 0),
-                          child: Image.asset(
-                            'assets/images/search_icon.png',
-                            fit: BoxFit.contain,
-                            height: 20,
-                            width: 20,
-                          ),
-                        ),
-                        isSuffixIcon: true,
-                        suffixIcon: Container(
-                          height: 38,
-                          width: 66,
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryColor,
-                            borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(10),
-                              bottomRight: Radius.circular(10),
-                            ),
-                          ),
-                          child: Center(
-                            child: Text(
-                              'Search',
-                              style: TextStyle(
-                                color: AppColors.bottomSheetColor,
-                                fontFamily: "Nunito-Bold",
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    Text(
-                      'Explore Cusines',
-                      style: TextStyle(
-                        color: AppColors.bottomSheetColor,
-                        fontFamily: 'aftika-regular',
-                        fontSize: 18,
+            body: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 38,
+                    child: CustomSeparateTextField(
+                      controller: controller.searchController,
+                      hintText: 'Try searching for restaurant name',
+                      hintStyle: TextStyle(
+                        color: AppColors.hintText,
+                        fontFamily: "Nunito-Regular",
                         fontWeight: FontWeight.w400,
+                        fontSize: 12,
+                      ),
+                      isPrefixIcon: true,
+                      isShadow: true,
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 4, top: 8, bottom: 8, right: 0),
+                        child: Image.asset(
+                          'assets/images/search_icon.png',
+                          fit: BoxFit.contain,
+                          height: 20,
+                          width: 20,
+                        ),
+                      ),
+                      isSuffixIcon: true,
+                      suffixIcon: Container(
+                        height: 38,
+                        width: 66,
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryColor,
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(10),
+                            bottomRight: Radius.circular(10),
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'Search',
+                            style: TextStyle(
+                              color: AppColors.bottomSheetColor,
+                              fontFamily: "Nunito-Bold",
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                    SizedBox(height: 12),
-                    Obx(() {
-                      return GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'Explore Cuisines',
+                    style: TextStyle(
+                      color: AppColors.bottomSheetColor,
+                      fontFamily: 'aftika-regular',
+                      fontSize: 18,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  SizedBox(height: 12),
+
+                     Expanded(
+                       child: GridView.builder(
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          mainAxisExtent: 220,
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
-                          childAspectRatio: itemWidth / itemHeight,
+                          mainAxisExtent: 165,
+                          crossAxisCount: 3,
+                          crossAxisSpacing: 10.0,
+                          mainAxisSpacing: 10.0,
                         ),
                         itemCount: cusinessController.cusinessItem.length,
                         itemBuilder: (context, index) {
                           final item = cusinessController.cusinessItem[index];
-                          return RectangleWidget(
-                            onNavigate: onNavigate,
-                            title: item.title,
-                            description: item.description,
-                            imagePath: item.imagePath,
-                            timetext: item.timeText,
-                            endTimeText: item.endTimeText,
-                            percentText: item.percentText,
-                            isFavorite: false.obs,
+                          return CircleContainerWidget(
+                            ontap: () {
+                              Get.to(()=>ExploreRestaurant());
+                            },
+                            isFavourite: false.obs,
+                            isLocation: false,
+                            height: 150,
+                            width: 115,
+                            imgPath: item.imagePath,
+                            titleText: item.title,
+                            descriptionText: item.description,
                           );
                         },
-                      );
-                    }),
-                    const SizedBox(height: 30),
-                  ],
-                ),
+                                             ),
+                     ),
+
+                  const SizedBox(height: 30),
+                ],
               ),
             ),
           );

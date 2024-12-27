@@ -5,10 +5,8 @@ import 'package:kaistable_website/constants/app_colors.dart';
 import 'package:kaistable_website/screens/auth_screens/login/controller/login_controller.dart';
 
 import '../../../custom_widget/TextAndWidget.dart';
-import '../../../custom_widget/separate_text_field.dart';
 import '../../../utils/validations.dart';
 import '../../../widgets/custom_button.dart';
-import '../../../widgets/custom_text_field.dart';
 import '../../home_screen/my_home_screen.dart';
 import '../forgot_pass/forgot_pass_screen.dart';
 import '../signup/signup_screen.dart';
@@ -26,7 +24,7 @@ class LoginScreen extends StatelessWidget {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.bgColor,
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -199,25 +197,41 @@ class LoginScreen extends StatelessWidget {
                   SizedBox(
                     height: 40,
                   ),
-                  Center(
-                    child: CustomButton(
-                      laBelText: 'Login',
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: 'Nunito-Sans',
-                      textColor: Colors.white,
-                      width: 200,
-                      height: 48,
-                      ontapp: () {
-                        if (_formKey.currentState!.validate()) {
-                          controller.emailController.clear();
-                          controller.passwordController.clear();
-                          Get.to(() => MyHomeScreen(
-                                countryName: 'USA',
-                              ));
-                        }
-                      },
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      CustomButton(
+                        laBelText: 'Login',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Nunito-Sans',
+                        textColor: Colors.white,
+                        width: 150,
+                        height: 43,
+                        ontapp: () {
+                          if (_formKey.currentState!.validate()) {
+                            controller.emailController.clear();
+                            controller.passwordController.clear();
+                            Get.to(() => MyHomeScreen(
+                                  countryName: 'USA',
+                                ));
+                          }
+                        },
+                      ),
+                      CustomButton(
+                        laBelText: 'Explore',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Nunito-Sans',
+                        textColor: AppColors.primaryColor,
+                        containerColor: Colors.white,
+                        isBorder: true,
+                        borderColor: AppColors.primaryColor,
+                        width: 150,
+                        height: 43,
+                        ontapp: () {},
+                      ),
+                    ],
                   ),
                   SizedBox(
                     height: 24,

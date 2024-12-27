@@ -17,7 +17,7 @@ class VerifyPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.bgColor,
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,

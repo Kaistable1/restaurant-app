@@ -1,13 +1,10 @@
 import 'dart:ui';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:kaistable_website/screens/detail_screens/controller/restaurant_detail_controller.dart';
-import 'package:kaistable_website/screens/detail_screens/widget/gallary_container.dart';
+
 import 'package:kaistable_website/screens/detail_screens/widget/map_widget.dart';
 import 'package:kaistable_website/screens/detail_screens/widget/number_text_widget.dart';
 import 'package:kaistable_website/screens/detail_screens/widget/review_widget.dart';
@@ -16,11 +13,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../utils/responsive.dart';
-import '../../widgets/custom_button.dart';
-import '../../widgets/uplaod_dialogBox.dart';
 import '../home_screen/location_pages/location_controller/location_list_controller.dart';
 import '../home_screen/location_pages/widget/location_star_widget.dart';
-import '../home_screen/my_home_screen.dart';
 import 'widget/about_section_widget.dart';
 
 class RestaurantDetailScreen extends StatelessWidget {
@@ -33,8 +27,6 @@ class RestaurantDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    bool isLargeScreen = screenWidth > 1400;
     return WillPopScope(
         onWillPop: () async {
           Get.back();
@@ -196,281 +188,393 @@ class RestaurantDetailScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: Responsive.isMobile(context) ? 10 : 18),
+                  SizedBox(height: 18),
                   Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(
-                            left: 16.0, right: 16, top: 10),
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Tabs(controller: controller),
                       ),
                     ],
                   ),
-                  SizedBox(height: Responsive.isMobile(context) ? 2 : 22),
+                  SizedBox(height: 2),
                   Obx(() {
-                    return controller.selectedTop.value == 'About'
-                        ? AboutSectionWidget()
-                        : controller.selectedTop.value == 'Reviews'
-                            ? ReviewWidget(isLargeScreen: isLargeScreen)
-                            : Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 16.0, right: 16, top: 16),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
+                    return controller.selectedTop.value == 'Entertainment'
+                        ? Column(
+                            children: [
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0),
+                                child: Table(
+                                  border: TableBorder.all(
+                                      color: AppColors.tableBorderColor,
+                                      width: 2,
+                                      borderRadius: BorderRadius.circular(10)),
+                                  columnWidths: const {
+                                    0: FlexColumnWidth(1.3),
+                                    1: FlexColumnWidth(1.3),
+                                    2: FlexColumnWidth(1.6),
+                                    3: FlexColumnWidth(2),
+                                  },
+                                  children: [
+                                    TableRow(
+                                      decoration: BoxDecoration(
+                                          color: AppColors.primaryColor
+                                              .withOpacity(0.2),
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
                                       children: [
-                                        Icon(
-                                          Icons.access_time_filled,
-                                          color: AppColors.primaryColor,
-                                          size: 20,
+                                        buildHeaderCell(
+                                          "Name",
                                         ),
-                                        SizedBox(
-                                          width: 8,
-                                        ),
-                                        Text(
-                                          'choose time & discount',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: AppColors.textColor,
-                                            fontSize: Responsive.isMobile(
-                                                    context)
-                                                ? 14
-                                                : Responsive.isTablet(context)
-                                                    ? 10
-                                                    : 14,
-                                            fontFamily: 'Nunito-Regular',
-                                            fontWeight: FontWeight.w400,
-                                            height: 0.16,
-                                          ),
-                                        ),
+                                        buildHeaderCell("Day"),
+                                        buildHeaderCell("Date"),
+                                        buildHeaderCell("Time"),
                                       ],
                                     ),
-                                  ),
-                                  SizedBox(
-                                    height: 16,
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                      left: 16,
-                                    ),
-                                    child: SizedBox(
-                                      height: 100,
-                                      child: ListView.builder(
-                                        controller: locationController
-                                            .scrollController,
-                                        scrollDirection: Axis.horizontal,
-                                        itemCount: locationController
-                                            .circleItems.length,
-                                        itemBuilder: (context, index) {
-                                          final item = locationController
-                                              .circleItems[index];
-                                          return Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 4, vertical: 6),
-                                            child: LocationStarWidget(
-                                              timeText1: item.timeText,
-                                              timeText2: item.timeText2,
-                                              percentageText: item.percentageText,
-                                            ),
-                                          );
-                                        },
+                                    // Table data rows
+                                    ...controller.rowData.map((data) {
+                                      return TableRow(
+                                        decoration: const BoxDecoration(
+                                          color: Colors
+                                              .white, // Row background color
+                                        ),
+                                        children: [
+                                          buildDataCell(data["Name"] ?? ""),
+                                          buildDataCell(data["Day"] ?? ""),
+                                          buildDataCell(data["Date"] ?? ""),
+                                          buildDataCell(data["Time"] ?? ""),
+                                        ],
+                                      );
+                                    }).toList(),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          )
+                        : controller.selectedTop.value == 'About'
+                            ? AboutSectionWidget()
+                            : controller.selectedTop.value == 'Reviews'
+                                ? ReviewWidget()
+                                : Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      SizedBox(
+                                        height: 12,
                                       ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 16,
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 16.0, right: 16.0),
-                                    child: Center(
-                                      child: Container(
-                                        width: Responsive.isMobile(context) ||
-                                                Responsive.isTablet(context)
-                                            ? Get.width
-                                            : Get.width * 0.7,
+                                      OfferSelectionWidget(
+                                          controller: controller),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 16.0, right: 16, top: 16),
                                         child: Row(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.center,
+                                              MainAxisAlignment.start,
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: [
-                                            // First part: Menu items and before discount columns
-                                            Expanded(
-                                              flex: 2,
-                                              child: Container(
-                                                // height: 420,
-
-                                                decoration: const BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius:
-                                                        BorderRadius.only(
-                                                            topLeft: Radius
-                                                                .circular(4),
-                                                            bottomLeft:
-                                                                Radius.circular(
-                                                                    4))),
-
-                                                child: Table(
-                                                  border: TableBorder.symmetric(
-                                                      inside: BorderSide(
-                                                          width: 1,
-                                                          color: Colors.grey
-                                                              .withOpacity(
-                                                                  0.5))),
-                                                  // columnWidths: {
-                                                  //   0:   FixedColumnWidth(Get.width*0.2),
-                                                  //   1:   FlexColumnWidth(Get.width*0.2),
-                                                  // },
-                                                  children: [
-                                                    _buildTableHeader(context),
-                                                    _buildTableRow(
-                                                      context,
-                                                      image:
-                                                          'assets/images/menu1.png',
-                                                      menuItem:
-                                                          'Our Specialty ',
-                                                      beforePrice: '\$30',
-                                                    ),
-                                                    _buildTableRow(
-                                                      context,
-                                                      image:
-                                                          'assets/images/menu2.png',
-                                                      menuItem:
-                                                          'Raddish Pastry',
-                                                      beforePrice: '\$20',
-                                                    ),
-                                                    _buildTableRow(
-                                                      context,
-                                                      image:
-                                                          'assets/images/menu3.png',
-                                                      menuItem:
-                                                          'Nam temporibus repellat ullam odit.',
-                                                      beforePrice: '\$30',
-                                                    ),
-                                                    _buildTableRow(
-                                                      context,
-                                                      image:
-                                                          'assets/images/menu1.png',
-                                                      menuItem:
-                                                          'Aut consectetur temporibus in',
-                                                      beforePrice: '\$40',
-                                                    ),
-                                                    _buildTableRow(
-                                                      context,
-                                                      image:
-                                                          'assets/images/menu2.png',
-                                                      menuItem:
-                                                          'Nam non eum velit tenetur',
-                                                      beforePrice: '\$20',
-                                                    ),
-                                                  ],
+                                            Icon(
+                                              Icons.access_time_filled,
+                                              color: AppColors.primaryColor,
+                                              size: 20,
+                                            ),
+                                            SizedBox(
+                                              width: 8,
+                                            ),
+                                            Text(
+                                              'choose time & discount',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: AppColors.textColor,
+                                                fontSize: 14,
+                                                fontFamily: 'Nunito-Regular',
+                                                fontWeight: FontWeight.w400,
+                                                height: 0.16,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 16,
+                                      ),
+                                      controller.selectedMenu.value ==
+                                              'Happy Hours Specials'
+                                          ? Padding(
+                                              padding: EdgeInsets.only(
+                                                left: 16,
+                                              ),
+                                              child: SizedBox(
+                                                height: 100,
+                                                child: ListView.builder(
+                                                  controller: locationController
+                                                      .scrollController,
+                                                  scrollDirection:
+                                                      Axis.horizontal,
+                                                  itemCount: locationController
+                                                      .circleItems
+                                                      .take(3)
+                                                      .length,
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    final item =
+                                                        locationController
+                                                            .circleItems[index];
+                                                    return Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 4,
+                                                              vertical: 6),
+                                                      child: LocationStarWidget(
+                                                        timeText1:
+                                                            item.timeText,
+                                                        timeText2:
+                                                            item.timeText2,
+                                                        percentageText:
+                                                            item.percentageText,
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                            )
+                                          : Padding(
+                                              padding: EdgeInsets.only(
+                                                left: 16,
+                                              ),
+                                              child: SizedBox(
+                                                height: 100,
+                                                child: ListView.builder(
+                                                  controller: locationController
+                                                      .scrollController,
+                                                  scrollDirection:
+                                                      Axis.horizontal,
+                                                  itemCount: locationController
+                                                      .circleItems.length,
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    final item =
+                                                        locationController
+                                                            .circleItems[index];
+                                                    return Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 4,
+                                                              vertical: 6),
+                                                      child: LocationStarWidget(
+                                                        timeText1:
+                                                            item.timeText,
+                                                        timeText2:
+                                                            item.timeText2,
+                                                        percentageText:
+                                                            item.percentageText,
+                                                      ),
+                                                    );
+                                                  },
                                                 ),
                                               ),
                                             ),
-                                            // Second part: After discount (green column)
-                                            Expanded(
-                                              child: Container(
-                                                height: 482,
-                                                decoration: BoxDecoration(
-                                                  color: AppColors.primaryColor,
-                                                  borderRadius:
-                                                      BorderRadius.circular(4),
+                                      SizedBox(
+                                        height: 16,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 16.0, right: 16.0),
+                                        child: Center(
+                                          child: Container(
+                                            width: Get.width,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                // First part: Menu items and before discount columns
+                                                Expanded(
+                                                  flex: 2,
+                                                  child: Container(
+                                                    // height: 420,
+                                                    decoration: const BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius:
+                                                            BorderRadius.only(
+                                                                topLeft: Radius
+                                                                    .circular(
+                                                                        4),
+                                                                bottomLeft: Radius
+                                                                    .circular(
+                                                                        4))),
+
+                                                    child: Table(
+                                                      border: TableBorder.symmetric(
+                                                          inside: BorderSide(
+                                                              width: 1,
+                                                              color: Colors.grey
+                                                                  .withOpacity(
+                                                                      0.5))),
+                                                      // columnWidths: {
+                                                      //   0:   FixedColumnWidth(Get.width*0.2),
+                                                      //   1:   FlexColumnWidth(Get.width*0.2),
+                                                      // },
+                                                      children: [
+                                                        _buildTableHeader(
+                                                            context),
+                                                        _buildTableRow(
+                                                          context,
+                                                          image:
+                                                              'assets/images/menu1.png',
+                                                          menuItem:
+                                                              'Our Specialty ',
+                                                          beforePrice: '\$30',
+                                                        ),
+                                                        _buildTableRow(
+                                                          context,
+                                                          image:
+                                                              'assets/images/menu2.png',
+                                                          menuItem:
+                                                              'Raddish Pastry',
+                                                          beforePrice: '\$20',
+                                                        ),
+                                                        _buildTableRow(
+                                                          context,
+                                                          image:
+                                                              'assets/images/menu3.png',
+                                                          menuItem:
+                                                              'Nam temporibus repellat ullam odit.',
+                                                          beforePrice: '\$30',
+                                                        ),
+                                                        _buildTableRow(
+                                                          context,
+                                                          image:
+                                                              'assets/images/menu1.png',
+                                                          menuItem:
+                                                              'Aut consectetur temporibus in',
+                                                          beforePrice: '\$40',
+                                                        ),
+                                                        _buildTableRow(
+                                                          context,
+                                                          image:
+                                                              'assets/images/menu2.png',
+                                                          menuItem:
+                                                              'Nam non eum velit tenetur',
+                                                          beforePrice: '\$20',
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
                                                 ),
-                                                child: Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(vertical: 42),
-                                                  child: Table(
-                                                    border:
-                                                        TableBorder.symmetric(
+                                                // Second part: After discount (green column)
+                                                Expanded(
+                                                  child: Container(
+                                                    height: 482,
+                                                    decoration: BoxDecoration(
+                                                      color: AppColors
+                                                          .primaryColor,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              4),
+                                                    ),
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 42),
+                                                      child: Table(
+                                                        border: TableBorder.symmetric(
                                                             inside: BorderSide(
                                                                 width: 1,
                                                                 color: Colors
                                                                     .grey
                                                                     .withOpacity(
                                                                         0.5))),
-                                                    // columnWidths: {
-                                                    //   0: const FlexColumnWidth(),
-                                                    // },
-                                                    children: [
-                                                      _buildGreenHeader(
-                                                          context),
-                                                      _buildGreenRow(context,
-                                                          afterPrice: '\$20'),
-                                                      _buildGreenRow(context,
-                                                          afterPrice: '\$10'),
-                                                      _buildGreenRow(context,
-                                                          afterPrice: '\$20'),
-                                                      _buildGreenRow(context,
-                                                          afterPrice: '\$30'),
-                                                      _buildGreenRow(context,
-                                                          afterPrice: '\$10'),
-                                                    ],
+                                                        // columnWidths: {
+                                                        //   0: const FlexColumnWidth(),
+                                                        // },
+                                                        children: [
+                                                          _buildGreenHeader(
+                                                              context),
+                                                          _buildGreenRow(
+                                                              context,
+                                                              afterPrice:
+                                                                  '\$20'),
+                                                          _buildGreenRow(
+                                                              context,
+                                                              afterPrice:
+                                                                  '\$10'),
+                                                          _buildGreenRow(
+                                                              context,
+                                                              afterPrice:
+                                                                  '\$20'),
+                                                          _buildGreenRow(
+                                                              context,
+                                                              afterPrice:
+                                                                  '\$30'),
+                                                          _buildGreenRow(
+                                                              context,
+                                                              afterPrice:
+                                                                  '\$10'),
+                                                        ],
+                                                      ),
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
+                                              ],
                                             ),
-                                          ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 16,
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 16.0, right: 16),
-                                    child: Text(
-                                      'Special Conditions ',
-                                      style: TextStyle(
-                                        color: AppColors.headingTextColor,
-                                        fontSize: Responsive.isMobile(context)
-                                            ? 20
-                                            : 28,
-                                        fontFamily: 'aftika-regular',
-                                        fontWeight: FontWeight.w400,
+                                      SizedBox(
+                                        height: 16,
                                       ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 20),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 16.0, right: 16),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: List.generate(
-                                        controller.texts.length,
-                                        (index) => NumberedTextWidget(
-                                          number: index + 1,
-                                          text: controller.texts[index],
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 16.0, right: 16),
+                                        child: Text(
+                                          'Special Conditions ',
+                                          style: TextStyle(
+                                            color: AppColors.headingTextColor,
+                                            fontSize: 20,
+                                            fontFamily: 'aftika-regular',
+                                            fontWeight: FontWeight.w400,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                ],
-                              );
+                                      const SizedBox(height: 20),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 16.0, right: 16),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: List.generate(
+                                            controller.texts.length,
+                                            (index) => NumberedTextWidget(
+                                              number: index + 1,
+                                              text: controller.texts[index],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
                   }),
-                  SizedBox(height: Responsive.isMobile(context) ? 12 : 22),
+                  SizedBox(height: 12),
                   Padding(
                     padding: const EdgeInsets.only(left: 16.0, right: 16),
                     child: Text(
                       'Map',
                       style: TextStyle(
                         color: AppColors.headingTextColor,
-                        fontSize: Responsive.isMobile(context) ? 20 : 28,
+                        fontSize: 20,
                         fontFamily: 'aftika-regular',
                         fontWeight: FontWeight.w400,
                       ),
                     ),
                   ),
-                  SizedBox(height: Responsive.isMobile(context) ? 30 : 22),
+                  SizedBox(height: 16),
                   Padding(
                     padding: const EdgeInsets.only(left: 16.0, right: 16),
                     child: Container(
@@ -480,46 +584,25 @@ class RestaurantDetailScreen extends StatelessWidget {
                           borderRadius: BorderRadius.all(Radius.circular(10))),
                       child: Row(
                         children: [
-                          Responsive.isMobile(context) ||
-                                  Responsive.isTablet(context)
-                              ? Padding(
-                                  padding: const EdgeInsets.all(0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        width: 328,
-                                        height: 500,
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(16)),
-                                        child:
-                                            MapWidget(controller: controller),
-                                      ),
-                                      const SizedBox(
-                                        width: 40,
-                                      ),
-                                      const MapDetailWidget(),
-                                    ],
-                                  ),
-                                )
-                              : Row(
-                                  children: [
-                                    Container(
-                                      width: Get.width * 0.7,
-                                      height: 400,
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(16)),
-                                      child: MapWidget(controller: controller),
-                                    ),
-                                    const SizedBox(
-                                      width: 40,
-                                    ),
-                                    const MapDetailWidget()
-                                  ],
+                          Padding(
+                            padding: const EdgeInsets.all(0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width: 328,
+                                  height: 500,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(16)),
+                                  child: MapWidget(controller: controller),
                                 ),
+                                const SizedBox(
+                                  width: 40,
+                                ),
+                                const MapDetailWidget(),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -544,8 +627,8 @@ class RestaurantDetailScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                         gradient: LinearGradient(
                           colors: [
-                            const Color(0xFFFFFFFF).withOpacity(0.4),
-                            const Color(0xFF4ECCA3).withOpacity(0.3),
+                            AppColors.whiteColor.withOpacity(0.4),
+                            AppColors.primaryColor.withOpacity(0.3),
                           ],
                           begin: Alignment.topCenter,
                           // Starting point of the gradient
@@ -567,22 +650,13 @@ class RestaurantDetailScreen extends StatelessWidget {
                                   height: 33,
                                   width: 49,
                                 ),
-                                SizedBox(
-                                    width: Responsive.isMobile(context)
-                                        ? 6
-                                        : Responsive.isTablet(context)
-                                            ? 4
-                                            : 16),
+                                SizedBox(width: 6),
                                 Text(
                                   'Ihop restaurant @ Tseug Kwan O',
                                   style: TextStyle(
                                     color: AppColors.blackColor,
                                     fontFamily: 'Nunito-Bold',
-                                    fontSize: Responsive.isMobile(context)
-                                        ? 14
-                                        : Responsive.isTablet(context)
-                                            ? 14
-                                            : 32,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -597,24 +671,15 @@ class RestaurantDetailScreen extends StatelessWidget {
                                   '(4.0)',
                                   style: TextStyle(
                                     color: Color(0xFF4F5761),
-                                    fontSize: Responsive.isMobile(context)
-                                        ? 16
-                                        : Responsive.isTablet(context)
-                                            ? 10
-                                            : 16,
+                                    fontSize: 16,
                                     fontFamily: 'Nunito-Regular',
                                     fontWeight: FontWeight.w400,
                                   ),
                                 ),
                                 SizedBox(
-                                  height:
-                                      Responsive.isMobile(context) ? 14 : 14,
+                                  height: 14 ,
                                   child: RatingBar(
-                                    itemSize: Responsive.isMobile(context)
-                                        ? 14
-                                        : Responsive.isTablet(context)
-                                            ? 12
-                                            : 14,
+                                    itemSize: 14,
                                     ignoreGestures: true,
                                     initialRating: 4,
                                     minRating: 1,
@@ -647,11 +712,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                   '234 reviews',
                                   style: TextStyle(
                                     color: AppColors.darkGrey,
-                                    fontSize: Responsive.isMobile(context)
-                                        ? 16
-                                        : Responsive.isTablet(context)
-                                            ? 10
-                                            : 16,
+                                    fontSize: 16,
                                     fontFamily: 'Nunito-Regular',
                                     fontWeight: FontWeight.w400,
                                     decoration: TextDecoration.underline,
@@ -669,11 +730,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                               'Chinese',
                               style: TextStyle(
                                 color: AppColors.darkGrey,
-                                fontSize: Responsive.isMobile(context)
-                                    ? 16
-                                    : Responsive.isTablet(context)
-                                        ? 10
-                                        : 16,
+                                fontSize: 16,
                                 fontFamily: 'Nunito-Regular',
                                 fontWeight: FontWeight.w400,
                               ),
@@ -731,6 +788,39 @@ class RestaurantDetailScreen extends StatelessWidget {
         ));
   }
 
+  // Header cell builder
+  Widget buildHeaderCell(String text) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+          fontFamily: 'Nunito-Sans',
+          color: Colors.black,
+        ),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+// Data cell builder
+  Widget buildDataCell(String text) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text(
+        text,
+        style: TextStyle(
+            fontFamily: 'Nunito-Sans',
+            color: AppColors.textColor,
+            fontWeight: FontWeight.w500,
+            fontSize: 8),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
   // Normal table rows for "Menu Items" and "Before Discount" columns
   TableRow _buildTableRow(
     context, {
@@ -784,7 +874,7 @@ class RestaurantDetailScreen extends StatelessWidget {
         ),
       ],
     );
-  } // Header for the green column (After discount)
+  }
 
   TableRow _buildGreenHeader(context) {
     return TableRow(
@@ -797,7 +887,7 @@ class RestaurantDetailScreen extends StatelessWidget {
               child: Text(
                 'After Discount',
                 style: TextStyle(
-                  fontSize: Responsive.isMobile(context) ? 12 : 26,
+                  fontSize: 12,
                   fontFamily: 'Nunito-Bold',
                   fontWeight: FontWeight.w500,
                 ),
@@ -822,7 +912,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                 'Menu Items',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: Responsive.isMobile(context) ? 12 : 26,
+                  fontSize: 12,
                   fontFamily: 'Nunito-Bold',
                   fontWeight: FontWeight.w500,
                 ),
@@ -836,7 +926,7 @@ class RestaurantDetailScreen extends StatelessWidget {
             child: Text(
               'Before Discount',
               style: TextStyle(
-                fontSize: Responsive.isMobile(context) ? 12 : 26,
+                fontSize: 12,
                 fontFamily: 'Nunito-Bold',
                 fontWeight: FontWeight.w500,
               ),
@@ -860,7 +950,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                 afterPrice,
                 style: TextStyle(
                   color: AppColors.bottomSheetColor,
-                  fontSize: Responsive.isMobile(context) ? 10 : 14,
+                  fontSize: 10,
                   fontFamily: 'Nunito-Bold',
                   fontWeight: FontWeight.w700,
                 ),
@@ -870,6 +960,73 @@ class RestaurantDetailScreen extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class OfferSelectionWidget extends StatelessWidget {
+  const OfferSelectionWidget({
+    super.key,
+    required this.controller,
+  });
+
+  final RestaurantDetailController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 30),
+      child: Container(
+        height: 40,
+        width: Get.width,
+        decoration: BoxDecoration(
+          color: const Color(0xFFEEEFF2),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: List.generate(
+            controller.menuList.length,
+            (index) {
+              return Obx(() {
+                return InkWell(
+                  onTap: () {
+                    controller.selectedMenu.value = controller.menuList[index];
+                  },
+                  child: IntrinsicWidth(
+                    child: Container(
+                      height: 26,
+                      decoration: BoxDecoration(
+                        color: controller.selectedMenu.value !=
+                                controller.menuList[index]
+                            ? Colors.transparent
+                            : AppColors.whiteColor,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Center(
+                        child: Text(
+                          controller.menuList[index],
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                            color: controller.selectedMenu.value !=
+                                    controller.menuList[index]
+                                ? AppColors.darkGrey
+                                : AppColors.primaryColor,
+                            fontFamily: 'Nunito-Regular',
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              });
+            },
+          ),
+        ),
+      ),
     );
   }
 }
@@ -898,7 +1055,6 @@ class RatingRowWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    bool isLargeScreen = screenWidth > 1400;
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -914,11 +1070,7 @@ class RatingRowWidget extends StatelessWidget {
                     Text(
                       'Kristin Watson',
                       style: TextStyle(
-                        fontSize: Responsive.isMobile(context)
-                            ? 12
-                            : isLargeScreen
-                                ? 18
-                                : 14,
+                        fontSize: 12,
                         fontWeight: FontWeight.w500,
                         fontFamily: 'Nunito-Bold',
                         color: Colors.black,
@@ -933,11 +1085,7 @@ class RatingRowWidget extends StatelessWidget {
                         color: AppColors.bottomSheetColor,
                         fontFamily: 'Nunito-Bold',
                         fontWeight: FontWeight.w500,
-                        fontSize: Responsive.isMobile(context)
-                            ? 10
-                            : isLargeScreen
-                                ? 18
-                                : 14,
+                        fontSize: 10,
                       ),
                     ),
                   ],
@@ -952,22 +1100,14 @@ class RatingRowWidget extends StatelessWidget {
                         text: '(5.0) ', // Rating text
                         style: TextStyle(
                           color: const Color(0xFF4F5761),
-                          fontSize: Responsive.isMobile(context)
-                              ? 10
-                              : isLargeScreen
-                                  ? 18
-                                  : 14,
+                          fontSize: 10,
                           fontFamily: 'Nunito-Regular',
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       WidgetSpan(
                         child: SizedBox(
-                          height: Responsive.isMobile(context)
-                              ? 13
-                              : isLargeScreen
-                                  ? 18
-                                  : 14,
+                          height: 13,
                           child: RatingBar(
                             itemSize: 12,
                             ignoreGestures: true,
@@ -1007,11 +1147,7 @@ class RatingRowWidget extends StatelessWidget {
                     'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor',
                     style: TextStyle(
                       fontFamily: 'Nunito-Regular',
-                      fontSize: Responsive.isMobile(context)
-                          ? 12
-                          : isLargeScreen
-                              ? 18
-                              : 14,
+                      fontSize: 12,
                       fontWeight: FontWeight.w400,
                       color: AppColors.bottomSheetColor,
                     ),
@@ -1026,13 +1162,9 @@ class RatingRowWidget extends StatelessWidget {
           child: Column(
             children: [
               const SizedBox(height: 10),
-              if (isImage) // Display images only if isImage is true
+              if (isImage)
                 SizedBox(
-                  height: Responsive.isMobile(context)
-                      ? 50
-                      : isLargeScreen
-                          ? 100
-                          : 80,
+                  height: 50,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: imagePaths.length,
@@ -1040,19 +1172,10 @@ class RatingRowWidget extends StatelessWidget {
                       return Container(
                         margin: EdgeInsets.only(right: 8.0),
                         // Space between images
-                        height: Responsive.isMobile(context)
-                            ? 44
-                            : isLargeScreen
-                                ? 100
-                                : 80,
-                        width: Responsive.isMobile(context)
-                            ? 75
-                            : isLargeScreen
-                                ? 200
-                                : 120,
+                        height: 44,
+                        width: 75,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(
-                              Responsive.isMobile(context) ? 5 : 8),
+                          borderRadius: BorderRadius.circular(5),
                           image: DecorationImage(
                             image: AssetImage(imagePaths[index]),
                             fit: BoxFit.cover,

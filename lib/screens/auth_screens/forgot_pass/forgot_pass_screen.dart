@@ -21,7 +21,7 @@ class ForgotPassScreen extends StatelessWidget {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.bgColor,
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),

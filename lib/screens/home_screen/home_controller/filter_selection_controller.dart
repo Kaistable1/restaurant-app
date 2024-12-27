@@ -124,10 +124,10 @@ class FilterSelectionController extends GetxController {
     }
   }
   final priceRange = [
-    '\$ {budget-friendly}',
-    '\$\$ {moderate}',
-    '\$\$\$ {premium}',
-    '\$\$\$\$ {luxury}',
+    '\$ (budget-friendly)',
+    '\$\$ (moderate)',
+    '\$\$\$ {premium)',
+    '\$\$\$\$ (luxury)',
   ];
   final selectedPriceRange= <String>[].obs;
 

@@ -10,8 +10,9 @@ class CircleContainerWidget extends StatelessWidget {
   final String descriptionText;
   final bool isLocation;
   final RxBool isFavourite;
-  final VoidCallback?
-      ontap; // changed islocation to isLocation for better readability
+  final double? width;
+  final double? height;
+  final VoidCallback? ontap;
 
   const CircleContainerWidget({
     super.key,
@@ -20,27 +21,18 @@ class CircleContainerWidget extends StatelessWidget {
     required this.descriptionText,
     this.isLocation = false,
     this.ontap,
-    required this.isFavourite, // Default value remains false
+    required this.isFavourite,
+    this.width,
+    this.height, // Default value remains false
   });
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    bool isLargeScreen = screenWidth > 1400;
-
     return InkWell(
       onTap: ontap,
       child: Container(
-        width: Responsive.isMobile(context)
-            ? 113
-            : isLargeScreen
-                ? 270
-                : 200,
-        height: Responsive.isMobile(context)
-            ? 144
-            : isLargeScreen
-                ? 365
-                : 280,
+        width: width ?? 113,
+        height: height ?? 144,
         decoration: BoxDecoration(
           color: AppColors.whiteColor,
           boxShadow: [
@@ -62,89 +54,58 @@ class CircleContainerWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Stack(
-                children: [
-
-              Container(
-                height: 95,
-                width:95,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                    image:
-                        AssetImage(imgPath), // 'assets/images/circle_img.png'
-                  ),
+            Container(
+              height: 95,
+              width: 95,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                image: DecorationImage(
+                  image: AssetImage(imgPath),
                 ),
               ),
-              Positioned(
-                left: Responsive.isMobile(context)
-                    ? 12
-                    : isLargeScreen
-                        ? 40
-                        : 30,
-                top: Responsive.isMobile(context)
-                    ? 16
-                    : isLargeScreen
-                        ? 40
-                        : 30,
-                child: Obx(() {
-                  return InkWell(
-                      onTap: () {
-                        isFavourite.value = !isFavourite.value;
-                      },
-                      child: isFavourite.value
-                          ? Icon(size: 18 ,
-                              Icons.favorite,
-                              color: AppColors.primaryColor,
-                            )
-                          : Icon(Icons.favorite,size: 18,color: AppColors.whiteColor   ,));
-                }
-                ),
-                height: Responsive.isMobile(context)
-                    ? 10
-                    : isLargeScreen
-                        ? 24
-                        : 20,
-                width: Responsive.isMobile(context)
-                    ? 10
-                    : isLargeScreen
-                        ? 24
-                        : 20,
-              )
-            ]),
+            ),
+            // Positioned(
+            //   left: 12,
+            //   top: 16,
+            //   child: Obx(() {
+            //     return InkWell(
+            //         onTap: () {
+            //           isFavourite.value = !isFavourite.value;
+            //         },
+            //         child: isFavourite.value
+            //             ? Icon(
+            //                 size: 18,
+            //                 Icons.favorite,
+            //                 color: AppColors.primaryColor,
+            //               )
+            //             : Icon(
+            //                 Icons.favorite,
+            //                 size: 18,
+            //                 color: AppColors.whiteColor,
+            //               ));
+            //   }),
+            //   height: 10,
+            //   width: 10,
+            // )
 
             SizedBox(
-              height: Responsive.isMobile(context)
-                  ?16
-                  : isLargeScreen
-                      ? 25
-                      : 10,
+              height: 16,
             ),
-
-
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                if (isLocation) // Conditionally show the location icon
+                if (isLocation)
                   Icon(
                     Icons.location_on,
-                    color: AppColors.primaryColor, // Adjust color if needed
-                    size: Responsive.isMobile(context)
-                        ? 14
-                        : isLargeScreen
-                            ? 26
-                            : 18, // Adjust size if needed
+                    color: AppColors.primaryColor,
+                    size: 14,
                   ),
-                const SizedBox(width: 4), // Space between icon and text
+                const SizedBox(width: 4),
                 Text(
                   titleText, // 'Super mega sale'
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
-                    fontSize: Responsive.isMobile(context)
-                        ? 9
-                        : isLargeScreen
-                            ? 22
-                            : 16,
+                    fontSize: 9,
                     fontFamily: 'Nunito-Bold',
                     color: AppColors.bottomSheetColor,
                   ),
@@ -152,31 +113,19 @@ class CircleContainerWidget extends StatelessWidget {
               ],
             ),
             SizedBox(
-              height: Responsive.isMobile(context)
-                  ? 6
-                  : isLargeScreen
-                      ? 10
-                      : 10,
+              height: 6,
             ),
             Text(
-              descriptionText, // '14 restaurants'
+              descriptionText,
               style: TextStyle(
                 fontWeight: FontWeight.w500,
-                fontSize: Responsive.isMobile(context)
-                    ? 9
-                    : isLargeScreen
-                        ? 18
-                        : 14,
+                fontSize: 9,
                 fontFamily: 'Nunito-Regular',
                 color: AppColors.textColor,
               ),
             ),
             SizedBox(
-              height: Responsive.isMobile(context)
-                  ? 12
-                  : isLargeScreen
-                      ? 2
-                      : 2,
+              height: 12,
             ),
           ],
         ),

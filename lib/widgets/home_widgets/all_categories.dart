@@ -105,56 +105,36 @@ class AllCategories extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height:12),
-        Obx(() {
-          // Determine item count based on screen type
-          int itemCount;
-          if (Responsive.isMobile(context)) {
-            itemCount = cusinessController.cusinessItem.length > 2
-                ? 2
-                : cusinessController.cusinessItem.length;
-          } else if (Responsive.isTablet(context)) {
-            itemCount = cusinessController.cusinessItem.length > 3
-                ? 3
-                : cusinessController.cusinessItem.length;
-          } else {
-            itemCount = cusinessController.cusinessItem.length > 4
-                ? 4
-                : cusinessController.cusinessItem.length;
-          }
-
-          return Padding(
-            padding: EdgeInsets.only(
-              left: 14,
-              right: 14,
-            ),
-            child: GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                mainAxisExtent: 220,
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-              ),
-              itemCount: itemCount,
+        Padding(
+          padding: EdgeInsets.only(left: 8, right: 6),
+          child: SizedBox(
+            height: 180,
+            child: ListView.builder(
+              controller: controller.scrollController,
+              scrollDirection: Axis.horizontal,
+              itemCount: cusinessController.cusinessItem.take(6).length,
               itemBuilder: (context, index) {
-                final item = cusinessController.cusinessItem[index];
-                return RectangleWidget(
-                  //onNavigate: onNavigate,
-                  title: item.title,
-                  description: item.description,
-                  imagePath: item.imagePath,
-                  timetext: item.timeText,
-                  percentText: item.percentText,
-                  endTimeText: item.endTimeText,
-                  isFavorite: false.obs,
+                final item =
+                cusinessController.cusinessItem[index];
+                return Padding(
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+                  child: CircleContainerWidget(
+                    ontap: () {
+                      Get.to(CuisinesViewAll());
+                    },
+                    isFavourite: false.obs,
+                    isLocation: false,
+                    imgPath: item.imagePath,
+                    titleText: item.title,
+                    descriptionText: item.description,
+                  ),
                 );
               },
             ),
-          );
-        }),
-        SizedBox(height: 16),
+          ),
+        ),
+        SizedBox(height: 10),
         Padding(
           padding: EdgeInsets.only(
             left: 14,
@@ -191,22 +171,6 @@ class AllCategories extends StatelessWidget {
         ),
         SizedBox(height: 12),
         Obx(() {
-          // Determine item count based on screen type
-          int itemCount;
-          if (Responsive.isMobile(context)) {
-            itemCount = trendingController.trendingItem.length > 2
-                ? 2
-                : trendingController.trendingItem.length;
-          } else if (Responsive.isTablet(context)) {
-            itemCount = trendingController.trendingItem.length > 3
-                ? 3
-                : trendingController.trendingItem.length;
-          } else {
-            itemCount = trendingController.trendingItem.length > 4
-                ? 4
-                : trendingController.trendingItem.length;
-          }
-
           return Padding(
             padding: EdgeInsets.only(
               left: 14,
@@ -221,7 +185,7 @@ class AllCategories extends StatelessWidget {
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
               ),
-              itemCount: itemCount,
+              itemCount: trendingController.trendingItem.take(2).length,
               itemBuilder: (context, index) {
                 final item = trendingController.trendingItem[index];
                 return RectangleWidget(
@@ -275,22 +239,6 @@ class AllCategories extends StatelessWidget {
         ),
         SizedBox(height: 12),
         Obx(() {
-          // Determine item count based on screen type
-          int itemCount;
-          if (Responsive.isMobile(context)) {
-            itemCount = newController.newItem.length > 2
-                ? 2
-                : newController.newItem.length;
-          } else if (Responsive.isTablet(context)) {
-            itemCount = newController.newItem.length > 3
-                ? 3
-                : newController.newItem.length;
-          } else {
-            itemCount = newController.newItem.length > 4
-                ? 4
-                : newController.newItem.length;
-          }
-
           return Padding(
             padding: EdgeInsets.only(
               left: 14,
@@ -305,7 +253,7 @@ class AllCategories extends StatelessWidget {
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
               ),
-              itemCount: itemCount,
+              itemCount: newController.newItem.take(2).length,
               itemBuilder: (context, index) {
                 final item = newController.newItem[index];
                 return RectangleWidget(
@@ -359,22 +307,6 @@ class AllCategories extends StatelessWidget {
         ),
         SizedBox(height: 12),
         Obx(() {
-          // Determine item count based on screen type
-          int itemCount;
-          if (Responsive.isMobile(context)) {
-            itemCount = recentlyViewedController.recentlyViewedItem.length > 2
-                ? 2
-                : recentlyViewedController.recentlyViewedItem.length;
-          } else if (Responsive.isTablet(context)) {
-            itemCount = recentlyViewedController.recentlyViewedItem.length > 3
-                ? 3
-                : recentlyViewedController.recentlyViewedItem.length;
-          } else {
-            itemCount = recentlyViewedController.recentlyViewedItem.length > 4
-                ? 4
-                : recentlyViewedController.recentlyViewedItem.length;
-          }
-
           return Padding(
             padding: EdgeInsets.only(
               left: 14,
@@ -389,7 +321,7 @@ class AllCategories extends StatelessWidget {
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
               ),
-              itemCount: itemCount,
+              itemCount: recentlyViewedController.recentlyViewedItem.take(2).length,
               itemBuilder: (context, index) {
                 final item = recentlyViewedController.recentlyViewedItem[index];
                 return RectangleWidget(

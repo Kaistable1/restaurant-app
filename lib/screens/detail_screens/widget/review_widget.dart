@@ -10,10 +10,8 @@ import 'package:kaistable_website/widgets/uplaod_dialogBox.dart';
 class ReviewWidget extends StatelessWidget {
   const ReviewWidget({
     super.key,
-    required this.isLargeScreen,
   });
 
-  final bool isLargeScreen;
 
   @override
   Widget build(BuildContext context) {
@@ -38,33 +36,15 @@ class ReviewWidget extends StatelessWidget {
                     '(4.0)',
                     style: TextStyle(
                       fontFamily: 'Nunito-Bold',
-                      fontSize: Responsive.isMobile(context)
-                          ? 20
-                          : Responsive.isTablet(context)
-                              ? 22
-                              : isLargeScreen
-                                  ? 54
-                                  : 44,
+                      fontSize:  20,
                       fontWeight: FontWeight.w500,
                       color: const Color(0xFF281717),
                     ),
                   ),
                   SizedBox(
-                    height: Responsive.isMobile(context)
-                        ? 14
-                        : Responsive.isTablet(context)
-                            ? 10
-                            : isLargeScreen
-                                ? 24
-                                : 14,
+                    height:  14,
                     child: RatingBar(
-                      itemSize: Responsive.isMobile(context)
-                          ? 14
-                          : Responsive.isTablet(context)
-                              ? 10
-                              : isLargeScreen
-                                  ? 24
-                                  : 14,
+                      itemSize: 14,
                       ignoreGestures: true,
                       initialRating: 4,
                       minRating: 1,
@@ -102,13 +82,7 @@ class ReviewWidget extends StatelessWidget {
                     child: Row(
                       children: [
                         RatingBar(
-                          itemSize: Responsive.isMobile(context)
-                              ? 12
-                              : Responsive.isTablet(context)
-                                  ? 16
-                                  : isLargeScreen
-                                      ? 38
-                                      : 28,
+                          itemSize: 12,
                           ignoreGestures: false,
                           initialRating: 5 - index.toDouble(),
                           minRating: 1,
@@ -118,19 +92,19 @@ class ReviewWidget extends StatelessWidget {
                           ratingWidget: RatingWidget(
                             full: Image.asset(
                               'assets/images/star yellow.png',
-                              height: Responsive.isMobile(context) ? 32 : 56,
-                              width: Responsive.isMobile(context) ? 32 : 56,
+                              height: 32 ,
+                              width:  32,
                             ),
                             half: Image.asset(
                               'assets/images/star yellow.png',
-                              height: Responsive.isMobile(context) ? 32 : 56,
-                              width: Responsive.isMobile(context) ? 32 : 56,
+                              height:  32,
+                              width:  32,
                             ),
                             empty: Image.asset(
                               'assets/images/star_empty.png',
                               color: const Color(0xFFBBBBBB),
-                              height: Responsive.isMobile(context) ? 32 : 56,
-                              width: Responsive.isMobile(context) ? 32 : 56,
+                              height: 32 ,
+                              width: 32 ,
                             ),
                           ),
                           itemPadding: const EdgeInsets.only(left: 2.0),
@@ -142,11 +116,7 @@ class ReviewWidget extends StatelessWidget {
                           width: 4,
                         ),
                         SizedBox(
-                          width: Responsive.isMobile(context)
-                              ? 80
-                              : Responsive.isTablet(context)
-                                  ? 90
-                                  : 232,
+                          width: 80,
                           child: const Divider(
                               thickness: 2, color: Color(0xFFBBBBBB)),
                         ),
@@ -158,13 +128,7 @@ class ReviewWidget extends StatelessWidget {
                           style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontFamily: 'Nunito-Regular',
-                              fontSize: Responsive.isMobile(context)
-                                  ? 12
-                                  : Responsive.isTablet(context)
-                                      ? 10
-                                      : isLargeScreen
-                                          ? 18
-                                          : 14,
+                              fontSize:12,
                               color: AppColors.bottomSheetColor),
                         ),
                       ],
@@ -248,125 +212,3 @@ class ReviewWidget extends StatelessWidget {
     );
   }
 }
-//class RatingRowWidget extends StatelessWidget {
-//   final bool isImage;
-//   final List<String> imagePaths;
-//
-//   const RatingRowWidget({super.key, required this.isImage, required this.imagePaths});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     double screenWidth = MediaQuery.of(context).size.width;
-//     bool isLargeScreen = screenWidth > 1400;
-//     return Column(
-//       mainAxisAlignment: MainAxisAlignment.start,
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         Row(
-//           children: [
-//             Text(
-//               'Deanna Blanda',
-//               style: TextStyle(
-//                 fontSize: Responsive.isMobile(context) ? 14 : isLargeScreen ? 18 : 14,
-//                 fontWeight: FontWeight.w700,
-//                 fontFamily: 'Nunito-Regular',
-//                 color: Colors.black,
-//               ),
-//             ),
-//           ],
-//         ),
-//         RichText(
-//           text: TextSpan(
-//             children: [
-//               TextSpan(
-//                 text: '(4.0) ', // Rating text
-//                 style: TextStyle(
-//                   color: const Color(0xFF4F5761),
-//                   fontSize: Responsive.isMobile(context) ? 14 : isLargeScreen ? 18 : 14,
-//                   fontFamily: 'Nunito-Regular',
-//                   fontWeight: FontWeight.w400,
-//                 ),
-//               ),
-//               WidgetSpan(
-//                 child: SizedBox(
-//                   height: Responsive.isMobile(context) ? 14 : isLargeScreen ? 18 : 14,
-//                   child: RatingBar(
-//                     itemSize: 12,
-//                     ignoreGestures: true,
-//                     initialRating: 4,
-//                     minRating: 1,
-//                     direction: Axis.horizontal,
-//                     allowHalfRating: true,
-//                     itemCount: 5,
-//                     ratingWidget: RatingWidget(
-//                       full: Image.asset('assets/images/star yellow.png', height: 14),
-//                       half: Image.asset('assets/images/star yellow.png', height: 14),
-//                       empty: Image.asset('assets/images/star_empty.png', height: 14),
-//                     ),
-//                     itemPadding: const EdgeInsets.only(left: 2.0),
-//                     onRatingUpdate: (rating) {
-//                       print(rating);
-//                     },
-//                   ),
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//         SizedBox(
-//           width: Responsive.isMobile(context) ? Get.width : isLargeScreen ? 700 : 600,
-//           height: Responsive.isMobile(context) ? 34 : isLargeScreen ? 50 : 40,
-//           child: Text(
-//             'Voluptatem atque molestiae numquam voluptatem bxca veritatis nesciunt comm odi.',
-//             style: TextStyle(
-//               fontFamily: 'Nunito-Regular',
-//               fontSize: Responsive.isMobile(context) ? 12 : isLargeScreen ? 18 : 14,
-//               fontWeight: FontWeight.w400,
-//               color: AppColors.botomSheetColor,
-//             ),
-//           ),
-//         ),
-//         Column(
-//           children: [
-//             const SizedBox(height: 3),
-//             if (isImage) // Display images only if isImage is true
-//               SizedBox(
-//                 height: Responsive.isMobile(context) ? 50 : isLargeScreen ? 100 : 80,
-//                 child: ListView.builder(
-//                   scrollDirection: Axis.horizontal,
-//                   itemCount: imagePaths.length,
-//                   itemBuilder: (context, index) {
-//                     return Container(
-//                       margin: EdgeInsets.only(right: 8.0), // Space between images
-//                       height: Responsive.isMobile(context) ? 50 : isLargeScreen ? 100 : 80,
-//                       width: Responsive.isMobile(context) ? 100 : isLargeScreen ? 200 : 120,
-//                       decoration: BoxDecoration(
-//                         borderRadius: BorderRadius.circular(Responsive.isMobile(context) ? 4 : 8),
-//                         image: DecorationImage(
-//                           image: AssetImage(imagePaths[index]),
-//                           fit: BoxFit.cover,
-//                         ),
-//                       ),
-//                     );
-//                   },
-//                 ),
-//               ),
-//             const SizedBox(height: 5),
-//             Align(
-//               alignment: Alignment.centerLeft,
-//               child: Text(
-//                 'June 30, 2024',
-//                 style: TextStyle(
-//                   color: AppColors.botomSheetColor,
-//                   fontFamily: 'Nunito-Regular',
-//                   fontWeight: FontWeight.w400,
-//                   fontSize: Responsive.isMobile(context) ? 12 : isLargeScreen ? 18 : 14,
-//                 ),
-//               ),
-//             ),
-//           ],
-//         ),
-//       ],
-//     );
-//   }
-// }

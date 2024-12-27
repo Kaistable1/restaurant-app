@@ -11,7 +11,8 @@ class AppColors {
   static const darkGrey = Color(0xFF4F5761);
   static const hintText = Color(0xFF98A2B3);
   static const lightGrey = Color(0xFF474747);
+  static const tableBorderColor = Color(0xFFD2D8E1);
+  static const tableHeadingColor = Color(0xFF555555);
 }
-
 
 

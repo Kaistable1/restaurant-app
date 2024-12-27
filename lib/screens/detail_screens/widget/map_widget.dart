@@ -100,13 +100,9 @@ class MapDetailWidget extends StatelessWidget {
               fontFamily: 'Nunito-Regular',
               fontWeight: FontWeight.w700,
             ),
-
-
           ),
         ),
         SizedBox(height: 10,),
-
-        //TagContainer(),
         SizedBox(
           height: 70,
           width: 325,
@@ -131,8 +127,6 @@ class MapDetailWidget extends StatelessWidget {
                   _buildStarBox(title: "outdoor seating",context,),
                   SizedBox(width: 4,),
                   _buildStarBox(title: "bar/lounge area",context, ),
-
-
                 ],
               ),
             ],
@@ -140,20 +134,18 @@ class MapDetailWidget extends StatelessWidget {
         )
         ,
         SizedBox(
-          height: 30,
+          height: 20,
         ),
         Padding(
           padding: const EdgeInsets.only(left: 8.0),
           child: Text(
-            'Facilities',
+            'Facilities/services',
             style: TextStyle(
               color: AppColors.headingTextColor,
               fontSize: 14,
               fontFamily: 'Nunito-Regular',
               fontWeight: FontWeight.w700,
             ),
-
-
           ),
         ),
         SizedBox(height: 10,),
@@ -163,7 +155,6 @@ class MapDetailWidget extends StatelessWidget {
           child: Column(
             children: [
               Row(
-
                 children: [
                   SizedBox(width: 4,),
                   _buildStarBox(title: "free wi-fi",context,),
@@ -173,7 +164,6 @@ class MapDetailWidget extends StatelessWidget {
                   _buildStarBox(title: "takeout",context, ),
                   SizedBox(width: 4,),
                   _buildStarBox(title: "drive-thru",context, ),
-
                 ],
               ),
               SizedBox(height: 8,),
@@ -183,15 +173,117 @@ class MapDetailWidget extends StatelessWidget {
                   _buildStarBox(title: "wheelchair accessibility",context,),
                   SizedBox(width: 4,),
                   _buildStarBox(title: "high chairs",context, ),
-
-
                 ],
               ),
             ],
           ),
         ),
         SizedBox(
-          height: 30,
+          height: 20,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: Text(
+            'Dietary Preferences',
+            style: TextStyle(
+              color: AppColors.headingTextColor,
+              fontSize: 14,
+              fontFamily: 'Nunito-Regular',
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+        SizedBox(height: 16,),
+        SizedBox(
+          height: 70,
+          width: 325,
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  SizedBox(width: 4,),
+                  _buildStarBox(title: "vegetarian",context,),
+                  SizedBox(width: 4,),
+                  _buildStarBox(title: "vegan",context, ),
+                  SizedBox(width: 4,),
+                  _buildStarBox(title: "gluten-free",context, ),
+                  SizedBox(width: 4,),
+                  _buildStarBox(title: "dairy-free",context, ),
+                ],
+              ),
+              SizedBox(height: 8,),
+              Row(
+                children: [
+                  SizedBox(width: 4,),
+                  _buildStarBox(title: "keto-friendly",context,),
+                ],
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: Text(
+            'Entertainment',
+            style: TextStyle(
+              color: AppColors.headingTextColor,
+              fontSize: 14,
+              fontFamily: 'Nunito-Regular',
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+        SizedBox(height: 10,),
+        SizedBox(
+          height: 40,
+          width: 325,
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  SizedBox(width: 4,),
+                  _buildStarBox(title: "Live Music",context,),
+                  SizedBox(width: 4,),
+                  _buildStarBox(title: "Karaoke",context, ),
+                  SizedBox(width: 4,),
+                  _buildStarBox(title: "DJ Nights",context, ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: Text(
+            'Price Range',
+            style: TextStyle(
+              color: AppColors.headingTextColor,
+              fontSize: 14,
+              fontFamily: 'Nunito-Regular',
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+        SizedBox(height: 10,),
+        SizedBox(
+          height: 50,
+          width: 325,
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  SizedBox(width: 4,),
+                  _buildStarBox(title: "\$ (budget-friendly)",context,),
+                ],
+              ),
+            ],
+          ),
         ),
         Padding(
           padding: const EdgeInsets.only(left: 8.0),
@@ -203,9 +295,6 @@ class MapDetailWidget extends StatelessWidget {
               fontFamily: 'Nunito-Regular',
               fontWeight: FontWeight.w700,
             ),
-
-
-
           ),
         ),
         SizedBox(height: 10,),
@@ -213,20 +302,20 @@ class MapDetailWidget extends StatelessWidget {
           padding: const EdgeInsets.only(left: 8.0),
           child: _buildStarBox(title: "chinese",context,),
         ),
-        SizedBox(height: 10,)
+        SizedBox(height: 20,)
 
       ],
     );
   }
   Widget _buildStarBox(BuildContext context, {
-    required String title, // The title should be a String.
+    required String title,
   }) {
     return Container(
       height: 30,
-      padding: EdgeInsets.only(left: 12,right: 12), // Padding to give some space around the text
+      padding: EdgeInsets.only(left: 12,right: 12),
       decoration: BoxDecoration(
         color: AppColors.primaryColor.withOpacity(.5),
-        borderRadius: BorderRadius.circular(32), // You can also make this customizable if needed
+        borderRadius: BorderRadius.circular(32),
       ),
       child: Center(
         child: Text(
@@ -235,7 +324,7 @@ class MapDetailWidget extends StatelessWidget {
             fontFamily: 'Nunito-Regular',
             fontSize: 12,
             fontWeight: FontWeight.w400,
-            color: AppColors.textColor, // Customizable text color
+            color: AppColors.textColor,
           ),
         ),
       ),

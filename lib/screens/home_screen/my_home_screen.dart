@@ -261,10 +261,10 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                   mainAxisSpacing: 10,
                                 ),
                                 itemCount:
-                                    cusinessController.cusinessItem.length,
+                                    cusinessController.exploreRestaurantsItem.length,
                                 itemBuilder: (context, index) {
                                   final item =
-                                      cusinessController.cusinessItem[index];
+                                      cusinessController.exploreRestaurantsItem[index];
                                   return RectangleWidget(
                                     title: item.title,
                                     description: item.description,
