@@ -197,42 +197,28 @@ class LoginScreen extends StatelessWidget {
                   SizedBox(
                     height: 40,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      CustomButton(
-                        laBelText: 'Login',
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'Nunito-Sans',
-                        textColor: Colors.white,
-                        width: 150,
-                        height: 43,
-                        ontapp: () {
-                          if (_formKey.currentState!.validate()) {
-                            controller.emailController.clear();
-                            controller.passwordController.clear();
-                            Get.to(() => MyHomeScreen(
-                                  countryName: 'USA',
-                                ));
-                          }
-                        },
+
+                      Center(
+                        child: CustomButton(
+                          laBelText: 'Login',
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'Nunito-Sans',
+                          textColor: Colors.white,
+                          width: 150,
+                          height: 43,
+                          ontapp: () {
+                            if (_formKey.currentState!.validate()) {
+                              controller.emailController.clear();
+                              controller.passwordController.clear();
+                              Get.to(() => MyHomeScreen(
+                                    countryName: 'USA',
+                                  ));
+                            }
+                          },
+                        ),
                       ),
-                      CustomButton(
-                        laBelText: 'Explore',
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'Nunito-Sans',
-                        textColor: AppColors.primaryColor,
-                        containerColor: Colors.white,
-                        isBorder: true,
-                        borderColor: AppColors.primaryColor,
-                        width: 150,
-                        height: 43,
-                        ontapp: () {},
-                      ),
-                    ],
-                  ),
+
                   SizedBox(
                     height: 24,
                   ),
