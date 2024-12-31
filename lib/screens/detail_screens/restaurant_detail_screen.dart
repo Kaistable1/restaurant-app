@@ -216,20 +216,22 @@ class RestaurantDetailScreen extends StatelessWidget {
                                   columnWidths: const {
                                     0: FlexColumnWidth(1.3),
                                     1: FlexColumnWidth(1.3),
-                                    2: FlexColumnWidth(1.6),
-                                    3: FlexColumnWidth(2),
+                                    2: FlexColumnWidth(1.3),
+                                    3: FlexColumnWidth(1.5),
+                                    4: FlexColumnWidth(1.8),
                                   },
                                   children: [
                                     TableRow(
                                       decoration: BoxDecoration(
                                           color: AppColors.primaryColor
                                               .withOpacity(0.2),
-                                          borderRadius:
+                                           borderRadius:
                                               BorderRadius.circular(10)),
                                       children: [
                                         buildHeaderCell(
                                           "Name",
                                         ),
+                                        buildHeaderCell("By"),
                                         buildHeaderCell("Day"),
                                         buildHeaderCell("Date"),
                                         buildHeaderCell("Time"),
@@ -244,6 +246,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                         ),
                                         children: [
                                           buildDataCell(data["Name"] ?? ""),
+                                          buildDataCell(data["By"] ?? ""),
                                           buildDataCell(data["Day"] ?? ""),
                                           buildDataCell(data["Date"] ?? ""),
                                           buildDataCell(data["Time"] ?? ""),
@@ -382,6 +385,53 @@ class RestaurantDetailScreen extends StatelessWidget {
                                         height: 16,
                                       ),
                                       Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              'Meals',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: AppColors.textColor,
+                                                fontSize: 15,
+                                                fontFamily: 'Nunito-Regular',
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  'Italian',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    color: AppColors.textColor,
+                                                    fontSize: 14,
+                                                    fontFamily:
+                                                        'Nunito-Regular',
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: 5,
+                                                ),
+                                                Image.asset(
+                                                  'assets/images/meal_Icon..png',
+                                                  height: 10.73,
+                                                  width: 17,
+                                                  fit: BoxFit.fill,
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 16,
+                                      ),
+                                      Padding(
                                         padding: const EdgeInsets.only(
                                             left: 16.0, right: 16.0),
                                         child: Center(
@@ -416,10 +466,6 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                               color: Colors.grey
                                                                   .withOpacity(
                                                                       0.5))),
-                                                      // columnWidths: {
-                                                      //   0:   FixedColumnWidth(Get.width*0.2),
-                                                      //   1:   FlexColumnWidth(Get.width*0.2),
-                                                      // },
                                                       children: [
                                                         _buildTableHeader(
                                                             context),
@@ -677,7 +723,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                   ),
                                 ),
                                 SizedBox(
-                                  height: 14 ,
+                                  height: 14,
                                   child: RatingBar(
                                     itemSize: 14,
                                     ignoreGestures: true,
