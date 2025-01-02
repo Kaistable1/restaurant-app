@@ -20,6 +20,20 @@ class RestaurantDetailController extends GetxController {
     'Happy Hours Specials',
   ];
 
+  final List<String> foodMenuImages = [
+    'assets/images/menu2.png',
+    'assets/images/menu1.png',
+    'assets/images/menu2.png',
+    'assets/images/menu1.png',
+  ];
+
+  final List<String> drinkMenuImages = [
+    'assets/images/menu1.png',
+    'assets/images/menu2.png',
+    'assets/images/menu1.png',
+    'assets/images/menu2.png',
+  ];
+
   final Completer<GoogleMapController> completer =
       Completer<GoogleMapController>();
 

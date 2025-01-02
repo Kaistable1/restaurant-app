@@ -225,7 +225,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                       decoration: BoxDecoration(
                                           color: AppColors.primaryColor
                                               .withOpacity(0.2),
-                                           borderRadius:
+                                          borderRadius:
                                               BorderRadius.circular(10)),
                                       children: [
                                         buildHeaderCell(
@@ -471,43 +471,14 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                             context),
                                                         _buildTableRow(
                                                           context,
-                                                          image:
-                                                              'assets/images/menu1.png',
-                                                          menuItem:
-                                                              'Our Specialty ',
-                                                          beforePrice: '\$30',
+                                                          imageList: controller.foodMenuImages,
+                                                          menuItem: 'Food menu',
                                                         ),
                                                         _buildTableRow(
                                                           context,
-                                                          image:
-                                                              'assets/images/menu2.png',
+                                                          imageList: controller.drinkMenuImages,
                                                           menuItem:
-                                                              'Raddish Pastry',
-                                                          beforePrice: '\$20',
-                                                        ),
-                                                        _buildTableRow(
-                                                          context,
-                                                          image:
-                                                              'assets/images/menu3.png',
-                                                          menuItem:
-                                                              'Nam temporibus repellat ullam odit.',
-                                                          beforePrice: '\$30',
-                                                        ),
-                                                        _buildTableRow(
-                                                          context,
-                                                          image:
-                                                              'assets/images/menu1.png',
-                                                          menuItem:
-                                                              'Aut consectetur temporibus in',
-                                                          beforePrice: '\$40',
-                                                        ),
-                                                        _buildTableRow(
-                                                          context,
-                                                          image:
-                                                              'assets/images/menu2.png',
-                                                          menuItem:
-                                                              'Nam non eum velit tenetur',
-                                                          beforePrice: '\$20',
+                                                              'Drink menu',
                                                         ),
                                                       ],
                                                     ),
@@ -516,7 +487,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                 // Second part: After discount (green column)
                                                 Expanded(
                                                   child: Container(
-                                                    height: 482,
+                                                    height: 280,
                                                     decoration: BoxDecoration(
                                                       color: AppColors
                                                           .primaryColor,
@@ -527,7 +498,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                     child: Padding(
                                                       padding: const EdgeInsets
                                                           .symmetric(
-                                                          vertical: 42),
+                                                          vertical: 16),
                                                       child: Table(
                                                         border: TableBorder.symmetric(
                                                             inside: BorderSide(
@@ -536,32 +507,17 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                                     .grey
                                                                     .withOpacity(
                                                                         0.5))),
-                                                        // columnWidths: {
-                                                        //   0: const FlexColumnWidth(),
-                                                        // },
                                                         children: [
                                                           _buildGreenHeader(
                                                               context),
                                                           _buildGreenRow(
                                                               context,
                                                               afterPrice:
-                                                                  '\$20'),
+                                                                  '50 \% off'),
                                                           _buildGreenRow(
                                                               context,
                                                               afterPrice:
-                                                                  '\$10'),
-                                                          _buildGreenRow(
-                                                              context,
-                                                              afterPrice:
-                                                                  '\$20'),
-                                                          _buildGreenRow(
-                                                              context,
-                                                              afterPrice:
-                                                                  '\$30'),
-                                                          _buildGreenRow(
-                                                              context,
-                                                              afterPrice:
-                                                                  '\$10'),
+                                                                  '2 for 1'),
                                                         ],
                                                       ),
                                                     ),
@@ -869,52 +825,53 @@ class RestaurantDetailScreen extends StatelessWidget {
 
   // Normal table rows for "Menu Items" and "Before Discount" columns
   TableRow _buildTableRow(
-    context, {
-    required String image,
-    required String menuItem,
-    required String beforePrice,
-  }) {
+      BuildContext context, {
+        required String menuItem,
+        required List<String> imageList, // Accept a list of images
+      }) {
     return TableRow(
       children: [
         Container(
-          height: 70,
+          height: 94,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(image, width: 30, height: 28),
-                const SizedBox(width: 6),
+                SizedBox(
+                  height: 60,
+                  width: 68,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: imageList.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        child: Image.asset(
+                          imageList[index],
+                          width: 60,
+                          height: 66,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                // SizedBox(height: 6),
                 Expanded(
                   child: Center(
-                    child: Text(menuItem,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: AppColors.textColor,
-                          fontSize: 10,
-                          fontFamily: 'Nunito-Regular',
-                          fontWeight: FontWeight.w500,
-                        )),
+                    child: Text(
+                      menuItem,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Colors.black, // Update this color if needed
+                        fontSize: 10,
+                        fontFamily: 'Nunito-Regular',
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ),
                 ),
               ],
-            ),
-          ),
-        ),
-        SizedBox(
-          height: 70,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Center(
-              child: Text(beforePrice,
-                  style: TextStyle(
-                    decoration: TextDecoration.lineThrough,
-                    decorationColor: AppColors.bottomSheetColor,
-                    color: AppColors.bottomSheetColor,
-                    fontSize: 10,
-                    fontFamily: 'Nunito-Regular',
-                    fontWeight: FontWeight.w700,
-                  )),
             ),
           ),
         ),
@@ -922,16 +879,17 @@ class RestaurantDetailScreen extends StatelessWidget {
     );
   }
 
+
   TableRow _buildGreenHeader(context) {
     return TableRow(
       children: [
         SizedBox(
-          height: 64,
+          height: 60,
           child: Center(
             child: Padding(
               padding: EdgeInsets.only(bottom: 16.0),
               child: Text(
-                'After Discount',
+                'Offer',
                 style: TextStyle(
                   fontSize: 12,
                   fontFamily: 'Nunito-Bold',
@@ -950,31 +908,18 @@ class RestaurantDetailScreen extends StatelessWidget {
     return TableRow(
       children: [
         Container(
-          height: 80,
+          height: 60,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Center(
               child: Text(
-                'Menu Items',
+                'Menus',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 12,
                   fontFamily: 'Nunito-Bold',
                   fontWeight: FontWeight.w500,
                 ),
-              ),
-            ),
-          ),
-        ),
-        Container(
-          height: 80,
-          child: Center(
-            child: Text(
-              'Before Discount',
-              style: TextStyle(
-                fontSize: 12,
-                fontFamily: 'Nunito-Bold',
-                fontWeight: FontWeight.w500,
               ),
             ),
           ),
@@ -988,7 +933,7 @@ class RestaurantDetailScreen extends StatelessWidget {
     return TableRow(
       children: [
         Container(
-          height: 70,
+          height: 94,
           child: Center(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
