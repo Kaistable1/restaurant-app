@@ -1,0 +1,230 @@
+import 'dart:async';
+
+import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+class RestaurantDetailController extends GetxController {
+  List<String> texts = [
+    "Ut nobis quo. Laudantium sint tempore voluptas illo quibusdam similique officiis. Natus ea similique sed rerum repudiandae deserunt. Deleniti et velit nam ut qui voluptatem voluptate.",
+    "Saepe explicabo non odit. Necessitatibus eius et rem alias. Ipsa reprehenderit debitis repellendus voluptas nesciunt. Ut maiores perspiciatis illo deserunt voluptatem. Voluptatem iste ea aut non dolores ea eum.",
+    "Assumenda deleniti corporis exercitationem ut blanditiis id aut quo. Nisi cupiditate nihil velit. Beatae similique suscipit dolor neque ut.",
+    "Assumenda deleniti corporis exercitationem ut blanditiis id aut quo. Nisi cupiditate nihil velit. Beatae similique suscipit dolor neque ut.",
+  ];
+  List top = ['Menu', 'About', 'Reviews'];
+  RxBool isFavorite = false.obs;
+  RxString selectedTop = 'Menu'.obs;
+
+  final Completer<GoogleMapController> completer =
+      Completer<GoogleMapController>();
+  ScrollController scrollController = ScrollController();
+  ScrollController scrollController2 = ScrollController();
+  ScrollController scrollController3 = ScrollController();
+  ScrollController scrollController4 = ScrollController();
+  final List<LocationListModel> circleItems = [
+    LocationListModel(
+      timeText: '20:00 to 21:00',
+      persentText: '10% off',
+    ),
+    LocationListModel(
+      timeText: '20:00 t0 21:00',
+      persentText: '30% off',
+    ),
+    LocationListModel(
+      timeText: '20:00 to 21:00',
+      persentText: '75% off',
+    ),
+    LocationListModel(
+      timeText: '20:00 to 21:00',
+      persentText: '20% off',
+    ),
+    LocationListModel(
+      timeText: '20:00 to 21:00',
+      persentText: '55% off',
+    ),
+    LocationListModel(
+      timeText: '20:00 to 21:00',
+      persentText: '60% off',
+    ),
+    LocationListModel(
+      timeText: '20:00 to 21:00',
+      persentText: '40% off',
+    ),
+    LocationListModel(
+      timeText: '20:00 to 21:00',
+      persentText: '25% off',
+    ),
+    LocationListModel(
+      timeText: '20:00 to 21:00',
+      persentText: '15% off',
+    ),
+  ];
+  final List<LocationListModel> circleItems2 = [
+    LocationListModel(
+      timeText: '16:00 to 16:00',
+      persentText: '10% off',
+    ),
+    LocationListModel(
+      timeText: '16:00 to 16:00',
+      persentText: '50% off',
+    ),
+    LocationListModel(
+      timeText: '16:00 to 16:00',
+      persentText: '30% off',
+    ),
+    LocationListModel(
+      timeText: '16:00 to 16:00',
+      persentText: '40% off',
+    ),
+    LocationListModel(
+      timeText: '16:00 to 16:00',
+      persentText: '50% off',
+    ),
+    LocationListModel(
+      timeText: '20:00 to 21:00',
+      persentText: '60% off',
+    ),
+    LocationListModel(
+      timeText: '16:00 to 16:00',
+      persentText: '70% off',
+    ),
+    LocationListModel(
+      timeText: '20:00 to 21:00',
+      persentText: '25% off',
+    ),
+    LocationListModel(
+      timeText: '20:00 to 21:00',
+      persentText: '15% off',
+    ),
+  ];
+  final List<LocationListModel> circleItems3 = [
+    LocationListModel(
+      timeText: '15:00 to 15:00',
+      persentText: '5% off',
+    ),
+    LocationListModel(
+      timeText: '16:00 to 16:00',
+      persentText: '15% off',
+    ),
+    LocationListModel(
+      timeText: '14:00 to 14:00',
+      persentText: '20% off',
+    ),
+    LocationListModel(
+      timeText: '17:00 to 17:00',
+      persentText: '25% off',
+    ),
+    LocationListModel(
+      timeText: '18:00 to 18:00',
+      persentText: '30% off',
+    ),
+    LocationListModel(
+      timeText: '20:00 to 21:00',
+      persentText: '35% off',
+    ),
+    LocationListModel(
+      timeText: '21:00 to 21:00',
+      persentText: '40% off',
+    ),
+    LocationListModel(
+      timeText: '14:00 to 14:00',
+      persentText: '25% off',
+    ),
+    LocationListModel(
+      timeText: '16:00 to 16:00',
+      persentText: '15% off',
+    ),
+  ];
+  final List<LocationListModel> circleItems4 = [
+    LocationListModel(
+      timeText: '15:00 to 15:00',
+      persentText: 'Deal 01',
+    ),
+    LocationListModel(
+      timeText: '16:00 to 16:00',
+      persentText: 'Deal 02',
+    ),
+    LocationListModel(
+      timeText: '14:00 to 14:00',
+      persentText: 'Deal 03',
+    ),
+  ];
+  void scrollLeft() {
+    scrollController.animateTo(
+      scrollController.offset - 300, // Scroll left by 300 pixels
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void scrollRight() {
+    scrollController.animateTo(
+      scrollController.offset + 300, // Scroll right by 300 pixels
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void scrollLeft2() {
+    scrollController2.animateTo(
+      scrollController2.offset - 300, // Scroll left by 300 pixels
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void scrollRight2() {
+    scrollController2.animateTo(
+      scrollController2.offset + 300, // Scroll right by 300 pixels
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void scrollLeft3() {
+    scrollController3.animateTo(
+      scrollController.offset - 300, // Scroll left by 300 pixels
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void scrollLeft4() {
+    scrollController4.animateTo(
+      scrollController4.offset - 300, // Scroll left by 300 pixels
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void scrollRight3() {
+    scrollController3.animateTo(
+      scrollController.offset + 300, // Scroll right by 300 pixels
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void scrollRight4() {
+    scrollController4.animateTo(
+      scrollController4.offset + 300, // Scroll right by 300 pixels
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  @override
+  void onClose() {
+    scrollController.dispose(); // Dispose the controller when not in use
+    super.onClose();
+  }
+}
+
+class LocationListModel {
+  final String timeText;
+  final String persentText;
+  LocationListModel({
+    required this.timeText,
+    required this.persentText,
+  });
+}
