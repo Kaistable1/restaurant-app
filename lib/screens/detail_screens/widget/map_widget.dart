@@ -26,7 +26,7 @@ class MapWidget extends StatelessWidget {
           const Marker(
             markerId: MarkerId('Property location'),
             position: LatLng(37.42796133580664,
-                -122.085749655962), // Example coordinates (San Francisco)
+                -122.085749655962),
           ),
         },
         mapType: MapType.normal,
@@ -36,7 +36,7 @@ class MapWidget extends StatelessWidget {
         ),
         // ListPropertyController.kGooglePlex,
         onMapCreated: (GoogleMapController gController) {
-          controller.completer.complete(gController);
+          // controller.completer.complete(gController);
         },
       ),
     );

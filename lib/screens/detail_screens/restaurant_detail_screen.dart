@@ -102,7 +102,7 @@ class RestaurantDetailScreen extends StatelessWidget {
           body: SingleChildScrollView(
             child: Stack(children: [
               Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Container(
@@ -113,7 +113,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                             image: AssetImage(
                                 "assets/images/restaurant_img.png"))),
                   ),
-                  SizedBox(height: Responsive.isMobile(context) ? 130 : 18),
+                  SizedBox(height:  130),
                   Center(
                     child: Container(
                       width: 264,
@@ -472,11 +472,12 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                         _buildTableRow(
                                                           context,
                                                           imageList: controller.foodMenuImages,
-                                                          menuItem: 'Food menu',
+                                                          menuItem: 'Food menu', menuItemNumbers: '(${controller.foodMenuImages.length.toString()})',
                                                         ),
                                                         _buildTableRow(
                                                           context,
                                                           imageList: controller.drinkMenuImages,
+                                                          menuItemNumbers: '(${controller.drinkMenuImages.length.toString()})',
                                                           menuItem:
                                                               'Drink menu',
                                                         ),
@@ -487,7 +488,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                 // Second part: After discount (green column)
                                                 Expanded(
                                                   child: Container(
-                                                    height: 280,
+                                                    height: 290,
                                                     decoration: BoxDecoration(
                                                       color: AppColors
                                                           .primaryColor,
@@ -498,7 +499,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                     child: Padding(
                                                       padding: const EdgeInsets
                                                           .symmetric(
-                                                          vertical: 16),
+                                                          vertical: 9),
                                                       child: Table(
                                                         border: TableBorder.symmetric(
                                                             inside: BorderSide(
@@ -564,15 +565,17 @@ class RestaurantDetailScreen extends StatelessWidget {
                                   );
                   }),
                   SizedBox(height: 12),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16.0, right: 16),
-                    child: Text(
-                      'Map',
-                      style: TextStyle(
-                        color: AppColors.headingTextColor,
-                        fontSize: 20,
-                        fontFamily: 'aftika-regular',
-                        fontWeight: FontWeight.w400,
+                  Align( alignment: Alignment.topLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 16.0, right: 16),
+                      child: Text(
+                        'Map',
+                        style: TextStyle(
+                          color: AppColors.headingTextColor,
+                          fontSize: 20,
+                          fontFamily: 'aftika-regular',
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
                     ),
                   ),
@@ -584,29 +587,23 @@ class RestaurantDetailScreen extends StatelessWidget {
                       decoration: const BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.all(Radius.circular(10))),
-                      child: Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width: 328,
-                                  height: 500,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(16)),
-                                  child: MapWidget(controller: controller),
-                                ),
-                                const SizedBox(
-                                  width: 40,
-                                ),
-                                const MapDetailWidget(),
-                              ],
-                            ),
+                      child:
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: Get.width,
+                                height: 500,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(16)),
+                                child: MapWidget(controller: controller),
+                              ),
+                              const SizedBox(
+                                width: 40,
+                              ),
+                              const MapDetailWidget(),
+                            ],
                           ),
-                        ],
-                      ),
                     ),
                   ),
                   SizedBox(
@@ -827,12 +824,13 @@ class RestaurantDetailScreen extends StatelessWidget {
   TableRow _buildTableRow(
       BuildContext context, {
         required String menuItem,
+        required String menuItemNumbers,
         required List<String> imageList, // Accept a list of images
       }) {
     return TableRow(
       children: [
         Container(
-          height: 94,
+          height: 106,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -857,6 +855,20 @@ class RestaurantDetailScreen extends StatelessWidget {
                   ),
                 ),
                 // SizedBox(height: 6),
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      menuItemNumbers,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Colors.black, // Update this color if needed
+                        fontSize: 10,
+                        fontFamily: 'Nunito-Regular',
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ),
                 Expanded(
                   child: Center(
                     child: Text(
@@ -933,7 +945,7 @@ class RestaurantDetailScreen extends StatelessWidget {
     return TableRow(
       children: [
         Container(
-          height: 94,
+          height: 106,
           child: Center(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
