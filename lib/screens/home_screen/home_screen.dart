@@ -8,14 +8,15 @@ import '../add_restaurant/add_restaurant.dart';
 import '../main_screen/mainscreen_controller/main_controller.dart';
 
 class HomeScreen extends StatelessWidget {
-
-  final controller = Get.put(MainController());
+  // final controller = Get.put(MainController());
   @override
   Widget build(BuildContext context) {
-    return _buildProfileView(context,controller);
+    return _buildProfileView(context);
   }
 
-  Widget _buildProfileView(BuildContext context, controller) {
+  Widget _buildProfileView(BuildContext context) {
+
+    final controller = Get.put(MainController());
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
     return Padding(

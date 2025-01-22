@@ -224,7 +224,7 @@ class OperatingHoursModel {
   String startTime;
   String endTime;
   String day;
-  List<OperatingHoursModel> days;
+  List<DaysModel> days;
 
 
   // Constructor
@@ -262,9 +262,9 @@ class OperatingHoursModel {
       startTime: data['startTime'],
       endTime: data['endTime'],
       day: data['day'],
-      days: RxList<OperatingHoursModel>.from(
+      days: RxList<DaysModel>.from(
         (data['days'] as List<dynamic>? ?? [])
-            .map((e) => OperatingHoursModel.fromMap(e as Map<String, dynamic>))
+            .map((e) => DaysModel.fromMap(e as Map<String, dynamic>))
             .toList(),
 
     ));
@@ -276,13 +276,13 @@ class DaysModel {
   String startTime;
   String endTime;
   String day;
-  List<OperatingHoursModel> days;
+  List<EatTimeModel> eatTimesList;
 
 
   // Constructor
   DaysModel({
     required this.eventName,
-    required this.days,
+    required this.eatTimesList,
     required this.eventBy,
     required this.startTime,
     required this.endTime,
@@ -291,12 +291,19 @@ class DaysModel {
 
   // Convert to Map for Firestore
   Future<Map<String, dynamic>> toMap() async {
+
+    List<Map<String, dynamic>> dataTimes = [];
+    for (var element in eatTimesList) {
+      var d = await element.toMap();
+      dataTimes.add(d);
+    }
     return {
       'eventName': eventName.text,
       'eventBy': eventBy.text,
       'startTime': startTime,
       'endTime': endTime,
       'day': day,
+      'dataTimes': dataTimes
     };
   }
 
@@ -314,9 +321,68 @@ class DaysModel {
       startTime: data['startTime'],
       endTime: data['endTime'],
       day: data['day'],
-      days: RxList<OperatingHoursModel>.from(
-        (data['days'] as List<dynamic>? ?? [])
-            .map((e) => OperatingHoursModel.fromMap(e as Map<String, dynamic>))
+        eatTimesList: RxList<EatTimeModel>.from(
+        (data['eatTimesList'] as List<dynamic>? ?? [])
+            .map((e) => EatTimeModel.fromMap(e as Map<String, dynamic>))
+            .toList(),
+
+    ));
+  }
+}
+class EatTimeModel {
+  TextEditingController eventName;
+  TextEditingController eventBy;
+  String startTime;
+  String endTime;
+  String day;
+  List<EatTimeModel> eatTimesList;
+
+
+  // Constructor
+  EatTimeModel({
+    required this.eventName,
+    required this.eatTimesList,
+    required this.eventBy,
+    required this.startTime,
+    required this.endTime,
+    required this.day,
+  });
+
+  // Convert to Map for Firestore
+  Future<Map<String, dynamic>> toMap() async {
+
+    List<Map<String, dynamic>> dataTimes = [];
+    for (var element in eatTimesList) {
+      var d = await element.toMap();
+      dataTimes.add(d);
+    }
+    return {
+      'eventName': eventName.text,
+      'eventBy': eventBy.text,
+      'startTime': startTime,
+      'endTime': endTime,
+      'day': day,
+      'dataTimes': dataTimes
+    };
+  }
+
+  // Create an instance from Firestore data
+  static EatTimeModel fromMap(Map<String, dynamic> data) {
+
+
+    return EatTimeModel(
+      eventName: TextEditingController(
+        text: data['eventName'],
+      ),
+        eventBy: TextEditingController(
+          text: data['eventBy'],
+        ),
+      startTime: data['startTime'],
+      endTime: data['endTime'],
+      day: data['day'],
+        eatTimesList: RxList<EatTimeModel>.from(
+        (data['eatTimesList'] as List<dynamic>? ?? [])
+            .map((e) => EatTimeModel.fromMap(e as Map<String, dynamic>))
             .toList(),
 
     ));
