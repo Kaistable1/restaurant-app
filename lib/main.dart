@@ -1,11 +1,27 @@
 import 'dart:ui';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:restaurant_web_app/screens/auth_screens/login_screen/login_screen.dart';
 
-void main() => runApp(MyApp());
-
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: const FirebaseOptions(
+        apiKey: "AIzaSyD-aHLAypbdgpbqlSNDl_5ofc257kKQPTI",
+        authDomain: "restaurantwebsite-4bdd8.firebaseapp.com",
+        projectId: "restaurantwebsite-4bdd8",
+        storageBucket: "restaurantwebsite-4bdd8.firebasestorage.app",
+        messagingSenderId: "404399548475",
+        appId: "1:404399548475:web:782d48d2dfe1e4604dd41e",
+        measurementId: "G-4ETNQB0PV4"),
+  );
+  runApp(MyApp());
+}
+//auth main
+FirebaseAuth auth = FirebaseAuth.instance;
 class MyApp extends StatelessWidget {
   // basda
   @override
@@ -28,4 +44,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
- //
+//

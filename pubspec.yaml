@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.4.3 <4.0.0'
+  sdk: '>=3.4.0 <4.0.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -45,14 +45,23 @@ dependencies:
   flutter_rating_bar:
   image_picker: ^1.1.2
   dotted_border: ^2.0.0
-  firebase_core: ^3.8.0
-  cloud_firestore: ^5.5.0
+
   file_picker: ^8.1.4
   dropdown_button2: ^2.3.9
   flutter_switch:
   flutter_time_picker_spinner:
   intl:
   flutter_datetime_picker: ^1.5.1
+
+  firebase_auth: ^5.4.0
+  firebase_storage: ^12.4.0
+  firebase_core: ^3.8.0
+  cloud_firestore: ^5.5.0
+  firebase_messaging: ^15.2.0
+  connectivity_plus: ^6.1.2
+
+
+
 
 
 

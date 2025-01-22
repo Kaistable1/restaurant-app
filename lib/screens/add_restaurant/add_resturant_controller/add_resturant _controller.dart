@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:restaurant_web_app/universal_models/restaurant_model.dart';
 
 import '../../../../constants/colors.dart';
 import '../../facilities_screen/facilities.dart';
 
 class AddRestaurantController extends GetxController {
+
+
+  ///backend
+
+  RestaurantModel restaurantModel = RestaurantModel.initialize();
+  ///frontend
   // Global key to manage the form state
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 

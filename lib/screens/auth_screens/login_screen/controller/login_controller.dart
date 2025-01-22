@@ -1,8 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:restaurant_web_app/main.dart';
 import 'package:restaurant_web_app/screens/main_screen/main_screen.dart';
 
 import '../../../../constants/colors.dart';
+import '../../../../widgets/loading_dialog.dart';
 
 class LoginController extends GetxController {
   final emailController = TextEditingController();
@@ -69,11 +73,62 @@ class LoginController extends GetxController {
     return isValid;
   }
 
+  Future<void> logIn() async {
+    loadingDialog(message: 'Please wait !!!!', loading: true);
+
+    try {
+      await auth
+          .signInWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      )
+          .then((value) async {
+        print('restaurants');
+
+        await FirebaseFirestore.instance
+            .collection('restaurants')
+            .doc(value.user!.uid)
+            .get()
+            .then((doc) async {
+          if (doc.exists) {
+            Get.back();
+            Get.offAll(() => MainScreen());
+            passwordController.clear();
+            emailController.clear();
+            Get.snackbar("Login", "Logged in successfully",
+                maxWidth: 400, backgroundColor: AppColors.primaryColor);
+            await auth.currentUser!.reload();
+          } else {
+            customAlertDialog2(
+              "We Couldn't Find Your Account",
+              "This email address is not associated with a Admin account. If you believe you should have access, please contact Support Team.",
+            );
+          }
+        });
+      });
+    } on FirebaseAuthException catch (error) {
+      print(error.toString());
+      Get.back();
+      switch (error.code) {
+        case "invalid-credential":
+          customAlertDialog2(
+            'INVALID LOGIN CREDENTIALS',
+            "The username or password you entered is incorrect. Please check your login information and try again.",
+          );
+          break;
+        case "unknown":
+          customAlertDialog2(
+            'INVALID LOGIN CREDENTIALS',
+            "The username or password you entered is incorrect. Please check your login information and try again.",
+          );
+          break;
+      }
+    }
+  }
+
   void login() {
     if (_validateFields()) {
-      Get.snackbar("Login", "Logged in successfully",
-          maxWidth: 400, backgroundColor: AppColors.primaryColor);
-      Get.offAll(() => MainScreen());
+      logIn();
     }
   }
 }

@@ -1,9 +1,14 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:restaurant_web_app/widgets/no_internet_dialog.dart';
 
 import '../../../../constants/colors.dart';
+import '../../../../widgets/loading_dialog.dart';
 import '../../../../widgets/round_button.dart';
 import '../../login_screen/login_screen.dart';
 
@@ -23,7 +28,9 @@ class ForgotController extends GetxController {
   /// Method to handle password reset
   void reset() {
     if (_validateFields()) {
-      _showResetDialog();
+      forgotPass
+        ();
+      // _showResetDialog();
     }
   }
 
@@ -37,7 +44,47 @@ class ForgotController extends GetxController {
     }
     return true;
   }
+  ///forgot password function
+  forgotPass() async {
+    loadingDialog(message: 'Please wait!!', loading: true);
+    final connecitivityResult = await (Connectivity().checkConnectivity());
 
+    if (connecitivityResult == ConnectivityResult.none) {
+      Get.back();
+      showNoInternetDialog();
+    } else {
+      await FirebaseFirestore.instance
+          .collection("restaurants")
+          .where('resEmail', isEqualTo: emailController.text)
+          .get()
+          .then((value) {
+        if (value.docs.isEmpty) {
+          Get.back();
+          print(value);
+          loadingDialog(message: "The Email doesn't Exists.", button: true);
+        } else {
+          FirebaseAuth.instance
+              .sendPasswordResetEmail(email: emailController.text,)
+              .then((value) {
+                Get.back();
+            _showResetDialog();
+            // dialogueBox(
+            //     text:
+            //     'A reset link has been emailed to you.Please also check your spam.',
+            //     color: primaryColor,
+            //     onPressed: () {
+            //       forgotEmailController.clear();
+            //       Get.off(() => LogIn());
+            //     });
+            emailController.clear();
+            print('sent successfully');
+          }).onError((error, stackTrace) {
+            print(error.toString());
+          });
+        }
+      });
+    }
+  }
   /// Method to show the reset confirmation dialog
   void _showResetDialog() {
     Get.dialog(

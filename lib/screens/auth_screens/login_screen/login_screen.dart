@@ -20,7 +20,7 @@ class LoginScreen extends StatelessWidget {
       body: Container(
         width: double.infinity,
         height: double.infinity, // Ensure full screen height
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
               image: AssetImage('assets/images/bg.png'), fit: BoxFit.cover),
         ),
@@ -56,7 +56,7 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 50),
+                const SizedBox(height: 50),
 
                 // Email Label aligned to the left
                 Text(
@@ -67,7 +67,7 @@ class LoginScreen extends StatelessWidget {
                     fontSize: Responsive.isDesktop(context) ? 18 : 14,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
 
                 // Email Field with Validation (Centered)
                 Obx(() => CustomTextField(
@@ -83,7 +83,7 @@ class LoginScreen extends StatelessWidget {
                           ? controller.emailError.value
                           : null,
                     )),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
 
                 // Password Label aligned to the left
                 Text(
@@ -94,7 +94,7 @@ class LoginScreen extends StatelessWidget {
                     fontSize: Responsive.isDesktop(context) ? 18 : 14,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
 
                 // Password Field with Validation (Centered)
                 Obx(() => CustomTextField(
@@ -120,7 +120,7 @@ class LoginScreen extends StatelessWidget {
                           ? controller.passwordError.value
                           : null,
                     )),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
 
                 // Forgot Password Link (Aligned to the right)
                 Align(
@@ -129,7 +129,7 @@ class LoginScreen extends StatelessWidget {
                     onTap: () {
                       Get.to(ForgotPassword());
                     },
-                    child: Text(
+                    child: const Text(
                       "Forgot Password?",
                       style: TextStyle(
                         color: AppColors.primaryColor,
@@ -138,7 +138,7 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
 
                 // Checkbox with text (Remember me)
                 Obx(() => Row(
@@ -156,7 +156,7 @@ class LoginScreen extends StatelessWidget {
                           ),
                           child: Checkbox(
                             value: controller.isRememberMeChecked.value,
-                            side: BorderSide(color: Colors.transparent),
+                            side: const BorderSide(color: Colors.transparent),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(4.0)),
                             onChanged: (bool? value) {
@@ -167,10 +167,10 @@ class LoginScreen extends StatelessWidget {
                             checkColor: AppColors.primaryColor,
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
-                        Text(
+                        const Text(
                           "Remember me",
                           style: TextStyle(
                             color: AppColors.primaryColor,
@@ -179,12 +179,12 @@ class LoginScreen extends StatelessWidget {
                         ),
                       ],
                     )),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
 
                 // Login Button (Centered)
                 CustomButton(
                   title: "Login",
-                  textStyle: TextStyle(
+                  textStyle: const TextStyle(
                       color: AppColors.whiteColor,
                       fontSize: 18,
                       fontWeight: FontWeight.w600),
@@ -193,7 +193,7 @@ class LoginScreen extends StatelessWidget {
                   width: double.infinity,
                   onPressed: controller.login, // Call login function
                 ),
-                SizedBox(height: 30),
+                const SizedBox(height: 30),
               ],
             ),
           ),

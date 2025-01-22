@@ -325,7 +325,7 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                       SizedBox(height: 8),
                                       CustomTextField(
                                         controller: restaurantController
-                                            .restaurantNameController,
+                                            .restaurantModel.resName,
                                         borderColor:
                                             AppColors.darkGrey.withOpacity(.1),
                                         width: 516,

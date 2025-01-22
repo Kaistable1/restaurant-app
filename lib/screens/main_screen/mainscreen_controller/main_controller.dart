@@ -12,6 +12,10 @@ import '../../home_screen/home_screen.dart';
 import '../../restaurant_detail_screen/restaurant_detail_screen.dart';
 
 class MainController extends GetxController {
+  ///backend
+
+
+  ///frontend
   String? selectedMenuItem = 'Home'; // Default selection set to Home
   bool isAddingRestaurant = false;
 
@@ -25,8 +29,8 @@ class MainController extends GetxController {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image.asset('assets/images/logout.png', width: 100),
-          SizedBox(height: 16),
-          Text('Logout Page'),
+          const SizedBox(height: 16),
+          const Text('Logout Page'),
         ],
       ),
     ),
@@ -102,7 +106,7 @@ class MainController extends GetxController {
                           },
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
                       Material(
@@ -122,7 +126,7 @@ class MainController extends GetxController {
                           height:
                               40, // Adjusted button height for better clickability
                           onPressed: () {
-                            Get.offAll(() => LoginScreen()); // Close the dialog
+                            Get.offAll(() => const LoginScreen()); // Close the dialog
                             // Add logout logic here (e.g., navigate to login screen)
                           },
                         ),

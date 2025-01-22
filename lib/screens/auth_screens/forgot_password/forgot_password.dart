@@ -18,7 +18,7 @@ class ForgotPassword extends StatelessWidget {
       body: Container(
         width: double.infinity,
         height: double.infinity, // Ensure full screen height
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
               image: AssetImage('assets/images/bg.png'), fit: BoxFit.cover),
         ),
@@ -53,7 +53,7 @@ class ForgotPassword extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SizedBox(height: 50),
+                      const SizedBox(height: 50),
                       Text(
                         "Email",
                         style: TextStyle(
@@ -62,7 +62,7 @@ class ForgotPassword extends StatelessWidget {
                           fontSize: Responsive.isDesktop(context) ? 18 : 14,
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       // Email Field with Validation
                       Obx(() => CustomTextField(
                             controller: controller.emailController,
@@ -84,7 +84,7 @@ class ForgotPassword extends StatelessWidget {
                       // Login Button
                       CustomButton(
                         title: "Submit",
-                        textStyle: TextStyle(
+                        textStyle: const TextStyle(
                             color: AppColors.whiteColor,
                             fontSize: 18,
                             fontWeight: FontWeight.w600),
@@ -118,7 +118,7 @@ class ForgotPassword extends StatelessWidget {
                       BoxShadow(
                         color: Colors.black.withOpacity(0.2),
                         blurRadius: 6,
-                        offset: Offset(0, 3),
+                        offset: const Offset(0, 3),
                       ),
                     ],
                   ),
@@ -126,7 +126,7 @@ class ForgotPassword extends StatelessWidget {
                     iconSize: Responsive.isMobile(context)
                         ? 14
                         : (Responsive.isTablet(context) ? 16 : 18),
-                    icon: Icon(Icons.arrow_back, color: AppColors.primaryColor),
+                    icon: const Icon(Icons.arrow_back, color: AppColors.primaryColor),
                     onPressed: () {
                       Get.back();
                     },
