@@ -1,13 +1,17 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:restaurant_web_app/constants/colors.dart';
+import 'package:restaurant_web_app/testing.dart';
 import 'package:restaurant_web_app/utils/responsive.dart';
 
 import '../../../../widgets/round_button.dart';
@@ -162,6 +166,7 @@ class DiscountTimeSetup extends StatefulWidget {
 class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
   String? selected_generalDiscounts;
   final controller = Get.put(EditRestaurantController());
+  final  itemController = Get.put(ItemController());
   String? selected_cuisne1;
   String? selected_cuisne3;
   String? selected_menuType;
@@ -2026,149 +2031,143 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                     ),
                   ),
                   SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Container(
-                        width: 211,
-                        height: 238,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: AppColors.whiteColor,
-                          border: Border.all(
-                              color: AppColors.darkGrey.withOpacity(.1)),
-                        ),
-                        child: Stack(
-                          children: [
-                            // Image at the top, take the full height of the container
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10.0),
-                              child: Image.asset(
-                                'assets/images/p1.png', // Replace with your image asset
-                                width: 211, // Set width to match the container
-                                height:
-                                    150, // Set height to match the container
-                                fit: BoxFit
-                                    .cover, // Make sure the image covers the entire area
+                  Container(
+                    height: 238,
+                    child: Obx(
+                          () => ListView.builder(
+                        itemCount: itemController.items.length + 1, // Add 1 for the "Add Meal" button
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          if (index < itemController.items.length) {
+                            final item = itemController.items[index];
+                            return Container(
+                              width: 211,
+                              height: 238,
+                              margin: EdgeInsets.only(right: 8), // Spacing between items
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: AppColors.whiteColor,
+                                border: Border.all(
+                                  color: AppColors.darkGrey.withOpacity(.1),
+                                ),
                               ),
-                            ),
-                            // Cross Icon at the top right corner
-
-                            // Plus Icon at the bottom right corner
-
-                            // Meal Info below the image
-                            Positioned(
-                              bottom: 20,
-                              left: 8,
-                              right: 8,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              child: Stack(
                                 children: [
-                                  Text(
-                                    'Cuisine: Italian',
-                                    style: TextStyle(
-                                      fontSize: 14,
+                                  // Image at the top
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    child: (item['images'] as List<XFile>).isNotEmpty
+                                        ? Image.network(
+                                      (item['images'] as List<XFile>).first.path,
+                                      width: double.infinity,
+                                      height: double.infinity,
+                                      fit: BoxFit.cover,
+                                    )
+                                        : SizedBox.shrink(), // Placeholder if no image
+                                  ),
+                                  // Meal Info
+                                  Positioned(
+                                    bottom: 20,
+                                    left: 8,
+                                    right: 8,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Cuisine: ${item['description']}',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          'Menu: ${item['name']}',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          'Offer: 2 for 1',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  SizedBox(height: 4),
-                                  Text(
-                                    'Menu: Food/Drink Menu',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  SizedBox(height: 4),
-                                  Text(
-                                    'Offer: 2 for 1',
-                                    style: TextStyle(
-                                      fontSize: 14,
+                                  // Close Icon
+                                  Positioned(
+                                    top: 8,
+                                    right: 8,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        itemController.items.removeAt(index); // Remove item
+                                      },
+                                      child: Container(
+                                        width: 20,
+                                        height: 20,
+                                        decoration: BoxDecoration(
+                                          color: AppColors.darkGrey,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Icon(
+                                          Icons.close,
+                                          color: Colors.white,
+                                          size: 10,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-                            Positioned(
-                              top: 0,
-                              right: 8,
-                              child: Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                            );
+                          } else {
+                            // Add Meal Button at the end
+                            return Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      _isColumn2Visible = !_isColumn2Visible;
+                                    });// Example function
+                                  },
                                   child: Container(
-                                    width: 20, // width of the circle
-                                    height: 20, // height of the circle
+                                    width: 24,
+                                    height: 24,
                                     decoration: BoxDecoration(
-                                      color: AppColors
-                                          .darkGrey, // background color
-                                      shape: BoxShape
-                                          .circle, // makes the container circular
+                                      border: Border.all(
+                                        color: AppColors.primaryColor,
+                                        width: 2,
+                                      ),
+                                      borderRadius: BorderRadius.circular(4.0),
                                     ),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        onPressed:
-                                        _removeContainer;
-                                      },
+                                    child: Center(
                                       child: Icon(
-                                        Icons.close, // cross icon
-                                        color: Colors.white, // icon color
-                                        size:
-                                            10, // adjust icon size to fit the circle
+                                        Icons.add,
+                                        color: AppColors.primaryColor,
+                                        size: 16,
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ),
-                            Positioned(
-                                top: 0,
-                                right: 8,
-                                bottom: 2,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Image.asset(
-                                    'assets/images/btn_image.png',
-                                    width: 24,
-                                    height: 24,
+                                SizedBox(height: 10),
+                                Text(
+                                  'Add meal',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
                                   ),
-                                )),
-                          ],
-                        ),
+                                ),
+                              ],
+                            );
+                          }
+                        },
                       ),
-                      SizedBox(
-                        width: 30,
-                      ),
-                      Column(
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              setState(() {
-                                _isColumn2Visible = !_isColumn2Visible;
-                              });
-                            },
-                            child: Container(
-                              width: 24,
-                              height: 24,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: AppColors.primaryColor, width: 2),
-                                borderRadius: BorderRadius.circular(4.0),
-                              ),
-                              child: Center(
-                                child: Icon(Icons.add,
-                                    color: AppColors.primaryColor, size: 16),
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 10),
-                          Text(
-                            'Add meal',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                    ),
                   ),
+
                   SizedBox(height: 10),
                   if (_isColumn2Visible)
                     Column(
@@ -2388,188 +2387,159 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                         SizedBox(height: 10),
                         Row(
                           children: [
-                            Stack(
-                              clipBehavior: Clip
-                                  .none, // Allows the cross icon to overflow if needed
-                              children: [
-                                // Circular Image with Border
-                                Container(
-                                  width: Responsive.isDesktop(context)
-                                      ? 160
-                                      : 120, // Adjust the size as needed
-                                  height:
-                                      Responsive.isDesktop(context) ? 150 : 110,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10)),
-                                  child: Image.asset(
-                                    'assets/images/img3.png',
-                                    fit: BoxFit
-                                        .cover, // Ensures the image fits within the circular container
-                                  ),
-                                ),
+                            Obx(
+                                  () => Wrap(
+                                spacing: 8,
+                                children: itemController.images.map((image) {
+                                  return Stack(
+                                    clipBehavior: Clip
+                                        .none, // Allows the cross icon to overflow if needed
+                                    children: [
+                                      // Circular Image with Border
+                                      Container(
+                                        width: Responsive.isDesktop(context)
+                                            ? 160
+                                            : 120, // Adjust the size as needed
+                                        height:
+                                        Responsive.isDesktop(context) ? 150 : 110,
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(10)),
+                                        child: Image.network(
+                                          image.path,
+                                          // width: 80,
+                                          // height: 80,
+                                          fit: BoxFit.cover,
+                                        ),/*Image.asset(
+                                          'assets/images/img3.png',
+                                          fit: BoxFit
+                                              .cover, // Ensures the image fits within the circular container
+                                        ),*/
+                                      ),
 
-                                // Close Icon in Top Right
-                                Positioned(
-                                  top: 8, // Adjust position as needed
-                                  right: 10,
-                                  child: GestureDetector(
-                                    onTap: () {},
-                                    child: Container(
-                                      width: 19,
-                                      height: 19,
-                                      decoration: BoxDecoration(
-                                        color: AppColors.darkGrey,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Icon(
-                                        Icons.close,
-                                        size: 10,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Stack(
-                              clipBehavior: Clip
-                                  .none, // Allows the cross icon to overflow if needed
-                              children: [
-                                // Circular Image with Border
-                                Container(
-                                  width: Responsive.isDesktop(context)
-                                      ? 160
-                                      : 120, // Adjust the size as needed
-                                  height:
-                                      Responsive.isDesktop(context) ? 150 : 110,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10)),
-                                  child: Image.asset(
-                                    'assets/images/img3.png',
-                                    fit: BoxFit
-                                        .cover, // Ensures the image fits within the circular container
-                                  ),
-                                ),
-
-                                // Close Icon in Top Right
-                                Positioned(
-                                  top: 8, // Adjust position as needed
-                                  right: 10,
-                                  child: GestureDetector(
-                                    onTap: () {},
-                                    child: Container(
-                                      width: 19,
-                                      height: 19,
-                                      decoration: BoxDecoration(
-                                        color: AppColors.darkGrey,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Icon(
-                                        Icons.close,
-                                        size: 10,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            GestureDetector(
-                              onTap: () => _pickImage(isLogo: true),
-                              child: _imageBytes == null
-                                  ? Container(
-                                      height: Responsive.isDesktop(context)
-                                          ? 150
-                                          : Responsive.isTablet(context)
-                                              ? 120
-                                              : 110,
-                                      width: 160,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Colors.grey.withOpacity(.1)),
-                                        borderRadius: BorderRadius.circular(12),
-                                        color: AppColors.whiteColor,
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(16.0),
-                                        child: DottedBorder(
-                                          borderType: BorderType.RRect,
-                                          radius: Radius.circular(12),
-                                          dashPattern: [6, 3],
-                                          color: AppColors.primaryColor,
-                                          strokeWidth: 1,
+                                      // Close Icon in Top Right
+                                      Positioned(
+                                        top: 8, // Adjust position as needed
+                                        right: 10,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            itemController.images.remove(image);
+                                          },
                                           child: Container(
+                                            width: 19,
+                                            height: 19,
                                             decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              color: AppColors.whiteColor,
+                                              color: AppColors.darkGrey,
+                                              shape: BoxShape.circle,
                                             ),
-                                            child: Center(
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Icon(
-                                                      Icons
-                                                          .upload_file_outlined,
-                                                      size: 25,
-                                                      color: AppColors
-                                                          .primaryColor),
-                                                  Text(
-                                                    'Upload Image',
-                                                    style: TextStyle(
-                                                      fontSize: Responsive
-                                                              .isMobile(context)
-                                                          ? 7
-                                                          : (Responsive
-                                                                  .isTablet(
-                                                                      context)
-                                                              ? 8
-                                                              : 10),
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    'Upload a .png file only',
-                                                    style: TextStyle(
-                                                      fontSize: Responsive
-                                                              .isMobile(context)
-                                                          ? 7
-                                                          : (Responsive
-                                                                  .isTablet(
-                                                                      context)
-                                                              ? 8
-                                                              : 10),
-                                                      color: AppColors
-                                                          .primaryColor,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
+                                            child: Icon(
+                                              Icons.close,
+                                              size: 10,
+                                              color: Colors.white,
                                             ),
                                           ),
                                         ),
                                       ),
-                                    )
-                                  : Container(
-                                      height: Responsive.isDesktop(context)
-                                          ? 150
-                                          : Responsive.isTablet(context)
-                                              ? 120
-                                              : 110,
-                                      width: 160,
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                          image: MemoryImage(_imageBytes!),
-                                          fit: BoxFit.cover,
+                                    ],
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+
+                            Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () => itemController.pickImages(),
+                                  child: _imageBytes == null
+                                      ? Container(
+                                          height: Responsive.isDesktop(context)
+                                              ? 150
+                                              : Responsive.isTablet(context)
+                                                  ? 120
+                                                  : 110,
+                                          width: 160,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: Colors.grey.withOpacity(.1)),
+                                            borderRadius: BorderRadius.circular(12),
+                                            color: AppColors.whiteColor,
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(16.0),
+                                            child: DottedBorder(
+                                              borderType: BorderType.RRect,
+                                              radius: Radius.circular(12),
+                                              dashPattern: [6, 3],
+                                              color: AppColors.primaryColor,
+                                              strokeWidth: 1,
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                  color: AppColors.whiteColor,
+                                                ),
+                                                child: Center(
+                                                  child: Column(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Icon(
+                                                          Icons
+                                                              .upload_file_outlined,
+                                                          size: 25,
+                                                          color: AppColors
+                                                              .primaryColor),
+                                                      Text(
+                                                        'Upload Image',
+                                                        style: TextStyle(
+                                                          fontSize: Responsive
+                                                                  .isMobile(context)
+                                                              ? 7
+                                                              : (Responsive
+                                                                      .isTablet(
+                                                                          context)
+                                                                  ? 8
+                                                                  : 10),
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        'Upload a .png file only',
+                                                        style: TextStyle(
+                                                          fontSize: Responsive
+                                                                  .isMobile(context)
+                                                              ? 7
+                                                              : (Responsive
+                                                                      .isTablet(
+                                                                          context)
+                                                                  ? 8
+                                                                  : 10),
+                                                          color: AppColors
+                                                              .primaryColor,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      : Container(
+                                          height: Responsive.isDesktop(context)
+                                              ? 150
+                                              : Responsive.isTablet(context)
+                                                  ? 120
+                                                  : 110,
+                                          width: 160,
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                              image: MemoryImage(_imageBytes!),
+                                              fit: BoxFit.cover,
+                                            ),
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
                                         ),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                    ),
+                                ),
+
+                              ],
                             ),
                           ],
                         ),
@@ -2591,6 +2561,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                           width: 516,
                           borderRadius: 8,
                           hintText: "2 for 1",
+                          controller: itemController.offerController,
                           fillColor: AppColors.whiteColor,
                           cursorColor: AppColors.primaryColor,
                           inputStyle:
@@ -2601,24 +2572,43 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                         SizedBox(height: 10),
                         Padding(
                           padding: const EdgeInsets.only(left: 100.0),
-                          child: CustomButton(
-                            title: "Save Percentage Value",
-                            textStyle: TextStyle(
-                              color: AppColors.whiteColor,
-                              fontSize: Responsive.isMobile(context) ? 16 : 18,
-                              fontWeight: FontWeight.w600,
-                            ),
-                            backgroundColor: AppColors.primaryColor,
-                            borderRadius: 8,
-                            width: Responsive.isMobile(context)
-                                ? screenWidth * 0.4
-                                : screenWidth * 0.2,
-                            onPressed: () {
-                              Get.snackbar("Percentage Value ",
-                                  "Percentage value is successfully saved",
-                                  maxWidth: 400,
-                                  backgroundColor: AppColors.primaryColor);
-                            },
+                          child: Row(
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  itemController.addItem(
+                                    selected_menuType.toString(),
+                                    selected_cuisne3.toString(),
+                                    itemController.offerController.text,
+                                  );
+                                  selected_menuType = null;
+                                  selected_cuisne3 = null;
+                                  itemController.offerController.clear();
+                                  // descriptionController.clear();
+                                  // priceController.clear();
+                                },
+                                child: const Text('Add Item'),
+                              ),
+                              CustomButton(
+                                title: "Save Percentage Value",
+                                textStyle: TextStyle(
+                                  color: AppColors.whiteColor,
+                                  fontSize: Responsive.isMobile(context) ? 16 : 18,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                backgroundColor: AppColors.primaryColor,
+                                borderRadius: 8,
+                                width: Responsive.isMobile(context)
+                                    ? screenWidth * 0.4
+                                    : screenWidth * 0.2,
+                                onPressed: () {
+                                  Get.snackbar("Percentage Value ",
+                                      "Percentage value is successfully saved",
+                                      maxWidth: 400,
+                                      backgroundColor: AppColors.primaryColor);
+                                },
+                              ),
+                            ],
                           ),
                         ),
                         SizedBox(height: 10),
@@ -2639,10 +2629,14 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                           ? screenWidth * 0.4
                           : screenWidth * 0.2,
                       onPressed: () {
-                        Get.snackbar(
-                            "Discount", "Discount is successfully saved",
-                            maxWidth: 400,
-                            backgroundColor: AppColors.primaryColor);
+                        FirebaseFirestore.instance.collection("Testing").add({
+                          "MenuDiscount": itemController.items,
+                          "age": 50,
+                        });
+                        // Get.snackbar(
+                        //     "Discount", "Discount is successfully saved",
+                        //     maxWidth: 400,
+                        //     backgroundColor: AppColors.primaryColor);
                       },
                     ),
                   ),
