@@ -191,7 +191,12 @@ class LoginScreen extends StatelessWidget {
                   backgroundColor: AppColors.primaryColor,
                   borderRadius: 8,
                   width: double.infinity,
-                  onPressed: controller.login, // Call login function
+                  onPressed: (){
+
+                    // if (controller.validateFields()) {
+                      controller.logIn();
+                    // }
+                  }, // Call login function
                 ),
                 const SizedBox(height: 30),
               ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:restaurant_web_app/screens/add_restaurant/add_resturant_controller/add_resturant%20_controller.dart';
 
 import '../../constants/colors.dart';
 import '../../utils/responsive.dart';
@@ -8,89 +9,8 @@ import '../../widgets/text_field.dart';
 import '../add_restaurant/edit_restaurant/edit_resturant.dart';
 import '../main_screen/mainscreen_controller/main_controller.dart';
 
-class OperatingHourScreen extends GetxController {
-  final TextEditingController aboutTextController = TextEditingController();
-
-  RxString aboutError = ''.obs;
-
-  void nextSave() {
-    bool isValid = true;
-    if (aboutTextController.text.isEmpty) {
-      aboutError.value = "Enter your Text";
-      isValid = false;
-    } else {
-      // You can add more validation rules here (e.g., minimum length, valid characters)
-      if (aboutTextController.text.length < 3) {
-        aboutError.value = "Text must be at least 3 characters";
-        isValid = false;
-      } else {
-        aboutError.value = '';
-      }
-
-      if (isValid) {
-        Get.snackbar("Success", "Data saved successfully!",
-            backgroundColor: AppColors.primaryColor,
-            colorText: Colors.white,
-            maxWidth: 400);
-        Get.to(() => EditRestaurantScreen(
-              isFromButtonClick: true,
-            ));
-        aboutTextController.clear();
-      }
-    }
-  }
-
-  final List<String> days = [
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday'
-  ];
-
-  // Stores the selected times for each meal of each day
-  var mealTimes = <String, Map<String, Map<String, String>>>{}.obs;
-  var dayToggles = <String, bool>{}.obs;
-  var cellToggles = <String, Map<String, bool>>{}.obs;
-
-  OperatingHourScreen() {
-    for (var day in days) {
-      mealTimes[day] = {
-        'Breakfast': {'From': '', 'To': ''},
-        'Brunch': {'From': '', 'To': ''},
-        'Lunch': {'From': '', 'To': ''},
-        'Dinner': {'From': '', 'To': ''},
-        'Late Night': {'From': '', 'To': ''},
-      };
-      dayToggles[day] = true; // Default toggle is ON
-      cellToggles[day] = {
-        'Breakfast': true,
-        'Brunch': true,
-        'Lunch': true,
-        'Dinner': true,
-        'Late Night': true,
-      };
-    }
-  }
-
-  Future<void> selectTime(
-      BuildContext context, String day, String meal, String type) async {
-    TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-
-    if (picked != null) {
-      mealTimes[day]![meal]![type] = picked.format(context);
-      mealTimes.refresh();
-    }
-  }
-}
-
 class OperatingHourScreen1 extends StatelessWidget {
-  final OperatingHourScreen controller = Get.put(OperatingHourScreen());
+  final controller = Get.put(AddRestaurantController());
   final Function(int)? onNavigate;
   final mainController = Get.put(MainController());
   bool? isFromButtonClick;
@@ -259,13 +179,18 @@ class OperatingHourScreen1 extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: 10),
-                  Text(
-                    'Add Operating Hours',
-                    style: TextStyle(
-                      color: AppColors.blackColor,
-                      fontFamily: 'Nunito-Regular',
-                      fontSize: 24,
-                      fontWeight: FontWeight.w700,
+                  GestureDetector(
+                    onTap: () {
+                      controller.saveOperatingHours();
+                    },
+                    child: const Text(
+                      'Add Operating Hours',
+                      style: TextStyle(
+                        color: AppColors.blackColor,
+                        fontFamily: 'Nunito-Regular',
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                 ],

@@ -1,10 +1,44 @@
-import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
+import 'dart:async';
+import 'dart:html';
+import 'dart:typed_data';
+
+import 'package:flutter/material.dart';
+import 'package:image_picker_web/image_picker_web.dart';
+import 'package:mime_type/mime_type.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:path/path.dart' as Path;
+import 'package:restaurant_web_app/widgets/loading_dialog.dart';
 
 class RestaurantDetailController extends GetxController {
+
+  ///get image from gallery
+  String mediaType = '';
+  Future<Uint8List?> getImage() async {
+    // loadingDialog(message: 'Please wait ...',loading: true);
+    try {
+      var mediaData = await ImagePickerWeb.getImageInfo;
+
+      String? mimeType = mime(Path.basename(mediaData!.fileName!));
+      File mediaFile =
+      File(mediaData.data!, mediaData.fileName!, {'type': mimeType});
+
+      if (mediaFile.name.isNotEmpty) {
+        // Get.back();
+        mediaType = 'image';
+        return mediaData.data!;
+      }
+    } catch (e) {
+      // Get.back();
+      loadingDialog(
+          message: 'Please select an image file (JPG or PNG format only)',
+          button: true);
+    }
+
+    return null;
+  }
+
   List<String> texts = [
     "Ut nobis quo. Laudantium sint tempore voluptas illo quibusdam similique officiis. Natus ea similique sed rerum repudiandae deserunt. Deleniti et velit nam ut qui voluptatem voluptate.",
     "Saepe explicabo non odit. Necessitatibus eius et rem alias. Ipsa reprehenderit debitis repellendus voluptas nesciunt. Ut maiores perspiciatis illo deserunt voluptatem. Voluptatem iste ea aut non dolores ea eum.",

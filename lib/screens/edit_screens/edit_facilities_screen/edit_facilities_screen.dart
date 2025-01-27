@@ -2,6 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:restaurant_web_app/screens/add_restaurant/add_resturant_controller/add_resturant%20_controller.dart';
 
 import '../../../constants/colors.dart';
 import '../../../utils/responsive.dart';
@@ -13,7 +14,7 @@ import '../../restaurant_detail_screen/restaurant_detail_screen.dart';
 
 class EditFacilitiesScreen extends StatelessWidget {
   final Function(int)? onNavigate;
-  final facilitiesController = Get.put(FacilitiesController());
+  final facilitiesController = Get.put(AddRestaurantController());
   final mainController = Get.put(MainController());
 
   EditFacilitiesScreen({super.key, this.onNavigate, this.isFromButtonClick});

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:restaurant_web_app/screens/add_restaurant/add_resturant_controller/add_resturant%20_controller.dart';
 import 'package:restaurant_web_app/screens/operating_hour_screen/operating_hour_screen.dart';
 
 import '../../constants/colors.dart';
@@ -66,7 +67,7 @@ class EventTableController extends GetxController {
 }
 
 class Entertainment_Screen extends StatelessWidget {
-  final EventTableController controller = Get.put(EventTableController());
+  final controller = Get.put(AddRestaurantController());
 
   bool? isFromButtonClick;
   final Function(int)? onNavigate;
@@ -104,7 +105,7 @@ class Entertainment_Screen extends StatelessWidget {
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.1),
-                          offset: Offset(0, 4),
+                          offset: const Offset(0, 4),
                           blurRadius: 6,
                           spreadRadius: 0,
                         ),
@@ -114,11 +115,11 @@ class Entertainment_Screen extends StatelessWidget {
                       padding: const EdgeInsets.all(4.0),
                       child: Row(
                         children: [
-                          SizedBox(width: 8),
-                          Text('Account Settings'),
-                          Spacer(),
+                          const SizedBox(width: 8),
+                          const Text('Account Settings'),
+                          const Spacer(),
                           PopupMenuButton<String>(
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.keyboard_arrow_down_sharp,
                               color: AppColors.primaryColor,
                             ),
@@ -142,8 +143,8 @@ class Entertainment_Screen extends StatelessWidget {
                                       width: 24,
                                       height: 24,
                                     ),
-                                    SizedBox(width: 16),
-                                    Text('Home'),
+                                    const SizedBox(width: 16),
+                                    const Text('Home'),
                                   ],
                                 ),
                               ),
@@ -156,8 +157,8 @@ class Entertainment_Screen extends StatelessWidget {
                                       width: 24,
                                       height: 24,
                                     ),
-                                    SizedBox(width: 16),
-                                    Text('View Restaurant Details'),
+                                    const SizedBox(width: 16),
+                                    const Text('View Restaurant Details'),
                                   ],
                                 ),
                               ),
@@ -170,8 +171,8 @@ class Entertainment_Screen extends StatelessWidget {
                                       width: 24,
                                       height: 24,
                                     ),
-                                    SizedBox(width: 16),
-                                    Text('Change Password'),
+                                    const SizedBox(width: 16),
+                                    const Text('Change Password'),
                                   ],
                                 ),
                               ),
@@ -184,8 +185,8 @@ class Entertainment_Screen extends StatelessWidget {
                                       width: 24,
                                       height: 24,
                                     ),
-                                    SizedBox(width: 16),
-                                    Text('Logout'),
+                                    const SizedBox(width: 16),
+                                    const Text('Logout'),
                                   ],
                                 ),
                               ),
@@ -220,7 +221,7 @@ class Entertainment_Screen extends StatelessWidget {
                         BoxShadow(
                           color: Colors.black.withOpacity(0.2),
                           blurRadius: 6,
-                          offset: Offset(0, 3),
+                          offset: const Offset(0, 3),
                         ),
                       ],
                     ),
@@ -228,15 +229,15 @@ class Entertainment_Screen extends StatelessWidget {
                       iconSize: Responsive.isMobile(context)
                           ? 14
                           : (Responsive.isTablet(context) ? 16 : 18),
-                      icon:
-                          Icon(Icons.arrow_back, color: AppColors.primaryColor),
+                      icon: const Icon(Icons.arrow_back,
+                          color: AppColors.primaryColor),
                       onPressed: () {
                         Get.back();
                       },
                     ),
                   ),
-                  SizedBox(width: 20),
-                  Text(
+                  const SizedBox(width: 20),
+                  const Text(
                     'Add Entertainment',
                     style: TextStyle(
                       color: AppColors.blackColor,
@@ -247,17 +248,22 @@ class Entertainment_Screen extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 20),
-              Text(
-                'Entertainment Schedule',
-                style: TextStyle(
-                  color: AppColors.blackColor,
-                  fontFamily: 'Nunito-Regular',
-                  fontSize: 24,
-                  fontWeight: FontWeight.w500,
+              const SizedBox(height: 20),
+              GestureDetector(
+                onTap: () {
+                  controller.updateRestaurantData(context);
+                },
+                child: const Text(
+                  'Entertainment Schedule',
+                  style: TextStyle(
+                    color: AppColors.blackColor,
+                    fontFamily: 'Nunito-Regular',
+                    fontSize: 24,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Obx(
                 () => SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
@@ -350,7 +356,7 @@ class Entertainment_Screen extends StatelessWidget {
                                       ),
                                       child: Checkbox(
                                         value: controller.checkBoxValues[index],
-                                        side: BorderSide(
+                                        side: const BorderSide(
                                             color: Colors.transparent),
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
@@ -370,7 +376,7 @@ class Entertainment_Screen extends StatelessWidget {
                             DataCell(Text(controller.byValues[index])),
                             DataCell(
                               DropdownButton<String>(
-                                icon: Icon(
+                                icon: const Icon(
                                   Icons.keyboard_arrow_down_sharp,
                                   color: AppColors.primaryColor,
                                 ),
@@ -517,7 +523,7 @@ class Entertainment_Screen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         CustomTextField(
                           inputFormatterslist: [
                             FilteringTextInputFormatter.allow(
@@ -535,7 +541,7 @@ class Entertainment_Screen extends StatelessWidget {
                           hintStyle:
                               const TextStyle(color: AppColors.blackColor),
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         CustomTextField(
                           inputFormatterslist: [
                             FilteringTextInputFormatter.allow(
@@ -591,7 +597,7 @@ class Entertainment_Screen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(width: 10),
+                        const SizedBox(width: 10),
                         CustomTextField(
                           inputFormatterslist: [
                             FilteringTextInputFormatter.allow(
@@ -609,7 +615,7 @@ class Entertainment_Screen extends StatelessWidget {
                           hintStyle:
                               const TextStyle(color: AppColors.blackColor),
                         ),
-                        SizedBox(width: 20),
+                        const SizedBox(width: 20),
                         CustomTextField(
                           inputFormatterslist: [
                             FilteringTextInputFormatter.allow(
@@ -629,7 +635,7 @@ class Entertainment_Screen extends StatelessWidget {
                         ),
                       ],
                     ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Center(
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -648,9 +654,8 @@ class Entertainment_Screen extends StatelessWidget {
                           ? screenWidth * 0.3
                           : screenWidth * 0.2,
                       onPressed: () {
-                        Get.to(() => OperatingHourScreen1(
-                              isFromButtonClick: true,
-                            ));
+                        controller.onTapOperatingHours(context);
+                        // Prepare entertainment schedule data
                       },
                     ),
                   ],

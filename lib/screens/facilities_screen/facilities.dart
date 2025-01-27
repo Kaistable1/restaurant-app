@@ -2,17 +2,17 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:restaurant_web_app/screens/add_restaurant/add_resturant_controller/add_resturant%20_controller.dart';
 
 import '../../constants/colors.dart';
 import '../../utils/responsive.dart';
 import '../../widgets/round_button.dart';
 import '../../widgets/text_field.dart';
 import '../main_screen/mainscreen_controller/main_controller.dart';
-import 'facilities_controller/facilities_controller.dart';
 
 class FacilitiesScreen extends StatelessWidget {
   final Function(int)? onNavigate;
-  final facilitiesController = Get.put(FacilitiesController());
+  final facilitiesController = Get.put(AddRestaurantController());
   final mainController = Get.put(MainController());
 
   FacilitiesScreen({super.key, this.onNavigate, this.isFromButtonClick});
@@ -77,7 +77,7 @@ class FacilitiesScreen extends StatelessWidget {
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.1),
-                          offset: Offset(0, 4),
+                          offset: const Offset(0, 4),
                           blurRadius: 6,
                           spreadRadius: 0,
                         ),
@@ -87,11 +87,11 @@ class FacilitiesScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(4.0),
                       child: Row(
                         children: [
-                          SizedBox(width: 8),
-                          Text('Account Settings'),
-                          Spacer(),
+                          const SizedBox(width: 8),
+                          const Text('Account Settings'),
+                          const Spacer(),
                           PopupMenuButton<String>(
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.keyboard_arrow_down_sharp,
                               color: AppColors.primaryColor,
                             ),
@@ -116,8 +116,8 @@ class FacilitiesScreen extends StatelessWidget {
                                       width: 24,
                                       height: 24,
                                     ),
-                                    SizedBox(width: 16),
-                                    Text('Home'),
+                                    const SizedBox(width: 16),
+                                    const Text('Home'),
                                   ],
                                 ),
                               ),
@@ -130,8 +130,8 @@ class FacilitiesScreen extends StatelessWidget {
                                       width: 24,
                                       height: 24,
                                     ),
-                                    SizedBox(width: 16),
-                                    Text('View Restaurant Details'),
+                                    const SizedBox(width: 16),
+                                    const Text('View Restaurant Details'),
                                   ],
                                 ),
                               ),
@@ -144,8 +144,8 @@ class FacilitiesScreen extends StatelessWidget {
                                       width: 24,
                                       height: 24,
                                     ),
-                                    SizedBox(width: 16),
-                                    Text('Change Password'),
+                                    const SizedBox(width: 16),
+                                    const Text('Change Password'),
                                   ],
                                 ),
                               ),
@@ -158,8 +158,8 @@ class FacilitiesScreen extends StatelessWidget {
                                       width: 24,
                                       height: 24,
                                     ),
-                                    SizedBox(width: 16),
-                                    Text('Logout'),
+                                    const SizedBox(width: 16),
+                                    const Text('Logout'),
                                   ],
                                 ),
                               ),
@@ -193,7 +193,7 @@ class FacilitiesScreen extends StatelessWidget {
                         BoxShadow(
                           color: Colors.black.withOpacity(0.2),
                           blurRadius: 6,
-                          offset: Offset(0, 3),
+                          offset: const Offset(0, 3),
                         ),
                       ],
                     ),
@@ -202,13 +202,13 @@ class FacilitiesScreen extends StatelessWidget {
                           ? 14
                           : (Responsive.isTablet(context) ? 16 : 18),
                       icon:
-                          Icon(Icons.arrow_back, color: AppColors.primaryColor),
+                          const Icon(Icons.arrow_back, color: AppColors.primaryColor),
                       onPressed: () {
                         Get.back();
                       },
                     ),
                   ),
-                  SizedBox(width: 20),
+                  const SizedBox(width: 20),
                   Text(
                     'Add Amenities',
                     style: TextStyle(
@@ -224,7 +224,7 @@ class FacilitiesScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               SizedBox(
@@ -275,7 +275,7 @@ class FacilitiesScreen extends StatelessWidget {
                                         ],
                                       ),
                                     ),
-                                    SizedBox(height: 10),
+                                    const SizedBox(height: 10),
                                     Obx(() {
                                       return Column(
                                         children: facilitiesController
@@ -320,13 +320,13 @@ class FacilitiesScreen extends StatelessWidget {
                                                             : Colors
                                                                 .transparent,
                                                       ),
-                                                      child: Icon(Icons.check,
+                                                      child: const Icon(Icons.check,
                                                           size: 18,
                                                           color: AppColors
                                                               .whiteColor),
                                                     ),
                                                   ),
-                                                  SizedBox(width: 10),
+                                                  const SizedBox(width: 10),
                                                   Flexible(
                                                     child: Text(
                                                       facility,
@@ -349,7 +349,7 @@ class FacilitiesScreen extends StatelessWidget {
                                                   ),
                                                 ],
                                               ),
-                                              Divider(
+                                              const Divider(
                                                 color: AppColors.primaryColor,
                                                 thickness: .2,
                                               ),
@@ -358,7 +358,7 @@ class FacilitiesScreen extends StatelessWidget {
                                         }).toList(),
                                       );
                                     }),
-                                    SizedBox(height: 10),
+                                    const SizedBox(height: 10),
                                     Row(
                                       children: [
                                         InkWell(
@@ -381,14 +381,14 @@ class FacilitiesScreen extends StatelessWidget {
                                               borderRadius:
                                                   BorderRadius.circular(4.0),
                                             ),
-                                            child: Center(
+                                            child: const Center(
                                               child: Icon(Icons.add,
                                                   color: AppColors.primaryColor,
                                                   size: 16),
                                             ),
                                           ),
                                         ),
-                                        SizedBox(width: 10),
+                                        const SizedBox(width: 10),
                                         CustomTextField(
                                           inputFormatterslist: [
                                             FilteringTextInputFormatter.allow(
@@ -412,7 +412,7 @@ class FacilitiesScreen extends StatelessWidget {
                                         ),
                                       ],
                                     ),
-                                    SizedBox(height: 16),
+                                    const SizedBox(height: 16),
                                     RichText(
                                       text: TextSpan(
                                         text: 'Dietary Preferences ',
@@ -441,7 +441,7 @@ class FacilitiesScreen extends StatelessWidget {
                                         ],
                                       ),
                                     ),
-                                    SizedBox(height: 10),
+                                    const SizedBox(height: 10),
                                     Obx(() {
                                       return Column(
                                         children: facilitiesController.dietary
@@ -485,13 +485,13 @@ class FacilitiesScreen extends StatelessWidget {
                                                             : Colors
                                                                 .transparent,
                                                       ),
-                                                      child: Icon(Icons.check,
+                                                      child: const Icon(Icons.check,
                                                           size: 18,
                                                           color: AppColors
                                                               .whiteColor),
                                                     ),
                                                   ),
-                                                  SizedBox(width: 10),
+                                                  const SizedBox(width: 10),
                                                   Flexible(
                                                     child: Text(
                                                       dietary,
@@ -514,7 +514,7 @@ class FacilitiesScreen extends StatelessWidget {
                                                   ),
                                                 ],
                                               ),
-                                              Divider(
+                                              const Divider(
                                                 color: AppColors.primaryColor,
                                                 thickness: .2,
                                               ),
@@ -523,7 +523,7 @@ class FacilitiesScreen extends StatelessWidget {
                                         }).toList(),
                                       );
                                     }),
-                                    SizedBox(height: 10),
+                                    const SizedBox(height: 10),
                                     Row(
                                       children: [
                                         InkWell(
@@ -545,14 +545,14 @@ class FacilitiesScreen extends StatelessWidget {
                                               borderRadius:
                                                   BorderRadius.circular(4.0),
                                             ),
-                                            child: Center(
+                                            child: const Center(
                                               child: Icon(Icons.add,
                                                   color: AppColors.primaryColor,
                                                   size: 16),
                                             ),
                                           ),
                                         ),
-                                        SizedBox(width: 10),
+                                        const SizedBox(width: 10),
                                         CustomTextField(
                                           inputFormatterslist: [
                                             FilteringTextInputFormatter.allow(
@@ -576,7 +576,7 @@ class FacilitiesScreen extends StatelessWidget {
                                         ),
                                       ],
                                     ),
-                                    SizedBox(height: 16),
+                                    const SizedBox(height: 16),
                                     RichText(
                                       text: TextSpan(
                                         text: 'Atmosphere ',
@@ -605,7 +605,7 @@ class FacilitiesScreen extends StatelessWidget {
                                         ],
                                       ),
                                     ),
-                                    SizedBox(height: 10),
+                                    const SizedBox(height: 10),
                                     Obx(() {
                                       return Column(
                                         children: facilitiesController
@@ -651,13 +651,13 @@ class FacilitiesScreen extends StatelessWidget {
                                                             : Colors
                                                                 .transparent,
                                                       ),
-                                                      child: Icon(Icons.check,
+                                                      child: const Icon(Icons.check,
                                                           size: 18,
                                                           color: AppColors
                                                               .whiteColor),
                                                     ),
                                                   ),
-                                                  SizedBox(width: 10),
+                                                  const SizedBox(width: 10),
                                                   Flexible(
                                                     child: Text(
                                                       atmosphere,
@@ -680,7 +680,7 @@ class FacilitiesScreen extends StatelessWidget {
                                                   ),
                                                 ],
                                               ),
-                                              Divider(
+                                              const Divider(
                                                 color: AppColors.primaryColor,
                                                 thickness: .2,
                                               ),
@@ -689,7 +689,7 @@ class FacilitiesScreen extends StatelessWidget {
                                         }).toList(),
                                       );
                                     }),
-                                    SizedBox(height: 10),
+                                    const SizedBox(height: 10),
                                     Row(
                                       children: [
                                         InkWell(
@@ -713,14 +713,14 @@ class FacilitiesScreen extends StatelessWidget {
                                               borderRadius:
                                                   BorderRadius.circular(4.0),
                                             ),
-                                            child: Center(
+                                            child: const Center(
                                               child: Icon(Icons.add,
                                                   color: AppColors.primaryColor,
                                                   size: 16),
                                             ),
                                           ),
                                         ),
-                                        SizedBox(width: 10),
+                                        const SizedBox(width: 10),
                                         CustomTextField(
                                           inputFormatterslist: [
                                             FilteringTextInputFormatter.allow(
@@ -744,7 +744,7 @@ class FacilitiesScreen extends StatelessWidget {
                                         ),
                                       ],
                                     ),
-                                    SizedBox(height: 16),
+                                    const SizedBox(height: 16),
                                     RichText(
                                       text: TextSpan(
                                         text: 'Price Range ',
@@ -773,7 +773,7 @@ class FacilitiesScreen extends StatelessWidget {
                                         ],
                                       ),
                                     ),
-                                    SizedBox(height: 10),
+                                    const SizedBox(height: 10),
                                     Obx(() {
                                       return Column(
                                         children: facilitiesController
@@ -814,14 +814,14 @@ class FacilitiesScreen extends StatelessWidget {
                                                                   .selectedPriceRange
                                                                   .value ==
                                                               pricerange
-                                                          ? Icon(Icons.check,
+                                                          ? const Icon(Icons.check,
                                                               size: 18,
                                                               color: AppColors
                                                                   .whiteColor)
                                                           : null,
                                                     ),
                                                   ),
-                                                  SizedBox(width: 10),
+                                                  const SizedBox(width: 10),
                                                   Flexible(
                                                     child: Text(
                                                       pricerange,
@@ -844,7 +844,7 @@ class FacilitiesScreen extends StatelessWidget {
                                                   ),
                                                 ],
                                               ),
-                                              Divider(
+                                              const Divider(
                                                 color: AppColors.primaryColor,
                                                 thickness: .2,
                                               ),
@@ -853,7 +853,7 @@ class FacilitiesScreen extends StatelessWidget {
                                         }).toList(),
                                       );
                                     }),
-                                    SizedBox(height: 10),
+                                    const SizedBox(height: 10),
                                     Row(
                                       children: [
                                         InkWell(
@@ -877,14 +877,14 @@ class FacilitiesScreen extends StatelessWidget {
                                               borderRadius:
                                                   BorderRadius.circular(4.0),
                                             ),
-                                            child: Center(
+                                            child: const Center(
                                               child: Icon(Icons.add,
                                                   color: AppColors.primaryColor,
                                                   size: 16),
                                             ),
                                           ),
                                         ),
-                                        SizedBox(width: 10),
+                                        const SizedBox(width: 10),
                                         CustomTextField(
                                           inputFormatterslist: [
                                             FilteringTextInputFormatter.allow(
@@ -908,11 +908,11 @@ class FacilitiesScreen extends StatelessWidget {
                                         ),
                                       ],
                                     ),
-                                    SizedBox(height: 16),
+                                    const SizedBox(height: 16),
                                   ],
                                 ),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 50,
                               ),
                               Expanded(
@@ -936,12 +936,12 @@ class FacilitiesScreen extends StatelessWidget {
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
-                                      SizedBox(height: 10),
+                                      const SizedBox(height: 10),
                                       CustomTextField(
                                         contentPadding:
-                                            EdgeInsets.only(left: 18, top: 22),
+                                            const EdgeInsets.only(left: 18, top: 22),
                                         controller: facilitiesController
-                                            .descriptionController,
+                                            .restaurantModel.specialConditions,
                                         maxLine: 5,
                                         borderColor:
                                             AppColors.darkGrey.withOpacity(.1),
@@ -956,7 +956,7 @@ class FacilitiesScreen extends StatelessWidget {
                                             fontSize: 14,
                                             color: AppColors.blackColor),
                                       ),
-                                      SizedBox(height: 10),
+                                      const SizedBox(height: 10),
                                       Text(
                                         'Social media',
                                         style: TextStyle(
@@ -969,7 +969,7 @@ class FacilitiesScreen extends StatelessWidget {
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
-                                      SizedBox(height: 10),
+                                      const SizedBox(height: 10),
                                       Obx(
                                         () => DropdownButtonHideUnderline(
                                           child: DropdownButton2<String>(
@@ -1001,6 +1001,8 @@ class FacilitiesScreen extends StatelessWidget {
                                               facilitiesController
                                                   .selectedSocialMedia
                                                   .value = value!;
+
+
                                             },
                                             buttonStyleData: ButtonStyleData(
                                               decoration: BoxDecoration(
@@ -1018,7 +1020,7 @@ class FacilitiesScreen extends StatelessWidget {
                                                 const MenuItemStyleData(
                                               height: 40,
                                             ),
-                                            iconStyleData: IconStyleData(
+                                            iconStyleData: const IconStyleData(
                                               icon: Icon(
                                                 Icons
                                                     .keyboard_arrow_down_outlined,
@@ -1029,7 +1031,7 @@ class FacilitiesScreen extends StatelessWidget {
                                           ),
                                         ),
                                       ),
-                                      SizedBox(height: 10),
+                                      const SizedBox(height: 10),
                                       Text(
                                         'Link',
                                         style: TextStyle(
@@ -1042,12 +1044,12 @@ class FacilitiesScreen extends StatelessWidget {
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
-                                      SizedBox(height: 10),
+                                      const SizedBox(height: 10),
                                       CustomTextField(
                                         contentPadding:
-                                            EdgeInsets.only(left: 18),
+                                            const EdgeInsets.only(left: 18),
                                         controller:
-                                            facilitiesController.linkController,
+                                            facilitiesController.restaurantModel.socialLink,
                                         borderColor:
                                             AppColors.darkGrey.withOpacity(.1),
                                         borderRadius: 8,
@@ -1067,7 +1069,7 @@ class FacilitiesScreen extends StatelessWidget {
                               ),
                             ],
                           ),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           Center(
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -1091,7 +1093,7 @@ class FacilitiesScreen extends StatelessWidget {
                                     facilitiesController.saveAndNext();
                                   },
                                 ),
-                                SizedBox(width: 10),
+                                const SizedBox(width: 10),
                                 // CustomButton(
                                 //   title: "Next",
                                 //   textStyle: TextStyle(

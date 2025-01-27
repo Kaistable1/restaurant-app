@@ -32,7 +32,7 @@ class LoginController extends GetxController {
     super.onClose();
   }
 
-  bool _validateFields() {
+  bool validateFields() {
     emailError.value = '';
     passwordError.value = '';
 
@@ -75,6 +75,9 @@ class LoginController extends GetxController {
 
   Future<void> logIn() async {
     loadingDialog(message: 'Please wait !!!!', loading: true);
+///to remove later
+    emailController.text ='eman.noor@alestrasol.com';
+    passwordController.text ='AestraSol1223@';
 
     try {
       await auth
@@ -126,9 +129,4 @@ class LoginController extends GetxController {
     }
   }
 
-  void login() {
-    if (_validateFields()) {
-      logIn();
-    }
-  }
 }

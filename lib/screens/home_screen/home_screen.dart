@@ -34,7 +34,7 @@ class HomeScreen extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                Spacer(),
+                const Spacer(),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -58,7 +58,7 @@ class HomeScreen extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Responsive.isDesktop(context)
                 ? Row(
                     children: [
@@ -69,43 +69,43 @@ class HomeScreen extends StatelessWidget {
                           children: [
                             _buildProfileRow('Resturant name:', 'Abc',
                                 Responsive.isMobile(context)),
-                            SizedBox(height: 10),
-                            Divider(
+                            const SizedBox(height: 10),
+                            const Divider(
                                 thickness: 0.2, color: AppColors.primaryColor),
                             _buildProfileRow('Contact:', '(225) 555-0118',
                                 Responsive.isMobile(context)),
-                            SizedBox(height: 10),
-                            Divider(
+                            const SizedBox(height: 10),
+                            const Divider(
                                 thickness: 0.2, color: AppColors.primaryColor),
                             _buildProfileRow(
                                 'Email:',
                                 'jessica.hanson@example.com',
                                 Responsive.isMobile(context)),
-                            SizedBox(height: 10),
-                            Divider(
+                            const SizedBox(height: 10),
+                            const Divider(
                                 thickness: 0.2, color: AppColors.primaryColor),
                             _buildProfileRow('City:', 'Viet Nam',
                                 Responsive.isMobile(context)),
-                            SizedBox(height: 10),
-                            Divider(
+                            const SizedBox(height: 10),
+                            const Divider(
                                 thickness: 0.2, color: AppColors.primaryColor),
                             _buildProfileRow('Address:', 'Abc',
                                 Responsive.isMobile(context)),
-                            SizedBox(height: 10),
-                            Divider(
+                            const SizedBox(height: 10),
+                            const Divider(
                                 thickness: 0.2, color: AppColors.primaryColor),
                             _buildProfileRow('Password:', 'xyz',
                                 Responsive.isMobile(context)),
                           ],
                         ),
                       ),
-                      SizedBox(width: 16),
+                      const SizedBox(width: 16),
                       Container(
                         width: screenWidth * .46,
                         height: screenHeight * .5,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          image: DecorationImage(
+                          image: const DecorationImage(
                             image: AssetImage('assets/images/p1.png'),
                             fit: BoxFit
                                 .cover, // Adjusts how the image fits inside the container
@@ -123,43 +123,43 @@ class HomeScreen extends StatelessWidget {
                           children: [
                             _buildProfileRow('Resturant name:', 'Abc',
                                 Responsive.isMobile(context)),
-                            SizedBox(height: 10),
-                            Divider(
+                            const SizedBox(height: 10),
+                            const Divider(
                                 thickness: 0.2, color: AppColors.primaryColor),
                             _buildProfileRow('Contact:', '(225) 555-0118',
                                 Responsive.isMobile(context)),
-                            SizedBox(height: 10),
-                            Divider(
+                            const SizedBox(height: 10),
+                            const Divider(
                                 thickness: 0.2, color: AppColors.primaryColor),
                             _buildProfileRow(
                                 'Email:',
                                 'jessica.hanson@example.com',
                                 Responsive.isMobile(context)),
-                            SizedBox(height: 10),
-                            Divider(
+                            const SizedBox(height: 10),
+                            const Divider(
                                 thickness: 0.2, color: AppColors.primaryColor),
                             _buildProfileRow('City:', 'Viet Nam',
                                 Responsive.isMobile(context)),
-                            SizedBox(height: 10),
-                            Divider(
+                            const SizedBox(height: 10),
+                            const Divider(
                                 thickness: 0.2, color: AppColors.primaryColor),
                             _buildProfileRow('Address:', 'Abc',
                                 Responsive.isMobile(context)),
-                            SizedBox(height: 10),
-                            Divider(
+                            const SizedBox(height: 10),
+                            const Divider(
                                 thickness: 0.2, color: AppColors.primaryColor),
                             _buildProfileRow('Password:', 'xyz',
                                 Responsive.isMobile(context)),
                           ],
                         ),
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       Container(
                         width: Get.width,
                         height: screenHeight * .5,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          image: DecorationImage(
+                          image: const DecorationImage(
                             image: AssetImage('assets/images/p1.png'),
                             fit: BoxFit
                                 .cover, // Adjusts how the image fits inside the container
@@ -190,7 +190,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           Expanded(
             child: Text(
               value,
