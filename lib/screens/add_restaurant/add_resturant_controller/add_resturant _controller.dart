@@ -804,6 +804,30 @@ class AddRestaurantController extends GetxController {
       mealTimes.refresh();
     }
   }
+  final List<LocationListModel> circleItems3 = [
+    LocationListModel(
+      timeText: '15:00 to 15:00',
+      persentText: '5% off',
+    ),
+    LocationListModel(
+      timeText: '16:00 to 16:00',
+      persentText: '15% off',
+    ),
+    LocationListModel(
+      timeText: '14:00 to 14:00',
+      persentText: '20% off',
+    ),
+
+  ];
+
+
+  final toDateController = TextEditingController();
+  final fromDateController = TextEditingController();
+  final toTimeController = TextEditingController();
+  final fromTimeHourController = TextEditingController();
+  final fromTimeMinuteController = TextEditingController();
+
+
 }
 
 // Model class for location data
