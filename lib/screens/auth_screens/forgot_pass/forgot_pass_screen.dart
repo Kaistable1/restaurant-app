@@ -109,16 +109,9 @@ class ForgotPassScreen extends StatelessWidget {
                       textColor: Colors.white,
                       width: 200,
                       height: 48,
-                      ontapp: () {
+                      ontapp: () async {
                         if (_formKey.currentState!.validate()) {
-                          dialogueBox(
-                              text:
-                                  'A reset link has been emailed to you. Please also check your spam.',
-                              color: AppColors.primaryColor,
-                              onPressed: () {
-                                Get.off(() => LoginScreen());
-                              });
-                          controller.emailController.clear();
+                          await controller.sendForgetEmail();
                         }
                       },
                     ),

@@ -64,30 +64,6 @@ class CircleContainerWidget extends StatelessWidget {
                 ),
               ),
             ),
-            // Positioned(
-            //   left: 12,
-            //   top: 16,
-            //   child: Obx(() {
-            //     return InkWell(
-            //         onTap: () {
-            //           isFavourite.value = !isFavourite.value;
-            //         },
-            //         child: isFavourite.value
-            //             ? Icon(
-            //                 size: 18,
-            //                 Icons.favorite,
-            //                 color: AppColors.primaryColor,
-            //               )
-            //             : Icon(
-            //                 Icons.favorite,
-            //                 size: 18,
-            //                 color: AppColors.whiteColor,
-            //               ));
-            //   }),
-            //   height: 10,
-            //   width: 10,
-            // )
-
             SizedBox(
               height: 16,
             ),

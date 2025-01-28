@@ -2,17 +2,13 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
-import 'package:kaistable_website/screens/auth_screens/login/controller/login_controller.dart';
 import 'package:kaistable_website/screens/auth_screens/signup/controller/signup_controller.dart';
 
 import '../../../custom_widget/TextAndWidget.dart';
-import '../../../custom_widget/separate_text_field.dart';
 import '../../../utils/validations.dart';
 import '../../../widgets/custom_button.dart';
-import '../../../widgets/custom_text_field.dart';
 import '../../terms_and_condition/terms_and_condition.dart';
 import '../login/login_screen.dart';
-import '../verify/verify_page.dart';
 
 class SignupScreen extends StatelessWidget {
   SignupScreen({super.key});
@@ -77,7 +73,7 @@ class SignupScreen extends StatelessWidget {
                   TextAndFieldWidget(
                     labelText: 'User Name',
                     hintText: 'Harold Richards',
-                    controller: controller.userNameController,
+                    controller: controller.userModel.username,
                     isSuffixIcon: true,
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -98,7 +94,7 @@ class SignupScreen extends StatelessWidget {
                   TextAndFieldWidget(
                     labelText: 'Email',
                     hintText: 'deanna.curtis@example.com',
-                    controller: controller.emailController,
+                    controller: controller.userModel.userEmail,
                     isSuffixIcon: true,
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -127,7 +123,7 @@ class SignupScreen extends StatelessWidget {
                     () => TextAndFieldWidget(
                       labelText: 'Password',
                       hintText: 'Password ',
-                      controller: controller.passwordController,
+                      controller: controller.userModel.password,
                       obscureText: controller.isPasswordHidden.value,
                       validator: (value) {
                         return isPasswordValid(value!);
@@ -160,14 +156,14 @@ class SignupScreen extends StatelessWidget {
                     () => TextAndFieldWidget(
                       labelText: 'Confirm Password',
                       hintText: 'Password ',
-                      controller: controller.confirmPasswordController,
+                      controller: controller.userModel.confirmpass,
                       obscureText: controller.isConfirmPasswordHidden.value,
                       isSuffixIcon: true,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter a confirm password';
                         }
-                        if (value != controller.passwordController.text) {
+                        if (value != controller.userModel.password.text) {
                           return 'Passwords do not match';
                         }
                         return null;
@@ -269,7 +265,7 @@ class SignupScreen extends StatelessWidget {
                       textColor: Colors.white,
                       width: 200,
                       height: 48,
-                      ontapp: () {
+                      ontapp: () async {
                         if (_formKey.currentState!.validate()) {
                           if (!controller.termsAndConditions.value) {
                             Get.snackbar(
@@ -281,13 +277,7 @@ class SignupScreen extends StatelessWidget {
                             );
                             return;
                           }
-
-                          controller.emailController.clear();
-                          controller.userNameController.clear();
-                          controller.passwordController.clear();
-                          controller.confirmPasswordController.clear();
-                          controller.termsAndConditions.value = false;
-                          Get.to(() => VerifyPage());
+                          await controller.sendEmail();
                         }
                       },
                     ),

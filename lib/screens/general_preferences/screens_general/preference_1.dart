@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
+import 'package:kaistable_website/screens/auth_screens/signup/controller/signup_controller.dart';
 import 'package:kaistable_website/screens/general_preferences/screens_general/preference_2.dart';
 
 import '../../../custom_widget/separate_text_field.dart';
@@ -180,7 +181,7 @@ class Preference1 extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                     fontSize: 20,
                     textColor: Colors.white,
-                    ontapp: () {
+                    ontapp: () async {
                       if (_formKey.currentState!.validate()) {
                         if (controller.selectedPreferences.contains("Other") &&
                             controller.screen1Controller.text.isEmpty) {
@@ -207,6 +208,11 @@ class Preference1 extends StatelessWidget {
                           );
                           return;
                         }
+
+                        final signupController = Get.put(SignupController());
+                        signupController.updateUserData(
+                            field: 'topThreeCuisines',
+                            entry: controller.selectedPreferences);
                         Get.to(() => Preference2());
                       }
                     },

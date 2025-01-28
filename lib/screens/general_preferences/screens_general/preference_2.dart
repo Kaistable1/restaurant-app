@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
+import 'package:kaistable_website/screens/auth_screens/signup/controller/signup_controller.dart';
 import 'package:kaistable_website/screens/general_preferences/screens_general/preference_3.dart';
 
 import '../../../custom_widget/separate_text_field.dart';
@@ -195,6 +196,10 @@ class Preference2 extends StatelessWidget {
                           );
                           return;
                         }
+                        final signupController = Get.put(SignupController());
+                        signupController.updateUserData(
+                            field: 'dietaryPref',
+                            entry: controller.selectedPreferences2.first);
                         Get.to(() => Preference3());
                       }
                     },

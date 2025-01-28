@@ -8,6 +8,7 @@ class TextAndFieldWidget extends StatelessWidget {
   final String? hintText;
   final Widget? suffixIcon;
   final Widget? prefixIcon;
+  final bool? readOnly;
   final TextEditingController? controller;
   final bool isSuffixIcon;
   final TextInputType? keyboardType;
@@ -19,6 +20,7 @@ class TextAndFieldWidget extends StatelessWidget {
     required this.labelText,
     this.hintText,
     this.suffixIcon,
+    this.readOnly = false,
     this.prefixIcon,
     this.controller,
     this.isSuffixIcon = false,
@@ -50,6 +52,7 @@ class TextAndFieldWidget extends StatelessWidget {
           isSuffixIcon: isSuffixIcon,
           keyboardType: keyboardType,
           isShadow: true,
+          readOnly: readOnly ?? false,
           obscureText: obscureText,
           suffixIcon: suffixIcon,
           validator: validator,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
+import 'package:kaistable_website/screens/auth_screens/signup/controller/signup_controller.dart';
 import 'package:kaistable_website/screens/general_preferences/screens_general/preference_8.dart';
 
 import '../../../custom_widget/separate_text_field.dart';
@@ -170,7 +171,10 @@ class Preference7 extends StatelessWidget {
                         borderRadius: 10,
                       );
                     } else {
-                      // controller.screen1Controller.clear();
+                      final signupController = Get.put(SignupController());
+                      signupController.updateUserData(
+                          field: 'enjoyDiningRestEnter',
+                          entry: controller.selectedPreferences7.first);
                       Get.to(() => Preference8());
                     }
                   },

@@ -114,11 +114,10 @@ class AllCategories extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               itemCount: cusinessController.cusinessItem.take(6).length,
               itemBuilder: (context, index) {
-                final item =
-                cusinessController.cusinessItem[index];
+                final item = cusinessController.cusinessItem[index];
                 return Padding(
                   padding:
-                  const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
                   child: CircleContainerWidget(
                     ontap: () {
                       Get.to(CuisinesViewAll());
@@ -321,7 +320,8 @@ class AllCategories extends StatelessWidget {
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
               ),
-              itemCount: recentlyViewedController.recentlyViewedItem.take(2).length,
+              itemCount:
+                  recentlyViewedController.recentlyViewedItem.take(2).length,
               itemBuilder: (context, index) {
                 final item = recentlyViewedController.recentlyViewedItem[index];
                 return RectangleWidget(

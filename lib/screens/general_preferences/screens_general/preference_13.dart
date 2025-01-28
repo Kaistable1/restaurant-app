@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:kaistable_website/screens/auth_screens/signup/controller/signup_controller.dart';
 import 'package:kaistable_website/screens/general_preferences/screens_general/preference_14.dart';
 
 import '../../../constants/app_colors.dart';
@@ -128,6 +129,10 @@ class Preference13 extends StatelessWidget {
                     textColor: Colors.white,
                     ontapp: () {
                       if (_formKey.currentState!.validate()) {
+                        final signupController = Get.put(SignupController());
+                        signupController.updateUserData(
+                            field: 'zipCode',
+                            entry: controller.zipCodeController.text);
                         Get.to(() => Preference14());
                       }
                     },

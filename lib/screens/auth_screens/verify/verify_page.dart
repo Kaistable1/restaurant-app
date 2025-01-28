@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kaistable_website/screens/auth_screens/signup/controller/signup_controller.dart';
+import 'package:kaistable_website/screens/general_preferences/screens_general/preference_1.dart';
+import 'package:kaistable_website/utils/loading.dart';
 import 'package:pinput/pinput.dart';
 import '../../../constants/app_colors.dart';
 import '../../../dialoges/reset_dialog.dart';
 import '../../../utils/validations.dart';
 import '../../../widgets/custom_button.dart';
-import '../../general_preferences/screens_general/preference_1.dart';
 import 'controller/verify_controller.dart';
 
 class VerifyPage extends StatelessWidget {
-  VerifyPage({super.key});
+  VerifyPage({super.key, required this.email});
 
   final controller = Get.put(VerifyController());
+  final signupController = Get.put(SignupController());
 
+  String email;
   @override
   Widget build(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
@@ -126,7 +130,7 @@ class VerifyPage extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                   fontFamily: 'Nunito-Sans',
                   textColor: Colors.white,
-                  ontapp: () {
+                  ontapp: () async {
                     controller.onClick.value = !controller.onClick.value;
                     String enteredCode =
                         controller.verifyController.text.trim();
@@ -135,8 +139,24 @@ class VerifyPage extends StatelessWidget {
                           !RegExp(r'^[0-9]+$').hasMatch(enteredCode)) {
                         controller.onClick.value = false;
                       } else if (enteredCode.length == 6) {
-                        controller.verifyController.clear();
-                        Get.to(() => Preference1());
+                        if (controller.verifyController.length == 6 &&
+                            controller.verifyController.text ==
+                                signupController.verificationCode.toString()) {
+                          await signupController.createAccount();
+                          print('----------------signup------------');
+                          print(
+                              'code--------- ${controller.verifyController.text} == ${signupController.verificationCode.toString()}');
+
+                          signupController.resetTextFields();
+                          controller.onClick.value = false;
+                          controller.verifyController.clear();
+                          Get.off(() => Preference1());
+                        } else {
+                          loadingDialog(
+                              message:
+                                  'The OTP you entered is incorrect. Please try again.',
+                              button: true);
+                        }
                       }
                     }
                   },

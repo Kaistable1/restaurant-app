@@ -1,7 +1,11 @@
+import 'dart:ffi';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/screens/about_app/about_app.dart';
 import 'package:kaistable_website/screens/auth_screens/login/login_screen.dart';
 import 'package:kaistable_website/screens/contact_us/contact_us.dart';
@@ -20,6 +24,7 @@ import 'package:kaistable_website/screens/home_screen/location_pages/location_vi
 import 'package:kaistable_website/screens/privacy_policy/privacy_policy.dart';
 import 'package:kaistable_website/screens/terms_and_condition/terms_and_condition.dart';
 import 'package:kaistable_website/widgets/custom_button.dart';
+import 'package:kaistable_website/widgets/global_functions.dart';
 
 import '../../constants/app_colors.dart';
 import '../../widgets/home_widgets/all_categories.dart';
@@ -51,7 +56,6 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
   List<String> countries = [
     "New York",
     "Los Angeles",
-    "Paris",
   ];
 
   // Selected country
@@ -110,18 +114,15 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
   }
 
   String selectedCountry = 'Select Country';
-
   @override
   void initState() {
     super.initState();
-    // Initialize the state with the passed country name
-    selectedCountry = widget.countryName!;
+    getCurrentUserData();
+    selectedCountry = widget.countryName ?? 'USA';
   }
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    bool isLargeScreen = screenWidth > 1400;
     return Scaffold(
         backgroundColor: AppColors.bgColor,
         appBar: AppBar(
@@ -211,7 +212,8 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                   fontWeight: FontWeight.w600,
                   height: 43,
                   width: 200,
-                  ontapp: () {
+                  ontapp: () async {
+                    await FirebaseAuth.instance.signOut();
                     Get.offAll(() => LoginScreen());
                   },
                 ),
@@ -260,11 +262,11 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                   crossAxisSpacing: 10,
                                   mainAxisSpacing: 10,
                                 ),
-                                itemCount:
-                                    cusinessController.exploreRestaurantsItem.length,
+                                itemCount: cusinessController
+                                    .exploreRestaurantsItem.length,
                                 itemBuilder: (context, index) {
-                                  final item =
-                                      cusinessController.exploreRestaurantsItem[index];
+                                  final item = cusinessController
+                                      .exploreRestaurantsItem[index];
                                   return RectangleWidget(
                                     title: item.title,
                                     description: item.description,
@@ -277,7 +279,9 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                 },
                               );
                             }),
-                            SizedBox(height: 16,),
+                            SizedBox(
+                              height: 16,
+                            ),
                           ],
                         ),
                       )
@@ -294,7 +298,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Text(
-                                  selectedCountry,
+                                  '${currentUserDataModel?.value.country}',
                                   style: TextStyle(
                                     color: AppColors.bottomSheetColor,
                                     fontFamily: 'aftika-regular',

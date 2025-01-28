@@ -1,24 +1,16 @@
-
-
-import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:kaistable_website/screens/home_screen/my_home_screen.dart';
-import 'package:kaistable_website/widgets/home_widgets/filter_widget.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../custom_widget/separate_text_field.dart';
 import '../../../utils/responsive.dart';
-import '../../../widgets/fav_rectangle_widget.dart';
 import '../../../widgets/rectangle_widget.dart';
 import '../../detail_screens/restaurant_detail_screen.dart';
 import '../home_controller/home_location_controller.dart';
 import 'location_controller/location_controller.dart';
 
 class LocationScreen extends StatelessWidget {
- // final ScrollController scrollcontroller;
+  // final ScrollController scrollcontroller;
   final Function(int)? onNavigate;
   final List<String> items = [
     '10%',
@@ -26,13 +18,15 @@ class LocationScreen extends StatelessWidget {
     '30%',
     '40%',
     '50%',
-
   ];
   final LocationController locationController = Get.put(LocationController());
-  final HomeLocationController mycontroller = Get.put(HomeLocationController());
-  LocationScreen({super.key, this.onNavigate,})
-  {
-    mycontroller.selectedTop.value='';
+  final HomeLocationController homeController =
+      Get.put(HomeLocationController());
+  LocationScreen({
+    super.key,
+    this.onNavigate,
+  }) {
+    homeController.selectedTop.value = '';
   }
 
   @override
@@ -40,18 +34,17 @@ class LocationScreen extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     bool isLargeScreen = screenWidth > 1400;
     return WillPopScope(
-      onWillPop: ()async{
-         Get.back();
+      onWillPop: () async {
+        Get.back();
         return false;
-
       },
       child: LayoutBuilder(
         builder: (context, constraints) {
           int itemsPerRow = Responsive.isMobile(context)
               ? 2
               : Responsive.isTablet(context)
-              ? 3
-              : 4;
+                  ? 3
+                  : 4;
           double itemWidth = (constraints.maxWidth / itemsPerRow) - 16;
           double itemHeight = Responsive.isMobile(context)
               ? 320
@@ -59,9 +52,11 @@ class LocationScreen extends StatelessWidget {
 
           return Scaffold(
             backgroundColor: AppColors.bgColor,
-            appBar: AppBar(backgroundColor: AppColors.bgColor,
+            appBar: AppBar(
+              backgroundColor: AppColors.bgColor,
               iconTheme: IconThemeData(
-                color: AppColors.primaryColor, // Set your desired color for the drawer icon
+                color: AppColors
+                    .primaryColor, // Set your desired color for the drawer icon
               ),
               centerTitle: true,
               automaticallyImplyLeading: true,
@@ -86,18 +81,23 @@ class LocationScreen extends StatelessWidget {
                     onTap: () {
                       Get.back(); // Navigate back to the home screen
                     },
-                    child: Icon(Icons.arrow_back, size: 18,color: AppColors.primaryColor,),
+                    child: Icon(
+                      Icons.arrow_back,
+                      size: 18,
+                      color: AppColors.primaryColor,
+                    ),
                   ),
                 ),
               ),
-
-              title: Text('Available restaurants',
+              title: Text(
+                'Available restaurants',
                 style: const TextStyle(
                   fontSize: 20,
                   color: AppColors.bottomSheetColor,
                   fontWeight: FontWeight.w700,
                   fontFamily: 'Nunito-Bold',
-                ),),
+                ),
+              ),
             ),
             body: SingleChildScrollView(
               child: Padding(
@@ -115,7 +115,7 @@ class LocationScreen extends StatelessWidget {
                         fontWeight: FontWeight.w400,
                       ),
                     ),
-                    SizedBox(height:  8),
+                    SizedBox(height: 8),
                     Text(
                       'The area is lively with restaurants, bars and nightlife.',
                       style: TextStyle(
@@ -125,11 +125,11 @@ class LocationScreen extends StatelessWidget {
                         fontWeight: FontWeight.w400,
                       ),
                     ),
-                    SizedBox(height:  10),
+                    SizedBox(height: 10),
                     SizedBox(
                       height: 38,
                       child: CustomSeparateTextField(
-                        controller: mycontroller.searchController,
+                        controller: homeController.searchController,
                         hintText: 'Try searching for restaurant name',
                         hintStyle: TextStyle(
                           color: AppColors.hintText,
@@ -174,7 +174,7 @@ class LocationScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height:  16),
+                    SizedBox(height: 16),
                     Text(
                       'Explore Restaurants',
                       style: TextStyle(
@@ -184,39 +184,40 @@ class LocationScreen extends StatelessWidget {
                         fontWeight: FontWeight.w400,
                       ),
                     ),
-                    SizedBox(height:  12),
-                    Obx(() {
-                      return GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          mainAxisExtent: 220,
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
-                          childAspectRatio: itemWidth / itemHeight,
-                        ),
-                        itemCount: locationController.locationItem.length,
-                        itemBuilder: (context, index) {
-                          final item = locationController.locationItem[index];
-                          return InkWell(
-                            onTap: () {
-                              Get.to(RestaurantDetailScreen());
-                            },
-                            child: RectangleWidget(
-                              onNavigate: onNavigate,
-                              title: item.title,
-                              description: item.description,
-                              imagePath: item.imagePath,
-                              timetext: item.timetext,
-                              percentText: item.percentText,
-                              endTimeText: item.endTimeText,
-                              isFavorite: false.obs,
-                            ),
-                          );
-                        },
-                      );
-                    }),
+                    SizedBox(height: 12),
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        mainAxisExtent: 220,
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                        childAspectRatio: itemWidth / itemHeight,
+                      ),
+                      itemCount: homeController.resaturant_list.length,
+                      itemBuilder: (context, index) {
+                        final item = homeController.resaturant_list[index];
+                        return InkWell(
+                          onTap: () {
+                            print('item ${item.logoImage}');
+                            Get.to(RestaurantDetailScreen(
+                              restaurantModel: item,
+                            ));
+                          },
+                          child: RectangleWidget(
+                            onNavigate: onNavigate,
+                            title: item.resName,
+                            description: item.about,
+                            imagePath: item.logoImage,
+                            timetext: '10 AM',
+                            percentText: '25%',
+                            endTimeText: '9 PM',
+                            isFavorite: false.obs,
+                          ),
+                        );
+                      },
+                    ),
                     const SizedBox(height: 30),
                   ],
                 ),

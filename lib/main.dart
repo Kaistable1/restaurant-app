@@ -1,15 +1,30 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:get/get.dart';
+import 'package:kaistable_website/models/usermodel.dart';
 import 'package:kaistable_website/splash_screen/splashscreen.dart';
-
+import 'package:kaistable_website/widgets/global_functions.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 bool myFlag = false;
-
+final auth = FirebaseAuth.instance;
+SharedPreferences? preferences;
+SharedPreferences? remember_me_pref;
+Rx<UserModel>? currentUserDataModel;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
+  try {
+    await Firebase.initializeApp(); 
+  await getCurrentUserData();
+
+  } on FirebaseAuthException catch (e) {
+    print('Error: ${e.code} - ${e.message}');
+  } catch (e) {
+    print('Unhandled error: $e');
+  }
+preferences = await SharedPreferences.getInstance();
+  remember_me_pref = await SharedPreferences.getInstance();
   runApp(const MyApp());
 }
 

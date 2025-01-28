@@ -184,6 +184,7 @@ class EditProfilePage extends StatelessWidget {
                 ),
                 TextAndFieldWidget(
                   labelText: 'Email',
+                  readOnly: true,
                   hintText: 'deanna.curtis@example.com',
                   controller: controller.emailController,
                   isSuffixIcon: true,

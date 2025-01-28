@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
+import 'package:kaistable_website/screens/auth_screens/signup/controller/signup_controller.dart';
 import 'package:kaistable_website/screens/general_preferences/screens_general/preference_4.dart';
 
 import '../../../custom_widget/separate_text_field.dart';
@@ -113,34 +114,34 @@ class Preference3 extends StatelessWidget {
                           controller.toggleSelection3(preference["name"]!),
                       child: isOther && isSelected
                           ? Container(
-                        height: 66,
-                        width: Get.width,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              spreadRadius: 1,
-                              blurRadius: 6,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Center(
-                          child: CustomSeparateTextField(
-                            hintText: 'Enter text',
-                            controller: controller.screen3Controller,
-                            keyboardType: TextInputType.name,
-                            isShadow: false,
-                          ),
-                        ),
-                      )
+                              height: 66,
+                              width: Get.width,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    spreadRadius: 1,
+                                    blurRadius: 6,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: Center(
+                                child: CustomSeparateTextField(
+                                  hintText: 'Enter text',
+                                  controller: controller.screen3Controller,
+                                  keyboardType: TextInputType.name,
+                                  isShadow: false,
+                                ),
+                              ),
+                            )
                           : PreferencesSelectionWidget(
-                        name: preference["name"]!,
-                        dinningImage: preference["image"]!,
-                        isSelected: isSelected,
-                      ),
+                              name: preference["name"]!,
+                              dinningImage: preference["image"]!,
+                              isSelected: isSelected,
+                            ),
                     );
                   });
                 },
@@ -169,7 +170,10 @@ class Preference3 extends StatelessWidget {
                         borderRadius: 10,
                       );
                     } else {
-                      // controller.screen1Controller.clear();
+                      final signupController = Get.put(SignupController());
+                      signupController.updateUserData(
+                          field: 'interestedDeals',
+                          entry: controller.selectedPreferences3.first);
                       Get.to(() => Preference4());
                     }
                   },
