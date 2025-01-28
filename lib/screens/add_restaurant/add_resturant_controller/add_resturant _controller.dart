@@ -1,16 +1,10 @@
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:restaurant_web_app/main.dart';
 import 'package:restaurant_web_app/screens/add_restaurant/edit_restaurant/edit_resturant.dart';
-import 'package:restaurant_web_app/universal_models/operating_hours.dart';
 import 'package:restaurant_web_app/universal_models/restaurant_model.dart';
 import 'package:restaurant_web_app/widgets/loading_dialog.dart';
 import 'package:restaurant_web_app/widgets/no_internet_dialog.dart';
@@ -83,11 +77,12 @@ class AddRestaurantController extends GetxController {
     }
   }
 
+
+
   Future<void> updateRestaurantData(BuildContext context) async {
     try {
       loadingDialog(message: 'Please wait !!', loading: true);
 
-      ///internet connectivity
       final connectivityResult = await Connectivity().checkConnectivity();
       if (connectivityResult == ConnectivityResult.none) {
         Get.back();
@@ -104,11 +99,8 @@ class AddRestaurantController extends GetxController {
         throw Exception("Restaurant data not found.");
       }
       Map<String, dynamic> currentData = currentDataSnapshot.data()!;
-      print(currentData);
 
       Map<String, dynamic> newData = await restaurantModel.toMap();
-
-      print(latitude.toString());
 
       Map<String, dynamic> updatedFields = {};
 
@@ -193,7 +185,8 @@ class AddRestaurantController extends GetxController {
           isFromButtonClick: true,
         ));
   }
-
+///
+  ///
   Future<RestaurantModel> getRestaurantById() async {
     try {
       DocumentSnapshot doc = await FirebaseFirestore.instance
@@ -268,22 +261,6 @@ class AddRestaurantController extends GetxController {
     } catch (e) {
       Get.snackbar("Error", "Failed to add schedule: $e");
     }
-  }
-
-  ///map things
-  var mapController = Completer<GoogleMapController>();
-  var latitude = 37.42796133580664.obs;
-  var longitude = 122.085749655962.obs;
-  Future<void> getCurrentLocation() async {
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    latitude.value = position.latitude;
-    longitude.value = position.longitude;
-
-    final GoogleMapController controller = await mapController.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(
-      CameraPosition(target: LatLng(latitude.value, longitude.value), zoom: 14),
-    ));
   }
 
   ///frontend
@@ -411,9 +388,6 @@ class AddRestaurantController extends GetxController {
   }
 
   void saveNextScreen() {
-    restaurantModel.latitude = latitude.value;
-    restaurantModel.longitude = longitude.value;
-
     Get.to(() => FacilitiesScreen(isFromButtonClick: true));
   }
 
@@ -792,77 +766,6 @@ class AddRestaurantController extends GetxController {
       }
     }
   }
-  Future<void> saveAllOperatingHours() async {
-    print("Saving Operating Hours...");
-
-    final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null) {
-      print("Error: User not logged in.");
-      return;
-    }
-
-    // Iterate over each day and its respective meals
-    for (var day in mealTimes.keys) {
-      // Check if the day is active
-      if (dayToggles[day] == false) {
-        continue; // Skip this day if toggled off
-      }
-
-      for (var meal in mealTimes[day]!.keys) {
-        // Check if the meal is active
-        if (cellToggles[day]![meal] == false) {
-          continue; // Skip this meal if toggled off
-        }
-
-        // Get the meal's start and end time
-        final fromTime = mealTimes[day]![meal]!['From'];
-        final toTime = mealTimes[day]![meal]!['To'];
-
-        // Skip meals without valid times
-        if (fromTime == null || toTime == null || fromTime.isEmpty || toTime.isEmpty) {
-          print("Skipping $day - $meal: Invalid times.");
-          continue;
-        }
-
-        // Create an OperatingHour object
-        final operatingHour = OperatingHour(
-          isClosed: false,
-          startTime: fromTime,
-          endTime: toTime,
-        );
-
-        // Save to Firestore using your OperatingHoursService
-        await OperatingHoursService().saveOperatingHours(day, meal, operatingHour);
-      }
-    }
-
-    print("All operating hours saved successfully.");
-  }
-  Future<void> saveOperatingHours2(
-      String day, String mealPeriod, OperatingHour hour) async {
-    final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null) {
-      print("Error: User is not logged in.");
-      return;
-    }
-///  await FirebaseFirestore.instance
-//           .collection('restaurants')
-//           .doc(uid)
-//           .collection(day)
-//           .doc(mealPeriod)
-//           .set(hour.toMap());
-    try {
-      await FirebaseFirestore.instance
-          .collection('restaurants')
-          .doc(uid)
-          .collection('operatingHours')
-          .doc(day)
-          .set(hour.toMap());
-      print("$mealPeriod on $day saved successfully in Firestore.");
-    } catch (e) {
-      print("Error saving $mealPeriod on $day: $e");
-    }
-  }
 
   // Stores the selected times for each meal of each day
   var mealTimes = <String, Map<String, Map<String, String>>>{}.obs;
@@ -888,88 +791,6 @@ class AddRestaurantController extends GetxController {
       };
     }
   }
-  void updateOperatingHourFromUI(
-      String day,
-      String mealPeriod,
-      bool isClosed,
-      String? startTime,
-      String? endTime,
-      ) {
-    if (!selectedHours.containsKey(day)) {
-      selectedHours[day] = {};
-    }
-
-    selectedHours[day]![mealPeriod] = OperatingHour(
-      isClosed: isClosed,
-      startTime: startTime,
-      endTime: endTime,
-    );
-
-    // selectedHours.refresh(); // 🔹 This ensures UI updates if you're using GetX
-  }
-  Future<void> loadOperatingHours() async {
-    final uid = FirebaseAuth.instance.currentUser!.uid;
-    final firestore = FirebaseFirestore.instance;
-
-    for (String day in [
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-      "Sunday"
-    ]) {
-      final querySnapshot = await firestore
-          .collection("restaurants")
-          .doc(uid)
-          .collection(day)
-          .get();
-
-      for (var doc in querySnapshot.docs) {
-        selectedHours.putIfAbsent(day, () => {});
-        selectedHours[day]![doc.id] = OperatingHour.fromMap(doc.data());
-
-        // 🔹 Update UI variables
-        // updateUI(day, doc.id, selectedHours[day]![doc.id]!);
-      }
-    }
-
-    // selectedHours.refresh(); // 🔹 Ensure UI updates
-  }
-
-// 🔹 Function to sync Firestore data with UI
-//   void updateUI(String day, String mealPeriod, OperatingHour hour) {
-//     if (!cellToggles.containsKey(day)) {
-//       cellToggles[day] = {};
-//     }
-//     cellToggles[day]![mealPeriod] = !hour.isClosed; // Toggle state
-//
-//     if (!timeControllers.containsKey(day)) {
-//       timeControllers[day] = {};
-//     }
-//     timeControllers[day]![mealPeriod] = TextEditingController(
-//       text: hour.startTime != null ? "${hour.startTime} - ${hour.endTime}" : "",
-//     );
-//   }
-//   Future<void> saveAllOperatingHours() async {
-//     print('Saving Data: $selectedHours'); // Debugging print
-//
-//     for (var day in selectedHours.keys) {
-//       for (var mealPeriod in selectedHours[day]!.keys) {
-//         if (cellToggles[day]?[mealPeriod] == false) {
-//           // If toggle is OFF, mark it as closed
-//           selectedHours[day]![mealPeriod]!.isClosed = true;
-//         }
-//
-//         await OperatingHoursService().saveOperatingHours(
-//           day,
-//           mealPeriod,
-//           selectedHours[day]![mealPeriod]!,
-//         );
-//       }
-//     }
-//   }
 
   Future<void> selectTime(
       BuildContext context, String day, String meal, String type) async {
@@ -983,61 +804,30 @@ class AddRestaurantController extends GetxController {
       mealTimes.refresh();
     }
   }
+  final List<LocationListModel> circleItems3 = [
+    LocationListModel(
+      timeText: '15:00 to 15:00',
+      persentText: '5% off',
+    ),
+    LocationListModel(
+      timeText: '16:00 to 16:00',
+      persentText: '15% off',
+    ),
+    LocationListModel(
+      timeText: '14:00 to 14:00',
+      persentText: '20% off',
+    ),
 
-  Map<String, Map<String, OperatingHour>> selectedHours = {};
+  ];
 
-  void updateOperatingHour(String day, String mealPeriod, bool isClosed,
-      String? startTime, String? endTime) {
-    if (!selectedHours.containsKey(day)) {
-      selectedHours[day] =
-          {}; // Initialize inner map for the day if not present
-    }
 
-    selectedHours[day]![mealPeriod] = OperatingHour(
-      isClosed: isClosed,
-      startTime: startTime,
-      endTime: endTime,
-    );
-  }
+  final toDateController = TextEditingController();
+  final fromDateController = TextEditingController();
+  final toTimeController = TextEditingController();
+  final fromTimeHourController = TextEditingController();
+  final fromTimeMinuteController = TextEditingController();
 
-  // Future<void> saveAllOperatingHours() async {
-  //   print('hdfbvh');
-  //   for (var day in selectedHours.keys) {
-  //     for (var mealPeriod in selectedHours[day]!.keys) {
-  //       await OperatingHoursService().saveOperatingHours(
-  //         day,
-  //         mealPeriod,
-  //         selectedHours[day]![mealPeriod]!,
-  //       );
-  //     }
-  //   }
-  // }
 
-  // Future<void> loadOperatingHours() async {
-  //   final uid = FirebaseAuth.instance.currentUser!.uid;
-  //   final firestore = FirebaseFirestore.instance;
-  //
-  //   for (String day in [
-  //     "Monday",
-  //     "Tuesday",
-  //     "Wednesday",
-  //     "Thursday",
-  //     "Friday",
-  //     "Saturday",
-  //     "Sunday"
-  //   ]) {
-  //     final querySnapshot = await firestore
-  //         .collection("restaurants")
-  //         .doc(uid)
-  //         .collection(day)
-  //         .get();
-  //
-  //     for (var doc in querySnapshot.docs) {
-  //       selectedHours.putIfAbsent(day, () => {});
-  //       selectedHours[day]![doc.id] = OperatingHour.fromMap(doc.data());
-  //     }
-  //   }
-  // }
 }
 
 // Model class for location data

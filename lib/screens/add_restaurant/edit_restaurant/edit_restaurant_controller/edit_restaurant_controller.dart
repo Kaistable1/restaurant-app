@@ -1,10 +1,17 @@
 
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 
 class EditRestaurantController extends GetxController {
 
+  final TextEditingController fromTimeHourController = TextEditingController();
+  final TextEditingController fromTimeMintController = TextEditingController();
+  final TextEditingController offerController = TextEditingController();
+  final TextEditingController toTimeMintController = TextEditingController();
+  final TextEditingController toTimeHourController = TextEditingController();
 
   final List<LocationListModel> circleItems3 = [
     LocationListModel(
@@ -32,4 +39,31 @@ class LocationListModel {
     required this.timeText,
     required this.persentText,
   });
+}
+class ItemController extends GetxController {
+  var items = <Map<String, dynamic>>[].obs;
+  var images = <XFile>[].obs;
+  final offerController = TextEditingController();
+
+  void addItem(String name, String description, String price) {
+    if (name.isNotEmpty && description.isNotEmpty && price.isNotEmpty) {
+      items.add({
+        'name': name,
+        'description': description,
+        'price': price,
+        'images': images.toList(), // Add images list
+      });
+      images.clear(); // Clear images after adding item
+    } else {
+      print('Please fill all fields');
+    }
+  }
+
+  Future<void> pickImages() async {
+    final ImagePicker picker = ImagePicker();
+    final pickedFiles = await picker.pickMultiImage();
+    if (pickedFiles != null) {
+      images.addAll(pickedFiles);
+    }
+  }
 }
