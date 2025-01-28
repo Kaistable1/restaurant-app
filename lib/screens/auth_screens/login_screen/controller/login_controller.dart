@@ -75,9 +75,10 @@ class LoginController extends GetxController {
 
   Future<void> logIn() async {
     loadingDialog(message: 'Please wait !!!!', loading: true);
-///to remove later
-    emailController.text ='eman.noor@alestrasol.com';
-    passwordController.text ='AestraSol1223@';
+
+    ///to remove later
+    emailController.text = 'eman.noor@alestrasol.com';
+    passwordController.text = 'Qwertyt2@123';
 
     try {
       await auth
@@ -128,5 +129,4 @@ class LoginController extends GetxController {
       }
     }
   }
-
 }

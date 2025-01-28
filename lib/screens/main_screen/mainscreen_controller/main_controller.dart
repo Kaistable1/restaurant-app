@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:restaurant_web_app/constants/colors.dart';
+import 'package:restaurant_web_app/main.dart';
 import 'package:restaurant_web_app/screens/auth_screens/login_screen/login_screen.dart';
 import 'package:restaurant_web_app/utils/responsive.dart';
 import 'package:restaurant_web_app/widgets/round_button.dart';
@@ -126,7 +127,10 @@ class MainController extends GetxController {
                           height:
                               40, // Adjusted button height for better clickability
                           onPressed: () {
-                            Get.offAll(() => const LoginScreen()); // Close the dialog
+                            auth.signOut().then((value) {
+                              Get.offAll(() => const LoginScreen()); // Close the dialog
+                            });
+
                             // Add logout logic here (e.g., navigate to login screen)
                           },
                         ),

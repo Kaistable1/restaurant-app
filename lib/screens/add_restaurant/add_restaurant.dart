@@ -25,6 +25,7 @@ class AddEditRestaurantScreen extends StatelessWidget {
   bool? isFromButtonClick;
   @override
   Widget build(BuildContext context) {
+    controller.getCurrentLocation();
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: isFromButtonClick == null
@@ -51,7 +52,7 @@ class AddEditRestaurantScreen extends StatelessWidget {
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.1),
-                          offset: Offset(0, 4),
+                          offset: const Offset(0, 4),
                           blurRadius: 6,
                           spreadRadius: 0,
                         ),
@@ -61,11 +62,11 @@ class AddEditRestaurantScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(4.0),
                       child: Row(
                         children: [
-                          SizedBox(width: 8),
-                          Text('Account Settings'),
-                          Spacer(),
+                          const SizedBox(width: 8),
+                          const Text('Account Settings'),
+                          const Spacer(),
                           PopupMenuButton<String>(
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.keyboard_arrow_down_sharp,
                               color: AppColors.primaryColor,
                             ),
@@ -90,8 +91,8 @@ class AddEditRestaurantScreen extends StatelessWidget {
                                       width: 24,
                                       height: 24,
                                     ),
-                                    SizedBox(width: 16),
-                                    Text('Home'),
+                                    const SizedBox(width: 16),
+                                    const Text('Home'),
                                   ],
                                 ),
                               ),
@@ -104,8 +105,8 @@ class AddEditRestaurantScreen extends StatelessWidget {
                                       width: 24,
                                       height: 24,
                                     ),
-                                    SizedBox(width: 16),
-                                    Text('View Restaurant Details'),
+                                    const SizedBox(width: 16),
+                                    const Text('View Restaurant Details'),
                                   ],
                                 ),
                               ),
@@ -118,8 +119,8 @@ class AddEditRestaurantScreen extends StatelessWidget {
                                       width: 24,
                                       height: 24,
                                     ),
-                                    SizedBox(width: 16),
-                                    Text('Change Password'),
+                                    const SizedBox(width: 16),
+                                    const Text('Change Password'),
                                   ],
                                 ),
                               ),
@@ -132,8 +133,8 @@ class AddEditRestaurantScreen extends StatelessWidget {
                                       width: 24,
                                       height: 24,
                                     ),
-                                    SizedBox(width: 16),
-                                    Text('Logout'),
+                                    const SizedBox(width: 16),
+                                    const Text('Logout'),
                                   ],
                                 ),
                               ),
@@ -261,7 +262,7 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                             color:
                                                 Colors.black.withOpacity(0.2),
                                             blurRadius: 6,
-                                            offset: Offset(0, 3),
+                                            offset: const Offset(0, 3),
                                           ),
                                         ],
                                       ),
@@ -271,14 +272,14 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                             : (Responsive.isTablet(context)
                                                 ? 16
                                                 : 18),
-                                        icon: Icon(Icons.arrow_back,
+                                        icon: const Icon(Icons.arrow_back,
                                             color: AppColors.primaryColor),
                                         onPressed: () {
                                           Get.back();
                                         },
                                       ),
                                     ),
-                                    SizedBox(width: 10),
+                                    const SizedBox(width: 10),
                                     Text(
                                       'Add Restaurant Details',
                                       style: TextStyle(
@@ -295,7 +296,7 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                     // Placeholder for spacing to align the title to the center.
                                   ],
                                 ),
-                                SizedBox(height: 8),
+                                const SizedBox(height: 8),
                                 // Restaurant Name Section
                                 RichText(
                                   text: TextSpan(
@@ -324,7 +325,7 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                     ],
                                   ),
                                 ),
-                                SizedBox(height: 8),
+                                const SizedBox(height: 8),
                                 CustomTextField(
                                   controller: restaurantController
                                       .restaurantNameController,
@@ -350,7 +351,7 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                             color: Colors.red, fontSize: 12),
                                       )
                                     : const SizedBox.shrink()),
-                                SizedBox(height: 24),
+                                const SizedBox(height: 24),
 
                                 // Image Section
                                 RichText(
@@ -380,7 +381,7 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                     ],
                                   ),
                                 ),
-                                SizedBox(height: 8),
+                                const SizedBox(height: 8),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -401,7 +402,7 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                                   ? 150
                                                   : 100,
                                           decoration: BoxDecoration(
-                                            image: DecorationImage(
+                                            image: const DecorationImage(
                                               image: AssetImage(
                                                   'assets/images/img3.png'),
                                               fit: BoxFit.cover,
@@ -410,7 +411,7 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                                 BorderRadius.circular(10),
                                           ),
                                         ),
-                                        SizedBox(width: 16),
+                                        const SizedBox(width: 16),
                                         // Image 2
                                         Container(
                                           height: isDesktop
@@ -424,7 +425,7 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                                   ? 150
                                                   : 100,
                                           decoration: BoxDecoration(
-                                            image: DecorationImage(
+                                            image: const DecorationImage(
                                               image: AssetImage(
                                                   'assets/images/img4.png'),
                                               fit: BoxFit.cover,
@@ -433,7 +434,7 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                                 BorderRadius.circular(10),
                                           ),
                                         ),
-                                        SizedBox(width: 16),
+                                        const SizedBox(width: 16),
                                         // Add New Image
                                         GestureDetector(
                                           onTap: () =>
@@ -472,10 +473,10 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                         ),
                                       ],
                                     ),
-                                    SizedBox(height: 16),
+                                    const SizedBox(height: 16),
                                   ],
                                 ),
-                                SizedBox(height: 24),
+                                const SizedBox(height: 24),
 
                                 // Logo Section
                                 RichText(
@@ -505,120 +506,145 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                     ],
                                   ),
                                 ),
-                                SizedBox(height: 8),
+                                const SizedBox(height: 8),
 
                                 ///start of logo
 
                                 GestureDetector(
-                                  onTap: () async {
-                                    Uint8List? selectedImage = await controller.getImage();
+                                    onTap: () async {
+                                      print('abcd');
+                                      print('abcd ' '''''' '');
+                                      Uint8List? selectedImage =
+                                          await controller.getImage();
 
-                                    if (selectedImage != null && selectedImage.isNotEmpty) {
-                                      restaurantController.restaurantModel.logoImageMemory.value =
-                                          selectedImage;
-                                    }
-
-                                  }/*=> _pickImage(isLogo: true)*/,
-                                  child: _imageBytes == null
-                                      ? Container(
-                                          height: isDesktop
-                                              ? 150
-                                              : isTablet
-                                                  ? 120
-                                                  : 110,
-                                          width: 516,
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: Colors.grey
-                                                    .withOpacity(.1)),
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                            color: AppColors.whiteColor,
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(16.0),
-                                            child: DottedBorder(
-                                              borderType: BorderType.RRect,
-                                              radius: Radius.circular(12),
-                                              dashPattern: [6, 3],
-                                              color: AppColors.primaryColor,
-                                              strokeWidth: 1,
-                                              child: Container(
+                                      if (selectedImage != null &&
+                                          selectedImage.isNotEmpty) {
+                                        restaurantController
+                                            .restaurantModel
+                                            .logoImageMemory
+                                            .value = selectedImage;
+                                      }
+                                    } /*=> _pickImage(isLogo: true)*/,
+                                    child: restaurantController.restaurantModel
+                                            .logoImageMemory.value.isNotEmpty
+                                        ? Image.memory(
+                                            restaurantController.restaurantModel
+                                                .logoImageMemory.value,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : restaurantController.restaurantModel
+                                                    .logoImage.value !=
+                                                ''
+                                            ? Image.network(
+                                                restaurantController
+                                                    .restaurantModel
+                                                    .logoImage
+                                                    .value,
+                                                fit: BoxFit.cover)
+                                            : Container(
+                                                height: isDesktop
+                                                    ? 150
+                                                    : isTablet
+                                                        ? 120
+                                                        : 110,
+                                                width: 516,
                                                 decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: Colors.grey
+                                                          .withOpacity(.1)),
                                                   borderRadius:
                                                       BorderRadius.circular(12),
                                                   color: AppColors.whiteColor,
                                                 ),
-                                                child: Center(
-                                                  child: Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      Icon(
-                                                          Icons
-                                                              .upload_file_outlined,
-                                                          size: 32,
-                                                          color: AppColors
-                                                              .primaryColor),
-                                                      Text(
-                                                        'Upload Logo',
-                                                        style: TextStyle(
-                                                          fontSize: Responsive
-                                                                  .isMobile(
-                                                                      context)
-                                                              ? 12
-                                                              : (Responsive
-                                                                      .isTablet(
-                                                                          context)
-                                                                  ? 14
-                                                                  : 16),
-                                                          color: AppColors
-                                                              .primaryColor,
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      16.0),
+                                                  child: DottedBorder(
+                                                    borderType:
+                                                        BorderType.RRect,
+                                                    radius:
+                                                        const Radius.circular(
+                                                            12),
+                                                    dashPattern: [6, 3],
+                                                    color:
+                                                        AppColors.primaryColor,
+                                                    strokeWidth: 1,
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(12),
+                                                        color: AppColors
+                                                            .whiteColor,
+                                                      ),
+                                                      child: Center(
+                                                        child: Column(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: [
+                                                            const Icon(
+                                                                Icons
+                                                                    .upload_file_outlined,
+                                                                size: 32,
+                                                                color: AppColors
+                                                                    .primaryColor),
+                                                            Text(
+                                                              'Upload Logo',
+                                                              style: TextStyle(
+                                                                fontSize: Responsive
+                                                                        .isMobile(
+                                                                            context)
+                                                                    ? 12
+                                                                    : (Responsive.isTablet(
+                                                                            context)
+                                                                        ? 14
+                                                                        : 16),
+                                                                color: AppColors
+                                                                    .primaryColor,
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              'Upload a .png file only',
+                                                              style: TextStyle(
+                                                                fontSize: Responsive
+                                                                        .isMobile(
+                                                                            context)
+                                                                    ? 12
+                                                                    : (Responsive.isTablet(
+                                                                            context)
+                                                                        ? 14
+                                                                        : 16),
+                                                                color: AppColors
+                                                                    .primaryColor,
+                                                              ),
+                                                            ),
+                                                          ],
                                                         ),
                                                       ),
-                                                      Text(
-                                                        'Upload a .png file only',
-                                                        style: TextStyle(
-                                                          fontSize: Responsive
-                                                                  .isMobile(
-                                                                      context)
-                                                              ? 12
-                                                              : (Responsive
-                                                                      .isTablet(
-                                                                          context)
-                                                                  ? 14
-                                                                  : 16),
-                                                          color: AppColors
-                                                              .primaryColor,
-                                                        ),
-                                                      ),
-                                                    ],
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            ),
-                                          ),
-                                        )
-                                      : Container(
-                                          height: isDesktop
-                                              ? 150
-                                              : isTablet
-                                                  ? 120
-                                                  : 110,
-                                          width: 516,
-                                          decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                              image: MemoryImage(_imageBytes!),
-                                              fit: BoxFit.cover,
-                                            ),
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                          ),
-                                        ),
-                                ),
+                                              )
+                                    // : Container(
+                                    //     height: isDesktop
+                                    //         ? 150
+                                    //         : isTablet
+                                    //             ? 120
+                                    //             : 110,
+                                    //     width: 516,
+                                    //     decoration: BoxDecoration(
+                                    //       image: DecorationImage(
+                                    //         image: MemoryImage(_imageBytes!),
+                                    //         fit: BoxFit.cover,
+                                    //       ),
+                                    //       borderRadius:
+                                    //           BorderRadius.circular(12),
+                                    //     ),
+                                    //   ),
+                                    ),
 
-                             ///end of logo
-                                SizedBox(height: 24),
+                                ///end of logo
+                                const SizedBox(height: 24),
 
                                 // Save Button
                                 RichText(
@@ -648,10 +674,10 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                     ],
                                   ),
                                 ),
-                                SizedBox(height: 8),
+                                const SizedBox(height: 8),
                                 CustomTextField(
-                                  controller:
-                                      restaurantController.restaurantModel.address,
+                                  controller: restaurantController
+                                      .restaurantModel.address,
                                   borderColor:
                                       AppColors.darkGrey.withOpacity(.1),
                                   width: 516,
@@ -663,7 +689,7 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                       color: AppColors.blackColor),
                                   hintStyle: const TextStyle(
                                       color: AppColors.blackColor),
-                                  suffixIcon: Icon(Icons.location_on,
+                                  suffixIcon: const Icon(Icons.location_on,
                                       color: AppColors.primaryColor),
                                 ),
                                 const SizedBox(height: 5),
@@ -710,7 +736,7 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                         ],
                                       ),
                                     ),
-                                    SizedBox(height: 8),
+                                    const SizedBox(height: 8),
                                     CustomTextField(
                                       controller:
                                           restaurantController.phoneController,
@@ -723,7 +749,7 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                             color: AppColors.darkGrey
                                                 .withOpacity(.1),
                                           ),
-                                          child: Center(
+                                          child: const Center(
                                             child: Text(
                                               '+1',
                                               style: TextStyle(
@@ -756,7 +782,7 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                                 fontSize: 12),
                                           )
                                         : const SizedBox.shrink()),
-                                    SizedBox(height: 8),
+                                    const SizedBox(height: 8),
                                     RichText(
                                       text: TextSpan(
                                         text: 'City ',
@@ -785,7 +811,7 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                         ],
                                       ),
                                     ),
-                                    SizedBox(height: 8),
+                                    const SizedBox(height: 8),
                                     CustomTextField(
                                       controller:
                                           restaurantController.cityController,
@@ -812,7 +838,7 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                                 fontSize: 12),
                                           )
                                         : const SizedBox.shrink()),
-                                    SizedBox(height: 8),
+                                    const SizedBox(height: 8),
                                     RichText(
                                       text: TextSpan(
                                         text: 'Zip code ',
@@ -841,7 +867,7 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                         ],
                                       ),
                                     ),
-                                    SizedBox(height: 8),
+                                    const SizedBox(height: 8),
                                     CustomTextField(
                                       controller: restaurantController
                                           .zipCodeController,
@@ -869,7 +895,7 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                                 fontSize: 12),
                                           )
                                         : const SizedBox.shrink()),
-                                    SizedBox(height: 8),
+                                    const SizedBox(height: 8),
                                     // Text(
                                     //   'Cuisines',
                                     //   style: TextStyle(
@@ -1048,7 +1074,7 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                     menuItemStyleData: const MenuItemStyleData(
                                       height: 40,
                                     ),
-                                    iconStyleData: IconStyleData(
+                                    iconStyleData: const IconStyleData(
                                       icon: Icon(
                                         Icons
                                             .keyboard_arrow_down_outlined, // Custom icon for dropdown
@@ -1079,7 +1105,7 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                           ? Get.width * 0.3
                                           : Get.width * 0.2,
                                       onPressed: () {
-                                        restaurantController.saveNextScreen();
+                                           restaurantController.saveNextScreen();
                                       },
                                     ),
                                     const SizedBox(
@@ -1129,9 +1155,9 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
         Container(
           width: 170, // Adjusted width
           height: 50, // Adjusted height
-          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-          margin:
-              EdgeInsets.only(bottom: 10), // Adds spacing between containers
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          margin: const EdgeInsets.only(
+              bottom: 10), // Adds spacing between containers
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
@@ -1142,7 +1168,7 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
           child: Center(
             child: Text(
               restaurantController.addedCuisines[index],
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
             ),
           ),
         ),
@@ -1160,12 +1186,12 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
             child: Container(
               width: 15, // Circular button size
               height: 15, // Circular button size
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: AppColors
                     .primaryColor, // Background color for the circular container
                 shape: BoxShape.circle, // Makes the container circular
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.close, // Cross icon
                 color: Colors.white, // Icon color
                 size: 10, // Icon size

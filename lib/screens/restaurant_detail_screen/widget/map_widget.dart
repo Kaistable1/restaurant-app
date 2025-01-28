@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:restaurant_web_app/screens/add_restaurant/add_resturant_controller/add_resturant%20_controller.dart';
 
 import '../../../../constants/colors.dart';
 import '../../../../utils/responsive.dart';
 import '../controller/restaurant_detail_controller.dart';
 
 class MapWidget extends StatelessWidget {
-  const MapWidget({
+  MapWidget({
     super.key,
     required this.controller,
   });
 
   final RestaurantDetailController controller;
-
+  final addController = Get.put(AddRestaurantController());
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
@@ -23,9 +25,35 @@ class MapWidget extends StatelessWidget {
           double mapHeight = MediaQuery.of(context).size.width > 600
               ? 500
               : 300; // Adjust for tablet/desktop
-          return Container(
+          return Obx((){return Container(
             height: mapHeight,
-            child: GoogleMap(
+            child:GoogleMap(
+              mapType: MapType.normal,
+              initialCameraPosition: CameraPosition(
+                target: LatLng(addController.latitude.value,
+                    addController.longitude.value),
+                zoom: 14,
+              ),
+              onMapCreated: (mapController) {
+                addController.mapController.complete(mapController);
+              },
+              markers: {
+                Marker(
+                  markerId: const MarkerId('currentLocation'),
+                  position: LatLng(addController.latitude.value,
+                      addController.longitude.value),
+                ),
+              },
+              onCameraIdle: () async {
+                // await controller.getAddress();
+              },
+              myLocationButtonEnabled: true,
+              onCameraMove: (position) async {
+                addController.latitude.value = position.target.latitude;
+                addController.longitude.value = position.target.longitude;
+
+              },
+            ), /*GoogleMap(
               markers: {
                 const Marker(
                   markerId: MarkerId('Property location'),
@@ -40,8 +68,13 @@ class MapWidget extends StatelessWidget {
               onMapCreated: (GoogleMapController gController) {
                 controller.completer.complete(gController);
               },
-            ),
-          );
+              onTap: (LatLng) {
+
+                addController.restaurantModel.latitude = LatLng.latitude;
+                addController.restaurantModel.longitude = LatLng.longitude;
+              },
+            ),*/
+          );});
         },
       ),
     );

@@ -110,8 +110,7 @@ class ChangePasswordScreen extends StatelessWidget {
                                 if (_formKey.currentState?.validate() ??
                                     false) {
                                   controller.savePassword(_formKey);
-                                  Get.snackbar('Saved',
-                                      'Your data is successfully updated');
+
                                   // Save password logic
                                 }
                               },

@@ -19,6 +19,7 @@ class OperatingHourScreen1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    controller.loadOperatingHours();
     double screenWidth = MediaQuery.of(context).size.width;
     bool isLargeScreen = screenWidth > 1600;
     controller.aboutError.value = '';
@@ -181,7 +182,7 @@ class OperatingHourScreen1 extends StatelessWidget {
                   SizedBox(width: 10),
                   GestureDetector(
                     onTap: () {
-                      controller.saveOperatingHours();
+                      controller.saveAllOperatingHours();
                     },
                     child: const Text(
                       'Add Operating Hours',

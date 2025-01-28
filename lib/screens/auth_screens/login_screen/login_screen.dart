@@ -138,48 +138,48 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 12),
-
-                // Checkbox with text (Remember me)
-                Obx(() => Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 24,
-                          height: 24,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: AppColors.primaryColor,
-                              width: 2,
-                            ),
-                            borderRadius: BorderRadius.circular(4.0),
-                          ),
-                          child: Checkbox(
-                            value: controller.isRememberMeChecked.value,
-                            side: const BorderSide(color: Colors.transparent),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4.0)),
-                            onChanged: (bool? value) {
-                              controller.isRememberMeChecked.value =
-                                  value ?? false;
-                            },
-                            activeColor: Colors.transparent,
-                            checkColor: AppColors.primaryColor,
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        const Text(
-                          "Remember me",
-                          style: TextStyle(
-                            color: AppColors.primaryColor,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    )),
-                const SizedBox(height: 20),
+                // const SizedBox(height: 12),
+                //
+                // // Checkbox with text (Remember me)
+                // Obx(() => Row(
+                //       mainAxisAlignment: MainAxisAlignment.start,
+                //       children: [
+                //         Container(
+                //           width: 24,
+                //           height: 24,
+                //           decoration: BoxDecoration(
+                //             border: Border.all(
+                //               color: AppColors.primaryColor,
+                //               width: 2,
+                //             ),
+                //             borderRadius: BorderRadius.circular(4.0),
+                //           ),
+                //           child: Checkbox(
+                //             value: controller.isRememberMeChecked.value,
+                //             side: const BorderSide(color: Colors.transparent),
+                //             shape: RoundedRectangleBorder(
+                //                 borderRadius: BorderRadius.circular(4.0)),
+                //             onChanged: (bool? value) {
+                //               controller.isRememberMeChecked.value =
+                //                   value ?? false;
+                //             },
+                //             activeColor: Colors.transparent,
+                //             checkColor: AppColors.primaryColor,
+                //           ),
+                //         ),
+                //         const SizedBox(
+                //           width: 10,
+                //         ),
+                //         const Text(
+                //           "Remember me",
+                //           style: TextStyle(
+                //             color: AppColors.primaryColor,
+                //             fontWeight: FontWeight.w600,
+                //           ),
+                //         ),
+                //       ],
+                //     )),
+                const SizedBox(height: 35),
 
                 // Login Button (Centered)
                 CustomButton(

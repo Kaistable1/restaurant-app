@@ -80,13 +80,13 @@ class RestaurantModel {
 
 // Convert the model instance to a map for storing in Firestore
   Future<Map<String, dynamic>> toMap() async {
-    logoImage.value =
-        logoImage.value.contains('https://firebasestorage.googleapis.com/') &&
-                logoImageMemory.value.isEmpty
-            ? logoImage.value
-            : logoImageMemory.value.isNotEmpty
-                ? await uploadImageToFirebase('logo', logoImageMemory.value)
-                : '';
+    // logoImage.value =
+    //     logoImage.value.contains('https://firebasestorage.googleapis.com/') &&
+    //             logoImageMemory.value.isEmpty
+    //         ? logoImage.value
+    //         : logoImageMemory.value.isNotEmpty
+    //             ? await uploadImageToFirebase('logo', logoImageMemory.value)
+    //             : '';
     List<Map<String, dynamic>> data = [];
     for (var element in entertainmentScheduleList) {
       var d = await element.toMap();
@@ -106,6 +106,7 @@ class RestaurantModel {
       'resEmail': resEmail.text,
       'socialLink': socialLink.text,
       'address': address.text,
+      'zipCode': zipCode.text,
       'city': city.text,
       'logoImage': logoImage.value,
       'specialConditions': specialConditions.text,
