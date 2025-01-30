@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
+import 'package:kaistable_website/main.dart';
+import 'package:kaistable_website/screens/detail_screens/restaurant_detail_screen.dart';
 import 'package:kaistable_website/widgets/rectangle_widget.dart';
 
 import '../home_screen/home_controller/home_location_controller.dart';
@@ -13,7 +16,7 @@ class FavoriteScreen extends StatelessWidget {
   final HomeLocationController mycontroller = Get.put(HomeLocationController());
 
   FavoriteScreen({super.key, this.onNavigate}) {
-    mycontroller.selectedTop.value='';
+    mycontroller.selectedTop.value = '';
   }
 
   @override
@@ -25,7 +28,8 @@ class FavoriteScreen extends StatelessWidget {
         Get.back();
         return false;
       },
-      child: Scaffold( backgroundColor: AppColors.bgColor,
+      child: Scaffold(
+        backgroundColor: AppColors.bgColor,
         appBar: AppBar(
           backgroundColor: AppColors.bgColor,
           iconTheme: IconThemeData(
@@ -58,70 +62,99 @@ class FavoriteScreen extends StatelessWidget {
               ),
             ),
           ),
-
-          title: Text('Favorites',
+          title: Text(
+            'Favorites',
             style: TextStyle(
               fontSize: 20,
               color: AppColors.bottomSheetColor,
               fontWeight: FontWeight.w700,
               fontFamily: 'Nunito-Bold',
-            ),),
+            ),
+          ),
         ),
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.only(left: 16,right: 16),
+            padding: const EdgeInsets.only(left: 16, right: 16),
             child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Obx(() {
-                      return GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          mainAxisExtent: 220,
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(auth.currentUser!.uid) // Current user's document
+                      .collection('favorite')
+                      .snapshots(), // Stream the favorite collection to listen for changes
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator(); // Show loading indicator
+                    }
+                    if (snapshot.hasError) {
+                      return Text('Something went wrong!'); // Handle errors
+                    }
+
+                    // Extract restaurant IDs from the favorite collection
+                    var favoriteRestaurantIds = snapshot.data!.docs
+                        .map((doc) => doc['resturantID'])
+                        .toList();
+
+                    // Filter the restaurant list to show only the favorites
+                    var favoriteRestaurants = mycontroller.resaturant_list
+                        .where((restaurant) => favoriteRestaurantIds.contains(
+                            restaurant
+                                .docID)) // Assuming 'id' is a property of restaurant
+                        .toList();
+                    if (favoriteRestaurants.isEmpty) {
+                      return Container(
+                        width: double.infinity,
+                        height: Get.height * 0.6,
+                        child: Center(
+                          child: Text('No favorite restaurants!'),
                         ),
-                        itemCount: controller.favoriteItems.length,
-                        itemBuilder: (context, index) {
-                          final item = controller.favoriteItems[index];
-                          return InkWell(
-                            onTap: () {
-                              if (onNavigate != null) {
-                                onNavigate!(8);
-                              }
-                            },
-                            child: RectangleWidget(
-                              onNavigate: onNavigate,
-                              title: item.title,
-                              description: item.description,
-                              imagePath: item.imagePath,
-                              timetext: item.timetext,
-                              endTimeText: item.endTimeText,
-                              percentText: item.percentText,
-                              isFavorite: true.obs,
-
-                            ),
-                          );
-                        },
                       );
-
-
-                    }),
-              SizedBox(height:  30 ),
-
-
-
-
-                  ],
+                    }
+                    return GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        mainAxisExtent: 220,
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                      ),
+                      itemCount: favoriteRestaurants
+                          .length, // Set the item count to the length of favorite restaurants
+                      itemBuilder: (context, index) {
+                        final item = favoriteRestaurants[index];
+                        return InkWell(
+                          onTap: () {
+                            Get.to(RestaurantDetailScreen(
+                              restaurantModel: item,
+                            ));
+                          },
+                          child: RectangleWidget(
+                            onNavigate: onNavigate,
+                            title: item.resName,
+                            description: item.about,
+                            imagePath: item.logoImage,
+                            timetext: '',
+                            endTimeText: '',
+                            percentText: '',
+                            resturant_id: item.docID,
+                            percentageOff: item.menuList.percentageOff,
+                            isFavorite: true.obs,
+                          ),
+                        );
+                      },
+                    );
+                  },
                 ),
+                SizedBox(height: 30),
+              ],
+            ),
           ),
         ),
       ),
     );
-
-
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
+import 'package:kaistable_website/models/review_model.dart';
 import 'package:kaistable_website/screens/detail_screens/controller/restaurant_detail_controller.dart';
 import 'package:kaistable_website/screens/detail_screens/widget/map_widget.dart';
 import 'package:kaistable_website/screens/detail_screens/widget/review_widget.dart';
@@ -35,6 +36,13 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
       Get.put(HomeLocationController());
 
   @override
+  void initState() {
+    homeLocationController.addRecentView(
+        restaurantID: widget.restaurantModel?.docID ?? '');
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Obx(() {
       int indexOfMenuPersentageOff = 0;
@@ -45,9 +53,6 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
       indexOfMenuHappyHourOff =
           homeLocationController.selectedHappyhour.indexOf(true);
 
-      print('selected ------${homeLocationController.selectedPersentage}');
-
-      print('indexOfPersentage ${indexOfMenuPersentageOff}');
       return WillPopScope(
           onWillPop: () async {
             Get.back();
@@ -88,24 +93,8 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                 ),
               ),
               actions: [
-                Obx(() {
-                  return InkWell(
-                      onTap: () {
-                        controller.isFavorite.value =
-                            !controller.isFavorite.value;
-                      },
-                      child: controller.isFavorite.value
-                          ? Icon(
-                              size: 24,
-                              Icons.favorite,
-                              color: AppColors.primaryColor,
-                            )
-                          : Icon(
-                              size: 24,
-                              Icons.favorite_border_outlined,
-                              color: AppColors.primaryColor,
-                            ));
-                }),
+                HomeLocationController()
+                    .favoriteHeart(resturant_id: widget.restaurantModel?.docID),
                 SizedBox(
                   width: 12,
                 )
@@ -178,13 +167,22 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                             // Instagram Icon
                             GestureDetector(
                               onTap: () async {
-                                if (!await launchUrl(Uri.parse(widget
-                                            .restaurantModel?.socialLink
+                                String link = widget.restaurantModel?.socialLink
                                             .contains('instagram') ??
                                         false
                                     ? widget.restaurantModel?.socialLink ?? ''
-                                    : ''))) {
-                                  throw Exception('Could not launch ');
+                                    : '';
+                                if (link == '') {
+                                  Get.snackbar('Oops!', 'URl not available');
+                                } else {
+                                  await launchUrl(
+                                    Uri.parse(widget.restaurantModel?.socialLink
+                                                .contains('instagram') ??
+                                            false
+                                        ? widget.restaurantModel?.socialLink ??
+                                            ''
+                                        : ''),
+                                  );
                                 }
                               },
                               child: Image.asset(
@@ -196,15 +194,24 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                             Spacer(),
                             GestureDetector(
                               onTap: () async {
-                                if (!await launchUrl(Uri.parse(widget
-                                            .restaurantModel?.socialLink
+                                String link = widget.restaurantModel?.socialLink
                                             .contains('youtube') ??
                                         false
                                     ? widget.restaurantModel?.socialLink ?? ''
-                                    : ''))) {
-                                  throw Exception('Could not launch ');
+                                    : '';
+                                if (link == '') {
+                                  Get.snackbar('Oops!', 'URl not available');
+                                } else {
+                                  await launchUrl(
+                                    Uri.parse(widget.restaurantModel?.socialLink
+                                                .contains('youtube') ??
+                                            false
+                                        ? widget.restaurantModel?.socialLink ??
+                                            ''
+                                        : ''),
+                                  );
                                 }
-                              }, // URL to open
+                              },
                               child: Image.asset(
                                 "assets/images/youtube.png",
                                 height: 22,
@@ -215,15 +222,24 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                             // X (Twitter) Icon
                             GestureDetector(
                               onTap: () async {
-                                if (!await launchUrl(Uri.parse(widget
-                                            .restaurantModel?.socialLink
+                                String link = widget.restaurantModel?.socialLink
                                             .contains('twitter') ??
                                         false
                                     ? widget.restaurantModel?.socialLink ?? ''
-                                    : ''))) {
-                                  throw Exception('Could not launch ');
+                                    : '';
+                                if (link == '') {
+                                  Get.snackbar('Oops!', 'URl not available');
+                                } else {
+                                  await launchUrl(
+                                    Uri.parse(widget.restaurantModel?.socialLink
+                                                .contains('twitter') ??
+                                            false
+                                        ? widget.restaurantModel?.socialLink ??
+                                            ''
+                                        : ''),
+                                  );
                                 }
-                              }, // URL to open
+                              },
                               child: Image.asset(
                                 "assets/images/X.png",
                                 height: 20,
@@ -286,18 +302,23 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                                         ],
                                       ),
                                       // Table data rows
-                                      ...controller.rowData.map((data) {
+                                      ...widget.restaurantModel!
+                                          .entertainmentScheduleList
+                                          .map((data) {
                                         return TableRow(
                                           decoration: const BoxDecoration(
                                             color: Colors
                                                 .white, // Row background color
                                           ),
                                           children: [
-                                            buildDataCell(data["Name"] ?? ""),
-                                            buildDataCell(data["By"] ?? ""),
-                                            buildDataCell(data["Day"] ?? ""),
-                                            buildDataCell(data["Date"] ?? ""),
-                                            buildDataCell(data["Time"] ?? ""),
+                                            buildDataCell(data.eventName ?? ""),
+                                            buildDataCell(data.eventBy ?? ""),
+                                            buildDataCell(data.day ?? ""),
+                                            buildDataCell(data.date ?? ""),
+                                            buildDataCell(data.startTime +
+                                                    ' - ' +
+                                                    data.endTime ??
+                                                ""),
                                           ],
                                         );
                                       }).toList(),
@@ -307,9 +328,16 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                               ],
                             )
                           : controller.selectedTop.value == 'About'
-                              ? AboutSectionWidget()
+                              ? AboutSectionWidget(
+                                  aboutText:
+                                      widget.restaurantModel?.about ?? '',
+                                  resturantID:
+                                      widget.restaurantModel?.docID ?? '',
+                                )
                               : controller.selectedTop.value == 'Reviews'
-                                  ? ReviewWidget()
+                                  ? ReviewWidget(
+                                      restaurantModel: widget.restaurantModel,
+                                    )
                                   : Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -859,64 +887,85 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                               SizedBox(
                                 height: 4,
                               ),
-                              Row(
-                                children: [
-                                  Text(
-                                    '(4.0)',
-                                    style: TextStyle(
-                                      color: Color(0xFF4F5761),
-                                      fontSize: 16,
-                                      fontFamily: 'Nunito-Regular',
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 14,
-                                    child: RatingBar(
-                                      itemSize: 14,
-                                      ignoreGestures: true,
-                                      initialRating: 4,
-                                      minRating: 1,
-                                      direction: Axis.horizontal,
-                                      allowHalfRating: true,
-                                      itemCount: 5,
-                                      ratingWidget: RatingWidget(
-                                        full: Image.asset(
-                                          'assets/images/star yellow.png',
-                                          height: 19,
+                              StreamBuilder<List<ReviewModel>>(
+                                  stream: homeLocationController.getReviews(
+                                      widget.restaurantModel?.docID ?? ''),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return Center(
+                                          child: CircularProgressIndicator());
+                                    }
+                                    if (!snapshot.hasData ||
+                                        snapshot.data!.isEmpty) {
+                                      return SizedBox();
+                                    }
+
+                                    final reviews = snapshot.data!;
+                                    return Row(
+                                      children: [
+                                        Text(
+                                          '(${reviews.map((e) => e.starRating).reduce((a, b) => a! + b!)! / reviews.length})',
+                                          style: TextStyle(
+                                            color: Color(0xFF4F5761),
+                                            fontSize: 16,
+                                            fontFamily: 'Nunito-Regular',
+                                            fontWeight: FontWeight.w400,
+                                          ),
                                         ),
-                                        half: Image.asset(
-                                          'assets/images/star yellow.png',
-                                          height: 19,
+                                        SizedBox(
+                                          height: 14,
+                                          child: RatingBar(
+                                            itemSize: 14,
+                                            ignoreGestures: true,
+                                            initialRating: reviews
+                                                    .map((e) =>
+                                                        e.starRating ?? 0)
+                                                    .reduce((a, b) => a + b) /
+                                                reviews.length,
+                                            minRating: 1,
+                                            direction: Axis.horizontal,
+                                            allowHalfRating: true,
+                                            itemCount: 5,
+                                            ratingWidget: RatingWidget(
+                                              full: Image.asset(
+                                                'assets/images/star yellow.png',
+                                                height: 19,
+                                              ),
+                                              half: Image.asset(
+                                                'assets/images/star yellow.png',
+                                                height: 19,
+                                              ),
+                                              empty: Image.asset(
+                                                'assets/images/star_empty.png',
+                                                height: 19,
+                                              ),
+                                            ),
+                                            itemPadding: const EdgeInsets.only(
+                                                left: 2.0, bottom: 20),
+                                            onRatingUpdate: (rating) {
+                                              print(rating);
+                                            },
+                                          ),
                                         ),
-                                        empty: Image.asset(
-                                          'assets/images/star_empty.png',
-                                          height: 19,
+                                        const SizedBox(width: 10),
+                                        Text(
+                                          '${reviews.length} reviews',
+                                          style: TextStyle(
+                                            color: AppColors.darkGrey,
+                                            fontSize: 16,
+                                            fontFamily: 'Nunito-Regular',
+                                            fontWeight: FontWeight.w400,
+                                            decoration:
+                                                TextDecoration.underline,
+                                          ),
                                         ),
-                                      ),
-                                      itemPadding: const EdgeInsets.only(
-                                          left: 2.0, bottom: 20),
-                                      onRatingUpdate: (rating) {
-                                        print(rating);
-                                      },
-                                    ),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Text(
-                                    '234 reviews',
-                                    style: TextStyle(
-                                      color: AppColors.darkGrey,
-                                      fontSize: 16,
-                                      fontFamily: 'Nunito-Regular',
-                                      fontWeight: FontWeight.w400,
-                                      decoration: TextDecoration.underline,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  )
-                                ],
-                              ),
+                                        const SizedBox(
+                                          width: 10,
+                                        )
+                                      ],
+                                    );
+                                  }),
                               SizedBox(
                                 height: 4,
                               ),
@@ -954,10 +1003,15 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
 
                                           if (index < 4) {
                                             // Display the first 4 images normally
-                                            return Image.network(
-                                              imagePath,
-                                              height: 41,
-                                              width: 46,
+                                            return ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                              child: Image.network(
+                                                imagePath,
+                                                fit: BoxFit.cover,
+                                                height: 41,
+                                                width: 46,
+                                              ),
                                             );
                                           } else if (index == 4 &&
                                               widget.restaurantModel!.imagesList
@@ -1080,10 +1134,14 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                        child: Image.network(
-                          imageList[index],
-                          width: 60,
-                          height: 66,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.network(
+                            imageList[index],
+                            fit: BoxFit.cover,
+                            width: 60,
+                            height: 50,
+                          ),
                         ),
                       );
                     },
@@ -1285,9 +1343,19 @@ class Line10 extends StatelessWidget {
 class RatingRowWidget extends StatelessWidget {
   final bool isImage;
   final List<String> imagePaths;
-
-  const RatingRowWidget(
-      {super.key, required this.isImage, required this.imagePaths});
+  String user_name;
+  double rating;
+  String description;
+  String date;
+  RatingRowWidget({
+    super.key,
+    required this.isImage,
+    required this.imagePaths,
+    required this.rating,
+    required this.date,
+    required this.description,
+    required this.user_name,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1305,7 +1373,7 @@ class RatingRowWidget extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      'Kristin Watson',
+                      user_name,
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
@@ -1317,7 +1385,7 @@ class RatingRowWidget extends StatelessWidget {
                       width: 180,
                     ),
                     Text(
-                      'June 30, 2024',
+                      date,
                       style: TextStyle(
                         color: AppColors.bottomSheetColor,
                         fontFamily: 'Nunito-Bold',
@@ -1334,7 +1402,7 @@ class RatingRowWidget extends StatelessWidget {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: '(5.0) ', // Rating text
+                        text: '${rating}', // Rating text
                         style: TextStyle(
                           color: const Color(0xFF4F5761),
                           fontSize: 10,
@@ -1348,7 +1416,7 @@ class RatingRowWidget extends StatelessWidget {
                           child: RatingBar(
                             itemSize: 12,
                             ignoreGestures: true,
-                            initialRating: 4,
+                            initialRating: rating,
                             minRating: 1,
                             direction: Axis.horizontal,
                             allowHalfRating: true,
@@ -1381,7 +1449,7 @@ class RatingRowWidget extends StatelessWidget {
                   width: 338,
                   height: 32,
                   child: Text(
-                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor',
+                    description,
                     style: TextStyle(
                       fontFamily: 'Nunito-Regular',
                       fontSize: 12,
@@ -1414,7 +1482,7 @@ class RatingRowWidget extends StatelessWidget {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),
                           image: DecorationImage(
-                            image: AssetImage(imagePaths[index]),
+                            image: NetworkImage(imagePaths[index]),
                             fit: BoxFit.cover,
                           ),
                         ),

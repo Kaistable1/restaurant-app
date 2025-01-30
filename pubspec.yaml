@@ -56,6 +56,7 @@ dependencies:
   mailer: 
   firebase_messaging: ^15.2.1
   shared_preferences:
+  intl:
 
 
 dev_dependencies:

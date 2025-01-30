@@ -1,11 +1,15 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RestaurantModel {
   String resName;
+  String docID;
   String resEmail;
   String specialConditions;
   String socialLink;
   String password;
+  double averageRating;
   String city;
   String address;
   String zipCode;
@@ -19,6 +23,7 @@ class RestaurantModel {
   String priceRange;
   double latitude;
   double longitude;
+  DateTime dateTime; // New field
   List<EntertainmentScheduleModel> entertainmentScheduleList;
   MenuModel menuList;
   String about; // New field
@@ -26,9 +31,11 @@ class RestaurantModel {
   // Constructor
   RestaurantModel({
     required this.facilityList,
+    required this.docID,
     required this.entertainmentScheduleList,
     required this.menuList,
     required this.city,
+    required this.averageRating,
     required this.longitude,
     required this.latitude,
     required this.imagesList,
@@ -46,13 +53,16 @@ class RestaurantModel {
     required this.logoImage,
     required this.spokenLanguage,
     required this.about, // Initialize in constructor
+    required this.dateTime, // Initialize dateTime
   });
 
   // Initialize the model with defaults
   static RestaurantModel initialize() {
     return RestaurantModel(
       resName: '',
+      docID: '',
       socialLink: '',
+      averageRating: 0.0,
       resEmail: '',
       city: '',
       address: '',
@@ -61,7 +71,6 @@ class RestaurantModel {
       dietaryList: <String>[],
       atmopshereList: <String>[],
       imagesList: <String>[],
-
       specialConditions: '',
       password: '',
       spokenLanguage: '',
@@ -73,6 +82,7 @@ class RestaurantModel {
       entertainmentScheduleList: [],
       menuList: MenuModel.initialize(),
       about: '', // Default value
+      dateTime: DateTime.now(), // Default to current datetime
     );
   }
 
@@ -89,10 +99,12 @@ class RestaurantModel {
 
     return {
       'resName': resName,
+      'docID': docID,
       'facilityList': facilityList,
       'dietaryList': dietaryList,
       'atmopshereList': atmopshereList,
       'resEmail': resEmail,
+      'averageRating': averageRating,
       'socialLink': socialLink,
       'address': address,
       'city': city,
@@ -108,6 +120,7 @@ class RestaurantModel {
       'socialMedia': socialMedia,
       'priceRange': priceRange,
       'about': about, // Add to Firestore map
+      'dateTime': dateTime.toIso8601String(), // Convert DateTime to String
     };
   }
 
@@ -116,6 +129,8 @@ class RestaurantModel {
       DocumentSnapshot<Map<String, dynamic>> snapshot) {
     return RestaurantModel(
       resName: snapshot.data()!['resName'],
+      averageRating: snapshot.data()!['averageRating'],
+      docID: snapshot.data()!['docID'],
       zipCode: snapshot.data()!['zipCode'],
       imagesList: snapshot.data()!['imagesList'],
       city: snapshot.data()!['city'],
@@ -139,6 +154,9 @@ class RestaurantModel {
       priceRange: snapshot.data()!['priceRange'],
       logoImage: snapshot.data()!['logoImage'],
       about: snapshot.data()!['about'] ?? '', // Extract `about` field
+      dateTime: snapshot.data()!['dateTime'] != null
+          ? DateTime.parse(snapshot.data()!['dateTime'])
+          : DateTime.now(), // Parse `dateTime` or set default
       entertainmentScheduleList: List<EntertainmentScheduleModel>.from(
         (snapshot.data()!['entertainmentScheduleList'] as List<dynamic>? ?? [])
             .map((e) =>
@@ -326,7 +344,7 @@ class HappyHourModel {
       startTime: data['startTime'],
       endTime: data['endTime'],
       percentage: data['percentage'],
-     food: MealModel.fromMap(data['food'] as Map<String, dynamic>),
+      food: MealModel.fromMap(data['food'] as Map<String, dynamic>),
       drink: MealModel.fromMap(data['drink'] as Map<String, dynamic>),
       cuisine: data['cuisine'],
     );

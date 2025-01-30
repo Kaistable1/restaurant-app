@@ -1,5 +1,9 @@
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/models/usermodel.dart';
 
@@ -17,4 +21,29 @@ Future<void> getCurrentUserData() async {
       }
     });
   }
+}
+
+Future<String> uploadImageToFirebase(
+    String refPath, Uint8List imagePath) async {
+  try {
+    String url = '';
+
+    String id = auth.currentUser != null
+        ? "${DateTime.now().millisecondsSinceEpoch}${auth.currentUser!.uid.toString()}"
+        : '${DateTime.now().millisecondsSinceEpoch}';
+
+    final ref = FirebaseStorage.instance.ref(refPath).child(id);
+    final uploadTask = await ref.putData(imagePath);
+
+    url = await uploadTask.ref.getDownloadURL();
+    print('image url ------------------ $url');
+    return url;
+  } catch (e) {
+    print('image upload error ------------- $e');
+    return '';
+  }
+}
+
+String formatDate(DateTime date) {
+  return DateFormat('MMMM d, y').format(date);
 }

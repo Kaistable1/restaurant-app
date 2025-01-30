@@ -156,9 +156,9 @@ class SignupController extends GetxController {
     });
   }
 
+//update user choices one by one
   updateUserData({field, entry}) async {
     try {
-      print('listing $entry');
       await FirebaseFirestore.instance
           .collection('users')
           .doc(auth.currentUser?.uid)

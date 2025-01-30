@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kaistable_website/main.dart';
+import 'package:kaistable_website/models/resaturant_model.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../custom_widget/separate_text_field.dart';
@@ -12,13 +14,7 @@ import 'location_controller/location_controller.dart';
 class LocationScreen extends StatelessWidget {
   // final ScrollController scrollcontroller;
   final Function(int)? onNavigate;
-  final List<String> items = [
-    '10%',
-    '20%',
-    '30%',
-    '40%',
-    '50%',
-  ];
+
   final LocationController locationController = Get.put(LocationController());
   final HomeLocationController homeController =
       Get.put(HomeLocationController());
@@ -28,9 +24,12 @@ class LocationScreen extends StatelessWidget {
   }) {
     homeController.selectedTop.value = '';
   }
+  List<RestaurantModel> filteredRestaurants = [];
+
 
   @override
   Widget build(BuildContext context) {
+    filteredRestaurants=homeController.resaturant_list;
     double screenWidth = MediaQuery.of(context).size.width;
     bool isLargeScreen = screenWidth > 1400;
     return WillPopScope(
@@ -107,7 +106,7 @@ class LocationScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
-                      'New york',
+                      currentUserDataModel?.value.city ?? "",
                       style: TextStyle(
                         color: AppColors.primaryColor,
                         fontFamily: 'aftika-regular',
@@ -131,6 +130,16 @@ class LocationScreen extends StatelessWidget {
                       child: CustomSeparateTextField(
                         controller: homeController.searchController,
                         hintText: 'Try searching for restaurant name',
+                        onChanged: (v) {
+                          filteredRestaurants =homeController.resaturant_list
+                              .where((item) => item.resName
+                              .toLowerCase()
+                              .contains(homeController
+                              .searchController.text
+                              .toLowerCase()))
+                              .toList();
+                          homeController.update();
+                        },
                         hintStyle: TextStyle(
                           color: AppColors.hintText,
                           fontFamily: "Nunito-Regular",
@@ -185,39 +194,44 @@ class LocationScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 12),
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        mainAxisExtent: 220,
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                        childAspectRatio: itemWidth / itemHeight,
-                      ),
-                      itemCount: homeController.resaturant_list.length,
-                      itemBuilder: (context, index) {
-                        final item = homeController.resaturant_list[index];
-                        return InkWell(
-                          onTap: () {
-                            print('item ${item.logoImage}');
-                            Get.to(RestaurantDetailScreen(
-                              restaurantModel: item,
-                            ));
-                          },
-                          child: RectangleWidget(
-                            onNavigate: onNavigate,
-                            title: item.resName,
-                            description: item.about,
-                            imagePath: item.logoImage,
-                            timetext: '10 AM',
-                            percentText: '25%',
-                            endTimeText: '9 PM',
-                            isFavorite: false.obs,
-                          ),
-                        );
-                      },
-                    ),
+                    GetBuilder<HomeLocationController>(
+                        builder: (homeLocationController) {
+                      return GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          mainAxisExtent: 220,
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          childAspectRatio: itemWidth / itemHeight,
+                        ),
+                        itemCount:filteredRestaurants.length,
+                        itemBuilder: (context, index) {
+                          final item = filteredRestaurants[index];
+                          return InkWell(
+                            onTap: () {
+                              print('item ${item.logoImage}');
+                              Get.to(RestaurantDetailScreen(
+                                restaurantModel: item,
+                              ));
+                            },
+                            child: RectangleWidget(
+                              onNavigate: onNavigate,
+                              title: item.resName,
+                              description: item.about,
+                              resturant_id: item.docID,
+                              imagePath: item.logoImage,
+                              timetext: '10 AM',
+                              percentText: '25%',
+                              endTimeText: '9 PM',
+                              percentageOff: item.menuList.percentageOff,
+                              isFavorite: false.obs,
+                            ),
+                          );
+                        },
+                      );
+                    }),
                     const SizedBox(height: 30),
                   ],
                 ),

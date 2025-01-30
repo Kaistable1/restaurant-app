@@ -1,8 +1,14 @@
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/models/usermodel.dart';
+import 'package:kaistable_website/utils/loading.dart';
+import 'package:kaistable_website/widgets/global_functions.dart';
 
 class ProfileController extends GetxController {
   final userNameController = TextEditingController();
@@ -21,7 +27,7 @@ class ProfileController extends GetxController {
 
   ///Image Picker
   var imagePath = ''.obs;
-
+  Uint8List? imageBytes;
   pickImage(RxString imagePath, ImageSource imageSource) async {
     Get.back();
     final ImagePicker imagePicker = ImagePicker();
@@ -30,6 +36,8 @@ class ProfileController extends GetxController {
       imagePath.value = "";
     } else {
       imagePath.value = image.path;
+      imageBytes = await image.readAsBytes();
+      update();
     }
   }
 
@@ -42,6 +50,25 @@ class ProfileController extends GetxController {
       }
     } catch (e) {
       print('Error $e');
+    }
+  }
+
+//update user profile
+  updateProfile() async {
+    try {
+      loadingDialog(message: 'Please wait!', height: 150, loading: true);
+      String imgUrl = await uploadImageToFirebase('profile', imageBytes!);
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(auth.currentUser?.uid)
+          .update({
+        'userImage': imgUrl,
+        'username': userNameController.text,
+      });
+      Get.back();
+    } catch (e) {
+      Get.back();
+      print('Error update profile $e');
     }
   }
 }

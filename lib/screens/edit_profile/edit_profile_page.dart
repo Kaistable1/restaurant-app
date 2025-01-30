@@ -1,8 +1,10 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/screens/edit_profile/widget/image_picker.dart';
 
 import '../../constants/app_colors.dart';
@@ -107,9 +109,14 @@ class EditProfilePage extends StatelessWidget {
                                             controller.imagePath.toString(),
                                           ),
                                         )
-                                      : const AssetImage(
-                                          'assets/images/edit_profile_image.png',
-                                        ) as ImageProvider<Object>,
+                                      : currentUserDataModel!
+                                              .value.userImage.value.isNotEmpty
+                                          ? NetworkImage(currentUserDataModel
+                                                  ?.value.userImage.value ??
+                                              '')
+                                          : const AssetImage(
+                                              'assets/images/edit_profile_image.png',
+                                            ) as ImageProvider<Object>,
                                   fit: BoxFit.cover,
                                 )),
                           ),
@@ -223,7 +230,7 @@ class EditProfilePage extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                     height: 43,
                     width: 170,
-                    ontapp: () {
+                    ontapp: () async {
                       if (_formkey.currentState!.validate()) {
                         if (controller.imagePath.isEmpty) {
                           Get.snackbar(
@@ -234,10 +241,12 @@ class EditProfilePage extends StatelessWidget {
                             colorText: Colors.white,
                           );
                           return;
+                        } else {
+                          print('press');
+                          await controller.updateProfile();
+                          // controller.userNameController.clear();
+                          // Get.back();
                         }
-                        controller.userNameController.clear();
-                        controller.emailController.clear();
-                        Get.back();
                       }
                     },
                   ),

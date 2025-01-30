@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:kaistable_website/models/recent_view.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../utils/responsive.dart';
@@ -20,7 +21,7 @@ import '../../screens/home_screen/location_pages/location_screen.dart';
 import '../../screens/home_screen/new_view_all/new_viewall.dart';
 import '../../screens/home_screen/recently_viewed/recently_viewed.dart';
 import '../../screens/home_screen/theme/theme_view_all.dart';
-import '../../screens/home_screen/trendind_all/trending_view_all.dart';
+import '../../screens/home_screen/trending_all/trending_view_all.dart';
 
 class AllCategories extends StatelessWidget {
   final HomeLocationController controller = Get.put(HomeLocationController());
@@ -168,39 +169,47 @@ class AllCategories extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: 12),
-        Obx(() {
-          return Padding(
-            padding: EdgeInsets.only(
-              left: 14,
-              right: 14,
-            ),
-            child: GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                mainAxisExtent: 220,
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-              ),
-              itemCount: trendingController.trendingItem.take(2).length,
+        SizedBox(height: 10),
+        //showing trending restaurants
+        Padding(
+          padding: const EdgeInsets.only(left: 14, right: 14),
+          child: SizedBox(
+            height: Get.height * 0.26, // Fixed height for the horizontal list
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: controller.resaturant_list.length,
               itemBuilder: (context, index) {
-                final item = trendingController.trendingItem[index];
-                return RectangleWidget(
-                  //onNavigate: onNavigate,
-                  title: item.title,
-                  description: item.description,
-                  imagePath: item.imagePath,
-                  timetext: item.timetext,
-                  percentText: item.percentText,
-                  endTimeText: item.endTimeText,
-                  isFavorite: false.obs,
+                final item = controller.resaturant_list[index];
+                return Padding(
+                  padding:
+                      const EdgeInsets.only(right: 10), // Space between items
+                  child: InkWell(
+                    onTap: () {
+                      Get.to(RestaurantDetailScreen(
+                        restaurantModel: item,
+                      ));
+                    },
+                    child: SizedBox(
+                      width: Get.width * 0.45,
+                      child: RectangleWidget(
+                        title: item.resName,
+                        description: item.about,
+                        resturant_id: item.docID,
+                        imagePath: item.logoImage,
+                        timetext: '10 AM',
+                        percentText: '25%',
+                        endTimeText: '9 PM',
+                        percentageOff: item.menuList.percentageOff,
+                        isFavorite: false.obs,
+                      ),
+                    ),
+                  ),
                 );
               },
             ),
-          );
-        }),
+          ),
+        ),
+
         SizedBox(height: 16),
         Padding(
           padding: EdgeInsets.only(
@@ -236,108 +245,159 @@ class AllCategories extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: 12),
-        Obx(() {
-          return Padding(
-            padding: EdgeInsets.only(
-              left: 14,
-              right: 14,
-            ),
-            child: GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                mainAxisExtent: 220,
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-              ),
-              itemCount: newController.newItem.take(2).length,
+        SizedBox(height: 10),
+        Padding(
+          padding: const EdgeInsets.only(left: 14, right: 14),
+          child: SizedBox(
+            height: Get.height * 0.26, // Fixed height for the horizontal list
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: controller.resaturant_list.length,
               itemBuilder: (context, index) {
-                final item = newController.newItem[index];
-                return RectangleWidget(
-                  //onNavigate: onNavigate,
-                  title: item.title,
-                  description: item.description,
-                  imagePath: item.imagePath,
-                  timetext: item.timetext,
-                  percentText: item.percentText,
-                  endTimeText: item.endTimeText,
-                  isFavorite: false.obs,
+                // Sort the list by datetime before displaying
+                controller.resaturant_list.sort((a, b) {
+                  DateTime dateA = a.dateTime;
+                  DateTime dateB = b.dateTime;
+                  return dateB.compareTo(dateA); // Descending order
+                });
+                final item = controller.resaturant_list[index];
+                return Padding(
+                  padding:
+                      const EdgeInsets.only(right: 10), // Space between items
+                  child: InkWell(
+                    onTap: () {
+                      Get.to(RestaurantDetailScreen(
+                        restaurantModel: item,
+                      ));
+                    },
+                    child: SizedBox(
+                      width: Get.width * 0.45,
+                      child: RectangleWidget(
+                        title: item.resName,
+                        description: item.about,
+                        resturant_id: item.docID,
+                        imagePath: item.logoImage,
+                        timetext: '10 AM',
+                        percentText: '25%',
+                        endTimeText: '9 PM',
+                        percentageOff: item.menuList.percentageOff,
+                        isFavorite: false.obs,
+                      ),
+                    ),
+                  ),
                 );
               },
             ),
-          );
-        }),
-        SizedBox(height: 16),
-        Padding(
-          padding: EdgeInsets.only(
-            left: 14,
-            right: 18,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Recently Viewed',
-                style: TextStyle(
-                  color: AppColors.bottomSheetColor,
-                  fontFamily: 'aftika-regular',
-                  fontSize: 18,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-              InkWell(
-                  onTap: () {
-                    Get.to(RecentlyViewed());
-                  },
-                  child: Text(
-                    "view all",
-                    style: TextStyle(
-                        decoration: TextDecoration.underline,
-                        decorationColor: AppColors.primaryColor,
-                        fontFamily: 'Nunito-Regular',
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.primaryColor),
-                  ))
-            ],
           ),
         ),
-        SizedBox(height: 12),
-        Obx(() {
-          return Padding(
-            padding: EdgeInsets.only(
-              left: 14,
-              right: 14,
-            ),
-            child: GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                mainAxisExtent: 220,
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-              ),
-              itemCount:
-                  recentlyViewedController.recentlyViewedItem.take(2).length,
-              itemBuilder: (context, index) {
-                final item = recentlyViewedController.recentlyViewedItem[index];
-                return RectangleWidget(
-                  //   onNavigate: onNavigate,
-                  title: item.title,
-                  description: item.description,
-                  imagePath: item.imagePath,
-                  timetext: item.timeText,
-                  percentText: item.percentText,
-                  endTimeText: item.endTimeText,
-                  isFavorite: false.obs,
-                );
-              },
-            ),
-          );
-        }),
+
+        SizedBox(height: 16),
+        StreamBuilder(
+          stream: controller.getRecentViews(),
+          builder: (context, snapshot) {
+            List<RecentViewModel> resturantsIDs = snapshot.data ?? [];
+            // Sort the `resturantsIDs` list by `dateTime` in descending order
+            resturantsIDs.sort(
+                (a, b) => b.dateTime.compareTo(a.dateTime)); // Descending order
+
+// Map restaurant IDs from the sorted `resturantsIDs` list
+            List<String> sortedRestaurantIds = resturantsIDs
+                .map((recentView) => recentView.restaurantID)
+                .toList();
+
+// Filter the restaurant list based on the sorted IDs and maintain the same order
+            List filteredRestaurants = sortedRestaurantIds
+                .map((id) => controller.resaturant_list.firstWhere(
+                      (restaurant) => restaurant.docID == id,
+                    ))
+                .where((restaurant) => restaurant != null)
+                .toList();
+
+            if (filteredRestaurants.isNotEmpty) {
+              return Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: 14,
+                      right: 18,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Recently Viewed',
+                          style: TextStyle(
+                            color: AppColors.bottomSheetColor,
+                            fontFamily: 'aftika-regular',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        InkWell(
+                            onTap: () {
+                              Get.to(RecentlyViewed());
+                            },
+                            child: Text(
+                              "view all",
+                              style: TextStyle(
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: AppColors.primaryColor,
+                                  fontFamily: 'Nunito-Regular',
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColors.primaryColor),
+                            ))
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 12),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 14, right: 14),
+                    child: SizedBox(
+                      height: Get.height *
+                          0.26, // Fixed height for the horizontal list
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: filteredRestaurants
+                            .length, // Use filtered list length
+                        itemBuilder: (context, index) {
+                          final item = filteredRestaurants[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(
+                                right: 10), // Space between items
+                            child: InkWell(
+                              onTap: () {
+                                Get.to(RestaurantDetailScreen(
+                                  restaurantModel: item,
+                                ));
+                              },
+                              child: SizedBox(
+                                width: Get.width * 0.45,
+                                child: RectangleWidget(
+                                  title: item.resName,
+                                  description: item.about,
+                                  resturant_id: item.docID,
+                                  imagePath: item.logoImage,
+                                  timetext: '10 AM',
+                                  percentText: '25%',
+                                  endTimeText: '9 PM',
+                                  percentageOff: item.menuList.percentageOff,
+                                  isFavorite: false.obs,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }
+            return SizedBox();
+          },
+        ),
+
         SizedBox(height: 16),
       ],
     );

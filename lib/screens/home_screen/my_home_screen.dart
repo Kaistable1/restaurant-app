@@ -161,7 +161,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                           Get.to(LocationScreen());
                         },
                         child: Text(
-                          'USA.Los Vegas',
+                          '${currentUserDataModel?.value.country}.${currentUserDataModel?.value.city}',
                           style: TextStyle(
                             color: AppColors.textColor,
                             fontWeight: FontWeight.w800,
@@ -298,7 +298,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Text(
-                                  '${currentUserDataModel?.value.country}',
+                                  '${currentUserDataModel?.value.city}',
                                   style: TextStyle(
                                     color: AppColors.bottomSheetColor,
                                     fontFamily: 'aftika-regular',
