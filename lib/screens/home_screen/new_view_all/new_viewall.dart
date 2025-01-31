@@ -27,7 +27,7 @@ class NewViewall extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     filteredRestaurants = homeController.resaturant_list;
-    filteredRestaurants.sort((a, b) => b.dateTime.compareTo(a.dateTime));
+    filteredRestaurants.sort((a, b) => b.createdAt.compareTo(a.createdAt));
     double screenWidth = MediaQuery.of(context).size.width;
     bool isLargeScreen = screenWidth > 1400;
     return WillPopScope(

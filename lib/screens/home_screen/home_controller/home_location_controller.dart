@@ -39,8 +39,7 @@ class HomeLocationController extends GetxController {
     if (selectedPersentage.isNotEmpty) {
       selectedPersentage[0] = true;
     }
-    print('selectedPersentage: $selectedPersentage');
-    print('selectedHappyhour: $selectedHappyhour');
+
   }
 
   final searchController = TextEditingController();
@@ -114,7 +113,7 @@ class HomeLocationController extends GetxController {
       socialLink: "https://instagram.com/fancyfork",
       password: "securepassword123",
       city: "New York",
-      dateTime: DateTime.now().subtract(Duration(days: 2)),
+      createdAt: DateTime.now().subtract(Duration(days: 2)),
       address: "123 Gourmet St",
       zipCode: "10001",
       logoImage:
@@ -155,7 +154,7 @@ class HomeLocationController extends GetxController {
       ],
       menuList: MenuModel(
         percentageOff: [
-          PersentageModel(
+          OfferModel(
             startTime: "12:00 PM",
             endTime: "2:00 PM",
             percentage: '20 %',
@@ -177,7 +176,7 @@ class HomeLocationController extends GetxController {
             ),
             cuisine: "American",
           ),
-          PersentageModel(
+          OfferModel(
             startTime: "4:00 PM",
             endTime: "6:00 PM",
             percentage: '26 %',
@@ -197,7 +196,7 @@ class HomeLocationController extends GetxController {
             ),
             cuisine: "American",
           ),
-          PersentageModel(
+          OfferModel(
             startTime: "1:00 PM",
             endTime: "2:00 PM",
             percentage: '60 %',
@@ -217,7 +216,7 @@ class HomeLocationController extends GetxController {
           ),
         ],
         happyHourSpecials: [
-          HappyHourModel(
+          OfferModel(
             startTime: "5:00 PM",
             endTime: "7:00 PM",
             percentage: '30 %',
@@ -246,7 +245,7 @@ class HomeLocationController extends GetxController {
     RestaurantModel(
       resName: "Spice Symphony",
       averageRating: 2,
-      dateTime: DateTime.now().subtract(Duration(days: 5)),
+      createdAt: DateTime.now().subtract(Duration(days: 5)),
       docID: '2323452345345345345',
       resEmail: "contact@fancyfork.com",
       specialConditions: "No pets allowed",
@@ -293,7 +292,7 @@ class HomeLocationController extends GetxController {
       ],
       menuList: MenuModel(
         percentageOff: [
-          PersentageModel(
+          OfferModel(
             startTime: "12:00 PM",
             endTime: "2:00 PM",
             percentage: '20 %',
@@ -315,7 +314,7 @@ class HomeLocationController extends GetxController {
             ),
             cuisine: "American",
           ),
-          PersentageModel(
+          OfferModel(
             startTime: "4:00 PM",
             endTime: "6:00 PM",
             percentage: '26 %',
@@ -335,7 +334,7 @@ class HomeLocationController extends GetxController {
             ),
             cuisine: "American",
           ),
-          PersentageModel(
+          OfferModel(
             startTime: "1:00 PM",
             endTime: "2:00 PM",
             percentage: '60 %',
@@ -355,7 +354,7 @@ class HomeLocationController extends GetxController {
           ),
         ],
         happyHourSpecials: [
-          HappyHourModel(
+          OfferModel(
             startTime: "5:00 PM",
             endTime: "7:00 PM",
             percentage: '30 %',
@@ -387,7 +386,7 @@ class HomeLocationController extends GetxController {
       docID: '456456456786786978687',
       resEmail: "contact@fancyfork.com",
       specialConditions: "No pets allowed",
-      dateTime: DateTime.now().subtract(Duration(days: 1)),
+      createdAt: DateTime.now().subtract(Duration(days: 1)),
       socialLink: "https://instagram.com/fancyfork",
       password: "securepassword123",
       city: "New York",
@@ -431,7 +430,7 @@ class HomeLocationController extends GetxController {
       ],
       menuList: MenuModel(
         percentageOff: [
-          PersentageModel(
+          OfferModel(
             startTime: "12:00 PM",
             endTime: "2:00 PM",
             percentage: '20 %',
@@ -453,7 +452,7 @@ class HomeLocationController extends GetxController {
             ),
             cuisine: "American",
           ),
-          PersentageModel(
+          OfferModel(
             startTime: "4:00 PM",
             endTime: "6:00 PM",
             percentage: '26 %',
@@ -473,7 +472,7 @@ class HomeLocationController extends GetxController {
             ),
             cuisine: "American",
           ),
-          PersentageModel(
+          OfferModel(
             startTime: "1:00 PM",
             endTime: "2:00 PM",
             percentage: '60 %',
@@ -493,7 +492,7 @@ class HomeLocationController extends GetxController {
           ),
         ],
         happyHourSpecials: [
-          HappyHourModel(
+          OfferModel(
             startTime: "5:00 PM",
             endTime: "7:00 PM",
             percentage: '30 %',
@@ -722,7 +721,7 @@ class HomeLocationController extends GetxController {
             socialLink: doc['socialLink'],
             password: "securepassword123",
             city: doc['city'],
-            dateTime: DateTime.now().subtract(Duration(days: 30)),
+            createdAt: DateTime.now().subtract(Duration(days: 30)),
             address: doc['address'],
             zipCode: doc['zipCode'],
             logoImage: doc['logoImage'],
@@ -762,7 +761,7 @@ class HomeLocationController extends GetxController {
             ],
             menuList: MenuModel(
               percentageOff: [
-                PersentageModel(
+                OfferModel(
                   startTime: "12:00 PM",
                   endTime: "2:00 PM",
                   percentage: '20 %',
@@ -784,7 +783,7 @@ class HomeLocationController extends GetxController {
                   ),
                   cuisine: "American",
                 ),
-                PersentageModel(
+                OfferModel(
                   startTime: "4:00 PM",
                   endTime: "6:00 PM",
                   percentage: '26 %',
@@ -804,7 +803,7 @@ class HomeLocationController extends GetxController {
                   ),
                   cuisine: "American",
                 ),
-                PersentageModel(
+                OfferModel(
                   startTime: "1:00 PM",
                   endTime: "2:00 PM",
                   percentage: '60 %',
@@ -824,7 +823,7 @@ class HomeLocationController extends GetxController {
                 ),
               ],
               happyHourSpecials: [
-                HappyHourModel(
+                OfferModel(
                   startTime: "5:00 PM",
                   endTime: "7:00 PM",
                   percentage: '30 %',
@@ -905,19 +904,31 @@ class HomeLocationController extends GetxController {
     }
   }
 
-Stream<List<RecentViewModel>> getRecentViews() {
-  // Access the Firestore collection where recent views are stored for the current user
-  var recentViewCollection = FirebaseFirestore.instance
-      .collection('users')
-      .doc(auth.currentUser?.uid)
-      .collection('recentView');
+  Stream<List<RecentViewModel>> getRecentViews() {
+    // Access the Firestore collection where recent views are stored for the current user
+    var recentViewCollection = FirebaseFirestore.instance
+        .collection('users')
+        .doc(auth.currentUser?.uid)
+        .collection('recentView');
 
-  return recentViewCollection.snapshots().map((querySnapshot) {
-    // Convert the documents to RecentViewModel objects
-    return querySnapshot.docs.map((doc) {
-      return RecentViewModel.fromMap(doc.data() as Map<String, dynamic>);
-    }).toList();
-  });
-}
+    return recentViewCollection.snapshots().map((querySnapshot) {
+      // Convert the documents to RecentViewModel objects
+      return querySnapshot.docs.map((doc) {
+        return RecentViewModel.fromMap(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
+   getRestaurants() async 
+   {
+    try{
+
+    }catch(e)
+    {
+      print('Error $e');
+    }
+   }
+
+
 
 }

@@ -47,7 +47,6 @@ class _LocationStarWidgetState extends State<LocationStarWidget> {
 
   @override
   Widget build(BuildContext context) {
-    print('selected ------${homeLocationController.selectedPersentage}');
     return Obx(() {
       bool isToggle = widget.menuType == 'HappyHour'
           ? homeLocationController.selectedHappyhour[widget.index]

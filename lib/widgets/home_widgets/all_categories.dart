@@ -256,8 +256,8 @@ class AllCategories extends StatelessWidget {
               itemBuilder: (context, index) {
                 // Sort the list by datetime before displaying
                 controller.resaturant_list.sort((a, b) {
-                  DateTime dateA = a.dateTime;
-                  DateTime dateB = b.dateTime;
+                  DateTime dateA = a.createdAt;
+                  DateTime dateB = b.createdAt;
                   return dateB.compareTo(dateA); // Descending order
                 });
                 final item = controller.resaturant_list[index];

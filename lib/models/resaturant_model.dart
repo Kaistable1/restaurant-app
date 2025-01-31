@@ -23,7 +23,7 @@ class RestaurantModel {
   String priceRange;
   double latitude;
   double longitude;
-  DateTime dateTime; // New field
+  DateTime createdAt; // New field
   List<EntertainmentScheduleModel> entertainmentScheduleList;
   MenuModel menuList;
   String about; // New field
@@ -53,7 +53,7 @@ class RestaurantModel {
     required this.logoImage,
     required this.spokenLanguage,
     required this.about, // Initialize in constructor
-    required this.dateTime, // Initialize dateTime
+    required this.createdAt, // Initialize createdAt
   });
 
   // Initialize the model with defaults
@@ -82,7 +82,7 @@ class RestaurantModel {
       entertainmentScheduleList: [],
       menuList: MenuModel.initialize(),
       about: '', // Default value
-      dateTime: DateTime.now(), // Default to current datetime
+      createdAt: DateTime.now(), // Default to current createdAt
     );
   }
 
@@ -120,7 +120,7 @@ class RestaurantModel {
       'socialMedia': socialMedia,
       'priceRange': priceRange,
       'about': about, // Add to Firestore map
-      'dateTime': dateTime.toIso8601String(), // Convert DateTime to String
+      'createdAt': createdAt.toIso8601String(), // Convert createdAt to String
     };
   }
 
@@ -132,7 +132,7 @@ class RestaurantModel {
       averageRating: snapshot.data()!['averageRating'],
       docID: snapshot.data()!['docID'],
       zipCode: snapshot.data()!['zipCode'],
-      imagesList: snapshot.data()!['imagesList'],
+      imagesList: snapshot.data()!['resImages'],
       city: snapshot.data()!['city'],
       resEmail: snapshot.data()!['resEmail'],
       socialLink: snapshot.data()!['socialLink'],
@@ -154,9 +154,9 @@ class RestaurantModel {
       priceRange: snapshot.data()!['priceRange'],
       logoImage: snapshot.data()!['logoImage'],
       about: snapshot.data()!['about'] ?? '', // Extract `about` field
-      dateTime: snapshot.data()!['dateTime'] != null
-          ? DateTime.parse(snapshot.data()!['dateTime'])
-          : DateTime.now(), // Parse `dateTime` or set default
+      createdAt: snapshot.data()!['createdAt'] != null
+          ? DateTime.parse(snapshot.data()!['createdAt'])
+          : DateTime.now(), // Parse `createdAt` or set default
       entertainmentScheduleList: List<EntertainmentScheduleModel>.from(
         (snapshot.data()!['entertainmentScheduleList'] as List<dynamic>? ?? [])
             .map((e) =>
@@ -227,8 +227,8 @@ class EntertainmentScheduleModel {
 }
 
 class MenuModel {
-  List<PersentageModel> percentageOff; // List of percentage offers
-  List<HappyHourModel> happyHourSpecials; // List of happy hour specials
+  List<OfferModel> percentageOff; // List of percentage offers
+  List<OfferModel> happyHourSpecials; // List of happy hour specials
 
   // Constructor
   MenuModel({
@@ -257,70 +257,35 @@ class MenuModel {
   static MenuModel fromMap(Map<String, dynamic> data) {
     return MenuModel(
       percentageOff: (data['percentageOff'] as List<dynamic>? ?? [])
-          .map((item) => PersentageModel.fromMap(item as Map<String, dynamic>))
+          .map((item) => OfferModel.fromMap(item as Map<String, dynamic>))
           .toList(),
       happyHourSpecials: (data['happyHourSpecials'] as List<dynamic>? ?? [])
-          .map((item) => HappyHourModel.fromMap(item as Map<String, dynamic>))
+          .map((item) => OfferModel.fromMap(item as Map<String, dynamic>))
           .toList(),
     );
   }
 }
 
-class PersentageModel {
+
+class OfferModel {
   String? startTime;
   String? endTime;
   String? percentage;
   MealModel food; // List of food meals
   MealModel drink; // List of drink meals
   String? cuisine;
+  String? discountType;
+  String? fromDate;
+  String? toDate;
 
   // Constructor
-  PersentageModel({
+  OfferModel({
     this.startTime,
     this.endTime,
+    this.toDate,
     this.percentage,
-    required this.food,
-    required this.drink,
-    this.cuisine,
-  });
-  // Convert the model instance to a map for Firestore
-  Map<String, dynamic> toMap() {
-    return {
-      'startTime': startTime,
-      'endTime': endTime,
-      'percentage': percentage,
-      'food': food,
-      'drink': drink,
-      'cuisine': cuisine,
-    };
-  }
-
-  // Create a model instance from Firestore data
-  static PersentageModel fromMap(Map<String, dynamic> data) {
-    return PersentageModel(
-      startTime: data['startTime'],
-      endTime: data['endTime'],
-      percentage: data['percentage'],
-      food: MealModel.fromMap(data['food'] as Map<String, dynamic>),
-      drink: MealModel.fromMap(data['drink'] as Map<String, dynamic>),
-      cuisine: data['cuisine'],
-    );
-  }
-}
-
-class HappyHourModel {
-  String? startTime;
-  String? endTime;
-  String? percentage;
-  MealModel food; // List of food meals
-  MealModel drink; // List of drink meals
-  String? cuisine;
-
-  // Constructor
-  HappyHourModel({
-    this.startTime,
-    this.endTime,
-    this.percentage,
+    this.discountType,
+    this.fromDate,
     required this.food,
     required this.drink,
     this.cuisine,
@@ -330,7 +295,11 @@ class HappyHourModel {
   Map<String, dynamic> toMap() {
     return {
       'startTime': startTime,
+      'discountType' : discountType,
       'endTime': endTime,
+      'fromDate' : fromDate,
+      'toDate' : toDate,
+
       'percentage': percentage,
       'food': food,
       'drink': drink,
@@ -339,11 +308,14 @@ class HappyHourModel {
   }
 
   // Create a model instance from Firestore data
-  static HappyHourModel fromMap(Map<String, dynamic> data) {
-    return HappyHourModel(
-      startTime: data['startTime'],
-      endTime: data['endTime'],
-      percentage: data['percentage'],
+  static OfferModel fromMap(Map<String, dynamic> data) {
+    return OfferModel(
+      startTime: data['menu']['fromTime'],
+      endTime: data['menu']['toTime'],
+      fromDate: data['fromDate'],
+      toDate: data['toDate'],
+      discountType : data['menu']['discountType'],
+      percentage: data['menu']['percentageValue'],
       food: MealModel.fromMap(data['food'] as Map<String, dynamic>),
       drink: MealModel.fromMap(data['drink'] as Map<String, dynamic>),
       cuisine: data['cuisine'],
@@ -372,8 +344,8 @@ class MealModel {
   // Create a model instance from Firestore data
   static MealModel fromMap(Map<String, dynamic> data) {
     return MealModel(
-      offerName: data['offerName'],
-      imagesList: List<String>.from(data['imagesList'] ?? []),
+      offerName: data['offer'],
+      imagesList: List<String>.from(data['images'] ?? []),
     );
   }
 }

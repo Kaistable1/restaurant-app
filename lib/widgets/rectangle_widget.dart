@@ -1,16 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:kaistable_website/main.dart';
+
 import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_location_controller.dart';
 
 import '../constants/app_colors.dart';
-import '../screens/detail_screens/restaurant_detail_screen.dart';
-import '../utils/responsive.dart';
+
 
 class RectangleWidget extends StatelessWidget {
   final String title;
@@ -20,7 +15,7 @@ class RectangleWidget extends StatelessWidget {
   final String? endTimeText;
   final String percentText;
   final RxBool isFavorite;
-  List<PersentageModel>? percentageOff;
+  List<OfferModel>? percentageOff;
   String? resturant_id;
   final Function(int)? onNavigate;
 
@@ -134,7 +129,7 @@ class RectangleWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildStarBox(BuildContext context, {required PersentageModel item}) {
+  Widget _buildStarBox(BuildContext context, {required OfferModel item}) {
     return Container(
       height: 55,
       width: 55,
