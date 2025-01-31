@@ -36,16 +36,19 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
 
   final HomeLocationController homeLocationController =
       Get.put(HomeLocationController());
-
+  MenuModel menuModel = MenuModel.initialize();
   @override
   void initState() {
+   
     homeLocationController.addRecentView(
         restaurantID: widget.restaurantModel?.docID ?? '');
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    // func();
     return Obx(() {
       int indexOfMenuPersentageOff = 0;
       int indexOfMenuHappyHourOff = 0;
@@ -54,6 +57,9 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
           homeLocationController.selectedPersentage.indexOf(true);
       indexOfMenuHappyHourOff =
           homeLocationController.selectedHappyhour.indexOf(true);
+      print(
+          'happyHourSpecials menu model ${menuModel.happyHourSpecials.length}');
+      print('percentageOff menu model ${menuModel.percentageOff.length}');
 
       return WillPopScope(
           onWillPop: () async {
@@ -351,13 +357,13 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                                             MenuModel.initialize();
                                         // Access the snapshot data
                                         var menuDocs = snapshot.data?.docs;
-                                        print('menu data -------- $menuDocs');
+                                        // print('menu data -------- $menuDocs');
                                         if (menuDocs != null) {
                                           // Print each document's raw data in the debug console
                                           for (var doc in menuDocs) {
-                                            print("Document ID: ${doc.id}");
-                                            print(
-                                                "Document Data: ${doc.data()}");
+                                            // print("Document ID: ${doc.id}");
+                                            // print(
+                                            //     "Document Data: ${doc.data()}");
                                             Map<String, dynamic> dataMap =
                                                 doc.data();
                                             String fromDate = dataMap[
@@ -629,19 +635,31 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                                                                       .value ==
                                                                   'Happy Hours Specials'
                                                               ? widget
-                                                                      .restaurantModel
-                                                                      ?.menuList
-                                                                      .happyHourSpecials[
-                                                                          indexOfMenuHappyHourOff]
-                                                                      .cuisine ??
-                                                                  ''
+                                                                      .restaurantModel!
+                                                                      .menuList
+                                                                      .happyHourSpecials
+                                                                      .isEmpty
+                                                                  ? ''
+                                                                  : widget
+                                                                          .restaurantModel
+                                                                          ?.menuList
+                                                                          .happyHourSpecials[
+                                                                              indexOfMenuHappyHourOff]
+                                                                          .cuisine ??
+                                                                      ''
                                                               : widget
-                                                                      .restaurantModel
-                                                                      ?.menuList
-                                                                      .percentageOff[
-                                                                          indexOfMenuPersentageOff]
-                                                                      .cuisine ??
-                                                                  '',
+                                                                      .restaurantModel!
+                                                                      .menuList
+                                                                      .happyHourSpecials
+                                                                      .isEmpty
+                                                                  ? ''
+                                                                  : widget
+                                                                          .restaurantModel
+                                                                          ?.menuList
+                                                                          .percentageOff[
+                                                                              indexOfMenuPersentageOff]
+                                                                          .cuisine ??
+                                                                      '',
                                                           textAlign:
                                                               TextAlign.center,
                                                           style: TextStyle(
@@ -721,27 +739,38 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                                                                               .value ==
                                                                           'Happy Hours Specials'
                                                                       ? widget
-                                                                          .restaurantModel!
-                                                                          .menuList
-                                                                          .happyHourSpecials[
-                                                                              indexOfMenuHappyHourOff]
-                                                                          .food
-                                                                          .imagesList
+                                                                              .restaurantModel!
+                                                                              .menuList
+                                                                              .happyHourSpecials
+                                                                              .isEmpty
+                                                                          ? []
+                                                                          : widget
+                                                                              .restaurantModel!
+                                                                              .menuList
+                                                                              .happyHourSpecials[
+                                                                                  indexOfMenuHappyHourOff]
+                                                                              .food
+                                                                              .imagesList
                                                                       : widget
-                                                                          .restaurantModel!
-                                                                          .menuList
-                                                                          .percentageOff[
-                                                                              indexOfMenuPersentageOff]
-                                                                          .food
-                                                                          .imagesList,
+                                                                              .restaurantModel!
+                                                                              .menuList
+                                                                              .percentageOff
+                                                                              .isEmpty
+                                                                          ? []
+                                                                          : widget
+                                                                              .restaurantModel!
+                                                                              .menuList
+                                                                              .percentageOff[indexOfMenuPersentageOff]
+                                                                              .food
+                                                                              .imagesList,
                                                                   menuItem:
                                                                       'Food Menu',
                                                                   menuItemNumbers: controller
                                                                               .selectedMenu
                                                                               .value ==
                                                                           'Happy Hours Specials'
-                                                                      ? '(${widget.restaurantModel!.menuList.happyHourSpecials[indexOfMenuHappyHourOff].food.imagesList.length.toString()})'
-                                                                      : '(${widget.restaurantModel!.menuList.percentageOff[indexOfMenuPersentageOff].food.imagesList.length.toString()})',
+                                                                      ? '(${widget.restaurantModel!.menuList.happyHourSpecials.isEmpty ? 0 : widget.restaurantModel!.menuList.happyHourSpecials[indexOfMenuHappyHourOff].food.imagesList.length.toString()})'
+                                                                      : '(${widget.restaurantModel!.menuList.percentageOff.isEmpty ? 0 : widget.restaurantModel!.menuList.percentageOff[indexOfMenuPersentageOff].food.imagesList.length.toString()})',
                                                                 ),
                                                                 _buildTableRow(
                                                                   context,
@@ -750,27 +779,38 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                                                                               .value ==
                                                                           'Happy Hours Specials'
                                                                       ? widget
-                                                                          .restaurantModel!
-                                                                          .menuList
-                                                                          .happyHourSpecials[
-                                                                              indexOfMenuHappyHourOff]
-                                                                          .drink
-                                                                          .imagesList
+                                                                              .restaurantModel!
+                                                                              .menuList
+                                                                              .happyHourSpecials
+                                                                              .isEmpty
+                                                                          ? []
+                                                                          : widget
+                                                                              .restaurantModel!
+                                                                              .menuList
+                                                                              .happyHourSpecials[
+                                                                                  indexOfMenuHappyHourOff]
+                                                                              .drink
+                                                                              .imagesList
                                                                       : widget
-                                                                          .restaurantModel!
-                                                                          .menuList
-                                                                          .percentageOff[
-                                                                              indexOfMenuPersentageOff]
-                                                                          .drink
-                                                                          .imagesList,
+                                                                              .restaurantModel!
+                                                                              .menuList
+                                                                              .percentageOff
+                                                                              .isEmpty
+                                                                          ? []
+                                                                          : widget
+                                                                              .restaurantModel!
+                                                                              .menuList
+                                                                              .percentageOff[indexOfMenuPersentageOff]
+                                                                              .drink
+                                                                              .imagesList,
                                                                   menuItem:
                                                                       'Drink Menu',
                                                                   menuItemNumbers: controller
                                                                               .selectedMenu
                                                                               .value ==
                                                                           'Happy Hours Specials'
-                                                                      ? '(${widget.restaurantModel!.menuList.happyHourSpecials[indexOfMenuHappyHourOff].drink.imagesList.length.toString()})'
-                                                                      : '(${widget.restaurantModel!.menuList.percentageOff[indexOfMenuPersentageOff].drink.imagesList.length.toString()})',
+                                                                      ? '(${widget.restaurantModel!.menuList.happyHourSpecials.isEmpty ? 0 : widget.restaurantModel!.menuList.happyHourSpecials[indexOfMenuHappyHourOff].drink.imagesList.length.toString()})'
+                                                                      : '(${widget.restaurantModel!.menuList.percentageOff.isEmpty ? 0 : widget.restaurantModel!.menuList.percentageOff[indexOfMenuPersentageOff].drink.imagesList.length.toString()})',
                                                                 ),
                                                               ],
                                                             ),
@@ -812,19 +852,31 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                                                                     context,
                                                                     afterPrice: controller.selectedMenu.value ==
                                                                             'Happy Hours Specials'
-                                                                        ? widget.restaurantModel!.menuList.happyHourSpecials[indexOfMenuHappyHourOff].food.offerName ??
-                                                                            ''
-                                                                        : widget.restaurantModel!.menuList.percentageOff[indexOfMenuPersentageOff].food.offerName ??
-                                                                            '',
+                                                                        ? widget
+                                                                                .restaurantModel!.menuList.happyHourSpecials.isEmpty
+                                                                            ? ''
+                                                                            : widget.restaurantModel!.menuList.happyHourSpecials[indexOfMenuHappyHourOff].food.offerName ??
+                                                                                ''
+                                                                        : widget
+                                                                                .restaurantModel!.menuList.percentageOff.isEmpty
+                                                                            ? ''
+                                                                            : widget.restaurantModel!.menuList.percentageOff[indexOfMenuPersentageOff].food.offerName ??
+                                                                                '',
                                                                   ),
                                                                   _buildGreenRow(
                                                                     context,
                                                                     afterPrice: controller.selectedMenu.value ==
                                                                             'Happy Hours Specials'
-                                                                        ? widget.restaurantModel!.menuList.happyHourSpecials[indexOfMenuHappyHourOff].drink.offerName ??
-                                                                            ''
-                                                                        : widget.restaurantModel!.menuList.percentageOff[indexOfMenuPersentageOff].drink.offerName ??
-                                                                            '',
+                                                                        ? widget
+                                                                                .restaurantModel!.menuList.happyHourSpecials.isEmpty
+                                                                            ? ''
+                                                                            : widget.restaurantModel!.menuList.happyHourSpecials[indexOfMenuHappyHourOff].drink.offerName ??
+                                                                                ''
+                                                                        : widget
+                                                                                .restaurantModel!.menuList.percentageOff.isEmpty
+                                                                            ? ''
+                                                                            : widget.restaurantModel!.menuList.percentageOff[indexOfMenuPersentageOff].drink.offerName ??
+                                                                                '',
                                                                   ),
                                                                 ],
                                                               ),

@@ -6,7 +6,6 @@ import 'package:kaistable_website/screens/home_screen/home_controller/home_locat
 
 import '../constants/app_colors.dart';
 
-
 class RectangleWidget extends StatelessWidget {
   final String title;
   final String imagePath;
@@ -91,16 +90,20 @@ class RectangleWidget extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 2),
-                Text(
-                  description,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w400,
-                    fontSize: 8,
-                    fontFamily: 'Nunito-Regular',
-                    color: AppColors.textColor,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      description,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 8,
+                        fontFamily: 'Nunito-Regular',
+                        color: AppColors.textColor,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

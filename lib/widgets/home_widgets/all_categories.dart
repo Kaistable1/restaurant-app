@@ -304,14 +304,16 @@ class AllCategories extends StatelessWidget {
             List<String> sortedRestaurantIds = resturantsIDs
                 .map((recentView) => recentView.restaurantID)
                 .toList();
-
+            List filteredRestaurants = [];
 // Filter the restaurant list based on the sorted IDs and maintain the same order
-            List filteredRestaurants = sortedRestaurantIds
-                .map((id) => controller.resaturant_list.firstWhere(
-                      (restaurant) => restaurant.docID == id,
-                    ))
-                .where((restaurant) => restaurant != null)
-                .toList();
+            if (controller.resaturant_list.isNotEmpty) {
+              filteredRestaurants = sortedRestaurantIds
+                  .map((id) => controller.resaturant_list.firstWhere(
+                        (restaurant) => restaurant.docID == id,
+                      ))
+                  .where((restaurant) => restaurant != null)
+                  .toList();
+            }
 
             if (filteredRestaurants.isNotEmpty) {
               return Column(
