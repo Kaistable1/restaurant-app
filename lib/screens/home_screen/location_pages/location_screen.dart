@@ -213,9 +213,21 @@ class LocationScreen extends StatelessWidget {
                           }
 
                           List<RestaurantModel> restaurants = snapshot.data!;
-                          homeController.initailizedSelectors(
-                              resaturantsList: restaurants);
+                          // Initialize state after the widget build phase
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            homeController.initailizedSelectors(
+                                resaturantsList: restaurants);
+                          });
+
                           filteredRestaurants = restaurants;
+                          print(
+                              '-------------------------resurants menu section----------------------------');
+                          filteredRestaurants.forEach((rest) {
+                            for (var v in rest.menuList.happyHourSpecials) {
+                              print('food offerName ${v.food.offerName}');
+                              print('drink offerName ${v.drink.offerName}');
+                            }
+                          });
                           return GridView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
@@ -246,6 +258,7 @@ class LocationScreen extends StatelessWidget {
                                   percentText: '25%',
                                   endTimeText: '9 PM',
                                   percentageOff: item.menuList.percentageOff,
+                                  happyhour: item.menuList.happyHourSpecials,
                                   isFavorite: false.obs,
                                 ),
                               );

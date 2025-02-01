@@ -27,7 +27,8 @@ class _LocationStarWidgetState extends State<LocationStarWidget> {
       Get.put(HomeLocationController());
 
   void _toggleTapped() {
-    if (widget.menuType == 'PercentageOff') {
+    if (widget.menuType == 'PercentageOff' &&
+        homeLocationController.selectedPersentage.isNotEmpty) {
       // Reset all values to false
       homeLocationController.selectedPersentage.fillRange(
           0, homeLocationController.selectedPersentage.length, false);
@@ -35,7 +36,8 @@ class _LocationStarWidgetState extends State<LocationStarWidget> {
       homeLocationController.selectedPersentage[widget.index] =
           !homeLocationController.selectedPersentage[widget.index];
     }
-    if (widget.menuType == 'HappyHour') {
+    if (widget.menuType == 'HappyHour' &&
+        homeLocationController.selectedHappyhour.isNotEmpty) {
       // Reset all values to false
       homeLocationController.selectedHappyhour
           .fillRange(0, homeLocationController.selectedHappyhour.length, false);
@@ -49,8 +51,12 @@ class _LocationStarWidgetState extends State<LocationStarWidget> {
   Widget build(BuildContext context) {
     return Obx(() {
       bool isToggle = widget.menuType == 'HappyHour'
-          ? homeLocationController.selectedHappyhour[widget.index]
-          : homeLocationController.selectedPersentage[widget.index];
+          ? homeLocationController.selectedHappyhour.isEmpty
+              ? false
+              : homeLocationController.selectedHappyhour[widget.index]
+          : homeLocationController.selectedPersentage.isEmpty
+              ? false
+              : homeLocationController.selectedPersentage[widget.index];
       final String imagePath = isToggle == true
           ? 'assets/images/star_img.png'
           : 'assets/images/star_img2.png';

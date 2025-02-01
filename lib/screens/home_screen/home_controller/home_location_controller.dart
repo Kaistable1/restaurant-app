@@ -29,7 +29,6 @@ class HomeLocationController extends GetxController {
     // Use forEach to add 'false' for each item in restaurant_list
     resaturantsList.forEach((v) {
       for (var x in v.menuList.percentageOff) {
-        print('velue x ${x.discountType}');
         if (x.discountType.toString().trim() == 'Happy Hour Special') {
           selectedHappyhour.add(false);
         } else if (x.discountType.toString().trim() == 'Percentage Off') {
@@ -50,8 +49,7 @@ class HomeLocationController extends GetxController {
     if (selectedPersentage.isNotEmpty) {
       selectedPersentage[0] = true;
     }
-    print('selectedHappyhour length ---------${selectedHappyhour.length}');
-    print('selectedPersentage length ---------${selectedPersentage.length}');
+
   }
 
   final searchController = TextEditingController();
@@ -728,7 +726,8 @@ class HomeLocationController extends GetxController {
             }
 
             // Categorize offers
-            if (offer['discountType'] == 'Happy Hour Special') {
+            if (offer['discountType'].toString().trim() ==
+                'Happy Hour Special') {
               happyHour.add(OfferModel(
                 startTime: offer['fromTime'],
                 endTime: offer['toTime'],
@@ -738,7 +737,8 @@ class HomeLocationController extends GetxController {
                 cuisine: cuisine,
                 discountType: offer['discountType'],
               ));
-            } else {
+            } else if (offer['discountType'].toString().trim() ==
+                'Percentage Off') {
               percentageOff.add(OfferModel(
                 startTime: offer['fromTime'],
                 endTime: offer['toTime'],
@@ -756,10 +756,7 @@ class HomeLocationController extends GetxController {
             percentageOff: percentageOff,
             happyHourSpecials: happyHour,
           );
-          for (var v in percentageOff) {
-            print('percentageOff food offer --------- ${v.food.offerName}');
-            print('percentageOff drink offer--------- ${v.drink.offerName}');
-          }
+         
         }
       }
 
@@ -769,4 +766,5 @@ class HomeLocationController extends GetxController {
       return MenuModel.initialize(); // Return an empty model in case of error
     }
   }
+
 }

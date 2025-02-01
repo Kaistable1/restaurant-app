@@ -15,6 +15,8 @@ class RectangleWidget extends StatelessWidget {
   final String percentText;
   final RxBool isFavorite;
   List<OfferModel>? percentageOff;
+  List<OfferModel>? happyhour;
+
   String? resturant_id;
   final Function(int)? onNavigate;
 
@@ -22,6 +24,7 @@ class RectangleWidget extends StatelessWidget {
     super.key,
     required this.title,
     this.percentageOff,
+    this.happyhour,
     this.resturant_id,
     required this.imagePath,
     required this.description,
@@ -34,6 +37,7 @@ class RectangleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     return Container(
       height: 173,
       decoration: BoxDecoration(
@@ -126,7 +130,22 @@ class RectangleWidget extends StatelessWidget {
                         )),
                   ],
                 )
-              : SizedBox(),
+              : happyhour?.isNotEmpty ?? false
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Dynamically build StarBoxes based on the percentageOff list
+                        ...happyhour!.take(2).map((item) => Padding(
+                              padding: const EdgeInsets.only(
+                                  right: 2.0), // Add spacing between items
+                              child: _buildStarBox(context,
+                                  item:
+                                      item), // Pass item to _buildStarBox if needed
+                            )),
+                      ],
+                    )
+                  : SizedBox(),
         ],
       ),
     );
