@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
 import 'package:kaistable_website/main.dart';
+import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/screens/detail_screens/restaurant_detail_screen.dart';
 import 'package:kaistable_website/widgets/rectangle_widget.dart';
 
@@ -79,76 +80,108 @@ class FavoriteScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection('users')
-                      .doc(auth.currentUser!.uid) // Current user's document
-                      .collection('favorite')
-                      .snapshots(), // Stream the favorite collection to listen for changes
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator(); // Show loading indicator
-                    }
-                    if (snapshot.hasError) {
-                      return Text('Something went wrong!'); // Handle errors
-                    }
+                StreamBuilder(
+                    stream: mycontroller.getRestaurants(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return SizedBox(
+                            height: Get.height * 0.7,
+                            child: Center(child: CircularProgressIndicator()));
+                      }
 
-                    // Extract restaurant IDs from the favorite collection
-                    var favoriteRestaurantIds = snapshot.data!.docs
-                        .map((doc) => doc['resturantID'])
-                        .toList();
+                      if (snapshot.hasError) {
+                        print('Error during stream call: ${snapshot.error}');
+                        return const Center(child: Text('Error loading data'));
+                      }
 
-                    // Filter the restaurant list to show only the favorites
-                    var favoriteRestaurants = mycontroller.resaturant_list
-                        .where((restaurant) => favoriteRestaurantIds.contains(
-                            restaurant
-                                .docID)) // Assuming 'id' is a property of restaurant
-                        .toList();
-                    if (favoriteRestaurants.isEmpty) {
-                      return Container(
-                        width: double.infinity,
-                        height: Get.height * 0.6,
-                        child: Center(
-                          child: Text('No favorite restaurants!'),
+                      if (snapshot.data == null || snapshot.data!.isEmpty) {
+                        return const Center(
+                            child: Text('No restaurants available.'));
+                      }
+
+                      List<RestaurantModel> restaurants = snapshot.data!;
+
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        mycontroller.initailizedSelectors(
+                            resaturantsList: restaurants);
+                      });
+                      return SizedBox(
+                        child: StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(auth
+                                  .currentUser!.uid) // Current user's document
+                              .collection('favorite')
+                              .snapshots(), // Stream the favorite collection to listen for changes
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return SizedBox(); // Show loading indicator
+                            }
+                            if (snapshot.hasError) {
+                              return Text(
+                                  'Something went wrong!'); // Handle errors
+                            }
+
+                            // Extract restaurant IDs from the favorite collection
+                            var favoriteRestaurantIds = snapshot.data!.docs
+                                .map((doc) => doc['resturantID'])
+                                .toList();
+
+                            // Filter the restaurant list to show only the favorites
+                            var favoriteRestaurants = restaurants
+                                .where((restaurant) =>
+                                    favoriteRestaurantIds.contains(restaurant
+                                        .docID)) // Assuming 'id' is a property of restaurant
+                                .toList();
+                            if (favoriteRestaurants.isEmpty) {
+                              return Container(
+                                width: double.infinity,
+                                height: Get.height * 0.6,
+                                child: Center(
+                                  child: Text('No favorite restaurants!'),
+                                ),
+                              );
+                            }
+                            return GridView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                mainAxisExtent: 220,
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 10,
+                                mainAxisSpacing: 10,
+                              ),
+                              itemCount: favoriteRestaurants
+                                  .length, // Set the item count to the length of favorite restaurants
+                              itemBuilder: (context, index) {
+                                final item = favoriteRestaurants[index];
+                                return InkWell(
+                                  onTap: () {
+                                    Get.to(RestaurantDetailScreen(
+                                      restaurantModel: item,
+                                    ));
+                                  },
+                                  child: RectangleWidget(
+                                    onNavigate: onNavigate,
+                                    title: item.resName,
+                                    description: item.about,
+                                    imagePath: item.logoImage,
+                                    timetext: '',
+                                    endTimeText: '',
+                                    percentText: '',
+                                    resturant_id: item.docID,
+                                    percentageOff: item.menuList.percentageOff,
+                                    isFavorite: true.obs,
+                                  ),
+                                );
+                              },
+                            );
+                          },
                         ),
                       );
-                    }
-                    return GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        mainAxisExtent: 220,
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                      ),
-                      itemCount: favoriteRestaurants
-                          .length, // Set the item count to the length of favorite restaurants
-                      itemBuilder: (context, index) {
-                        final item = favoriteRestaurants[index];
-                        return InkWell(
-                          onTap: () {
-                            Get.to(RestaurantDetailScreen(
-                              restaurantModel: item,
-                            ));
-                          },
-                          child: RectangleWidget(
-                            onNavigate: onNavigate,
-                            title: item.resName,
-                            description: item.about,
-                            imagePath: item.logoImage,
-                            timetext: '',
-                            endTimeText: '',
-                            percentText: '',
-                            resturant_id: item.docID,
-                            percentageOff: item.menuList.percentageOff,
-                            isFavorite: true.obs,
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
+                    }),
                 SizedBox(height: 30),
               ],
             ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/screens/detail_screens/restaurant_detail_screen.dart';
 import 'package:kaistable_website/widgets/rectangle_widget.dart';
@@ -32,22 +33,10 @@ class _TrendingViewAllState extends State<TrendingViewAll> {
   final HomeLocationController homeController =
       Get.put(HomeLocationController());
 
-  //resnding restaurants getted
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   loadTrendingRestaurants();
-  // }
-
-  // void loadTrendingRestaurants() async {
-  //   filteredRestaurants = await homeController.getTrendingRestaurants();
-  //   homeController.update();
-  // }
   List<RestaurantModel> filteredRestaurants = [];
 
   @override
   Widget build(BuildContext context) {
-    filteredRestaurants = homeController.resaturant_list;
     double screenWidth = MediaQuery.of(context).size.width;
     bool isLargeScreen = screenWidth > 1400;
     return WillPopScope(
@@ -123,112 +112,156 @@ class _TrendingViewAllState extends State<TrendingViewAll> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    SizedBox(height: 10),
-                    SizedBox(
-                      height: 38,
-                      child: CustomSeparateTextField(
-                        controller: homeController.searchController,
-                        hintText: 'Try searching for restaurant name',
-                        onChanged: (v) {
-                          filteredRestaurants = homeController.resaturant_list
-                              .where((item) => item.resName
-                                  .toLowerCase()
-                                  .contains(homeController.searchController.text
-                                      .toLowerCase()))
-                              .toList();
-                          homeController.update();
-                        },
-                        hintStyle: TextStyle(
-                          color: AppColors.hintText,
-                          fontFamily: "Nunito-Regular",
-                          fontWeight: FontWeight.w400,
-                          fontSize: 12,
-                        ),
-                        isPrefixIcon: true,
-                        isShadow: true,
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 4, top: 8, bottom: 8, right: 0),
-                          child: Image.asset(
-                            'assets/images/search_icon.png',
-                            fit: BoxFit.contain,
-                            height: 20,
-                            width: 20,
-                          ),
-                        ),
-                        isSuffixIcon: true,
-                        suffixIcon: Container(
-                          height: 38,
-                          width: 66,
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryColor,
-                            borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(10),
-                              bottomRight: Radius.circular(10),
-                            ),
-                          ),
-                          child: Center(
-                            child: Text(
-                              'Search',
-                              style: TextStyle(
-                                color: AppColors.bottomSheetColor,
-                                fontFamily: "Nunito-Bold",
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
+                    StreamBuilder(
+                        stream: homeController.getTrendingRestaurants(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return SizedBox(
+                              height: Get.height * 0.5,
+                              child: Center(child: CircularProgressIndicator()),
+                            ); // Show loading indicator
+                          }
+
+                          if (snapshot.hasError) {
+                            print('Error during stream call ${snapshot.error}');
+                            return Text(''); // Show error message if any
+                          }
+
+                          if (snapshot.data == null || snapshot.data!.isEmpty) {
+                            return Text(
+                                'No restaurants found'); // Handle the case where data is null or empty
+                          }
+
+                          List<RestaurantModel> restaurants = snapshot.data!;
+                          // Initialize state after the widget build phase
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            homeController.initailizedSelectors(
+                                resaturantsList: restaurants);
+                          });
+
+                          filteredRestaurants = restaurants;
+
+                          return Column(
+                            children: [
+                              SizedBox(
+                                height: 38,
+                                child: CustomSeparateTextField(
+                                  controller: homeController.searchController,
+                                  hintText: 'Try searching for restaurant name',
+                                  onChanged: (v) {
+                                    filteredRestaurants = restaurants
+                                        .where((item) => item.resName
+                                            .toLowerCase()
+                                            .contains(homeController
+                                                .searchController.text
+                                                .toLowerCase()))
+                                        .toList();
+                                    homeController.update();
+                                  },
+                                  hintStyle: TextStyle(
+                                    color: AppColors.hintText,
+                                    fontFamily: "Nunito-Regular",
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12,
+                                  ),
+                                  isPrefixIcon: true,
+                                  isShadow: true,
+                                  prefixIcon: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 4, top: 8, bottom: 8, right: 0),
+                                    child: Image.asset(
+                                      'assets/images/search_icon.png',
+                                      fit: BoxFit.contain,
+                                      height: 20,
+                                      width: 20,
+                                    ),
+                                  ),
+                                  isSuffixIcon: true,
+                                  suffixIcon: Container(
+                                    height: 38,
+                                    width: 66,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primaryColor,
+                                      borderRadius: BorderRadius.only(
+                                        topRight: Radius.circular(10),
+                                        bottomRight: Radius.circular(10),
+                                      ),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        'Search',
+                                        style: TextStyle(
+                                          color: AppColors.bottomSheetColor,
+                                          fontFamily: "Nunito-Bold",
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    Text(
-                      'Explore Restaurants',
-                      style: TextStyle(
-                        color: AppColors.bottomSheetColor,
-                        fontFamily: 'aftika-regular',
-                        fontSize: 18,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    SizedBox(height: 12),
-                    GetBuilder<HomeLocationController>(
-                        builder: (homeLocationController) {
-                      return GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          mainAxisExtent: 220,
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
-                          childAspectRatio: itemWidth / itemHeight,
-                        ),
-                        itemCount: filteredRestaurants.length,
-                        itemBuilder: (context, index) {
-                          final item = filteredRestaurants[index];
-                          return InkWell(
-                            onTap: () {
-                              Get.to(RestaurantDetailScreen(
-                                restaurantModel: item,
-                              ));
-                            },
-                            child: RectangleWidget(
-                              onNavigate: widget.onNavigate,
-                              title: item.resName,
-                              description: item.about,
-                              resturant_id: item.docID,
-                              imagePath: item.logoImage,
-                              timetext: '10 AM',
-                              percentText: '25%',
-                              endTimeText: '9 PM',
-                              percentageOff: item.menuList.percentageOff,
-                              isFavorite: false.obs,
-                            ),
+                              SizedBox(height: 16),
+                              Row(
+                                children: [
+                                  Text(
+                                    'Explore Restaurants',
+                                    style: TextStyle(
+                                      color: AppColors.bottomSheetColor,
+                                      fontFamily: 'aftika-regular',
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 12),
+                             
+                              GetBuilder<HomeLocationController>(
+                                  builder: (controller) {
+                                return GridView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                    mainAxisExtent: 220,
+                                    crossAxisCount: 2,
+                                    crossAxisSpacing: 10,
+                                    mainAxisSpacing: 10,
+                                    childAspectRatio: itemWidth / itemHeight,
+                                  ),
+                                  itemCount: filteredRestaurants.length,
+                                  itemBuilder: (context, index) {
+                                    final item = filteredRestaurants[index];
+                                    return InkWell(
+                                      onTap: () {
+                                        Get.to(RestaurantDetailScreen(
+                                          restaurantModel: item,
+                                        ));
+                                      },
+                                      child: RectangleWidget(
+                                        // onNavigate: onNavigate,
+                                        title: item.resName,
+                                        description: item.about,
+                                        resturant_id: item.docID,
+                                        imagePath: item.logoImage,
+                                        timetext: '10 AM',
+                                        percentText: '25%',
+                                        endTimeText: '9 PM',
+                                        percentageOff:
+                                            item.menuList.percentageOff,
+                                        happyhour:
+                                            item.menuList.happyHourSpecials,
+                                        isFavorite: false.obs,
+                                      ),
+                                    );
+                                  },
+                                );
+                              }),
+                            ],
                           );
-                        },
-                      );
-                    }),
+                        }),
                     const SizedBox(height: 30),
                   ],
                 ),
@@ -239,5 +272,4 @@ class _TrendingViewAllState extends State<TrendingViewAll> {
       ),
     );
   }
-
 }

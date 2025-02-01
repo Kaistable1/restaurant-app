@@ -21,7 +21,6 @@ class HomeLocationController extends GetxController {
   RxList selectedHappyhour = [].obs;
 
   initailizedSelectors({required List<RestaurantModel> resaturantsList}) {
-    print('init state ------------------------');
     // Ensure the list is cleared before adding false values
     selectedPersentage.clear();
     selectedHappyhour.clear();
@@ -49,7 +48,6 @@ class HomeLocationController extends GetxController {
     if (selectedPersentage.isNotEmpty) {
       selectedPersentage[0] = true;
     }
-
   }
 
   final searchController = TextEditingController();
@@ -113,146 +111,7 @@ class HomeLocationController extends GetxController {
     super.onClose();
   }
 
-  List<RestaurantModel> resaturant_list = [
-    // RestaurantModel(
-    //   resName: "The Fancy Fork",
-    //   averageRating: 3,
-    //   docID: 'qA4ZwrICw8NWshCaZ52a5dqgDSj2',
-    //   resEmail: "contact@fancyfork.com",
-    //   specialConditions: "No pets allowed",
-    //   socialLink: "https://instagram.com/fancyfork",
-    //   password: "securepassword123",
-    //   city: "New York",
-    //   createdAt: DateTime.now().subtract(Duration(days: 2)),
-    //   address: "123 Gourmet St",
-    //   zipCode: "10001",
-    //   logoImage:
-    //       'https://plus.unsplash.com/premium_photo-1673108852141-e8c3c22a4a22?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    //   facilityList: ["Free WiFi", "Parking", "Outdoor Seating"],
-    //   imagesList: [
-    //     'https://plus.unsplash.com/premium_photo-1673108852141-e8c3c22a4a22?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    //     'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=2810&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    //     'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=2810&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    //     'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=2810&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    //   ],
-    //   dietaryList: ["Vegan", "Gluten-Free"],
-    //   atmopshereList: ["Casual", "Romantic"],
-    //   spokenLanguage: "English",
-    //   socialMedia: "Instagram",
-    //   priceRange: "156",
-    //   latitude: 33.6995,
-    //   longitude: 73.0363,
-    //   entertainmentScheduleList: [
-    //     EntertainmentScheduleModel(
-    //       eventName: "Live Jazz Night",
-    //       eventBy: "The Smooth Band",
-    //       startTime: "7:00 PM",
-    //       endTime: "10:00 PM",
-    //       day: "Friday",
-    //       date: "2025-02-02",
-    //       isSelected: false,
-    //     ),
-    //     EntertainmentScheduleModel(
-    //       eventName: "Band",
-    //       eventBy: "The Smooth Band",
-    //       startTime: "7:00 PM",
-    //       endTime: "10:00 PM",
-    //       day: "Thursday",
-    //       date: "2025-02-02",
-    //       isSelected: false,
-    //     ),
-    //   ],
-    //   menuList: MenuModel(
-    //     percentageOff: [
-    //       OfferModel(
-    //         startTime: "12:00 PM",
-    //         endTime: "2:00 PM",
-    //         percentage: '20 %',
-    //         food: MealModel(
-    //           offerName: "2 for 1",
-    //           imagesList: [
-    //             'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    //             'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=2810&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    //             'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    //           ],
-    //         ),
-    //         drink: MealModel(
-    //           offerName: "Free",
-    //           imagesList: [
-    //             'https://plus.unsplash.com/premium_photo-1673108852141-e8c3c22a4a22?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    //             'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=2810&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    //             'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=2810&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    //           ],
-    //         ),
-    //         cuisine: "American",
-    //       ),
-    //       OfferModel(
-    //         startTime: "4:00 PM",
-    //         endTime: "6:00 PM",
-    //         percentage: '26 %',
-    //         food: MealModel(
-    //           offerName: "5 for 1",
-    //           imagesList: [
-    //             'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=2810&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    //             'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    //           ],
-    //         ),
-    //         drink: MealModel(
-    //           offerName: "Free Iced",
-    //           imagesList: [
-    //             'https://plus.unsplash.com/premium_photo-1673108852141-e8c3c22a4a22?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    //             'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=2810&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    //           ],
-    //         ),
-    //         cuisine: "American",
-    //       ),
-    //       OfferModel(
-    //         startTime: "1:00 PM",
-    //         endTime: "2:00 PM",
-    //         percentage: '60 %',
-    //         food: MealModel(
-    //           offerName: "4 for 1",
-    //           imagesList: [
-    //             'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    //           ],
-    //         ),
-    //         drink: MealModel(
-    //           offerName: "Free Coffee",
-    //           imagesList: [
-    //             'https://plus.unsplash.com/premium_photo-1673108852141-e8c3c22a4a22?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    //           ],
-    //         ),
-    //         cuisine: "American",
-    //       ),
-    //     ],
-    //     happyHourSpecials: [
-    //       OfferModel(
-    //         startTime: "5:00 PM",
-    //         endTime: "7:00 PM",
-    //         percentage: '30 %',
-    //         food: MealModel(
-    //           offerName: "Free Buffalo Wings",
-    //           imagesList: [
-    //             'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    //             'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=2810&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    //             'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    //           ],
-    //         ),
-    //         drink: MealModel(
-    //           offerName: "1 Margarita",
-    //           imagesList: [
-    //             'https://plus.unsplash.com/premium_photo-1673108852141-e8c3c22a4a22?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    //             'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=2810&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    //             'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=2810&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    //           ],
-    //         ),
-    //         cuisine: "Tex-Mex",
-    //       ),
-    //     ],
-    //   ),
-    //   about: "A modern restaurant offering the best dining experience.",
-    // ),
-  ];
+  List<RestaurantModel> resaturant_list = [];
 
   addFavoriteResturants({required String restaurantID}) async {
     try {
@@ -428,169 +287,49 @@ class HomeLocationController extends GetxController {
 
   //get trensing resturants base on totoal reviews and rating
 
-  Future<List<RestaurantModel>> getTrendingRestaurants() async {
-    final restaurantsSnapshot =
-        await FirebaseFirestore.instance.collection('restaurants').get();
+  Stream<List<RestaurantModel>> getTrendingRestaurants() {
+    return FirebaseFirestore.instance
+        .collection('restaurants')
+        .snapshots()
+        .asyncMap((snapshot) async {
+      // Fetch all restaurants and their menus
+      final restaurants = await Future.wait(
+        snapshot.docs.map((doc) async {
+          final reviewsSnapshot =
+              await doc.reference.collection('reviews').get();
 
-    List<RestaurantModel> restaurants = [];
+          int totalReviews = reviewsSnapshot.size;
+          double totalRating = reviewsSnapshot.docs
+              .map((e) => double.parse(e['starRating'].toString()))
+              .fold(0.0, (prev, rating) => prev + rating);
+          double averageRating =
+              totalReviews > 0 ? totalRating / totalReviews : 0.0;
 
-    for (var doc in restaurantsSnapshot.docs) {
-      final reviewsSnapshot = await doc.reference.collection('reviews').get();
+          // Filter out restaurants without reviews
+          if (totalReviews > 0) {
+            // Fetch menu list from subcollection
+            final restaurant = RestaurantModel.fromDocumentSnapshot(doc);
+            restaurant.menuList = await _getMenuFromSubcollection(doc.id);
 
-      int totalReviews = reviewsSnapshot.size;
-      double totalRating = reviewsSnapshot.docs
-          .map((e) => double.parse(e['starRating'].toString()))
-          .fold(0.0, (prev, rating) => prev + rating);
-      double averageRating =
-          totalReviews > 0 ? totalRating / totalReviews : 0.0;
+            // Set average rating
+            restaurant.averageRating = averageRating;
 
-      if (totalReviews > 0) {
-        restaurants.add(
-          RestaurantModel(
-            resName: doc['resName'],
-            docID: doc['docID'],
-            resEmail: doc['resEmail'],
-            averageRating: averageRating,
-            specialConditions: doc['specialConditions'],
-            socialLink: doc['socialLink'],
-            password: "securepassword123",
-            city: doc['city'],
-            createdAt: DateTime.now().subtract(Duration(days: 30)),
-            address: doc['address'],
-            zipCode: doc['zipCode'],
-            logoImage: doc['logoImage'],
-            facilityList: (doc['facilityList'] as List<dynamic>).cast<String>(),
-            imagesList: [
-              'https://plus.unsplash.com/premium_photo-1673108852141-e8c3c22a4a22?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-              'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=2810&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-              'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=2810&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-              'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=2810&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-            ],
-            dietaryList: ["Vegan", "Gluten-Free"],
-            atmopshereList: ["Casual", "Romantic"],
-            spokenLanguage: "English",
-            socialMedia: "Instagram",
-            priceRange: "156",
-            latitude: 33.6995,
-            longitude: 73.0363,
-            entertainmentScheduleList: [
-              EntertainmentScheduleModel(
-                eventName: "Live Jazz Night",
-                eventBy: "The Smooth Band",
-                startTime: "7:00 PM",
-                endTime: "10:00 PM",
-                day: "Friday",
-                date: "2025-02-02",
-                isSelected: false,
-              ),
-              EntertainmentScheduleModel(
-                eventName: "Band",
-                eventBy: "The Smooth Band",
-                startTime: "7:00 PM",
-                endTime: "10:00 PM",
-                day: "Thursday",
-                date: "2025-02-02",
-                isSelected: false,
-              ),
-            ],
-            menuList: MenuModel(
-              percentageOff: [
-                OfferModel(
-                  startTime: "12:00 PM",
-                  endTime: "2:00 PM",
-                  percentage: '20 %',
-                  food: MealModel(
-                    offerName: "2 for 1",
-                    imagesList: [
-                      'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                      'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=2810&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                      'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                    ],
-                  ),
-                  drink: MealModel(
-                    offerName: "Free",
-                    imagesList: [
-                      'https://plus.unsplash.com/premium_photo-1673108852141-e8c3c22a4a22?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                      'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=2810&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                      'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=2810&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                    ],
-                  ),
-                  cuisine: "American",
-                ),
-                OfferModel(
-                  startTime: "4:00 PM",
-                  endTime: "6:00 PM",
-                  percentage: '26 %',
-                  food: MealModel(
-                    offerName: "5 for 1",
-                    imagesList: [
-                      'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=2810&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                      'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                    ],
-                  ),
-                  drink: MealModel(
-                    offerName: "Free Iced",
-                    imagesList: [
-                      'https://plus.unsplash.com/premium_photo-1673108852141-e8c3c22a4a22?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                      'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=2810&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                    ],
-                  ),
-                  cuisine: "American",
-                ),
-                OfferModel(
-                  startTime: "1:00 PM",
-                  endTime: "2:00 PM",
-                  percentage: '60 %',
-                  food: MealModel(
-                    offerName: "4 for 1",
-                    imagesList: [
-                      'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                    ],
-                  ),
-                  drink: MealModel(
-                    offerName: "Free Coffee",
-                    imagesList: [
-                      'https://plus.unsplash.com/premium_photo-1673108852141-e8c3c22a4a22?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                    ],
-                  ),
-                  cuisine: "American",
-                ),
-              ],
-              happyHourSpecials: [
-                OfferModel(
-                  startTime: "5:00 PM",
-                  endTime: "7:00 PM",
-                  percentage: '30 %',
-                  food: MealModel(
-                    offerName: "Free Buffalo Wings",
-                    imagesList: [
-                      'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                      'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=2810&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                      'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                    ],
-                  ),
-                  drink: MealModel(
-                    offerName: "1 Margarita",
-                    imagesList: [
-                      'https://plus.unsplash.com/premium_photo-1673108852141-e8c3c22a4a22?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                      'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=2810&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                      'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=2810&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                    ],
-                  ),
-                  cuisine: "Tex-Mex",
-                ),
-              ],
-            ),
-            about: "A modern restaurant offering the best dining experience.",
-          ),
-        );
-      }
-    }
+            return restaurant;
+          }
+          return null;
+        }).toList(),
+      );
 
-    // Sort by average rating or total reviews
-    restaurants.sort((a, b) => b.averageRating.compareTo(a.averageRating));
+      // Filter out null restaurants (those without reviews)
+      final trendingRestaurants =
+          restaurants.whereType<RestaurantModel>().toList();
 
-    return restaurants;
+      // Sort by average rating in descending order
+      trendingRestaurants
+          .sort((a, b) => b.averageRating.compareTo(a.averageRating));
+
+      return trendingRestaurants; // Return List<RestaurantModel>
+    });
   }
 
   addRecentView({
@@ -646,9 +385,8 @@ class HomeLocationController extends GetxController {
         .collection('recentView');
 
     return recentViewCollection.snapshots().map((querySnapshot) {
-      // Convert the documents to RecentViewModel objects
       return querySnapshot.docs.map((doc) {
-        return RecentViewModel.fromMap(doc.data() as Map<String, dynamic>);
+        return RecentViewModel.fromMap(doc.data());
       }).toList();
     });
   }
@@ -670,6 +408,26 @@ class HomeLocationController extends GetxController {
     });
   }
 
+  bool isOfferValidForCurrentDate(String fromDate, String toDate) {
+    try {
+      DateTime currentDate = DateTime.now().toLocal();
+      DateTime now =
+          DateTime(currentDate.year, currentDate.month, currentDate.day);
+
+      // Parse the dates in the format dd/MM/yy
+      DateTime fromDateTime = DateFormat("dd/MM/yy").parse(fromDate);
+      DateTime toDateTime = DateFormat("dd/MM/yy").parse(toDate);
+
+      // Check if the offer is valid for the current date
+      return (now.isAfter(fromDateTime) ||
+              now.isAtSameMomentAs(fromDateTime)) &&
+          (now.isBefore(toDateTime) || now.isAtSameMomentAs(toDateTime));
+    } catch (e) {
+      print("Error parsing dates: $e");
+      return false;
+    }
+  }
+
   Future<MenuModel> _getMenuFromSubcollection(String restaurantId) async {
     try {
       // Fetch the documents from Firestore
@@ -679,24 +437,20 @@ class HomeLocationController extends GetxController {
           .collection('MealMenu')
           .get();
 
-      // Initialize menu data
-      MenuModel mealMenu = MenuModel.initialize();
+      // Initialize empty lists for storing valid offers
+      List<OfferModel> mergedPercentageOff = [];
+      List<OfferModel> mergedHappyHour = [];
+
       // Process each document
       for (var doc in snapshot.docs) {
         Map<String, dynamic> dataMap = doc.data();
+
         // Parse fromDate and toDate
         String fromDate = dataMap['fromDate']!;
         String toDate = dataMap['toDate']!;
-        DateTime currentDate = DateTime.now().toLocal();
-        DateTime now =
-            DateTime(currentDate.year, currentDate.month, currentDate.day);
-        // Parse the dates in the format dd/MM/yy
-        DateTime fromDateTime = DateFormat("dd/MM/yy").parse(fromDate);
-        DateTime toDateTime = DateFormat("dd/MM/yy").parse(toDate);
 
-        // Check if the offer is valid for the current date
-        if ((now.isAfter(fromDateTime) || now.isAtSameMomentAs(fromDateTime)) &&
-            (now.isBefore(toDateTime) || now.isAtSameMomentAs(toDateTime))) {
+        // Use the new function to check date validity
+        if (isOfferValidForCurrentDate(fromDate, toDate)) {
           List<OfferModel> percentageOff = [];
           List<OfferModel> happyHour = [];
 
@@ -706,7 +460,7 @@ class HomeLocationController extends GetxController {
             String cuisine = '';
 
             if (offer['items'] != []) {
-              cuisine = offer['items'][0]['cuisineMenu'];
+              cuisine = offer['items'][0]['cuisineName'];
               // Categorize food and drinks
               if (offer['items'][0]['cuisineMenu'] == 'Drinks Menu') {
                 drink = MealModel(
@@ -751,20 +505,22 @@ class HomeLocationController extends GetxController {
             }
           }
 
-          // Update menu model
-          mealMenu = MenuModel(
-            percentageOff: percentageOff,
-            happyHourSpecials: happyHour,
-          );
-         
+          // Merge the valid offers into the main list
+          mergedPercentageOff.addAll(percentageOff);
+          mergedHappyHour.addAll(happyHour);
         }
       }
 
-      return mealMenu;
+      // Create a single MenuModel with the merged offers
+      MenuModel mergedMenu = MenuModel(
+        percentageOff: mergedPercentageOff,
+        happyHourSpecials: mergedHappyHour,
+      );
+
+      return mergedMenu; // Return the merged MenuModel
     } catch (e) {
       print("Error fetching menu data: $e");
       return MenuModel.initialize(); // Return an empty model in case of error
     }
   }
-
 }
