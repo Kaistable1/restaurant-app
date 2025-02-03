@@ -6,9 +6,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/main.dart';
+import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/screens/about_app/about_app.dart';
 import 'package:kaistable_website/screens/auth_screens/login/login_screen.dart';
 import 'package:kaistable_website/screens/contact_us/contact_us.dart';
+import 'package:kaistable_website/screens/detail_screens/restaurant_detail_screen.dart';
 import 'package:kaistable_website/screens/favorite_screen/favorite_screen.dart';
 import 'package:kaistable_website/screens/home_screen/cuisiness_viewall/cuisines_view_all.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_cusiness_controller.dart';
@@ -251,34 +253,77 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                             SizedBox(
                               height: 16,
                             ),
-                            Obx(() {
-                              return GridView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                  mainAxisExtent: 220,
-                                  crossAxisCount: 2,
-                                  crossAxisSpacing: 10,
-                                  mainAxisSpacing: 10,
-                                ),
-                                itemCount: cusinessController
-                                    .exploreRestaurantsItem.length,
-                                itemBuilder: (context, index) {
-                                  final item = cusinessController
-                                      .exploreRestaurantsItem[index];
-                                  return RectangleWidget(
-                                    title: item.title,
-                                    description: item.description,
-                                    imagePath: item.imagePath,
-                                    timetext: item.timeText,
-                                    percentText: item.percentText,
-                                    endTimeText: item.endTimeText,
-                                    isFavorite: false.obs,
-                                  );
-                                },
-                              );
-                            }),
+                            StreamBuilder(
+                                stream: controller.getRestaurants(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return SizedBox(
+                                      height: Get.height * 0.5,
+                                      child: Center(
+                                          child: CircularProgressIndicator()),
+                                    );
+                                  }
+
+                                  if (snapshot.hasError) {
+                                    return Text('Error: ${snapshot.error}');
+                                  }
+
+                                  if (snapshot.data == null ||
+                                      snapshot.data!.isEmpty) {
+                                    return Text('No restaurants found');
+                                  }
+                                  filterSelectionController.aggregatedFilters
+                                      .forEach((item) {
+                                    print('Filter itme =====>$item');
+                                  });
+                                  List<RestaurantModel> restaurants =
+                                      snapshot.data!;
+                                  controller.initializeSelectors(restaurants);
+
+                                  return GetBuilder<HomeLocationController>(
+                                      builder: (controller) {
+                                    return GridView.builder(
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      gridDelegate:
+                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                        mainAxisExtent: 220,
+                                        crossAxisCount: 2,
+                                        crossAxisSpacing: 10,
+                                        mainAxisSpacing: 10,
+                                      ),
+                                      itemCount:
+                                          controller.filteredRestaurants.length,
+                                      itemBuilder: (context, index) {
+                                        final item = controller
+                                            .filteredRestaurants[index];
+                                        return InkWell(
+                                          onTap: () {
+                                            Get.to(RestaurantDetailScreen(
+                                              restaurantModel: item,
+                                            ));
+                                          },
+                                          child: RectangleWidget(
+                                            title: item.resName,
+                                            description: item.about,
+                                            resturant_id: item.docID,
+                                            imagePath: item.logoImage,
+                                            timetext: '10 AM',
+                                            percentText: '25%',
+                                            endTimeText: '9 PM',
+                                            percentageOff:
+                                                item.menuList.percentageOff,
+                                            happyhour:
+                                                item.menuList.happyHourSpecials,
+                                            isFavorite: false.obs,
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  });
+                                }),
                             SizedBox(
                               height: 16,
                             ),
