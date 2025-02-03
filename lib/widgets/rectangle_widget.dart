@@ -37,7 +37,6 @@ class RectangleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     return Container(
       height: 173,
       decoration: BoxDecoration(

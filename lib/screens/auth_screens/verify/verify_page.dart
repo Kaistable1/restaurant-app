@@ -56,7 +56,7 @@ class VerifyPage extends StatelessWidget {
                 height: 14,
               ),
               Text(
-                'Enter the 6 digit code we have sent to abc@gmail.com',
+                'Enter the 6 digit code we have sent to ${signupController.userModel.userEmail.text}',
                 style: TextStyle(
                   color: AppColors.blackColor,
                   fontWeight: FontWeight.w300,
@@ -181,7 +181,9 @@ class VerifyPage extends StatelessWidget {
               ),
               Center(
                 child: GestureDetector(
-                  onTap: () {
+                  onTap: () async {
+                    await signupController.sendEmail(isFromResendOtp: true);
+
                     dialogueBox(
                         text: 'The code has been sent to your email address.',
                         color: AppColors.primaryColor,

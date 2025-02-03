@@ -232,6 +232,7 @@ class AllCategories extends StatelessWidget {
                                   percentText: '25%',
                                   endTimeText: '9 PM',
                                   percentageOff: item.menuList.percentageOff,
+                                  happyhour: item.menuList.happyHourSpecials,
                                   isFavorite: false.obs,
                                 ),
                               ),
@@ -341,6 +342,7 @@ class AllCategories extends StatelessWidget {
                                   percentText: '25%',
                                   endTimeText: '9 PM',
                                   percentageOff: item.menuList.percentageOff,
+                                  happyhour: item.menuList.happyHourSpecials,
                                   isFavorite: false.obs,
                                 ),
                               ),
@@ -393,7 +395,7 @@ class AllCategories extends StatelessWidget {
 
                   List filteredRestaurants = [];
 
-                 // Filter the restaurant list based on the sorted IDs and maintain the same order
+                  // Filter the restaurant list based on the sorted IDs and maintain the same order
                   if (restaurants.isNotEmpty) {
                     filteredRestaurants = sortedRestaurantIds
                         .map((id) {
@@ -406,7 +408,7 @@ class AllCategories extends StatelessWidget {
                             (element) => element) // Flatten the nested lists
                         .toList();
                   }
- 
+
                   if (filteredRestaurants.isNotEmpty) {
                     return Column(
                       children: [
@@ -477,6 +479,8 @@ class AllCategories extends StatelessWidget {
                                         endTimeText: '9 PM',
                                         percentageOff:
                                             item.menuList.percentageOff,
+                                        happyhour:
+                                            item.menuList.happyHourSpecials,
                                         isFavorite: false.obs,
                                       ),
                                     ),

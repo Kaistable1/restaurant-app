@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/models/usermodel.dart';
 import 'package:kaistable_website/screens/auth_screens/verify/verify_page.dart';
+import 'package:kaistable_website/screens/general_preferences/screens_general/preference_1.dart';
 import 'package:kaistable_website/screens/onboarding_screen/onboarding_controller/onboarding_controller.dart';
 import 'package:kaistable_website/utils/loading.dart';
 import 'package:mailer/mailer.dart';
@@ -142,10 +144,15 @@ class SignupController extends GetxController {
         'userID': auth.currentUser!.uid,
         'country': onbordingController.selectedCountry.value,
         'city': onbordingController.selectedCity.value,
-        'token': await messaging.getToken() ?? '',
+        'token': Platform.isAndroid ? await getUserDeviceToken() : '',
       }).then((value) {
+        print('going to prefer 1');
         userModel.userID = auth.currentUser!.uid;
         verifyController.clear();
+        resetTextFields();
+        onClick.value = false;
+        verifyController.clear();
+        Get.off(() => Preference1());
       });
     }).onError((error, stackTrace) async {
       print(error.toString());
@@ -154,6 +161,15 @@ class SignupController extends GetxController {
       loadingDialog(
           message: "There was problem!\nPlease try again later", button: true);
     });
+  }
+
+  Future<String> getUserDeviceToken() async {
+    try {
+      return await messaging.getToken() ?? '';
+    } catch (e) {
+      print('Error getting user device token $e');
+      return '';
+    }
   }
 
 //update user choices one by one
