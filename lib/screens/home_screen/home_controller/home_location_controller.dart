@@ -192,7 +192,7 @@ class HomeLocationController extends GetxController {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('users')
-          .doc(auth.currentUser!.uid) // Current user's document
+          .doc(auth.currentUser?.uid) // Current user's document
           .collection('favorite')
           .where('resturantID',
               isEqualTo: resturant_id) // Filter by restaurantID
@@ -521,6 +521,29 @@ class HomeLocationController extends GetxController {
     } catch (e) {
       print("Error fetching menu data: $e");
       return MenuModel.initialize(); // Return an empty model in case of error
+    }
+  }
+
+  List<RestaurantModel> allRestaurants = [];
+  List<RestaurantModel> filteredRestaurants = [];
+
+  // Initialize restaurants list
+  void initializeSelectors(List<RestaurantModel> restaurants) {
+    allRestaurants = restaurants;
+    filteredRestaurants = restaurants;
+    update();
+  }
+
+  // Filter restaurants
+  void filterRestaurants(String query) {
+    if (query.isEmpty) {
+      filteredRestaurants = allRestaurants;
+    } else {
+      filteredRestaurants = allRestaurants
+          .where((restaurant) =>
+              restaurant.resName.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+      update();
     }
   }
 }

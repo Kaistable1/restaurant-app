@@ -530,8 +530,13 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                                                                   .happyHourSpecials
                                                                   .isEmpty
                                                               ? ''
-                                                              : indexOfMenuPersentageOff <
-                                                                      0
+                                                              : (indexOfMenuPersentageOff <
+                                                                          0 ||
+                                                                      widget
+                                                                          .restaurantModel!
+                                                                          .menuList
+                                                                          .percentageOff
+                                                                          .isEmpty)
                                                                   ? ''
                                                                   : widget
                                                                           .restaurantModel
@@ -973,7 +978,7 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                                     return Row(
                                       children: [
                                         Text(
-                                          '(${reviews.map((e) => e.starRating).reduce((a, b) => a! + b!)! / reviews.length})',
+                                          '(${(reviews.map((e) => e.starRating).reduce((a, b) => a! + b!)! / reviews.length).toStringAsFixed(1)})',
                                           style: TextStyle(
                                             color: Color(0xFF4F5761),
                                             fontSize: 16,

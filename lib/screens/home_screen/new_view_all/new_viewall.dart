@@ -101,6 +101,72 @@ class NewViewall extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
+                    SizedBox(
+                      height: 38,
+                      child: CustomSeparateTextField(
+                        controller: homeController.searchController,
+                        hintText: 'Try searching for restaurant name',
+                        onChanged: (v) {
+                          if (v.isNotEmpty) homeController.filterRestaurants(v);
+                        },
+                        hintStyle: TextStyle(
+                          color: AppColors.hintText,
+                          fontFamily: "Nunito-Regular",
+                          fontWeight: FontWeight.w400,
+                          fontSize: 12,
+                        ),
+                        isPrefixIcon: true,
+                        isShadow: true,
+                        prefixIcon: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 4, top: 8, bottom: 8, right: 0),
+                          child: Image.asset(
+                            'assets/images/search_icon.png',
+                            fit: BoxFit.contain,
+                            height: 20,
+                            width: 20,
+                          ),
+                        ),
+                        isSuffixIcon: true,
+                        suffixIcon: Container(
+                          height: 38,
+                          width: 66,
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryColor,
+                            borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(10),
+                              bottomRight: Radius.circular(10),
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'Search',
+                              style: TextStyle(
+                                color: AppColors.bottomSheetColor,
+                                fontFamily: "Nunito-Bold",
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Text(
+                          'Explore Restaurants',
+                          style: TextStyle(
+                            color: AppColors.bottomSheetColor,
+                            fontFamily: 'aftika-regular',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 12),
                     StreamBuilder(
                         stream: homeController.getRestaurants(),
                         builder: (context, snapshot) {
@@ -123,138 +189,49 @@ class NewViewall extends StatelessWidget {
                           }
 
                           List<RestaurantModel> restaurants = snapshot.data!;
-                          // Initialize state after the widget build phase
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            homeController.initailizedSelectors(
-                                resaturantsList: restaurants);
-                          });
+                          homeController.initializeSelectors(restaurants);
 
-                          filteredRestaurants = restaurants;
-                          // Sort the list by datetime before displaying
-
-                          return Column(
-                            children: [
-                              SizedBox(
-                                height: 38,
-                                child: CustomSeparateTextField(
-                                  controller: homeController.searchController,
-                                  hintText: 'Try searching for restaurant name',
-                                  onChanged: (v) {
-                                    filteredRestaurants = restaurants
-                                        .where((item) => item.resName
-                                            .toLowerCase()
-                                            .contains(homeController
-                                                .searchController.text
-                                                .toLowerCase()))
-                                        .toList();
-                                    homeController.update();
-                                  },
-                                  hintStyle: TextStyle(
-                                    color: AppColors.hintText,
-                                    fontFamily: "Nunito-Regular",
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 12,
-                                  ),
-                                  isPrefixIcon: true,
-                                  isShadow: true,
-                                  prefixIcon: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 4, top: 8, bottom: 8, right: 0),
-                                    child: Image.asset(
-                                      'assets/images/search_icon.png',
-                                      fit: BoxFit.contain,
-                                      height: 20,
-                                      width: 20,
-                                    ),
-                                  ),
-                                  isSuffixIcon: true,
-                                  suffixIcon: Container(
-                                    height: 38,
-                                    width: 66,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.primaryColor,
-                                      borderRadius: BorderRadius.only(
-                                        topRight: Radius.circular(10),
-                                        bottomRight: Radius.circular(10),
-                                      ),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        'Search',
-                                        style: TextStyle(
-                                          color: AppColors.bottomSheetColor,
-                                          fontFamily: "Nunito-Bold",
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                          return GetBuilder<HomeLocationController>(
+                            builder: (controller) {
+                              return GridView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  mainAxisExtent: 220,
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 10,
+                                  mainAxisSpacing: 10,
                                 ),
-                              ),
-                              SizedBox(height: 16),
-                              Row(
-                                children: [
-                                  Text(
-                                    'Explore Restaurants',
-                                    style: TextStyle(
-                                      color: AppColors.bottomSheetColor,
-                                      fontFamily: 'aftika-regular',
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w400,
+                                itemCount:
+                                    controller.filteredRestaurants.length,
+                                itemBuilder: (context, index) {
+                                  final item =
+                                      controller.filteredRestaurants[index];
+                                  return InkWell(
+                                    onTap: () {
+                                      Get.to(RestaurantDetailScreen(
+                                        restaurantModel: item,
+                                      ));
+                                    },
+                                    child: RectangleWidget(
+                                      title: item.resName,
+                                      description: item.about,
+                                      resturant_id: item.docID,
+                                      imagePath: item.logoImage,
+                                      timetext: '10 AM',
+                                      percentText: '25%',
+                                      endTimeText: '9 PM',
+                                      percentageOff:
+                                          item.menuList.percentageOff,
+                                      happyhour:
+                                          item.menuList.happyHourSpecials,
+                                      isFavorite: false.obs,
                                     ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 12),
-                              GetBuilder<HomeLocationController>(
-                                  builder: (controller) {
-                                return GridView.builder(
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    mainAxisExtent: 220,
-                                    crossAxisCount: 2,
-                                    crossAxisSpacing: 10,
-                                    mainAxisSpacing: 10,
-                                    childAspectRatio: itemWidth / itemHeight,
-                                  ),
-                                  itemCount: filteredRestaurants.length,
-                                  itemBuilder: (context, index) {
-                                    filteredRestaurants.sort((a, b) {
-                                      DateTime dateA = a.createdAt;
-                                      DateTime dateB = b.createdAt;
-                                      return dateB
-                                          .compareTo(dateA); // Descending order
-                                    });
-                                    final item = filteredRestaurants[index];
-                                    return InkWell(
-                                      onTap: () {
-                                        Get.to(RestaurantDetailScreen(
-                                          restaurantModel: item,
-                                        ));
-                                      },
-                                      child: RectangleWidget(
-                                        onNavigate: onNavigate,
-                                        title: item.resName,
-                                        description: item.about,
-                                        resturant_id: item.docID,
-                                        imagePath: item.logoImage,
-                                        timetext: '10 AM',
-                                        percentText: '25%',
-                                        endTimeText: '9 PM',
-                                        percentageOff:
-                                            item.menuList.percentageOff,
-                                        happyhour:
-                                            item.menuList.happyHourSpecials,
-                                        isFavorite: false.obs,
-                                      ),
-                                    );
-                                  },
-                                );
-                              }),
-                            ],
+                                  );
+                                },
+                              );
+                            },
                           );
                         }),
                     const SizedBox(height: 30),

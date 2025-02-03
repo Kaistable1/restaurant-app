@@ -205,7 +205,7 @@ class ReviewWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '(${reviews.map((e) => e.starRating).reduce((a, b) => a! + b!)! / reviews.length})',
+                          '(${(reviews.map((e) => e.starRating).reduce((a, b) => a! + b!)! / reviews.length).toStringAsFixed(1)})',
                           style: TextStyle(
                             fontFamily: 'Nunito-Bold',
                             fontSize: 20,

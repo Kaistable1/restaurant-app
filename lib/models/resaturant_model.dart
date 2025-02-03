@@ -130,36 +130,35 @@ class RestaurantModel {
     final data = snapshot.data()!; // Get the data map
 
     return RestaurantModel(
-      resName: data['resName'],
+      resName: data['resName'] ?? '', // Default to empty string
       averageRating: (data['averageRating'] ?? 0).toDouble(),
-      docID: data['docID'],
-      zipCode: data['zipCode'],
+      docID: data['docID'] ?? '', // Default to empty string
+      zipCode: data['zipCode'] ?? '', // Default to empty string
       imagesList:
           List<String>.from(data['resImages'] ?? []), // Cast to List<String>
-      city: data['city'],
-      resEmail: data['resEmail'],
-      socialLink: data['socialLink'],
-      address: data['address'],
-      latitude: (data['latitude'] ?? 0).toDouble() ?? 33.602018,
-      longitude: (data['longitude'] ?? 0).toDouble() ?? 33.602018,
-      facilityList:
-          List<String>.from(data['facilityList'] ?? []), // Cast to List<String>
+      city: data['city'] ?? '', // Default to empty string
+      resEmail: data['resEmail'] ?? '', // Default to empty string
+      socialLink: data['socialLink'] ?? '', // Default to empty string
+      address: data['address'] ?? '', // Default to empty string
+      latitude: (data['latitude'] ?? 0).toDouble(),
+      longitude: (data['longitude'] ?? 0).toDouble(),
+      facilityList: List<String>.from(
+          data['facilityList'] ?? []), // Default to empty list
       atmopshereList: List<String>.from(
-          data['atmopshereList'] ?? []), // Cast to List<String>
+          data['atmopshereList'] ?? []), // Default to empty list
       dietaryList:
-          List<String>.from(data['dietaryList'] ?? []), // Cast to List<String>
-      specialConditions: data['specialConditions'],
-      password: data['password'],
-      spokenLanguage:
-          data['spokenLanguage'] == '' ? 'MALE' : data['spokenLanguage'],
-      socialMedia: data['socialMedia'],
-      priceRange: data['priceRange'],
-      logoImage: data['logoImage'],
-      about: data['about'] ?? '',
+          List<String>.from(data['dietaryList'] ?? []), // Default to empty list
+      specialConditions:
+          data['specialConditions'] ?? '', // Default to empty string
+      password: data['password'] ?? '', // Default to empty string
+      spokenLanguage: data['spokenLanguage'] ?? '', // Default to empty string
+      socialMedia: data['socialMedia'] ?? '', // Default to empty string
+      priceRange: data['priceRange'] ?? '', // Default to empty string
+      logoImage: data['logoImage'] ?? '', // Default to empty string
+      about: data['about'] ?? '', // Default to empty string
       createdAt: data['createdAt'] != null
           ? (data['createdAt'] as Timestamp).toDate()
-          : DateTime.now(),
-
+          : DateTime.now(), // Default to current date
       entertainmentScheduleList: List<EntertainmentScheduleModel>.from(
         (data['entertainmentScheduleList'] as List<dynamic>? ?? []).map(
           (e) => EntertainmentScheduleModel.fromMap(e as Map<String, dynamic>),
