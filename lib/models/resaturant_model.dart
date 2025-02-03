@@ -23,10 +23,11 @@ class RestaurantModel {
   String priceRange;
   double latitude;
   double longitude;
-  DateTime createdAt; // New field
+  DateTime createdAt;
   List<EntertainmentScheduleModel> entertainmentScheduleList;
   MenuModel menuList;
-  String about; // New field
+  String about;
+  String country;  // New field added
 
   // Constructor
   RestaurantModel({
@@ -52,8 +53,9 @@ class RestaurantModel {
     required this.zipCode,
     required this.logoImage,
     required this.spokenLanguage,
-    required this.about, // Initialize in constructor
-    required this.createdAt, // Initialize createdAt
+    required this.about,
+    required this.createdAt,
+    required this.country,  // Initialize in constructor
   });
 
   // Initialize the model with defaults
@@ -81,8 +83,9 @@ class RestaurantModel {
       zipCode: '',
       entertainmentScheduleList: [],
       menuList: MenuModel.initialize(),
-      about: '', // Default value
-      createdAt: DateTime.now(), // Default to current createdAt
+      about: '',
+      createdAt: DateTime.now(),
+      country: '', // Default to empty string for country
     );
   }
 
@@ -119,52 +122,49 @@ class RestaurantModel {
       'longitude': longitude,
       'socialMedia': socialMedia,
       'priceRange': priceRange,
-      'about': about, // Add to Firestore map
-      'createdAt': createdAt.toIso8601String(), // Convert createdAt to String
+      'about': about,
+      'createdAt': createdAt.toIso8601String(),
+      'country': country, // Add country to Firestore map
     };
   }
 
   // Create a model instance from a DocumentSnapshot
   static RestaurantModel fromDocumentSnapshot(
       DocumentSnapshot<Map<String, dynamic>> snapshot) {
-    final data = snapshot.data()!; // Get the data map
+    final data = snapshot.data()!;
 
     return RestaurantModel(
-      resName: data['resName'] ?? '', // Default to empty string
+      resName: data['resName'] ?? '',
       averageRating: (data['averageRating'] ?? 0).toDouble(),
-      docID: data['docID'] ?? '', // Default to empty string
-      zipCode: data['zipCode'] ?? '', // Default to empty string
-      imagesList:
-          List<String>.from(data['resImages'] ?? []), // Cast to List<String>
-      city: data['city'] ?? '', // Default to empty string
-      resEmail: data['resEmail'] ?? '', // Default to empty string
-      socialLink: data['socialLink'] ?? '', // Default to empty string
-      address: data['address'] ?? '', // Default to empty string
+      docID: data['docID'] ?? '',
+      zipCode: data['zipCode'] ?? '',
+      imagesList: List<String>.from(data['resImages'] ?? []),
+      city: data['city'] ?? '',
+      resEmail: data['resEmail'] ?? '',
+      socialLink: data['socialLink'] ?? '',
+      address: data['address'] ?? '',
       latitude: (data['latitude'] ?? 0).toDouble(),
       longitude: (data['longitude'] ?? 0).toDouble(),
-      facilityList: List<String>.from(
-          data['facilityList'] ?? []), // Default to empty list
-      atmopshereList: List<String>.from(
-          data['atmopshereList'] ?? []), // Default to empty list
-      dietaryList:
-          List<String>.from(data['dietaryList'] ?? []), // Default to empty list
-      specialConditions:
-          data['specialConditions'] ?? '', // Default to empty string
-      password: data['password'] ?? '', // Default to empty string
-      spokenLanguage: data['spokenLanguage'] ?? '', // Default to empty string
-      socialMedia: data['socialMedia'] ?? '', // Default to empty string
-      priceRange: data['priceRange'] ?? '', // Default to empty string
-      logoImage: data['logoImage'] ?? '', // Default to empty string
-      about: data['about'] ?? '', // Default to empty string
+      facilityList: List<String>.from(data['facilityList'] ?? []),
+      atmopshereList: List<String>.from(data['atmopshereList'] ?? []),
+      dietaryList: List<String>.from(data['dietaryList'] ?? []),
+      specialConditions: data['specialConditions'] ?? '',
+      password: data['password'] ?? '',
+      spokenLanguage: data['spokenLanguage'] ?? '',
+      socialMedia: data['socialMedia'] ?? '',
+      priceRange: data['priceRange'] ?? '',
+      logoImage: data['logoImage'] ?? '',
+      about: data['about'] ?? '',
       createdAt: data['createdAt'] != null
           ? (data['createdAt'] as Timestamp).toDate()
-          : DateTime.now(), // Default to current date
+          : DateTime.now(),
       entertainmentScheduleList: List<EntertainmentScheduleModel>.from(
         (data['entertainmentScheduleList'] as List<dynamic>? ?? []).map(
           (e) => EntertainmentScheduleModel.fromMap(e as Map<String, dynamic>),
         ),
       ),
-      menuList: MenuModel.initialize(), // Initialize menuList as empty
+      menuList: MenuModel.initialize(),
+      country: data['country'] ?? '', // Fetch country from Firestore
     );
   }
 }

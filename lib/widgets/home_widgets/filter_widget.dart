@@ -103,81 +103,86 @@ class FilterWidget extends StatelessWidget {
           ),
         ),
         Obx(
-              () => filterController.isFilterListVisible.value &&
-              filterController.aggregatedFilters.isNotEmpty
+          () => filterController.isFilterListVisible.value &&
+                  filterController.aggregatedFilters.isNotEmpty
               ? Column(
-            children: [
-              SizedBox(height: 10),
-              Padding( 
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: SizedBox(
-                        width: 280,
-                        child: LayoutBuilder(
-                          builder: (context, constraints) {
-                            double availableWidth = constraints.maxWidth;
-                            return Obx(
-                                  () => Wrap(
-                                direction: Axis.horizontal,
-                                spacing: 7,
-                                runSpacing: 10,
-                                children: [
-                                  ...filterController.aggregatedFilters
-                                      .map((filterName) {
-                                    return ConstrainedBox(
-                                      constraints: BoxConstraints(
-                                        maxWidth: availableWidth / 1,
-                                      ),
-                                      child: SelectedFilterWidgets(
-                                        filterName: filterName,
-                                        onTap: () {
-                                          filterController.aggregatedFilters
-                                              .remove(filterName);
-                                          // Hide the filter list if it's empty after removal
-                                          if (filterController
-                                              .aggregatedFilters.isEmpty) {
-                                            filterController
-                                                .isFilterListVisible
-                                                .value = false;
-                                          }
-                                        },
-                                      ),
-                                    );
-                                  }).toList(),
-                                ],
+                    SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: SizedBox(
+                              width: 280,
+                              child: LayoutBuilder(
+                                builder: (context, constraints) {
+                                  double availableWidth = constraints.maxWidth;
+                                  return Obx(
+                                    () => Wrap(
+                                      direction: Axis.horizontal,
+                                      spacing: 7,
+                                      runSpacing: 10,
+                                      children: [
+                                        ...filterController.aggregatedFilters
+                                            .map((filterName) {
+                                          return ConstrainedBox(
+                                            constraints: BoxConstraints(
+                                              maxWidth: availableWidth / 1,
+                                            ),
+                                            child: SelectedFilterWidgets(
+                                              filterName: filterName,
+                                              onTap: () {
+                                                filterController
+                                                    .aggregatedFilters
+                                                    .remove(filterName);
+                                                // Hide the filter list if it's empty after removal
+                                                if (filterController
+                                                    .aggregatedFilters
+                                                    .isEmpty) {
+                                                  filterController
+                                                      .isFilterListVisible
+                                                      .value = false;
+                                                }
+                                                print('press-----');
+                                                controller.update();
+                                              },
+                                            ),
+                                          );
+                                        }).toList(),
+                                      ],
+                                    ),
+                                  );
+                                },
                               ),
-                            );
-                          },
-                        ),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              filterController.aggregatedFilters.clear();
+                              filterController.isFilterListVisible.value =
+                                  false;
+                            },
+                            child: Text(
+                              'clear all',
+                              style: TextStyle(
+                                color: AppColors.primaryColor,
+                                fontFamily: "Nunito-Sans",
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                decoration: TextDecoration.underline,
+                                decorationColor: AppColors.primaryColor,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        filterController.aggregatedFilters.clear();
-                        filterController.isFilterListVisible.value = false;
-                      },
-                      child: Text(
-                        'clear all',
-                        style: TextStyle(
-                          color: AppColors.primaryColor,
-                          fontFamily: "Nunito-Sans",
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          decoration: TextDecoration.underline,
-                          decorationColor: AppColors.primaryColor,
-                        ),
-                      ),
-                    ),
+                    SizedBox(height: 8),
                   ],
-                ),
-              ),
-              SizedBox(height: 8),
-            ],
-          )
+                )
               : SizedBox.shrink(),
         ),
       ],

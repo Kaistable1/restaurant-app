@@ -1,10 +1,9 @@
-import 'dart:ffi';
-
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/screens/about_app/about_app.dart';
@@ -12,7 +11,6 @@ import 'package:kaistable_website/screens/auth_screens/login/login_screen.dart';
 import 'package:kaistable_website/screens/contact_us/contact_us.dart';
 import 'package:kaistable_website/screens/detail_screens/restaurant_detail_screen.dart';
 import 'package:kaistable_website/screens/favorite_screen/favorite_screen.dart';
-import 'package:kaistable_website/screens/home_screen/cuisiness_viewall/cuisines_view_all.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_cusiness_controller.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_filter_controller.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_location_controller.dart';
@@ -20,7 +18,6 @@ import 'package:kaistable_website/screens/home_screen/home_controller/home_new_c
 import 'package:kaistable_website/screens/home_screen/home_controller/home_recently_viewed_controller.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_theme_controller.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_trending_controller.dart';
-
 import 'package:kaistable_website/screens/home_screen/location_pages/location_screen.dart';
 import 'package:kaistable_website/screens/home_screen/location_pages/location_view_all/location_view_all.dart';
 import 'package:kaistable_website/screens/privacy_policy/privacy_policy.dart';
@@ -115,12 +112,65 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
     }
   }
 
-  String selectedCountry = 'Select Country';
+  String selectedCountry = '';
   @override
   void initState() {
     super.initState();
     getCurrentUserData();
     selectedCountry = widget.countryName ?? 'USA';
+  }
+
+  Future<Map<String, dynamic>?> getOperatingHours(String restaurantId) async {
+    try {
+      String currentDay = DateFormat('EEEE').format(DateTime.now());
+      // Reference to the operatinghour subcollection of the restaurant
+      var operatingHoursDoc = await FirebaseFirestore.instance
+          .collection('restaurants')
+          .doc(restaurantId)
+          .collection('operatingHours')
+          .doc(currentDay) // Assuming weekdays document
+          .get();
+
+      if (operatingHoursDoc.exists) {
+        return operatingHoursDoc.data();
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching operating hours: $e');
+      return null;
+    }
+  }
+
+  Future<List<RestaurantModel>> _getFilteredRestaurants(
+      List<RestaurantModel> restaurants) async {
+    List<RestaurantModel> filteredRestaurants = [];
+    List<String> timeOfDayList = filterSelectionController.aggregatedFilters;
+
+    for (var restaurant in restaurants) {
+      // Fetch operating hours for the restaurant
+      var operatingHours = await getOperatingHours(restaurant.docID);
+
+      if (operatingHours != null) {
+        // Loop through the selected timeOfDay values from the user's filter
+        for (var timeOfDay in timeOfDayList) {
+          if (operatingHours.containsKey(timeOfDay)) {
+            var timeSlot = operatingHours[timeOfDay];
+            print('timeSlot $timeSlot');
+            // Check if the restaurant is open for the selected time (i.e., 'isClosed' is false or null)
+            var isClosed = timeSlot['isClosed'];
+
+            // If 'isClosed' is false or null, add the restaurant to the filtered list
+            if (isClosed == null || !isClosed) {
+              filteredRestaurants.add(
+                  restaurant); // Add restaurant if the selected time is open
+              break; // Stop checking other times once a valid time is found for the restaurant
+            }
+          }
+        }
+      }
+    }
+    return filteredRestaurants;
   }
 
   @override
@@ -254,76 +304,281 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                               height: 16,
                             ),
                             StreamBuilder(
-                                stream: controller.getRestaurants(),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return SizedBox(
-                                      height: Get.height * 0.5,
-                                      child: Center(
-                                          child: CircularProgressIndicator()),
-                                    );
-                                  }
+                              stream: controller.getRestaurants(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return SizedBox(
+                                    height: Get.height * 0.5,
+                                    child: Center(
+                                        child: CircularProgressIndicator()),
+                                  );
+                                }
 
-                                  if (snapshot.hasError) {
-                                    return Text('Error: ${snapshot.error}');
-                                  }
+                                if (snapshot.hasError) {
+                                  return Text('Error: ${snapshot.error}');
+                                }
 
-                                  if (snapshot.data == null ||
-                                      snapshot.data!.isEmpty) {
-                                    return Text('No restaurants found');
-                                  }
-                                  filterSelectionController.aggregatedFilters
-                                      .forEach((item) {
-                                    print('Filter itme =====>$item');
-                                  });
-                                  List<RestaurantModel> restaurants =
-                                      snapshot.data!;
-                                  controller.initializeSelectors(restaurants);
+                                if (snapshot.data == null ||
+                                    snapshot.data!.isEmpty) {
+                                  return Text('No restaurants found');
+                                }
 
-                                  return GetBuilder<HomeLocationController>(
-                                      builder: (controller) {
-                                    return GridView.builder(
-                                      shrinkWrap: true,
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      gridDelegate:
-                                          SliverGridDelegateWithFixedCrossAxisCount(
-                                        mainAxisExtent: 220,
-                                        crossAxisCount: 2,
-                                        crossAxisSpacing: 10,
-                                        mainAxisSpacing: 10,
-                                      ),
-                                      itemCount:
-                                          controller.filteredRestaurants.length,
-                                      itemBuilder: (context, index) {
-                                        final item = controller
-                                            .filteredRestaurants[index];
-                                        return InkWell(
-                                          onTap: () {
-                                            Get.to(RestaurantDetailScreen(
-                                              restaurantModel: item,
-                                            ));
-                                          },
-                                          child: RectangleWidget(
-                                            title: item.resName,
-                                            description: item.about,
-                                            resturant_id: item.docID,
-                                            imagePath: item.logoImage,
-                                            timetext: '10 AM',
-                                            percentText: '25%',
-                                            endTimeText: '9 PM',
-                                            percentageOff:
-                                                item.menuList.percentageOff,
-                                            happyhour:
-                                                item.menuList.happyHourSpecials,
-                                            isFavorite: false.obs,
-                                          ),
-                                        );
-                                      },
-                                    );
-                                  });
-                                }),
+                                // Apply filtering logic here
+                                List<RestaurantModel> restaurants =
+                                    snapshot.data!;
+
+                                // Filter by Country
+                                if (filterSelectionController
+                                    .selectedCountry.isNotEmpty) {
+                                  print(filterSelectionController
+                                      .aggregatedFilters);
+                                  print('flag 1');
+                                  restaurants = restaurants.where((restaurant) {
+                                    print(
+                                        'restaurant.country ${restaurant.country}');
+                                    return filterSelectionController
+                                        .aggregatedFilters
+                                        .contains(restaurant.country);
+                                  }).toList();
+                                }
+
+                                // Filter by City
+                                if (filterSelectionController
+                                    .selectedCity.isNotEmpty) {
+                                  print('flag 2');
+                                  restaurants = restaurants.where((restaurant) {
+                                    return filterSelectionController
+                                        .aggregatedFilters
+                                        .contains(restaurant.city);
+                                  }).toList();
+                                }
+
+                                // Filter by Language
+                                if (filterSelectionController
+                                    .selectedLanguage.isNotEmpty) {
+                                  print('flag 3');
+                                  restaurants = restaurants.where((restaurant) {
+                                    return restaurant.spokenLanguage ==
+                                        filterSelectionController
+                                            .selectedLanguage.value;
+                                  }).toList();
+                                }
+
+                                // Filter by Discounts
+                                if (filterSelectionController
+                                    .selectedDiscounts.isNotEmpty) {
+                                  print('flag 4');
+                                  restaurants = restaurants.where((restaurant) {
+                                    return (filterSelectionController
+                                                .aggregatedFilters
+                                                .contains('percentage off') &&
+                                            restaurant.menuList.percentageOff
+                                                .isNotEmpty) ||
+                                        filterSelectionController
+                                                .aggregatedFilters
+                                                .contains(
+                                                    'happy hour specials') &&
+                                            restaurant.menuList
+                                                .happyHourSpecials.isNotEmpty;
+                                  }).toList();
+                                }
+
+                                // Filter by Atmosphere
+                                if (filterSelectionController
+                                    .selectedAtmosphere.isNotEmpty) {
+                                  print('flag 5');
+                                  restaurants = restaurants.where((restaurant) {
+                                    // Convert both lists to lowercase
+                                    List<String> selectedFiltersLowercase =
+                                        filterSelectionController
+                                            .aggregatedFilters
+                                            .map((filter) =>
+                                                filter.toLowerCase())
+                                            .toList();
+                                    List<String> restaurantAtmosphereLowercase =
+                                        restaurant.atmopshereList
+                                            .map((atmosphere) =>
+                                                atmosphere.toLowerCase())
+                                            .toList();
+                                    // Check if any selected filter is contained in any restaurant atmosphere
+                                    bool isMatch = selectedFiltersLowercase
+                                        .any((selectedFilter) {
+                                      return restaurantAtmosphereLowercase
+                                          .any((restaurantAtmosphere) {
+                                        return restaurantAtmosphere
+                                            .contains(selectedFilter);
+                                      });
+                                    });
+                                    return isMatch;
+                                  }).toList();
+                                }
+
+                                // Filter by Facilities
+                                if (filterSelectionController
+                                    .selectedFacilities.isNotEmpty) {
+                                  print('flag 6');
+                                  restaurants = restaurants.where((restaurant) {
+                                    // Convert both lists to lowercase
+                                    List<String> selectedFiltersLowercase =
+                                        filterSelectionController
+                                            .aggregatedFilters
+                                            .map((filter) =>
+                                                filter.toLowerCase())
+                                            .toList();
+                                    List<String> restaurantFacilitiesLowercase =
+                                        restaurant.facilityList
+                                            .map((facility) =>
+                                                facility.toLowerCase())
+                                            .toList();
+                                    // Check if any selected filter is contained in any restaurant facility
+                                    bool isMatch = selectedFiltersLowercase
+                                        .any((selectedFilter) {
+                                      return restaurantFacilitiesLowercase
+                                          .any((restaurantFacility) {
+                                        return restaurantFacility
+                                            .contains(selectedFilter);
+                                      });
+                                    });
+                                    return isMatch;
+                                  }).toList();
+                                }
+
+                                // Filter by Entertainment
+                                if (filterSelectionController
+                                    .selectedEntertainment.isNotEmpty) {
+                                  print('flag 7');
+                                  restaurants = restaurants.where((restaurant) {
+                                    // Check if any item in the restaurant's entertainmentScheduleList matches the selected filters
+                                    return restaurant.entertainmentScheduleList
+                                        .any((schedule) {
+                                      return filterSelectionController
+                                          .aggregatedFilters
+                                          .any((filter) {
+                                        // Compare the relevant fields (e.g., eventName, eventBy, date, etc.)
+                                        return schedule.eventName
+                                                .toLowerCase() ==
+                                            filter.toLowerCase();
+                                      });
+                                    });
+                                  }).toList();
+                                }
+
+                                // Filter by Dietary
+                                if (filterSelectionController
+                                    .selectedDietary.isNotEmpty) {
+                                  print('flag 8');
+                                  restaurants = restaurants.where((restaurant) {
+                                    // Convert both lists to lowercase
+                                    List<String> selectedFiltersLowercase =
+                                        filterSelectionController
+                                            .aggregatedFilters
+                                            .map((filter) =>
+                                                filter.toLowerCase())
+                                            .toList();
+                                    List<String> restaurantDietaryLowercase =
+                                        restaurant.dietaryList
+                                            .map((dietary) =>
+                                                dietary.toLowerCase())
+                                            .toList();
+                                    // Check if any selected filter is contained in any restaurant dietary option
+                                    bool isMatch = selectedFiltersLowercase
+                                        .any((selectedFilter) {
+                                      return restaurantDietaryLowercase
+                                          .any((restaurantDietary) {
+                                        return restaurantDietary
+                                            .contains(selectedFilter);
+                                      });
+                                    });
+                                    return isMatch;
+                                  }).toList();
+                                }
+
+                                // Filter by Price Range
+                                if (filterSelectionController
+                                    .selectedPriceRange.isNotEmpty) {
+                                  print('flag 9');
+                                  restaurants = restaurants.where((restaurant) {
+                                    return filterSelectionController
+                                        .selectedPriceRange
+                                        .contains(restaurant.priceRange);
+                                  }).toList();
+                                }
+
+                                // Initialize filtered restaurants
+                                controller.initializeSelectors(restaurants);
+
+                                return FutureBuilder(
+                                    future:
+                                        _getFilteredRestaurants(restaurants),
+                                    builder: (context, futureSnapshot) {
+                                      List<RestaurantModel>
+                                          timeOfDayRestaurants =
+                                          futureSnapshot.data ?? [];
+                                      // print(
+                                      //     'filterSelectionController.aggregatedFilters ${filterSelectionController.aggregatedFilters}');
+                                      // print(
+                                      //     'filterSelectionController.selectedTimeOfDay ${filterSelectionController.selectedTimeOfDay}');
+                                      // print(
+                                      //     'isTrue ${filterSelectionController.aggregatedFilters.any((filter) => filterSelectionController.selectedTimeOfDay.contains(filter))}');
+
+                                      if (filterSelectionController
+                                          .aggregatedFilters
+                                          .any((filter) =>
+                                              filterSelectionController
+                                                  .selectedTimeOfDay
+                                                  .contains(filter))) {
+                                        print('flag 11');
+                                        controller.filteredRestaurants =
+                                            timeOfDayRestaurants;
+                                      }
+
+                                      return GetBuilder<HomeLocationController>(
+                                        builder: (controller) {
+                                          return GridView.builder(
+                                            shrinkWrap: true,
+                                            physics:
+                                                const NeverScrollableScrollPhysics(),
+                                            gridDelegate:
+                                                SliverGridDelegateWithFixedCrossAxisCount(
+                                              mainAxisExtent: 220,
+                                              crossAxisCount: 2,
+                                              crossAxisSpacing: 10,
+                                              mainAxisSpacing: 10,
+                                            ),
+                                            itemCount: controller
+                                                .filteredRestaurants.length,
+                                            itemBuilder: (context, index) {
+                                              final item = controller
+                                                  .filteredRestaurants[index];
+                                              return InkWell(
+                                                onTap: () {
+                                                  Get.to(RestaurantDetailScreen(
+                                                    restaurantModel: item,
+                                                  ));
+                                                },
+                                                child: RectangleWidget(
+                                                  title: item.resName,
+                                                  description: item.about,
+                                                  resturant_id: item.docID,
+                                                  imagePath: item.logoImage,
+                                                  timetext: '10 AM',
+                                                  percentText: '25%',
+                                                  endTimeText: '9 PM',
+                                                  percentageOff: item
+                                                      .menuList.percentageOff,
+                                                  happyhour: item.menuList
+                                                      .happyHourSpecials,
+                                                  isFavorite: false.obs,
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        },
+                                      );
+                                    });
+                              },
+                            ),
                             SizedBox(
                               height: 16,
                             ),

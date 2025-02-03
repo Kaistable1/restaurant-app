@@ -17,6 +17,7 @@ class MapWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('lat----$lat    long-----$long');
     return ClipRRect(
       borderRadius: BorderRadius.only(
           topRight: Radius.circular(10), topLeft: Radius.circular(10)),

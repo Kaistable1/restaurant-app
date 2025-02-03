@@ -147,6 +147,7 @@ void filterSelectionDialogueBox() {
                           SizedBox(
                             height: 12,
                           ),
+                          
                           Obx(
                             () => DropDownButton(
                               hintText: 'Language',
@@ -231,6 +232,7 @@ void filterSelectionDialogueBox() {
                           SizedBox(
                             height: 12,
                           ),
+                        
                           LayoutBuilder(
                             builder: (context, constraints) {
                               double availableWidth = constraints.maxWidth;

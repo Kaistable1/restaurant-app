@@ -10,8 +10,18 @@ class FilterSelectionController extends GetxController {
     'vegan',
     'american',
   ];
-  final selectedFilters = <String>[].obs;
+  RxString selectedCountry = ''.obs;
+  RxString selectedCity = ''.obs;
+  RxString selectedLanguage = ''.obs;
 
+  final selectedFilters = <String>[].obs;
+  final selectedDiscounts = <String>[].obs;
+  final selectedAtmosphere = <String>[].obs;
+  final selectedFacilities = <String>[].obs;
+  final selectedEntertainment = <String>[].obs;
+  final selectedDietary = <String>[].obs;
+  final selectedPriceRange = <String>[].obs;
+  final selectedTimeOfDay = <String>[].obs;
   void toggleFilter(String name) {
     if (selectedFilters.contains(name)) {
       selectedFilters.remove(name);
@@ -24,7 +34,6 @@ class FilterSelectionController extends GetxController {
     'percentage off',
     'happy hour specials',
   ];
-  final selectedDiscounts = <String>[].obs;
 
   void toggleDiscounts(String name) {
     if (selectedDiscounts.contains(name)) {
@@ -35,13 +44,12 @@ class FilterSelectionController extends GetxController {
   }
 
   final timeOfDay = [
-    'breakfast',
-    'brunch',
-    'lunch',
-    'dinner',
-    'late night',
+    'Breakfast',
+    'Brunch',
+    'Lunch',
+    'Dinner',
+    'Late Night',
   ];
-  final selectedTimeOfDay = <String>[].obs;
 
   void toggleTimeOfDay(String name) {
     if (selectedTimeOfDay.contains(name)) {
@@ -52,12 +60,11 @@ class FilterSelectionController extends GetxController {
   }
 
   final atmosphere = [
-    'casual dinning',
-    'fine dinning',
+    'casual dining',
+    'fine dining',
     'fast casual',
     'pop',
   ];
-  final selectedAtmosphere = <String>[].obs;
 
   void toggleAtmosphere(String name) {
     if (selectedAtmosphere.contains(name)) {
@@ -68,7 +75,7 @@ class FilterSelectionController extends GetxController {
   }
 
   final facilities = [
-    'free  wi-fi',
+    'free wi-fi',
     'private dinning',
     'parking',
     'takeout',
@@ -80,7 +87,6 @@ class FilterSelectionController extends GetxController {
     'wheelchair accessibility',
     'high chairs',
   ];
-  final selectedFacilities = <String>[].obs;
 
   void toggleFacilities(String name) {
     if (selectedFacilities.contains(name)) {
@@ -98,7 +104,6 @@ class FilterSelectionController extends GetxController {
     'sports screenings',
     'hookah',
   ];
-  final selectedEntertainment = <String>[].obs;
 
   void toggleEntertainment(String name) {
     if (selectedEntertainment.contains(name)) {
@@ -107,6 +112,7 @@ class FilterSelectionController extends GetxController {
       selectedEntertainment.add(name);
     }
   }
+
   final dietaryPreferences = [
     'vegetarian',
     'vegan',
@@ -114,7 +120,6 @@ class FilterSelectionController extends GetxController {
     'dairy-free',
     'keto-friendly',
   ];
-  final selectedDietary = <String>[].obs;
 
   void toggleDietary(String name) {
     if (selectedDietary.contains(name)) {
@@ -123,13 +128,13 @@ class FilterSelectionController extends GetxController {
       selectedDietary.add(name);
     }
   }
+
   final priceRange = [
-    '\$ (budget-friendly)',
-    '\$\$ (moderate)',
-    '\$\$\$ {premium)',
-    '\$\$\$\$ (luxury)',
+    '\$(Budget-Friendly)',
+    '\$\$(Moderate)',
+    '\$\$\${Premium)',
+    '\$\$\$\$(Luxury)',
   ];
-  final selectedPriceRange= <String>[].obs;
 
   void togglePriceRange(String name) {
     if (selectedPriceRange.contains(name)) {
@@ -139,7 +144,7 @@ class FilterSelectionController extends GetxController {
     }
   }
 
-///-----------------------------------------------------///
+  ///-----------------------------------------------------///
   var aggregatedFilters = <String>[].obs;
 
   void aggregateSelectedFilters() {
@@ -169,9 +174,4 @@ class FilterSelectionController extends GetxController {
   void toggleFilterListVisibility() {
     isFilterListVisible.value = !isFilterListVisible.value;
   }
-
-  RxString selectedCountry = ''.obs;
-  RxString selectedCity = ''.obs;
-  RxString selectedLanguage = ''.obs;
-
 }
