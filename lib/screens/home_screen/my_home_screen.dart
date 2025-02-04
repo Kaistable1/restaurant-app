@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:intl/intl.dart';
 import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
@@ -175,8 +176,60 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
     return filteredRestaurants;
   }
 
+  bool isSearching = false;
+  List<RestaurantModel> filterRestaurants(
+      List<RestaurantModel> restaurants, String query) {
+    query = query
+        .toLowerCase(); // Convert query to lowercase for case-insensitive search
+    final int? queryNumber =
+        int.tryParse(query); // Try to parse query as a number
+
+    return restaurants.where((restaurant) {
+      // Check if the query is numeric
+      if (queryNumber != null) {
+        // If numeric, match with zipCode
+        return restaurant.zipCode == query;
+      }
+
+      // If not numeric, check all fields for matches
+      return restaurant.resName.toLowerCase().contains(query) ||
+          restaurant.city.toLowerCase().contains(query) ||
+          restaurant.address.toLowerCase().contains(query) ||
+          restaurant.zipCode.toLowerCase().contains(query) ||
+          restaurant.country.toLowerCase().contains(query) ||
+          restaurant.about.toLowerCase().contains(query) ||
+          restaurant.socialLink.toLowerCase().contains(query) ||
+          restaurant.priceRange.toLowerCase().contains(query) ||
+          restaurant.specialConditions.toLowerCase().contains(query) ||
+          restaurant.spokenLanguage.toLowerCase().contains(query) ||
+          //filter by events
+          restaurant.entertainmentScheduleList.any((item) =>
+              item.eventName.toLowerCase().contains(query) ||
+              item.eventBy.toLowerCase().contains(query)) ||
+          restaurant.facilityList.any((facility) => facility
+              .toLowerCase()
+              .contains(query)) || // Check in facilityList
+          restaurant.dietaryList.any((dietary) =>
+              dietary.toLowerCase().contains(query)) || // Check in dietaryList
+          restaurant.atmopshereList.any((atmosphere) => atmosphere
+              .toLowerCase()
+              .contains(query)); // Check in atmopshereList
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
+    controller.searchController.addListener(() {
+      final text = controller.searchController.text;
+
+      if (text.isNotEmpty) {
+        isSearching = true;
+      } else {
+        isSearching = false;
+      }
+      setState(() {});
+    });
+
     return Scaffold(
         backgroundColor: AppColors.bgColor,
         appBar: AppBar(
@@ -284,394 +337,504 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               FilterWidget(),
-              Obx(
-                () => filterSelectionController.isFilterListVisible.value &&
-                        filterSelectionController.aggregatedFilters.isNotEmpty
-                    ? Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Explore Restaurants',
-                              style: TextStyle(
-                                color: AppColors.bottomSheetColor,
-                                fontFamily: 'aftika-regular',
-                                fontSize: 18,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 16,
-                            ),
-                            StreamBuilder(
-                              stream: controller.getRestaurants(),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return SizedBox(
-                                    height: Get.height * 0.5,
-                                    child: Center(
-                                        child: CircularProgressIndicator(
-                                      color: AppColors.primaryColor,
-                                    )),
-                                  );
-                                }
-
-                                if (snapshot.hasError) {
-                                  return Text('Error: ${snapshot.error}');
-                                }
-
-                                if (snapshot.data == null ||
-                                    snapshot.data!.isEmpty) {
-                                  return Text('No restaurants found');
-                                }
-
-                                // Apply filtering logic here
-                                List<RestaurantModel> restaurants =
-                                    snapshot.data!;
-
-                                // Filter by Country
-                                if (filterSelectionController
-                                    .selectedCountry.isNotEmpty) {
-                                  print(filterSelectionController
-                                      .aggregatedFilters);
-                                  print('flag 1');
-                                  restaurants = restaurants.where((restaurant) {
-                                    print(
-                                        'restaurant.country ${restaurant.country}');
-                                    return filterSelectionController
-                                        .aggregatedFilters
-                                        .contains(restaurant.country);
-                                  }).toList();
-                                }
-
-                                // Filter by City
-                                if (filterSelectionController
-                                    .selectedCity.isNotEmpty) {
-                                  print('flag 2');
-                                  restaurants = restaurants.where((restaurant) {
-                                    return filterSelectionController
-                                        .aggregatedFilters
-                                        .contains(restaurant.city);
-                                  }).toList();
-                                }
-
-                                // Filter by Language
-                                if (filterSelectionController
-                                    .selectedLanguage.isNotEmpty) {
-                                  print('flag 3');
-                                  restaurants = restaurants.where((restaurant) {
-                                    return restaurant.spokenLanguage ==
-                                        filterSelectionController
-                                            .selectedLanguage.value;
-                                  }).toList();
-                                }
-
-                                // Filter by Discounts
-                                if (filterSelectionController
-                                    .selectedDiscounts.isNotEmpty) {
-                                  print('flag 4');
-                                  restaurants = restaurants.where((restaurant) {
-                                    return (filterSelectionController
-                                                .aggregatedFilters
-                                                .contains('percentage off') &&
-                                            restaurant.menuList.percentageOff
-                                                .isNotEmpty) ||
-                                        filterSelectionController
-                                                .aggregatedFilters
-                                                .contains(
-                                                    'happy hour specials') &&
-                                            restaurant.menuList
-                                                .happyHourSpecials.isNotEmpty;
-                                  }).toList();
-                                }
-
-                                // Filter by Atmosphere
-                                if (filterSelectionController
-                                    .selectedAtmosphere.isNotEmpty) {
-                                  print('flag 5');
-                                  restaurants = restaurants.where((restaurant) {
-                                    // Convert both lists to lowercase
-                                    List<String> selectedFiltersLowercase =
-                                        filterSelectionController
-                                            .aggregatedFilters
-                                            .map((filter) =>
-                                                filter.toLowerCase())
-                                            .toList();
-                                    List<String> restaurantAtmosphereLowercase =
-                                        restaurant.atmopshereList
-                                            .map((atmosphere) =>
-                                                atmosphere.toLowerCase())
-                                            .toList();
-                                    // Check if any selected filter is contained in any restaurant atmosphere
-                                    bool isMatch = selectedFiltersLowercase
-                                        .any((selectedFilter) {
-                                      return restaurantAtmosphereLowercase
-                                          .any((restaurantAtmosphere) {
-                                        return restaurantAtmosphere
-                                            .contains(selectedFilter);
-                                      });
-                                    });
-                                    return isMatch;
-                                  }).toList();
-                                }
-
-                                // Filter by Facilities
-                                if (filterSelectionController
-                                    .selectedFacilities.isNotEmpty) {
-                                  print('flag 6');
-                                  restaurants = restaurants.where((restaurant) {
-                                    // Convert both lists to lowercase
-                                    List<String> selectedFiltersLowercase =
-                                        filterSelectionController
-                                            .aggregatedFilters
-                                            .map((filter) =>
-                                                filter.toLowerCase())
-                                            .toList();
-                                    List<String> restaurantFacilitiesLowercase =
-                                        restaurant.facilityList
-                                            .map((facility) =>
-                                                facility.toLowerCase())
-                                            .toList();
-                                    // Check if any selected filter is contained in any restaurant facility
-                                    bool isMatch = selectedFiltersLowercase
-                                        .any((selectedFilter) {
-                                      return restaurantFacilitiesLowercase
-                                          .any((restaurantFacility) {
-                                        return restaurantFacility
-                                            .contains(selectedFilter);
-                                      });
-                                    });
-                                    return isMatch;
-                                  }).toList();
-                                }
-
-                                // Filter by Entertainment
-                                if (filterSelectionController
-                                    .selectedEntertainment.isNotEmpty) {
-                                  print('flag 7');
-                                  restaurants = restaurants.where((restaurant) {
-                                    // Check if any item in the restaurant's entertainmentScheduleList matches the selected filters
-                                    return restaurant.entertainmentScheduleList
-                                        .any((schedule) {
-                                      return filterSelectionController
-                                          .aggregatedFilters
-                                          .any((filter) {
-                                        // Compare the relevant fields (e.g., eventName, eventBy, date, etc.)
-                                        return schedule.eventName
-                                                .toLowerCase() ==
-                                            filter.toLowerCase();
-                                      });
-                                    });
-                                  }).toList();
-                                }
-
-                                // Filter by Dietary
-                                if (filterSelectionController
-                                    .selectedDietary.isNotEmpty) {
-                                  print('flag 8');
-                                  restaurants = restaurants.where((restaurant) {
-                                    // Convert both lists to lowercase
-                                    List<String> selectedFiltersLowercase =
-                                        filterSelectionController
-                                            .aggregatedFilters
-                                            .map((filter) =>
-                                                filter.toLowerCase())
-                                            .toList();
-                                    List<String> restaurantDietaryLowercase =
-                                        restaurant.dietaryList
-                                            .map((dietary) =>
-                                                dietary.toLowerCase())
-                                            .toList();
-                                    // Check if any selected filter is contained in any restaurant dietary option
-                                    bool isMatch = selectedFiltersLowercase
-                                        .any((selectedFilter) {
-                                      return restaurantDietaryLowercase
-                                          .any((restaurantDietary) {
-                                        return restaurantDietary
-                                            .contains(selectedFilter);
-                                      });
-                                    });
-                                    return isMatch;
-                                  }).toList();
-                                }
-
-                                // Filter by Price Range
-                                if (filterSelectionController
-                                    .selectedPriceRange.isNotEmpty) {
-                                  print('flag 9');
-                                  restaurants = restaurants.where((restaurant) {
-                                    return filterSelectionController
-                                        .selectedPriceRange
-                                        .contains(restaurant.priceRange);
-                                  }).toList();
-                                }
-
-                                // Initialize filtered restaurants
-                                WidgetsBinding.instance
-                                    .addPostFrameCallback((_) {
-                                  controller.initializeSelectors(restaurants);
-                                });
-
-                                return FutureBuilder<List<RestaurantModel>>(
-                                  future: _getFilteredRestaurants(restaurants),
-                                  builder: (context, futureSnapshot) {
-                                    // Handle the first FutureBuilder for filtered restaurants
-                                    List<RestaurantModel> timeOfDayRestaurants =
-                                        futureSnapshot.data ?? [];
-
-                                    if (filterSelectionController
-                                        .aggregatedFilters
-                                        .any((filter) =>
-                                            filterSelectionController
-                                                .selectedTimeOfDay
-                                                .contains(filter))) {
-                                      controller.filteredRestaurants =
-                                          timeOfDayRestaurants;
-                                    }
-
-                                    // Handle the second FutureBuilder for cuisines
-                                    return FutureBuilder<
-                                        Map<String, List<String>>>(
-                                      future: filterSelectionController
-                                              .aggregatedFilters
-                                              .any((filter) =>
-                                                  filterSelectionController
-                                                      .selectedFilters
-                                                      .contains(filter))
-                                          ? filterController
-                                              .getRestaurantsGroupedByCuisine()
-                                          : Future.value(
-                                              {}), // Provide a default empty map if the condition is false
-                                      builder:
-                                          (context, futureCuisineSnapshot) {
-                                        if (futureCuisineSnapshot
-                                                .connectionState ==
-                                            ConnectionState.waiting) {
-                                          return _buildLoadingIndicator();
-                                        }
-
-                                        if (futureCuisineSnapshot.hasError) {
-                                          return _buildErrorWidget(
-                                              'Failed to load cuisines!');
-                                        }
-
-                                        final cuisineMap =
-                                            futureCuisineSnapshot.data ?? {};
-
-                                        // Filter cuisines based on selected filters
-                                        final selectedCuisines =
-                                            filterSelectionController
-                                                .aggregatedFilters;
-
-                                        if (selectedCuisines.any((filter) =>
-                                            filterSelectionController
-                                                .selectedFilters
-                                                .contains(filter))) {
-                                          final filteredRestaurantIds =
-                                              cuisineMap.entries
-                                                  .where((entry) =>
-                                                      selectedCuisines.contains(
-                                                          entry.key
-                                                              .toLowerCase()))
-                                                  .expand(
-                                                      (entry) => entry.value)
-                                                  .toSet()
-                                                  .toList();
-
-                                          if (filteredRestaurantIds
-                                              .isNotEmpty) {
-                                            controller.filteredRestaurants =
-                                                controller.filteredRestaurants
-                                                    .where((restaurant) =>
-                                                        filteredRestaurantIds
-                                                            .contains(restaurant
-                                                                .docID))
-                                                    .toList();
-                                          } else {
-                                            controller.filteredRestaurants = [];
-                                            return _buildEmptyState(
-                                                'No restaurants found!');
-                                          }
-                                        }
-                                        controller.searchController
-                                            .addListener(() {
-                                          controller.filteredRestaurants =
-                                              restaurants
-                                                  .where((item) => item.resName
-                                                      .toLowerCase()
-                                                      .contains(controller
-                                                          .searchController.text
-                                                          .toLowerCase()))
-                                                  .toList();
-                                          controller.update();
-                                        });
-                                        return GetBuilder<
-                                            HomeLocationController>(
-                                          builder: (controller) {
-                                            return _buildRestaurantGrid(
-                                                controller.filteredRestaurants);
-                                          },
-                                        );
-                                      },
-                                    );
-                                  },
-                                );
-                              },
-                            ),
-                            SizedBox(
-                              height: 16,
-                            ),
-                          ],
-                        ),
-                      )
-                    : Column(
+              isSearching
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Padding(
-                            padding: EdgeInsets.only(
-                              left: 16,
-                              right: 18,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '${currentUserDataModel?.value.city}',
-                                  style: TextStyle(
-                                    color: AppColors.bottomSheetColor,
-                                    fontFamily: 'aftika-regular',
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                                Spacer(),
-                                InkWell(
-                                    onTap: () {
-                                      Get.to(LocationViewAll());
-                                    },
-                                    child: Text(
-                                      "view all",
-                                      style: TextStyle(
-                                          decoration: TextDecoration.underline,
-                                          decorationColor:
-                                              AppColors.primaryColor,
-                                          fontFamily: 'Nunito-Regular',
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                          color: AppColors.primaryColor),
-                                    ))
-                              ],
+                          Text(
+                            'Explore Restaurants',
+                            style: TextStyle(
+                              color: AppColors.bottomSheetColor,
+                              fontFamily: 'aftika-regular',
+                              fontSize: 18,
+                              fontWeight: FontWeight.w400,
                             ),
                           ),
-                          const SizedBox(height: 1),
-                          AllCategories(),
+                          SizedBox(
+                            height: 16,
+                          ),
+                          StreamBuilder(
+                            stream: controller.getRestaurants(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return SizedBox(
+                                  height: Get.height * 0.5,
+                                  child: Center(
+                                      child: CircularProgressIndicator(
+                                    color: AppColors.primaryColor,
+                                  )),
+                                );
+                              }
+
+                              if (snapshot.hasError) {
+                                return Text('Error: ${snapshot.error}');
+                              }
+
+                              if (snapshot.data == null ||
+                                  snapshot.data!.isEmpty) {
+                                return Text('No restaurants found');
+                              }
+                              // Get the list of restaurants
+                              List<RestaurantModel> restaurants =
+                                  snapshot.data!;
+
+                              // Add a listener to update filtering whenever the search query changes
+                              controller.searchController.addListener(() {
+                                final text = controller.searchController.text;
+                                controller.filteredRestaurants =
+                                    filterRestaurants(restaurants, text);
+                              });
+                              // Build the restaurant grid
+                              return GetBuilder<HomeLocationController>(
+                                builder: (controller) {
+                                  return _buildRestaurantGrid(
+                                      controller.filteredRestaurants);
+                                },
+                              );
+                            },
+                          ),
+                          SizedBox(
+                            height: 16,
+                          ),
                         ],
                       ),
-              ),
+                    )
+                  : Obx(
+                      () => filterSelectionController
+                                  .isFilterListVisible.value &&
+                              filterSelectionController
+                                  .aggregatedFilters.isNotEmpty
+                          ? Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Explore Restaurants',
+                                    style: TextStyle(
+                                      color: AppColors.bottomSheetColor,
+                                      fontFamily: 'aftika-regular',
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 16,
+                                  ),
+                                  StreamBuilder(
+                                    stream: controller.getRestaurants(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return SizedBox(
+                                          height: Get.height * 0.5,
+                                          child: Center(
+                                              child: CircularProgressIndicator(
+                                            color: AppColors.primaryColor,
+                                          )),
+                                        );
+                                      }
+
+                                      if (snapshot.hasError) {
+                                        return Text('Error: ${snapshot.error}');
+                                      }
+
+                                      if (snapshot.data == null ||
+                                          snapshot.data!.isEmpty) {
+                                        return Text('No restaurants found');
+                                      }
+
+                                      // Apply filtering logic here
+                                      List<RestaurantModel> restaurants =
+                                          snapshot.data!;
+
+                                      // Filter by Country
+                                      if (filterSelectionController
+                                          .selectedCountry.isNotEmpty) {
+                                        print(filterSelectionController
+                                            .aggregatedFilters);
+                                        print('flag 1');
+                                        restaurants =
+                                            restaurants.where((restaurant) {
+                                          print(
+                                              'restaurant.country ${restaurant.country}');
+                                          return filterSelectionController
+                                              .aggregatedFilters
+                                              .contains(restaurant.country);
+                                        }).toList();
+                                      }
+
+                                      // Filter by City
+                                      if (filterSelectionController
+                                          .selectedCity.isNotEmpty) {
+                                        print('flag 2');
+                                        restaurants =
+                                            restaurants.where((restaurant) {
+                                          return filterSelectionController
+                                              .aggregatedFilters
+                                              .contains(restaurant.city);
+                                        }).toList();
+                                      }
+
+                                      // Filter by Language
+                                      if (filterSelectionController
+                                          .selectedLanguage.isNotEmpty) {
+                                        print('flag 3');
+                                        restaurants =
+                                            restaurants.where((restaurant) {
+                                          return restaurant.spokenLanguage ==
+                                              filterSelectionController
+                                                  .selectedLanguage.value;
+                                        }).toList();
+                                      }
+
+                                      // Filter by Discounts
+                                      if (filterSelectionController
+                                          .selectedDiscounts.isNotEmpty) {
+                                        print('flag 4');
+                                        restaurants =
+                                            restaurants.where((restaurant) {
+                                          return (filterSelectionController
+                                                      .aggregatedFilters
+                                                      .contains(
+                                                          'percentage off') &&
+                                                  restaurant
+                                                      .menuList
+                                                      .percentageOff
+                                                      .isNotEmpty) ||
+                                              filterSelectionController
+                                                      .aggregatedFilters
+                                                      .contains(
+                                                          'happy hour specials') &&
+                                                  restaurant
+                                                      .menuList
+                                                      .happyHourSpecials
+                                                      .isNotEmpty;
+                                        }).toList();
+                                      }
+
+                                      // Filter by Atmosphere
+                                      if (filterSelectionController
+                                          .selectedAtmosphere.isNotEmpty) {
+                                        print('flag 5');
+                                        restaurants =
+                                            restaurants.where((restaurant) {
+                                          // Convert both lists to lowercase
+                                          List<String>
+                                              selectedFiltersLowercase =
+                                              filterSelectionController
+                                                  .aggregatedFilters
+                                                  .map((filter) =>
+                                                      filter.toLowerCase())
+                                                  .toList();
+                                          List<String>
+                                              restaurantAtmosphereLowercase =
+                                              restaurant.atmopshereList
+                                                  .map((atmosphere) =>
+                                                      atmosphere.toLowerCase())
+                                                  .toList();
+                                          // Check if any selected filter is contained in any restaurant atmosphere
+                                          bool isMatch =
+                                              selectedFiltersLowercase
+                                                  .any((selectedFilter) {
+                                            return restaurantAtmosphereLowercase
+                                                .any((restaurantAtmosphere) {
+                                              return restaurantAtmosphere
+                                                  .contains(selectedFilter);
+                                            });
+                                          });
+                                          return isMatch;
+                                        }).toList();
+                                      }
+
+                                      // Filter by Facilities
+                                      if (filterSelectionController
+                                          .selectedFacilities.isNotEmpty) {
+                                        print('flag 6');
+                                        restaurants =
+                                            restaurants.where((restaurant) {
+                                          // Convert both lists to lowercase
+                                          List<String>
+                                              selectedFiltersLowercase =
+                                              filterSelectionController
+                                                  .aggregatedFilters
+                                                  .map((filter) =>
+                                                      filter.toLowerCase())
+                                                  .toList();
+                                          List<String>
+                                              restaurantFacilitiesLowercase =
+                                              restaurant.facilityList
+                                                  .map((facility) =>
+                                                      facility.toLowerCase())
+                                                  .toList();
+                                          // Check if any selected filter is contained in any restaurant facility
+                                          bool isMatch =
+                                              selectedFiltersLowercase
+                                                  .any((selectedFilter) {
+                                            return restaurantFacilitiesLowercase
+                                                .any((restaurantFacility) {
+                                              return restaurantFacility
+                                                  .contains(selectedFilter);
+                                            });
+                                          });
+                                          return isMatch;
+                                        }).toList();
+                                      }
+
+                                      // Filter by Entertainment
+                                      if (filterSelectionController
+                                          .selectedEntertainment.isNotEmpty) {
+                                        print('flag 7');
+                                        restaurants =
+                                            restaurants.where((restaurant) {
+                                          // Check if any item in the restaurant's entertainmentScheduleList matches the selected filters
+                                          return restaurant
+                                              .entertainmentScheduleList
+                                              .any((schedule) {
+                                            return filterSelectionController
+                                                .aggregatedFilters
+                                                .any((filter) {
+                                              // Compare the relevant fields (e.g., eventName, eventBy, date, etc.)
+                                              return schedule.eventName
+                                                      .toLowerCase() ==
+                                                  filter.toLowerCase();
+                                            });
+                                          });
+                                        }).toList();
+                                      }
+
+                                      // Filter by Dietary
+                                      if (filterSelectionController
+                                          .selectedDietary.isNotEmpty) {
+                                        print('flag 8');
+                                        restaurants =
+                                            restaurants.where((restaurant) {
+                                          // Convert both lists to lowercase
+                                          List<String>
+                                              selectedFiltersLowercase =
+                                              filterSelectionController
+                                                  .aggregatedFilters
+                                                  .map((filter) =>
+                                                      filter.toLowerCase())
+                                                  .toList();
+                                          List<String>
+                                              restaurantDietaryLowercase =
+                                              restaurant.dietaryList
+                                                  .map((dietary) =>
+                                                      dietary.toLowerCase())
+                                                  .toList();
+                                          // Check if any selected filter is contained in any restaurant dietary option
+                                          bool isMatch =
+                                              selectedFiltersLowercase
+                                                  .any((selectedFilter) {
+                                            return restaurantDietaryLowercase
+                                                .any((restaurantDietary) {
+                                              return restaurantDietary
+                                                  .contains(selectedFilter);
+                                            });
+                                          });
+                                          return isMatch;
+                                        }).toList();
+                                      }
+
+                                      // Filter by Price Range
+                                      if (filterSelectionController
+                                          .selectedPriceRange.isNotEmpty) {
+                                        print('flag 9');
+                                        restaurants =
+                                            restaurants.where((restaurant) {
+                                          return filterSelectionController
+                                              .selectedPriceRange
+                                              .contains(restaurant.priceRange);
+                                        }).toList();
+                                      }
+
+                                      // Initialize filtered restaurants
+                                      WidgetsBinding.instance
+                                          .addPostFrameCallback((_) {
+                                        controller
+                                            .initializeSelectors(restaurants);
+                                      });
+
+                                      return FutureBuilder<
+                                          List<RestaurantModel>>(
+                                        future: _getFilteredRestaurants(
+                                            restaurants),
+                                        builder: (context, futureSnapshot) {
+                                          // Handle the first FutureBuilder for filtered restaurants
+                                          List<RestaurantModel>
+                                              timeOfDayRestaurants =
+                                              futureSnapshot.data ?? [];
+
+                                          if (filterSelectionController
+                                              .aggregatedFilters
+                                              .any((filter) =>
+                                                  filterSelectionController
+                                                      .selectedTimeOfDay
+                                                      .contains(filter))) {
+                                            controller.filteredRestaurants =
+                                                timeOfDayRestaurants;
+                                          }
+
+                                          // Handle the second FutureBuilder for cuisines
+                                          return FutureBuilder<
+                                              Map<String, List<String>>>(
+                                            future: filterSelectionController
+                                                    .aggregatedFilters
+                                                    .any((filter) =>
+                                                        filterSelectionController
+                                                            .selectedFilters
+                                                            .contains(filter))
+                                                ? filterController
+                                                    .getRestaurantsGroupedByCuisine()
+                                                : Future.value(
+                                                    {}), // Provide a default empty map if the condition is false
+                                            builder: (context,
+                                                futureCuisineSnapshot) {
+                                              if (futureCuisineSnapshot
+                                                      .connectionState ==
+                                                  ConnectionState.waiting) {
+                                                return _buildLoadingIndicator();
+                                              }
+
+                                              if (futureCuisineSnapshot
+                                                  .hasError) {
+                                                return _buildErrorWidget(
+                                                    'Failed to load cuisines!');
+                                              }
+
+                                              final cuisineMap =
+                                                  futureCuisineSnapshot.data ??
+                                                      {};
+
+                                              // Filter cuisines based on selected filters
+                                              final selectedCuisines =
+                                                  filterSelectionController
+                                                      .aggregatedFilters;
+
+                                              if (selectedCuisines.any(
+                                                  (filter) =>
+                                                      filterSelectionController
+                                                          .selectedFilters
+                                                          .contains(filter))) {
+                                                final filteredRestaurantIds =
+                                                    cuisineMap
+                                                        .entries
+                                                        .where((entry) =>
+                                                            selectedCuisines
+                                                                .contains(entry
+                                                                    .key
+                                                                    .toLowerCase()))
+                                                        .expand((entry) =>
+                                                            entry.value)
+                                                        .toSet()
+                                                        .toList();
+
+                                                if (filteredRestaurantIds
+                                                    .isNotEmpty) {
+                                                  controller
+                                                          .filteredRestaurants =
+                                                      controller
+                                                          .filteredRestaurants
+                                                          .where((restaurant) =>
+                                                              filteredRestaurantIds
+                                                                  .contains(
+                                                                      restaurant
+                                                                          .docID))
+                                                          .toList();
+                                                } else {
+                                                  controller
+                                                      .filteredRestaurants = [];
+                                                  return _buildEmptyState(
+                                                      'No restaurants found!');
+                                                }
+                                              }
+                                              controller.searchController
+                                                  .addListener(() {
+                                                controller.filteredRestaurants =
+                                                    restaurants
+                                                        .where((item) => item
+                                                            .resName
+                                                            .toLowerCase()
+                                                            .contains(controller
+                                                                .searchController
+                                                                .text
+                                                                .toLowerCase()))
+                                                        .toList();
+                                                controller.update();
+                                              });
+                                              return GetBuilder<
+                                                  HomeLocationController>(
+                                                builder: (controller) {
+                                                  return _buildRestaurantGrid(
+                                                      controller
+                                                          .filteredRestaurants);
+                                                },
+                                              );
+                                            },
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
+                                  SizedBox(
+                                    height: 16,
+                                  ),
+                                ],
+                              ),
+                            )
+                          : Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                    left: 16,
+                                    right: 18,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '${currentUserDataModel?.value.city}',
+                                        style: TextStyle(
+                                          color: AppColors.bottomSheetColor,
+                                          fontFamily: 'aftika-regular',
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                      Spacer(),
+                                      InkWell(
+                                          onTap: () {
+                                            Get.to(LocationViewAll());
+                                          },
+                                          child: Text(
+                                            "view all",
+                                            style: TextStyle(
+                                                decoration:
+                                                    TextDecoration.underline,
+                                                decorationColor:
+                                                    AppColors.primaryColor,
+                                                fontFamily: 'Nunito-Regular',
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w500,
+                                                color: AppColors.primaryColor),
+                                          ))
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 1),
+                                AllCategories(),
+                              ],
+                            ),
+                    ),
             ],
           ),
         ));
