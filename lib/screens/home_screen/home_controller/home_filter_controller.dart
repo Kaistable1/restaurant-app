@@ -124,6 +124,37 @@ class HomeFilterController extends GetxController {
 
     return cuisineMap;
   }
+
+  Future<Map<String, List<String>>> getRestaurantsGroupedByAddress() async {
+    // Initialize Firestore
+    final firestore = FirebaseFirestore.instance;
+
+    // Fetch all restaurants
+    QuerySnapshot restaurantsSnapshot =
+        await firestore.collection('restaurants').get();
+
+    // Map to hold address as key and list of restaurants as value
+    Map<String, List<String>> addressMap = {};
+
+    for (var restaurantDoc in restaurantsSnapshot.docs) {
+      // Extract the data from the document
+      var restaurantData = restaurantDoc.data() as Map<String, dynamic>;
+
+      // Access the 'address' field
+      var address = restaurantData['address'];
+      if (address != null && address is String) {
+        // Initialize the list for this address if not already present
+        if (!addressMap.containsKey(address)) {
+          addressMap[address] = [];
+        }
+
+        // Add the restaurant ID to the list for this address
+        addressMap[address]!.add(restaurantDoc.id);
+      }
+    }
+
+    return addressMap;
+  }
 }
 
 class FilterItems {

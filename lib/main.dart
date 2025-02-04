@@ -15,15 +15,14 @@ Rx<UserModel>? currentUserDataModel;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
-    await Firebase.initializeApp(); 
-  await getCurrentUserData();
-
+    await Firebase.initializeApp();
+    await getCurrentUserData();
   } on FirebaseAuthException catch (e) {
     print('Error: ${e.code} - ${e.message}');
   } catch (e) {
     print('Unhandled error: $e');
   }
-preferences = await SharedPreferences.getInstance();
+  preferences = await SharedPreferences.getInstance();
   remember_me_pref = await SharedPreferences.getInstance();
   runApp(const MyApp());
 }

@@ -44,35 +44,104 @@ class AllCategories extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Padding(
-          padding: EdgeInsets.only(left: 8, right: 6),
-          child: SizedBox(
-            height: 180,
-            child: ListView.builder(
-              controller: controller.scrollController,
-              scrollDirection: Axis.horizontal,
-              itemCount: controller.circleItems.length, // Number of items
-              itemBuilder: (context, index) {
-                final item =
-                    controller.circleItems[index]; // Get item from model list
-                return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-                  child: CircleContainerWidget(
-                    ontap: () {
-                      Get.to(LocationScreen());
-                    },
-                    isFavourite: false.obs,
-                    isLocation: true,
-                    imgPath: item.imgPath,
-                    titleText: item.titleText,
-                    descriptionText: item.descriptionText,
+        FutureBuilder(
+            future: filterController.getRestaurantsGroupedByAddress(),
+            builder: (context, snapshot) {
+              // 1. Check if the Future is still loading
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    for (int i = 0; i < 3; i++)
+                      Container(
+                        width: 113,
+                        height: 144,
+                        decoration: BoxDecoration(
+                          color: AppColors.whiteColor,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              spreadRadius: 0,
+                              blurRadius: 2,
+                              offset: const Offset(0, 1),
+                            ),
+                          ],
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(150),
+                            topRight: Radius.circular(150),
+                            bottomLeft: Radius.circular(25),
+                            bottomRight: Radius.circular(25),
+                          ),
+                        ),
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.primaryColor,
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              }
+
+              // 2. Check if the Future is completed but has an error
+              if (snapshot.hasError) {
+                return SizedBox();
+              }
+
+              // 3. Check if the Future completed successfully but returned null
+              if (!snapshot.hasData || snapshot.data == null) {
+                return Center(
+                  child: Text(
+                    'No data available',
+                    style: TextStyle(color: Colors.grey),
                   ),
                 );
-              },
-            ),
-          ),
-        ),
+              }
+              final addressMap = snapshot.data as Map<String, List<String>>;
+              if (addressMap.isEmpty) {
+                return Center(
+                  child: Text(
+                    '',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                );
+              }
+              return Padding(
+                padding: EdgeInsets.only(left: 8, right: 6),
+                child: SizedBox(
+                  height: 180,
+                  child: ListView.builder(
+                    controller: controller.scrollController,
+                    scrollDirection: Axis.horizontal,
+                    itemCount: addressMap.keys.length,
+                    itemBuilder: (context, index) {
+                      final address = addressMap.keys.elementAt(index);
+                      final restaurants = addressMap[address]!.toSet().toList()
+                        ..sort();
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 6),
+                        child: CircleContainerWidget(
+                          ontap: () {
+                            Get.to(() => ExploreRestaurant(
+                                  restaurantIDs: restaurants,
+                                  cuisneName: address,
+                                ));
+                          },
+                          isFavourite: false.obs,
+                          isLocation: false,
+                          imgPath: 'assets/images/aa.png',
+                          titleText: address,
+                          descriptionText:
+                              '${restaurants.length.toString()} restaurants',
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              );
+            }),
+
         SizedBox(height: 16),
         Padding(
           padding: EdgeInsets.only(
