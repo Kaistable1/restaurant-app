@@ -195,7 +195,11 @@ class LocationScreen extends StatelessWidget {
                         }
 
                         List<RestaurantModel> restaurants = snapshot.data!;
-                        homeController.initializeSelectors(restaurants);
+                         WidgetsBinding.instance.addPostFrameCallback((_) {
+                         homeController.initializeSelectors(restaurants);
+                        });
+
+                       
 
                         return GetBuilder<HomeLocationController>(
                           builder: (controller) {

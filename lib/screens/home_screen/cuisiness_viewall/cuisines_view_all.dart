@@ -266,6 +266,7 @@ class CuisinesViewAll extends StatelessWidget {
                           );
                         });
                       }),
+                 
                   const SizedBox(height: 30),
                 ],
               ),

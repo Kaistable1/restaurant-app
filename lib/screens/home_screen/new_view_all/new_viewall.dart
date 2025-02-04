@@ -189,8 +189,10 @@ class NewViewall extends StatelessWidget {
                           }
 
                           List<RestaurantModel> restaurants = snapshot.data!;
-                          homeController.initializeSelectors(restaurants);
-
+                          // Initialize filtered restaurants
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            homeController.initializeSelectors(restaurants);
+                          });
                           return GetBuilder<HomeLocationController>(
                             builder: (controller) {
                               return GridView.builder(

@@ -173,6 +173,7 @@ class FavoriteScreen extends StatelessWidget {
                                     percentText: '',
                                     resturant_id: item.docID,
                                     percentageOff: item.menuList.percentageOff,
+                                    happyhour: item.menuList.happyHourSpecials,
                                     isFavorite: true.obs,
                                   ),
                                 );

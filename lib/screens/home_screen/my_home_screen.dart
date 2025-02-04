@@ -510,7 +510,10 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                 }
 
                                 // Initialize filtered restaurants
-                                controller.initializeSelectors(restaurants);
+                                WidgetsBinding.instance
+                                    .addPostFrameCallback((_) {
+                                  controller.initializeSelectors(restaurants);
+                                });
 
                                 return FutureBuilder<List<RestaurantModel>>(
                                   future: _getFilteredRestaurants(restaurants),

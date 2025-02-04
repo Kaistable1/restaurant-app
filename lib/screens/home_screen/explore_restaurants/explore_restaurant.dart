@@ -163,7 +163,7 @@ class ExploreRestaurant extends StatelessWidget {
                         }
 
                         List<RestaurantModel> restaurants = snapshot.data!;
-                     
+
                         if (restaurantIDs?.isNotEmpty ?? false) {
                           // Filter restaurants where the ID is in the selected IDs list
                           restaurants = restaurants
@@ -172,7 +172,6 @@ class ExploreRestaurant extends StatelessWidget {
                               .toList();
                         }
                         controller.searchController.addListener(() {
-                          print('press');
                           controller.filteredRestaurants = restaurants
                               .where((item) => item.resName
                                   .toLowerCase()
@@ -181,8 +180,9 @@ class ExploreRestaurant extends StatelessWidget {
                               .toList();
                           controller.update();
                         });
-
-                        controller.initializeSelectors(restaurants);
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          controller.initializeSelectors(restaurants);
+                        });
 
                         return GetBuilder<HomeLocationController>(
                           builder: (controller) {
