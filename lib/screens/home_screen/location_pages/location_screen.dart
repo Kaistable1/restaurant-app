@@ -28,8 +28,6 @@ class LocationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    bool isLargeScreen = screenWidth > 1400;
     return WillPopScope(
       onWillPop: () async {
         Get.back();
@@ -37,16 +35,6 @@ class LocationScreen extends StatelessWidget {
       },
       child: LayoutBuilder(
         builder: (context, constraints) {
-          int itemsPerRow = Responsive.isMobile(context)
-              ? 2
-              : Responsive.isTablet(context)
-                  ? 3
-                  : 4;
-          double itemWidth = (constraints.maxWidth / itemsPerRow) - 16;
-          double itemHeight = Responsive.isMobile(context)
-              ? 320
-              : (isLargeScreen ? 500 : 500); // Set a fixed height for items
-
           return Scaffold(
             backgroundColor: AppColors.bgColor,
             appBar: AppBar(

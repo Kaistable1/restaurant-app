@@ -4,6 +4,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:kaistable_website/models/recent_view.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
+import 'package:kaistable_website/screens/home_screen/explore_restaurants/explore_restaurant.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../utils/responsive.dart';
@@ -107,34 +108,100 @@ class AllCategories extends StatelessWidget {
             ],
           ),
         ),
-        Padding(
-          padding: EdgeInsets.only(left: 8, right: 6),
-          child: SizedBox(
-            height: 180,
-            child: ListView.builder(
-              controller: controller.scrollController,
-              scrollDirection: Axis.horizontal,
-              itemCount: cusinessController.cusinessItem.take(6).length,
-              itemBuilder: (context, index) {
-                final item = cusinessController.cusinessItem[index];
-                return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-                  child: CircleContainerWidget(
-                    ontap: () {
-                      Get.to(CuisinesViewAll());
-                    },
-                    isFavourite: false.obs,
-                    isLocation: false,
-                    imgPath: item.imagePath,
-                    titleText: item.title,
-                    descriptionText: item.description,
+        FutureBuilder(
+            future: filterController.getRestaurantsGroupedByCuisine(),
+            builder: (context, snapshot) {
+              // 1. Check if the Future is still loading
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    for (int i = 0; i < 3; i++)
+                      Container(
+                        width: 113,
+                        height: 144,
+                        decoration: BoxDecoration(
+                          color: AppColors.whiteColor,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              spreadRadius: 0,
+                              blurRadius: 2,
+                              offset: const Offset(0, 1),
+                            ),
+                          ],
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(150),
+                            topRight: Radius.circular(150),
+                            bottomLeft: Radius.circular(25),
+                            bottomRight: Radius.circular(25),
+                          ),
+                        ),
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.primaryColor,
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              }
+
+              // 2. Check if the Future is completed but has an error
+              if (snapshot.hasError) {
+                return SizedBox();
+              }
+
+              // 3. Check if the Future completed successfully but returned null
+              if (!snapshot.hasData || snapshot.data == null) {
+                return Center(
+                  child: Text(
+                    'No data available',
+                    style: TextStyle(color: Colors.grey),
                   ),
                 );
-              },
-            ),
-          ),
-        ),
+              }
+              final cuisineMap = snapshot.data as Map<String, List<String>>;
+              if (cuisineMap.isEmpty) {
+                return Center(
+                  child: Text(
+                    'No cuisines found',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                );
+              }
+              return Padding(
+                padding: EdgeInsets.only(left: 8, right: 6),
+                child: SizedBox(
+                  height: 180,
+                  child: ListView.builder(
+                    controller: controller.scrollController,
+                    scrollDirection: Axis.horizontal,
+                    itemCount: cuisineMap.keys.length,
+                    itemBuilder: (context, index) {
+                      final cuisineName = cuisineMap.keys.elementAt(index);
+                      final restaurants =
+                          cuisineMap[cuisineName]!.toSet().toList()..sort();
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 6),
+                        child: CircleContainerWidget(
+                          ontap: () {
+                            Get.to(() => ExploreRestaurant());
+                          },
+                          isFavourite: false.obs,
+                          isLocation: false,
+                          imgPath: 'assets/images/aa.png',
+                          titleText: cuisineName,
+                          descriptionText:
+                              '${restaurants.length.toString()} restaurants',
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              );
+            }),
 
         //showing trending restaurants
         Padding(

@@ -526,11 +526,17 @@ class HomeLocationController extends GetxController {
 
   List<RestaurantModel> allRestaurants = [];
   List<RestaurantModel> filteredRestaurants = [];
-
+  Map<String, List<String>> cusinesMapFilter = {};
   // Initialize restaurants list
   void initializeSelectors(List<RestaurantModel> restaurants) {
     allRestaurants = restaurants;
     filteredRestaurants = restaurants;
+    update();
+  }
+
+  // Initialize cusines list
+  void initializeCuisinesSelectors(Map<String, List<String>> cuisines) {
+    cusinesMapFilter = cuisines;
     update();
   }
 

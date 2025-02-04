@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -311,7 +313,9 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                   return SizedBox(
                                     height: Get.height * 0.5,
                                     child: Center(
-                                        child: CircularProgressIndicator()),
+                                        child: CircularProgressIndicator(
+                                      color: AppColors.primaryColor,
+                                    )),
                                   );
                                 }
 
@@ -515,13 +519,6 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                       List<RestaurantModel>
                                           timeOfDayRestaurants =
                                           futureSnapshot.data ?? [];
-                                      // print(
-                                      //     'filterSelectionController.aggregatedFilters ${filterSelectionController.aggregatedFilters}');
-                                      // print(
-                                      //     'filterSelectionController.selectedTimeOfDay ${filterSelectionController.selectedTimeOfDay}');
-                                      // print(
-                                      //     'isTrue ${filterSelectionController.aggregatedFilters.any((filter) => filterSelectionController.selectedTimeOfDay.contains(filter))}');
-
                                       if (filterSelectionController
                                           .aggregatedFilters
                                           .any((filter) =>
@@ -533,49 +530,129 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                             timeOfDayRestaurants;
                                       }
 
-                                      return GetBuilder<HomeLocationController>(
-                                        builder: (controller) {
-                                          return GridView.builder(
-                                            shrinkWrap: true,
-                                            physics:
-                                                const NeverScrollableScrollPhysics(),
-                                            gridDelegate:
-                                                SliverGridDelegateWithFixedCrossAxisCount(
-                                              mainAxisExtent: 220,
-                                              crossAxisCount: 2,
-                                              crossAxisSpacing: 10,
-                                              mainAxisSpacing: 10,
-                                            ),
-                                            itemCount: controller
-                                                .filteredRestaurants.length,
-                                            itemBuilder: (context, index) {
-                                              final item = controller
-                                                  .filteredRestaurants[index];
-                                              return InkWell(
-                                                onTap: () {
-                                                  Get.to(RestaurantDetailScreen(
-                                                    restaurantModel: item,
-                                                  ));
-                                                },
-                                                child: RectangleWidget(
-                                                  title: item.resName,
-                                                  description: item.about,
-                                                  resturant_id: item.docID,
-                                                  imagePath: item.logoImage,
-                                                  timetext: '10 AM',
-                                                  percentText: '25%',
-                                                  endTimeText: '9 PM',
-                                                  percentageOff: item
-                                                      .menuList.percentageOff,
-                                                  happyhour: item.menuList
-                                                      .happyHourSpecials,
-                                                  isFavorite: false.obs,
+                                      return FutureBuilder(
+                                          future: filterController
+                                              .getRestaurantsGroupedByCuisine(),
+                                          builder:
+                                              (context, futureCuisinSnapshot) {
+                                            if (futureCuisinSnapshot
+                                                    .connectionState ==
+                                                ConnectionState.waiting) {
+                                              return SizedBox(
+                                                height: Get.height * 0.5,
+                                                child: Center(
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    color:
+                                                        AppColors.primaryColor,
+                                                  ),
                                                 ),
                                               );
-                                            },
-                                          );
-                                        },
-                                      );
+                                            }
+
+                                            final cuisineMap =
+                                                futureCuisinSnapshot.data ?? {};
+
+                                            // Filter cuisines based on selected cuisines
+                                            final selectedCuisines =
+                                                filterSelectionController
+                                                    .aggregatedFilters;
+
+                                            if (filterSelectionController
+                                                .aggregatedFilters
+                                                .any((filter) =>
+                                                    filterSelectionController
+                                                        .selectedFilters
+                                                        .contains(filter))) {
+                                              final List<String>
+                                                  filteredRestaurantIds =
+                                                  cuisineMap.entries
+                                                      .where((entry) {
+                                                        return selectedCuisines
+                                                            .contains(entry.key
+                                                                .toLowerCase());
+                                                      })
+                                                      .expand((entry) =>
+                                                          entry.value)
+                                                      .toList();
+                                              List<String> uniqueIDs =
+                                                  filteredRestaurantIds
+                                                      .toSet()
+                                                      .toList();
+                                              if (uniqueIDs.isNotEmpty) {
+                                                // Filter restaurants where the ID is in the selected IDs list
+                                                controller.filteredRestaurants =
+                                                    controller
+                                                        .filteredRestaurants
+                                                        .where((restaurant) =>
+                                                            uniqueIDs.contains(
+                                                                restaurant
+                                                                    .docID))
+                                                        .toList();
+                                              } else {
+                                                controller.filteredRestaurants =
+                                                    [];
+                                                return SizedBox(
+                                                  height: Get.height * 0.5,
+                                                  child: Center(
+                                                    child: Text(
+                                                        'No restaurants found!'),
+                                                  ),
+                                                );
+                                              }
+                                            }
+                                            return GetBuilder<
+                                                HomeLocationController>(
+                                              builder: (controller) {
+                                                return GridView.builder(
+                                                  shrinkWrap: true,
+                                                  physics:
+                                                      const NeverScrollableScrollPhysics(),
+                                                  gridDelegate:
+                                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                                    mainAxisExtent: 220,
+                                                    crossAxisCount: 2,
+                                                    crossAxisSpacing: 10,
+                                                    mainAxisSpacing: 10,
+                                                  ),
+                                                  itemCount: controller
+                                                      .filteredRestaurants
+                                                      .length,
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    final item = controller
+                                                            .filteredRestaurants[
+                                                        index];
+                                                    return InkWell(
+                                                      onTap: () {
+                                                        Get.to(
+                                                            RestaurantDetailScreen(
+                                                          restaurantModel: item,
+                                                        ));
+                                                      },
+                                                      child: RectangleWidget(
+                                                        title: item.resName,
+                                                        description: item.about,
+                                                        resturant_id:
+                                                            item.docID,
+                                                        imagePath:
+                                                            item.logoImage,
+                                                        timetext: '10 AM',
+                                                        percentText: '25%',
+                                                        endTimeText: '9 PM',
+                                                        percentageOff: item
+                                                            .menuList
+                                                            .percentageOff,
+                                                        happyhour: item.menuList
+                                                            .happyHourSpecials,
+                                                        isFavorite: false.obs,
+                                                      ),
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                            );
+                                          });
                                     });
                               },
                             ),

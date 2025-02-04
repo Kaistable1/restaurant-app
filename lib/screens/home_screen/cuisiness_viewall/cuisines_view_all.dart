@@ -1,27 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:kaistable_website/screens/home_screen/my_home_screen.dart';
-import 'package:kaistable_website/widgets/rectangle_widget.dart';
+import 'package:kaistable_website/screens/home_screen/home_controller/home_filter_controller.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../custom_widget/separate_text_field.dart';
-import '../../../utils/responsive.dart';
 import '../../../widgets/circle_container_widget.dart';
-import '../../../widgets/fav_rectangle_widget.dart';
-import '../../../widgets/home_widgets/filter_widget.dart';
-import '../../detail_screens/restaurant_detail_screen.dart';
 import '../explore_restaurants/explore_restaurant.dart';
 import '../home_controller/home_cusiness_controller.dart';
 import '../home_controller/home_location_controller.dart';
-import '../home_controller/home_recently_viewed_controller.dart';
 
 class CuisinesViewAll extends StatelessWidget {
   final Function(int)? onNavigate;
   final HomeCusinessController cusinessController =
       Get.put(HomeCusinessController());
   final HomeLocationController controller = Get.put(HomeLocationController());
+  final HomeFilterController filterController = Get.put(HomeFilterController());
 
   CuisinesViewAll({super.key, this.onNavigate}) {
     // Reset the selectedTop value when this screen is instantiated
@@ -30,7 +23,6 @@ class CuisinesViewAll extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return WillPopScope(
       onWillPop: () async {
         Get.back();
@@ -43,8 +35,7 @@ class CuisinesViewAll extends StatelessWidget {
             appBar: AppBar(
               backgroundColor: AppColors.bgColor,
               iconTheme: const IconThemeData(
-                color: AppColors
-                    .primaryColor,
+                color: AppColors.primaryColor,
               ),
               centerTitle: true,
               automaticallyImplyLeading: true,
@@ -148,34 +139,133 @@ class CuisinesViewAll extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 12),
-
-                     Expanded(
-                       child: GridView.builder(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          mainAxisExtent: 165,
-                          crossAxisCount: 3,
-                          crossAxisSpacing: 10.0,
-                          mainAxisSpacing: 10.0,
-                        ),
-                        itemCount: cusinessController.cusinessItem.length,
-                        itemBuilder: (context, index) {
-                          final item = cusinessController.cusinessItem[index];
-                          return CircleContainerWidget(
-                            ontap: () {
-                              Get.to(()=>ExploreRestaurant());
-                            },
-                            isFavourite: false.obs,
-                            isLocation: false,
-                            height: 150,
-                            width: 115,
-                            imgPath: item.imagePath,
-                            titleText: item.title,
-                            descriptionText: item.description,
+                  FutureBuilder(
+                      future: filterController.getRestaurantsGroupedByCuisine(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: GridView.builder(
+                              physics:
+                                  const NeverScrollableScrollPhysics(), // Prevents scrolling
+                              shrinkWrap:
+                                  true, // Adjusts to the height of the children
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount:
+                                    3, // Number of columns in the grid
+                                crossAxisSpacing:
+                                    8.0, // Spacing between columns
+                                mainAxisSpacing: 8.0, // Spacing between rows
+                                childAspectRatio: 113 /
+                                    144, // Aspect ratio for the containers
+                              ),
+                              itemCount: 12, // Number of items in the grid
+                              itemBuilder: (context, index) {
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    color: AppColors.whiteColor,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        spreadRadius: 0,
+                                        blurRadius: 2,
+                                        offset: const Offset(0, 1),
+                                      ),
+                                    ],
+                                    borderRadius: const BorderRadius.only(
+                                      topLeft: Radius.circular(150),
+                                      topRight: Radius.circular(150),
+                                      bottomLeft: Radius.circular(25),
+                                      bottomRight: Radius.circular(25),
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      color: AppColors.primaryColor,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
                           );
-                        },
-                                             ),
-                     ),
+                        }
+                        final cuisineMap =
+                            snapshot.data as Map<String, List<String>>;
 
+                        // Declare filteredCuisineMap outside the listener
+                        Map<String, List<String>> filteredCuisineMap = {};
+
+                        // Add a listener to the search controller
+                        controller.searchController.addListener(() {
+                          print('Search triggered');
+
+                          // Filter the cuisineMap by the search text
+                          filteredCuisineMap = cuisineMap.entries
+                              .where((entry) => entry.key
+                                  .toLowerCase()
+                                  .contains(controller.searchController.text
+                                      .toLowerCase()))
+                              .fold<Map<String, List<String>>>({},
+                                  (map, entry) {
+                            map[entry.key] = entry.value;
+                            return map;
+                          });
+
+                          // Update the controller with the filtered data
+                          controller.cusinesMapFilter = filteredCuisineMap;
+                          controller.update();
+                        });
+
+                        // Initialize the cuisine selectors
+                        controller.initializeCuisinesSelectors(cuisineMap);
+
+                        return GetBuilder<HomeLocationController>(
+                            builder: (controller) {
+                          return Expanded(
+                            child: GridView.builder(
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                mainAxisExtent: 165,
+                                crossAxisCount: 3,
+                                crossAxisSpacing: 10.0,
+                                mainAxisSpacing: 10.0,
+                              ),
+                              itemCount:
+                                  controller.cusinesMapFilter.keys.length,
+                              itemBuilder: (context, index) {
+                                final cuisineName = controller
+                                    .cusinesMapFilter.keys
+                                    .elementAt(index);
+                                final restaurants = controller
+                                    .cusinesMapFilter[cuisineName]!
+                                    .toSet()
+                                    .toList()
+                                  ..sort();
+
+                                return CircleContainerWidget(
+                                  ontap: () {
+                                    Get.to(() => ExploreRestaurant(
+                                          restaurantIDs: restaurants,
+                                          cuisneName: cuisineName,
+                                        ));
+                                  },
+                                  isFavourite: false.obs,
+                                  isLocation: false,
+                                  height: 150,
+                                  width: 115,
+                                  imgPath: 'assets/images/aa.png',
+                                  titleText: cuisineName,
+                                  descriptionText:
+                                      '${restaurants.length.toString()} restaurants',
+                                );
+                              },
+                            ),
+                          );
+                        });
+                      }),
                   const SizedBox(height: 30),
                 ],
               ),
