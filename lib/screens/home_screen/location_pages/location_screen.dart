@@ -200,15 +200,18 @@ class LocationScreen extends StatelessWidget {
                         WidgetsBinding.instance.addPostFrameCallback((_) {
                           homeController.initializeSelectors(restaurants);
                         });
-                        if (city != null && country != null) {
-                          restaurants = restaurants.where((restaurant) {
-                            return restaurant.city == city &&
-                                restaurant.country == country;
-                          }).toList();
-                        }
 
                         return GetBuilder<HomeLocationController>(
                           builder: (controller) {
+                            if (city != null && country != null) {
+                              controller.filteredRestaurants = controller
+                                  .filteredRestaurants
+                                  .where((restaurant) {
+                                return restaurant.city == city &&
+                                    restaurant.country == country;
+                              }).toList();
+                            }
+
                             return GridView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),

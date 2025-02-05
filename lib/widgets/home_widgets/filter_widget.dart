@@ -91,7 +91,7 @@ class FilterWidget extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   filterSelectionDialogueBox();
-                  filterController.toggleFilterListVisibility();
+                
                 },
                 child: Image.asset(
                   'assets/images/filter_image__.png',

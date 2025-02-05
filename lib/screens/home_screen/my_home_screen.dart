@@ -1,11 +1,7 @@
-import 'dart:ffi';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:intl/intl.dart';
 import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
@@ -849,7 +845,6 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
   }
 
   Widget _buildDrawerItem(String title, int index) {
-    bool isSelected = _selectedIndex == index;
     return Column(
       children: [
         ListTile(

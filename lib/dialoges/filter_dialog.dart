@@ -147,7 +147,6 @@ void filterSelectionDialogueBox() {
                           SizedBox(
                             height: 12,
                           ),
-                          
                           Obx(
                             () => DropDownButton(
                               hintText: 'Language',
@@ -232,7 +231,6 @@ void filterSelectionDialogueBox() {
                           SizedBox(
                             height: 12,
                           ),
-                        
                           LayoutBuilder(
                             builder: (context, constraints) {
                               double availableWidth = constraints.maxWidth;
@@ -582,23 +580,18 @@ void filterSelectionDialogueBox() {
                           ),
                           Center(
                             child: CustomButton(
-                                laBelText: 'Apply',
-                                height: 40,
-                                width: 170,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'Nunito-Sans',
-                                textColor: Colors.white,
-                                ontapp: () {
-                                  controller.aggregateSelectedFilters();
-                                  Get.back();
-                                  // if (controller.areFiltersEmpty()) {
-                                  //   controller.showSnackbarForEmptyFilters();
-                                  // } else {
-                                  //   controller.aggregateSelectedFilters();
-                                  //   Get.back();
-                                  // }
-                                },
+                              laBelText: 'Apply',
+                              height: 40,
+                              width: 170,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'Nunito-Sans',
+                              textColor: Colors.white,
+                              ontapp: () {
+                                controller.aggregateSelectedFilters();
+                                //  controller.toggleFilterListVisibility();
+                                Get.back();
+                              },
                             ),
                           ),
                           SizedBox(

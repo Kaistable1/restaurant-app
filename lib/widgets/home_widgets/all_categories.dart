@@ -225,7 +225,7 @@ class AllCategories extends StatelessWidget {
               if (!snapshot.hasData || snapshot.data == null) {
                 return Center(
                   child: Text(
-                    'No data available',
+                    '',
                     style: TextStyle(color: Colors.grey),
                   ),
                 );
@@ -234,7 +234,7 @@ class AllCategories extends StatelessWidget {
               if (cuisineMap.isEmpty) {
                 return Center(
                   child: Text(
-                    'No cuisines found',
+                    '',
                     style: TextStyle(color: Colors.grey),
                   ),
                 );
@@ -256,7 +256,10 @@ class AllCategories extends StatelessWidget {
                             horizontal: 6, vertical: 6),
                         child: CircleContainerWidget(
                           ontap: () {
-                            Get.to(() => ExploreRestaurant());
+                            Get.to(() => ExploreRestaurant(
+                                  cuisneName: cuisineName,
+                                  restaurantIDs: restaurants,
+                                ));
                           },
                           isFavourite: false.obs,
                           isLocation: false,
