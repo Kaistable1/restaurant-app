@@ -527,7 +527,7 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                                                           : widget
                                                                   .restaurantModel!
                                                                   .menuList
-                                                                  .happyHourSpecials
+                                                                  .percentageOff
                                                                   .isEmpty
                                                               ? ''
                                                               : (indexOfMenuPersentageOff <

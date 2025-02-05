@@ -310,7 +310,7 @@ class HomeLocationController extends GetxController {
             // Fetch menu list from subcollection
             final restaurant = RestaurantModel.fromDocumentSnapshot(doc);
             restaurant.menuList = await _getMenuFromSubcollection(doc.id);
-
+            
             // Set average rating
             restaurant.averageRating = averageRating;
 
@@ -516,7 +516,15 @@ class HomeLocationController extends GetxController {
         percentageOff: mergedPercentageOff,
         happyHourSpecials: mergedHappyHour,
       );
+      // print(
+      //     '=======================================================================');
+      // print(
+      //     '==================================Persentage off=====================================');
 
+      // print(
+      //     '=======================================================================');
+      // print(
+      //     '=======================================================================');
       return mergedMenu; // Return the merged MenuModel
     } catch (e) {
       print("Error fetching menu data: $e");
