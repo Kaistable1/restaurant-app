@@ -132,7 +132,7 @@ class FilterSelectionController extends GetxController {
   final priceRange = [
     '\$(Budget-Friendly)',
     '\$\$(Moderate)',
-    '\$\$\${Premium)',
+    '\$\$\$(Premium)',
     '\$\$\$\$(Luxury)',
   ];
 

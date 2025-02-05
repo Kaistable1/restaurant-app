@@ -203,7 +203,7 @@ class MapDetailWidget extends StatelessWidget {
           SizedBox(
             width: 325,
             child: _buildStarBox(
-              titleList: ['\$${priceRange}'],
+              titleList: ['${priceRange}'],
               context,
             ),
           ),

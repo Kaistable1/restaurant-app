@@ -652,8 +652,13 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                         print('flag 9');
                                         restaurants =
                                             restaurants.where((restaurant) {
+                                          print(
+                                              'restaurant.priceRange ${restaurant.priceRange}');
+                                          print(
+                                              'filterSelectionController.aggregatedFilters ${filterSelectionController.aggregatedFilters}');
+
                                           return filterSelectionController
-                                              .selectedPriceRange
+                                              .aggregatedFilters
                                               .contains(restaurant.priceRange);
                                         }).toList();
                                       }
