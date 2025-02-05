@@ -265,7 +265,10 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                       const SizedBox(width: 1),
                       InkWell(
                         onTap: () {
-                          Get.to(LocationScreen());
+                          Get.to(LocationScreen(
+                            city: currentUserDataModel?.value.city,
+                            country: currentUserDataModel?.value.country,
+                          ));
                         },
                         child: Text(
                           '${currentUserDataModel?.value.country}.${currentUserDataModel?.value.city}',

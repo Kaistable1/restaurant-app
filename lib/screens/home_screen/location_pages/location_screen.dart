@@ -5,7 +5,6 @@ import 'package:kaistable_website/models/resaturant_model.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../custom_widget/separate_text_field.dart';
-import '../../../utils/responsive.dart';
 import '../../../widgets/rectangle_widget.dart';
 import '../../detail_screens/restaurant_detail_screen.dart';
 import '../home_controller/home_location_controller.dart';
@@ -21,11 +20,14 @@ class LocationScreen extends StatelessWidget {
   LocationScreen({
     super.key,
     this.onNavigate,
+    this.city,
+    this.country,
   }) {
     homeController.selectedTop.value = '';
   }
   List<RestaurantModel> filteredRestaurants = [];
-
+  String? city;
+  String? country;
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -195,11 +197,15 @@ class LocationScreen extends StatelessWidget {
                         }
 
                         List<RestaurantModel> restaurants = snapshot.data!;
-                         WidgetsBinding.instance.addPostFrameCallback((_) {
-                         homeController.initializeSelectors(restaurants);
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          homeController.initializeSelectors(restaurants);
                         });
-
-                       
+                        if (city != null && country != null) {
+                          restaurants = restaurants.where((restaurant) {
+                            return restaurant.city == city &&
+                                restaurant.country == country;
+                          }).toList();
+                        }
 
                         return GetBuilder<HomeLocationController>(
                           builder: (controller) {

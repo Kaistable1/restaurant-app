@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kaistable_website/main.dart';
 
 class HomeFilterController extends GetxController {
   var filterItem = <FilterItems>[].obs;
@@ -130,8 +131,10 @@ class HomeFilterController extends GetxController {
     final firestore = FirebaseFirestore.instance;
 
     // Fetch all restaurants
-    QuerySnapshot restaurantsSnapshot =
-        await firestore.collection('restaurants').get();
+    QuerySnapshot restaurantsSnapshot = await firestore
+        .collection('restaurants')
+        .where('city', isEqualTo: currentUserDataModel?.value.city)
+        .get();
 
     // Map to hold address as key and list of restaurants as value
     Map<String, List<String>> addressMap = {};

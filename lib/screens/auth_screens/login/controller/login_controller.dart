@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -30,7 +31,7 @@ class LoginController extends GetxController {
         remember_me_pref?.getBool('is_remember_me') == true ? true : false;
   }
 
-  Future login() async {
+   login() async {
     loadingDialog(message: 'Please wait !!', loading: true, height: 150);
 
     try {
@@ -40,6 +41,7 @@ class LoginController extends GetxController {
         password: passwordController.value.text,
       )
           .then((value) async {
+        await updateUserCityCountry();
         await getCurrentUserData();
         Get.back();
 
@@ -88,4 +90,21 @@ class LoginController extends GetxController {
       }
     }
   }
+  
+  updateUserCityCountry() async 
+  {
+    try{
+      OnboardingController onboardingController=Get.find();
+         await FirebaseFirestore.instance
+          .collection('users')
+          .doc(auth.currentUser!.uid.toString())
+          .update({
+        'country': onboardingController.selectedCountry.value,
+        'city': onboardingController.selectedCity.value,
+      });
+    }catch(e){
+      print('Error $e');
+    }
+  }
+
 }
