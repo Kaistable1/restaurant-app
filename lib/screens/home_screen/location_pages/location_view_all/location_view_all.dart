@@ -177,7 +177,6 @@ class LocationViewAll extends StatelessWidget {
                   Map<String, List<String>> filteredCuisineMap = {};
 
                   controller.searchController.addListener(() {
-                    print('Search triggered');
                     filteredCuisineMap = addressMap.entries
                         .where((entry) => entry.key.toLowerCase().contains(
                             controller.searchController.text.toLowerCase()))

@@ -35,38 +35,50 @@ class UploadImageSectionState extends State<UploadImageSection> {
         allowMultiple: true,
       );
       if (result != null) {
-        // Handle web images if necessary
+        // Check if the number of selected images exceeds the limit (3 in this case)
+        if (result.files.length > 3) {
+          // Show a message or handle the restriction
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('You can only pick up to 3 images.')),
+          );
+        } else {
+          // Handle web images if necessary
+        }
       }
     } else {
       // Use image_picker for mobile platforms
       final ImagePicker picker = ImagePicker();
       final List<XFile>? images = await picker.pickMultiImage();
       if (images != null) {
-        setState(() {
-          _selectedImages = images.map((image) => File(image.path)).toList();
-        });
+        // Check if the number of selected images exceeds the limit (3 in this case)
+        if (images.length > 3) {
+          Get.snackbar('Limit Exceeded', 'You can only pick up to 3 images.');
+        } else {
+          setState(() {
+            _selectedImages = images.map((image) => File(image.path)).toList();
+          });
+        }
       }
     }
   }
 
-  void _validateAndSubmit() async  {
-
-      if (_reviewController.text.isEmpty) {
-        _errorMessage = "Please enter your  review.";
-      } else {
-       await homeLocationController.addRestaurantReview(
-            restaurantID: widget.restaurantId,
-            description: _reviewController.text,
-            images: _selectedImages,
-            starRating: ratingStars);
-        _errorMessage = null;
-        Get.snackbar("Thank you for your feedback! ",
-            "Your review has been successfully added.",
-            colorText: AppColors.whiteColor,
-            backgroundColor: AppColors.primaryColor);
-        Navigator.pop(context);
-      }
-      setState(() {  });
+  void _validateAndSubmit() async {
+    if (_reviewController.text.isEmpty) {
+      _errorMessage = "Please enter your  review.";
+    } else {
+      await homeLocationController.addRestaurantReview(
+          restaurantID: widget.restaurantId,
+          description: _reviewController.text,
+          images: _selectedImages,
+          starRating: ratingStars);
+      _errorMessage = null;
+      Get.snackbar("Thank you for your feedback! ",
+          "Your review has been successfully added.",
+          colorText: AppColors.whiteColor,
+          backgroundColor: AppColors.primaryColor);
+      Navigator.pop(context);
+    }
+    setState(() {});
   }
 
   double ratingStars = 1.0;
