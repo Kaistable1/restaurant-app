@@ -140,93 +140,94 @@ class CuisinesViewAll extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 12),
-                    FutureBuilder(
-                        future:
-                            filterController.getRestaurantsGroupedByCuisine(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: GridView.builder(
-                                physics:
-                                    const NeverScrollableScrollPhysics(), // Prevents scrolling
-                                shrinkWrap:
-                                    true, // Adjusts to the height of the children
-                                gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount:
-                                      3, // Number of columns in the grid
-                                  crossAxisSpacing:
-                                      8.0, // Spacing between columns
-                                  mainAxisSpacing: 8.0, // Spacing between rows
-                                  childAspectRatio: 113 /
-                                      144, // Aspect ratio for the containers
-                                ),
-                                itemCount: 12, // Number of items in the grid
-                                itemBuilder: (context, index) {
-                                  return Container(
-                                    decoration: BoxDecoration(
-                                      color: AppColors.whiteColor,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.1),
-                                          spreadRadius: 0,
-                                          blurRadius: 2,
-                                          offset: const Offset(0, 1),
-                                        ),
-                                      ],
-                                      borderRadius: const BorderRadius.only(
-                                        topLeft: Radius.circular(150),
-                                        topRight: Radius.circular(150),
-                                        bottomLeft: Radius.circular(25),
-                                        bottomRight: Radius.circular(25),
-                                      ),
-                                    ),
-                                    child: Center(
-                                      child: CircularProgressIndicator(
-                                        color: AppColors.primaryColor,
-                                      ),
-                                    ),
-                                  );
-                                },
+                    StreamBuilder<Map<String, List<String>>>(
+                      stream: filterController.getRestaurantsGroupedByCuisine(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: GridView.builder(
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                crossAxisSpacing: 8.0,
+                                mainAxisSpacing: 8.0,
+                                childAspectRatio: 113 / 144,
                               ),
-                            );
-                          }
-                          final cuisineMap =
-                              snapshot.data as Map<String, List<String>>;
+                              itemCount: 12, // Number of items in the grid
+                              itemBuilder: (context, index) {
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    color: AppColors.whiteColor,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        spreadRadius: 0,
+                                        blurRadius: 2,
+                                        offset: const Offset(0, 1),
+                                      ),
+                                    ],
+                                    borderRadius: const BorderRadius.only(
+                                      topLeft: Radius.circular(150),
+                                      topRight: Radius.circular(150),
+                                      bottomLeft: Radius.circular(25),
+                                      bottomRight: Radius.circular(25),
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      color: AppColors.primaryColor,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        }
 
-                          // Declare filteredCuisineMap outside the listener
-                          Map<String, List<String>> filteredCuisineMap = {};
+                        if (snapshot.hasError) {
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        }
 
-                          // Add a listener to the search controller
-                          controller.searchController.addListener(() {
-                            print('Search triggered');
+                        final cuisineMap = snapshot.data!;
 
-                            // Filter the cuisineMap by the search text
-                            filteredCuisineMap = cuisineMap.entries
-                                .where((entry) => entry.key
-                                    .toLowerCase()
-                                    .contains(controller.searchController.text
-                                        .toLowerCase()))
-                                .fold<Map<String, List<String>>>({},
-                                    (map, entry) {
-                              map[entry.key] = entry.value;
-                              return map;
-                            });
+                        // Declare filteredCuisineMap outside the listener
+                        Map<String, List<String>> filteredCuisineMap = {};
 
-                            // Update the controller with the filtered data
-                            controller.cusinesMapFilter = filteredCuisineMap;
-                            controller.update();
+                        // Add a listener to the search controller
+                        controller.searchController.addListener(() {
+                          print('Search triggered');
+
+                          // Filter the cuisineMap by the search text
+                          filteredCuisineMap = cuisineMap.entries
+                              .where((entry) => entry.key
+                                  .toLowerCase()
+                                  .contains(controller.searchController.text
+                                      .toLowerCase()))
+                              .fold<Map<String, List<String>>>({},
+                                  (map, entry) {
+                            map[entry.key] = entry.value;
+                            return map;
                           });
 
-                          // Initialize the cuisine selectors
-                          controller.initializeCuisinesSelectors(cuisineMap);
+                          // Update the controller with the filtered data
+                          controller.cusinesMapFilter = filteredCuisineMap;
+                          controller.update();
+                        });
 
-                          return GetBuilder<HomeLocationController>(
-                              builder: (controller) {
-                            return Expanded(
+                        // Initialize the cuisine selectors
+                        controller.initializeCuisinesSelectors(cuisineMap);
+
+                        return GetBuilder<HomeLocationController>(
+                          builder: (controller) {
+                            return SizedBox(
+                              height: Get.height * 0.8,
+                              width: double.infinity,
                               child: GridView.builder(
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
@@ -266,8 +267,10 @@ class CuisinesViewAll extends StatelessWidget {
                                 },
                               ),
                             );
-                          });
-                        }),
+                          },
+                        );
+                      },
+                    ),
                     const SizedBox(height: 30),
                   ],
                 ),

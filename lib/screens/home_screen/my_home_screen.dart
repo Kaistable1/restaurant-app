@@ -687,9 +687,9 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                           }
 
                                           // Handle the second FutureBuilder for cuisines
-                                          return FutureBuilder<
+                                          return StreamBuilder<
                                               Map<String, List<String>>>(
-                                            future: filterSelectionController
+                                            stream: filterSelectionController
                                                     .aggregatedFilters
                                                     .any((filter) =>
                                                         filterSelectionController
@@ -697,24 +697,24 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                                             .contains(filter))
                                                 ? filterController
                                                     .getRestaurantsGroupedByCuisine()
-                                                : Future.value(
-                                                    {}), // Provide a default empty map if the condition is false
+                                                : Stream.value(
+                                                    {}), // Provides a default empty map if no filters are selected
                                             builder: (context,
-                                                futureCuisineSnapshot) {
-                                              if (futureCuisineSnapshot
+                                                streamCuisineSnapshot) {
+                                              if (streamCuisineSnapshot
                                                       .connectionState ==
                                                   ConnectionState.waiting) {
                                                 return _buildLoadingIndicator();
                                               }
 
-                                              if (futureCuisineSnapshot
+                                              if (streamCuisineSnapshot
                                                   .hasError) {
                                                 return _buildErrorWidget(
                                                     'Failed to load cuisines!');
                                               }
 
                                               final cuisineMap =
-                                                  futureCuisineSnapshot.data ??
+                                                  streamCuisineSnapshot.data ??
                                                       {};
 
                                               // Filter cuisines based on selected filters
@@ -759,6 +759,8 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                                       'No restaurants found!');
                                                 }
                                               }
+
+                                              // Listen for search changes and filter restaurants accordingly
                                               controller.searchController
                                                   .addListener(() {
                                                 controller.filteredRestaurants =
@@ -773,6 +775,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                                         .toList();
                                                 controller.update();
                                               });
+
                                               return GetBuilder<
                                                   HomeLocationController>(
                                                 builder: (controller) {

@@ -177,103 +177,100 @@ class AllCategories extends StatelessWidget {
             ],
           ),
         ),
-        FutureBuilder(
-            future: filterController.getRestaurantsGroupedByCuisine(),
-            builder: (context, snapshot) {
-              // 1. Check if the Future is still loading
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    for (int i = 0; i < 3; i++)
-                      Container(
-                        width: 113,
-                        height: 144,
-                        decoration: BoxDecoration(
-                          color: AppColors.whiteColor,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              spreadRadius: 0,
-                              blurRadius: 2,
-                              offset: const Offset(0, 1),
-                            ),
-                          ],
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(150),
-                            topRight: Radius.circular(150),
-                            bottomLeft: Radius.circular(25),
-                            bottomRight: Radius.circular(25),
+        StreamBuilder<Map<String, List<String>>>(
+          stream: filterController
+              .getRestaurantsGroupedByCuisine(), // Stream to listen for changes
+          builder: (context, streamSnapshot) {
+            // 1. Check if the Stream is still loading
+            if (streamSnapshot.connectionState == ConnectionState.waiting) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  for (int i = 0; i < 3; i++)
+                    Container(
+                      width: 113,
+                      height: 144,
+                      decoration: BoxDecoration(
+                        color: AppColors.whiteColor,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            spreadRadius: 0,
+                            blurRadius: 2,
+                            offset: const Offset(0, 1),
                           ),
-                        ),
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            color: AppColors.primaryColor,
-                          ),
+                        ],
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(150),
+                          topRight: Radius.circular(150),
+                          bottomLeft: Radius.circular(25),
+                          bottomRight: Radius.circular(25),
                         ),
                       ),
-                  ],
-                );
-              }
-
-              // 2. Check if the Future is completed but has an error
-              if (snapshot.hasError) {
-                return SizedBox();
-              }
-
-              // 3. Check if the Future completed successfully but returned null
-              if (!snapshot.hasData || snapshot.data == null) {
-                return Center(
-                  child: Text(
-                    '',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                );
-              }
-              final cuisineMap = snapshot.data as Map<String, List<String>>;
-              if (cuisineMap.isEmpty) {
-                return Center(
-                  child: Text(
-                    '',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                );
-              }
-              return Padding(
-                padding: EdgeInsets.only(left: 8, right: 6),
-                child: SizedBox(
-                  height: 180,
-                  child: ListView.builder(
-                    controller: controller.scrollController,
-                    scrollDirection: Axis.horizontal,
-                    itemCount: cuisineMap.keys.length,
-                    itemBuilder: (context, index) {
-                      final cuisineName = cuisineMap.keys.elementAt(index);
-                      final restaurants =
-                          cuisineMap[cuisineName]!.toSet().toList()..sort();
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 6),
-                        child: CircleContainerWidget(
-                          ontap: () {
-                            Get.to(() => ExploreRestaurant(
-                                  cuisneName: cuisineName,
-                                  restaurantIDs: restaurants,
-                                ));
-                          },
-                          isFavourite: false.obs,
-                          isLocation: false,
-                          imgPath: 'assets/images/aa.png',
-                          titleText: cuisineName,
-                          descriptionText:
-                              '${restaurants.length.toString()} restaurants',
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.primaryColor,
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    ),
+                ],
+              );
+            }
+
+            // 2. Check if the Stream has an error
+            if (streamSnapshot.hasError) {
+              return SizedBox();
+            }
+
+            // 3. Check if the Stream completed successfully but returned null or empty data
+            final cuisineMap = streamSnapshot.data ?? {};
+            if (cuisineMap.isEmpty) {
+              return Center(
+                child: Text(
+                  'No cuisines available',
+                  style: TextStyle(color: Colors.grey),
                 ),
               );
-            }),
+            }
+
+            // 4. Return the GridView after data is loaded successfully
+            return Padding(
+              padding: EdgeInsets.only(left: 8, right: 6),
+              child: SizedBox(
+                height: 180,
+                child: ListView.builder(
+                  controller: controller.scrollController,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: cuisineMap.keys.length,
+                  itemBuilder: (context, index) {
+                    final cuisineName = cuisineMap.keys.elementAt(index);
+                    final restaurants =
+                        cuisineMap[cuisineName]!.toSet().toList()..sort();
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 6),
+                      child: CircleContainerWidget(
+                        ontap: () {
+                          Get.to(() => ExploreRestaurant(
+                                cuisneName: cuisineName,
+                                restaurantIDs: restaurants,
+                              ));
+                        },
+                        isFavourite: false.obs,
+                        isLocation: false,
+                        imgPath: 'assets/images/aa.png',
+                        titleText: cuisineName,
+                        descriptionText:
+                            '${restaurants.length.toString()} restaurants',
+                      ),
+                    );
+                  },
+                ),
+              ),
+            );
+          },
+        ),
 
         //showing trending restaurants
         Padding(

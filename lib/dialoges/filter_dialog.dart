@@ -589,7 +589,6 @@ void filterSelectionDialogueBox() {
                               textColor: Colors.white,
                               ontapp: () {
                                 controller.aggregateSelectedFilters();
-                                //  controller.toggleFilterListVisibility();
                                 Get.back();
                               },
                             ),

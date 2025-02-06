@@ -22,6 +22,21 @@ class FilterSelectionController extends GetxController {
   final selectedDietary = <String>[].obs;
   final selectedPriceRange = <String>[].obs;
   final selectedTimeOfDay = <String>[].obs;
+  void clearAll() {
+    selectedCountry.value = ''; // Clear selected country
+    selectedCity.value = ''; // Clear selected city
+    selectedLanguage.value = ''; // Clear selected language
+
+    selectedFilters.clear(); // Clear selected filters
+    selectedDiscounts.clear(); // Clear selected discounts
+    selectedAtmosphere.clear(); // Clear selected atmosphere
+    selectedFacilities.clear(); // Clear selected facilities
+    selectedEntertainment.clear(); // Clear selected entertainment
+    selectedDietary.clear(); // Clear selected dietary preferences
+    selectedPriceRange.clear(); // Clear selected price range
+    selectedTimeOfDay.clear(); // Clear selected time of day
+  }
+
   void toggleFilter(String name) {
     if (selectedFilters.contains(name)) {
       selectedFilters.remove(name);

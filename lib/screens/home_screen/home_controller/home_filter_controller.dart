@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_location_controller.dart';
@@ -15,108 +14,80 @@ class HomeFilterController extends GetxController {
 
   void loadFilter() {
     // Dummy data. Replace with your actual data source.
-    filterItem.addAll([
-      FilterItems(
-          title: 'Abc restaurant',
-          description:
-              'Duis aute irure dolor in reprehend voluptate velit esse cillum',
-          imagePath: 'assets/images/filter_img.png'),
-      FilterItems(
-          title: 'Abc restaurant',
-          description:
-              'Duis aute irure dolor in reprehend voluptate velit esse cillum',
-          imagePath: 'assets/images/filter_img.png'),
-      FilterItems(
-          title: 'Abc restaurant',
-          description:
-              'Duis aute irure dolor in reprehend voluptate velit esse cillum',
-          imagePath: 'assets/images/filter_img.png'),
-      FilterItems(
-          title: 'Abc restaurant',
-          description:
-              'Duis aute irure dolor in reprehend voluptate velit esse cillum',
-          imagePath: 'assets/images/filter_img.png'),
-      FilterItems(
-          title: 'Abc restaurant',
-          description:
-              'Duis aute irure dolor in reprehend voluptate velit esse cillum',
-          imagePath: 'assets/images/filter_img.png'),
-      FilterItems(
-          title: 'Abc restaurant',
-          description:
-              'Duis aute irure dolor in reprehend voluptate velit esse cillum',
-          imagePath: 'assets/images/filter_img.png'),
-      FilterItems(
-          title: 'Abc restaurant',
-          description:
-              'Duis aute irure dolor in reprehend voluptate velit esse cillum',
-          imagePath: 'assets/images/filter_img.png'),
-      FilterItems(
-          title: 'Abc restaurant',
-          description:
-              'Duis aute irure dolor in reprehend voluptate velit esse cillum',
-          imagePath: 'assets/images/filter_img.png'),
-      FilterItems(
-          title: 'Abc restaurant',
-          description:
-              'Duis aute irure dolor in reprehend voluptate velit esse cillum',
-          imagePath: 'assets/images/filter_img.png'),
-    ]);
+    filterItem.addAll([]);
   }
 
-  Future<Map<String, List<String>>> getRestaurantsGroupedByCuisine() async {
-    // Initialize Firestore
+  Stream<Map<String, List<String>>> getRestaurantsGroupedByCuisine() async* {
     final firestore = FirebaseFirestore.instance;
+    print('testing----------');
 
-    // Fetch all restaurants
-    QuerySnapshot restaurantsSnapshot =
-        await firestore.collection('restaurants').get();
+    // Fetch the list of restaurants and their meal menus asynchronously
+    final restaurantsSnapshot = await firestore.collection('restaurants').get();
 
-    // Map to hold cuisine as key and list of restaurants as value
-    Map<String, List<String>> cuisineMap = {};
+    if (restaurantsSnapshot.docs.isEmpty) {
+      yield {}; // No restaurants found
+      return;
+    }
+
+    // Create a list of futures for processing all the restaurants' meal menus
+    List<Future<Map<String, List<String>>>> futures = [];
 
     for (var restaurantDoc in restaurantsSnapshot.docs) {
-      // Access MealMenu inner collection
-      QuerySnapshot mealMenuSnapshot = await firestore
-          .collection('restaurants')
-          .doc(restaurantDoc.id)
-          .collection('MealMenu')
-          .get();
+      futures.add(_processMealMenuForRestaurant(restaurantDoc.id, firestore));
+    }
 
-      for (var restaurantDoc in restaurantsSnapshot.docs) {
-        // Access MealMenu inner collection
-        QuerySnapshot mealMenuSnapshot = await firestore
-            .collection('restaurants')
-            .doc(restaurantDoc.id)
-            .collection('MealMenu')
-            .get();
+    // Wait for all the futures to complete
+    List<Map<String, List<String>>> restaurantResults =
+        await Future.wait(futures);
 
-        for (var mealDoc in mealMenuSnapshot.docs) {
-          // Cast 'mealDoc.data()' to Map<String, dynamic>
-          var mealData = mealDoc.data() as Map<String, dynamic>;
-          String startDate = mealData['fromDate'];
-          String endDate = mealData['toDate'];
-          final homeController = Get.find<HomeLocationController>();
-          if (homeController.isOfferValidForCurrentDate(startDate, endDate)) {
-            // Access 'menu' array
-            var menuList = mealData['menu'];
-            if (menuList != null && menuList is List) {
-              for (var menuEntry in menuList) {
-                if (menuEntry is Map<String, dynamic>) {
-                  // Access 'items' array
-                  var itemsList = menuEntry['items'];
-                  if (itemsList != null && itemsList is List) {
-                    for (var item in itemsList) {
-                      if (item is Map<String, dynamic>) {
-                        // Extract cuisineName
-                        var cuisineName = item['cuisineName'];
-                        if (cuisineName != null) {
-                          if (!cuisineMap.containsKey(cuisineName)) {
-                            cuisineMap[cuisineName] = [];
-                          }
-                          cuisineMap[cuisineName]!.add(restaurantDoc.id);
-                        }
+    // Merge all the cuisine maps
+    Map<String, List<String>> mergedCuisineMap = {};
+    for (var result in restaurantResults) {
+      result.forEach((key, value) {
+        if (mergedCuisineMap.containsKey(key)) {
+          mergedCuisineMap[key]!.addAll(value);
+        } else {
+          mergedCuisineMap[key] = value;
+        }
+      });
+    }
+    yield mergedCuisineMap;
+  }
+
+// Helper function to process meal menus for each restaurant
+  Future<Map<String, List<String>>> _processMealMenuForRestaurant(
+      String restaurantId, FirebaseFirestore firestore) async {
+    Map<String, List<String>> cuisineMap = {};
+
+    // Fetch meal menus for a restaurant
+    final mealMenuSnapshot = await firestore
+        .collection('restaurants')
+        .doc(restaurantId)
+        .collection('MealMenu')
+        .get();
+
+    for (var mealDoc in mealMenuSnapshot.docs) {
+      var mealData = mealDoc.data();
+      String startDate = mealData['fromDate'];
+      String endDate = mealData['toDate'];
+      final homeController = Get.find<HomeLocationController>();
+
+      // Check if the offer is valid for the current date
+      if (homeController.isOfferValidForCurrentDate(startDate, endDate)) {
+        var menuList = mealData['menu'];
+        if (menuList != null && menuList is List) {
+          for (var menuEntry in menuList) {
+            if (menuEntry is Map<String, dynamic>) {
+              var itemsList = menuEntry['items'];
+              if (itemsList != null && itemsList is List) {
+                for (var item in itemsList) {
+                  if (item is Map<String, dynamic>) {
+                    var cuisineName = item['cuisineName'];
+                    if (cuisineName != null) {
+                      if (!cuisineMap.containsKey(cuisineName)) {
+                        cuisineMap[cuisineName] = [];
                       }
+                      cuisineMap[cuisineName]!.add(restaurantId);
                     }
                   }
                 }
