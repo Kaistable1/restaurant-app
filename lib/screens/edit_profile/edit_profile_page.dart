@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/screens/edit_profile/widget/image_picker.dart';
+import 'package:kaistable_website/screens/home_screen/my_home_screen.dart';
 
 import '../../constants/app_colors.dart';
 import '../../custom_widget/TextAndWidget.dart';
@@ -48,8 +49,7 @@ class EditProfilePage extends StatelessWidget {
             ),
             child: GestureDetector(
               onTap: () {
-                Get.back();
-                ;
+                Get.off(MyHomeScreen());
               },
               child: Icon(Icons.arrow_back, size: 18),
             ),
@@ -242,7 +242,6 @@ class EditProfilePage extends StatelessWidget {
                           );
                           return;
                         } else {
-                          print('press');
                           await controller.updateProfile();
                           // controller.userNameController.clear();
                           // Get.back();

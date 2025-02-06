@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
+import 'package:kaistable_website/screens/onboarding_screen/onboarding_controller/onboarding_controller.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../custom_widget/separate_text_field.dart';
@@ -28,8 +29,10 @@ class LocationScreen extends StatelessWidget {
   List<RestaurantModel> filteredRestaurants = [];
   String? city;
   String? country;
+  final onboradingController = Get.put(OnboardingController());
   @override
   Widget build(BuildContext context) {
+    bool isOnboarding = onboradingController.selectedCountry.value != 'Country';
     return WillPopScope(
       onWillPop: () async {
         Get.back();
@@ -94,7 +97,9 @@ class LocationScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
-                      currentUserDataModel?.value.city ?? "",
+                      isOnboarding
+                          ? onboradingController.selectedCity.value ?? ''
+                          : currentUserDataModel?.value.city ?? "",
                       style: TextStyle(
                         color: AppColors.primaryColor,
                         fontFamily: 'aftika-regular',
@@ -178,7 +183,11 @@ class LocationScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 12),
                     StreamBuilder(
-                      stream: homeController.getRestaurants(),
+                      stream: homeController.getRestaurants(
+                        city: isOnboarding
+                            ? onboradingController.selectedCity.value ?? ''
+                            : currentUserDataModel?.value.city ?? "",
+                      ),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -193,7 +202,10 @@ class LocationScreen extends StatelessWidget {
                         }
 
                         if (snapshot.data == null || snapshot.data!.isEmpty) {
-                          return Text('No restaurants found');
+                          return SizedBox(
+                              height: Get.height * 0.5,
+                              child:
+                                  Center(child: Text('No restaurants found')));
                         }
 
                         List<RestaurantModel> restaurants = snapshot.data!;

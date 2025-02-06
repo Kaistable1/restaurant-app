@@ -44,7 +44,7 @@ class OnboardingScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Text(
-                  "Lorem ipsum dolor sit amet",
+                  "Explore Restaurants with SAVRLY",
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w400,
@@ -56,7 +56,7 @@ class OnboardingScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 16, right: 16),
                 child: Text(
-                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+                  "Discover the best dining spots with SAVRLY! Our user-friendly app lets you explore local restaurants, view menus, and read reviews to find your next favorite meal. Enjoy a seamless culinary journey at your fingertips.",
                   textAlign: TextAlign.justify,
                   style: TextStyle(
                     fontSize: 12,
@@ -233,7 +233,7 @@ class ChooseLocationWidget extends StatelessWidget {
                   } else {
                     // Proceed with the next step
                     controller.hasError.value = false;
-                    Get.offAll(
+                    Get.to(
                       () => MyHomeScreen(
                         countryName: controller.selectedCity.value,
                       ),

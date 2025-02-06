@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/screens/home_screen/explore_restaurants/explore_restaurant.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_filter_controller.dart';
+import 'package:kaistable_website/screens/onboarding_screen/onboarding_controller/onboarding_controller.dart';
 
 import '../../../../constants/app_colors.dart';
 import '../../../../custom_widget/separate_text_field.dart';
 import '../../../../widgets/circle_container_widget.dart';
 import '../../home_controller/home_location_controller.dart';
-import '../location_screen.dart';
 
 class LocationViewAll extends StatelessWidget {
   final HomeLocationController controller = Get.put(HomeLocationController());
   final HomeFilterController filterController = Get.put(HomeFilterController());
 
   LocationViewAll({super.key});
-
+  final onboradingController = Get.put(OnboardingController());
   @override
   Widget build(BuildContext context) {
+    bool isOnboarding = onboradingController.selectedCountry.value != 'Country';
+
     return Scaffold(
       backgroundColor: AppColors.bgColor,
       appBar: AppBar(
@@ -127,7 +130,11 @@ class LocationViewAll extends StatelessWidget {
               ),
               SizedBox(height: 16),
               FutureBuilder(
-                future: filterController.getRestaurantsGroupedByAddress(),
+                future: filterController.getRestaurantsGroupedByAddress(
+                  city: isOnboarding
+                      ? onboradingController.selectedCity.value
+                      : currentUserDataModel?.value.city,
+                ),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Padding(

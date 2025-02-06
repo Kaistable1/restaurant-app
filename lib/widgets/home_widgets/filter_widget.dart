@@ -91,7 +91,7 @@ class FilterWidget extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   filterSelectionDialogueBox();
-                  filterController.toggleFilterListVisibility();
+                  // filterController.toggleFilterListVisibility();
                 },
                 child: Image.asset(
                   'assets/images/filter_image__.png',
@@ -103,8 +103,7 @@ class FilterWidget extends StatelessWidget {
           ),
         ),
         Obx(
-          () => filterController.isFilterListVisible.value &&
-                  filterController.aggregatedFilters.isNotEmpty
+          () => filterController.aggregatedFilters.isNotEmpty
               ? Column(
                   children: [
                     SizedBox(height: 10),
@@ -163,8 +162,8 @@ class FilterWidget extends StatelessWidget {
                             onTap: () {
                               filterController.aggregatedFilters.clear();
                               filterController.clearAll();
-                              filterController.isFilterListVisible.value =
-                                  false;
+                              // filterController.isFilterListVisible.value =
+                              //     false;
                             },
                             child: Text(
                               'clear all',

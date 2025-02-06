@@ -38,7 +38,6 @@ class RectangleWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 173,
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.4),
         borderRadius: BorderRadius.circular(10),
@@ -152,8 +151,8 @@ class RectangleWidget extends StatelessWidget {
 
   Widget _buildStarBox(BuildContext context, {required OfferModel item}) {
     return Container(
-      height: 55,
-      width: 55,
+      height: Get.height * 0.065,
+      width: Get.height * 0.065,
       decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/images/star_img.png'),

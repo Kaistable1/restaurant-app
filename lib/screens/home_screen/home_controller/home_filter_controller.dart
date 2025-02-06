@@ -101,14 +101,15 @@ class HomeFilterController extends GetxController {
     return cuisineMap;
   }
 
-  Future<Map<String, List<String>>> getRestaurantsGroupedByAddress() async {
+  Future<Map<String, List<String>>> getRestaurantsGroupedByAddress(
+      {city}) async {
     // Initialize Firestore
     final firestore = FirebaseFirestore.instance;
 
     // Fetch all restaurants
     QuerySnapshot restaurantsSnapshot = await firestore
         .collection('restaurants')
-        .where('city', isEqualTo: currentUserDataModel?.value.city)
+        .where('city', isEqualTo: city)
         .get();
 
     // Map to hold address as key and list of restaurants as value

@@ -201,7 +201,7 @@ class HomeLocationController extends GetxController {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Icon(
             Icons.favorite_border_outlined,
-            size: 18,
+            size: 22,
             color: AppColors.primaryColor,
           ); // Show loading indicator while waiting for data
         }
@@ -209,7 +209,7 @@ class HomeLocationController extends GetxController {
         if (snapshot.hasError) {
           return Icon(
             Icons.favorite_border_outlined,
-            size: 18,
+            size: 22,
             color: AppColors.primaryColor,
           ); // Show error icon if there's an error
         }
@@ -257,12 +257,12 @@ class HomeLocationController extends GetxController {
               ? Image.asset(
                   'assets/images/heart_icon.png',
                   color: AppColors.primaryColor,
-                  height: 16,
-                  width: 16,
+                  height: 22,
+                  width: 22,
                 )
               : Icon(
                   Icons.favorite_border_outlined,
-                  size: 18,
+                  size: 22,
                   color: AppColors.primaryColor,
                 ),
         );
@@ -310,7 +310,7 @@ class HomeLocationController extends GetxController {
             // Fetch menu list from subcollection
             final restaurant = RestaurantModel.fromDocumentSnapshot(doc);
             restaurant.menuList = await _getMenuFromSubcollection(doc.id);
-            
+
             // Set average rating
             restaurant.averageRating = averageRating;
 
@@ -391,9 +391,10 @@ class HomeLocationController extends GetxController {
     });
   }
 
-  Stream<List<RestaurantModel>> getRestaurants() {
+  Stream<List<RestaurantModel>> getRestaurants({city}) {
     return FirebaseFirestore.instance
         .collection('restaurants')
+        .where('city', isEqualTo: city)
         .snapshots()
         .asyncMap((snapshot) async {
       // Fetch all restaurants and their menus

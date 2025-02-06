@@ -115,11 +115,15 @@ void filterSelectionDialogueBox() {
                                     fontfamily: 'Nunito-Sans',
                                     hintfontsize: 14,
                                     dropdownItemWidth: 100,
-                                    items: const [
-                                      "New York",
-                                      "Los Angeles",
-                                      "Paris",
-                                    ],
+                                    items: controller.selectedCountry.value ==
+                                            'USA'
+                                        ? const [
+                                            "New York",
+                                            "Los Angeles",
+                                          ]
+                                        : const [
+                                            "Paris",
+                                          ],
                                     selectedValue:
                                         controller.selectedCity.value,
                                     onChanged: (value) {

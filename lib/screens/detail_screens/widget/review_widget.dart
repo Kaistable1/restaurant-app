@@ -6,6 +6,7 @@ import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/models/review_model.dart';
 import 'package:kaistable_website/screens/detail_screens/restaurant_detail_screen.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_location_controller.dart';
+import 'package:kaistable_website/screens/onboarding_screen/onboarding_controller/onboarding_controller.dart';
 import 'package:kaistable_website/utils/responsive.dart';
 import 'package:kaistable_website/widgets/custom_button.dart';
 import 'package:kaistable_website/widgets/global_functions.dart';
@@ -158,18 +159,28 @@ class ReviewWidget extends StatelessWidget {
                   padding: const EdgeInsets.all(16.0),
                   child: CustomButton(
                     ontapp: () {
-                      Get.bottomSheet(
-                        UploadImageSection(
-                          restaurantId: restaurantModel?.docID ?? '',
-                        ),
-                        isScrollControlled: true,
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(20),
+                      final onboradingController =
+                          Get.put(OnboardingController());
+                      bool isOnboarding =
+                          onboradingController.selectedCountry.value !=
+                              'Country';
+                      if (!isOnboarding) {
+                        Get.bottomSheet(
+                          UploadImageSection(
+                            restaurantId: restaurantModel?.docID ?? '',
                           ),
-                        ),
-                      );
+                          isScrollControlled: true,
+                          backgroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(20),
+                            ),
+                          ),
+                        );
+                      } else {
+                        Get.snackbar(
+                            'SAVRLY', 'Please signup for this operation!');
+                      }
                     },
                     laBelText: 'Write a review',
                     height: 48,
@@ -340,18 +351,27 @@ class ReviewWidget extends StatelessWidget {
                 padding: const EdgeInsets.all(16.0),
                 child: CustomButton(
                   ontapp: () {
-                    Get.bottomSheet(
-                      UploadImageSection(
-                        restaurantId: restaurantModel?.docID ?? '',
-                      ),
-                      isScrollControlled: true,
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(20),
+                    final onboradingController =
+                        Get.put(OnboardingController());
+                    bool isOnboarding =
+                        onboradingController.selectedCountry.value != 'Country';
+                    if (!isOnboarding) {
+                      Get.bottomSheet(
+                        UploadImageSection(
+                          restaurantId: restaurantModel?.docID ?? '',
                         ),
-                      ),
-                    );
+                        isScrollControlled: true,
+                        backgroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(20),
+                          ),
+                        ),
+                      );
+                    } else {
+                      Get.snackbar(
+                          'SAVRLY', 'Please signup for this operation!');
+                    }
                   },
                   laBelText: 'Write a review',
                   height: 48,

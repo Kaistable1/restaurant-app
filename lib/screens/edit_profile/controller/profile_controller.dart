@@ -65,7 +65,10 @@ class ProfileController extends GetxController {
         'userImage': imgUrl,
         'username': userNameController.text,
       });
+      getCurrentUserData();
       Get.back();
+
+      Get.snackbar('SAVRLY', 'Profile updated successfully!');
     } catch (e) {
       Get.back();
       print('Error update profile $e');

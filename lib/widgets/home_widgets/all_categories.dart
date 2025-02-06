@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/models/recent_view.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/screens/home_screen/explore_restaurants/explore_restaurant.dart';
+import 'package:kaistable_website/screens/home_screen/location_pages/location_view_all/location_view_all.dart';
+import 'package:kaistable_website/screens/onboarding_screen/onboarding_controller/onboarding_controller.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../utils/responsive.dart';
@@ -19,10 +20,8 @@ import '../../screens/home_screen/home_controller/home_new_controller.dart';
 import '../../screens/home_screen/home_controller/home_recently_viewed_controller.dart';
 import '../../screens/home_screen/home_controller/home_theme_controller.dart';
 import '../../screens/home_screen/home_controller/home_trending_controller.dart';
-import '../../screens/home_screen/location_pages/location_screen.dart';
 import '../../screens/home_screen/new_view_all/new_viewall.dart';
 import '../../screens/home_screen/recently_viewed/recently_viewed.dart';
-import '../../screens/home_screen/theme/theme_view_all.dart';
 import '../../screens/home_screen/trending_all/trending_view_all.dart';
 
 class AllCategories extends StatelessWidget {
@@ -37,49 +36,76 @@ class AllCategories extends StatelessWidget {
   final HomeNewController newController = Get.put(HomeNewController());
   final HomeFilterController filterController = Get.put(HomeFilterController());
   final scrollController = ScrollController();
-
+  final onboradingController = Get.put(OnboardingController());
   AllCategories({super.key});
 
   @override
   Widget build(BuildContext context) {
+    bool isOnboarding = onboradingController.selectedCountry.value != 'Country';
     return Column(
       children: [
         FutureBuilder(
-            future: filterController.getRestaurantsGroupedByAddress(),
+            future: filterController.getRestaurantsGroupedByAddress(
+              city: isOnboarding
+                  ? onboradingController.selectedCity.value
+                  : currentUserDataModel?.value.city,
+            ),
             builder: (context, snapshot) {
               // 1. Check if the Future is still loading
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    for (int i = 0; i < 3; i++)
-                      Container(
-                        width: 113,
-                        height: 144,
-                        decoration: BoxDecoration(
-                          color: AppColors.whiteColor,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              spreadRadius: 0,
-                              blurRadius: 2,
-                              offset: const Offset(0, 1),
-                            ),
-                          ],
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(150),
-                            topRight: Radius.circular(150),
-                            bottomLeft: Radius.circular(25),
-                            bottomRight: Radius.circular(25),
-                          ),
-                        ),
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            color: AppColors.primaryColor,
-                          ),
+                return Padding(
+                  padding: EdgeInsets.only(
+                    left: 16,
+                    right: 18,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        isOnboarding
+                            ? '${onboradingController.selectedCity.value}'
+                            : '${currentUserDataModel?.value.city}',
+                        style: TextStyle(
+                          color: AppColors.bottomSheetColor,
+                          fontFamily: 'aftika-regular',
+                          fontSize: 18,
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
-                  ],
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          for (int i = 0; i < 3; i++)
+                            Container(
+                              width: 113,
+                              height: 144,
+                              decoration: BoxDecoration(
+                                color: AppColors.whiteColor,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    spreadRadius: 0,
+                                    blurRadius: 2,
+                                    offset: const Offset(0, 1),
+                                  ),
+                                ],
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(150),
+                                  topRight: Radius.circular(150),
+                                  bottomLeft: Radius.circular(25),
+                                  bottomRight: Radius.circular(25),
+                                ),
+                              ),
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  color: AppColors.primaryColor,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
                 );
               }
 
@@ -106,39 +132,80 @@ class AllCategories extends StatelessWidget {
                   ),
                 );
               }
-              return Padding(
-                padding: EdgeInsets.only(left: 8, right: 6),
-                child: SizedBox(
-                  height: 180,
-                  child: ListView.builder(
-                    controller: controller.scrollController,
-                    scrollDirection: Axis.horizontal,
-                    itemCount: addressMap.keys.length,
-                    itemBuilder: (context, index) {
-                      final address = addressMap.keys.elementAt(index);
-                      final restaurants = addressMap[address]!.toSet().toList()
-                        ..sort();
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 6),
-                        child: CircleContainerWidget(
-                          ontap: () {
-                            Get.to(() => ExploreRestaurant(
-                                  restaurantIDs: restaurants,
-                                  cuisneName: address,
-                                ));
-                          },
-                          isFavourite: false.obs,
-                          isLocation: false,
-                          imgPath: 'assets/images/aa.png',
-                          titleText: address,
-                          descriptionText:
-                              '${restaurants.length.toString()} restaurants',
+              return Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: 16,
+                      right: 18,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          isOnboarding
+                              ? '${onboradingController.selectedCity.value}'
+                              : '${currentUserDataModel?.value.city}',
+                          style: TextStyle(
+                            color: AppColors.bottomSheetColor,
+                            fontFamily: 'aftika-regular',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
-                      );
-                    },
+                        Spacer(),
+                        InkWell(
+                            onTap: () {
+                              Get.to(LocationViewAll());
+                            },
+                            child: Text(
+                              "view all",
+                              style: TextStyle(
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: AppColors.primaryColor,
+                                  fontFamily: 'Nunito-Regular',
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColors.primaryColor),
+                            ))
+                      ],
+                    ),
                   ),
-                ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 8, right: 6),
+                    child: SizedBox(
+                      height: 180,
+                      child: ListView.builder(
+                        controller: controller.scrollController,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: addressMap.keys.length,
+                        itemBuilder: (context, index) {
+                          final address = addressMap.keys.elementAt(index);
+                          final restaurants =
+                              addressMap[address]!.toSet().toList()..sort();
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 6),
+                            child: CircleContainerWidget(
+                              ontap: () {
+                                Get.to(() => ExploreRestaurant(
+                                      restaurantIDs: restaurants,
+                                      cuisneName: address,
+                                    ));
+                              },
+                              isFavourite: false.obs,
+                              isLocation: false,
+                              imgPath: 'assets/images/aa.png',
+                              titleText: address,
+                              descriptionText:
+                                  '${restaurants.length.toString()} restaurants',
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
               );
             }),
 
@@ -342,7 +409,7 @@ class AllCategories extends StatelessWidget {
                     SizedBox(height: 10),
                     SizedBox(
                       height: Get.height *
-                          0.26, // Fixed height for the horizontal list
+                          0.27, // Fixed height for the horizontal list
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: restaurants.length,

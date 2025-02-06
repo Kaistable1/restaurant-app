@@ -73,7 +73,7 @@ class MapDetailWidget extends StatelessWidget {
           Row(
             children: [
               Text(
-                'Address',
+                'Area',
                 style: TextStyle(
                   color: AppColors.headingTextColor,
                   fontSize: 14,

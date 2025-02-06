@@ -5,6 +5,7 @@ import 'package:kaistable_website/constants/app_colors.dart';
 import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/screens/detail_screens/restaurant_detail_screen.dart';
+import 'package:kaistable_website/screens/home_screen/my_home_screen.dart';
 import 'package:kaistable_website/widgets/rectangle_widget.dart';
 
 import '../home_screen/home_controller/home_location_controller.dart';
@@ -57,7 +58,7 @@ class FavoriteScreen extends StatelessWidget {
               ),
               child: GestureDetector(
                 onTap: () {
-                  Get.back();
+                  Get.off(MyHomeScreen());
                 },
                 child: Icon(Icons.arrow_back, size: 18),
               ),

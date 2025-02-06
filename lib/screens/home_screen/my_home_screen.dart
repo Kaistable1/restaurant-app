@@ -19,6 +19,7 @@ import 'package:kaistable_website/screens/home_screen/home_controller/home_theme
 import 'package:kaistable_website/screens/home_screen/home_controller/home_trending_controller.dart';
 import 'package:kaistable_website/screens/home_screen/location_pages/location_screen.dart';
 import 'package:kaistable_website/screens/home_screen/location_pages/location_view_all/location_view_all.dart';
+import 'package:kaistable_website/screens/onboarding_screen/onboarding_controller/onboarding_controller.dart';
 import 'package:kaistable_website/screens/privacy_policy/privacy_policy.dart';
 import 'package:kaistable_website/screens/terms_and_condition/terms_and_condition.dart';
 import 'package:kaistable_website/widgets/custom_button.dart';
@@ -70,6 +71,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
       Get.put(HomeTrendingController());
   final HomeNewController newController = Get.put(HomeNewController());
   final HomeFilterController filterController = Get.put(HomeFilterController());
+  final onboradingController = Get.put(OnboardingController());
   final scrollController = ScrollController();
   int _selectedIndex = 0; // Track the selected index
   Color decorationLineColor =
@@ -188,16 +190,18 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
       }
 
       // If not numeric, check all fields for matches
-      return restaurant.resName.toLowerCase().contains(query) ||
-          restaurant.city.toLowerCase().contains(query) ||
-          restaurant.address.toLowerCase().contains(query) ||
+      return restaurant.resName.toLowerCase().contains(query.toLowerCase()) ||
+          restaurant.city.toLowerCase().contains(query.toLowerCase()) ||
+          restaurant.address.toLowerCase().contains(query.toLowerCase()) ||
           restaurant.zipCode.toLowerCase().contains(query) ||
-          restaurant.country.toLowerCase().contains(query) ||
-          restaurant.about.toLowerCase().contains(query) ||
+          restaurant.country.toLowerCase().contains(query.toLowerCase()) ||
+          restaurant.about.toLowerCase().contains(query.toLowerCase()) ||
           restaurant.socialLink.toLowerCase().contains(query) ||
           restaurant.priceRange.toLowerCase().contains(query) ||
           restaurant.specialConditions.toLowerCase().contains(query) ||
-          restaurant.spokenLanguage.toLowerCase().contains(query) ||
+          restaurant.spokenLanguage
+              .toLowerCase()
+              .contains(query.toLowerCase()) ||
           //filter by events
           restaurant.entertainmentScheduleList.any((item) =>
               item.eventName.toLowerCase().contains(query) ||
@@ -215,17 +219,21 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool isOnboarding = onboradingController.selectedCountry.value != 'Country';
+    String previousText = '';
+
     controller.searchController.addListener(() {
       final text = controller.searchController.text;
-
-      if (text.isNotEmpty) {
-        isSearching = true;
-      } else {
-        isSearching = false;
+      if (text != previousText) {
+        previousText = text;
+        if (text.trim().isNotEmpty) {
+          isSearching = true;
+        } else {
+          isSearching = false;
+        }
+        setState(() {});
       }
-      setState(() {});
     });
-
     return Scaffold(
         backgroundColor: AppColors.bgColor,
         appBar: AppBar(
@@ -267,7 +275,9 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                           ));
                         },
                         child: Text(
-                          '${currentUserDataModel?.value.country}.${currentUserDataModel?.value.city}',
+                          isOnboarding
+                              ? '${onboradingController.selectedCountry.value}.${onboradingController.selectedCity.value}'
+                              : '${currentUserDataModel?.value.country}.${currentUserDataModel?.value.city}',
                           style: TextStyle(
                             color: AppColors.textColor,
                             fontWeight: FontWeight.w800,
@@ -282,54 +292,86 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                 : const SizedBox.shrink(),
           ],
         ),
-        drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              DrawerHeader(
-                decoration: const BoxDecoration(
-                  color: AppColors.primaryColor,
-                ),
-                child: Center(
-                  child: Image.asset(
-                    'assets/images/topbar_logo.png',
-                    height: 200,
-                    width: 200,
+        drawer: isOnboarding
+            ? Drawer(
+                child: ListView(padding: EdgeInsets.zero, children: <Widget>[
+                DrawerHeader(
+                  decoration: const BoxDecoration(
+                    color: AppColors.primaryColor,
+                  ),
+                  child: Center(
+                    child: Image.asset(
+                      'assets/images/topbar_logo.png',
+                      height: 200,
+                      width: 200,
+                    ),
                   ),
                 ),
-              ),
-              _buildDrawerItem('Home', 0),
-              _buildDrawerItem('Favorites', 1),
-              _buildDrawerItem('Edit profile', 2),
-              _buildDrawerItem('Change Password', 3),
-              _buildDrawerItem('Terms and conditions', 4),
-              _buildDrawerItem('Privacy policy', 5),
-              _buildDrawerItem('About app', 6),
-              _buildDrawerItem('Contact us', 7),
-              SizedBox(
-                height: 30,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 75),
-                child: CustomButton(
-                  laBelText: 'Logout',
-                  fontSize: 20,
-                  textColor: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  height: 43,
-                  width: 200,
-                  ontapp: () async {
-                    await FirebaseAuth.instance.signOut();
-                    Get.offAll(() => LoginScreen());
-                  },
+                Center(child: Text('Register to enable the drawer feature!')),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 75, vertical: 20),
+                  child: CustomButton(
+                    laBelText: 'Go back',
+                    fontSize: 20,
+                    textColor: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    height: 43,
+                    width: 200,
+                    ontapp: () async {
+                      Get.close(2);
+                    },
+                  ),
+                ),
+              ]))
+            : Drawer(
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: <Widget>[
+                    DrawerHeader(
+                      decoration: const BoxDecoration(
+                        color: AppColors.primaryColor,
+                      ),
+                      child: Center(
+                        child: Image.asset(
+                          'assets/images/topbar_logo.png',
+                          height: 200,
+                          width: 200,
+                        ),
+                      ),
+                    ),
+                    _buildDrawerItem('Home', 0),
+                    _buildDrawerItem('Favorites', 1),
+                    _buildDrawerItem('Edit profile', 2),
+                    _buildDrawerItem('Change Password', 3),
+                    _buildDrawerItem('Terms and conditions', 4),
+                    _buildDrawerItem('Privacy policy', 5),
+                    _buildDrawerItem('About app', 6),
+                    _buildDrawerItem('Contact us', 7),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 75),
+                      child: CustomButton(
+                        laBelText: 'Logout',
+                        fontSize: 20,
+                        textColor: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        height: 43,
+                        width: 200,
+                        ontapp: () async {
+                          await FirebaseAuth.instance.signOut();
+                          Get.offAll(() => LoginScreen());
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                  ],
                 ),
               ),
-              SizedBox(
-                height: 30,
-              ),
-            ],
-          ),
-        ),
         body: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -356,7 +398,10 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                             height: 16,
                           ),
                           StreamBuilder(
-                            stream: controller.getRestaurants(),
+                            stream: controller.getRestaurants(
+                                city: isOnboarding
+                                    ? onboradingController.selectedCity.value
+                                    : currentUserDataModel?.value.city),
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
@@ -404,9 +449,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                     )
                   : Obx(
                       () => filterSelectionController
-                                  .isFilterListVisible.value &&
-                              filterSelectionController
-                                  .aggregatedFilters.isNotEmpty
+                              .aggregatedFilters.isNotEmpty
                           ? Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 16),
@@ -433,10 +476,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                           ConnectionState.waiting) {
                                         return SizedBox(
                                           height: Get.height * 0.5,
-                                          child: Center(
-                                              child: CircularProgressIndicator(
-                                            color: AppColors.primaryColor,
-                                          )),
+                                         
                                         );
                                       }
 
@@ -668,8 +708,15 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
 
                                       return FutureBuilder<
                                           List<RestaurantModel>>(
-                                        future: _getFilteredRestaurants(
-                                            restaurants),
+                                        future: filterSelectionController
+                                                .aggregatedFilters
+                                                .any((filter) =>
+                                                    filterSelectionController
+                                                        .selectedTimeOfDay
+                                                        .contains(filter))
+                                            ? _getFilteredRestaurants(
+                                                restaurants)
+                                            : null,
                                         builder: (context, futureSnapshot) {
                                           // Handle the first FutureBuilder for filtered restaurants
                                           List<RestaurantModel>
@@ -800,43 +847,6 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                    left: 16,
-                                    right: 18,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        '${currentUserDataModel?.value.city}',
-                                        style: TextStyle(
-                                          color: AppColors.bottomSheetColor,
-                                          fontFamily: 'aftika-regular',
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                      ),
-                                      Spacer(),
-                                      InkWell(
-                                          onTap: () {
-                                            Get.to(LocationViewAll());
-                                          },
-                                          child: Text(
-                                            "view all",
-                                            style: TextStyle(
-                                                decoration:
-                                                    TextDecoration.underline,
-                                                decorationColor:
-                                                    AppColors.primaryColor,
-                                                fontFamily: 'Nunito-Regular',
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500,
-                                                color: AppColors.primaryColor),
-                                          ))
-                                    ],
-                                  ),
-                                ),
                                 const SizedBox(height: 1),
                                 AllCategories(),
                               ],
