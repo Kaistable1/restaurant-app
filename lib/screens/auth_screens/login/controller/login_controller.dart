@@ -8,19 +8,25 @@ import 'package:kaistable_website/screens/onboarding_screen/onboarding_controlle
 import 'package:kaistable_website/utils/loading.dart';
 import 'package:kaistable_website/widgets/global_functions.dart';
 
+// Controller to manage login functionality, state, and interactions
 class LoginController extends GetxController {
+  // Text editing controllers for email and password fields
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  var rememberMe = false.obs;
-  var isPasswordHidden = true.obs;
-  bool isRemember = false;
 
+  // Observables for managing UI state
+  var rememberMe = false.obs; // Observable for "Remember Me" checkbox
+  var isPasswordHidden = true.obs; // Observable to toggle password visibility
+  bool isRemember = false; // Local variable to track "Remember Me" state
+
+  // Clears the text fields for email and password
   void resetTextFields() {
     emailController.clear();
     passwordController.clear();
   }
 
-  checkRememberMe() {
+  // Checks if "Remember Me" is enabled and retrieves stored email/password
+  void checkRememberMe() {
     if (remember_me_pref!.getBool('is_remember_me') == true) {
       emailController.text =
           remember_me_pref!.getString('remember_me_email') ?? '';
@@ -31,30 +37,45 @@ class LoginController extends GetxController {
         remember_me_pref?.getBool('is_remember_me') == true ? true : false;
   }
 
-   login() async {
+  // Handles user login
+  Future<void> login() async {
+    // Show a loading dialog while attempting login
     loadingDialog(message: 'Please wait !!', loading: true, height: 150);
 
     try {
+      // Sign in using Firebase Authentication
       await auth
           .signInWithEmailAndPassword(
         email: emailController.value.text,
         password: passwordController.value.text,
       )
           .then((value) async {
+        // Update user location data
         await updateUserCityCountry();
+        // Fetch current user data
         await getCurrentUserData();
+
+        // Close the loading dialog
         Get.back();
 
         if (currentUserDataModel != null) {
-          final onboradingContorller = Get.put(OnboardingController());
+          // Navigate to the home screen if user data is valid
+          final onboardingController = Get.put(OnboardingController());
           Get.offAll(() => MyHomeScreen(
-                countryName: onboradingContorller.selectedCountry.value,
+                countryName: onboardingController.selectedCountry.value,
               ));
+
+          // Clear the email and password fields
           emailController.clear();
           passwordController.clear();
+
+          // Reload the current user to ensure updated data is reflected
           await auth.currentUser!.reload();
+
+          // Reset text fields
           resetTextFields();
         } else {
+          // If user data is null, show an error dialog
           Get.back();
           loadingDialog(
               message:
@@ -62,8 +83,10 @@ class LoginController extends GetxController {
         }
       });
     } on FirebaseAuthException catch (error) {
+      // Close the loading dialog
       Get.back();
-      print(error.toString());
+
+      // Handle Firebase-specific authentication errors
       switch (error.code) {
         case "invalid-credential":
           loadingDialog(
@@ -87,24 +110,26 @@ class LoginController extends GetxController {
               button: true);
           break;
         default:
+          // Handle unexpected errors gracefully
+          print("Unhandled error: ${error.code}");
       }
     }
   }
-  
-  updateUserCityCountry() async 
-  {
-    try{
-      OnboardingController onboardingController=Get.find();
-         await FirebaseFirestore.instance
+
+  // Updates the user's city and country in Firestore
+  Future<void> updateUserCityCountry() async {
+    try {
+      OnboardingController onboardingController = Get.find();
+      await FirebaseFirestore.instance
           .collection('users')
           .doc(auth.currentUser!.uid.toString())
           .update({
         'country': onboardingController.selectedCountry.value,
         'city': onboardingController.selectedCity.value,
       });
-    }catch(e){
+    } catch (e) {
+      // Log any errors that occur during the update
       print('Error $e');
     }
   }
-
 }
