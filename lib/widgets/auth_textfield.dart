@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:restaurant_web_app/constants/colors.dart';
 
-class CustomTextField extends StatelessWidget {
+class AuthTextField extends StatelessWidget {
   final TextStyle inputStyle;
   final TextStyle hintStyle;
   final double? width;
@@ -28,7 +28,7 @@ class CustomTextField extends StatelessWidget {
   final bool expands;
   final List<TextInputFormatter>? inputFormatterslist;
 
-  const CustomTextField({
+  const AuthTextField({
     super.key,
     required this.inputStyle,
     required this.hintStyle,
@@ -80,9 +80,7 @@ class CustomTextField extends StatelessWidget {
         maxLines: expands ? null : maxLine,
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: const TextStyle(
-            fontWeight: FontWeight.w200,
-              color: AppColors.darkGrey) ,
+          hintStyle:TextStyle(color: AppColors.whiteColor,fontWeight: FontWeight.w200 ) ,
           errorText: errorText, // Add this line to display error text
           filled: fillColor != null,
           fillColor: fillColor,

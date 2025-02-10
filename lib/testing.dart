@@ -1,9 +1,11 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+
+import 'universal_models/discount_model.dart';
+
 // class ItemListScreen extends StatelessWidget {
 //   final ItemControllerTwo itemController = Get.put(ItemControllerTwo());
 //   final TextEditingController nameController = TextEditingController();
@@ -173,54 +175,51 @@ class ItemControllerTwo extends GetxController {
   var items = <ItemModel>[].obs;
   var categoryItems = <CategoryModel>[].obs;
 
-  void addItem(String name, String description, String price) {
-    if (name.isNotEmpty && description.isNotEmpty && price.isNotEmpty) {
-      items.add(ItemModel(
-        name: name,
-        description: description,
-        offer: price,
-        images: images.toList(),
-      ));
-      images.clear();
-    }
-  }
+  // void addItem(String name, String description, String price) {
+  //   if (name.isNotEmpty && description.isNotEmpty && price.isNotEmpty) {
+  //     items.add(ItemModel(
+  //       name: name,
+  //       description: description,
+  //       offer: price,
+  //       images: images.toList(),
+  //     ));
+  //     images.clear();
+  //   }
+  // }
 
-  void addCategoryAndSubcategory(String category, String subcategory, {String? fromDate, String?  toDate, String? percentageValue, String? FromTime, String? ToTime, String? offerController, String? discountType, fromTimeType, String? toTimeType, required bool lifeTime, required bool isAllDay}) {
-    if (category.isNotEmpty && subcategory.isNotEmpty && items.isNotEmpty) {
-      categoryItems.add(CategoryModel(
-        category: category,
-        fromDate: fromDate ?? '',
-        toDate: toDate ?? '',
-        lifeTime: lifeTime  ,
-        isAllDay: isAllDay ,
-        percentageValue: percentageValue ?? '',
-        FromTime: FromTime ?? '',
-        ToTime: ToTime ?? '',
-        discountType: discountType ?? '',
-        toTimeType: toTimeType ?? '',
-        subcategory: subcategory,
-        items: items.toList(),
-      ));
-      items.clear();
-    }
-  }
+  // void addCategoryAndSubcategory(String category, String subcategory,
+  //     {String? fromDate,
+  //     String? toDate,
+  //     String? percentageValue,
+  //     String? FromTime,
+  //     String? ToTime,
+  //     String? offerController,
+  //     String? discountType,
+  //     fromTimeType,
+  //     String? toTimeType,
+  //     required bool lifeTime,
+  //     required bool isAllDay}) {
+  //   if (category.isNotEmpty && subcategory.isNotEmpty && items.isNotEmpty) {
+  //     categoryItems.add(CategoryModel(
+  //       category: category,
+  //       fromDate: fromDate ?? '',
+  //       toDate: toDate ?? '',
+  //       lifeTime: lifeTime,
+  //       isAllDay: isAllDay,
+  //       percentageValue: percentageValue ?? '',
+  //       FromTime: FromTime ?? '',
+  //       ToTime: ToTime ?? '',
+  //       discountType: discountType ?? '',
+  //       toTimeType: toTimeType ?? '',
+  //       subcategory: subcategory,
+  //       items: items.toList(),
+  //     ));
+  //     items.clear();
+  //   }
+  // }
 
-  // Method to pick images
-  Future<void> pickImages() async {
-    final ImagePicker picker = ImagePicker();
 
-    try {
-      // Allow multiple image selection
-      final List<XFile>? selectedImages = await picker.pickMultiImage();
 
-      if (selectedImages != null) {
-        // Add selected images to the list
-        images.addAll(selectedImages.map((image) => image.path).toList());
-      }
-    } catch (e) {
-      print('Error picking images: $e');
-    }
-  }
   // Fetch data as a JSON-like structure
   List<Map<String, dynamic>> getAllData() {
     return categoryItems.map((category) => category.toMap()).toList();
@@ -234,125 +233,28 @@ class ItemControllerTwo extends GetxController {
     );
     try {
       // for (var category in categoryItems) {
-        await FirebaseFirestore.instance.collection('restaurants').doc("qA4ZwrICw8NWshCaZ52a5dqgDSj2").collection("MealMenu").add({
-          'menu': categoryItems.map((category) => category.toMap()).toList(),
-          'timestamp': FieldValue.serverTimestamp(),
-          'category': categoryItems.first.category,
-          'fromDate': categoryItems.first.fromDate,
-          'return': categoryItems.first.discountType,
-
-
-        });
+      await FirebaseFirestore.instance
+          .collection('restaurants')
+          .doc("qA4ZwrICw8NWshCaZ52a5dqgDSj2")
+          .collection("MealMenu")
+          .add({
+        'menu': categoryItems.map((category) => category.toMap()).toList(),
+        'timestamp': FieldValue.serverTimestamp(),
+        'toDate': categoryItems.first.toDate,
+        'fromDate': categoryItems.first.fromDate,
+        'discountType': categoryItems.first.discountType,
+      });
       // }
       print('Data saved to Firestore successfully!');
-        categoryItems.clear();
-        Get.back();
+      categoryItems.clear();
+      Get.back();
     } catch (e) {
       print('Error saving data to Firestore: $e');
     }
   }
 }
 
-class ItemModel {
-  String name;
-  String description;
-  String offer;
-  List<String> images; // URLs of images
 
-  ItemModel({
-    required this.name,
-    required this.description,
-    required this.offer,
-    required this.images,
-  });
-
-  // Convert ItemModel to Map
-  Map<String, dynamic> toMap() {
-    return {
-      'name': name,
-      'description': description,
-      'price': offer,
-      'images': images,
-    };
-  }
-
-  // Create ItemModel from Map
-  factory ItemModel.fromMap(Map<String, dynamic> map) {
-    return ItemModel(
-      name: map['name'] ?? '',
-      description: map['description'] ?? '',
-      offer: map['price'] ?? '',
-      images: List<String>.from(map['images'] ?? []),
-    );
-  }
-}
-
-class CategoryModel {
-  String category;
-  String subcategory;
-  String fromDate;
-  String toDate;
-  String percentageValue;
-  String FromTime;
-  String ToTime;
-  String discountType;
-  String toTimeType;
-  bool lifeTime;
-  bool isAllDay;
-  List<ItemModel> items;
-
-  CategoryModel({
-    required this.category,
-    required this.subcategory,
-    required this.fromDate,
-    required this.percentageValue,
-    required this.toDate,
-    required this.FromTime,
-    required this.ToTime,
-    required this.discountType,
-    required this.lifeTime,
-    required this.isAllDay,
-    required this.toTimeType,
-    required this.items,
-  });
-
-  // Convert CategoryModel to Map
-  Map<String, dynamic> toMap() {
-    return {
-      'category': category,
-      'subcategory': subcategory,
-      'fromDate': fromDate,
-      'percentageValue': percentageValue,
-      'toDate': toDate,
-      'toTimeType': toTimeType,
-      'FromTime': FromTime,
-      'discountType': discountType,
-      'ToTime': ToTime,
-      'isAllDay': isAllDay,
-      'lifeTime': lifeTime,
-      'items': items.map((item) => item.toMap()).toList(),
-    };
-  }
-
-  // Create CategoryModel from Map
-  factory CategoryModel.fromMap(Map<String, dynamic> map) {
-    return CategoryModel(
-      category: map['category'] ?? '',
-      discountType: map['discountType'] ?? '',
-      FromTime: map['FromTime'] ?? '',
-      ToTime: map['ToTime'] ?? '',
-      isAllDay: map['isAllDay'] ?? '',
-      toTimeType: map['toTimeType'] ?? '',
-      subcategory: map['subcategory'] ?? '',
-      percentageValue: map['percentageValue'] ?? '',
-      toDate: map['toDate'] ?? '',
-      lifeTime: map['lifeTime'] ?? '',
-      fromDate: map['fromDate'] ?? '',
-      items: List<ItemModel>.from(
-          map['items']?.map((item) => ItemModel.fromMap(item)) ?? []),
-    );
-  }
-}
 
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
@@ -555,5 +457,39 @@ class CategoryModel {
 //       });
 //       items.clear(); // Clear items after adding to category
 //     }
+//   }
+// }
+
+// Future<void> saveCategoryToFirestore() async {
+//   assignDiscountData(); // Assign values before saving
+//
+//   if (discountModel == null) {
+//     print("No discount data to save.");
+//     return;
+//   }
+//   Get.defaultDialog(
+//     title: 'Saving Data',
+//     content: const CircularProgressIndicator(),
+//     barrierDismissible: false,
+//   );
+//   try {
+//     // for (var category in categoryItems) {
+//     await FirebaseFirestore.instance
+//         .collection('restaurants')
+//         .doc(auth.currentUser!.uid)
+//         .collection("MealMenu")
+//         .add({
+//       'menu': categoryItems.map((category) => category.toMap()).toList(),
+//       'timestamp': FieldValue.serverTimestamp(),
+//       'toDate': categoryItems.first.toDate,
+//       'fromDate': categoryItems.first.fromDate,
+//       'discountType': categoryItems.first.discountType,
+//     });
+//
+//     print('Data saved to Firestore successfully!');
+//     categoryItems.clear();
+//     Get.back();
+//   } catch (e) {
+//     print('Error saving data to Firestore: $e');
 //   }
 // }

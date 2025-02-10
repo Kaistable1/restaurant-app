@@ -3,9 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:restaurant_web_app/screens/add_restaurant/add_resturant_controller/add_resturant%20_controller.dart';
-import 'package:restaurant_web_app/screens/operating_hour_screen/operating_hour_screen.dart';
-
+import 'package:restaurant_web_app/widgets/account_settings_popup_widget.dart';
+import 'package:restaurant_web_app/widgets/global_functions.dart';
 import '../../constants/colors.dart';
+import '../../main.dart';
 import '../../utils/responsive.dart';
 import '../../widgets/round_button.dart';
 import '../../widgets/text_field.dart';
@@ -78,7 +79,7 @@ class Entertainment_Screen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: isFromButtonClick == null
@@ -113,87 +114,7 @@ class Entertainment_Screen extends StatelessWidget {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(4.0),
-                      child: Row(
-                        children: [
-                          const SizedBox(width: 8),
-                          const Text('Account Settings'),
-                          const Spacer(),
-                          PopupMenuButton<String>(
-                            icon: const Icon(
-                              Icons.keyboard_arrow_down_sharp,
-                              color: AppColors.primaryColor,
-                            ),
-                            onSelected: (value) {
-                              if (value == 'Logout') {
-                                mainController.showLogoutDialog(context);
-                              } else {
-                                mainController.selectedMenuItem = value;
-                                mainController.isAddingRestaurant = false;
-                                mainController.update();
-                                Get.close(3);
-                              }
-                            },
-                            itemBuilder: (context) => [
-                              PopupMenuItem(
-                                value: 'Home',
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/home.png',
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                    const SizedBox(width: 16),
-                                    const Text('Home'),
-                                  ],
-                                ),
-                              ),
-                              PopupMenuItem(
-                                value: 'View Restaurant Details',
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/resturant_detail.png',
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                    const SizedBox(width: 16),
-                                    const Text('View Restaurant Details'),
-                                  ],
-                                ),
-                              ),
-                              PopupMenuItem(
-                                value: 'Change Password',
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/change_password.png',
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                    const SizedBox(width: 16),
-                                    const Text('Change Password'),
-                                  ],
-                                ),
-                              ),
-                              PopupMenuItem(
-                                value: 'Logout',
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/logout.png',
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                    const SizedBox(width: 16),
-                                    const Text('Logout'),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                      child: Obx(() => currentUserDataModel.value!.address.text != ''? AccountSettingsPopupWidget():AccountNoAuthPopupWidget(),),
                     ),
                   ),
                 ),
@@ -251,7 +172,7 @@ class Entertainment_Screen extends StatelessWidget {
               const SizedBox(height: 20),
               GestureDetector(
                 onTap: () {
-                  controller.updateRestaurantData(context);
+                  // controller.updateRestaurantData(context);
                 },
                 child: const Text(
                   'Entertainment Schedule',
@@ -267,221 +188,236 @@ class Entertainment_Screen extends StatelessWidget {
               Obx(
                 () => SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minWidth: MediaQuery.of(context).size.width * 0.95,
-                    ),
-                    child: DataTable(
-                      border: TableBorder.all(
-                        color: Colors.grey,
-                        width: 1,
-                      ),
-                      headingRowColor: MaterialStateColor.resolveWith(
-                        (states) => AppColors.lightbgColor,
-                      ),
-                      headingTextStyle: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                      columns: const [
-                        DataColumn(
-                          label: Expanded(
-                            child: Center(
-                              child: Text('Name',
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700)),
-                            ),
+                  child: controller.eventNames.length == 0
+                      ? SizedBox()
+                      : ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minWidth: MediaQuery.of(context).size.width * 0.95,
                           ),
-                        ),
-                        DataColumn(
-                          label: Expanded(
-                            child: Center(
-                              child: Text('By',
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700)),
+                          child: DataTable(
+                            border: TableBorder.all(
+                              color: Colors.grey,
+                              width: 1,
                             ),
-                          ),
-                        ),
-                        DataColumn(
-                          label: Expanded(
-                            child: Center(
-                              child: Text('Day',
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700)),
+                            headingRowColor: MaterialStateColor.resolveWith(
+                              (states) => AppColors.lightbgColor,
                             ),
-                          ),
-                        ),
-                        DataColumn(
-                          label: Expanded(
-                            child: Center(
-                              child: Text('Date',
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700)),
+                            headingTextStyle: const TextStyle(
+                              fontWeight: FontWeight.bold,
                             ),
-                          ),
-                        ),
-                        DataColumn(
-                          label: Expanded(
-                            child: Center(
-                              child: Text('Time',
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700)),
-                            ),
-                          ),
-                        ),
-                      ],
-                      rows:
-                          List.generate(controller.eventNames.length, (index) {
-                        return DataRow(
-                          cells: [
-                            DataCell(
-                              Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Container(
-                                      width: 20,
-                                      height: 20,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          color: AppColors.primaryColor,
-                                          width: 2,
+                            columns: const [
+                              DataColumn(
+                                label: Expanded(
+                                  child: Center(
+                                    child: Text('Name',
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w700)),
+                                  ),
+                                ),
+                              ),
+                              DataColumn(
+                                label: Expanded(
+                                  child: Center(
+                                    child: Text('By',
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w700)),
+                                  ),
+                                ),
+                              ),
+                              DataColumn(
+                                label: Expanded(
+                                  child: Center(
+                                    child: Text('Day',
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w700)),
+                                  ),
+                                ),
+                              ),
+                              DataColumn(
+                                label: Expanded(
+                                  child: Center(
+                                    child: Text('Date',
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w700)),
+                                  ),
+                                ),
+                              ),
+                              DataColumn(
+                                label: Expanded(
+                                  child: Center(
+                                    child: Text('Time',
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w700)),
+                                  ),
+                                ),
+                              ),
+                            ],
+                            rows: List.generate(controller.eventNames.length,
+                                (index) {
+                              return DataRow(
+                                cells: [
+                                  DataCell(
+                                    Row(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Container(
+                                            width: 20,
+                                            height: 20,
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                color: AppColors.primaryColor,
+                                                width: 2,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(4.0),
+                                            ),
+                                            child: Checkbox(
+                                              value: controller
+                                                  .checkBoxValues[index],
+                                              side: const BorderSide(
+                                                  color: Colors.transparent),
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          4.0)),
+                                              onChanged: (bool? newValue) {
+                                                controller
+                                                    .toggleCheckbox(index);
+                                              },
+                                              activeColor: Colors.transparent,
+                                              checkColor:
+                                                  AppColors.primaryColor,
+                                            ),
+                                          ),
                                         ),
-                                        borderRadius:
-                                            BorderRadius.circular(4.0),
+                                        Text(controller.eventNames[index]),
+                                      ],
+                                    ),
+                                  ),
+                                  DataCell(Text(controller.byValues[index])),
+                                  DataCell(
+                                    DropdownButton<String>(
+                                      icon: const Icon(
+                                        Icons.keyboard_arrow_down_sharp,
+                                        color: AppColors.primaryColor,
                                       ),
-                                      child: Checkbox(
-                                        value: controller.checkBoxValues[index],
-                                        side: const BorderSide(
-                                            color: Colors.transparent),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(4.0)),
-                                        onChanged: (bool? newValue) {
-                                          controller.toggleCheckbox(index);
-                                        },
-                                        activeColor: Colors.transparent,
-                                        checkColor: AppColors.primaryColor,
+                                      isExpanded: true,
+                                      value: controller.selectedDays[index],
+                                      hint: const Text('Select Day'),
+                                      items: controller.daysOfWeek
+                                          .map(
+                                            (day) => DropdownMenuItem(
+                                              value: day,
+                                              child: Text(day),
+                                            ),
+                                          )
+                                          .toList(),
+                                      onChanged: (newValue) {
+                                        controller.selectedDays[index] =
+                                            newValue;
+                                      },
+                                    ),
+                                  ),
+                                  DataCell(
+                                    GestureDetector(
+                                      onTap: () async {
+                                        DateTime? pickedDate =
+                                            await showDatePicker(
+                                          context: context,
+                                          initialDate: DateTime.now(),
+                                          firstDate: DateTime(2000),
+                                          lastDate: DateTime(2100),
+                                        );
+                                        if (pickedDate != null) {
+                                          controller.selectedDates[index] =
+                                              pickedDate;
+                                        }
+                                      },
+                                      child: Container(
+                                        width: double.infinity,
+                                        height: 30,
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.primaryColor,
+                                          borderRadius:
+                                              BorderRadius.circular(4),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            controller.selectedDates[index] !=
+                                                    null
+                                                ? DateFormat('dd MMM, yyyy')
+                                                    .format(controller
+                                                        .selectedDates[index]!)
+                                                : 'Set Date',
+                                            style: const TextStyle(
+                                                color: Colors.white),
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                  Text(controller.eventNames[index]),
+                                  DataCell(
+                                    GestureDetector(
+                                      onTap: () async {
+                                        TimeOfDay? fromTime =
+                                            await showTimePicker(
+                                          context: context,
+                                          initialTime: TimeOfDay.now(),
+                                        );
+                                        if (fromTime != null) {
+                                          TimeOfDay? toTime =
+                                              await showTimePicker(
+                                            context: context,
+                                            initialTime: fromTime,
+                                          );
+                                          if (toTime != null) {
+                                            controller.selectedTimes[index] = {
+                                              "from": fromTime,
+                                              "to": toTime,
+                                            };
+                                          }
+                                        }
+                                      },
+                                      child: Container(
+                                        width: double.infinity,
+                                        height: 30,
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.primaryColor,
+                                          borderRadius:
+                                              BorderRadius.circular(4),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            controller.selectedTimes[index]
+                                                            ["from"] !=
+                                                        null &&
+                                                    controller.selectedTimes[
+                                                            index]["to"] !=
+                                                        null
+                                                ? '${controller.selectedTimes[index]["from"]!.format(context)} - ${controller.selectedTimes[index]["to"]!.format(context)}'
+                                                : 'Set Time',
+                                            style: const TextStyle(
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ), // Time logic here
                                 ],
-                              ),
-                            ),
-                            DataCell(Text(controller.byValues[index])),
-                            DataCell(
-                              DropdownButton<String>(
-                                icon: const Icon(
-                                  Icons.keyboard_arrow_down_sharp,
-                                  color: AppColors.primaryColor,
-                                ),
-                                isExpanded: true,
-                                value: controller.selectedDays[index],
-                                hint: const Text('Select Day'),
-                                items: controller.daysOfWeek
-                                    .map(
-                                      (day) => DropdownMenuItem(
-                                        value: day,
-                                        child: Text(day),
-                                      ),
-                                    )
-                                    .toList(),
-                                onChanged: (newValue) {
-                                  controller.selectedDays[index] = newValue;
-                                },
-                              ),
-                            ),
-                            DataCell(
-                              GestureDetector(
-                                onTap: () async {
-                                  DateTime? pickedDate = await showDatePicker(
-                                    context: context,
-                                    initialDate: DateTime.now(),
-                                    firstDate: DateTime(2000),
-                                    lastDate: DateTime(2100),
-                                  );
-                                  if (pickedDate != null) {
-                                    controller.selectedDates[index] =
-                                        pickedDate;
-                                  }
-                                },
-                                child: Container(
-                                  width: double.infinity,
-                                  height: 30,
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.primaryColor,
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      controller.selectedDates[index] != null
-                                          ? DateFormat('dd MMM, yyyy').format(
-                                              controller.selectedDates[index]!)
-                                          : 'Set Date',
-                                      style:
-                                          const TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            DataCell(
-                              GestureDetector(
-                                onTap: () async {
-                                  TimeOfDay? fromTime = await showTimePicker(
-                                    context: context,
-                                    initialTime: TimeOfDay.now(),
-                                  );
-                                  if (fromTime != null) {
-                                    TimeOfDay? toTime = await showTimePicker(
-                                      context: context,
-                                      initialTime: fromTime,
-                                    );
-                                    if (toTime != null) {
-                                      controller.selectedTimes[index] = {
-                                        "from": fromTime,
-                                        "to": toTime,
-                                      };
-                                    }
-                                  }
-                                },
-                                child: Container(
-                                  width: double.infinity,
-                                  height: 30,
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.primaryColor,
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      controller.selectedTimes[index]["from"] !=
-                                                  null &&
-                                              controller.selectedTimes[index]
-                                                      ["to"] !=
-                                                  null
-                                          ? '${controller.selectedTimes[index]["from"]!.format(context)} - ${controller.selectedTimes[index]["to"]!.format(context)}'
-                                          : 'Set Time',
-                                      style:
-                                          const TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ), // Time logic here
-                          ],
-                        );
-                      }),
-                    ),
-                  ),
+                              );
+                            }),
+                          ),
+                        ),
                 ),
               ),
               const SizedBox(height: 16),
@@ -654,7 +590,7 @@ class Entertainment_Screen extends StatelessWidget {
                           ? screenWidth * 0.3
                           : screenWidth * 0.2,
                       onPressed: () {
-                        controller.onTapOperatingHours(context);
+                        controller.onTapEntertainment(context);
                         // Prepare entertainment schedule data
                       },
                     ),

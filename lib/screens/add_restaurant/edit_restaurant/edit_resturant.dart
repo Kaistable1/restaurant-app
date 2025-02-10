@@ -11,11 +11,16 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:restaurant_web_app/constants/colors.dart';
+import 'package:restaurant_web_app/main.dart';
+import 'package:restaurant_web_app/screens/add_restaurant/add_resturant_controller/add_resturant%20_controller.dart';
 import 'package:restaurant_web_app/testing.dart';
 import 'package:restaurant_web_app/utils/responsive.dart';
+import 'package:restaurant_web_app/widgets/account_settings_popup_widget.dart';
 
 import '../../../../widgets/round_button.dart';
 import '../../../../widgets/text_field.dart';
+import '../../../universal_models/discount_model.dart';
+import '../../../widgets/global_functions.dart';
 import '../../main_screen/mainscreen_controller/main_controller.dart';
 import '../../restaurant_detail_screen/restaurant_detail_screen.dart';
 import '../../restaurant_detail_screen/widget/star_widget_gen_discount.dart';
@@ -58,7 +63,7 @@ class EditRestaurantScreen extends StatelessWidget {
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.1),
-                          offset: Offset(0, 4),
+                          offset: const Offset(0, 4),
                           blurRadius: 6,
                           spreadRadius: 0,
                         ),
@@ -66,87 +71,10 @@ class EditRestaurantScreen extends StatelessWidget {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(4.0),
-                      child: Row(
-                        children: [
-                          SizedBox(width: 8),
-                          Text('Account Settings'),
-                          Spacer(),
-                          PopupMenuButton<String>(
-                            icon: Icon(
-                              Icons.keyboard_arrow_down_sharp,
-                              color: AppColors.primaryColor,
-                            ),
-                            onSelected: (value) {
-                              if (value == 'Logout') {
-                                mainController.showLogoutDialog(
-                                    context); // Show logout dialog
-                              } else {
-                                mainController.selectedMenuItem = value;
-                                mainController.isAddingRestaurant = false;
-                                mainController.update();
-                                Get.close(4);
-                              }
-                            },
-                            itemBuilder: (context) => [
-                              PopupMenuItem(
-                                value: 'Home',
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/home.png',
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                    SizedBox(width: 16),
-                                    Text('Home'),
-                                  ],
-                                ),
-                              ),
-                              PopupMenuItem(
-                                value: 'View Restaurant Details',
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/resturant_detail.png',
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                    SizedBox(width: 16),
-                                    Text('View Restaurant Details'),
-                                  ],
-                                ),
-                              ),
-                              PopupMenuItem(
-                                value: 'Change Password',
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/change_password.png',
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                    SizedBox(width: 16),
-                                    Text('Change Password'),
-                                  ],
-                                ),
-                              ),
-                              PopupMenuItem(
-                                value: 'Logout',
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/logout.png',
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                    SizedBox(width: 16),
-                                    Text('Logout'),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                      child: Obx(
+                        () => currentUserDataModel.value!.address.text != ''
+                            ? AccountSettingsPopupWidget()
+                            : AccountNoAuthPopupWidget(),
                       ),
                     ),
                   ),
@@ -166,11 +94,11 @@ class DiscountTimeSetup extends StatefulWidget {
 class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
   String? selected_generalDiscounts;
   final controller = Get.put(EditRestaurantController());
-  final itemController = Get.put(ItemControllerTwo());
+  final itemController = Get.put(AddRestaurantController());
   String? selected_cuisne1;
   String? selected_cuisne3;
-  String? selected_menuType;
-  String? selected_cuisne;
+  // String? selected_menuType;
+  // String? selected_cuisne;
   bool _isDiscountListVisible = true;
   final List<String> generalDiscounts = [
     'Percentage Off',
@@ -343,7 +271,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                       BoxShadow(
                         color: Colors.black.withOpacity(0.2),
                         blurRadius: 6,
-                        offset: Offset(0, 3),
+                        offset: const Offset(0, 3),
                       ),
                     ],
                   ),
@@ -351,13 +279,14 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                     iconSize: Responsive.isMobile(context)
                         ? 14
                         : (Responsive.isTablet(context) ? 16 : 18),
-                    icon: Icon(Icons.arrow_back, color: AppColors.primaryColor),
+                    icon: const Icon(Icons.arrow_back,
+                        color: AppColors.primaryColor),
                     onPressed: () {
                       Get.back();
                     },
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
                 // Title
@@ -396,223 +325,668 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                 fontWeight: FontWeight.w700,
               ),
             ),
-            SizedBox(height: 10),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  width: 211,
-                  height: 238,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: AppColors.whiteColor,
-                    border:
-                        Border.all(color: AppColors.darkGrey.withOpacity(.1)),
-                  ),
-                  child: Stack(
+            const SizedBox(height: 10),
+            // StreamBuilder(
+            //     stream: FirebaseFirestore.instance
+            //         .collection('restaurants')
+            //         .doc(
+            //             'qA4ZwrICw8NWshCaZ52a5dqgDSj2' /*auth.currentUser!.uid*/)
+            //         .collection('MealMenu')
+            //         .snapshots(),
+            //     builder: (context, snapshot) {
+            //       if (snapshot.connectionState == ConnectionState.waiting) {
+            //         return SizedBox(
+            //             width: Get.width,
+            //             height: 246,
+            //             child: const Center(
+            //                 child: CircularProgressIndicator(
+            //               color: AppColors.primaryColor,
+            //             )));
+            //       }
+            //       if (snapshot.hasError) {
+            //         print(snapshot.error.toString());
+            //         print('error' + 'data has ');
+            //       }
+            //
+            //       if (snapshot.data!.docs.isEmpty) {
+            //         return Column(
+            //           children: [
+            //             InkWell(
+            //               onTap: () {
+            //                 setState(() {
+            //                   _isColumnVisible = !_isColumnVisible;
+            //                 });
+            //               },
+            //               child: Container(
+            //                 width: 24,
+            //                 height: 24,
+            //                 decoration: BoxDecoration(
+            //                   border: Border.all(
+            //                       color: AppColors.primaryColor, width: 2),
+            //                   borderRadius: BorderRadius.circular(4.0),
+            //                 ),
+            //                 child: const Center(
+            //                   child: Icon(Icons.add,
+            //                       color: AppColors.primaryColor, size: 16),
+            //                 ),
+            //               ),
+            //             ),
+            //             const SizedBox(height: 10),
+            //             const Text(
+            //               'Add Discountghijkyuhj',
+            //               style: TextStyle(
+            //                 fontSize: 16,
+            //                 fontWeight: FontWeight.w600,
+            //               ),
+            //             ),
+            //           ],
+            //         );
+            //       }
+            //
+            //       return Row(
+            //         crossAxisAlignment: CrossAxisAlignment.center,
+            //         children: [
+            //           ListView.builder(
+            //             scrollDirection:
+            //                 Axis.horizontal, // Makes the list horizontal
+            //             itemCount:
+            //                 snapshot.data!.docs.length, // Number of items
+            //             itemBuilder: (context, index) {
+            //               print(snapshot.data!.docs.length);
+            //
+            //               DiscountModel mealModel = DiscountModel.fromJson(
+            //                   snapshot.data!.docs[index].data()
+            //                       as Map<String, dynamic>);
+            //
+            //               print("mealModel.toTime");
+            //               print(snapshot.data!.docs.length);
+            //               return Padding(
+            //                 padding: const EdgeInsets.symmetric(
+            //                     horizontal: 8.0), // Spacing between items
+            //                 child: Container(
+            //                   width: 211,
+            //                   decoration: BoxDecoration(
+            //                     borderRadius: BorderRadius.circular(10),
+            //                     color: AppColors.whiteColor,
+            //                     border: Border.all(
+            //                         color:
+            //                             AppColors.darkGrey.withOpacity(.1)),
+            //                   ),
+            //                   child: Stack(
+            //                     children: [
+            //                       // Image at the top
+            //                       ClipRRect(
+            //                         borderRadius: BorderRadius.circular(10.0),
+            //                         child: Image.asset(
+            //                           'assets/images/p1.png',
+            //                           width: 211,
+            //                           height: 150,
+            //                           fit: BoxFit.cover,
+            //                         ),
+            //                       ),
+            //
+            //                       // Meal Info below the image
+            //                       Positioned(
+            //                         bottom: 5,
+            //                         left: 8,
+            //                         right: 8,
+            //                         child: Column(
+            //                           crossAxisAlignment:
+            //                               CrossAxisAlignment.start,
+            //                           children: [
+            //                             const Text(
+            //                               'Happy Hour',
+            //                               style: TextStyle(
+            //                                 fontSize: 16,
+            //                                 fontWeight: FontWeight.w700,
+            //                               ),
+            //                             ),
+            //                             const SizedBox(height: 8),
+            //                             SizedBox(
+            //                               height:
+            //                                   50, // Adjusted height for horizontal list items
+            //                               child: ListView.builder(
+            //                                 scrollDirection: Axis.horizontal,
+            //                                 itemCount: controller
+            //                                     .circleItems3.length,
+            //                                 itemBuilder: (context, index) {
+            //                                   final item = controller
+            //                                       .circleItems3[index];
+            //                                   return SizedBox(
+            //                                     width:
+            //                                         50, // Adjust width for each item
+            //                                     child: LocationStarWidget(
+            //                                       timeText: item.timeText,
+            //                                       persentText:
+            //                                           item.persentText,
+            //                                       persentTextStyle:
+            //                                           const TextStyle(
+            //                                         fontWeight:
+            //                                             FontWeight.w700,
+            //                                         fontSize: 7,
+            //                                         fontFamily:
+            //                                             'Nunito-Regular',
+            //                                       ),
+            //                                       timeTextStyle:
+            //                                           const TextStyle(
+            //                                         fontWeight:
+            //                                             FontWeight.w700,
+            //                                         fontSize: 7,
+            //                                         fontFamily:
+            //                                             'Nunito-Regular',
+            //                                       ),
+            //                                     ),
+            //                                   );
+            //                                 },
+            //                               ),
+            //                             ),
+            //                           ],
+            //                         ),
+            //                       ),
+            //
+            //                       // Top Right Corner - Close Button
+            //                       Positioned(
+            //                         top: 8,
+            //                         right: 8,
+            //                         child: Row(
+            //                           children: [
+            //                             Container(
+            //                               width: 120,
+            //                               height: 18,
+            //                               decoration: BoxDecoration(
+            //                                 borderRadius:
+            //                                     BorderRadius.circular(4),
+            //                                 color: AppColors.primaryColor,
+            //                               ),
+            //                               child: const Center(
+            //                                 child: Text(
+            //                                   '03.10.2024 - 04.10.2024',
+            //                                   style: TextStyle(
+            //                                     fontSize: 10,
+            //                                     fontWeight: FontWeight.w400,
+            //                                     color: AppColors.whiteColor,
+            //                                   ),
+            //                                 ),
+            //                               ),
+            //                             ),
+            //                             const SizedBox(width: 5),
+            //                             GestureDetector(
+            //                               onTap: () {
+            //                                 _removeContainer();
+            //                               },
+            //                               child: Container(
+            //                                 width: 20,
+            //                                 height: 20,
+            //                                 decoration: const BoxDecoration(
+            //                                   color: AppColors.darkGrey,
+            //                                   shape: BoxShape.circle,
+            //                                 ),
+            //                                 child: const Icon(
+            //                                   Icons.close,
+            //                                   color: Colors.white,
+            //                                   size: 10,
+            //                                 ),
+            //                               ),
+            //                             ),
+            //                           ],
+            //                         ),
+            //                       ),
+            //
+            //                       // Top Right Button Image
+            //                       Positioned(
+            //                         top: 8,
+            //                         right: 8,
+            //                         child: Image.asset(
+            //                           'assets/images/btn_image.png',
+            //                           width: 24,
+            //                           height: 24,
+            //                         ),
+            //                       ),
+            //                     ],
+            //                   ),
+            //                 ),
+            //               );
+            //             },
+            //           ),
+            //
+            //           SizedBox(
+            //             width: Responsive.isMobile(context) ? 8 : 30,
+            //           ),
+            //           // Add Button
+            //           Column(
+            //             children: [
+            //               InkWell(
+            //                 onTap: () {
+            //                   setState(() {
+            //                     _isColumnVisible = !_isColumnVisible;
+            //                   });
+            //                 },
+            //                 child: Container(
+            //                   width: 24,
+            //                   height: 24,
+            //                   decoration: BoxDecoration(
+            //                     border: Border.all(
+            //                         color: AppColors.primaryColor, width: 2),
+            //                     borderRadius: BorderRadius.circular(4.0),
+            //                   ),
+            //                   child: const Center(
+            //                     child: Icon(Icons.add,
+            //                         color: AppColors.primaryColor, size: 16),
+            //                   ),
+            //                 ),
+            //               ),
+            //               const SizedBox(height: 10),
+            //               const Text(
+            //                 'Add Discount',
+            //                 style: TextStyle(
+            //                   fontSize: 16,
+            //                   fontWeight: FontWeight.w600,
+            //                 ),
+            //               ),
+            //             ],
+            //           ),
+            //         ],
+            //       );
+            //     }),
+
+            ///to delete later
+            // Column(
+            //   children: [
+            //     InkWell(
+            //       onTap: () {
+            //         setState(() {
+            //           _isColumnVisible = !_isColumnVisible;
+            //         });
+            //       },
+            //       child: Container(
+            //         width: 24,
+            //         height: 24,
+            //         decoration: BoxDecoration(
+            //           border:
+            //               Border.all(color: AppColors.primaryColor, width: 2),
+            //           borderRadius: BorderRadius.circular(4.0),
+            //         ),
+            //         child: const Center(
+            //           child: Icon(Icons.add,
+            //               color: AppColors.primaryColor, size: 16),
+            //         ),
+            //       ),
+            //     ),
+            //     const SizedBox(height: 10),
+            //     const Text(
+            //       'Add Discount',
+            //       style: TextStyle(
+            //         fontSize: 16,
+            //         fontWeight: FontWeight.w600,
+            //       ),
+            //     ),
+            //   ],
+            // ),
+
+            StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection('restaurants')
+                  .doc(auth.currentUser!.uid)
+                  .collection('MealMenu')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return SizedBox(
+                    width: Get.width,
+                    height: 246,
+                    child: const Center(
+                      child: CircularProgressIndicator(
+                          color: AppColors.primaryColor),
+                    ),
+                  );
+                }
+
+                if (snapshot.hasError) {
+                  print("Firestore Error: ${snapshot.error}");
+                  return const Center(child: Text("Something went wrong!"));
+                }
+                if (snapshot.data!.docs.isEmpty) {
+                  return Column(
                     children: [
-                      // Image at the top, take the full height of the container
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(10.0),
-                        child: Image.asset(
-                          'assets/images/p1.png', // Replace with your image asset
-                          width: 211, // Set width to match the container
-                          height: 150, // Set height to match the container
-                          fit: BoxFit
-                              .cover, // Make sure the image covers the entire area
-                        ),
-                      ),
-                      // Cross Icon at the top right corner
-
-                      // Plus Icon at the bottom right corner
-
-                      // Meal Info below the image
-                      Positioned(
-                        bottom: 5,
-                        left: 8,
-                        right: 8,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Happy Hour',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-
-                            SizedBox(
-                                height: 8), // Spacing between text and list
-                            Container(
-                              height: Responsive.isMobile(context)
-                                  ? 40
-                                  : Responsive.isDesktop(context)
-                                      ? 60
-                                      : 50, // Adjusted height for horizontal list items
-                              child: ListView.builder(
-                                scrollDirection:
-                                    Axis.horizontal, // Horizontal scrolling
-                                itemCount: controller
-                                    .circleItems3.length, // Number of items
-                                itemBuilder: (context, index) {
-                                  final item = controller.circleItems3[
-                                      index]; // Get item from model list
-                                  return SizedBox(
-                                    width: Responsive.isMobile(context)
-                                        ? 40
-                                        : Responsive.isDesktop(context)
-                                            ? 60
-                                            : 50, // Width of each item
-                                    child: LocationStarWidget(
-                                      timeText: 'item.timeText',
-                                      persentText: item.persentText,
-                                      persentTextStyle: TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: Responsive.isMobile(context)
-                                            ? 4
-                                            : Responsive.isTablet(context)
-                                                ? 5
-                                                : 7,
-                                        fontFamily: 'Nunito-Regular',
-                                      ),
-                                      timeTextStyle: TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: Responsive.isMobile(context)
-                                            ? 4
-                                            : Responsive.isTablet(context)
-                                                ? 5
-                                                : 7,
-                                        fontFamily: 'Nunito-Regular',
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      Positioned(
-                        top: 0,
-                        right: 8,
-                        child: Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 120, // width of the circle
-                                  height: 18, // height of the circle
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(4),
-                                    color: AppColors
-                                        .primaryColor, // background color
-                                    shape: BoxShape
-                                        .rectangle, // makes the container circular
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      '03.10.2024 - 04.10.2024',
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w400,
-                                        color: AppColors.whiteColor,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                Container(
-                                  width: 20, // width of the circle
-                                  height: 20, // height of the circle
-                                  decoration: BoxDecoration(
-                                    color:
-                                        AppColors.darkGrey, // background color
-                                    shape: BoxShape
-                                        .circle, // makes the container circular
-                                  ),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      onPressed:
-                                      _removeContainer;
-                                    },
-                                    child: Icon(
-                                      Icons.close, // cross icon
-                                      color: Colors.white, // icon color
-                                      size:
-                                          10, // adjust icon size to fit the circle
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            _isColumnVisible = !_isColumnVisible;
+                          });
+                        },
+                        child: Container(
+                          width: 24,
+                          height: 24,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                                color: AppColors.primaryColor, width: 2),
+                            borderRadius: BorderRadius.circular(4.0),
+                          ),
+                          child: const Center(
+                            child: Icon(Icons.add,
+                                color: AppColors.primaryColor, size: 16),
                           ),
                         ),
                       ),
-                      Positioned(
-                          top: 0,
-                          right: 8,
-                          bottom: 2,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Image.asset(
-                              'assets/images/btn_image.png',
+                      const SizedBox(height: 10),
+                      const Text(
+                        'Add Discount',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  );
+                }
+
+                // Check if snapshot has data and contains documents
+                if (!snapshot.hasData || snapshot.data == null) {
+                  return Column(
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            _isColumnVisible = !_isColumnVisible;
+                          });
+                        },
+                        child: Container(
+                          width: 24,
+                          height: 24,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                                color: AppColors.primaryColor, width: 2),
+                            borderRadius: BorderRadius.circular(4.0),
+                          ),
+                          child: const Center(
+                            child: Icon(Icons.add,
+                                color: AppColors.primaryColor, size: 16),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      const Text(
+                        'Add Discount',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  );
+                }
+
+                // If data exists, show the list
+                return SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: 246,
+                        child: ListView.builder(
+                          primary: false, shrinkWrap: true,
+                          scrollDirection:
+                              Axis.horizontal, // Makes the list horizontal
+                          itemCount:
+                              snapshot.data!.docs.length, // Number of items
+                          itemBuilder: (context, index) {
+                            final docData = snapshot.data!.docs[index].data()
+                                as Map<String, dynamic>?;
+
+                            if (docData == null)
+                              return const SizedBox(); // Safeguard against null data
+
+                            DiscountModel discountModel =
+                                DiscountModel.fromJson(docData);
+
+                            String docID = snapshot.data!.docs[index].id;
+
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8.0), // Spacing between items
+                              child: Container(
+                                width: 211,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: AppColors.whiteColor,
+                                  border: Border.all(
+                                      color:
+                                          AppColors.darkGrey.withOpacity(.1)),
+                                ),
+                                child: Stack(
+                                  children: [
+                                    // Image at the top
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      child: Image.network(
+                                        discountModel.menu[0].items[0]
+                                                .itemImages.isNotEmpty
+                                            ? discountModel.menu[0].items[0]
+                                                .itemImages[0].value
+                                            : '', // Empty string to trigger errorBuilder
+                                        width: double.infinity,
+                                        height: Responsive.isMobile(context)
+                                            ? 95
+                                            : (Responsive.isTablet(context)
+                                                ? 120
+                                                : 150),
+                                        fit: BoxFit.fitHeight,
+                                        errorBuilder:
+                                            (context, error, stackTrace) {
+                                          return Container(
+                                            width: double.infinity,
+                                            height: Responsive.isMobile(context)
+                                                ? 95
+                                                : (Responsive.isTablet(context)
+                                                    ? 120
+                                                    : 150),
+                                            color: Colors.grey[
+                                                300], // Placeholder background color
+                                            child: Icon(
+                                                Icons.image_not_supported,
+                                                color: Colors.grey[600]),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    //                     ClipRRect(
+                                    //                    borderRadius: BorderRadius.circular(10.0),
+                                    //                 child: Image.asset(
+                                    //                   'assets/images/p1.png',
+                                    //                   width: 211,
+                                    //                    height: 150,
+                                    //                  fit: BoxFit.cover,
+                                    //                ),
+                                    //              ),
+
+                                    // Meal Info below the image
+                                    Positioned(
+                                      bottom: 5,
+                                      left: 8,
+                                      right: 8,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            discountModel.discountType,
+                                            style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w700),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          SizedBox(
+                                            height:
+                                                50, // Adjusted height for horizontal list items
+                                            child: ListView.builder(
+                                              scrollDirection: Axis.horizontal,
+                                              itemCount:
+                                                  discountModel.menu.length,
+                                              itemBuilder: (context, index) {
+                                                CategoryModel menuModel =
+                                                    discountModel.menu[index];
+                                                return SizedBox(
+                                                  width:
+                                                      50, // Adjust width for each item
+                                                  child: LocationStarWidget(
+                                                    timeText:
+                                                        '${menuModel.fromTime} - ${menuModel.toTime}',
+                                                    persentText:
+                                                        '${menuModel.percentageValue}% OFF',
+                                                    persentTextStyle:
+                                                        const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      fontSize: 7,
+                                                      fontFamily:
+                                                          'Nunito-Regular',
+                                                    ),
+                                                    timeTextStyle:
+                                                        const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      fontSize: 7,
+                                                      fontFamily:
+                                                          'Nunito-Regular',
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    // Top Right Corner - Close Button
+                                    Positioned(
+                                      top: 8,
+                                      right: 8,
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            width: 120,
+                                            height: 18,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
+                                              color: AppColors.primaryColor,
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                '${formatDate(discountModel.fromDate)} - ${formatDate(discountModel.toDate)}',
+                                                style: const TextStyle(
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: AppColors.whiteColor,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 5),
+                                          GestureDetector(
+                                            onTap: () async {
+                                              // await FirebaseFirestore.instance.collection('restaurants').doc(auth.currentUser!.uid).collection('MealMenu').doc(docID).delete().then((value) {print('done');}).onError((error, stackTrace) {print('error');});
+                                            },
+                                            child: Container(
+                                              width: 20,
+                                              height: 20,
+                                              decoration: const BoxDecoration(
+                                                color: AppColors.darkGrey,
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: const Icon(Icons.close,
+                                                  color: Colors.white,
+                                                  size: 10),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    // Top Right Button Image
+                                    Positioned(
+                                      top: 8,
+                                      right: 8,
+                                      child: GestureDetector(
+                                        onTap: () async {
+                                          await FirebaseFirestore.instance
+                                              .collection('restaurants')
+                                              .doc(auth.currentUser!.uid)
+                                              .collection('MealMenu')
+                                              .doc(docID)
+                                              .delete()
+                                              .then((value) {
+                                            print('done');
+                                          }).onError((error, stackTrace) {
+                                            print('error');
+                                          });
+                                        },
+                                        child: Container(
+                                          width: 20,
+                                          height: 20,
+                                          decoration: const BoxDecoration(
+                                            color: Colors.grey,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: const Icon(Icons.close,
+                                              color: Colors.white, size: 10),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+
+                      SizedBox(width: Responsive.isMobile(context) ? 8 : 30),
+
+                      // Add Button
+                      Column(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              setState(() {
+                                _isColumnVisible = !_isColumnVisible;
+                              });
+                            },
+                            child: Container(
                               width: 24,
                               height: 24,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: AppColors.primaryColor, width: 2),
+                                borderRadius: BorderRadius.circular(4.0),
+                              ),
+                              child: const Center(
+                                child: Icon(Icons.add,
+                                    color: AppColors.primaryColor, size: 16),
+                              ),
                             ),
-                          )),
+                          ),
+                          const SizedBox(height: 10),
+                          const Text(
+                            'Add Discount',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
-                ),
-                SizedBox(
-                  width: Responsive.isMobile(context) ? 8 : 30,
-                ),
-                // Add Button
-                Column(
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        setState(() {
-                          _isColumnVisible = !_isColumnVisible;
-                        });
-                      },
-                      child: Container(
-                        width: 24,
-                        height: 24,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                              color: AppColors.primaryColor, width: 2),
-                          borderRadius: BorderRadius.circular(4.0),
-                        ),
-                        child: Center(
-                          child: Icon(Icons.add,
-                              color: AppColors.primaryColor, size: 16),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'Add Discount',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                );
+              },
             ),
-            SizedBox(height: 10),
+
+            const SizedBox(height: 10),
             // Conditional Column
             if (_isColumnVisible)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Text(
                     'Date',
                     style: TextStyle(
@@ -624,7 +998,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Responsive.isDesktop(context)
                       ? Row(
                           children: [
@@ -639,7 +1013,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 10,
                             ),
                             GestureDetector(
@@ -661,7 +1035,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                       hintStyle: const TextStyle(
                                           color: AppColors.blackColor),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 10,
                                     ),
                                     Image.asset(
@@ -673,7 +1047,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                 ),
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 20,
                             ),
                             Text(
@@ -687,7 +1061,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 10,
                             ),
                             GestureDetector(
@@ -709,7 +1083,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                       hintStyle: const TextStyle(
                                           color: AppColors.blackColor),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 10,
                                     ),
                                     Image.asset(
@@ -721,7 +1095,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                 ),
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 10,
                             ),
                             Container(
@@ -736,7 +1110,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                               ),
                               child: Checkbox(
                                 value: isChecked,
-                                side: BorderSide(color: AppColors.whiteColor),
+                                side: const BorderSide(
+                                    color: AppColors.whiteColor),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(4.0),
                                 ),
@@ -749,7 +1124,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                 checkColor: AppColors.primaryColor,
                               ),
                             ),
-                            SizedBox(width: 10),
+                            const SizedBox(width: 10),
                             Text(
                               'Lifetime',
                               style: TextStyle(
@@ -778,7 +1153,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 10,
                                 ),
                                 GestureDetector(
@@ -800,7 +1175,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                           hintStyle: const TextStyle(
                                               color: AppColors.blackColor),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 10,
                                         ),
                                         Image.asset(
@@ -814,7 +1189,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                 ),
                               ],
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             Row(
@@ -830,7 +1205,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 28,
                                 ),
                                 GestureDetector(
@@ -852,7 +1227,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                           hintStyle: const TextStyle(
                                               color: AppColors.blackColor),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 10,
                                         ),
                                         Image.asset(
@@ -864,7 +1239,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 10,
                                 ),
                                 Container(
@@ -879,8 +1254,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                   ),
                                   child: Checkbox(
                                     value: isChecked,
-                                    side:
-                                        BorderSide(color: AppColors.whiteColor),
+                                    side: const BorderSide(
+                                        color: AppColors.whiteColor),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(4.0),
                                     ),
@@ -893,7 +1268,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                     checkColor: AppColors.primaryColor,
                                   ),
                                 ),
-                                SizedBox(width: 10),
+                                const SizedBox(width: 10),
                                 Text(
                                   'Lifetime',
                                   style: TextStyle(
@@ -910,8 +1285,155 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                           ],
                         ),
                   // Text displayed before the list
-                  SizedBox(height: 10),
+                  const SizedBox(height: 20),
 
+                  RichText(
+                    text: TextSpan(
+                      text: 'Select Discount Type ',
+                      style: TextStyle(
+                        fontSize: Responsive.isMobile(context)
+                            ? 16
+                            : Responsive.isTablet(context)
+                                ? 18
+                                : 24,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: '*', // Add the red asterisk
+                          style: TextStyle(
+                            fontSize: Responsive.isMobile(context)
+                                ? 16
+                                : Responsive.isTablet(context)
+                                    ? 18
+                                    : 24,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.red,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  // SizedBox(
+                  //   width: screenWidth * .3,
+                  //   child: DropdownButtonHideUnderline(
+                  //     child: DropdownButton2<String>(
+                  //       isExpanded: true,
+                  //       hint: Text(
+                  //         'Select discount type',
+                  //         style: TextStyle(
+                  //           fontSize: 14,
+                  //           color: Theme.of(context).hintColor,
+                  //         ),
+                  //       ),
+                  //       items: generalDiscounts
+                  //           .map((String item) => DropdownMenuItem<String>(
+                  //                 value: item,
+                  //                 child: Text(
+                  //                   item,
+                  //                   style: const TextStyle(
+                  //                     fontSize: 14,
+                  //                   ),
+                  //                 ),
+                  //               ))
+                  //           .toList(),
+                  //       value:itemController. selected_cuisne,
+                  //       onChanged: (String? value) {
+                  //         setState(() {
+                  //           itemController.selected_cuisne = value;
+                  //           _isDiscountListVisible = true;
+                  //           print("selected_cuisne Value $itemController.selected_cuisne");
+                  //         });
+                  //       },
+                  //       buttonStyleData: ButtonStyleData(
+                  //         decoration: BoxDecoration(
+                  //           border: Border.all(
+                  //             color: AppColors.darkGrey.withOpacity(.1),
+                  //           ),
+                  //           borderRadius:
+                  //               BorderRadius.circular(8), // Rounded corners
+                  //           color: AppColors.whiteColor,
+                  //         ),
+                  //         padding: const EdgeInsets.symmetric(horizontal: 16),
+                  //         height: 40,
+                  //       ),
+                  //       menuItemStyleData: const MenuItemStyleData(
+                  //         height: 40,
+                  //       ),
+                  //       iconStyleData: const IconStyleData(
+                  //         icon: Icon(
+                  //           Icons
+                  //               .keyboard_arrow_down_outlined, // Custom icon for dropdown
+                  //           color: AppColors.primaryColor,
+                  //         ),
+                  //         iconSize: 24,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+
+                  SizedBox(
+                    width: screenWidth * .3,
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton2<String>(
+                        isExpanded: true,
+                        hint: Text(
+                          'Select discount type',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Theme.of(context).hintColor,
+                          ),
+                        ),
+                        items: generalDiscounts.map((String item) {
+                          return DropdownMenuItem<String>(
+                            value: item,
+                            child: Text(
+                              item,
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                          );
+                        }).toList(),
+                        value: generalDiscounts
+                                .contains(itemController.selected_cuisne)
+                            ? itemController.selected_cuisne
+                            : null, // ✅ Ensure valid value
+                        onChanged: (String? value) {
+                          setState(() {
+                            itemController.selected_cuisne = value;
+                            _isDiscountListVisible = true;
+                            print(
+                                "selected_cuisne Value: ${itemController.selected_cuisne}");
+                          });
+                        },
+                        buttonStyleData: ButtonStyleData(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: AppColors.darkGrey.withOpacity(.1),
+                            ),
+                            borderRadius:
+                                BorderRadius.circular(8), // Rounded corners
+                            color: AppColors.whiteColor,
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          height: 40,
+                        ),
+                        menuItemStyleData: const MenuItemStyleData(
+                          height: 40,
+                        ),
+                        iconStyleData: const IconStyleData(
+                          icon: Icon(
+                            Icons
+                                .keyboard_arrow_down_outlined, // Custom icon for dropdown
+                            color: AppColors.primaryColor,
+                          ),
+                          iconSize: 24,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
                   // Spacing between the heading and the list
 
                   Text(
@@ -925,7 +1447,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -942,53 +1464,60 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                   children: itemController.categoryItems
                                       .map((category) {
                                     return LocationStarWidget(
-                                      timeText: "${category.FromTime}  ${category.ToTime}",
-                                      persentText: "${category.percentageValue}%",
+                                      timeText:
+                                          "${category.fromTime}  ${category.toTime}",
+                                      persentText:
+                                          "${category.percentageValue}%",
                                     );
                                   }).toList(),
                                 ),
                               ),
-                              SizedBox(width: 10),
+                              const SizedBox(width: 10),
                               InkWell(
                                 onTap: () {
                                   setState(() {
                                     _isColumn3Visible = !_isColumn3Visible;
                                   });
                                 },
-                                child: Container(
-                                  width: 24,
-                                  height: 24,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: AppColors.primaryColor,
-                                      width: 2,
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      width: 24,
+                                      height: 24,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: AppColors.primaryColor,
+                                          width: 2,
+                                        ),
+                                        borderRadius:
+                                            BorderRadius.circular(4.0),
+                                      ),
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.add,
+                                          color: AppColors.primaryColor,
+                                          size: 16,
+                                        ),
+                                      ),
                                     ),
-                                    borderRadius: BorderRadius.circular(4.0),
-                                  ),
-                                  child: Center(
-                                    child: Icon(
-                                      Icons.add,
-                                      color: AppColors.primaryColor,
-                                      size: 16,
+                                    const SizedBox(width: 10),
+                                    const Column(
+                                      children: [
+                                        Text(
+                                          'Percentage Value',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
                         ),
-                      ),
-                      SizedBox(width: 10),
-                      Column(
-                        children: [
-                          Text(
-                            'Percentage Value',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
                       ),
                     ],
                   ),
@@ -1048,7 +1577,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                   //     ),
                   //   ],
                   // ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
 
                   // List items
                   if (_isColumn3Visible)
@@ -1064,7 +1593,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                 width: screenWidth * .3,
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton2<int>(
-                                    hint: Text(
+                                    hint: const Text(
                                       "Select Percentage Value",
                                       style: TextStyle(
                                           color:
@@ -1107,7 +1636,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                     menuItemStyleData: const MenuItemStyleData(
                                       height: 40, // Menu item height
                                     ),
-                                    iconStyleData: IconStyleData(
+                                    iconStyleData: const IconStyleData(
                                       icon: Icon(
                                         Icons
                                             .keyboard_arrow_down_outlined, // Custom dropdown icon
@@ -1123,7 +1652,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                           ),
                       ],
                     ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   RichText(
                     text: TextSpan(
                       text: 'Time ',
@@ -1151,7 +1680,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Responsive.isDesktop(context)
                       ? Row(
                           children: [
@@ -1166,7 +1695,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
-                            SizedBox(width: 10),
+                            const SizedBox(width: 10),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
@@ -1184,11 +1713,11 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
                                         contentPadding:
-                                            EdgeInsets.only(bottom: 10),
+                                            const EdgeInsets.only(bottom: 10),
                                         hintText: '00',
                                         fillColor: Colors.grey.withOpacity(.4),
                                         filled: true,
-                                        hintStyle: TextStyle(
+                                        hintStyle: const TextStyle(
                                             fontSize: 18,
                                             color: AppColors.whiteColor),
                                       ),
@@ -1198,13 +1727,14 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                             2), // Restrict to 2 digits
                                       ],
                                       controller:
-                                          controller.fromTimeHourController,
+                                          itemController.fromTimeHourController,
                                       onChanged: (value) {
                                         if (value.isNotEmpty) {
                                           int? intValue = int.tryParse(value);
                                           if (intValue != null &&
                                               (intValue < 1 || intValue > 24)) {
-                                            controller.fromTimeHourController
+                                            itemController
+                                                    .fromTimeHourController
                                                     .text =
                                                 ''; // Clear the field if the value is invalid
                                           }
@@ -1212,16 +1742,15 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                       },
                                       textAlign: TextAlign.center,
                                       keyboardType: TextInputType.number,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.w500),
                                     ),
                                   ),
                                 ),
                                 // Colon Separator
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 4),
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 4),
                                   child: Text(
                                     ':',
                                     style: TextStyle(
@@ -1243,22 +1772,23 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
                                         contentPadding:
-                                            EdgeInsets.only(bottom: 10),
+                                            const EdgeInsets.only(bottom: 10),
                                         hintText: '00',
                                         fillColor: Colors.grey.withOpacity(.4),
                                         filled: true,
-                                        hintStyle: TextStyle(
+                                        hintStyle: const TextStyle(
                                             fontSize: 18,
                                             color: AppColors.whiteColor),
                                       ),
                                       controller:
-                                          controller.fromTimeMintController,
+                                          itemController.fromTimeMintController,
                                       onChanged: (value) {
                                         if (value.isNotEmpty) {
                                           int? intValue = int.tryParse(value);
                                           if (intValue != null &&
-                                              (intValue < 1 || intValue > 24)) {
-                                            controller.fromTimeMintController
+                                              (intValue < 1 || intValue > 60)) {
+                                            itemController
+                                                    .fromTimeMintController
                                                     .text =
                                                 ''; // Clear the field if the value is invalid
                                           }
@@ -1271,13 +1801,13 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                       ],
                                       textAlign: TextAlign.center,
                                       keyboardType: TextInputType.number,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.w500),
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 12),
+                                const SizedBox(width: 12),
                                 // AM/PM Toggle
                                 Container(
                                   height: 39,
@@ -1301,7 +1831,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                             color: isAmSelected
                                                 ? AppColors.primaryColor
                                                 : Colors.transparent,
-                                            borderRadius: BorderRadius.only(
+                                            borderRadius:
+                                                const BorderRadius.only(
                                               topLeft: Radius.circular(8),
                                               bottomLeft: Radius.circular(8),
                                             ),
@@ -1333,7 +1864,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                             color: !isAmSelected
                                                 ? AppColors.primaryColor
                                                 : Colors.transparent,
-                                            borderRadius: BorderRadius.only(
+                                            borderRadius:
+                                                const BorderRadius.only(
                                               topRight: Radius.circular(8),
                                               bottomRight: Radius.circular(8),
                                             ),
@@ -1355,15 +1887,15 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                     ],
                                   ),
                                 ),
-                                SizedBox(width: 12),
-                                Icon(
+                                const SizedBox(width: 12),
+                                const Icon(
                                   Icons.watch_later_outlined,
                                   size: 30,
                                   color: AppColors.primaryColor,
                                 ),
                               ],
                             ),
-                            SizedBox(width: 20),
+                            const SizedBox(width: 20),
                             Text(
                               'To',
                               style: TextStyle(
@@ -1375,7 +1907,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
-                            SizedBox(width: 10),
+                            const SizedBox(width: 10),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
@@ -1393,11 +1925,11 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
                                         contentPadding:
-                                            EdgeInsets.only(bottom: 10),
+                                            const EdgeInsets.only(bottom: 10),
                                         hintText: '00',
                                         fillColor: Colors.grey.withOpacity(.4),
                                         filled: true,
-                                        hintStyle: TextStyle(
+                                        hintStyle: const TextStyle(
                                             fontSize: 18,
                                             color: AppColors.whiteColor),
                                       ),
@@ -1407,13 +1939,13 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                             2), // Restrict to 2 digits
                                       ],
                                       controller:
-                                          controller.toTimeHourController,
+                                          itemController.toTimeHourController,
                                       onChanged: (value) {
                                         if (value.isNotEmpty) {
                                           int? intValue = int.tryParse(value);
                                           if (intValue != null &&
                                               (intValue < 1 || intValue > 24)) {
-                                            controller
+                                            itemController
                                                     .toTimeHourController.text =
                                                 ''; // Clear the field if the value is invalid
                                           }
@@ -1421,16 +1953,15 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                       },
                                       textAlign: TextAlign.center,
                                       keyboardType: TextInputType.number,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.w500),
                                     ),
                                   ),
                                 ),
                                 // Colon Separator
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 4),
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 4),
                                   child: Text(
                                     ':',
                                     style: TextStyle(
@@ -1452,11 +1983,11 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
                                         contentPadding:
-                                            EdgeInsets.only(bottom: 10),
+                                            const EdgeInsets.only(bottom: 10),
                                         hintText: '00',
                                         fillColor: Colors.grey.withOpacity(.4),
                                         filled: true,
-                                        hintStyle: TextStyle(
+                                        hintStyle: const TextStyle(
                                             fontSize: 18,
                                             color: AppColors.whiteColor),
                                       ),
@@ -1466,13 +1997,13 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                             2), // Restrict to 2 digits
                                       ],
                                       controller:
-                                          controller.toTimeMintController,
+                                          itemController.toTimeMintController,
                                       onChanged: (value) {
                                         if (value.isNotEmpty) {
                                           int? intValue = int.tryParse(value);
                                           if (intValue != null &&
-                                              (intValue < 1 || intValue > 24)) {
-                                            controller
+                                              (intValue < 1 || intValue > 60)) {
+                                            itemController
                                                     .toTimeMintController.text =
                                                 ''; // Clear the field if the value is invalid
                                           }
@@ -1480,13 +2011,13 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                       },
                                       textAlign: TextAlign.center,
                                       keyboardType: TextInputType.number,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.w500),
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 12),
+                                const SizedBox(width: 12),
                                 // AM/PM Toggle
                                 Container(
                                   height: 39,
@@ -1512,7 +2043,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                             color: isAmSelected2
                                                 ? AppColors.primaryColor
                                                 : Colors.transparent,
-                                            borderRadius: BorderRadius.only(
+                                            borderRadius:
+                                                const BorderRadius.only(
                                               topLeft: Radius.circular(8),
                                               bottomLeft: Radius.circular(8),
                                             ),
@@ -1546,7 +2078,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                             color: !isAmSelected2
                                                 ? AppColors.primaryColor
                                                 : Colors.transparent,
-                                            borderRadius: BorderRadius.only(
+                                            borderRadius:
+                                                const BorderRadius.only(
                                               topRight: Radius.circular(8),
                                               bottomRight: Radius.circular(8),
                                             ),
@@ -1568,15 +2101,15 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                     ],
                                   ),
                                 ),
-                                SizedBox(width: 12),
-                                Icon(
+                                const SizedBox(width: 12),
+                                const Icon(
                                   Icons.watch_later_outlined,
                                   size: 30,
                                   color: AppColors.primaryColor,
                                 ),
                               ],
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 10,
                             ),
                             Container(
@@ -1591,7 +2124,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                               ),
                               child: Checkbox(
                                 value: isAllDay,
-                                side: BorderSide(color: AppColors.whiteColor),
+                                side: const BorderSide(
+                                    color: AppColors.whiteColor),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(4.0),
                                 ),
@@ -1604,7 +2138,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                 checkColor: AppColors.primaryColor,
                               ),
                             ),
-                            SizedBox(width: 10),
+                            const SizedBox(width: 10),
                             Text(
                               'All Day',
                               style: TextStyle(
@@ -1635,7 +2169,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
-                                SizedBox(width: 10),
+                                const SizedBox(width: 10),
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
@@ -1654,12 +2188,13 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                           decoration: InputDecoration(
                                             border: InputBorder.none,
                                             contentPadding:
-                                                EdgeInsets.only(bottom: 10),
+                                                const EdgeInsets.only(
+                                                    bottom: 10),
                                             hintText: '00',
                                             fillColor:
                                                 Colors.grey.withOpacity(.4),
                                             filled: true,
-                                            hintStyle: TextStyle(
+                                            hintStyle: const TextStyle(
                                                 fontSize: 18,
                                                 color: AppColors.whiteColor),
                                           ),
@@ -1671,16 +2206,16 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                           ],
                                           textAlign: TextAlign.center,
                                           keyboardType: TextInputType.number,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.w500),
                                         ),
                                       ),
                                     ),
                                     // Colon Separator
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 4),
+                                    const Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 4),
                                       child: Text(
                                         ':',
                                         style: TextStyle(
@@ -1703,12 +2238,13 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                           decoration: InputDecoration(
                                             border: InputBorder.none,
                                             contentPadding:
-                                                EdgeInsets.only(bottom: 10),
+                                                const EdgeInsets.only(
+                                                    bottom: 10),
                                             hintText: '00',
                                             fillColor:
                                                 Colors.grey.withOpacity(.4),
                                             filled: true,
-                                            hintStyle: TextStyle(
+                                            hintStyle: const TextStyle(
                                                 fontSize: 18,
                                                 color: AppColors.whiteColor),
                                           ),
@@ -1720,13 +2256,13 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                           ],
                                           textAlign: TextAlign.center,
                                           keyboardType: TextInputType.number,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.w500),
                                         ),
                                       ),
                                     ),
-                                    SizedBox(width: 12),
+                                    const SizedBox(width: 12),
                                     // AM/PM Toggle
                                     Container(
                                       height: 39,
@@ -1751,7 +2287,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                                 color: isAmSelected
                                                     ? AppColors.primaryColor
                                                     : Colors.transparent,
-                                                borderRadius: BorderRadius.only(
+                                                borderRadius:
+                                                    const BorderRadius.only(
                                                   topLeft: Radius.circular(8),
                                                   bottomLeft:
                                                       Radius.circular(8),
@@ -1784,7 +2321,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                                 color: !isAmSelected
                                                     ? AppColors.primaryColor
                                                     : Colors.transparent,
-                                                borderRadius: BorderRadius.only(
+                                                borderRadius:
+                                                    const BorderRadius.only(
                                                   topRight: Radius.circular(8),
                                                   bottomRight:
                                                       Radius.circular(8),
@@ -1807,8 +2345,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                         ],
                                       ),
                                     ),
-                                    SizedBox(width: 12),
-                                    Icon(
+                                    const SizedBox(width: 12),
+                                    const Icon(
                                       Icons.watch_later_outlined,
                                       size: 30,
                                       color: AppColors.primaryColor,
@@ -1817,7 +2355,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             Row(
                               children: [
                                 Text(
@@ -1831,7 +2369,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
-                                SizedBox(width: 28),
+                                const SizedBox(width: 28),
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
@@ -1850,12 +2388,13 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                           decoration: InputDecoration(
                                             border: InputBorder.none,
                                             contentPadding:
-                                                EdgeInsets.only(bottom: 10),
+                                                const EdgeInsets.only(
+                                                    bottom: 10),
                                             hintText: '00',
                                             fillColor:
                                                 Colors.grey.withOpacity(.4),
                                             filled: true,
-                                            hintStyle: TextStyle(
+                                            hintStyle: const TextStyle(
                                                 fontSize: 18,
                                                 color: AppColors.whiteColor),
                                           ),
@@ -1867,16 +2406,16 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                           ],
                                           textAlign: TextAlign.center,
                                           keyboardType: TextInputType.number,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.w500),
                                         ),
                                       ),
                                     ),
                                     // Colon Separator
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 4),
+                                    const Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 4),
                                       child: Text(
                                         ':',
                                         style: TextStyle(
@@ -1899,12 +2438,13 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                           decoration: InputDecoration(
                                             border: InputBorder.none,
                                             contentPadding:
-                                                EdgeInsets.only(bottom: 10),
+                                                const EdgeInsets.only(
+                                                    bottom: 10),
                                             hintText: '00',
                                             fillColor:
                                                 Colors.grey.withOpacity(.4),
                                             filled: true,
-                                            hintStyle: TextStyle(
+                                            hintStyle: const TextStyle(
                                                 fontSize: 18,
                                                 color: AppColors.whiteColor),
                                           ),
@@ -1916,13 +2456,13 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                           ],
                                           textAlign: TextAlign.center,
                                           keyboardType: TextInputType.number,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.w500),
                                         ),
                                       ),
                                     ),
-                                    SizedBox(width: 12),
+                                    const SizedBox(width: 12),
                                     // AM/PM Toggle
                                     Container(
                                       height: 39,
@@ -1947,7 +2487,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                                 color: isAmSelected2
                                                     ? AppColors.primaryColor
                                                     : Colors.transparent,
-                                                borderRadius: BorderRadius.only(
+                                                borderRadius:
+                                                    const BorderRadius.only(
                                                   topLeft: Radius.circular(8),
                                                   bottomLeft:
                                                       Radius.circular(8),
@@ -1980,7 +2521,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                                 color: !isAmSelected2
                                                     ? AppColors.primaryColor
                                                     : Colors.transparent,
-                                                borderRadius: BorderRadius.only(
+                                                borderRadius:
+                                                    const BorderRadius.only(
                                                   topRight: Radius.circular(8),
                                                   bottomRight:
                                                       Radius.circular(8),
@@ -2003,15 +2545,15 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                         ],
                                       ),
                                     ),
-                                    SizedBox(width: 12),
-                                    Icon(
+                                    const SizedBox(width: 12),
+                                    const Icon(
                                       Icons.watch_later_outlined,
                                       size: 30,
                                       color: AppColors.primaryColor,
                                     ),
                                   ],
                                 ),
-                                SizedBox(width: 10),
+                                const SizedBox(width: 10),
                                 Container(
                                   width: 24,
                                   height: 24,
@@ -2024,8 +2566,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                   ),
                                   child: Checkbox(
                                     value: isAllDay,
-                                    side:
-                                        BorderSide(color: AppColors.whiteColor),
+                                    side: const BorderSide(
+                                        color: AppColors.whiteColor),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(4.0),
                                     ),
@@ -2038,7 +2580,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                     checkColor: AppColors.primaryColor,
                                   ),
                                 ),
-                                SizedBox(width: 10),
+                                const SizedBox(width: 10),
                                 Text(
                                   'All Day',
                                   style: TextStyle(
@@ -2054,93 +2596,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                             ),
                           ],
                         ),
-                  SizedBox(height: 10),
-                  RichText(
-                    text: TextSpan(
-                      text: 'Select Discount Type ',
-                      style: TextStyle(
-                        fontSize: Responsive.isMobile(context)
-                            ? 16
-                            : Responsive.isTablet(context)
-                                ? 18
-                                : 24,
-                        fontWeight: FontWeight.w700,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: '*', // Add the red asterisk
-                          style: TextStyle(
-                            fontSize: Responsive.isMobile(context)
-                                ? 16
-                                : Responsive.isTablet(context)
-                                    ? 18
-                                    : 24,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.red,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  SizedBox(
-                    width: screenWidth * .3,
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton2<String>(
-                        isExpanded: true,
-                        hint: Text(
-                          'Select discount type',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Theme.of(context).hintColor,
-                          ),
-                        ),
-                        items: generalDiscounts
-                            .map((String item) => DropdownMenuItem<String>(
-                                  value: item,
-                                  child: Text(
-                                    item,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ))
-                            .toList(),
-                        value: selected_cuisne,
-                        onChanged: (String? value) {
-                          setState(() {
-                            selected_cuisne = value;
-                            _isDiscountListVisible = true;
-                            print("selected_cuisne Value $selected_cuisne");
-                          });
-                        },
-                        buttonStyleData: ButtonStyleData(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: AppColors.darkGrey.withOpacity(.1),
-                            ),
-                            borderRadius:
-                                BorderRadius.circular(8), // Rounded corners
-                            color: AppColors.whiteColor,
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          height: 40,
-                        ),
-                        menuItemStyleData: const MenuItemStyleData(
-                          height: 40,
-                        ),
-                        iconStyleData: IconStyleData(
-                          icon: Icon(
-                            Icons
-                                .keyboard_arrow_down_outlined, // Custom icon for dropdown
-                            color: AppColors.primaryColor,
-                          ),
-                          iconSize: 24,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 10),
+
+                  const SizedBox(height: 10),
                   RichText(
                     text: TextSpan(
                       text: 'Add Menu ',
@@ -2168,106 +2625,12 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 10),
-                  Container(
-                    height: 238,
-                    child: Obx(
-                      () => ListView.builder(
-                        itemCount: itemController.items.length +
-                            1, // Add 1 for the "Add Meal" button
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          if (index < itemController.items.length) {
-                            final item = itemController.items[index];
-                            return Container(
-                              width: 211,
-                              height: 238,
-                              margin: EdgeInsets.only(
-                                  right: 8), // Spacing between items
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: AppColors.whiteColor,
-                                border: Border.all(
-                                  color: AppColors.darkGrey.withOpacity(.1),
-                                ),
-                              ),
-                              child: Stack(
-                                children: [
-                                  // Image at the top
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    child: item.images.first.isNotEmpty
-                                        ? Image.network(
-                                            item.images.first,
-                                            width: double.infinity,
-                                            height: double.infinity,
-                                            fit: BoxFit.cover,
-                                          )
-                                        : SizedBox
-                                            .shrink(), // Placeholder if no image
-                                  ),
-                                  // Meal Info
-                                  Positioned(
-                                    bottom: 20,
-                                    left: 8,
-                                    right: 8,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Cuisine: ${item.description}',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                        SizedBox(height: 4),
-                                        Text(
-                                          'Menu: ${item.name}',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                        SizedBox(height: 4),
-                                        Text(
-                                          'Offer: 2 for 1',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  // Close Icon
-                                  Positioned(
-                                    top: 8,
-                                    right: 8,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        itemController.items
-                                            .removeAt(index); // Remove item
-                                      },
-                                      child: Container(
-                                        width: 20,
-                                        height: 20,
-                                        decoration: BoxDecoration(
-                                          color: AppColors.darkGrey,
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: Icon(
-                                          Icons.close,
-                                          color: Colors.white,
-                                          size: 10,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          } else {
-                            // Add Meal Button at the end
-                            return Column(
+                  const SizedBox(height: 10),
+                  Obx(
+                    () {
+                      return itemController.items.isEmpty
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 InkWell(
@@ -2286,7 +2649,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                       ),
                                       borderRadius: BorderRadius.circular(4.0),
                                     ),
-                                    child: Center(
+                                    child: const Center(
                                       child: Icon(
                                         Icons.add,
                                         color: AppColors.primaryColor,
@@ -2295,155 +2658,321 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 10),
-                                Text(
+                                const SizedBox(height: 10),
+                                const Text(
                                   'Add meal',
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  'Cuisine',
+                                  style: TextStyle(
+                                    fontSize: Responsive.isMobile(context)
+                                        ? 16
+                                        : Responsive.isTablet(context)
+                                            ? 18
+                                            : 24,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                Visibility(
+                                  visible: selected_cuisne3 == 'other',
+                                  child: Row(
+                                    children: [
+                                      CustomTextField(
+                                          borderColor: AppColors.darkGrey
+                                              .withOpacity(.1),
+                                          controller: customCuisineController,
+                                          width: 500,
+                                          borderRadius: 8,
+                                          hintText: "Type",
+                                          fillColor: AppColors.whiteColor,
+                                          cursorColor: AppColors.primaryColor,
+                                          inputStyle: const TextStyle(
+                                              color: AppColors.blackColor),
+                                          hintStyle: const TextStyle(
+                                              color: AppColors.blackColor),
+                                          suffixIcon: Padding(
+                                            padding: const EdgeInsets.only(
+                                                right: 16.0),
+                                            child: IconButton(
+                                              onPressed: () {
+                                                setState(() {
+                                                  if (customCuisineController
+                                                      .text.isNotEmpty) {
+                                                    // Add the custom cuisine to the list
+                                                    cuisine.insert(
+                                                        cuisine.length - 1,
+                                                        customCuisineController
+                                                            .text);
+                                                    // Set it as the selected cuisine
+                                                    selected_cuisne3 =
+                                                        customCuisineController
+                                                            .text;
+                                                    showTextField = false;
+                                                    customCuisineController
+                                                        .clear();
+                                                  }
+                                                });
+                                              },
+                                              icon: const Icon(Icons.add,
+                                                  color: Colors.white),
+                                              iconSize: 18,
+                                              splashRadius: 20,
+                                              style: ButtonStyle(
+                                                backgroundColor:
+                                                    MaterialStateProperty.all<
+                                                            Color>(
+                                                        AppColors.primaryColor),
+                                                shape: MaterialStateProperty
+                                                    .all<CircleBorder>(
+                                                  const CircleBorder(),
+                                                ),
+                                              ),
+                                            ),
+                                          )),
+                                    ],
+                                  ),
+                                ),
+                                Visibility(
+                                  visible: selected_cuisne3 != 'other',
+                                  child: SizedBox(
+                                    width: Responsive.isDesktop(context)
+                                        ? screenWidth * .27
+                                        : double.infinity,
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton2<String>(
+                                        // isExpanded: true,
+                                        hint: Text(
+                                          'Select Cuisine',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Theme.of(context).hintColor,
+                                          ),
+                                        ),
+                                        items: cuisine
+                                            .map((String item) =>
+                                                DropdownMenuItem<String>(
+                                                  value: item,
+                                                  child: Text(
+                                                    item,
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ))
+                                            .toList(),
+                                        value: selected_cuisne3,
+                                        onChanged: (String? value) {
+                                          setState(() {
+                                            selected_cuisne3 = value;
+                                          });
+                                        },
+                                        buttonStyleData: ButtonStyleData(
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              color: AppColors.darkGrey
+                                                  .withOpacity(.1),
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                                8), // Rounded corners
+                                            color: AppColors.whiteColor,
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16),
+                                          height: 40,
+                                        ),
+                                        menuItemStyleData:
+                                            const MenuItemStyleData(
+                                          height: 40,
+                                        ),
+                                        iconStyleData: const IconStyleData(
+                                          icon: Icon(
+                                            Icons
+                                                .keyboard_arrow_down_outlined, // Custom icon for dropdown
+                                            color: AppColors.primaryColor,
+                                          ),
+                                          iconSize: 24,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
                               ],
+                            )
+                          : Container(
+                              height: 238,
+                              child: Obx(
+                                () => ListView.builder(
+                                  itemCount: itemController.items.length +
+                                      1, // Add 1 for the "Add Meal" button
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, index) {
+                                    if (index < itemController.items.length) {
+                                      final item = itemController.items[index];
+                                      return Container(
+                                        width: 211,
+                                        height: 238,
+                                        margin: const EdgeInsets.only(
+                                            right: 8), // Spacing between items
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color: AppColors.whiteColor,
+                                          border: Border.all(
+                                            color: AppColors.darkGrey
+                                                .withOpacity(.1),
+                                          ),
+                                        ),
+                                        child: Stack(
+                                          children: [
+                                            // Image at the top
+                                            Container(
+                                              width: 211,
+                                              height: 150,
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(10.0),
+                                                child: item.itemMemoryImages
+                                                        .first.isNotEmpty
+                                                    ? Image.memory(
+                                                        item.itemMemoryImages
+                                                            .first,
+                                                        width: double.infinity,
+                                                        height: double.infinity,
+                                                        fit: BoxFit.cover,
+                                                      )
+                                                    : const SizedBox
+                                                        .shrink(), // Placeholder if no image
+                                              ),
+                                            ),
+                                            // Meal Info
+                                            Positioned(
+                                              bottom: 20,
+                                              left: 8,
+                                              right: 8,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  const SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Text(
+                                                    'Cuisine: ${item.cuisineName}',
+                                                    style: const TextStyle(
+                                                        fontSize: 14,
+                                                        color: AppColors
+                                                            .textColor),
+                                                  ),
+                                                  const SizedBox(height: 4),
+                                                  Text(
+                                                    'Menu: ${item.cuisineMenu}',
+                                                    style: const TextStyle(
+                                                      color:
+                                                          AppColors.textColor,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 4),
+                                                  Text(
+                                                    'Offer: ${item.offer}',
+                                                    style: const TextStyle(
+                                                      color:
+                                                          AppColors.textColor,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            // Close Icon
+                                            Positioned(
+                                              top: 8,
+                                              right: 8,
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  itemController.items.removeAt(
+                                                      index); // Remove item
+                                                },
+                                                child: Container(
+                                                  width: 20,
+                                                  height: 20,
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                    color: AppColors.darkGrey,
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                  child: const Icon(
+                                                    Icons.close,
+                                                    color: Colors.white,
+                                                    size: 10,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    } else {
+                                      // Add Meal Button at the end
+                                      return Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          InkWell(
+                                            onTap: () {
+                                              setState(() {
+                                                _isColumn2Visible =
+                                                    !_isColumn2Visible;
+                                              }); // Example function
+                                            },
+                                            child: Container(
+                                              width: 24,
+                                              height: 24,
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: AppColors.primaryColor,
+                                                  width: 2,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(4.0),
+                                              ),
+                                              child: const Center(
+                                                child: Icon(
+                                                  Icons.add,
+                                                  color: AppColors.primaryColor,
+                                                  size: 16,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 10),
+                                          const Text(
+                                            'Add meal',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    }
+                                  },
+                                ),
+                              ),
                             );
-                          }
-                        },
-                      ),
-                    ),
+                    },
                   ),
-
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   if (_isColumn2Visible)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Cuisine',
-                          style: TextStyle(
-                            fontSize: Responsive.isMobile(context)
-                                ? 16
-                                : Responsive.isTablet(context)
-                                    ? 18
-                                    : 24,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        Visibility(
-                          visible: selected_cuisne3 == 'other',
-                          child: Row(
-                            children: [
-                              CustomTextField(
-                                  borderColor:
-                                      AppColors.darkGrey.withOpacity(.1),
-                                  controller: customCuisineController,
-                                  width: 500,
-                                  borderRadius: 8,
-                                  hintText: "Type",
-                                  fillColor: AppColors.whiteColor,
-                                  cursorColor: AppColors.primaryColor,
-                                  inputStyle: const TextStyle(
-                                      color: AppColors.blackColor),
-                                  hintStyle: const TextStyle(
-                                      color: AppColors.blackColor),
-                                  suffixIcon: Padding(
-                                    padding: const EdgeInsets.only(right: 16.0),
-                                    child: IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          if (customCuisineController
-                                              .text.isNotEmpty) {
-                                            // Add the custom cuisine to the list
-                                            cuisine.insert(cuisine.length - 1,
-                                                customCuisineController.text);
-                                            // Set it as the selected cuisine
-                                            selected_cuisne3 =
-                                                customCuisineController.text;
-                                            showTextField = false;
-                                            customCuisineController.clear();
-                                          }
-                                        });
-                                      },
-                                      icon:
-                                          Icon(Icons.add, color: Colors.white),
-                                      iconSize: 18,
-                                      splashRadius: 20,
-                                      style: ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStateProperty.all<Color>(
-                                                AppColors.primaryColor),
-                                        shape: MaterialStateProperty.all<
-                                            CircleBorder>(
-                                          CircleBorder(),
-                                        ),
-                                      ),
-                                    ),
-                                  )),
-                            ],
-                          ),
-                        ),
-                        Visibility(
-                          visible: selected_cuisne3 != 'other',
-                          child: SizedBox(
-                            width: Responsive.isDesktop(context)
-                                ? screenWidth * .27
-                                : double.infinity,
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton2<String>(
-                                // isExpanded: true,
-                                hint: Text(
-                                  'Select Cuisine',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Theme.of(context).hintColor,
-                                  ),
-                                ),
-                                items: cuisine
-                                    .map((String item) =>
-                                        DropdownMenuItem<String>(
-                                          value: item,
-                                          child: Text(
-                                            item,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ))
-                                    .toList(),
-                                value: selected_cuisne3,
-                                onChanged: (String? value) {
-                                  setState(() {
-                                    selected_cuisne3 = value;
-                                  });
-                                },
-                                buttonStyleData: ButtonStyleData(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: AppColors.darkGrey.withOpacity(.1),
-                                    ),
-                                    borderRadius: BorderRadius.circular(
-                                        8), // Rounded corners
-                                    color: AppColors.whiteColor,
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16),
-                                  height: 40,
-                                ),
-                                menuItemStyleData: const MenuItemStyleData(
-                                  height: 40,
-                                ),
-                                iconStyleData: IconStyleData(
-                                  icon: Icon(
-                                    Icons
-                                        .keyboard_arrow_down_outlined, // Custom icon for dropdown
-                                    color: AppColors.primaryColor,
-                                  ),
-                                  iconSize: 24,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 10),
                         Text(
                           'Menu Type',
                           style: TextStyle(
@@ -2455,14 +2984,13 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                             fontWeight: FontWeight.w700,
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         SizedBox(
                           width: Responsive.isDesktop(context)
                               ? screenWidth * .27
                               : double.infinity,
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton2<String>(
-                              // isExpanded: true,
                               hint: Text(
                                 'Select Menu Type',
                                 style: TextStyle(
@@ -2470,29 +2998,29 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                   color: Theme.of(context).hintColor,
                                 ),
                               ),
-                              items: menuType
-                                  .map(
-                                      (String item) => DropdownMenuItem<String>(
-                                            value: item,
-                                            child: Text(
-                                              item,
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                          ))
-                                  .toList(),
-                              value: selected_menuType,
+                              items: menuType.map((String item) {
+                                return DropdownMenuItem<String>(
+                                  value: item,
+                                  child: Text(
+                                    item,
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                );
+                              }).toList(),
+                              value: menuType.contains(
+                                      itemController.selected_menuType)
+                                  ? itemController.selected_menuType
+                                  : null, // ✅ Ensure valid value
                               onChanged: (String? value) {
                                 setState(() {
-                                  selected_menuType = value;
+                                  itemController.selected_menuType = value;
                                 });
                               },
                               buttonStyleData: ButtonStyleData(
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                    color: AppColors.darkGrey.withOpacity(.1),
-                                  ),
+                                      color:
+                                          AppColors.darkGrey.withOpacity(.1)),
                                   borderRadius: BorderRadius.circular(
                                       8), // Rounded corners
                                   color: AppColors.whiteColor,
@@ -2504,7 +3032,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                               menuItemStyleData: const MenuItemStyleData(
                                 height: 40,
                               ),
-                              iconStyleData: IconStyleData(
+                              iconStyleData: const IconStyleData(
                                 icon: Icon(
                                   Icons
                                       .keyboard_arrow_down_outlined, // Custom icon for dropdown
@@ -2515,7 +3043,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                             ),
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Text(
                           'Image',
                           style: TextStyle(
@@ -2527,13 +3055,14 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                             fontWeight: FontWeight.w700,
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Row(
                           children: [
                             Obx(
                               () => Wrap(
                                 spacing: 8,
-                                children: itemController.images.map((image) {
+                                children:
+                                    itemController.memoryImages.map((image) {
                                   return Stack(
                                     clipBehavior: Clip
                                         .none, // Allows the cross icon to overflow if needed
@@ -2549,7 +3078,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                         decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(10)),
-                                        child: Image.network(
+                                        child: Image.memory(
                                           image,
                                           // width: 80,
                                           // height: 80,
@@ -2567,16 +3096,17 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                         right: 10,
                                         child: GestureDetector(
                                           onTap: () {
-                                            itemController.images.remove(image);
+                                            itemController.memoryImages
+                                                .remove(image);
                                           },
                                           child: Container(
                                             width: 19,
                                             height: 19,
-                                            decoration: BoxDecoration(
+                                            decoration: const BoxDecoration(
                                               color: AppColors.darkGrey,
                                               shape: BoxShape.circle,
                                             ),
-                                            child: Icon(
+                                            child: const Icon(
                                               Icons.close,
                                               size: 10,
                                               color: Colors.white,
@@ -2592,7 +3122,17 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                             Row(
                               children: [
                                 GestureDetector(
-                                  onTap: () => itemController.pickImages(),
+                                  onTap: () async {
+                                    // In the GestureDetector
+                                    List<Uint8List> selectedImages =
+                                        await getImages();
+                                    itemController.memoryImages
+                                        .addAll(selectedImages);
+
+// Check if images were added to memoryImages
+                                    print(
+                                        'Memory Images: ${itemController.memoryImages}');
+                                  },
                                   child: _imageBytes == null
                                       ? Container(
                                           height: Responsive.isDesktop(context)
@@ -2613,7 +3153,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                             padding: const EdgeInsets.all(16.0),
                                             child: DottedBorder(
                                               borderType: BorderType.RRect,
-                                              radius: Radius.circular(12),
+                                              radius: const Radius.circular(12),
                                               dashPattern: [6, 3],
                                               color: AppColors.primaryColor,
                                               strokeWidth: 1,
@@ -2628,7 +3168,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                                     mainAxisSize:
                                                         MainAxisSize.min,
                                                     children: [
-                                                      Icon(
+                                                      const Icon(
                                                           Icons
                                                               .upload_file_outlined,
                                                           size: 25,
@@ -2692,7 +3232,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                             ),
                           ],
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Text(
                           'Offer',
                           style: TextStyle(
@@ -2704,13 +3244,13 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                             fontWeight: FontWeight.w700,
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         CustomTextField(
                           borderColor: AppColors.darkGrey.withOpacity(.1),
                           width: 516,
                           borderRadius: 8,
                           hintText: "2 for 1",
-                          controller: controller.offerController,
+                          controller: itemController.offerController,
                           fillColor: AppColors.whiteColor,
                           cursorColor: AppColors.primaryColor,
                           inputStyle:
@@ -2718,79 +3258,242 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                           hintStyle:
                               const TextStyle(color: AppColors.blackColor),
                         ),
-                        SizedBox(height: 10),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 100.0),
-                          child: Row(
-                            children: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  itemController.addItem(
-                                    selected_menuType.toString(),
-                                    selected_cuisne3.toString(),
-                                    controller.offerController.text,
-
-                                    // itemController.offerController.text,
-                                  );
-                                  selected_menuType = null;
-                                  selected_cuisne3 = null;
-                                  // itemController.offerController.clear();
-                                  // descriptionController.clear();
-                                  // priceController.clear();
-                                },
-                                child: const Text('Add Item'),
-                              ),
-                              CustomButton(
-                                title: "Save Percentage Value",
-                                textStyle: TextStyle(
-                                  color: AppColors.whiteColor,
-                                  fontSize:
-                                      Responsive.isMobile(context) ? 16 : 18,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                backgroundColor: AppColors.primaryColor,
-                                borderRadius: 8,
-                                width: Responsive.isMobile(context)
-                                    ? screenWidth * 0.4
-                                    : screenWidth * 0.2,
-                                onPressed: () {
-                                  final fromTime = isAllDay
-                                      ? 'Lifetime'
-                                      : '${controller.toTimeHourController.text}:${controller.toTimeMintController.text} ${isAmSelected ? 'AM' : 'PM'}';
-
-                                  final toTime = isAllDay
-                                      ? 'All Day'
-                                      : '${controller.fromTimeHourController.text}:${controller.fromTimeMintController.text} ${isAmSelected ? 'AM' : 'PM'}';
-                                  itemController.addCategoryAndSubcategory(
-                                    _dateController.text,
-                                    _dateControllerTo.text,
-                                    fromDate: _dateController.text,
-                                    lifeTime: isChecked,
-                                    isAllDay: isAllDay,
-                                    toDate: _dateControllerTo.text,
-                                    offerController: controller.offerController.text,
-                                    percentageValue:
-                                        _selectedDiscount.toString(),
-                                    FromTime: fromTime,
-                                    ToTime: toTime,
-                                    discountType: selected_cuisne,
-                                    toTimeType:
-                                        isAmSelected2 == true ? "AM" : "PM",
-                                    // discountType:
-                                  );
-                                  // Get.snackbar("Percentage Value ",
-                                  //     "Percentage value is successfully saved",
-                                  //     maxWidth: 400,
-                                  //     backgroundColor: AppColors.primaryColor);
-                                },
-                              ),
-                            ],
+                        const SizedBox(height: 10),
+                        CustomButton(
+                          title: 'Add Menu',
+                          textStyle: TextStyle(
+                            color: AppColors.whiteColor,
+                            fontSize: Responsive.isMobile(context) ? 16 : 18,
+                            fontWeight: FontWeight.w600,
                           ),
+                          backgroundColor: AppColors.primaryColor,
+                          borderRadius: 8,
+                          width: Responsive.isMobile(context)
+                              ? screenWidth * 0.4
+                              : screenWidth * 0.2,
+                          onPressed: () {
+                            // 🛑 If more than 2 items exist, prevent adding
+                            if (itemController.items.length >= 2) {
+                              Get.snackbar(
+                                "Limit Reached",
+                                "You can only add 1 Food Menu and 1 Drinks Menu.",
+                                snackPosition: SnackPosition.TOP,
+                                backgroundColor: AppColors.primaryColor,
+                                colorText: Colors.white,
+                                duration: const Duration(seconds: 2),
+                              );
+                              return;
+                            }
+
+                            // 🛑 Ensure selected_menuType, selected_cuisine3, and offer are filled
+                            if (itemController.selected_menuType == null ||
+                                selected_cuisne3 == null ||
+                                itemController.offerController.text.isEmpty) {
+                              Get.snackbar(
+                                "Validation Error",
+                                "Please fill Cuisine, Menu Type, Image, and Offer before adding the menu.",
+                                snackPosition: SnackPosition.TOP,
+                                backgroundColor: AppColors.primaryColor,
+                                colorText: Colors.white,
+                                duration: const Duration(seconds: 2),
+                              );
+                              return;
+                            }
+
+                            // ✅ Check if "Food Menu" and "Drinks Menu" exist
+                            bool hasFoodMenu = itemController.items
+                                .any((item) => item.cuisineMenu == "Food Menu");
+                            bool hasDrinksMenu = itemController.items.any(
+                                (item) => item.cuisineMenu == "Drinks Menu");
+
+                            // 🛑 Prevent adding duplicates
+                            if ((hasFoodMenu &&
+                                    itemController.selected_menuType ==
+                                        "Food Menu") ||
+                                (hasDrinksMenu &&
+                                    itemController.selected_menuType ==
+                                        "Drinks Menu")) {
+                              Get.snackbar(
+                                "Duplicate Entry",
+                                "You can only add one Food Menu and one Drinks Menu.",
+                                snackPosition: SnackPosition.TOP,
+                                backgroundColor: AppColors.primaryColor,
+                                colorText: Colors.white,
+                                duration: const Duration(seconds: 2),
+                              );
+                              return;
+                            }
+
+                            // ✅ If all conditions pass, add the item
+                            itemController.addItem(
+                              itemController.selected_menuType.toString(),
+                              selected_cuisne3.toString(),
+                              itemController.offerController.text,
+                            );
+
+                            setState(() {
+                              _isColumn2Visible = !_isColumn2Visible;
+                            });
+                          },
                         ),
-                        SizedBox(height: 10),
                       ],
                     ),
-                  SizedBox(height: 20),
+
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 100.0),
+                    child: Column(
+                      children: [
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        // CustomButton(
+                        //   title: "Save Percentage Value",
+                        //   textStyle: TextStyle(
+                        //     color: AppColors.whiteColor,
+                        //     fontSize: Responsive.isMobile(context) ? 16 : 18,
+                        //     fontWeight: FontWeight.w600,
+                        //   ),
+                        //   backgroundColor: AppColors.primaryColor,
+                        //   borderRadius: 8,
+                        //   width: Responsive.isMobile(context) ? screenWidth * 0.4 : screenWidth * 0.2,
+                        //   onPressed: () {
+                        //     final fromTime = isAllDay
+                        //         ? 'All'
+                        //         : '${controller.toTimeHourController.text}:${controller.toTimeMintController.text} ${isAmSelected ? 'AM' : 'PM'}';
+                        //
+                        //     final toTime = isAllDay
+                        //         ? ' Day'
+                        //         : '${controller.fromTimeHourController.text}:${controller.fromTimeMintController.text} ${isAmSelected ? 'AM' : 'PM'}';
+                        //
+                        //     **Validation Logic**
+                        //     if (!isAllDay &&
+                        //         (controller.fromTimeHourController.text.isEmpty ||
+                        //             controller.fromTimeMintController.text.isEmpty ||
+                        //             controller.toTimeHourController.text.isEmpty ||
+                        //             controller.toTimeMintController.text.isEmpty)) {
+                        //       Get.snackbar(
+                        //         "Validation Error",
+                        //         "Please select a valid time range or check the 'All Day' option.",
+                        //         backgroundColor: AppColors.primaryColor,
+                        //         colorText: Colors.white,
+                        //       );
+                        //       return;
+                        //     }
+                        //
+                        //     // **Proceed if validation passes**
+                        //     itemController.addCategoryAndSubcategory(
+                        //       _dateController.text,
+                        //       _dateControllerTo.text,
+                        //       fromDate: _dateController.text,
+                        //       lifeTime: isChecked,
+                        //       isAllDay: isAllDay,
+                        //       toDate: _dateControllerTo.text,
+                        //       offerController: itemController.offerController.text,
+                        //       percentageValue: _selectedDiscount.toString(),
+                        //       FromTime: fromTime,
+                        //       ToTime: toTime,
+                        //       discountType: itemController.selected_cuisne,
+                        //       toTimeType: isAmSelected2 == true ? "AM" : "PM",
+                        //     );
+                        //   },
+                        // ),
+                        CustomButton(
+                          title: "Save Percentage Value",
+                          textStyle: TextStyle(
+                            color: AppColors.whiteColor,
+                            fontSize: Responsive.isMobile(context) ? 16 : 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          backgroundColor: AppColors.primaryColor,
+                          borderRadius: 8,
+                          width: Responsive.isMobile(context)
+                              ? screenWidth * 0.4
+                              : screenWidth * 0.2,
+                          onPressed: () {
+                            final fromTime = isAllDay
+                                ? 'All'
+                                : '${itemController.toTimeHourController.text}:${itemController.toTimeMintController.text} ${isAmSelected ? 'AM' : 'PM'}';
+
+                            final toTime = isAllDay
+                                ? ' Day'
+                                : '${itemController.fromTimeHourController.text}:${itemController.fromTimeMintController.text} ${isAmSelected ? 'AM' : 'PM'}';
+
+                            // **Validation Logic**
+                            if (!isAllDay &&
+                                (itemController
+                                        .fromTimeHourController.text.isEmpty ||
+                                    itemController
+                                        .fromTimeMintController.text.isEmpty ||
+                                    itemController
+                                        .toTimeHourController.text.isEmpty ||
+                                    itemController
+                                        .toTimeMintController.text.isEmpty)) {
+                              Get.snackbar(
+                                "Validation Error",
+                                "Please select a valid time range or check the 'All Day' option.",
+                                backgroundColor: AppColors.primaryColor,
+                                colorText: Colors.white,
+                              );
+                              return;
+                            }
+                            // 🛑 If less than 2 items exist, prevent saving
+                            if (itemController.items.length < 2) {
+                              Get.snackbar(
+                                "Add More Items",
+                                "Please add at least 2 menu items before saving.",
+                                snackPosition: SnackPosition.TOP,
+                                backgroundColor: AppColors.primaryColor,
+                                colorText: Colors.white,
+                                duration: const Duration(seconds: 2),
+                              );
+                              return;
+                            }
+
+                            // 🛑 Ensure a discount is selected
+                            if (_selectedDiscount == null) {
+                              Get.snackbar(
+                                "Discount Not Selected",
+                                "Please select a percentage value before saving.",
+                                snackPosition: SnackPosition.TOP,
+                                backgroundColor: AppColors.primaryColor,
+                                colorText: Colors.white,
+                                duration: const Duration(seconds: 2),
+                              );
+                              return;
+                            }
+
+                            if (itemController.selected_cuisne == null) {
+                              Get.snackbar(
+                                "Discount Type not selected",
+                                "Please select at least one discount type",
+                                backgroundColor: AppColors.primaryColor,
+                                colorText: Colors.white,
+                              );
+                              return;
+                            }
+
+                            // ✅ If all conditions pass, proceed with saving
+                            itemController.addCategoryAndSubcategory(
+                              _dateController.text,
+                              _dateControllerTo.text,
+                              fromDate: _dateController.text,
+                              lifeTime: isChecked,
+                              isAllDay: isAllDay,
+                              toDate: _dateControllerTo.text,
+                              percentageValue: _selectedDiscount.toString(),
+                              FromTime: fromTime,
+                              ToTime: toTime,
+                              discountType: itemController.selected_cuisne,
+                              toTimeType: isAmSelected2 == true ? "AM" : "PM",
+                            );
+                            _selectedDiscount = null;
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
                   Center(
                     child: CustomButton(
                       title: " Save Discount",
@@ -2805,42 +3508,82 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                           ? screenWidth * 0.4
                           : screenWidth * 0.2,
                       onPressed: () async {
+                        if ((_dateController.text.isEmpty ||
+                                _dateControllerTo.text.isEmpty) &&
+                            !isChecked) {
+                          // Show an error message if neither date range nor lifetime is selected
+                          Get.snackbar(
+                            "Validation Error",
+                            "Please select a date range or check the lifetime option",
+                            backgroundColor: AppColors.primaryColor,
+                            colorText: Colors.white,
+                          );
+                          return;
+                        }
+                        if (itemController.selected_cuisne == null) {
+                          Get.snackbar(
+                            "Validation Error",
+                            "Please select at least one discount type",
+                            backgroundColor: AppColors.primaryColor,
+                            colorText: Colors.white,
+                          );
+                          return;
+                        }
+
+                        if (itemController.categoryItems.isEmpty) {
+                          Get.snackbar(
+                            "No Items Added",
+                            "Please add at least one category item before proceeding.",
+                            backgroundColor: AppColors.primaryColor,
+                            colorText: Colors.white,
+                          );
+                          return;
+                        }
                         await itemController.saveCategoryToFirestore();
-                        // Get.snackbar(
-                        //     "Discount", "Discount is successfully saved",
-                        //     maxWidth: 400,
-                        //     backgroundColor: AppColors.primaryColor);
+                        setState(() {
+                          _isColumnVisible = false;
+                        });
+                        itemController.selected_cuisne = null;
+                        _dateControllerTo.clear();
+                        _dateController.clear();
                       },
                     ),
                   ),
-                  SizedBox(height: 20),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CustomButton(
-                        title: "Done",
-                        borderClr: AppColors.primaryColor,
-                        textStyle: TextStyle(
-                          color: AppColors.primaryColor,
-                          fontSize: Responsive.isMobile(context) ? 16 : 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        backgroundColor: AppColors.whiteColor,
-                        borderRadius: 8,
-                        width: Responsive.isMobile(context)
-                            ? screenWidth * 0.4
-                            : screenWidth * 0.2,
-                        onPressed: () {
-                          showDoneDialog(context);
-                          // print('hy');
-                        },
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 20),
                 ],
               ),
+
+            SizedBox(
+              height: 50,
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CustomButton(
+                  title: "Done",
+                  borderClr: AppColors.primaryColor,
+                  textStyle: TextStyle(
+                    color: AppColors.primaryColor,
+                    fontSize: Responsive.isMobile(context) ? 16 : 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  backgroundColor: AppColors.whiteColor,
+                  borderRadius: 8,
+                  width: Responsive.isMobile(context)
+                      ? screenWidth * 0.4
+                      : screenWidth * 0.2,
+                  onPressed: () {
+                    itemController.updateRestaurantData(context);
+
+                    //
+                    //
+                    // print('hy');
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
           ],
         ),
       ),
@@ -2849,6 +3592,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
 }
 
 showDoneDialog(BuildContext context) {
+  Get.back();
   Get.dialog(
     WillPopScope(
       onWillPop: () async =>
@@ -2874,7 +3618,7 @@ showDoneDialog(BuildContext context) {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'Congratulations you have successfully add restaurants details',
+                  'Congratulations you have successfully added restaurants details',
                   style: TextStyle(
                     fontSize: Responsive.isMobile(context)
                         ? 12

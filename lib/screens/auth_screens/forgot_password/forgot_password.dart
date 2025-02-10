@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:restaurant_web_app/widgets/auth_textfield.dart';
 
 import '../../../constants/colors.dart';
 import '../../../utils/responsive.dart';
@@ -64,7 +65,7 @@ class ForgotPassword extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       // Email Field with Validation
-                      Obx(() => CustomTextField(
+                      Obx(() => AuthTextField(
                             controller: controller.emailController,
                             width: double.infinity,
                             borderRadius: 8,
@@ -72,9 +73,13 @@ class ForgotPassword extends StatelessWidget {
                             fillColor: AppColors.whiteColor.withOpacity(0.2),
                             cursorColor: AppColors.primaryColor,
                             inputStyle:
-                                const TextStyle(color: AppColors.whiteColor),
+                                const TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColors.whiteColor),
                             hintStyle:
-                                const TextStyle(color: AppColors.whiteColor),
+                                const TextStyle(
+                                    fontWeight: FontWeight.w200,
+                                    color: AppColors.darkGrey),
                             errorText: controller.emailError.value.isNotEmpty
                                 ? controller.emailError.value
                                 : null,

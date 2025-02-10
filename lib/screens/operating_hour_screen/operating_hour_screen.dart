@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:restaurant_web_app/screens/add_restaurant/add_resturant_controller/add_resturant%20_controller.dart';
+import 'package:restaurant_web_app/widgets/account_settings_popup_widget.dart';
+import 'package:restaurant_web_app/widgets/global_functions.dart';
 
 import '../../constants/colors.dart';
+import '../../main.dart';
 import '../../utils/responsive.dart';
 import '../../widgets/round_button.dart';
 import '../../widgets/text_field.dart';
@@ -19,10 +22,10 @@ class OperatingHourScreen1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    controller.loadOperatingHours();
+
     double screenWidth = MediaQuery.of(context).size.width;
     bool isLargeScreen = screenWidth > 1600;
-    controller.aboutError.value = '';
+
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: isFromButtonClick == null
@@ -49,7 +52,7 @@ class OperatingHourScreen1 extends StatelessWidget {
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.1),
-                          offset: Offset(0, 4),
+                          offset: const Offset(0, 4),
                           blurRadius: 6,
                           spreadRadius: 0,
                         ),
@@ -57,87 +60,7 @@ class OperatingHourScreen1 extends StatelessWidget {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(4.0),
-                      child: Row(
-                        children: [
-                          SizedBox(width: 8),
-                          Text('Account Settings'),
-                          Spacer(),
-                          PopupMenuButton<String>(
-                            icon: Icon(
-                              Icons.keyboard_arrow_down_sharp,
-                              color: AppColors.primaryColor,
-                            ),
-                            onSelected: (value) {
-                              if (value == 'Logout') {
-                                mainController.showLogoutDialog(context);
-                              } else {
-                                mainController.selectedMenuItem = value;
-                                mainController.isAddingRestaurant = false;
-                                mainController.update();
-                                Get.close(3);
-                              }
-                            },
-                            itemBuilder: (context) => [
-                              PopupMenuItem(
-                                value: 'Home',
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/home.png',
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                    SizedBox(width: 16),
-                                    Text('Home'),
-                                  ],
-                                ),
-                              ),
-                              PopupMenuItem(
-                                value: 'View Restaurant Details',
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/resturant_detail.png',
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                    SizedBox(width: 16),
-                                    Text('View Restaurant Details'),
-                                  ],
-                                ),
-                              ),
-                              PopupMenuItem(
-                                value: 'Change Password',
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/change_password.png',
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                    SizedBox(width: 16),
-                                    Text('Change Password'),
-                                  ],
-                                ),
-                              ),
-                              PopupMenuItem(
-                                value: 'Logout',
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/logout.png',
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                    SizedBox(width: 16),
-                                    Text('Logout'),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                      child: Obx(() => currentUserDataModel.value?.phoneNumber.text != ''? AccountSettingsPopupWidget():AccountNoAuthPopupWidget(),),
                     ),
                   ),
                 ),
@@ -164,7 +87,7 @@ class OperatingHourScreen1 extends StatelessWidget {
                         BoxShadow(
                           color: Colors.black.withOpacity(0.2),
                           blurRadius: 6,
-                          offset: Offset(0, 3),
+                          offset: const Offset(0, 3),
                         ),
                       ],
                     ),
@@ -173,30 +96,25 @@ class OperatingHourScreen1 extends StatelessWidget {
                           ? 14
                           : (Responsive.isTablet(context) ? 16 : 18),
                       icon:
-                          Icon(Icons.arrow_back, color: AppColors.primaryColor),
+                          const Icon(Icons.arrow_back, color: AppColors.primaryColor),
                       onPressed: () {
                         Get.back();
                       },
                     ),
                   ),
-                  SizedBox(width: 10),
-                  GestureDetector(
-                    onTap: () {
-                      controller.saveAllOperatingHours();
-                    },
-                    child: const Text(
-                      'Add Operating Hours',
-                      style: TextStyle(
-                        color: AppColors.blackColor,
-                        fontFamily: 'Nunito-Regular',
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                      ),
+                  const SizedBox(width: 10),
+                  const Text(
+                    'Add Operating Hours',
+                    style: TextStyle(
+                      color: AppColors.blackColor,
+                      fontFamily: 'Nunito-Regular',
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               LayoutBuilder(
                 builder: (context, constraints) {
                   return Padding(
@@ -204,7 +122,7 @@ class OperatingHourScreen1 extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         RichText(
                           text: TextSpan(
                             text: 'Operating hours ',
@@ -232,7 +150,7 @@ class OperatingHourScreen1 extends StatelessWidget {
                             ],
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         ConstrainedBox(
                           constraints:
                               BoxConstraints(minWidth: constraints.maxWidth),
@@ -253,7 +171,7 @@ class OperatingHourScreen1 extends StatelessWidget {
                                         color: Colors.grey.withOpacity(0.2),
                                         spreadRadius: 2,
                                         blurRadius: 4,
-                                        offset: Offset(0, 2),
+                                        offset: const Offset(0, 2),
                                       ),
                                     ],
                                   ),
@@ -483,14 +401,14 @@ class OperatingHourScreen1 extends StatelessWidget {
                                                                       ? 'Set Time'
                                                                       : '${controller.mealTimes[day]![meal]!['From']} - ${controller.mealTimes[day]![meal]!['To']}')
                                                                   : 'Closed',
-                                                              style: TextStyle(
+                                                              style: const TextStyle(
                                                                   color: AppColors
                                                                       .whiteColor),
                                                             ),
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(width: 8),
+                                                      const SizedBox(width: 8),
                                                       Column(
                                                         children: [
                                                           ToggleButtons(
@@ -516,7 +434,7 @@ class OperatingHourScreen1 extends StatelessWidget {
                                                                 decoration:
                                                                     BoxDecoration(
                                                                   borderRadius:
-                                                                      BorderRadius
+                                                                      const BorderRadius
                                                                           .only(
                                                                     topLeft: Radius
                                                                         .circular(
@@ -536,7 +454,7 @@ class OperatingHourScreen1 extends StatelessWidget {
                                                                 alignment:
                                                                     Alignment
                                                                         .center,
-                                                                child: Text(
+                                                                child: const Text(
                                                                   'On',
                                                                   style:
                                                                       TextStyle(
@@ -553,7 +471,7 @@ class OperatingHourScreen1 extends StatelessWidget {
                                                                 decoration:
                                                                     BoxDecoration(
                                                                   borderRadius:
-                                                                      BorderRadius
+                                                                      const BorderRadius
                                                                           .only(
                                                                     bottomLeft:
                                                                         Radius.circular(
@@ -573,7 +491,7 @@ class OperatingHourScreen1 extends StatelessWidget {
                                                                 alignment:
                                                                     Alignment
                                                                         .center,
-                                                                child: Text(
+                                                                child: const Text(
                                                                   'Off',
                                                                   style:
                                                                       TextStyle(
@@ -586,7 +504,7 @@ class OperatingHourScreen1 extends StatelessWidget {
                                                               ),
                                                             ],
                                                             constraints:
-                                                                BoxConstraints(
+                                                                const BoxConstraints(
                                                                     minWidth:
                                                                         30,
                                                                     minHeight:
@@ -608,7 +526,7 @@ class OperatingHourScreen1 extends StatelessWidget {
                                                           BorderRadius.circular(
                                                               5),
                                                     ),
-                                                    child: Text(
+                                                    child: const Text(
                                                       'Closed',
                                                       style: TextStyle(
                                                         color: AppColors
@@ -628,66 +546,8 @@ class OperatingHourScreen1 extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(height: 20),
-                        RichText(
-                          text: TextSpan(
-                            text: 'About ',
-                            style: TextStyle(
-                              fontSize: Responsive.isMobile(context)
-                                  ? 16
-                                  : Responsive.isTablet(context)
-                                      ? 18
-                                      : 24,
-                              fontWeight: FontWeight.w700,
-                            ),
-                            children: [
-                              TextSpan(
-                                text: '*', // Add the red asterisk
-                                style: TextStyle(
-                                  fontSize: Responsive.isMobile(context)
-                                      ? 16
-                                      : Responsive.isTablet(context)
-                                          ? 18
-                                          : 24,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.red,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 60.0),
-                          child: CustomTextField(
-                            controller: controller.aboutTextController,
-                            borderColor: AppColors.darkGrey.withOpacity(.1),
-                            width:
-                                isLargeScreen ? Get.width * .5 : Get.width * .9,
-                            maxLine: 6,
-                            borderRadius: 10,
-                            hintText: "Add Text",
-                            fillColor: AppColors.whiteColor,
-                            cursorColor: AppColors.primaryColor,
-                            inputStyle:
-                                const TextStyle(color: AppColors.blackColor),
-                            hintStyle:
-                                const TextStyle(color: AppColors.blackColor),
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        Obx(() => controller.aboutError.value.isNotEmpty
-                            ? Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 60.0),
-                                child: Text(
-                                  controller.aboutError.value,
-                                  style: const TextStyle(
-                                      color: Colors.red, fontSize: 12),
-                                ),
-                              )
-                            : const SizedBox.shrink()),
-                        SizedBox(height: 20),
+
+                        const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -708,7 +568,7 @@ class OperatingHourScreen1 extends StatelessWidget {
                                 controller.nextSave();
                               },
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 15,
                             ),
                             // CustomButton(

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../../constants/colors.dart';
 import '../../../utils/responsive.dart';
+import '../../../widgets/auth_textfield.dart';
 import '../../../widgets/round_button.dart';
 import '../../../widgets/text_field.dart';
 import '../forgot_password/forgot_password.dart';
@@ -70,7 +71,7 @@ class LoginScreen extends StatelessWidget {
                 const SizedBox(height: 8),
 
                 // Email Field with Validation (Centered)
-                Obx(() => CustomTextField(
+                Obx(() => AuthTextField(
                       controller: controller.emailController,
                       width: double.infinity,
                       borderRadius: 8,
@@ -97,7 +98,7 @@ class LoginScreen extends StatelessWidget {
                 const SizedBox(height: 8),
 
                 // Password Field with Validation (Centered)
-                Obx(() => CustomTextField(
+                Obx(() => AuthTextField(
                       controller: controller.passwordController,
                       width: double.infinity,
                       borderRadius: 8,
@@ -193,9 +194,9 @@ class LoginScreen extends StatelessWidget {
                   width: double.infinity,
                   onPressed: (){
 
-                    // if (controller.validateFields()) {
+                    if (controller.validateFields()) {
                       controller.logIn();
-                    // }
+                    }
                   }, // Call login function
                 ),
                 const SizedBox(height: 30),

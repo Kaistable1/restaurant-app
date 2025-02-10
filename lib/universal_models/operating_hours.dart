@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../main.dart';
 
 class OperatingHour {
   final bool isClosed;
@@ -30,6 +29,7 @@ class OperatingHour {
     );
   }
 }
+
 class OperatingHoursService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -39,14 +39,17 @@ class OperatingHoursService {
     if (uid == null) {
       throw Exception("User not logged in.");
     }
-print('fhvioh');
+    print('fhvioh');
     await _firestore
         .collection('restaurants')
         .doc(uid)
         .collection(day)
         .doc(mealPeriod)
-        .set(hour.toMap()).then((value) {
-          print('jbds');
-        },);
+        .set(hour.toMap())
+        .then(
+      (value) {
+        print('jbds');
+      },
+    );
   }
 }

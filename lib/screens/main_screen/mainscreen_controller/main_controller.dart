@@ -1,10 +1,12 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:restaurant_web_app/constants/colors.dart';
 import 'package:restaurant_web_app/main.dart';
 import 'package:restaurant_web_app/screens/auth_screens/login_screen/login_screen.dart';
+import 'package:restaurant_web_app/universal_models/restaurant_model.dart';
 import 'package:restaurant_web_app/utils/responsive.dart';
 import 'package:restaurant_web_app/widgets/round_button.dart';
 
@@ -15,6 +17,22 @@ import '../../restaurant_detail_screen/restaurant_detail_screen.dart';
 class MainController extends GetxController {
   ///backend
 
+  Rx<RestaurantModel> restaurantModel = RestaurantModel.initialize().obs;
+  Future<void> fetchRestaurantData() async {
+    try {
+      DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+          .instance
+          .collection('restaurants')
+          .doc(auth.currentUser!.uid)
+          .get();
+
+      if (snapshot.exists) {
+        restaurantModel.value = RestaurantModel.fromDocumentSnapshot(snapshot);
+      }
+    } catch (e) {
+      print("Error fetching restaurant data: $e");
+    }
+  }
 
   ///frontend
   String? selectedMenuItem = 'Home'; // Default selection set to Home
@@ -36,7 +54,6 @@ class MainController extends GetxController {
       ),
     ),
   };
-
   showLogoutDialog(BuildContext context) {
     Get.dialog(
       WillPopScope(
@@ -128,7 +145,8 @@ class MainController extends GetxController {
                               40, // Adjusted button height for better clickability
                           onPressed: () {
                             auth.signOut().then((value) {
-                              Get.offAll(() => const LoginScreen()); // Close the dialog
+                              Get.offAll(() =>
+                                  const LoginScreen()); // Close the dialog
                             });
 
                             // Add logout logic here (e.g., navigate to login screen)

@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:restaurant_web_app/main.dart';
 
 import '../../../constants/colors.dart';
 import '../../../utils/responsive.dart';
@@ -11,6 +14,66 @@ import '../../restaurant_detail_screen/restaurant_detail_screen.dart';
 
 class EditOperatingHourScreen extends GetxController {
   final TextEditingController aboutTextController = TextEditingController();
+  ///add operating hour function
+  /// Save all operating hours
+  Future<void> saveAllOperatingHours() async {
+    print("Saving Operating Hours...");
+
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) {
+      print("Error: User not logged in.");
+      return;
+    }
+
+    for (var day in mealTimes.keys) {
+      Map<String, dynamic> mealsMap = {};
+
+      if (dayToggles[day] == false) {
+        print("$day is toggled off. Saving all meals as closed...");
+        for (var meal in mealTimes[day]!.keys) {
+          mealsMap[meal] = {"isClosed": true};
+        }
+      } else {
+        for (var meal in mealTimes[day]!.keys) {
+          if (cellToggles[day]![meal] == false) {
+            mealsMap[meal] = {"isClosed": true};
+            continue;
+          }
+
+          final fromTime = mealTimes[day]![meal]!['From'];
+          final toTime = mealTimes[day]![meal]!['To'];
+
+          if (fromTime == null || fromTime.isEmpty || toTime == null || toTime.isEmpty) {
+            print("Skipping $meal on $day: Invalid times.");
+            mealsMap[meal] = {"isClosed": true};
+            continue;
+          }
+
+          mealsMap[meal] = {
+            "isClosed": false,
+            "startTime": fromTime,
+            "endTime": toTime,
+          };
+        }
+      }
+
+      // Save using `merge: true` to avoid overwriting existing fields
+      try {
+        await FirebaseFirestore.instance
+            .collection('restaurants')
+            .doc(uid)
+            .collection('operatingHours')
+            .doc(day)
+            .set(mealsMap, SetOptions(merge: true)); // Merging instead of replacing
+        print("$day saved successfully in Firestore.");
+      } catch (e) {
+        print("Error saving $day: $e");
+      }
+    }
+
+    print("All operating hours saved successfully.");
+  }
+
 
   RxString aboutError = ''.obs;
 
@@ -273,255 +336,295 @@ class EditOperatingHourScreen1 extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 10),
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 10),
-                        RichText(
-                          text: TextSpan(
-                            text: 'Operating hours ',
-                            style: TextStyle(
-                              fontSize: Responsive.isMobile(context)
-                                  ? 16
-                                  : Responsive.isTablet(context)
-                                      ? 18
-                                      : 24,
-                              fontWeight: FontWeight.w700,
-                            ),
+              StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection('restaurants')
+                      .doc(auth.currentUser!.uid)
+                      .collection('operatingHours')
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return Center(child: Text("No operating hours found"));
+                    }
+
+                    // Process data from Firestore
+                    var docs = snapshot.data!.docs;
+
+                    controller.mealTimes.clear();
+                    controller. dayToggles.clear();
+                    controller.cellToggles.clear();
+
+                    for (var doc in docs) {
+                      String day = doc.id;
+                      Map<String, dynamic> meals = doc.data() as Map<String, dynamic>;
+
+                      controller.dayToggles[day] = meals.values.any((meal) => !meal["isClosed"]);
+                      controller.cellToggles[day] = {};
+                      controller.mealTimes[day] = {};
+
+                      meals.forEach((mealName, mealData) {
+                        bool isClosed = mealData["isClosed"] ?? true;
+                        controller.cellToggles[day]![mealName] = !isClosed;
+
+                        controller. mealTimes[day]![mealName] = {
+                          "From": isClosed ? "" : mealData["startTime"],
+                          "To": isClosed ? "" : mealData["endTime"],
+                        };
+                      });
+                    }
+                    return   LayoutBuilder(
+                      builder: (context, constraints) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TextSpan(
-                                text: '*', // Add the red asterisk
-                                style: TextStyle(
-                                  fontSize: Responsive.isMobile(context)
-                                      ? 16
-                                      : Responsive.isTablet(context)
-                                          ? 18
-                                          : 24,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.red,
+                              SizedBox(height: 10),
+                              RichText(
+                                text: TextSpan(
+                                  text: 'Operating hours ',
+                                  style: TextStyle(
+                                    fontSize: Responsive.isMobile(context)
+                                        ? 16
+                                        : Responsive.isTablet(context)
+                                        ? 18
+                                        : 24,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                      text: '*', // Add the red asterisk
+                                      style: TextStyle(
+                                        fontSize: Responsive.isMobile(context)
+                                            ? 16
+                                            : Responsive.isTablet(context)
+                                            ? 18
+                                            : 24,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColors.red,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        ConstrainedBox(
-                          constraints:
-                              BoxConstraints(minWidth: constraints.maxWidth),
-                          child: Obx(
-                            () => SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Container(
-                                  padding: const EdgeInsets.all(30.0),
-                                  decoration: BoxDecoration(
-                                    color: Colors
-                                        .white, // Set background color to white
-                                    borderRadius: BorderRadius.circular(
-                                        10), // Set circular border with radius 6
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.2),
-                                        spreadRadius: 2,
-                                        blurRadius: 4,
-                                        offset: Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: DataTable(
-                                    columnSpacing: 10,
-                                    columns: [
-                                      DataColumn(
-                                        label: Expanded(
-                                          child: Center(
-                                            child: Text(
-                                              'Days',
-                                              style: TextStyle(
-                                                fontSize:
-                                                    Responsive.isMobile(context)
-                                                        ? 12
-                                                        : Responsive.isTablet(
-                                                                context)
-                                                            ? 16
-                                                            : 18,
-                                                fontWeight: FontWeight.w700,
-                                              ),
+                              SizedBox(height: 10),
+                              ConstrainedBox(
+                                constraints:
+                                BoxConstraints(minWidth: constraints.maxWidth),
+                                child: Obx(
+                                      () => SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Container(
+                                        padding: const EdgeInsets.all(30.0),
+                                        decoration: BoxDecoration(
+                                          color: Colors
+                                              .white, // Set background color to white
+                                          borderRadius: BorderRadius.circular(
+                                              10), // Set circular border with radius 6
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.grey.withOpacity(0.2),
+                                              spreadRadius: 2,
+                                              blurRadius: 4,
+                                              offset: Offset(0, 2),
                                             ),
-                                          ),
+                                          ],
                                         ),
-                                      ),
-                                      DataColumn(
-                                        label: Expanded(
-                                          child: Center(
-                                            child: Text(
-                                              'Breakfast',
-                                              style: TextStyle(
-                                                fontSize:
-                                                    Responsive.isMobile(context)
-                                                        ? 12
-                                                        : Responsive.isTablet(
-                                                                context)
-                                                            ? 16
-                                                            : 18,
-                                                fontWeight: FontWeight.w700,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      DataColumn(
-                                        label: Expanded(
-                                          child: Center(
-                                            child: Text(
-                                              'Brunch',
-                                              style: TextStyle(
-                                                fontSize:
-                                                    Responsive.isMobile(context)
-                                                        ? 12
-                                                        : Responsive.isTablet(
-                                                                context)
-                                                            ? 16
-                                                            : 18,
-                                                fontWeight: FontWeight.w700,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      DataColumn(
-                                        label: Expanded(
-                                          child: Center(
-                                            child: Text(
-                                              'Lunch',
-                                              style: TextStyle(
-                                                fontSize:
-                                                    Responsive.isMobile(context)
-                                                        ? 12
-                                                        : Responsive.isTablet(
-                                                                context)
-                                                            ? 16
-                                                            : 18,
-                                                fontWeight: FontWeight.w700,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      DataColumn(
-                                        label: Expanded(
-                                          child: Center(
-                                            child: Text(
-                                              'Dinner',
-                                              style: TextStyle(
-                                                fontSize:
-                                                    Responsive.isMobile(context)
-                                                        ? 12
-                                                        : Responsive.isTablet(
-                                                                context)
-                                                            ? 16
-                                                            : 18,
-                                                fontWeight: FontWeight.w700,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      DataColumn(
-                                        label: Expanded(
-                                          child: Center(
-                                            child: Text(
-                                              'Late Night',
-                                              style: TextStyle(
-                                                fontSize:
-                                                    Responsive.isMobile(context)
-                                                        ? 12
-                                                        : Responsive.isTablet(
-                                                                context)
-                                                            ? 16
-                                                            : 18,
-                                                fontWeight: FontWeight.w700,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                    rows: controller.days.map((day) {
-                                      bool isDayActive =
-                                          controller.dayToggles[day]!;
-                                      return DataRow(cells: [
-                                        DataCell(
-                                          Row(
-                                            children: [
-                                              Transform.scale(
-                                                scale: 0.6,
-                                                child: Switch(
-                                                  value: isDayActive,
-                                                  activeColor:
-                                                      AppColors.whiteColor,
-                                                  activeTrackColor:
-                                                      AppColors.primaryColor,
-                                                  inactiveThumbColor:
-                                                      AppColors.primaryColor,
-                                                  onChanged: (value) {
-                                                    controller.dayToggles[day] =
-                                                        value;
-                                                    controller.dayToggles
-                                                        .refresh();
-                                                  },
-                                                ),
-                                              ),
-                                              Text(
-                                                day,
-                                                style: TextStyle(
-                                                  fontSize: Responsive.isMobile(
+                                        child: DataTable(
+                                          columnSpacing: 10,
+                                          columns: [
+                                            DataColumn(
+                                              label: Expanded(
+                                                child: Center(
+                                                  child: Text(
+                                                    'Days',
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                      Responsive.isMobile(context)
+                                                          ? 12
+                                                          : Responsive.isTablet(
                                                           context)
-                                                      ? 12
-                                                      : Responsive.isTablet(
-                                                              context)
                                                           ? 16
                                                           : 18,
-                                                  fontWeight: FontWeight.w500,
+                                                      fontWeight: FontWeight.w700,
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
-                                            ],
-                                          ),
-                                        ),
-                                        ...[
-                                          'Breakfast',
-                                          'Brunch',
-                                          'Lunch',
-                                          'Dinner',
-                                          'Late Night'
-                                        ].map((meal) {
-                                          bool isMealActive = controller
-                                              .cellToggles[day]![meal]!;
-                                          return DataCell(
-                                            isDayActive
-                                                ? Row(
+                                            ),
+                                            DataColumn(
+                                              label: Expanded(
+                                                child: Center(
+                                                  child: Text(
+                                                    'Breakfast',
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                      Responsive.isMobile(context)
+                                                          ? 12
+                                                          : Responsive.isTablet(
+                                                          context)
+                                                          ? 16
+                                                          : 18,
+                                                      fontWeight: FontWeight.w700,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            DataColumn(
+                                              label: Expanded(
+                                                child: Center(
+                                                  child: Text(
+                                                    'Brunch',
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                      Responsive.isMobile(context)
+                                                          ? 12
+                                                          : Responsive.isTablet(
+                                                          context)
+                                                          ? 16
+                                                          : 18,
+                                                      fontWeight: FontWeight.w700,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            DataColumn(
+                                              label: Expanded(
+                                                child: Center(
+                                                  child: Text(
+                                                    'Lunch',
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                      Responsive.isMobile(context)
+                                                          ? 12
+                                                          : Responsive.isTablet(
+                                                          context)
+                                                          ? 16
+                                                          : 18,
+                                                      fontWeight: FontWeight.w700,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            DataColumn(
+                                              label: Expanded(
+                                                child: Center(
+                                                  child: Text(
+                                                    'Dinner',
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                      Responsive.isMobile(context)
+                                                          ? 12
+                                                          : Responsive.isTablet(
+                                                          context)
+                                                          ? 16
+                                                          : 18,
+                                                      fontWeight: FontWeight.w700,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            DataColumn(
+                                              label: Expanded(
+                                                child: Center(
+                                                  child: Text(
+                                                    'Late Night',
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                      Responsive.isMobile(context)
+                                                          ? 12
+                                                          : Responsive.isTablet(
+                                                          context)
+                                                          ? 16
+                                                          : 18,
+                                                      fontWeight: FontWeight.w700,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                          rows: controller.days.map((day) {
+                                            bool isDayActive =
+                                            controller.dayToggles[day]!;
+                                            return DataRow(cells: [
+                                              DataCell(
+                                                Row(
+                                                  children: [
+                                                    Transform.scale(
+                                                      scale: 0.6,
+                                                      child: Switch(
+                                                        value: isDayActive,
+                                                        activeColor:
+                                                        AppColors.whiteColor,
+                                                        activeTrackColor:
+                                                        AppColors.primaryColor,
+                                                        inactiveThumbColor:
+                                                        AppColors.primaryColor,
+                                                        onChanged: (value) {
+                                                          controller.dayToggles[day] =
+                                                              value;
+                                                          controller.dayToggles
+                                                              .refresh();
+                                                        },
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      day,
+                                                      style: TextStyle(
+                                                        fontSize: Responsive.isMobile(
+                                                            context)
+                                                            ? 12
+                                                            : Responsive.isTablet(
+                                                            context)
+                                                            ? 16
+                                                            : 18,
+                                                        fontWeight: FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              ...[
+                                                'Breakfast',
+                                                'Brunch',
+                                                'Lunch',
+                                                'Dinner',
+                                                'Late Night'
+                                              ].map((meal) {
+                                                bool isMealActive = controller
+                                                    .cellToggles[day]![meal]!;
+                                                return DataCell(
+                                                  isDayActive
+                                                      ? Row(
                                                     children: [
                                                       Expanded(
                                                         child: InkWell(
                                                           onTap: isMealActive
                                                               ? () async {
-                                                                  await controller
-                                                                      .selectTime(
-                                                                          context,
-                                                                          day,
-                                                                          meal,
-                                                                          'From');
-                                                                  await controller
-                                                                      .selectTime(
-                                                                          context,
-                                                                          day,
-                                                                          meal,
-                                                                          'To');
-                                                                }
+                                                            await controller
+                                                                .selectTime(
+                                                                context,
+                                                                day,
+                                                                meal,
+                                                                'From');
+                                                            await controller
+                                                                .selectTime(
+                                                                context,
+                                                                day,
+                                                                meal,
+                                                                'To');
+                                                          }
                                                               : null,
                                                           child: Container(
                                                             height: 40,
@@ -529,35 +632,35 @@ class EditOperatingHourScreen1 extends StatelessWidget {
                                                             alignment: Alignment
                                                                 .center,
                                                             decoration:
-                                                                BoxDecoration(
+                                                            BoxDecoration(
                                                               border: Border.all(
                                                                   color: AppColors
                                                                       .darkGrey
                                                                       .withOpacity(
-                                                                          .1)),
+                                                                      .1)),
                                                               color: isMealActive
                                                                   ? AppColors
-                                                                      .primaryColor
+                                                                  .primaryColor
                                                                   : AppColors
-                                                                      .darkGrey
-                                                                      .withOpacity(
-                                                                          .3),
+                                                                  .darkGrey
+                                                                  .withOpacity(
+                                                                  .3),
                                                               borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          5),
+                                                              BorderRadius
+                                                                  .circular(
+                                                                  5),
                                                             ),
                                                             child: Text(
                                                               isMealActive
                                                                   ? (controller
-                                                                              .mealTimes[day]![meal]![
-                                                                                  'From']!
-                                                                              .isEmpty &&
-                                                                          controller
-                                                                              .mealTimes[day]![meal]!['To']!
-                                                                              .isEmpty
-                                                                      ? 'Set Time'
-                                                                      : '${controller.mealTimes[day]![meal]!['From']} - ${controller.mealTimes[day]![meal]!['To']}')
+                                                                  .mealTimes[day]![meal]![
+                                                              'From']!
+                                                                  .isEmpty &&
+                                                                  controller
+                                                                      .mealTimes[day]![meal]!['To']!
+                                                                      .isEmpty
+                                                                  ? 'Set Time'
+                                                                  : '${controller.mealTimes[day]![meal]!['From']} - ${controller.mealTimes[day]![meal]!['To']}')
                                                                   : 'Closed',
                                                               style: TextStyle(
                                                                   color: AppColors
@@ -576,50 +679,50 @@ class EditOperatingHourScreen1 extends StatelessWidget {
                                                             ],
                                                             onPressed: (index) {
                                                               controller.cellToggles[
-                                                                          day]![
-                                                                      meal] =
+                                                              day]![
+                                                              meal] =
                                                                   index == 0;
                                                               controller
                                                                   .cellToggles
                                                                   .refresh();
                                                             },
                                                             direction:
-                                                                Axis.vertical,
+                                                            Axis.vertical,
                                                             children: [
                                                               Container(
                                                                 width: 30,
                                                                 height: 20,
                                                                 decoration:
-                                                                    BoxDecoration(
+                                                                BoxDecoration(
                                                                   borderRadius:
-                                                                      BorderRadius
-                                                                          .only(
+                                                                  BorderRadius
+                                                                      .only(
                                                                     topLeft: Radius
                                                                         .circular(
-                                                                            6),
+                                                                        6),
                                                                     topRight: Radius
                                                                         .circular(
-                                                                            6),
+                                                                        6),
                                                                   ),
                                                                   color: isMealActive
                                                                       ? AppColors
-                                                                          .primaryColor
+                                                                      .primaryColor
                                                                       : AppColors
-                                                                          .darkGrey
-                                                                          .withOpacity(
-                                                                              .3),
+                                                                      .darkGrey
+                                                                      .withOpacity(
+                                                                      .3),
                                                                 ),
                                                                 alignment:
-                                                                    Alignment
-                                                                        .center,
+                                                                Alignment
+                                                                    .center,
                                                                 child: Text(
                                                                   'On',
                                                                   style:
-                                                                      TextStyle(
+                                                                  TextStyle(
                                                                     color: Colors
                                                                         .white,
                                                                     fontSize:
-                                                                        12,
+                                                                    12,
                                                                   ),
                                                                 ),
                                                               ),
@@ -627,46 +730,46 @@ class EditOperatingHourScreen1 extends StatelessWidget {
                                                                 width: 30,
                                                                 height: 20,
                                                                 decoration:
-                                                                    BoxDecoration(
+                                                                BoxDecoration(
                                                                   borderRadius:
-                                                                      BorderRadius
-                                                                          .only(
+                                                                  BorderRadius
+                                                                      .only(
                                                                     bottomLeft:
-                                                                        Radius.circular(
-                                                                            6),
+                                                                    Radius.circular(
+                                                                        6),
                                                                     bottomRight:
-                                                                        Radius.circular(
-                                                                            6),
+                                                                    Radius.circular(
+                                                                        6),
                                                                   ),
                                                                   color: !isMealActive
                                                                       ? AppColors
-                                                                          .primaryColor
+                                                                      .primaryColor
                                                                       : AppColors
-                                                                          .darkGrey
-                                                                          .withOpacity(
-                                                                              .3),
+                                                                      .darkGrey
+                                                                      .withOpacity(
+                                                                      .3),
                                                                 ),
                                                                 alignment:
-                                                                    Alignment
-                                                                        .center,
+                                                                Alignment
+                                                                    .center,
                                                                 child: Text(
                                                                   'Off',
                                                                   style:
-                                                                      TextStyle(
+                                                                  TextStyle(
                                                                     color: Colors
                                                                         .white,
                                                                     fontSize:
-                                                                        12,
+                                                                    12,
                                                                   ),
                                                                 ),
                                                               ),
                                                             ],
                                                             constraints:
-                                                                BoxConstraints(
-                                                                    minWidth:
-                                                                        30,
-                                                                    minHeight:
-                                                                        20),
+                                                            BoxConstraints(
+                                                                minWidth:
+                                                                30,
+                                                                minHeight:
+                                                                20),
                                                             borderColor: Colors
                                                                 .transparent, // No outer border
                                                           ),
@@ -674,15 +777,15 @@ class EditOperatingHourScreen1 extends StatelessWidget {
                                                       ),
                                                     ],
                                                   )
-                                                : Container(
+                                                      : Container(
                                                     height: 40,
                                                     alignment: Alignment.center,
                                                     decoration: BoxDecoration(
                                                       color: AppColors.darkGrey
                                                           .withOpacity(.3),
                                                       borderRadius:
-                                                          BorderRadius.circular(
-                                                              5),
+                                                      BorderRadius.circular(
+                                                          5),
                                                     ),
                                                     child: Text(
                                                       'Closed',
@@ -690,70 +793,70 @@ class EditOperatingHourScreen1 extends StatelessWidget {
                                                         color: AppColors
                                                             .whiteColor,
                                                         fontWeight:
-                                                            FontWeight.bold,
+                                                        FontWeight.bold,
                                                       ),
                                                     ),
                                                   ),
-                                          );
-                                        }).toList(),
-                                      ]);
-                                    }).toList(),
+                                                );
+                                              }).toList(),
+                                            ]);
+                                          }).toList(),
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        RichText(
-                          text: TextSpan(
-                            text: 'About ',
-                            style: TextStyle(
-                              fontSize: Responsive.isMobile(context)
-                                  ? 16
-                                  : Responsive.isTablet(context)
-                                      ? 18
-                                      : 24,
-                              fontWeight: FontWeight.w700,
-                            ),
-                            children: [
-                              TextSpan(
-                                text: '*', // Add the red asterisk
-                                style: TextStyle(
-                                  fontSize: Responsive.isMobile(context)
-                                      ? 16
-                                      : Responsive.isTablet(context)
-                                          ? 18
-                                          : 24,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.red,
+                              SizedBox(height: 20),
+                              RichText(
+                                text: TextSpan(
+                                  text: 'About ',
+                                  style: TextStyle(
+                                    fontSize: Responsive.isMobile(context)
+                                        ? 16
+                                        : Responsive.isTablet(context)
+                                        ? 18
+                                        : 24,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                      text: '*', // Add the red asterisk
+                                      style: TextStyle(
+                                        fontSize: Responsive.isMobile(context)
+                                            ? 16
+                                            : Responsive.isTablet(context)
+                                            ? 18
+                                            : 24,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColors.red,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 60.0),
-                          child: CustomTextField(
-                            controller: controller.aboutTextController,
-                            borderColor: AppColors.darkGrey.withOpacity(.1),
-                            width:
-                                isLargeScreen ? Get.width * .5 : Get.width * .9,
-                            maxLine: 6,
-                            borderRadius: 10,
-                            hintText: "Add Text",
-                            fillColor: AppColors.whiteColor,
-                            cursorColor: AppColors.primaryColor,
-                            inputStyle:
-                                const TextStyle(color: AppColors.blackColor),
-                            hintStyle:
-                                const TextStyle(color: AppColors.blackColor),
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        Obx(() => controller.aboutError.value.isNotEmpty
-                            ? Padding(
+                              SizedBox(height: 10),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 60.0),
+                                child: CustomTextField(
+                                  controller: controller.aboutTextController,
+                                  borderColor: AppColors.darkGrey.withOpacity(.1),
+                                  width:
+                                  isLargeScreen ? Get.width * .5 : Get.width * .9,
+                                  maxLine: 6,
+                                  borderRadius: 10,
+                                  hintText: "Add Text",
+                                  fillColor: AppColors.whiteColor,
+                                  cursorColor: AppColors.primaryColor,
+                                  inputStyle:
+                                  const TextStyle(color: AppColors.blackColor),
+                                  hintStyle:
+                                  const TextStyle(color: AppColors.blackColor),
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              Obx(() => controller.aboutError.value.isNotEmpty
+                                  ? Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 60.0),
                                 child: Text(
@@ -762,39 +865,41 @@ class EditOperatingHourScreen1 extends StatelessWidget {
                                       color: Colors.red, fontSize: 12),
                                 ),
                               )
-                            : const SizedBox.shrink()),
-                        SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CustomButton(
-                              title: "Update",
-                              textStyle: TextStyle(
-                                color: AppColors.whiteColor,
-                                fontSize:
-                                    Responsive.isMobile(context) ? 16 : 18,
-                                fontWeight: FontWeight.w600,
+                                  : const SizedBox.shrink()),
+                              SizedBox(height: 20),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CustomButton(
+                                    title: "Update",
+                                    textStyle: TextStyle(
+                                      color: AppColors.whiteColor,
+                                      fontSize:
+                                      Responsive.isMobile(context) ? 16 : 18,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    backgroundColor: AppColors.primaryColor,
+                                    borderRadius: 8,
+                                    width: Responsive.isMobile(context)
+                                        ? Get.width * 0.4
+                                        : Get.width * 0.2,
+                                    onPressed: () {
+                                      controller.saveAllOperatingHours();
+                                      // Get.snackbar('Update',
+                                      //     'Your data is successfully updated.');
+                                      // Get.to(() => RestaurantDetailScreen(
+                                      //   isFromButtonClick: true,
+                                      // ));
+                                    },
+                                  ),
+                                ],
                               ),
-                              backgroundColor: AppColors.primaryColor,
-                              borderRadius: 8,
-                              width: Responsive.isMobile(context)
-                                  ? Get.width * 0.4
-                                  : Get.width * 0.2,
-                              onPressed: () {
-                                Get.snackbar('Update',
-                                    'Your data is successfully updated.');
-                                Get.to(() => RestaurantDetailScreen(
-                                      isFromButtonClick: true,
-                                    ));
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },)
             ],
           ),
         ),

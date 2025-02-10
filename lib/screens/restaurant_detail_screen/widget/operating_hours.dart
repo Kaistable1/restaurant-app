@@ -3,8 +3,11 @@ import 'package:get/get.dart';
 
 import '../../../../constants/colors.dart';
 import '../../../../utils/responsive.dart';
+import '../../../universal_models/restaurant_model.dart';
+import '../controller/restaurant_detail_controller.dart';
 
-class OperatingHours extends StatelessWidget {
+class OperatingHoursClass extends StatelessWidget {
+  final controller = Get.put(RestaurantDetailController());
   @override
   Widget build(BuildContext context) {
     // Determine responsive font size
@@ -69,7 +72,8 @@ class OperatingHours extends StatelessWidget {
       SizedBox(width: 8), // Space between columns
       _buildHeaderCell('Lunch', fontSize),
       SizedBox(width: 8), // Space between columns
-      _buildHeaderCell('Dinner', fontSize),
+      _buildHeaderCell('Dinner', fontSize),      SizedBox(width: 8), // Space between columns
+      _buildHeaderCell('Late Night', fontSize),
     ];
   }
 
@@ -90,84 +94,88 @@ class OperatingHours extends StatelessWidget {
   }
 
   List<Widget> _buildDataRows(double fontSize) {
-    final data = [
-      [
-        'Monday',
-        '09:00 am - 11:00 am',
-        '12:00 pm - 02:00 pm',
-        '12:00 pm - 02:00 pm',
-        '03:00 pm - 06:00 pm'
-      ],
-      [
-        'Tuesday',
-        '09:00 am - 11:00 am',
-        '12:00 pm - 02:00 pm',
-        '12:00 pm - 02:00 pm',
-        '03:00 pm - 06:00 pm'
-      ],
-      [
-        'Wednesday',
-        '09:00 am - 11:00 am',
-        '12:00 pm - 02:00 pm',
-        '12:00 pm - 02:00 pm',
-        '03:00 pm - 06:00 pm'
-      ],
-      [
-        'Thursday',
-        'Closed',
-        'Closed',
-        '09:00 am - 11:00 am',
-        '12:00 pm - 02:00 pm'
-      ],
-      ['Friday', 'Closed', 'Closed', 'Closed', '12:00 pm - 02:00 pm'],
-      ['Saturday', 'Closed', 'Closed', 'Closed', 'Closed'],
-      ['Sunday', 'Closed', 'Closed', 'Closed', 'Closed'],
+    final controller = Get.find<RestaurantDetailController>();
+    List<String> days = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday'
     ];
 
-    return data.map((row) {
+    return days.map((day) {
+      OperatingHours? dayData = controller.operatingHours[day];
+
       return Column(
         children: [
           Row(
             children: [
-              _buildDataCell(row[0], fontSize,
-                  flex: 1, isDay: true), // Reduced flex for Days column
-              SizedBox(width: 8), // Space between columns
-              _buildDataCell(row[1], fontSize),
-              SizedBox(width: 8), // Space between columns
-              _buildDataCell(row[2], fontSize),
-              SizedBox(width: 8), // Space between columns
-              _buildDataCell(row[3], fontSize),
-              SizedBox(width: 8), // Space between columns
-              _buildDataCell(row[4], fontSize),
+              _buildDataCell(day, fontSize, flex: 1, isDay: true),
+              SizedBox(width: 8),
+              _buildTimeSlotCell(dayData?.timeSlots['Breakfast'], fontSize),
+              SizedBox(width: 8),
+              _buildTimeSlotCell(dayData?.timeSlots['Brunch'], fontSize),
+              SizedBox(width: 8),
+              _buildTimeSlotCell(dayData?.timeSlots['Lunch'], fontSize),
+              SizedBox(width: 8),
+              _buildTimeSlotCell(dayData?.timeSlots['Dinner'], fontSize),
+              SizedBox(width: 8),
+              _buildTimeSlotCell(dayData?.timeSlots['Late Night'], fontSize),
             ],
           ),
-          const Divider(thickness: 1), // Divider between rows
+          const Divider(thickness: 1),
         ],
       );
     }).toList();
   }
+}
 
-  Widget _buildDataCell(String text, double fontSize,
-      {int flex = 1, bool isDay = false}) {
-    Color availableColor = const Color(0xFF4ECCA3).withOpacity(.9);
-    Color closedColor = const Color(0xFF98A2B3).withOpacity(.8);
+Widget _buildDataCell(String text, double fontSize,
+    {int flex = 1, bool isDay = false}) {
+  Color availableColor = const Color(0xFF4ECCA3).withOpacity(.9);
+  Color closedColor = const Color(0xFF98A2B3).withOpacity(.8);
 
+  return Expanded(
+    flex: flex,
+    child: Container(
+      decoration: BoxDecoration(
+        color: isDay
+            ? Colors.transparent
+            : (text == 'Closed' ? closedColor : availableColor),
+        borderRadius: BorderRadius.circular(3),
+      ),
+      padding: EdgeInsets.symmetric(vertical: isDay ? 0 : 8),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: fontSize,
+          color: isDay ? const Color(0xFF555555) : Colors.white,
+          fontWeight: isDay ? FontWeight.w500 : FontWeight.w700,
+          fontFamily: "Nunito-Regular",
+        ),
+        textAlign: TextAlign.center,
+      ),
+    ),
+  );
+}
+
+Widget _buildTimeSlotCell(TimeSlot? slot, double fontSize) {
+  if (slot == null || slot.isClosed) {
     return Expanded(
-      flex: flex,
       child: Container(
         decoration: BoxDecoration(
-          color: isDay
-              ? Colors.transparent
-              : (text == 'Closed' ? closedColor : availableColor),
+          color: Color(0xFF98A2B3).withOpacity(.8),
           borderRadius: BorderRadius.circular(3),
         ),
-        padding: EdgeInsets.symmetric(vertical: isDay ? 0 : 8),
+        padding: EdgeInsets.symmetric(vertical: 8),
         child: Text(
-          text,
+          'Closed',
           style: TextStyle(
             fontSize: fontSize,
-            color: isDay ? const Color(0xFF555555) : Colors.white,
-            fontWeight: isDay ? FontWeight.w500 : FontWeight.w700,
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
             fontFamily: "Nunito-Regular",
           ),
           textAlign: TextAlign.center,
@@ -175,4 +183,24 @@ class OperatingHours extends StatelessWidget {
       ),
     );
   }
+
+  return Expanded(
+    child: Container(
+      decoration: BoxDecoration(
+        color: Color(0xFF4ECCA3).withOpacity(.9),
+        borderRadius: BorderRadius.circular(3),
+      ),
+      padding: EdgeInsets.symmetric(vertical: 8),
+      child: Text(
+        '${slot.startTime} - ${slot.endTime}',
+        style: TextStyle(
+          fontSize: fontSize,
+          color: Colors.white,
+          fontWeight: FontWeight.w700,
+          fontFamily: "Nunito-Regular",
+        ),
+        textAlign: TextAlign.center,
+      ),
+    ),
+  );
 }

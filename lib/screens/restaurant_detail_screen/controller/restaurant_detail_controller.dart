@@ -1,18 +1,155 @@
-
 import 'dart:async';
 import 'dart:html';
 import 'dart:typed_data';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker_web/image_picker_web.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:path/path.dart' as Path;
+import 'package:restaurant_web_app/universal_models/restaurant_model.dart';
 import 'package:restaurant_web_app/widgets/loading_dialog.dart';
+import '../../../main.dart';
+import '../../../universal_models/discount_model.dart';
 
 class RestaurantDetailController extends GetxController {
+  ///backend
+  var selectedIndexTab = ''.obs;
+  // var selectedIndex = 0.obs;
+  // void changeIndex(int index) {
+  //   selectedIndexTab.value = index;
+  // }
 
+  var operatingHours = <String, OperatingHours>{}.obs;
+  var isLoading = true.obs;
+  // var discountModels = <DiscountModel>[].obs;
+  // var discountModels2 = <DiscountModel>[].obs;
+  var selectedIndex = 0.obs;
+  var selectedCategory = Rxn<CategoryModel>(); // Observable category model
+
+  void selectCategory(int index, CategoryModel category) {
+    selectedIndex.value = index;
+    selectedCategory.value = category;
+  }
+
+  @override
+  void onInit() async {
+    super.onInit();
+    fetchOperatingHours();
+    await fetchMenuData();
+    await fetchMenuDataSpecial();
+    if(menuItems.isNotEmpty){
+      selectCategory(0, menuItems[0]);
+
+    }
+    if(menuItemsSpecial.isNotEmpty){
+      selectCategory2(0, menuItemsSpecial[0]);
+
+    }
+  }
+
+  ///getting Percentage Off data
+
+  var menuItems =
+      <CategoryModel>[].obs; // Define menuItems as an observable list
+  Future<void> fetchMenuData() async {
+    try {
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection('restaurants')
+          .doc(auth.currentUser!.uid)
+          .collection('MealMenu')
+          .where('discountType', isEqualTo: 'Percentage Off')
+          .get();
+      print(snapshot.docs.length);
+      print('ist');
+      if (snapshot.docs.isNotEmpty) {
+        List<CategoryModel> menuList = snapshot.docs
+            .map((doc) =>
+                DiscountModel.fromJson(doc.data() as Map<String, dynamic>).menu)
+            .expand((menu) => menu) // Flattening the list of menus
+            .toList();
+
+        menuItems.value =
+            menuList; // Assuming you have an observable list like RxList<CategoryModel>
+      }
+    } catch (e) {
+      print("Error fetching menu data: $e");
+    }
+  }
+
+  ///getting Happy Hour Special data
+  var menuItemsSpecial =
+      <CategoryModel>[].obs; // Define menuItems as an observable list
+  Future<void> fetchMenuDataSpecial() async {
+    try {
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection('restaurants')
+          .doc(auth.currentUser!.uid)
+          .collection('MealMenu')
+          .where('discountType', isEqualTo: 'Happy Hour Special')
+          .get();
+      print(snapshot.docs.length);
+      print('aefdjfd');
+      if (snapshot.docs.isNotEmpty) {
+        List<CategoryModel> menuList = snapshot.docs
+            .map((doc) =>
+                DiscountModel.fromJson(doc.data() as Map<String, dynamic>).menu)
+            .expand((menu) => menu) // Flattening the list of menus
+            .toList();
+
+        menuItemsSpecial.value =
+            menuList; // Assuming you have an observable list like RxList<CategoryModel>
+      }
+    } catch (e) {
+      print("Error fetching menu data: $e");
+    }
+  }
+
+  var selectedIndexTabSpecial = 0.obs;
+
+  void changeIndexSpecial(int index) {
+    selectedIndexSpecial.value = index;
+  }
+
+  void selectCategory2(int index, CategoryModel category) {
+    selectedIndexSpecial.value = index;
+    selectedCategorySpecial.value = category;
+  }
+
+  var selectedCategorySpecial =
+      Rxn<CategoryModel>(); // Observable category model
+
+  var selectedIndexSpecial = 0.obs;
+  Future<void> fetchOperatingHours() async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+      // Get the operatingHours sub-collection
+      QuerySnapshot snapshot = await firestore
+          .collection('restaurants')
+          .doc(userId)
+          .collection('operatingHours')
+          .get();
+
+      Map<String, OperatingHours> fetchedData = {};
+
+      for (var doc in snapshot.docs) {
+        fetchedData[doc.id] =
+            OperatingHours.fromMap(doc.data() as Map<String, dynamic>);
+      }
+
+      operatingHours.assignAll(fetchedData);
+    } catch (e) {
+      print("Error fetching operating hours: $e");
+    } finally {
+      isLoading(false);
+    }
+  }
+
+  ///frontend
   ///get image from gallery
   String mediaType = '';
   Future<Uint8List?> getImage() async {
@@ -22,7 +159,7 @@ class RestaurantDetailController extends GetxController {
 
       String? mimeType = mime(Path.basename(mediaData!.fileName!));
       File mediaFile =
-      File(mediaData.data!, mediaData.fileName!, {'type': mimeType});
+          File(mediaData.data!, mediaData.fileName!, {'type': mimeType});
 
       if (mediaFile.name.isNotEmpty) {
         // Get.back();

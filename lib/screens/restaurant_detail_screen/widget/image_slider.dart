@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:restaurant_web_app/universal_models/restaurant_model.dart';
 
 import '../../../../utils/responsive.dart';
 
 class ImageSlider extends StatefulWidget {
-  const ImageSlider({Key? key}) : super(key: key);
-
+  ImageSlider({Key? key, required this.resModel}) : super(key: key);
+  RestaurantModel resModel;
   @override
   _ImageSliderState createState() => _ImageSliderState();
 }
@@ -51,13 +52,13 @@ class _ImageSliderState extends State<ImageSlider> {
                     _currentIndex = index;
                   });
                 },
-                itemCount: _images.length,
+                itemCount: widget.resModel.resImages.length,
                 itemBuilder: (context, index) {
                   return Container(
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: AssetImage(_images[index]),
-                        fit: BoxFit.cover,
+                        image: NetworkImage(widget.resModel.resImages[index].value),
+                        fit: BoxFit.fitHeight,
                       ),
                       borderRadius: BorderRadius.circular(5),
                     ),

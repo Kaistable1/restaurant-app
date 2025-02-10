@@ -1,18 +1,8 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
-
 class EditRestaurantController extends GetxController {
-
-  final TextEditingController fromTimeHourController = TextEditingController();
-  final TextEditingController fromTimeMintController = TextEditingController();
-  final TextEditingController offerController = TextEditingController();
-  final TextEditingController toTimeMintController = TextEditingController();
-  final TextEditingController toTimeHourController = TextEditingController();
-
   final List<LocationListModel> circleItems3 = [
     LocationListModel(
       timeText: '15:00 to 15:00',
@@ -26,11 +16,8 @@ class EditRestaurantController extends GetxController {
       timeText: '14:00 to 14:00',
       persentText: '20% off',
     ),
-
   ];
 }
-
-
 
 class LocationListModel {
   final String timeText;
@@ -40,6 +27,7 @@ class LocationListModel {
     required this.persentText,
   });
 }
+
 class ItemController extends GetxController {
   var items = <Map<String, dynamic>>[].obs;
   var images = <XFile>[].obs;

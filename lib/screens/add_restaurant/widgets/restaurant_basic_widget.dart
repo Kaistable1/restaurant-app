@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:restaurant_web_app/constants/colors.dart';
 import 'package:restaurant_web_app/screens/restaurant_detail_screen/controller/restaurant_detail_controller.dart';
 import 'package:restaurant_web_app/utils/responsive.dart';
+import 'package:restaurant_web_app/widgets/global_functions.dart';
 import 'package:restaurant_web_app/widgets/text_field.dart';
 
 import '../../../widgets/round_button.dart';
@@ -35,29 +36,7 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
     'Spain',
   ];
   String? selectedValue;
-  Uint8List? _imageBytes; // For the logo image
-  Uint8List? _addedImageBytes;
-  // Function to pick an image using File Picker
-  Future<void> _pickImage({bool isLogo = false}) async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
-      allowCompression: true,
-    );
 
-    if (result != null) {
-      final file = result.files.single;
-
-      setState(() {
-        if (isLogo) {
-          _imageBytes = file.bytes; // Set the logo image bytes
-        } else {
-          _addedImageBytes = file.bytes; // Set the added image bytes
-        }
-      });
-    } else {
-      print("No file selected");
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +68,8 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
                   iconSize: Responsive.isMobile(context)
                       ? 14
                       : (Responsive.isTablet(context) ? 16 : 18),
-                  icon: const Icon(Icons.arrow_back, color: AppColors.primaryColor),
+                  icon: const Icon(Icons.arrow_back,
+                      color: AppColors.primaryColor),
                   onPressed: () {
                     Get.back();
                   },
@@ -204,90 +184,122 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
+                    Padding(
+                      padding: const EdgeInsets.only(right: 24),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
                           children: [
-                            // Image 1
-                            Container(
-                              height: widget.isDesktop
-                                  ? 160
-                                  : widget.isTablet
-                                      ? 150
-                                      : 100,
-                              width: widget.isDesktop
-                                  ? 160
-                                  : widget.isTablet
-                                      ? 150
-                                      : 100,
-                              decoration: BoxDecoration(
-                                image: const DecorationImage(
-                                  image: AssetImage('assets/images/img3.png'),
-                                  fit: BoxFit.cover,
-                                ),
-                                borderRadius: BorderRadius.circular(10),
+                            Obx(
+                              () => Wrap(
+                                spacing: 8,
+                                children: restaurantController
+                                    .restaurantModel.resImageMemory
+                                    .map((image) {
+                                  return Stack(
+                                    clipBehavior: Clip
+                                        .none, // Allows the cross icon to overflow if needed
+                                    children: [
+                                      // Circular Image with Border
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: Container(
+                                          width: Responsive.isDesktop(context)
+                                              ? 160
+                                              : 150, // Adjust the size as needed
+                                          height: Responsive.isDesktop(context)
+                                              ? 160
+                                              : 110,
+
+                                          child: Image.memory(
+                                            image,
+
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+
+                                      // Close Icon in Top Right
+                                      Positioned(
+                                        top: 8, // Adjust position as needed
+                                        right: 10,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            restaurantController
+                                                .restaurantModel.resImageMemory
+                                                .remove(image);
+                                          },
+                                          child: Container(
+                                            width: 19,
+                                            height: 19,
+                                            decoration: const BoxDecoration(
+                                              color: AppColors.darkGrey,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: const Icon(
+                                              Icons.close,
+                                              size: 10,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }).toList(),
                               ),
                             ),
-                            const SizedBox(width: 16),
-                            // Image 2
-                            Container(
-                              height: widget.isDesktop
-                                  ? 160
-                                  : widget.isTablet
-                                      ? 150
-                                      : 100,
-                              width: widget.isDesktop
-                                  ? 160
-                                  : widget.isTablet
-                                      ? 150
-                                      : 100,
-                              decoration: BoxDecoration(
-                                image: const DecorationImage(
-                                  image: AssetImage('assets/images/img4.png'),
-                                  fit: BoxFit.cover,
-                                ),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            // Add New Image
-                            GestureDetector(
-                              onTap: () => _pickImage(isLogo: false),
-                              child: Container(
-                                height: widget.isDesktop
-                                    ? 160
-                                    : widget.isTablet
-                                        ? 150
-                                        : 100,
-                                width: widget.isDesktop
-                                    ? 160
-                                    : widget.isTablet
-                                        ? 150
-                                        : 100,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: Colors.grey.withOpacity(.2)),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: _addedImageBytes == null
-                                    ? Icon(Icons.add,
-                                        color: AppColors.primaryColor,
-                                        size: widget.isDesktop
-                                            ? 40
-                                            : widget.isTablet
-                                                ? 30
-                                                : 28)
-                                    : Image.memory(_addedImageBytes!,
-                                        fit: BoxFit.cover),
-                              ),
+                            Row(
+                              children: [
+                                GestureDetector(
+                                    onTap: () async {
+                                      Uint8List? selectedImage =
+                                          await getImage();
+
+                                      if (selectedImage != null &&
+                                          selectedImage.isNotEmpty) {
+                                        restaurantController
+                                            .restaurantModel.resImageMemory
+                                            .add(selectedImage);
+                                        // print(
+                                        //     '${controller.listingModel!.listingImageMemories.length}++++++++++++++++++ gallery');
+                                      }
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 8.0),
+                                      child: Container(
+                                          height: widget.isDesktop
+                                              ? 160
+                                              : widget.isTablet
+                                                  ? 150
+                                                  : 100,
+                                          width: widget.isDesktop
+                                              ? 160
+                                              : widget.isTablet
+                                                  ? 150
+                                                  : 100,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color:
+                                                    Colors.grey.withOpacity(.2)),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          child: Icon(Icons.add,
+                                              color: AppColors.primaryColor,
+                                              size: widget.isDesktop
+                                                  ? 40
+                                                  : widget.isTablet
+                                                      ? 30
+                                                      : 28)),
+                                    )),
+                              ],
                             ),
                           ],
                         ),
-                        const SizedBox(height: 16),
-                      ],
+                      ),
                     ),
+
                     const SizedBox(height: 24),
 
                     // Logo Section
@@ -338,9 +350,6 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
                                   .logoImageMemory.value.isNotEmpty
                               ? ClipRRect(
                                   borderRadius: BorderRadius.circular(12),
-                                  // Border.all(
-                                  //    color: Colors.grey.withOpacity(.1)),
-
                                   child: Image.memory(
                                     height: widget.isDesktop
                                         ? 150
@@ -626,7 +635,9 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
                               ? Get.width * 0.1
                               : Get.width * 0.2,
                           onPressed: () {
+
                             restaurantController.saveNextScreen();
+                            // restaurantController.saveNextScreenTemporary();
                           },
                         ),
                         const SizedBox(
@@ -694,27 +705,28 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
                     ),
                     const SizedBox(height: 8),
                     CustomTextField(
-                      controller: restaurantController.phoneController,
+                      controller:
+                          restaurantController.restaurantModel.phoneNumber,
                       borderColor: AppColors.darkGrey.withOpacity(.1),
                       width: 516,
                       borderRadius: 8,
-                      prefixIcon: Padding(
-                        padding: const EdgeInsets.all(2.0),
-                        child: Container(
-                          width: 20,
-                          height: 45,
-                          decoration: BoxDecoration(
-                            color: AppColors.darkGrey.withOpacity(.1),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              '+1',
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                      ),
+                      // prefixIcon: Padding(
+                      //   padding: const EdgeInsets.all(2.0),
+                      //   child: Container(
+                      //     width: 20,
+                      //     height: 45,
+                      //     decoration: BoxDecoration(
+                      //       color: AppColors.darkGrey.withOpacity(.1),
+                      //     ),
+                      //     child: const Center(
+                      //       child: Text(
+                      //         '+1',
+                      //         style: TextStyle(
+                      //             fontSize: 16, fontWeight: FontWeight.bold),
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
                       hintText: " Phone no",
                       fillColor: AppColors.whiteColor,
                       cursorColor: AppColors.primaryColor,
@@ -780,6 +792,62 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
                     const SizedBox(height: 8),
                     RichText(
                       text: TextSpan(
+                        text: 'Country ',
+                        style: TextStyle(
+                          fontSize: Responsive.isMobile(context)
+                              ? 16
+                              : Responsive.isTablet(context)
+                              ? 18
+                              : 24,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: '*', // Add the red asterisk
+                            style: TextStyle(
+                              fontSize: Responsive.isMobile(
+                                  context)
+                                  ? 16
+                                  : Responsive.isTablet(context)
+                                  ? 18
+                                  : 24,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.red,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    CustomTextField(
+                      controller: restaurantController
+                          .restaurantModel.country,
+                      borderColor:
+                      AppColors.darkGrey.withOpacity(.1),
+                      width: 516,
+                      borderRadius: 8,
+                      hintText: "Country",
+                      fillColor: AppColors.whiteColor,
+                      cursorColor: AppColors.primaryColor,
+                      inputStyle: const TextStyle(
+                          color: AppColors.blackColor),
+                      hintStyle: const TextStyle(
+                          color: AppColors.blackColor),
+                    ),
+                    const SizedBox(height: 5),
+                    Obx(() => restaurantController
+                        .countryError.value.isNotEmpty
+                        ? Text(
+                      restaurantController
+                          .countryError.value,
+                      style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 12),
+                    )
+                        : const SizedBox.shrink()),
+                    const SizedBox(height: 8),
+                    RichText(
+                      text: TextSpan(
                         text: 'Zip code ',
                         style: TextStyle(
                           fontSize: Responsive.isMobile(context)
@@ -826,107 +894,54 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
                           )
                         : const SizedBox.shrink()),
                     const SizedBox(height: 8),
-                    // Text(
-                    //   'Cuisine',
-                    //   style: TextStyle(
-                    //     fontSize: Responsive.isMobile(context)
-                    //         ? 16
-                    //         : Responsive.isTablet(context)
-                    //             ? 18
-                    //             : 24,
-                    //     fontWeight: FontWeight.w600,
-                    //   ),
-                    // ),
-                    // SizedBox(height: 8),
-                    //
-                    // Row(
-                    //   children: [
-                    //     CustomTextField(
-                    //       borderColor: AppColors.darkGrey
-                    //           .withOpacity(.1),
-                    //       width: Responsive.isMobile(context)
-                    //           ? screenWidth * 0.28
-                    //           : screenWidth * 0.3,
-                    //       borderRadius: 8,
-                    //       controller: restaurantController
-                    //           .cuisineController,
-                    //       hintText: "Cuisines",
-                    //       fillColor: AppColors.whiteColor,
-                    //       cursorColor: AppColors.primaryColor,
-                    //       inputStyle: const TextStyle(
-                    //           color: AppColors.blackColor),
-                    //       hintStyle: const TextStyle(
-                    //           color: AppColors.blackColor),
-                    //     ),
-                    //     SizedBox(width: 10),
-                    //     InkWell(
-                    //       onTap: () {
-                    //         if (restaurantController
-                    //             .cuisineController
-                    //             .text
-                    //             .isNotEmpty) {
-                    //           setState(() {
-                    //             restaurantController
-                    //                 .addedCuisines
-                    //                 .add(restaurantController
-                    //                     .cuisineController
-                    //                     .text);
-                    //             restaurantController
-                    //                 .cuisineController
-                    //                 .clear();
-                    //           });
-                    //           restaurantController
-                    //               .cusineError.value = '';
-                    //         }
-                    //       },
-                    //       child: Container(
-                    //         width: 24,
-                    //         height: 24,
-                    //         decoration: BoxDecoration(
-                    //           border: Border.all(
-                    //               color:
-                    //                   AppColors.primaryColor,
-                    //               width: 2),
-                    //           borderRadius:
-                    //               BorderRadius.circular(4.0),
-                    //         ),
-                    //         child: Center(
-                    //           child: Icon(Icons.add,
-                    //               color:
-                    //                   AppColors.primaryColor,
-                    //               size: 16),
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
-                    // const SizedBox(height: 5),
-                    // Obx(() => restaurantController
-                    //         .cusineError.value.isNotEmpty
-                    //     ? Text(
-                    //         restaurantController
-                    //             .cusineError.value,
-                    //         style: const TextStyle(
-                    //             color: Colors.red,
-                    //             fontSize: 12),
-                    //       )
-                    //     : const SizedBox.shrink()),
-                    //
-                    // SizedBox(height: 10),
-                    // Wrap(
-                    //   spacing:
-                    //       10.0, // Horizontal space between items
-                    //   runSpacing:
-                    //       10.0, // Vertical space between rows
-                    //   children: List.generate(
-                    //     restaurantController
-                    //         .addedCuisines.length,
-                    //     (index) {
-                    //       return _buildCuisineContainer(
-                    //           index);
-                    //     },
-                    //   ),
-                    // ),
+                    RichText(
+                      text: TextSpan(
+                        text: 'About ',
+                        style: TextStyle(
+                          fontSize: Responsive.isMobile(context)
+                              ? 16
+                              : Responsive.isTablet(context)
+                                  ? 18
+                                  : 24,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: '*', // Add the red asterisk
+                            style: TextStyle(
+                              fontSize: Responsive.isMobile(context)
+                                  ? 16
+                                  : Responsive.isTablet(context)
+                                      ? 18
+                                      : 24,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.red,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    CustomTextField(
+                      controller: restaurantController.restaurantModel.about,
+                      borderColor: AppColors.darkGrey.withOpacity(.1),
+                      width: 516,
+                      borderRadius: 8,
+                      hintText: "About",
+                      fillColor: AppColors.whiteColor,
+                      cursorColor: AppColors.primaryColor,
+                      inputStyle: const TextStyle(color: AppColors.blackColor),
+                      hintStyle: const TextStyle(color: AppColors.blackColor),
+                    ),
+                    const SizedBox(height: 5),
+                    Obx(() => restaurantController.aboutError.value.isNotEmpty
+                        ? Text(
+                            restaurantController.aboutError.value,
+                            style: const TextStyle(
+                                color: Colors.red, fontSize: 12),
+                          )
+                        : const SizedBox.shrink()),
+                    const SizedBox(height: 8),
                   ],
                 ),
               ),

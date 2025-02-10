@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:restaurant_web_app/screens/add_restaurant/add_resturant_controller/add_resturant%20_controller.dart';
+import 'package:restaurant_web_app/universal_models/restaurant_model.dart';
+import 'package:restaurant_web_app/widgets/global_functions.dart';
 
 import '../../../../constants/colors.dart';
 import '../../../../utils/responsive.dart';
+import '../../../widgets/global_functions.dart';
 import '../controller/restaurant_detail_controller.dart';
 
 class MapWidget extends StatelessWidget {
@@ -25,35 +28,35 @@ class MapWidget extends StatelessWidget {
           double mapHeight = MediaQuery.of(context).size.width > 600
               ? 500
               : 300; // Adjust for tablet/desktop
-          return Obx((){return Container(
-            height: mapHeight,
-            child:GoogleMap(
-              mapType: MapType.normal,
-              initialCameraPosition: CameraPosition(
-                target: LatLng(addController.latitude.value,
-                    addController.longitude.value),
-                zoom: 14,
-              ),
-              onMapCreated: (mapController) {
-                addController.mapController.complete(mapController);
-              },
-              markers: {
-                Marker(
-                  markerId: const MarkerId('currentLocation'),
-                  position: LatLng(addController.latitude.value,
-                      addController.longitude.value),
+          return Obx(() {
+            return Container(
+              height: mapHeight,
+              child: GoogleMap(
+                mapType: MapType.normal,
+                initialCameraPosition: CameraPosition(
+                  target: LatLng( latitude.value,
+                      longitude.value),
+                  zoom: 14,
                 ),
-              },
-              onCameraIdle: () async {
-                // await controller.getAddress();
-              },
-              myLocationButtonEnabled: true,
-              onCameraMove: (position) async {
-                addController.latitude.value = position.target.latitude;
-                addController.longitude.value = position.target.longitude;
-
-              },
-            ), /*GoogleMap(
+                onMapCreated: (mapController) {
+                   mapControllerr.complete(mapController);
+                },
+                markers: {
+                  Marker(
+                    markerId: const MarkerId('currentLocation'),
+                    position: LatLng( latitude.value,
+                       longitude.value),
+                  ),
+                },
+                onCameraIdle: () async {
+                  // await controller.getAddress();
+                },
+                myLocationButtonEnabled: true,
+                onCameraMove: (position) async {
+                  latitude.value = position.target.latitude;
+                  longitude.value = position.target.longitude;
+                },
+              ), /*GoogleMap(
               markers: {
                 const Marker(
                   markerId: MarkerId('Property location'),
@@ -74,7 +77,8 @@ class MapWidget extends StatelessWidget {
                 addController.restaurantModel.longitude = LatLng.longitude;
               },
             ),*/
-          );});
+            );
+          });
         },
       ),
     );
@@ -84,8 +88,9 @@ class MapWidget extends StatelessWidget {
 class MapDetailWidget extends StatelessWidget {
   const MapDetailWidget({
     super.key,
+    required this.restaurantModel,
   });
-
+  final RestaurantModel restaurantModel;
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -108,9 +113,9 @@ class MapDetailWidget extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               Text(
-                'shop g31, g/f, park central 9 tong tank, tseung kwan',
+               restaurantModel.address.text,
                 style: TextStyle(
                   color: AppColors.darkGrey,
                   fontSize: Responsive.isMobile(context) ? 6 : 14,
@@ -118,7 +123,7 @@ class MapDetailWidget extends StatelessWidget {
                   fontWeight: FontWeight.w400,
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
 
               // Atmospheres Section
               Text(
@@ -130,19 +135,19 @@ class MapDetailWidget extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
+              // ListView.builder(
+              //   itemBuilder: (context, index) {
+              //     return _buildAtmosphere(context, 'Cozy');
+              //   },
+              // ),
               Wrap(
-                spacing: Responsive.isMobile(context) ? 6 : 10,
-                runSpacing: Responsive.isMobile(context) ? 6 : 10,
-                children: [
-                  _buildAtmosphere(context, 'Cozy'),
-                  _buildAtmosphere(context, 'Casual dining'),
-                  _buildAtmosphere(context, 'Private dining rooms'),
-                  _buildAtmosphere(context, 'Outdoor seating'),
-                  _buildAtmosphere(context, 'Bar/lounge area'),
-                ],
-              ),
-              SizedBox(height: 16),
+                  spacing: Responsive.isMobile(context) ? 6 : 10,
+                  runSpacing: Responsive.isMobile(context) ? 6 : 10,
+                  children: restaurantModel.atmopshereList.map((atmosphere) {
+                    return _buildAtmosphere(context, atmosphere);
+                  }).toList()),
+              const SizedBox(height: 16),
 
               // Facilities Section
               Text(
@@ -154,20 +159,26 @@ class MapDetailWidget extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Wrap(
-                spacing: Responsive.isMobile(context) ? 4 : 10,
-                runSpacing: Responsive.isMobile(context) ? 4 : 10,
-                children: [
-                  _buildFacility(context, 'Outdoor Seating'),
-                  _buildFacility(context, 'Kid-Friendly'),
-                  _buildFacility(context, 'Pet-Friendly'),
-                  _buildFacility(context, 'Private Dining'),
-                  _buildFacility(context, 'Wheelchair accessibility'),
-                  _buildFacility(context, 'High chairs'),
-                ],
-              ),
-              SizedBox(height: 16),
+                  spacing: Responsive.isMobile(context) ? 6 : 10,
+                  runSpacing: Responsive.isMobile(context) ? 6 : 10,
+                  children: restaurantModel.facilityList.map((facility) {
+                    return _buildAtmosphere(context, facility);
+                  }).toList()),
+              // Wrap(
+              //   spacing: Responsive.isMobile(context) ? 4 : 10,
+              //   runSpacing: Responsive.isMobile(context) ? 4 : 10,
+              //   children: [
+              //     _buildFacility(context, 'Outdoor Seating'),
+              //     _buildFacility(context, 'Kid-Friendly'),
+              //     _buildFacility(context, 'Pet-Friendly'),
+              //     _buildFacility(context, 'Private Dining'),
+              //     _buildFacility(context, 'Wheelchair accessibility'),
+              //     _buildFacility(context, 'High chairs'),
+              //   ],
+              // ),
+              const SizedBox(height: 16),
               Text(
                 'Dietary Preferences',
                 style: TextStyle(
@@ -177,42 +188,32 @@ class MapDetailWidget extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Wrap(
-                spacing: Responsive.isMobile(context) ? 4 : 10,
-                runSpacing: Responsive.isMobile(context) ? 4 : 10,
-                children: [
-                  _buildDietary(context, 'Vegetarian'),
-                  _buildDietary(context, 'Vegan'),
-                  _buildDietary(context, 'Gluten-Free'),
-                  _buildDietary(context, 'Dairy-Free'),
-                  _buildDietary(context, 'Keto-Friendly'),
-                ],
-              ),
-              SizedBox(height: 16),
+                  spacing: Responsive.isMobile(context) ? 6 : 10,
+                  runSpacing: Responsive.isMobile(context) ? 6 : 10,
+                  children: restaurantModel.dietaryList.map((dietaryData) {
+                    return _buildAtmosphere(context, dietaryData);
+                  }).toList()),
+              const SizedBox(height: 16),
 
-              Text(
-                'Entertainment',
-                style: TextStyle(
-                  color: AppColors.headingTextColor,
-                  fontSize: Responsive.isMobile(context) ? 6 : 14,
-                  fontFamily: 'Nunito-Regular',
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              SizedBox(height: 8),
-              Wrap(
-                spacing: Responsive.isMobile(context) ? 4 : 10,
-                runSpacing: Responsive.isMobile(context) ? 4 : 10,
-                children: [
-                  _buildEntertainment(context, 'parking'),
-                  _buildEntertainment(context, 'takeout'),
-                  _buildEntertainment(context, 'drive-thru'),
-                  _buildEntertainment(context, 'wheelchair accessibility'),
-                  _buildEntertainment(context, 'high chairs'),
-                ],
-              ),
-              SizedBox(height: 16),
+              // Text(
+              //   'Entertainment',
+              //   style: TextStyle(
+              //     color: AppColors.headingTextColor,
+              //     fontSize: Responsive.isMobile(context) ? 6 : 14,
+              //     fontFamily: 'Nunito-Regular',
+              //     fontWeight: FontWeight.w700,
+              //   ),
+              // ),
+              // const SizedBox(height: 8),
+              // Wrap(
+              //     spacing: Responsive.isMobile(context) ? 6 : 10,
+              //     runSpacing: Responsive.isMobile(context) ? 6 : 10,
+              //     children: restaurantModel.ent.map((facility) {
+              //       return _buildAtmosphere(context, facility);
+              //     }).toList()),
+              // const SizedBox(height: 16),
               Text(
                 'Price Range',
                 style: TextStyle(
@@ -222,15 +223,23 @@ class MapDetailWidget extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
+
               Wrap(
-                spacing: Responsive.isMobile(context) ? 4 : 10,
-                runSpacing: Responsive.isMobile(context) ? 4 : 10,
-                children: [
-                  _buildPriceRange(context, '\$(Budget-Friendly)'),
-                ],
-              ),
-              SizedBox(height: 16),
+                  spacing: Responsive.isMobile(context) ? 6 : 10,
+                  runSpacing: Responsive.isMobile(context) ? 6 : 10,
+                  children: [
+
+                    _buildPriceRange(context, restaurantModel.priceRange.value),
+                  ]),
+              // Wrap(
+              //   spacing: Responsive.isMobile(context) ? 4 : 10,
+              //   runSpacing: Responsive.isMobile(context) ? 4 : 10,
+              //   children: [
+              //     _buildPriceRange(context, '\$(Budget-Friendly)'),
+              //   ],
+              // ),
+              const SizedBox(height: 16),
               // Spoken Languages Section
               Text(
                 'Spoken Languages',
@@ -241,15 +250,15 @@ class MapDetailWidget extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Container(
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
-                  color: Color(0XFFB2E6D6),
+                  color: const Color(0XFFB2E6D6),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  'Chinese',
+               restaurantModel.spokenLanguage.value,
                   style: TextStyle(
                     color: AppColors.blackColor,
                     fontSize: Responsive.isMobile(context) ? 6 : 12,
@@ -267,9 +276,9 @@ class MapDetailWidget extends StatelessWidget {
 
   Widget _buildAtmosphere(BuildContext context, String text) {
     return Container(
-      padding: EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
-        color: Color(0XFFB2E6D6),
+        color: const Color(0XFFB2E6D6),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
@@ -286,9 +295,9 @@ class MapDetailWidget extends StatelessWidget {
 
   Widget _buildFacility(BuildContext context, String text) {
     return Container(
-      padding: EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
-        color: Color(0XFFB2E6D6),
+        color: const Color(0XFFB2E6D6),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
@@ -305,9 +314,9 @@ class MapDetailWidget extends StatelessWidget {
 
   Widget _buildEntertainment(BuildContext context, String text) {
     return Container(
-      padding: EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
-        color: Color(0XFFB2E6D6),
+        color: const Color(0XFFB2E6D6),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
@@ -324,9 +333,9 @@ class MapDetailWidget extends StatelessWidget {
 
   Widget _buildPriceRange(BuildContext context, String text) {
     return Container(
-      padding: EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
-        color: Color(0XFFB2E6D6),
+        color: const Color(0XFFB2E6D6),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
@@ -343,9 +352,9 @@ class MapDetailWidget extends StatelessWidget {
 
   Widget _buildDietary(BuildContext context, String text) {
     return Container(
-      padding: EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
-        color: Color(0XFFB2E6D6),
+        color: const Color(0XFFB2E6D6),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(

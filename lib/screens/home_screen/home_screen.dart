@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:restaurant_web_app/constants/colors.dart';
+import 'package:restaurant_web_app/main.dart';
 
 import '../../utils/responsive.dart';
 import '../../widgets/round_button.dart';
@@ -15,7 +16,6 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildProfileView(BuildContext context) {
-
     final controller = Get.put(MainController());
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
@@ -35,134 +35,198 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    CustomButton(
-                      title: "Add Restaurant Details",
-                      textStyle: TextStyle(
-                        color: AppColors.whiteColor,
-                        fontSize: Responsive.isMobile(context) ? 16 : 24,
-                        fontWeight: FontWeight.w700,
-                      ),
-                      backgroundColor: AppColors.primaryColor,
-                      borderRadius: 10,
-                      width: Responsive.isMobile(context) ? 200 : 300,
-                      onPressed: () {
-                        Get.to(() => AddEditRestaurantScreen(
-                              isFromButtonClick: true,
-                            ));
-                      },
-                    ),
-                  ],
-                ),
+                Obx(
+                  () => (currentUserDataModel.value?.zipCode?.text ?? '')
+                          .isEmpty
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            CustomButton(
+                              title: "Add Restaurant Details",
+                              textStyle: TextStyle(
+                                color: AppColors.whiteColor,
+                                fontSize:
+                                    Responsive.isMobile(context) ? 16 : 24,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              backgroundColor: AppColors.primaryColor,
+                              borderRadius: 10,
+                              width: Responsive.isMobile(context) ? 200 : 300,
+                              onPressed: () {
+                                Get.to(() => AddEditRestaurantScreen(
+                                      isFromButtonClick: true,
+                                    ));
+                              },
+                            ),
+                          ],
+                        )
+                      : Container(),
+                )
               ],
             ),
             const SizedBox(height: 20),
             Responsive.isDesktop(context)
                 ? Row(
                     children: [
-                      Container(
-                        width: 625,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildProfileRow('Resturant name:', 'Abc',
-                                Responsive.isMobile(context)),
-                            const SizedBox(height: 10),
-                            const Divider(
-                                thickness: 0.2, color: AppColors.primaryColor),
-                            _buildProfileRow('Contact:', '(225) 555-0118',
-                                Responsive.isMobile(context)),
-                            const SizedBox(height: 10),
-                            const Divider(
-                                thickness: 0.2, color: AppColors.primaryColor),
-                            _buildProfileRow(
-                                'Email:',
-                                'jessica.hanson@example.com',
-                                Responsive.isMobile(context)),
-                            const SizedBox(height: 10),
-                            const Divider(
-                                thickness: 0.2, color: AppColors.primaryColor),
-                            _buildProfileRow('City:', 'Viet Nam',
-                                Responsive.isMobile(context)),
-                            const SizedBox(height: 10),
-                            const Divider(
-                                thickness: 0.2, color: AppColors.primaryColor),
-                            _buildProfileRow('Address:', 'Abc',
-                                Responsive.isMobile(context)),
-                            const SizedBox(height: 10),
-                            const Divider(
-                                thickness: 0.2, color: AppColors.primaryColor),
-                            _buildProfileRow('Password:', 'xyz',
-                                Responsive.isMobile(context)),
-                          ],
+                      Obx(
+                        () => Container(
+                          width: 625,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildProfileRow(
+                                  'Resturant name:',
+                                  controller.restaurantModel.value.resName.text,
+                                  Responsive.isMobile(context)),
+                              const SizedBox(height: 10),
+                              const Divider(
+                                  thickness: 0.2,
+                                  color: AppColors.primaryColor),
+                              _buildProfileRow(
+                                  'Contact:',
+                                  controller
+                                      .restaurantModel.value.phoneNumber.text,
+                                  Responsive.isMobile(context)),
+                              const SizedBox(height: 10),
+                              const Divider(
+                                  thickness: 0.2,
+                                  color: AppColors.primaryColor),
+                              _buildProfileRow(
+                                  'Email:',
+                                  controller
+                                      .restaurantModel.value.resEmail.text,
+                                  Responsive.isMobile(context)),
+                              const SizedBox(height: 10),
+                              const Divider(
+                                  thickness: 0.2,
+                                  color: AppColors.primaryColor),
+                              _buildProfileRow(
+                                  'City:',
+                                  controller.restaurantModel.value.city.text,
+                                  Responsive.isMobile(context)),
+                              const SizedBox(height: 10),
+                              const Divider(
+                                  thickness: 0.2,
+                                  color: AppColors.primaryColor),
+                              _buildProfileRow(
+                                  'Address:',
+                                  controller.restaurantModel.value.address.text,
+                                  Responsive.isMobile(context)),
+                              const SizedBox(height: 10),
+                              const Divider(
+                                  thickness: 0.2,
+                                  color: AppColors.primaryColor),
+                              _buildProfileRow(
+                                  'Password:',
+                                  controller
+                                      .restaurantModel.value.password.text,
+                                  Responsive.isMobile(context)),
+                            ],
+                          ),
                         ),
                       ),
                       const SizedBox(width: 16),
-                      Container(
-                        width: screenWidth * .46,
-                        height: screenHeight * .5,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          image: const DecorationImage(
-                            image: AssetImage('assets/images/p1.png'),
-                            fit: BoxFit
-                                .cover, // Adjusts how the image fits inside the container
-                          ),
-                        ),
+                      Obx(
+                        () =>
+                            controller.restaurantModel.value.logoImage.value !=
+                                    ''
+                                ? Container(
+                                    width: screenWidth * .46,
+                                    height: screenHeight * .5,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      image: DecorationImage(
+                                        image: NetworkImage(
+                                          controller.restaurantModel.value
+                                              .logoImage.value,
+                                        ),
+                                        fit: BoxFit
+                                            .fitHeight, // Adjusts how the image fits inside the container
+                                      ),
+                                    ),
+                                  )
+                                : SizedBox(),
                       )
                     ],
                   )
                 : Column(
                     children: [
-                      Container(
-                        width: 625,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildProfileRow('Resturant name:', 'Abc',
-                                Responsive.isMobile(context)),
-                            const SizedBox(height: 10),
-                            const Divider(
-                                thickness: 0.2, color: AppColors.primaryColor),
-                            _buildProfileRow('Contact:', '(225) 555-0118',
-                                Responsive.isMobile(context)),
-                            const SizedBox(height: 10),
-                            const Divider(
-                                thickness: 0.2, color: AppColors.primaryColor),
-                            _buildProfileRow(
-                                'Email:',
-                                'jessica.hanson@example.com',
-                                Responsive.isMobile(context)),
-                            const SizedBox(height: 10),
-                            const Divider(
-                                thickness: 0.2, color: AppColors.primaryColor),
-                            _buildProfileRow('City:', 'Viet Nam',
-                                Responsive.isMobile(context)),
-                            const SizedBox(height: 10),
-                            const Divider(
-                                thickness: 0.2, color: AppColors.primaryColor),
-                            _buildProfileRow('Address:', 'Abc',
-                                Responsive.isMobile(context)),
-                            const SizedBox(height: 10),
-                            const Divider(
-                                thickness: 0.2, color: AppColors.primaryColor),
-                            _buildProfileRow('Password:', 'xyz',
-                                Responsive.isMobile(context)),
-                          ],
-                        ),
+                      Obx(
+                        () {
+                          return Container(
+                            width: 625,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildProfileRow(
+                                    'Restaurant name:',
+                                    controller
+                                        .restaurantModel.value.resName.text,
+                                    Responsive.isMobile(context)),
+                                const SizedBox(height: 10),
+                                const Divider(
+                                    thickness: 0.2,
+                                    color: AppColors.primaryColor),
+                                _buildProfileRow(
+                                    'Contact:',
+                                    controller
+                                        .restaurantModel.value.phoneNumber.text,
+                                    Responsive.isMobile(context)),
+                                const SizedBox(height: 10),
+                                const Divider(
+                                    thickness: 0.2,
+                                    color: AppColors.primaryColor),
+                                _buildProfileRow(
+                                    'Email:',
+                                    controller
+                                        .restaurantModel.value.resEmail.text,
+                                    Responsive.isMobile(context)),
+                                const SizedBox(height: 10),
+                                const Divider(
+                                    thickness: 0.2,
+                                    color: AppColors.primaryColor),
+                                _buildProfileRow(
+                                    'City:',
+                                    controller.restaurantModel.value.city.text,
+                                    Responsive.isMobile(context)),
+                                const SizedBox(height: 10),
+                                const Divider(
+                                    thickness: 0.2,
+                                    color: AppColors.primaryColor),
+                                _buildProfileRow(
+                                    'Address:',
+                                    controller
+                                        .restaurantModel.value.address.text,
+                                    Responsive.isMobile(context)),
+                                const SizedBox(height: 10),
+                                const Divider(
+                                    thickness: 0.2,
+                                    color: AppColors.primaryColor),
+                                _buildProfileRow(
+                                    'Password:',
+                                    controller
+                                        .restaurantModel.value.password.text,
+                                    Responsive.isMobile(context)),
+                              ],
+                            ),
+                          );
+                        },
                       ),
                       const SizedBox(height: 20),
-                      Container(
-                        width: Get.width,
-                        height: screenHeight * .5,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          image: const DecorationImage(
-                            image: AssetImage('assets/images/p1.png'),
-                            fit: BoxFit
-                                .cover, // Adjusts how the image fits inside the container
+                      Obx(
+                        () => Container(
+                          width: Get.width,
+                          height: screenHeight * .5,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            image: DecorationImage(
+                              image: NetworkImage(
+                                controller
+                                    .restaurantModel.value.logoImage.value,
+                              ),
+                              fit: BoxFit
+                                  .fitHeight, // Adjusts how the image fits inside the container
+                            ),
                           ),
                         ),
                       )

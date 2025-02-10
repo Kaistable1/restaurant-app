@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:restaurant_web_app/constants/colors.dart';
+import 'package:restaurant_web_app/main.dart';
 import 'package:restaurant_web_app/screens/home_screen/home_screen.dart';
 import 'package:restaurant_web_app/screens/main_screen/mainscreen_controller/main_controller.dart';
+import 'package:restaurant_web_app/widgets/global_functions.dart';
+
+import '../../widgets/account_settings_popup_widget.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -14,6 +18,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    controller.fetchRestaurantData();
     return GetBuilder<MainController>(builder: (controller) {
       return Scaffold(
         backgroundColor: AppColors.whiteColor,
@@ -46,87 +51,13 @@ class _MainScreenState extends State<MainScreen> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(4.0),
-                  child: Row(
-                    children: [
-                      SizedBox(width: 8),
-                      Text('Account Settings'),
-                      Spacer(),
-                      PopupMenuButton<String>(
-                        icon: Icon(
-                          Icons.keyboard_arrow_down_sharp,
-                          color: AppColors.primaryColor,
-                        ),
-                        onSelected: (value) {
-                          if (value == 'Logout') {
-                            controller.showLogoutDialog(
-                                context); // Show logout dialog
-                          } else {
-                            controller.selectedMenuItem = value;
-                            controller.isAddingRestaurant = false;
-                            controller.update();
-                          }
-                        },
-                        itemBuilder: (context) => [
-                          PopupMenuItem(
-                            value: 'Home',
-                            child: Row(
-                              children: [
-                                Image.asset(
-                                  'assets/images/home.png',
-                                  width: 24,
-                                  height: 24,
-                                ),
-                                SizedBox(width: 16),
-                                Text('Home'),
-                              ],
-                            ),
-                          ),
-                          PopupMenuItem(
-                            value: 'View Restaurant Details',
-                            child: Row(
-                              children: [
-                                Image.asset(
-                                  'assets/images/resturant_detail.png',
-                                  width: 24,
-                                  height: 24,
-                                ),
-                                SizedBox(width: 16),
-                                Text('View Restaurant Details'),
-                              ],
-                            ),
-                          ),
-                          PopupMenuItem(
-                            value: 'Change Password',
-                            child: Row(
-                              children: [
-                                Image.asset(
-                                  'assets/images/change_password.png',
-                                  width: 24,
-                                  height: 24,
-                                ),
-                                SizedBox(width: 16),
-                                Text('Change Password'),
-                              ],
-                            ),
-                          ),
-                          PopupMenuItem(
-                            value: 'Logout',
-                            child: Row(
-                              children: [
-                                Image.asset(
-                                  'assets/images/logout.png',
-                                  width: 24,
-                                  height: 24,
-                                ),
-                                SizedBox(width: 16),
-                                Text('Logout'),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                  child: Obx(() {
+                    final resModel = currentUserDataModel.value;
+                    if (resModel == null || resModel.zipCode.text.isEmpty) {
+                      return AccountNoAuthPopupWidget();
+                    }
+                    return AccountSettingsPopupWidget();
+                  }),
                 ),
               ),
             ),

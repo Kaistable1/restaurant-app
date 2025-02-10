@@ -1,11 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:restaurant_web_app/constants/colors.dart';
+import 'package:restaurant_web_app/main.dart';
 import 'package:restaurant_web_app/screens/edit_screens/update_discount/update_discount.dart';
 import 'package:restaurant_web_app/screens/main_screen/main_screen.dart';
 import 'package:restaurant_web_app/screens/main_screen/mainscreen_controller/main_controller.dart';
+import 'package:restaurant_web_app/universal_models/discount_model.dart';
 import 'package:restaurant_web_app/utils/responsive.dart';
 
+import '../../../widgets/global_functions.dart';
 import '../../restaurant_detail_screen/widget/custom_tabbar.dart';
 import '../../restaurant_detail_screen/widget/star_widget_gen_discount.dart';
 import 'edit_discount_controller/edit_discount_controller.dart';
@@ -49,7 +53,7 @@ class EditDiscountScreen extends StatelessWidget {
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.1),
-                          offset: Offset(0, 4),
+                          offset: const Offset(0, 4),
                           blurRadius: 6,
                           spreadRadius: 0,
                         ),
@@ -59,11 +63,11 @@ class EditDiscountScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(4.0),
                       child: Row(
                         children: [
-                          SizedBox(width: 8),
-                          Text('Account Settings'),
-                          Spacer(),
+                          const SizedBox(width: 8),
+                          const Text('Account Settings'),
+                          const Spacer(),
                           PopupMenuButton<String>(
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.keyboard_arrow_down_sharp,
                               color: AppColors.primaryColor,
                             ),
@@ -89,8 +93,8 @@ class EditDiscountScreen extends StatelessWidget {
                                       width: 24,
                                       height: 24,
                                     ),
-                                    SizedBox(width: 16),
-                                    Text('Home'),
+                                    const SizedBox(width: 16),
+                                    const Text('Home'),
                                   ],
                                 ),
                               ),
@@ -103,8 +107,8 @@ class EditDiscountScreen extends StatelessWidget {
                                       width: 24,
                                       height: 24,
                                     ),
-                                    SizedBox(width: 16),
-                                    Text('View Restaurant Details'),
+                                    const SizedBox(width: 16),
+                                    const Text('View Restaurant Details'),
                                   ],
                                 ),
                               ),
@@ -117,8 +121,8 @@ class EditDiscountScreen extends StatelessWidget {
                                       width: 24,
                                       height: 24,
                                     ),
-                                    SizedBox(width: 16),
-                                    Text('Change Password'),
+                                    const SizedBox(width: 16),
+                                    const Text('Change Password'),
                                   ],
                                 ),
                               ),
@@ -131,8 +135,8 @@ class EditDiscountScreen extends StatelessWidget {
                                       width: 24,
                                       height: 24,
                                     ),
-                                    SizedBox(width: 16),
-                                    Text('Logout'),
+                                    const SizedBox(width: 16),
+                                    const Text('Logout'),
                                   ],
                                 ),
                               ),
@@ -149,7 +153,7 @@ class EditDiscountScreen extends StatelessWidget {
         child: Column(
           children: [
             _buildHeader(context),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             SizedBox(
               height: MediaQuery.of(context).size.height * 1.3,
               child: Material(
@@ -207,7 +211,7 @@ class EditDiscountScreen extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
             blurRadius: 6,
-            offset: Offset(0, 3),
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -215,7 +219,7 @@ class EditDiscountScreen extends StatelessWidget {
         iconSize: Responsive.isMobile(context)
             ? 16
             : (Responsive.isTablet(context) ? 20 : 24),
-        icon: Icon(Icons.arrow_back, color: AppColors.primaryColor),
+        icon: const Icon(Icons.arrow_back, color: AppColors.primaryColor),
         onPressed: () {
           Navigator.of(context).pop(); // Back action
         },
@@ -223,7 +227,6 @@ class EditDiscountScreen extends StatelessWidget {
     );
   }
 
-  // Build Discount Tab
   // Build Discount Tab
   Widget _buildDiscountTab(BuildContext context) {
     return Padding(
@@ -239,7 +242,7 @@ class EditDiscountScreen extends StatelessWidget {
               fontWeight: FontWeight.w700,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           LayoutBuilder(
@@ -253,23 +256,55 @@ class EditDiscountScreen extends StatelessWidget {
                 crossAxisCount = 6; // For desktop view, 6 containers
               }
 
-              return Obx(() {
-                return SizedBox(
+              return SizedBox(
                   height: 500,
-                  child: GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: crossAxisCount,
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      childAspectRatio: 211 / 238,
-                    ),
-                    itemCount: discountItems.length,
-                    itemBuilder: (context, index) {
-                      return _buildCustomContainer(index, context);
+                  child: StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection('restaurants')
+                        .doc(auth.currentUser!.uid)
+                        .collection('MealMenu')
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return SizedBox(
+                          width: Get.width,
+                          height: 246,
+                          child: const Center(
+                            child: CircularProgressIndicator(
+                                color: AppColors.primaryColor),
+                          ),
+                        );
+                      }
+                      if (snapshot.hasError) {
+                        print("Firestore Error: ${snapshot.error}");
+                        return const Center(
+                            child: Text("Something went wrong!"));
+                      }
+                      if (snapshot.data!.docs.isEmpty) {
+                        print("Firestore Data: ${snapshot.data!.docs.length}");
+                      }
+
+                      return GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: crossAxisCount,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                          childAspectRatio: 211 / 238,
+                        ),
+                        itemCount: snapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          final docData = snapshot.data!.docs[index].data()
+                              as Map<String, dynamic>?;
+                          if (docData == null) return const SizedBox();
+                          DiscountModel discountModel =
+                              DiscountModel.fromJson(docData);
+
+                          return _buildCustomContainer(
+                              index, context, discountModel);
+                        },
+                      );
                     },
-                  ),
-                );
-              });
+                  ));
             },
           ),
         ],
@@ -291,7 +326,7 @@ class EditDiscountScreen extends StatelessWidget {
               fontWeight: FontWeight.w700,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           LayoutBuilder(
@@ -330,7 +365,8 @@ class EditDiscountScreen extends StatelessWidget {
   }
 
   // Build Custom Container
-  Widget _buildCustomContainer(int index, BuildContext context) {
+  Widget _buildCustomContainer(
+      int index, BuildContext context, DiscountModel discountModel) {
     double screenWidth = MediaQuery.of(context).size.width;
     bool isLargeScreen = screenWidth > 1600;
     return Container(
@@ -349,19 +385,36 @@ class EditDiscountScreen extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(10.0),
-            child: Image.asset(
-              'assets/images/p1.png',
+            child: Image.network(
+              discountModel.menu[0].items[0].itemImages.isNotEmpty
+                  ? discountModel.menu[0].items[0].itemImages[0].value
+                  : '', // Empty string to trigger errorBuilder
               width: double.infinity,
               height: Responsive.isMobile(context)
-                  ? 110
+                  ? 95
                   : (Responsive.isTablet(context)
-                      ? 130
+                  ? 120
+                  : isLargeScreen
+                  ? 210
+                  : 140),
+              fit: BoxFit.fitHeight,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  width: double.infinity,
+                  height: Responsive.isMobile(context)
+                      ? 100
+                      : (Responsive.isTablet(context)
+                      ? 120
                       : isLargeScreen
-                          ? 230
-                          : 150),
-              fit: BoxFit.cover,
+                      ? 215
+                      : 140),
+                  color: Colors.grey[300], // Placeholder background color
+                  child: Icon(Icons.image_not_supported, color: Colors.grey[600]),
+                );
+              },
             ),
-          ),
+          )
+,
           Positioned(
             top: 8,
             right: isLargeScreen ? 12 : 8,
@@ -372,11 +425,11 @@ class EditDiscountScreen extends StatelessWidget {
               child: Container(
                 width: 20,
                 height: 20,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.grey,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.close, color: Colors.white, size: 10),
+                child: const Icon(Icons.close, color: Colors.white, size: 10),
               ),
             ),
           ),
@@ -417,9 +470,11 @@ class EditDiscountScreen extends StatelessWidget {
                     shape: BoxShape.rectangle,
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                    padding: EdgeInsets.symmetric(horizontal: 2.0),
                     child: Text(
-                      '03.10.2024 - 05.10.2024',
+                      discountModel.fromDate == '' && discountModel.toDate == ''
+                          ? '  Lifetime  '
+                          : '${formatDate(discountModel.fromDate)} - ${formatDate(discountModel.toDate)}',
                       style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w400,
@@ -439,7 +494,7 @@ class EditDiscountScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Percentage off 01',
+                  discountModel.discountType,
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
                 ),
                 SizedBox(
@@ -451,10 +506,9 @@ class EditDiscountScreen extends StatelessWidget {
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal, // Horizontal scrolling
                     itemCount:
-                        controller.circleItems4.length, // Number of items
+                       discountModel.menu.length, // Number of items
                     itemBuilder: (context, index) {
-                      final item = controller
-                          .circleItems4[index]; // Get item from model list
+                      CategoryModel menuModel = discountModel.menu[index];
                       return SizedBox(
                         width: Responsive.isMobile(context)
                             ? 30
@@ -462,8 +516,8 @@ class EditDiscountScreen extends StatelessWidget {
                                 ? 50
                                 : 40, // Width of each item
                         child: LocationStarWidget(
-                          timeText: '18:00-19:00',
-                          persentText: '50% OFF',
+                          timeText: '${menuModel.fromTime} - ${menuModel.toTime}',
+                          persentText: '${menuModel.percentageValue}% OFF',
                           persentTextStyle: TextStyle(
                             fontWeight: FontWeight.w700,
                             color: AppColors.whiteColor,
@@ -539,11 +593,11 @@ class EditDiscountScreen extends StatelessWidget {
               child: Container(
                 width: 20,
                 height: 20,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.grey,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.close, color: Colors.white, size: 10),
+                child: const Icon(Icons.close, color: Colors.white, size: 10),
               ),
             ),
           ),
@@ -583,8 +637,8 @@ class EditDiscountScreen extends StatelessWidget {
                     color: AppColors.primaryColor,
                     shape: BoxShape.rectangle,
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 2.0),
                     child: Text(
                       '16.10.2024 - 24.10.2024',
                       style: TextStyle(
@@ -605,7 +659,7 @@ class EditDiscountScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'Happy Hour Special',
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
                 ),

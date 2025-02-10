@@ -15,6 +15,10 @@ class RestaurantModel {
   TextEditingController city;
   TextEditingController address;
   TextEditingController zipCode;
+  TextEditingController phoneNumber;
+  TextEditingController about;
+  TextEditingController country;
+  DateTime createdAt;
   RxString logoImage;
   Rx<Uint8List> logoImageMemory;
   RxList<String> facilityList;
@@ -25,14 +29,19 @@ class RestaurantModel {
   RxString priceRange;
   double latitude;
   double longitude;
+  List<RxString> resImages;
+  RxList<Uint8List> resImageMemory;
   List<EntertainmentScheduleModel> entertainmentScheduleList;
 
   //constructor
   RestaurantModel({
     required this.facilityList,
+    required this.phoneNumber,
     required this.entertainmentScheduleList,
     required this.city,
+    required this.createdAt,
     required this.longitude,
+    required this.about,
     required this.latitude,
     required this.resName,
     required this.docID,
@@ -44,22 +53,32 @@ class RestaurantModel {
     required this.address,
     required this.socialMedia,
     required this.priceRange,
+    required this.country,
     required this.atmopshereList,
     required this.zipCode,
     required this.logoImage,
     required this.logoImageMemory,
+    required this.resImageMemory,
+    required this.resImages,
     required this.spokenLanguage,
   });
 
 // Initialize the model with default values
 
   static RestaurantModel initialize() {
+    DateTime now = DateTime.now();
+    DateTime createdAt = DateTime(
+        now.year, now.month, now.day, now.hour, now.minute, now.second);
     return RestaurantModel(
       resName: TextEditingController(),
       socialLink: TextEditingController(),
       resEmail: TextEditingController(),
       city: TextEditingController(),
+      country: TextEditingController(),
       address: TextEditingController(),
+      phoneNumber: TextEditingController(),
+      about: TextEditingController(),
+      createdAt: createdAt,
       logoImage: ''.obs,
       docID: auth.currentUser!.uid,
       logoImageMemory: Uint8List(0).obs,
@@ -75,18 +94,33 @@ class RestaurantModel {
       priceRange: ''.obs,
       zipCode: TextEditingController(),
       entertainmentScheduleList: [],
+      resImages: [],
+      resImageMemory: RxList<Uint8List>(),
     );
   }
 
 // Convert the model instance to a map for storing in Firestore
   Future<Map<String, dynamic>> toMap() async {
-    // logoImage.value =
-    //     logoImage.value.contains('https://firebasestorage.googleapis.com/') &&
-    //             logoImageMemory.value.isEmpty
-    //         ? logoImage.value
-    //         : logoImageMemory.value.isNotEmpty
-    //             ? await uploadImageToFirebase('logo', logoImageMemory.value)
-    //             : '';
+    logoImage.value =
+        logoImage.value.contains('https://firebasestorage.googleapis.com/') &&
+                logoImageMemory.value.isEmpty
+            ? logoImage.value
+            : logoImageMemory.value.isNotEmpty
+                ? await uploadImageToFirebase('logo', logoImageMemory.value)
+                : '';
+
+
+    List<String> imageUrls = [];
+    for (var image in resImages) {
+      imageUrls.add(image.value);
+    }
+    for (int i = 0; i < resImageMemory.length; i++) {
+      print('adding media in listing');
+      String uploadedUrl =
+          await uploadImageToFirebase('listings', resImageMemory[i]);
+      imageUrls.add(uploadedUrl);
+    }
+
     List<Map<String, dynamic>> data = [];
     for (var element in entertainmentScheduleList) {
       var d = await element.toMap();
@@ -98,7 +132,12 @@ class RestaurantModel {
       dataHours.add(d);
     }
     return {
+      'resImages': imageUrls,
+      'createdAt': createdAt,
       'resName': resName.text,
+      'phoneNumber': phoneNumber.text,
+      'country': country.text,
+      'about': about.text,
       'docID': docID,
       'facilityList': facilityList,
       'dietaryList': dietaryList,
@@ -124,106 +163,72 @@ class RestaurantModel {
   static RestaurantModel fromDocumentSnapshot(
       DocumentSnapshot<Map<String, dynamic>> snapshot) {
     final data = snapshot.data() ?? {}; // Ensure data is not null
+    ///images
+//     List<String> images = List<String>.from(snapshot.data()!['resImages']);
 
+    List<String> images = List<String>.from(data['resImages'] ?? []);
+    List<RxString> resImages = [];
+
+    for (String image in images) {
+      resImages.add(RxString(image));
+    }
     return RestaurantModel(
-      resName: TextEditingController(
-        text: data['resName'] ?? '',
-      ),
-      zipCode: TextEditingController(
-        text: data['zipCode'] ?? '',
-      ),
-      city: TextEditingController(
-        text: data['city'] ?? '',
-      ),
-      resEmail: TextEditingController(
-        text: data['resEmail'] ?? '',
-      ),
-      socialLink: TextEditingController(
-        text: data['socialLink'] ?? '',
-      ),
-      address: TextEditingController(
-        text: data['address'] ?? '',
-      ),
-      latitude: snapshot.data()!['latitude'] ?? 33.602018,
-      longitude: snapshot.data()!['longitude'] ?? 33.602018,
-      facilityList: RxList<String>.from(
-          (data['facilityList'] as List<dynamic>? ?? [])
-              .map((e) => e.toString())),
-      atmopshereList: RxList<String>.from(
-          (data['atmopshereList'] as List<dynamic>? ?? [])
-              .map((e) => e.toString())),
-      dietaryList: RxList<String>.from(
-          (data['dietaryList'] as List<dynamic>? ?? [])
-              .map((e) => e.toString())),
-      specialConditions:
-          TextEditingController(text: data['specialConditions'] ?? ''),
-      password: TextEditingController(text: data['password'] ?? ''),
-      spokenLanguage: RxString(data['spokenLanguage'] ?? 'English'),
-      socialMedia: RxString(data['socialMedia'] ?? ''),
-      priceRange: RxString(data['priceRange'] ?? ''),
-      docID: data['docID'],
-      logoImage: RxString(data['logoImage'] ?? ''),
-      logoImageMemory: Uint8List(0).obs,
-      entertainmentScheduleList: RxList<EntertainmentScheduleModel>.from(
-        (data['entertainmentScheduleList'] as List<dynamic>? ?? [])
-            .map((e) => EntertainmentScheduleModel.fromMap(e)),
-      ),
-    );
+        resName: TextEditingController(
+          text: data['resName'] ?? '',
+        ),
+        country: TextEditingController(
+          text: data['country'] ?? '',
+        ),
+        zipCode: TextEditingController(
+          text: data['zipCode'] ?? '',
+        ),
+        about: TextEditingController(
+          text: data['about'] ?? '',
+        ),
+        phoneNumber: TextEditingController(
+          text: data['phoneNumber'] ?? '',
+        ),
+        city: TextEditingController(
+          text: data['city'] ?? '',
+        ),
+        resEmail: TextEditingController(
+          text: data['resEmail'] ?? '',
+        ),
+        socialLink: TextEditingController(
+          text: data['socialLink'] ?? '',
+        ),
+        address: TextEditingController(
+          text: data['address'] ?? '',
+        ),
+        createdAt:
+            (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+        latitude: snapshot.data()!['latitude'] ?? 33.602018,
+        longitude: snapshot.data()!['longitude'] ?? 33.602018,
+        facilityList: RxList<String>.from(
+            (data['facilityList'] as List<dynamic>? ?? [])
+                .map((e) => e.toString())),
+        atmopshereList: RxList<String>.from(
+            (data['atmopshereList'] as List<dynamic>? ?? [])
+                .map((e) => e.toString())),
+        dietaryList: RxList<String>.from(
+            (data['dietaryList'] as List<dynamic>? ?? [])
+                .map((e) => e.toString())),
+        specialConditions:
+            TextEditingController(text: data['specialConditions'] ?? ''),
+        password: TextEditingController(text: data['password'] ?? ''),
+        spokenLanguage: RxString(data['spokenLanguage'] ?? 'English'),
+        socialMedia: RxString(data['socialMedia'] ?? ''),
+        priceRange: RxString(data['priceRange'] ?? ''),
+        docID: data['docID'] ?? '',
+        logoImage: RxString(data['logoImage'] ?? ''),
+        logoImageMemory: Uint8List(0).obs,
+        entertainmentScheduleList: RxList<EntertainmentScheduleModel>.from(
+          (data['entertainmentScheduleList'] as List<dynamic>? ?? [])
+              .map((e) => EntertainmentScheduleModel.fromMap(e)),
+        ),
+        resImageMemory: RxList<Uint8List>(),
+        resImages: resImages);
   }
-
-//   static RestaurantModel fromDocumentSnapshot(
-//       DocumentSnapshot<Map<String, dynamic>> snapshot) {
-//     // print('Entire snapshot data: ${snapshot.data()}');
-//     // print('Value of warning: ${snapshot.data()!['warning']}');
-//
-//     // Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
-//     return RestaurantModel(
-//       resName: TextEditingController(
-//         text: snapshot.data()!['resName'],
-//       ),
-//       zipCode: TextEditingController(
-//         text: snapshot.data()!['zipCode'],
-//       ),
-//       city: TextEditingController(
-//         text: snapshot.data()!['city'],
-//       ),
-//       resEmail: TextEditingController(
-//         text: snapshot.data()!['resEmail'],
-//       ),
-//       socialLink: TextEditingController(
-//         text: snapshot.data()!['socialLink'],
-//       ),
-//       address: TextEditingController(
-//         text: snapshot.data()!['address'],
-//       ),
-//       latitude: snapshot.data()!['latitude'] ?? '33.602018',
-//       longitude: snapshot.data()!['longitude'] ?? '33.602018',
-//       facilityList: RxList<String>.from(
-//           snapshot.data()!['facilityList'].map((e) => e.toString())),
-//       atmopshereList: RxList<String>.from(
-//           snapshot.data()!['atmopshereList'].map((e) => e.toString())),
-//       dietaryList: RxList<String>.from(
-//           snapshot.data()!['dietaryList'].map((e) => e.toString())),
-//       specialConditions:
-//           TextEditingController(text: snapshot.data()!['specialConditions']),
-//       password: TextEditingController(text: snapshot.data()!['password']),
-//       spokenLanguage: RxString(snapshot.data()!['spokenLanguage'] == ''
-//           ? 'MALE'
-//           : snapshot.data()!['spokenLanguage']),
-//       socialMedia: RxString(snapshot.data()!['socialMedia']),
-//       priceRange: RxString(snapshot.data()!['priceRange']),
-//       docID: snapshot.data()!['docID'],
-//       logoImage: RxString(
-//         snapshot.data()!['logoImage'],
-//       ),
-//       logoImageMemory: Uint8List(0).obs,
-//       entertainmentScheduleList: RxList<EntertainmentScheduleModel>.from(
-//         (snapshot.data()!['entertainmentScheduleList'] as List<dynamic>? ?? [])
-//             .map((e) =>
-//                 EntertainmentScheduleModel.fromMap(e as Map<String, dynamic>))
-//             .toList(),
-//       ),
-//     );
 }
 
 class EntertainmentScheduleModel {
@@ -287,223 +292,6 @@ class EntertainmentScheduleModel {
     );
   }
 }
-
-//
-// class OperatingHoursModel {
-//   List<DaysModel> days;
-//
-//   // Constructor
-//
-//   OperatingHoursModel({
-//     required this.days,
-//   });
-//
-//   static OperatingHoursModel initialize() {
-//     return OperatingHoursModel(
-//       days: [],
-//     );
-//   }
-//
-//   // Convert to Map for Firestore
-//   Future<Map<String, dynamic>> toMap() async {
-//     List<Map<String, dynamic>> data = [];
-//     for (var element in days) {
-//       var d = await element.toMap();
-//       data.add(d);
-//     }
-//     return {'days': data};
-//   }
-//
-//   // Create an instance from Firestore data
-//   static OperatingHoursModel fromMap(Map<String, dynamic> data) {
-//     return OperatingHoursModel(
-//         days: RxList<DaysModel>.from(
-//       (data['days'] as List<dynamic>? ?? [])
-//           .map((e) => DaysModel.fromMap(e as Map<String, dynamic>))
-//           .toList(),
-//     ));
-//   }
-// }
-//
-// class DaysModel {
-//   List<EatTimeModel> meals;
-//
-//   // Constructor
-//   DaysModel({
-//     required this.meals,
-//   });
-//   static DaysModel initialize() {
-//     return DaysModel(meals: []);
-//   }
-//   // Convert to Map for Firestore
-//   Future<Map<String, dynamic>> toMap() async {
-//     List<Map<String, dynamic>> dataTimes = [];
-//     for (var element in meals) {
-//       var d = await element.toMap();
-//       dataTimes.add(d);
-//     }
-//     return {'dataTimes': dataTimes};
-//   }
-//
-//   // Create an instance from Firestore data
-//   static DaysModel fromMap(Map<String, dynamic> data) {
-//     return DaysModel(
-//         meals: RxList<EatTimeModel>.from(
-//       (data['meals'] as List<dynamic>? ?? [])
-//           .map((e) => EatTimeModel.fromMap(e as Map<String, dynamic>))
-//           .toList(),
-//     ));
-//   }
-// }
-//
-// class EatTimeModel {
-//   bool isClosed;
-//   String startTime;
-//   String endTime;
-//   List<EatTimeModel> meals;
-//
-//   // Constructor
-//   EatTimeModel({
-//     required this.isClosed,
-//     required this.meals,
-//     required this.startTime,
-//     required this.endTime,
-//   });
-//
-//   static EatTimeModel initialize() {
-//     return EatTimeModel(
-//         meals: [], isClosed: false, endTime: '', startTime: '');
-//   }
-//
-//   // Convert to Map for Firestore
-//   Future<Map<String, dynamic>> toMap() async {
-//     List<Map<String, dynamic>> dataTimes = [];
-//     for (var element in meals) {
-//       var d = await element.toMap();
-//       dataTimes.add(d);
-//     }
-//     return {
-//       'startTime': startTime,
-//       'endTime': endTime,
-//       'dataTimes': dataTimes,
-//       'isClosed': isClosed
-//     };
-//   }
-//
-//   // Create an instance from Firestore data
-//   static EatTimeModel fromMap(Map<String, dynamic> data) {
-//     return EatTimeModel(
-//         isClosed: data['isClosed'],
-//         startTime: data['startTime'],
-//         endTime: data['endTime'],
-//         meals: RxList<EatTimeModel>.from(
-//           (data['meals'] as List<dynamic>? ?? [])
-//               .map((e) => EatTimeModel.fromMap(e as Map<String, dynamic>))
-//               .toList(),
-//         ));
-//   }
-// }
-////////////////////
-// class OperatingHoursModel {
-//   Map<String, DaysModel> days;
-//
-//   // Constructor
-//   OperatingHoursModel({
-//     required this.days,
-//   });
-//
-//   static OperatingHoursModel initialize() {
-//     return OperatingHoursModel(days: {});
-//   }
-//
-//   // Convert to Map for Firestore
-//   Future<Map<String, dynamic>> toMap() async {
-//     Map<String, dynamic> daysMap = {};
-//     for (var entry in days.entries) {
-//       daysMap[entry.key] = await entry.value.toMap();
-//     }
-//     return daysMap;
-//   }
-//
-//   // Create an instance from Firestore data
-//   static OperatingHoursModel fromFirestore(Map<String, dynamic> data) {
-//     return OperatingHoursModel(
-//       days: Map<String, DaysModel>.from(
-//         data.map(
-//               (key, value) => MapEntry(key, DaysModel.fromFirestore(value)),
-//         ),
-//       ),
-//     );
-//   }
-// }
-//
-// class DaysModel {
-//   Map<String, EatTimeModel> meals;
-//
-//   // Constructor
-//   DaysModel({
-//     required this.meals,
-//   });
-//
-//   static DaysModel initialize() {
-//     return DaysModel(meals: {});
-//   }
-//
-//   // Convert to Map for Firestore
-//   Future<Map<String, dynamic>> toMap() async {
-//     Map<String, dynamic> mealMap = {};
-//     for (var entry in meals.entries) {
-//       mealMap[entry.key] = await entry.value.toMap();
-//     }
-//     return mealMap;
-//   }
-//
-//   // Create an instance from Firestore data
-//   static DaysModel fromFirestore(Map<String, dynamic> data) {
-//     return DaysModel(
-//       meals: Map<String, EatTimeModel>.from(
-//         data.map(
-//               (key, value) => MapEntry(key, EatTimeModel.fromFirestore(value)),
-//         ),
-//       ),
-//     );
-//   }
-// }
-//
-// class EatTimeModel {
-//   bool isClosed;
-//   String? startTime;
-//   String? endTime;
-//
-//   // Constructor
-//   EatTimeModel({
-//     required this.isClosed,
-//     this.startTime,
-//     this.endTime,
-//   });
-//
-//   static EatTimeModel initialize() {
-//     return EatTimeModel(isClosed: true, startTime: null, endTime: null);
-//   }
-//
-//   // Convert to Map for Firestore
-//   Future<Map<String, dynamic>> toMap() async {
-//     return {
-//       'isClosed': isClosed,
-//       'startTime': startTime ?? '',
-//       'endTime': endTime ?? '',
-//     };
-//   }
-//
-//   // Create an instance from Firestore data
-//   static EatTimeModel fromFirestore(Map<String, dynamic> data) {
-//     return EatTimeModel(
-//       isClosed: data['isClosed'] ?? true,
-//       startTime: data['startTime'] ?? '',
-//       endTime: data['endTime'] ?? '',
-//     );
-//   }
-// }
 
 /// Model for a single time slot (e.g., Breakfast, Lunch, Dinner)
 class TimeSlot {

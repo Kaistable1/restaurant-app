@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:restaurant_web_app/screens/add_restaurant/add_resturant_controller/add_resturant%20_controller.dart';
+import 'package:restaurant_web_app/widgets/account_settings_popup_widget.dart';
 
 import '../../constants/colors.dart';
+import '../../main.dart';
 import '../../utils/responsive.dart';
+import '../../widgets/global_functions.dart';
 import '../../widgets/round_button.dart';
 import '../../widgets/text_field.dart';
 import '../main_screen/mainscreen_controller/main_controller.dart';
@@ -85,87 +88,10 @@ class FacilitiesScreen extends StatelessWidget {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(4.0),
-                      child: Row(
-                        children: [
-                          const SizedBox(width: 8),
-                          const Text('Account Settings'),
-                          const Spacer(),
-                          PopupMenuButton<String>(
-                            icon: const Icon(
-                              Icons.keyboard_arrow_down_sharp,
-                              color: AppColors.primaryColor,
-                            ),
-                            onSelected: (value) {
-                              if (value == 'Logout') {
-                                mainController.showLogoutDialog(
-                                    context); // Show logout dialog
-                              } else {
-                                mainController.selectedMenuItem = value;
-                                mainController.isAddingRestaurant = false;
-                                mainController.update();
-                                Get.close(2);
-                              }
-                            },
-                            itemBuilder: (context) => [
-                              PopupMenuItem(
-                                value: 'Home',
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/home.png',
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                    const SizedBox(width: 16),
-                                    const Text('Home'),
-                                  ],
-                                ),
-                              ),
-                              PopupMenuItem(
-                                value: 'View Restaurant Details',
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/resturant_detail.png',
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                    const SizedBox(width: 16),
-                                    const Text('View Restaurant Details'),
-                                  ],
-                                ),
-                              ),
-                              PopupMenuItem(
-                                value: 'Change Password',
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/change_password.png',
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                    const SizedBox(width: 16),
-                                    const Text('Change Password'),
-                                  ],
-                                ),
-                              ),
-                              PopupMenuItem(
-                                value: 'Logout',
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/logout.png',
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                    const SizedBox(width: 16),
-                                    const Text('Logout'),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                      child: Obx(
+                        () => currentUserDataModel.value!.address.text != ''
+                            ? AccountSettingsPopupWidget()
+                            : AccountNoAuthPopupWidget(),
                       ),
                     ),
                   ),
@@ -201,8 +127,8 @@ class FacilitiesScreen extends StatelessWidget {
                       iconSize: Responsive.isMobile(context)
                           ? 14
                           : (Responsive.isTablet(context) ? 16 : 18),
-                      icon:
-                          const Icon(Icons.arrow_back, color: AppColors.primaryColor),
+                      icon: const Icon(Icons.arrow_back,
+                          color: AppColors.primaryColor),
                       onPressed: () {
                         Get.back();
                       },
@@ -231,894 +157,939 @@ class FacilitiesScreen extends StatelessWidget {
                 height: isLargeScreen ? screenHeight * 1.7 : screenHeight * 2.7,
                 child: LayoutBuilder(
                   builder: (context, constraints) {
-                    double maxWidth = constraints.maxWidth;
                     return ConstrainedBox(
                       constraints: BoxConstraints(
                         // maxWidth: 800,
                         minHeight: constraints.maxHeight, // Full screen height
                       ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    RichText(
-                                      text: TextSpan(
-                                        text: 'Facilities/Service ',
-                                        style: TextStyle(
-                                          fontSize: Responsive.isMobile(context)
-                                              ? 16
-                                              : Responsive.isTablet(context)
-                                                  ? 18
-                                                  : 24,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                        children: [
-                                          TextSpan(
-                                            text: '*', // Add the red asterisk
-                                            style: TextStyle(
-                                              fontSize: Responsive.isMobile(
-                                                      context)
-                                                  ? 16
-                                                  : Responsive.isTablet(context)
-                                                      ? 18
-                                                      : 24,
-                                              fontWeight: FontWeight.w700,
-                                              color: AppColors.red,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Obx(() {
-                                      return Column(
-                                        children: facilitiesController
-                                            .facilities
-                                            .map((facility) {
-                                          return Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      if (facilitiesController
-                                                          .facilitySelection
-                                                          .contains(facility)) {
-                                                        facilitiesController
-                                                            .facilitySelection
-                                                            .remove(facility);
-                                                      } else {
-                                                        facilitiesController
-                                                            .facilitySelection
-                                                            .add(facility);
-                                                      }
-                                                    },
-                                                    child: Container(
-                                                      width: 24,
-                                                      height: 24,
-                                                      decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                          color: AppColors
-                                                              .primaryColor,
-                                                          width: 2,
-                                                        ),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(4.0),
-                                                        color: facilitiesController
-                                                                .facilitySelection
-                                                                .contains(
-                                                                    facility)
-                                                            ? AppColors
-                                                                .primaryColor
-                                                            : Colors
-                                                                .transparent,
-                                                      ),
-                                                      child: const Icon(Icons.check,
-                                                          size: 18,
-                                                          color: AppColors
-                                                              .whiteColor),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 10),
-                                                  Flexible(
-                                                    child: Text(
-                                                      facility,
-                                                      style: TextStyle(
-                                                        fontFamily:
-                                                            'Nunito-Regular',
-                                                        fontSize: Responsive
-                                                                .isMobile(
-                                                                    context)
-                                                            ? 12
-                                                            : Responsive
-                                                                    .isTablet(
-                                                                        context)
-                                                                ? 14
-                                                                : 18,
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const Divider(
-                                                color: AppColors.primaryColor,
-                                                thickness: .2,
-                                              ),
-                                            ],
-                                          );
-                                        }).toList(),
-                                      );
-                                    }),
-                                    const SizedBox(height: 10),
-                                    Row(
-                                      children: [
-                                        InkWell(
-                                          onTap: () {
-                                            if (facilitiesTextController
-                                                .text.isNotEmpty) {
-                                              facilitiesController.addFacility(
-                                                  facilitiesTextController
-                                                      .text);
-                                              facilitiesTextController.clear();
-                                            }
-                                          },
-                                          child: Container(
-                                            width: 24,
-                                            height: 24,
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: AppColors.primaryColor,
-                                                  width: 2),
-                                              borderRadius:
-                                                  BorderRadius.circular(4.0),
-                                            ),
-                                            child: const Center(
-                                              child: Icon(Icons.add,
-                                                  color: AppColors.primaryColor,
-                                                  size: 16),
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 10),
-                                        CustomTextField(
-                                          inputFormatterslist: [
-                                            FilteringTextInputFormatter.allow(
-                                                RegExp(
-                                                    r'[a-zA-Z]')), // Allow letters only
-                                          ],
-                                          borderColor: AppColors.darkGrey
-                                              .withOpacity(.1),
-                                          width: Responsive.isMobile(context)
-                                              ? screenWidth * 0.28
-                                              : screenWidth * 0.3,
-                                          borderRadius: 8,
-                                          controller: facilitiesTextController,
-                                          hintText: "Add more",
-                                          fillColor: AppColors.whiteColor,
-                                          cursorColor: AppColors.primaryColor,
-                                          inputStyle: const TextStyle(
-                                              color: AppColors.blackColor),
-                                          hintStyle: const TextStyle(
-                                              color: AppColors.blackColor),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 16),
-                                    RichText(
-                                      text: TextSpan(
-                                        text: 'Dietary Preferences ',
-                                        style: TextStyle(
-                                          fontSize: Responsive.isMobile(context)
-                                              ? 16
-                                              : Responsive.isTablet(context)
-                                                  ? 18
-                                                  : 24,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                        children: [
-                                          TextSpan(
-                                            text: '*', // Add the red asterisk
-                                            style: TextStyle(
-                                              fontSize: Responsive.isMobile(
-                                                      context)
-                                                  ? 16
-                                                  : Responsive.isTablet(context)
-                                                      ? 18
-                                                      : 24,
-                                              fontWeight: FontWeight.w700,
-                                              color: AppColors.red,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Obx(() {
-                                      return Column(
-                                        children: facilitiesController.dietary
-                                            .map((dietary) {
-                                          return Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      if (facilitiesController
-                                                          .dietarySelection
-                                                          .contains(dietary)) {
-                                                        facilitiesController
-                                                            .dietarySelection
-                                                            .remove(dietary);
-                                                      } else {
-                                                        facilitiesController
-                                                            .dietarySelection
-                                                            .add(dietary);
-                                                      }
-                                                    },
-                                                    child: Container(
-                                                      width: 24,
-                                                      height: 24,
-                                                      decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                          color: AppColors
-                                                              .primaryColor,
-                                                          width: 2,
-                                                        ),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(4.0),
-                                                        color: facilitiesController
-                                                                .dietarySelection
-                                                                .contains(
-                                                                    dietary)
-                                                            ? AppColors
-                                                                .primaryColor
-                                                            : Colors
-                                                                .transparent,
-                                                      ),
-                                                      child: const Icon(Icons.check,
-                                                          size: 18,
-                                                          color: AppColors
-                                                              .whiteColor),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 10),
-                                                  Flexible(
-                                                    child: Text(
-                                                      dietary,
-                                                      style: TextStyle(
-                                                        fontFamily:
-                                                            'Nunito-Regular',
-                                                        fontSize: Responsive
-                                                                .isMobile(
-                                                                    context)
-                                                            ? 12
-                                                            : Responsive
-                                                                    .isTablet(
-                                                                        context)
-                                                                ? 14
-                                                                : 18,
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const Divider(
-                                                color: AppColors.primaryColor,
-                                                thickness: .2,
-                                              ),
-                                            ],
-                                          );
-                                        }).toList(),
-                                      );
-                                    }),
-                                    const SizedBox(height: 10),
-                                    Row(
-                                      children: [
-                                        InkWell(
-                                          onTap: () {
-                                            if (dietaryTextController
-                                                .text.isNotEmpty) {
-                                              facilitiesController.adddietary(
-                                                  dietaryTextController.text);
-                                              dietaryTextController.clear();
-                                            }
-                                          },
-                                          child: Container(
-                                            width: 24,
-                                            height: 24,
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: AppColors.primaryColor,
-                                                  width: 2),
-                                              borderRadius:
-                                                  BorderRadius.circular(4.0),
-                                            ),
-                                            child: const Center(
-                                              child: Icon(Icons.add,
-                                                  color: AppColors.primaryColor,
-                                                  size: 16),
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 10),
-                                        CustomTextField(
-                                          inputFormatterslist: [
-                                            FilteringTextInputFormatter.allow(
-                                                RegExp(
-                                                    r'[a-zA-Z]')), // Allow letters only
-                                          ],
-                                          borderColor: AppColors.darkGrey
-                                              .withOpacity(.1),
-                                          width: Responsive.isMobile(context)
-                                              ? screenWidth * 0.28
-                                              : screenWidth * 0.3,
-                                          borderRadius: 8,
-                                          controller: dietaryTextController,
-                                          hintText: "Add more",
-                                          fillColor: AppColors.whiteColor,
-                                          cursorColor: AppColors.primaryColor,
-                                          inputStyle: const TextStyle(
-                                              color: AppColors.blackColor),
-                                          hintStyle: const TextStyle(
-                                              color: AppColors.blackColor),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 16),
-                                    RichText(
-                                      text: TextSpan(
-                                        text: 'Atmosphere ',
-                                        style: TextStyle(
-                                          fontSize: Responsive.isMobile(context)
-                                              ? 16
-                                              : Responsive.isTablet(context)
-                                                  ? 18
-                                                  : 24,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                        children: [
-                                          TextSpan(
-                                            text: '*', // Add the red asterisk
-                                            style: TextStyle(
-                                              fontSize: Responsive.isMobile(
-                                                      context)
-                                                  ? 16
-                                                  : Responsive.isTablet(context)
-                                                      ? 18
-                                                      : 24,
-                                              fontWeight: FontWeight.w700,
-                                              color: AppColors.red,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Obx(() {
-                                      return Column(
-                                        children: facilitiesController
-                                            .atmosphere
-                                            .map((atmosphere) {
-                                          return Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      if (facilitiesController
-                                                          .atmosphereSelection
-                                                          .contains(
-                                                              atmosphere)) {
-                                                        facilitiesController
-                                                            .atmosphereSelection
-                                                            .remove(atmosphere);
-                                                      } else {
-                                                        facilitiesController
-                                                            .atmosphereSelection
-                                                            .add(atmosphere);
-                                                      }
-                                                    },
-                                                    child: Container(
-                                                      width: 24,
-                                                      height: 24,
-                                                      decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                          color: AppColors
-                                                              .primaryColor,
-                                                          width: 2,
-                                                        ),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(4.0),
-                                                        color: facilitiesController
-                                                                .atmosphereSelection
-                                                                .contains(
-                                                                    atmosphere)
-                                                            ? AppColors
-                                                                .primaryColor
-                                                            : Colors
-                                                                .transparent,
-                                                      ),
-                                                      child: const Icon(Icons.check,
-                                                          size: 18,
-                                                          color: AppColors
-                                                              .whiteColor),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 10),
-                                                  Flexible(
-                                                    child: Text(
-                                                      atmosphere,
-                                                      style: TextStyle(
-                                                        fontFamily:
-                                                            'Nunito-Regular',
-                                                        fontSize: Responsive
-                                                                .isMobile(
-                                                                    context)
-                                                            ? 12
-                                                            : Responsive
-                                                                    .isTablet(
-                                                                        context)
-                                                                ? 14
-                                                                : 18,
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const Divider(
-                                                color: AppColors.primaryColor,
-                                                thickness: .2,
-                                              ),
-                                            ],
-                                          );
-                                        }).toList(),
-                                      );
-                                    }),
-                                    const SizedBox(height: 10),
-                                    Row(
-                                      children: [
-                                        InkWell(
-                                          onTap: () {
-                                            if (atmosphereTextController
-                                                .text.isNotEmpty) {
-                                              facilitiesController
-                                                  .addAtmosphere(
-                                                      atmosphereTextController
-                                                          .text);
-                                              atmosphereTextController.clear();
-                                            }
-                                          },
-                                          child: Container(
-                                            width: 24,
-                                            height: 24,
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: AppColors.primaryColor,
-                                                  width: 2),
-                                              borderRadius:
-                                                  BorderRadius.circular(4.0),
-                                            ),
-                                            child: const Center(
-                                              child: Icon(Icons.add,
-                                                  color: AppColors.primaryColor,
-                                                  size: 16),
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 10),
-                                        CustomTextField(
-                                          inputFormatterslist: [
-                                            FilteringTextInputFormatter.allow(
-                                                RegExp(
-                                                    r'[a-zA-Z]')), // Allow letters only
-                                          ],
-                                          borderColor: AppColors.darkGrey
-                                              .withOpacity(.1),
-                                          width: Responsive.isMobile(context)
-                                              ? screenWidth * 0.28
-                                              : screenWidth * 0.3,
-                                          borderRadius: 8,
-                                          controller: atmosphereTextController,
-                                          hintText: "Add more",
-                                          fillColor: AppColors.whiteColor,
-                                          cursorColor: AppColors.primaryColor,
-                                          inputStyle: const TextStyle(
-                                              color: AppColors.blackColor),
-                                          hintStyle: const TextStyle(
-                                              color: AppColors.blackColor),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 16),
-                                    RichText(
-                                      text: TextSpan(
-                                        text: 'Price Range ',
-                                        style: TextStyle(
-                                          fontSize: Responsive.isMobile(context)
-                                              ? 16
-                                              : Responsive.isTablet(context)
-                                                  ? 18
-                                                  : 24,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                        children: [
-                                          TextSpan(
-                                            text: '*', // Add the red asterisk
-                                            style: TextStyle(
-                                              fontSize: Responsive.isMobile(
-                                                      context)
-                                                  ? 16
-                                                  : Responsive.isTablet(context)
-                                                      ? 18
-                                                      : 24,
-                                              fontWeight: FontWeight.w700,
-                                              color: AppColors.red,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Obx(() {
-                                      return Column(
-                                        children: facilitiesController
-                                            .pricerange
-                                            .map((pricerange) {
-                                          return Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      facilitiesController
-                                                          .selectPriceRange(
-                                                              pricerange);
-                                                    },
-                                                    child: Container(
-                                                      width: 24,
-                                                      height: 24,
-                                                      decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                          color: AppColors
-                                                              .primaryColor,
-                                                          width: 2,
-                                                        ),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(4.0),
-                                                        color: facilitiesController
-                                                                    .selectedPriceRange
-                                                                    .value ==
-                                                                pricerange
-                                                            ? AppColors
-                                                                .primaryColor
-                                                            : Colors
-                                                                .transparent,
-                                                      ),
-                                                      child: facilitiesController
-                                                                  .selectedPriceRange
-                                                                  .value ==
-                                                              pricerange
-                                                          ? const Icon(Icons.check,
-                                                              size: 18,
-                                                              color: AppColors
-                                                                  .whiteColor)
-                                                          : null,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 10),
-                                                  Flexible(
-                                                    child: Text(
-                                                      pricerange,
-                                                      style: TextStyle(
-                                                        fontFamily:
-                                                            'Nunito-Regular',
-                                                        fontSize: Responsive
-                                                                .isMobile(
-                                                                    context)
-                                                            ? 12
-                                                            : Responsive
-                                                                    .isTablet(
-                                                                        context)
-                                                                ? 14
-                                                                : 18,
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const Divider(
-                                                color: AppColors.primaryColor,
-                                                thickness: .2,
-                                              ),
-                                            ],
-                                          );
-                                        }).toList(),
-                                      );
-                                    }),
-                                    const SizedBox(height: 10),
-                                    Row(
-                                      children: [
-                                        InkWell(
-                                          onTap: () {
-                                            if (priceRangeTextController
-                                                .text.isNotEmpty) {
-                                              facilitiesController
-                                                  .addPriceRange(
-                                                      priceRangeTextController
-                                                          .text);
-                                              priceRangeTextController.clear();
-                                            }
-                                          },
-                                          child: Container(
-                                            width: 24,
-                                            height: 24,
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: AppColors.primaryColor,
-                                                  width: 2),
-                                              borderRadius:
-                                                  BorderRadius.circular(4.0),
-                                            ),
-                                            child: const Center(
-                                              child: Icon(Icons.add,
-                                                  color: AppColors.primaryColor,
-                                                  size: 16),
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 10),
-                                        CustomTextField(
-                                          inputFormatterslist: [
-                                            FilteringTextInputFormatter.allow(
-                                                RegExp(
-                                                    r'[0-9!@#$%^&*(),.?":{}|<>]')),
-                                          ],
-                                          borderColor: AppColors.darkGrey
-                                              .withOpacity(.1),
-                                          width: Responsive.isMobile(context)
-                                              ? screenWidth * 0.28
-                                              : screenWidth * 0.3,
-                                          borderRadius: 8,
-                                          controller: priceRangeTextController,
-                                          hintText: "Add more",
-                                          fillColor: AppColors.whiteColor,
-                                          cursorColor: AppColors.primaryColor,
-                                          inputStyle: const TextStyle(
-                                              color: AppColors.blackColor),
-                                          hintStyle: const TextStyle(
-                                              color: AppColors.blackColor),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 16),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 50,
-                              ),
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 30.0),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        'Specials Conditions',
-                                        style: TextStyle(
-                                          color: AppColors.blackColor,
-                                          fontFamily: 'Nunito-Regular',
-                                          fontSize: Responsive.isMobile(context)
-                                              ? 16
-                                              : Responsive.isTablet(context)
-                                                  ? 18
-                                                  : 24,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 10),
-                                      CustomTextField(
-                                        contentPadding:
-                                            const EdgeInsets.only(left: 18, top: 22),
-                                        controller: facilitiesController
-                                            .restaurantModel.specialConditions,
-                                        maxLine: 5,
-                                        borderColor:
-                                            AppColors.darkGrey.withOpacity(.1),
-                                        borderRadius: 8,
-                                        hintText: "Add text",
-                                        fillColor: AppColors.whiteColor,
-                                        cursorColor: AppColors.primaryColor,
-                                        inputStyle: const TextStyle(
-                                            fontSize: 14,
-                                            color: AppColors.blackColor),
-                                        hintStyle: const TextStyle(
-                                            fontSize: 14,
-                                            color: AppColors.blackColor),
-                                      ),
-                                      const SizedBox(height: 10),
-                                      Text(
-                                        'Social media',
-                                        style: TextStyle(
-                                          fontFamily: 'Nunito-Regular',
-                                          fontSize: Responsive.isMobile(context)
-                                              ? 16
-                                              : Responsive.isTablet(context)
-                                                  ? 18
-                                                  : 24,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 10),
-                                      Obx(
-                                        () => DropdownButtonHideUnderline(
-                                          child: DropdownButton2<String>(
-                                            isExpanded: true,
-                                            hint: Text(
-                                              'Tiktok',
+                                      RichText(
+                                        text: TextSpan(
+                                          text: 'Facilities/Service ',
+                                          style: TextStyle(
+                                            fontSize: Responsive.isMobile(
+                                                    context)
+                                                ? 16
+                                                : Responsive.isTablet(context)
+                                                    ? 18
+                                                    : 24,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                          children: [
+                                            TextSpan(
+                                              text: '*', // Add the red asterisk
                                               style: TextStyle(
-                                                fontSize: 14,
-                                                color:
-                                                    Theme.of(context).hintColor,
+                                                fontSize:
+                                                    Responsive.isMobile(context)
+                                                        ? 16
+                                                        : Responsive.isTablet(
+                                                                context)
+                                                            ? 18
+                                                            : 24,
+                                                fontWeight: FontWeight.w700,
+                                                color: AppColors.red,
                                               ),
                                             ),
-                                            items: facilitiesController
-                                                .socialMedia
-                                                .map((String item) =>
-                                                    DropdownMenuItem<String>(
-                                                      value: item,
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Obx(() {
+                                        return Column(
+                                          children: facilitiesController
+                                              .facilities
+                                              .map((facility) {
+                                            return Column(
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        if (facilitiesController
+                                                            .facilitySelection
+                                                            .contains(
+                                                                facility)) {
+                                                          facilitiesController
+                                                              .facilitySelection
+                                                              .remove(facility);
+                                                        } else {
+                                                          facilitiesController
+                                                              .facilitySelection
+                                                              .add(facility);
+                                                        }
+                                                      },
+                                                      child: Container(
+                                                        width: 24,
+                                                        height: 24,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          border: Border.all(
+                                                            color: AppColors
+                                                                .primaryColor,
+                                                            width: 2,
+                                                          ),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      4.0),
+                                                          color: facilitiesController
+                                                                  .facilitySelection
+                                                                  .contains(
+                                                                      facility)
+                                                              ? AppColors
+                                                                  .primaryColor
+                                                              : Colors
+                                                                  .transparent,
+                                                        ),
+                                                        child: const Icon(
+                                                            Icons.check,
+                                                            size: 18,
+                                                            color: AppColors
+                                                                .whiteColor),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 10),
+                                                    Flexible(
                                                       child: Text(
-                                                        item,
-                                                        style: const TextStyle(
-                                                          fontSize: 14,
+                                                        facility,
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Nunito-Regular',
+                                                          fontSize: Responsive
+                                                                  .isMobile(
+                                                                      context)
+                                                              ? 12
+                                                              : Responsive
+                                                                      .isTablet(
+                                                                          context)
+                                                                  ? 14
+                                                                  : 18,
+                                                          fontWeight:
+                                                              FontWeight.w400,
                                                         ),
                                                       ),
-                                                    ))
-                                                .toList(),
-                                            value: facilitiesController
-                                                .selectedSocialMedia.value,
-                                            onChanged: (String? value) {
-                                              facilitiesController
-                                                  .selectedSocialMedia
-                                                  .value = value!;
-
-
+                                                    ),
+                                                  ],
+                                                ),
+                                                const Divider(
+                                                  color: AppColors.primaryColor,
+                                                  thickness: .2,
+                                                ),
+                                              ],
+                                            );
+                                          }).toList(),
+                                        );
+                                      }),
+                                      const SizedBox(height: 10),
+                                      Row(
+                                        children: [
+                                          InkWell(
+                                            onTap: () {
+                                              if (facilitiesTextController
+                                                  .text.isNotEmpty) {
+                                                facilitiesController
+                                                    .addFacility(
+                                                        facilitiesTextController
+                                                            .text);
+                                                facilitiesTextController
+                                                    .clear();
+                                              }
                                             },
-                                            buttonStyleData: ButtonStyleData(
+                                            child: Container(
+                                              width: 24,
+                                              height: 24,
                                               decoration: BoxDecoration(
                                                 border: Border.all(
-                                                  color: AppColors.darkGrey
-                                                      .withOpacity(.1),
-                                                ),
+                                                    color:
+                                                        AppColors.primaryColor,
+                                                    width: 2),
                                                 borderRadius:
-                                                    BorderRadius.circular(8),
-                                                color: AppColors.whiteColor,
+                                                    BorderRadius.circular(4.0),
                                               ),
-                                              height: 40,
-                                            ),
-                                            menuItemStyleData:
-                                                const MenuItemStyleData(
-                                              height: 40,
-                                            ),
-                                            iconStyleData: const IconStyleData(
-                                              icon: Icon(
-                                                Icons
-                                                    .keyboard_arrow_down_outlined,
-                                                color: AppColors.primaryColor,
+                                              child: const Center(
+                                                child: Icon(Icons.add,
+                                                    color:
+                                                        AppColors.primaryColor,
+                                                    size: 16),
                                               ),
-                                              iconSize: 24,
                                             ),
                                           ),
+                                          const SizedBox(width: 10),
+                                          CustomTextField(
+                                            inputFormatterslist: [
+                                              FilteringTextInputFormatter.allow(
+                                                  RegExp(
+                                                      r'[a-zA-Z]')), // Allow letters only
+                                            ],
+                                            borderColor: AppColors.darkGrey
+                                                .withOpacity(.1),
+                                            width: Responsive.isMobile(context)
+                                                ? screenWidth * 0.28
+                                                : screenWidth * 0.3,
+                                            borderRadius: 8,
+                                            controller:
+                                                facilitiesTextController,
+                                            hintText: "Add more",
+                                            fillColor: AppColors.whiteColor,
+                                            cursorColor: AppColors.primaryColor,
+                                            inputStyle: const TextStyle(
+                                                color: AppColors.blackColor),
+                                            hintStyle: const TextStyle(
+                                                color: AppColors.blackColor),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 16),
+                                      RichText(
+                                        text: TextSpan(
+                                          text: 'Dietary Preferences ',
+                                          style: TextStyle(
+                                            fontSize: Responsive.isMobile(
+                                                    context)
+                                                ? 16
+                                                : Responsive.isTablet(context)
+                                                    ? 18
+                                                    : 24,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                          children: [
+                                            TextSpan(
+                                              text: '*', // Add the red asterisk
+                                              style: TextStyle(
+                                                fontSize:
+                                                    Responsive.isMobile(context)
+                                                        ? 16
+                                                        : Responsive.isTablet(
+                                                                context)
+                                                            ? 18
+                                                            : 24,
+                                                fontWeight: FontWeight.w700,
+                                                color: AppColors.red,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                       const SizedBox(height: 10),
-                                      Text(
-                                        'Link',
-                                        style: TextStyle(
-                                          fontFamily: 'Nunito-Regular',
-                                          fontSize: Responsive.isMobile(context)
-                                              ? 16
-                                              : Responsive.isTablet(context)
-                                                  ? 18
-                                                  : 24,
-                                          fontWeight: FontWeight.w600,
+                                      Obx(() {
+                                        return Column(
+                                          children: facilitiesController.dietary
+                                              .map((dietary) {
+                                            return Column(
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        if (facilitiesController
+                                                            .dietarySelection
+                                                            .contains(
+                                                                dietary)) {
+                                                          facilitiesController
+                                                              .dietarySelection
+                                                              .remove(dietary);
+                                                        } else {
+                                                          facilitiesController
+                                                              .dietarySelection
+                                                              .add(dietary);
+                                                        }
+                                                      },
+                                                      child: Container(
+                                                        width: 24,
+                                                        height: 24,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          border: Border.all(
+                                                            color: AppColors
+                                                                .primaryColor,
+                                                            width: 2,
+                                                          ),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      4.0),
+                                                          color: facilitiesController
+                                                                  .dietarySelection
+                                                                  .contains(
+                                                                      dietary)
+                                                              ? AppColors
+                                                                  .primaryColor
+                                                              : Colors
+                                                                  .transparent,
+                                                        ),
+                                                        child: const Icon(
+                                                            Icons.check,
+                                                            size: 18,
+                                                            color: AppColors
+                                                                .whiteColor),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 10),
+                                                    Flexible(
+                                                      child: Text(
+                                                        dietary,
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Nunito-Regular',
+                                                          fontSize: Responsive
+                                                                  .isMobile(
+                                                                      context)
+                                                              ? 12
+                                                              : Responsive
+                                                                      .isTablet(
+                                                                          context)
+                                                                  ? 14
+                                                                  : 18,
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const Divider(
+                                                  color: AppColors.primaryColor,
+                                                  thickness: .2,
+                                                ),
+                                              ],
+                                            );
+                                          }).toList(),
+                                        );
+                                      }),
+                                      const SizedBox(height: 10),
+                                      Row(
+                                        children: [
+                                          InkWell(
+                                            onTap: () {
+                                              if (dietaryTextController
+                                                  .text.isNotEmpty) {
+                                                facilitiesController.adddietary(
+                                                    dietaryTextController.text);
+                                                dietaryTextController.clear();
+                                              }
+                                            },
+                                            child: Container(
+                                              width: 24,
+                                              height: 24,
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color:
+                                                        AppColors.primaryColor,
+                                                    width: 2),
+                                                borderRadius:
+                                                    BorderRadius.circular(4.0),
+                                              ),
+                                              child: const Center(
+                                                child: Icon(Icons.add,
+                                                    color:
+                                                        AppColors.primaryColor,
+                                                    size: 16),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          CustomTextField(
+                                            inputFormatterslist: [
+                                              FilteringTextInputFormatter.allow(
+                                                  RegExp(
+                                                      r'[a-zA-Z]')), // Allow letters only
+                                            ],
+                                            borderColor: AppColors.darkGrey
+                                                .withOpacity(.1),
+                                            width: Responsive.isMobile(context)
+                                                ? screenWidth * 0.28
+                                                : screenWidth * 0.3,
+                                            borderRadius: 8,
+                                            controller: dietaryTextController,
+                                            hintText: "Add more",
+                                            fillColor: AppColors.whiteColor,
+                                            cursorColor: AppColors.primaryColor,
+                                            inputStyle: const TextStyle(
+                                                color: AppColors.blackColor),
+                                            hintStyle: const TextStyle(
+                                                color: AppColors.blackColor),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 16),
+                                      RichText(
+                                        text: TextSpan(
+                                          text: 'Atmosphere ',
+                                          style: TextStyle(
+                                            fontSize: Responsive.isMobile(
+                                                    context)
+                                                ? 16
+                                                : Responsive.isTablet(context)
+                                                    ? 18
+                                                    : 24,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                          children: [
+                                            TextSpan(
+                                              text: '*', // Add the red asterisk
+                                              style: TextStyle(
+                                                fontSize:
+                                                    Responsive.isMobile(context)
+                                                        ? 16
+                                                        : Responsive.isTablet(
+                                                                context)
+                                                            ? 18
+                                                            : 24,
+                                                fontWeight: FontWeight.w700,
+                                                color: AppColors.red,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                       const SizedBox(height: 10),
-                                      CustomTextField(
-                                        contentPadding:
-                                            const EdgeInsets.only(left: 18),
-                                        controller:
-                                            facilitiesController.restaurantModel.socialLink,
-                                        borderColor:
-                                            AppColors.darkGrey.withOpacity(.1),
-                                        borderRadius: 8,
-                                        hintText: "Tiktok.com",
-                                        fillColor: AppColors.whiteColor,
-                                        cursorColor: AppColors.primaryColor,
-                                        inputStyle: const TextStyle(
-                                            fontSize: 14,
-                                            color: AppColors.blackColor),
-                                        hintStyle: const TextStyle(
-                                            fontSize: 14,
-                                            color: AppColors.blackColor),
+                                      Obx(() {
+                                        return Column(
+                                          children: facilitiesController
+                                              .atmosphere
+                                              .map((atmosphere) {
+                                            return Column(
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        if (facilitiesController
+                                                            .atmosphereSelection
+                                                            .contains(
+                                                                atmosphere)) {
+                                                          facilitiesController
+                                                              .atmosphereSelection
+                                                              .remove(
+                                                                  atmosphere);
+                                                        } else {
+                                                          facilitiesController
+                                                              .atmosphereSelection
+                                                              .add(atmosphere);
+                                                        }
+                                                      },
+                                                      child: Container(
+                                                        width: 24,
+                                                        height: 24,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          border: Border.all(
+                                                            color: AppColors
+                                                                .primaryColor,
+                                                            width: 2,
+                                                          ),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      4.0),
+                                                          color: facilitiesController
+                                                                  .atmosphereSelection
+                                                                  .contains(
+                                                                      atmosphere)
+                                                              ? AppColors
+                                                                  .primaryColor
+                                                              : Colors
+                                                                  .transparent,
+                                                        ),
+                                                        child: const Icon(
+                                                            Icons.check,
+                                                            size: 18,
+                                                            color: AppColors
+                                                                .whiteColor),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 10),
+                                                    Flexible(
+                                                      child: Text(
+                                                        atmosphere,
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Nunito-Regular',
+                                                          fontSize: Responsive
+                                                                  .isMobile(
+                                                                      context)
+                                                              ? 12
+                                                              : Responsive
+                                                                      .isTablet(
+                                                                          context)
+                                                                  ? 14
+                                                                  : 18,
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const Divider(
+                                                  color: AppColors.primaryColor,
+                                                  thickness: .2,
+                                                ),
+                                              ],
+                                            );
+                                          }).toList(),
+                                        );
+                                      }),
+                                      const SizedBox(height: 10),
+                                      Row(
+                                        children: [
+                                          InkWell(
+                                            onTap: () {
+                                              if (atmosphereTextController
+                                                  .text.isNotEmpty) {
+                                                facilitiesController
+                                                    .addAtmosphere(
+                                                        atmosphereTextController
+                                                            .text);
+                                                atmosphereTextController
+                                                    .clear();
+                                              }
+                                            },
+                                            child: Container(
+                                              width: 24,
+                                              height: 24,
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color:
+                                                        AppColors.primaryColor,
+                                                    width: 2),
+                                                borderRadius:
+                                                    BorderRadius.circular(4.0),
+                                              ),
+                                              child: const Center(
+                                                child: Icon(Icons.add,
+                                                    color:
+                                                        AppColors.primaryColor,
+                                                    size: 16),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          CustomTextField(
+                                            inputFormatterslist: [
+                                              FilteringTextInputFormatter.allow(
+                                                  RegExp(
+                                                      r'[a-zA-Z]')), // Allow letters only
+                                            ],
+                                            borderColor: AppColors.darkGrey
+                                                .withOpacity(.1),
+                                            width: Responsive.isMobile(context)
+                                                ? screenWidth * 0.28
+                                                : screenWidth * 0.3,
+                                            borderRadius: 8,
+                                            controller:
+                                                atmosphereTextController,
+                                            hintText: "Add more",
+                                            fillColor: AppColors.whiteColor,
+                                            cursorColor: AppColors.primaryColor,
+                                            inputStyle: const TextStyle(
+                                                color: AppColors.blackColor),
+                                            hintStyle: const TextStyle(
+                                                color: AppColors.blackColor),
+                                          ),
+                                        ],
                                       ),
+                                      const SizedBox(height: 16),
+                                      RichText(
+                                        text: TextSpan(
+                                          text: 'Price Range ',
+                                          style: TextStyle(
+                                            fontSize: Responsive.isMobile(
+                                                    context)
+                                                ? 16
+                                                : Responsive.isTablet(context)
+                                                    ? 18
+                                                    : 24,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                          children: [
+                                            TextSpan(
+                                              text: '*', // Add the red asterisk
+                                              style: TextStyle(
+                                                fontSize:
+                                                    Responsive.isMobile(context)
+                                                        ? 16
+                                                        : Responsive.isTablet(
+                                                                context)
+                                                            ? 18
+                                                            : 24,
+                                                fontWeight: FontWeight.w700,
+                                                color: AppColors.red,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Obx(() {
+                                        return Column(
+                                          children: facilitiesController
+                                              .pricerange
+                                              .map((pricerange) {
+                                            return Column(
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        facilitiesController
+                                                            .selectPriceRange(
+                                                                pricerange);
+                                                      },
+                                                      child: Container(
+                                                        width: 24,
+                                                        height: 24,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          border: Border.all(
+                                                            color: AppColors
+                                                                .primaryColor,
+                                                            width: 2,
+                                                          ),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      4.0),
+                                                          color: facilitiesController
+                                                                      .selectedPriceRange
+                                                                      .value ==
+                                                                  pricerange
+                                                              ? AppColors
+                                                                  .primaryColor
+                                                              : Colors
+                                                                  .transparent,
+                                                        ),
+                                                        child: facilitiesController
+                                                                    .selectedPriceRange
+                                                                    .value ==
+                                                                pricerange
+                                                            ? const Icon(
+                                                                Icons.check,
+                                                                size: 18,
+                                                                color: AppColors
+                                                                    .whiteColor)
+                                                            : null,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 10),
+                                                    Flexible(
+                                                      child: Text(
+                                                        pricerange,
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Nunito-Regular',
+                                                          fontSize: Responsive
+                                                                  .isMobile(
+                                                                      context)
+                                                              ? 12
+                                                              : Responsive
+                                                                      .isTablet(
+                                                                          context)
+                                                                  ? 14
+                                                                  : 18,
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const Divider(
+                                                  color: AppColors.primaryColor,
+                                                  thickness: .2,
+                                                ),
+                                              ],
+                                            );
+                                          }).toList(),
+                                        );
+                                      }),
+                                      const SizedBox(height: 10),
+                                      Row(
+                                        children: [
+                                          InkWell(
+                                            onTap: () {
+                                              if (priceRangeTextController
+                                                  .text.isNotEmpty) {
+                                                facilitiesController
+                                                    .addPriceRange(
+                                                        priceRangeTextController
+                                                            .text);
+                                                priceRangeTextController
+                                                    .clear();
+                                              }
+                                            },
+                                            child: Container(
+                                              width: 24,
+                                              height: 24,
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color:
+                                                        AppColors.primaryColor,
+                                                    width: 2),
+                                                borderRadius:
+                                                    BorderRadius.circular(4.0),
+                                              ),
+                                              child: const Center(
+                                                child: Icon(Icons.add,
+                                                    color:
+                                                        AppColors.primaryColor,
+                                                    size: 16),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          CustomTextField(
+                                            inputFormatterslist: [
+                                              FilteringTextInputFormatter.allow(
+                                                  RegExp(
+                                                      r'[0-9!@#$%^&*(),.?":{}|<>]')),
+                                            ],
+                                            borderColor: AppColors.darkGrey
+                                                .withOpacity(.1),
+                                            width: Responsive.isMobile(context)
+                                                ? screenWidth * 0.28
+                                                : screenWidth * 0.3,
+                                            borderRadius: 8,
+                                            controller:
+                                                priceRangeTextController,
+                                            hintText: "Add more",
+                                            fillColor: AppColors.whiteColor,
+                                            cursorColor: AppColors.primaryColor,
+                                            inputStyle: const TextStyle(
+                                                color: AppColors.blackColor),
+                                            hintStyle: const TextStyle(
+                                                color: AppColors.blackColor),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 16),
                                     ],
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
-                          Center(
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                CustomButton(
-                                  title: "Save and Continue",
-                                  textStyle: TextStyle(
-                                    color: AppColors.whiteColor,
-                                    fontSize:
-                                        Responsive.isMobile(context) ? 16 : 18,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                  backgroundColor: AppColors.primaryColor,
-                                  borderRadius: 8,
-                                  width: Responsive.isMobile(context)
-                                      ? screenWidth * 0.3
-                                      : screenWidth * 0.2,
-                                  onPressed: () {
-                                    // Save action
-                                    facilitiesController.saveAndNext();
-                                  },
+                                const SizedBox(
+                                  width: 50,
                                 ),
-                                const SizedBox(width: 10),
-                                // CustomButton(
-                                //   title: "Next",
-                                //   textStyle: TextStyle(
-                                //     color: AppColors.primaryColor,
-                                //     fontSize: Responsive.isMobile(context)
-                                //         ? 16
-                                //         : 18,
-                                //     fontWeight: FontWeight.w600,
-                                //   ),
-                                //   backgroundColor: AppColors.whiteColor,
-                                //   borderClr: AppColors.primaryColor,
-                                //   borderRadius: 8,
-                                //   width: Responsive.isMobile(context)
-                                //       ? screenWidth * 0.3
-                                //       : screenWidth * 0.1,
-                                //   onPressed: () {
-                                //     Get.to(() => OperatingHourScreen1(
-                                //           isFromButtonClick: true,
-                                //         ));
-                                //   },
-                                // ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 30.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Specials Conditions',
+                                          style: TextStyle(
+                                            color: AppColors.blackColor,
+                                            fontFamily: 'Nunito-Regular',
+                                            fontSize: Responsive.isMobile(
+                                                    context)
+                                                ? 16
+                                                : Responsive.isTablet(context)
+                                                    ? 18
+                                                    : 24,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        CustomTextField(
+                                          contentPadding: const EdgeInsets.only(
+                                              left: 18, top: 22),
+                                          controller: facilitiesController
+                                              .restaurantModel
+                                              .specialConditions,
+                                          maxLine: 5,
+                                          borderColor: AppColors.darkGrey
+                                              .withOpacity(.1),
+                                          borderRadius: 8,
+                                          hintText: "Add text",
+                                          fillColor: AppColors.whiteColor,
+                                          cursorColor: AppColors.primaryColor,
+                                          inputStyle: const TextStyle(
+                                              fontSize: 14,
+                                              color: AppColors.blackColor),
+                                          hintStyle: const TextStyle(
+                                              fontSize: 14,
+                                              color: AppColors.blackColor),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Text(
+                                          'Social media',
+                                          style: TextStyle(
+                                            fontFamily: 'Nunito-Regular',
+                                            fontSize: Responsive.isMobile(
+                                                    context)
+                                                ? 16
+                                                : Responsive.isTablet(context)
+                                                    ? 18
+                                                    : 24,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Obx(
+                                          () => DropdownButtonHideUnderline(
+                                            child: DropdownButton2<String>(
+                                              isExpanded: true,
+                                              hint: Text(
+                                                'Tiktok',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Theme.of(context)
+                                                      .hintColor,
+                                                ),
+                                              ),
+                                              items: facilitiesController
+                                                  .socialMedia
+                                                  .map((String item) =>
+                                                      DropdownMenuItem<String>(
+                                                        value: item,
+                                                        child: Text(
+                                                          item,
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 14,
+                                                          ),
+                                                        ),
+                                                      ))
+                                                  .toList(),
+                                              value: facilitiesController
+                                                  .selectedSocialMedia.value,
+                                              onChanged: (String? value) {
+                                                facilitiesController
+                                                    .selectedSocialMedia
+                                                    .value = value!;
+                                              },
+                                              buttonStyleData: ButtonStyleData(
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                    color: AppColors.darkGrey
+                                                        .withOpacity(.1),
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                  color: AppColors.whiteColor,
+                                                ),
+                                                height: 40,
+                                              ),
+                                              menuItemStyleData:
+                                                  const MenuItemStyleData(
+                                                height: 40,
+                                              ),
+                                              iconStyleData:
+                                                  const IconStyleData(
+                                                icon: Icon(
+                                                  Icons
+                                                      .keyboard_arrow_down_outlined,
+                                                  color: AppColors.primaryColor,
+                                                ),
+                                                iconSize: 24,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Text(
+                                          'Link',
+                                          style: TextStyle(
+                                            fontFamily: 'Nunito-Regular',
+                                            fontSize: Responsive.isMobile(
+                                                    context)
+                                                ? 16
+                                                : Responsive.isTablet(context)
+                                                    ? 18
+                                                    : 24,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        CustomTextField(
+                                          contentPadding:
+                                              const EdgeInsets.only(left: 18),
+                                          controller: facilitiesController
+                                              .restaurantModel.socialLink,
+                                          borderColor: AppColors.darkGrey
+                                              .withOpacity(.1),
+                                          borderRadius: 8,
+                                          hintText: "Tiktok.com",
+                                          fillColor: AppColors.whiteColor,
+                                          cursorColor: AppColors.primaryColor,
+                                          inputStyle: const TextStyle(
+                                              fontSize: 14,
+                                              color: AppColors.blackColor),
+                                          hintStyle: const TextStyle(
+                                              fontSize: 14,
+                                              color: AppColors.blackColor),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: 20),
+                            Center(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CustomButton(
+                                    title: "Save and Continue",
+                                    textStyle: TextStyle(
+                                      color: AppColors.whiteColor,
+                                      fontSize: Responsive.isMobile(context)
+                                          ? 16
+                                          : 18,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    backgroundColor: AppColors.primaryColor,
+                                    borderRadius: 8,
+                                    width: Responsive.isMobile(context)
+                                        ? screenWidth * 0.3
+                                        : screenWidth * 0.2,
+                                    onPressed: () {
+                                      // Save action
+                                      facilitiesController.saveAndNext();
+                                    },
+                                  ),
+                                  const SizedBox(width: 10),
+                                  // CustomButton(
+                                  //   title: "Next",
+                                  //   textStyle: TextStyle(
+                                  //     color: AppColors.primaryColor,
+                                  //     fontSize: Responsive.isMobile(context)
+                                  //         ? 16
+                                  //         : 18,
+                                  //     fontWeight: FontWeight.w600,
+                                  //   ),
+                                  //   backgroundColor: AppColors.whiteColor,
+                                  //   borderClr: AppColors.primaryColor,
+                                  //   borderRadius: 8,
+                                  //   width: Responsive.isMobile(context)
+                                  //       ? screenWidth * 0.3
+                                  //       : screenWidth * 0.1,
+                                  //   onPressed: () {
+                                  //     Get.to(() => OperatingHourScreen1(
+                                  //           isFromButtonClick: true,
+                                  //         ));
+                                  //   },
+                                  // ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },

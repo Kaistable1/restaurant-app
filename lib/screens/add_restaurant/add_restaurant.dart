@@ -7,10 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:restaurant_web_app/constants/colors.dart';
 import 'package:restaurant_web_app/screens/add_restaurant/widgets/restaurant_basic_widget.dart';
+import 'package:restaurant_web_app/widgets/global_functions.dart';
 
 import '../../../utils/responsive.dart';
 import '../../../widgets/round_button.dart';
 import '../../../widgets/text_field.dart';
+import '../../main.dart';
+import '../../widgets/account_settings_popup_widget.dart';
 import '../main_screen/mainscreen_controller/main_controller.dart';
 import '../restaurant_detail_screen/controller/restaurant_detail_controller.dart';
 import '../restaurant_detail_screen/widget/map_widget.dart';
@@ -25,7 +28,7 @@ class AddEditRestaurantScreen extends StatelessWidget {
   bool? isFromButtonClick;
   @override
   Widget build(BuildContext context) {
-    controller.getCurrentLocation();
+    getCurrentLocation();
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: isFromButtonClick == null
@@ -60,88 +63,13 @@ class AddEditRestaurantScreen extends StatelessWidget {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(4.0),
-                      child: Row(
-                        children: [
-                          const SizedBox(width: 8),
-                          const Text('Account Settings'),
-                          const Spacer(),
-                          PopupMenuButton<String>(
-                            icon: const Icon(
-                              Icons.keyboard_arrow_down_sharp,
-                              color: AppColors.primaryColor,
-                            ),
-                            onSelected: (value) {
-                              if (value == 'Logout') {
-                                mainController.showLogoutDialog(
-                                    context); // Show logout dialog
-                              } else {
-                                mainController.selectedMenuItem = value;
-                                mainController.isAddingRestaurant = false;
-                                mainController.update();
-                                Get.close(1);
-                              }
-                            },
-                            itemBuilder: (context) => [
-                              PopupMenuItem(
-                                value: 'Home',
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/home.png',
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                    const SizedBox(width: 16),
-                                    const Text('Home'),
-                                  ],
-                                ),
-                              ),
-                              PopupMenuItem(
-                                value: 'View Restaurant Details',
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/resturant_detail.png',
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                    const SizedBox(width: 16),
-                                    const Text('View Restaurant Details'),
-                                  ],
-                                ),
-                              ),
-                              PopupMenuItem(
-                                value: 'Change Password',
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/change_password.png',
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                    const SizedBox(width: 16),
-                                    const Text('Change Password'),
-                                  ],
-                                ),
-                              ),
-                              PopupMenuItem(
-                                value: 'Logout',
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/logout.png',
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                    const SizedBox(width: 16),
-                                    const Text('Logout'),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                      child: Obx(() {
+                        final resModel = currentUserDataModel.value;
+                        if (resModel == null || resModel.zipCode.text.isEmpty) {
+                          return AccountNoAuthPopupWidget();
+                        }
+                        return AccountSettingsPopupWidget();
+                      }),
                     ),
                   ),
                 ),
@@ -159,8 +87,6 @@ class AddEditRestaurantContent extends StatefulWidget {
 }
 
 class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
-  final _formKey = GlobalKey<FormState>();
-
   final controller = Get.put(RestaurantDetailController());
   final restaurantController = Get.put(AddRestaurantController());
 
@@ -201,7 +127,6 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
     restaurantController.restaurantsNameError.value = '';
     restaurantController.addressError.value = '';
     restaurantController.phoneError.value = '';
-    // restaurantController.cusineError.value = '';
     restaurantController.cityError.value = '';
     restaurantController.zipCodeError.value = '';
     double screenWidth = MediaQuery.of(context).size.width;
@@ -386,93 +311,301 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
                                       children: [
-                                        // Image 1
-                                        Container(
-                                          height: isDesktop
-                                              ? 160
-                                              : isTablet
-                                                  ? 150
-                                                  : 100,
-                                          width: isDesktop
-                                              ? 160
-                                              : isTablet
-                                                  ? 150
-                                                  : 100,
-                                          decoration: BoxDecoration(
-                                            image: const DecorationImage(
-                                              image: AssetImage(
-                                                  'assets/images/img3.png'),
-                                              fit: BoxFit.cover,
-                                            ),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
+                                        Obx(
+                                          () => Wrap(
+                                            spacing: 8,
+                                            children: restaurantController
+                                                .restaurantModel.resImageMemory
+                                                .map((image) {
+                                              return Stack(
+                                                clipBehavior: Clip
+                                                    .none, // Allows the cross icon to overflow if needed
+                                                children: [
+                                                  // Circular Image with Border
+                                                  Container(
+                                                    width: Responsive.isDesktop(
+                                                            context)
+                                                        ? 160
+                                                        : 120, // Adjust the size as needed
+                                                    height:
+                                                        Responsive.isDesktop(
+                                                                context)
+                                                            ? 150
+                                                            : 110,
+                                                    decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10)),
+                                                    child: Image.memory(
+                                                      image,
+                                                      // width: 80,
+                                                      // height: 80,
+                                                      fit: BoxFit.cover,
+                                                    ), /*Image.asset(
+                                          'assets/images/img3.png',
+                                          fit: BoxFit
+                                              .cover, // Ensures the image fits within the circular container
+                                        ),*/
+                                                  ),
+
+                                                  // Close Icon in Top Right
+                                                  Positioned(
+                                                    top:
+                                                        8, // Adjust position as needed
+                                                    right: 10,
+                                                    child: GestureDetector(
+                                                      onTap: () {
+                                                        restaurantController
+                                                            .restaurantModel.resImageMemory
+                                                            .remove(image);
+                                                      },
+                                                      child: Container(
+                                                        width: 19,
+                                                        height: 19,
+                                                        decoration:
+                                                            const BoxDecoration(
+                                                          color: AppColors
+                                                              .darkGrey,
+                                                          shape:
+                                                              BoxShape.circle,
+                                                        ),
+                                                        child: const Icon(
+                                                          Icons.close,
+                                                          size: 10,
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              );
+                                            }).toList(),
                                           ),
                                         ),
-                                        const SizedBox(width: 16),
-                                        // Image 2
-                                        Container(
-                                          height: isDesktop
-                                              ? 160
-                                              : isTablet
-                                                  ? 150
-                                                  : 100,
-                                          width: isDesktop
-                                              ? 160
-                                              : isTablet
-                                                  ? 150
-                                                  : 100,
-                                          decoration: BoxDecoration(
-                                            image: const DecorationImage(
-                                              image: AssetImage(
-                                                  'assets/images/img4.png'),
-                                              fit: BoxFit.cover,
+                                        Row(
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () async {
+                                                Uint8List? selectedImage =
+                                                    await controller.getImage();
+
+                                                if (selectedImage != null &&
+                                                    selectedImage.isNotEmpty) {
+                                                  restaurantController
+                                                      .restaurantModel
+                                                      .resImageMemory
+                                                      .add(selectedImage);
+                                                  // print(
+                                                  //     '${controller.listingModel!.listingImageMemories.length}++++++++++++++++++ gallery');
+                                                }
+                                              },
+                                              child: _imageBytes == null
+                                                  ? Container(
+                                                      height: Responsive
+                                                              .isDesktop(
+                                                                  context)
+                                                          ? 150
+                                                          : Responsive.isTablet(
+                                                                  context)
+                                                              ? 120
+                                                              : 110,
+                                                      width: 160,
+                                                      decoration: BoxDecoration(
+                                                        border: Border.all(
+                                                            color: Colors.grey
+                                                                .withOpacity(
+                                                                    .1)),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(12),
+                                                        color: AppColors
+                                                            .whiteColor,
+                                                      ),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(16.0),
+                                                        child: DottedBorder(
+                                                          borderType:
+                                                              BorderType.RRect,
+                                                          radius: const Radius
+                                                              .circular(12),
+                                                          dashPattern: [6, 3],
+                                                          color: AppColors
+                                                              .primaryColor,
+                                                          strokeWidth: 1,
+                                                          child: Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          12),
+                                                              color: AppColors
+                                                                  .whiteColor,
+                                                            ),
+                                                            child: Center(
+                                                              child: Column(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                children: [
+                                                                  const Icon(
+                                                                      Icons
+                                                                          .upload_file_outlined,
+                                                                      size: 25,
+                                                                      color: AppColors
+                                                                          .primaryColor),
+                                                                  Text(
+                                                                    'Upload Image',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize: Responsive.isMobile(
+                                                                              context)
+                                                                          ? 7
+                                                                          : (Responsive.isTablet(context)
+                                                                              ? 8
+                                                                              : 10),
+                                                                    ),
+                                                                  ),
+                                                                  Text(
+                                                                    'Upload a .png file only',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize: Responsive.isMobile(
+                                                                              context)
+                                                                          ? 7
+                                                                          : (Responsive.isTablet(context)
+                                                                              ? 8
+                                                                              : 10),
+                                                                      color: AppColors
+                                                                          .primaryColor,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : Container(
+                                                      height: Responsive
+                                                              .isDesktop(
+                                                                  context)
+                                                          ? 150
+                                                          : Responsive.isTablet(
+                                                                  context)
+                                                              ? 120
+                                                              : 110,
+                                                      width: 160,
+                                                      decoration: BoxDecoration(
+                                                        image: DecorationImage(
+                                                          image: MemoryImage(
+                                                              _imageBytes!),
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(12),
+                                                      ),
+                                                    ),
                                             ),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 16),
-                                        // Add New Image
-                                        GestureDetector(
-                                          onTap: () =>
-                                              _pickImage(isLogo: false),
-                                          child: Container(
-                                            height: isDesktop
-                                                ? 160
-                                                : isTablet
-                                                    ? 150
-                                                    : 100,
-                                            width: isDesktop
-                                                ? 160
-                                                : isTablet
-                                                    ? 150
-                                                    : 100,
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Colors.grey
-                                                      .withOpacity(.2)),
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            child: _addedImageBytes == null
-                                                ? Icon(Icons.add,
-                                                    color:
-                                                        AppColors.primaryColor,
-                                                    size: isDesktop
-                                                        ? 40
-                                                        : isTablet
-                                                            ? 30
-                                                            : 28)
-                                                : Image.memory(
-                                                    _addedImageBytes!,
-                                                    fit: BoxFit.cover),
-                                          ),
+                                          ],
                                         ),
                                       ],
                                     ),
+                                    // Row(
+                                    //   mainAxisAlignment:
+                                    //       MainAxisAlignment.start,
+                                    //   children: [
+                                    //     // Image 1
+                                    //     Container(
+                                    //       height: isDesktop
+                                    //           ? 160
+                                    //           : isTablet
+                                    //               ? 150
+                                    //               : 100,
+                                    //       width: isDesktop
+                                    //           ? 160
+                                    //           : isTablet
+                                    //               ? 150
+                                    //               : 100,
+                                    //       decoration: BoxDecoration(
+                                    //         image: const DecorationImage(
+                                    //           image: AssetImage(
+                                    //               'assets/images/img3.png'),
+                                    //           fit: BoxFit.cover,
+                                    //         ),
+                                    //         borderRadius:
+                                    //             BorderRadius.circular(10),
+                                    //       ),
+                                    //     ),
+                                    //     const SizedBox(width: 16),
+                                    //     // Image 2
+                                    //     Container(
+                                    //       height: isDesktop
+                                    //           ? 160
+                                    //           : isTablet
+                                    //               ? 150
+                                    //               : 100,
+                                    //       width: isDesktop
+                                    //           ? 160
+                                    //           : isTablet
+                                    //               ? 150
+                                    //               : 100,
+                                    //       decoration: BoxDecoration(
+                                    //         image: const DecorationImage(
+                                    //           image: AssetImage(
+                                    //               'assets/images/img4.png'),
+                                    //           fit: BoxFit.cover,
+                                    //         ),
+                                    //         borderRadius:
+                                    //             BorderRadius.circular(10),
+                                    //       ),
+                                    //     ),
+                                    //     const SizedBox(width: 16),
+                                    //     // Add New Image
+                                    //     GestureDetector(
+                                    //       onTap: () =>
+                                    //           _pickImage(isLogo: false),
+                                    //       child: Container(
+                                    //         height: isDesktop
+                                    //             ? 160
+                                    //             : isTablet
+                                    //                 ? 150
+                                    //                 : 100,
+                                    //         width: isDesktop
+                                    //             ? 160
+                                    //             : isTablet
+                                    //                 ? 150
+                                    //                 : 100,
+                                    //         decoration: BoxDecoration(
+                                    //           border: Border.all(
+                                    //               color: Colors.grey
+                                    //                   .withOpacity(.2)),
+                                    //           borderRadius:
+                                    //               BorderRadius.circular(10),
+                                    //         ),
+                                    //         child: _addedImageBytes == null
+                                    //             ? Icon(Icons.add,
+                                    //                 color:
+                                    //                     AppColors.primaryColor,
+                                    //                 size: isDesktop
+                                    //                     ? 40
+                                    //                     : isTablet
+                                    //                         ? 30
+                                    //                         : 28)
+                                    //             : Image.memory(
+                                    //                 _addedImageBytes!,
+                                    //                 fit: BoxFit.cover),
+                                    //       ),
+                                    //     ),
+                                    //   ],
+                                    // ),
+
+                                    ////////change photo section
                                     const SizedBox(height: 16),
                                   ],
                                 ),
@@ -512,17 +645,16 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
 
                                 GestureDetector(
                                     onTap: () async {
-                                      print('abcd');
-                                      print('abcd ' '''''' '');
+                                      print('abcdef');
+
                                       Uint8List? selectedImage =
-                                          await controller.getImage();
+                                      await Get.put(RestaurantDetailController())
+                                          .getImage();
 
                                       if (selectedImage != null &&
                                           selectedImage.isNotEmpty) {
-                                        restaurantController
-                                            .restaurantModel
-                                            .logoImageMemory
-                                            .value = selectedImage;
+                                        restaurantController.restaurantModel
+                                            .logoImageMemory.value = selectedImage;
                                       }
                                     } /*=> _pickImage(isLogo: true)*/,
                                     child: restaurantController.restaurantModel
@@ -738,32 +870,32 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                     ),
                                     const SizedBox(height: 8),
                                     CustomTextField(
-                                      controller:
-                                          restaurantController.phoneController,
-                                      prefixIcon: Padding(
-                                        padding: const EdgeInsets.all(2.0),
-                                        child: Container(
-                                          width: 20,
-                                          height: 45,
-                                          decoration: BoxDecoration(
-                                            color: AppColors.darkGrey
-                                                .withOpacity(.1),
-                                          ),
-                                          child: const Center(
-                                            child: Text(
-                                              '+1',
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
+                                      controller: restaurantController
+                                          .restaurantModel.phoneNumber,
+                                      // prefixIcon: Padding(
+                                      //   padding: const EdgeInsets.all(2.0),
+                                      //   child: Container(
+                                      //     width: 20,
+                                      //     height: 45,
+                                      //     decoration: BoxDecoration(
+                                      //       color: AppColors.darkGrey
+                                      //           .withOpacity(.1),
+                                      //     ),
+                                      //     child: const Center(
+                                      //       child: Text(
+                                      //         '+1',
+                                      //         style: TextStyle(
+                                      //             fontSize: 16,
+                                      //             fontWeight: FontWeight.bold),
+                                      //       ),
+                                      //     ),
+                                      //   ),
+                                      // ),
                                       borderColor:
                                           AppColors.darkGrey.withOpacity(.1),
                                       width: 516,
                                       borderRadius: 8,
-                                      hintText: "Phone no",
+                                      hintText: "+1 34567765",
                                       fillColor: AppColors.whiteColor,
                                       cursorColor: AppColors.primaryColor,
                                       inputStyle: const TextStyle(
@@ -813,8 +945,8 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                     ),
                                     const SizedBox(height: 8),
                                     CustomTextField(
-                                      controller:
-                                          restaurantController.cityController,
+                                      controller: restaurantController
+                                          .restaurantModel.city,
                                       borderColor:
                                           AppColors.darkGrey.withOpacity(.1),
                                       width: 516,
@@ -839,6 +971,66 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                           )
                                         : const SizedBox.shrink()),
                                     const SizedBox(height: 8),
+
+                                    ///
+                                    RichText(
+                                      text: TextSpan(
+                                        text: 'Country ',
+                                        style: TextStyle(
+                                          fontSize: Responsive.isMobile(context)
+                                              ? 16
+                                              : Responsive.isTablet(context)
+                                                  ? 18
+                                                  : 24,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                        children: [
+                                          TextSpan(
+                                            text: '*', // Add the red asterisk
+                                            style: TextStyle(
+                                              fontSize: Responsive.isMobile(
+                                                      context)
+                                                  ? 16
+                                                  : Responsive.isTablet(context)
+                                                      ? 18
+                                                      : 24,
+                                              fontWeight: FontWeight.w700,
+                                              color: AppColors.red,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    CustomTextField(
+                                      controller: restaurantController
+                                          .restaurantModel.country,
+                                      borderColor:
+                                          AppColors.darkGrey.withOpacity(.1),
+                                      width: 516,
+                                      borderRadius: 8,
+                                      hintText: "Country",
+                                      fillColor: AppColors.whiteColor,
+                                      cursorColor: AppColors.primaryColor,
+                                      inputStyle: const TextStyle(
+                                          color: AppColors.blackColor),
+                                      hintStyle: const TextStyle(
+                                          color: AppColors.blackColor),
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Obx(() => restaurantController
+                                            .countryError.value.isNotEmpty
+                                        ? Text(
+                                            restaurantController
+                                                .countryError.value,
+                                            style: const TextStyle(
+                                                color: Colors.red,
+                                                fontSize: 12),
+                                          )
+                                        : const SizedBox.shrink()),
+                                    const SizedBox(height: 8),
+
+                                    ///
                                     RichText(
                                       text: TextSpan(
                                         text: 'Zip code ',
@@ -1105,7 +1297,7 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                           ? Get.width * 0.3
                                           : Get.width * 0.2,
                                       onPressed: () {
-                                           restaurantController.saveNextScreen();
+                                        restaurantController.saveNextScreen();
                                       },
                                     ),
                                     const SizedBox(
