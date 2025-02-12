@@ -267,7 +267,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                   isFromButtonClick: true,
                                                 )); // Navigate to Operating Hour screen
                                                 break;
-                                              case 'Edit Discount (in progress)':
+                                              case 'Edit Discount':
                                                 Get.to(EditDiscountScreen(
                                                   isFromButtonClick: true,
                                                 )); // Navigate to Discount screen
@@ -293,8 +293,8 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                   Text('Edit Operating Hour'),
                                             ),
                                             const PopupMenuItem(
-                                              value: 'Edit Discount (in progress)',
-                                              child: Text('Edit Discount (in progress)'),
+                                              value: 'Edit Discount',
+                                              child: Text('Edit Discount'),
                                             ),
                                           ],
                                         ),

@@ -15,7 +15,84 @@ import '../../restaurant_detail_screen/restaurant_detail_screen.dart';
 class EditOperatingHourScreen extends GetxController {
   final TextEditingController aboutTextController = TextEditingController();
   ///add operating hour function
-  /// Save all operating hours
+  // Future<void> saveAllOperatingHours() async {
+  //   print("Saving Operating Hours...");
+  //
+  //   final uid = FirebaseAuth.instance.currentUser?.uid;
+  //   if (uid == null) {
+  //     print("Error: User not logged in.");
+  //     return;
+  //   }
+  //
+  //   // ✅ Make a **safe copy** of dayToggles to avoid state changes during iteration
+  //   final togglesSnapshot = Map<String, bool>.from(dayToggles);
+  //
+  //   // ✅ Force-refresh UI state to ensure it's fully updated
+  //    dayToggles.refresh();
+  //  cellToggles.refresh();
+  //   mealTimes.refresh();
+  //
+  //   print("Snapshot of dayToggles before processing: $togglesSnapshot");
+  //
+  //   for (var day in List.from(mealTimes.keys)) {
+  //     Map<String, dynamic> mealsMap = {};
+  //
+  //     // ✅ Use the snapshot to ensure toggle state remains correct
+  //     bool isDayToggledOff = togglesSnapshot.containsKey(day) && togglesSnapshot[day] == false;
+  //
+  //     print("Processing $day - Toggled: $isDayToggledOff | UI State: ${dayToggles[day]}");
+  //
+  //     if (isDayToggledOff) {
+  //       print("$day is toggled off. Saving all meals as closed...");
+  //       for (var meal in List.from(mealTimes[day]!.keys)) {
+  //         mealsMap[meal] = {"isClosed": true};
+  //       }
+  //     } else {
+  //       for (var meal in List.from(mealTimes[day]!.keys)) {
+  //         if (cellToggles[day]![meal] == false) {
+  //           mealsMap[meal] = {"isClosed": true};
+  //           continue;
+  //         }
+  //
+  //         final fromTime = mealTimes[day]![meal]!['From'];
+  //         final toTime = mealTimes[day]![meal]!['To'];
+  //
+  //         if (fromTime == null || fromTime.isEmpty || toTime == null || toTime.isEmpty) {
+  //           print("Skipping $meal on $day: Invalid times.");
+  //           mealsMap[meal] = {"isClosed": true};
+  //           continue;
+  //         }
+  //
+  //         mealsMap[meal] = {
+  //           "isClosed": false,
+  //           "startTime": fromTime,
+  //           "endTime": toTime,
+  //         };
+  //       }
+  //     }
+  //
+  //     // ✅ Always save toggled-off days
+  //     if (isDayToggledOff || mealsMap.isNotEmpty) {
+  //       try {
+  //         await FirebaseFirestore.instance
+  //             .collection('restaurants')
+  //             .doc(uid)
+  //             .collection('operatingHours')
+  //             .doc(day)
+  //             .set(mealsMap, SetOptions(merge: true));
+  //         print("$day saved successfully in Firestore.");
+  //       } catch (e) {
+  //         print("Error saving $day: $e");
+  //       }
+  //     } else {
+  //       print("Skipping save for $day as no changes were made.");
+  //     }
+  //   }
+  //
+  //   print("All operating hours saved successfully.");
+  // }
+  //
+
   Future<void> saveAllOperatingHours() async {
     print("Saving Operating Hours...");
 
@@ -25,16 +102,32 @@ class EditOperatingHourScreen extends GetxController {
       return;
     }
 
-    for (var day in mealTimes.keys) {
+    // ✅ First, force UI to update before taking snapshot
+    // controller.dayToggles.refresh();
+    // controller.cellToggles.refresh();
+    // controller.mealTimes.refresh();
+
+    // ✅ Now, take the snapshot **after** ensuring state is updated
+    await Future.delayed(Duration(milliseconds: 100)); // Ensures state is updated before reading
+    final togglesSnapshot = Map<String, bool>.from(dayToggles);
+
+    print("Snapshot of dayToggles before processing: $togglesSnapshot");
+
+    for (var day in List.from(mealTimes.keys)) {
       Map<String, dynamic> mealsMap = {};
 
-      if (dayToggles[day] == false) {
+      // ✅ Use the **updated** snapshot to avoid state inconsistency
+      bool isDayToggledOff = togglesSnapshot.containsKey(day) && togglesSnapshot[day] == false;
+
+      print("Processing $day - Toggled: $isDayToggledOff | UI State: ${dayToggles[day]}");
+
+      if (isDayToggledOff) {
         print("$day is toggled off. Saving all meals as closed...");
-        for (var meal in mealTimes[day]!.keys) {
+        for (var meal in List.from(mealTimes[day]!.keys)) {
           mealsMap[meal] = {"isClosed": true};
         }
       } else {
-        for (var meal in mealTimes[day]!.keys) {
+        for (var meal in List.from(mealTimes[day]!.keys)) {
           if (cellToggles[day]![meal] == false) {
             mealsMap[meal] = {"isClosed": true};
             continue;
@@ -57,22 +150,87 @@ class EditOperatingHourScreen extends GetxController {
         }
       }
 
-      // Save using `merge: true` to avoid overwriting existing fields
-      try {
-        await FirebaseFirestore.instance
-            .collection('restaurants')
-            .doc(uid)
-            .collection('operatingHours')
-            .doc(day)
-            .set(mealsMap, SetOptions(merge: true)); // Merging instead of replacing
-        print("$day saved successfully in Firestore.");
-      } catch (e) {
-        print("Error saving $day: $e");
+      // ✅ Always save toggled-off days
+      if (isDayToggledOff || mealsMap.isNotEmpty) {
+        try {
+          await FirebaseFirestore.instance
+              .collection('restaurants')
+              .doc(uid)
+              .collection('operatingHours')
+              .doc(day)
+              .set(mealsMap, SetOptions(merge: true));
+          print("$day saved successfully in Firestore.");
+        } catch (e) {
+          print("Error saving $day: $e");
+        }
+      } else {
+        print("Skipping save for $day as no changes were made.");
       }
     }
 
     print("All operating hours saved successfully.");
   }
+
+///
+
+
+  // Future<void> saveAllOperatingHours() async {
+  //   print("Saving Operating Hours...");
+  //
+  //   final uid = FirebaseAuth.instance.currentUser?.uid;
+  //   if (uid == null) {
+  //     print("Error: User not logged in.");
+  //     return;
+  //   }
+  //
+  //   for (var day in mealTimes.keys) {
+  //     Map<String, dynamic> mealsMap = {};
+  //
+  //     if (dayToggles[day] == false) {
+  //       print("$day is toggled off. Saving all meals as closed...");
+  //       for (var meal in mealTimes[day]!.keys) {
+  //         mealsMap[meal] = {"isClosed": true};
+  //       }
+  //     } else {
+  //       for (var meal in mealTimes[day]!.keys) {
+  //         if (cellToggles[day]![meal] == false) {
+  //           mealsMap[meal] = {"isClosed": true};
+  //           continue;
+  //         }
+  //
+  //         final fromTime = mealTimes[day]![meal]!['From'];
+  //         final toTime = mealTimes[day]![meal]!['To'];
+  //
+  //         if (fromTime == null || fromTime.isEmpty || toTime == null || toTime.isEmpty) {
+  //           print("Skipping $meal on $day: Invalid times.");
+  //           mealsMap[meal] = {"isClosed": true};
+  //           continue;
+  //         }
+  //
+  //         mealsMap[meal] = {
+  //           "isClosed": false,
+  //           "startTime": fromTime,
+  //           "endTime": toTime,
+  //         };
+  //       }
+  //     }
+  //
+  //     // Save using `merge: true` to avoid overwriting existing fields
+  //     try {
+  //       await FirebaseFirestore.instance
+  //           .collection('restaurants')
+  //           .doc(uid)
+  //           .collection('operatingHours')
+  //           .doc(day)
+  //           .set(mealsMap, SetOptions(merge: true)); // Merging instead of replacing
+  //       print("$day saved successfully in Firestore.");
+  //     } catch (e) {
+  //       print("Error saving $day: $e");
+  //     }
+  //   }
+  //
+  //   print("All operating hours saved successfully.");
+  // }
 
 
   RxString aboutError = ''.obs;

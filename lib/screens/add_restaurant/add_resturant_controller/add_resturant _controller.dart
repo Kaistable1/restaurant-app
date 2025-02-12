@@ -138,59 +138,113 @@ class AddRestaurantController extends GetxController {
 
   ///onTap of entertainment
 
+  // void onTapEntertainment(BuildContext context) {
+  //   if (eventNames.isEmpty ||
+  //       byValues.isEmpty ||
+  //       selectedDays.isEmpty ||
+  //       selectedDates.isEmpty ||
+  //       selectedTimes.isEmpty) {
+  //     loadingDialog(
+  //         button: true,
+  //         message: 'Please fill in all details before continuing.');
+  //     return;
+  //   }
+  //
+  //   List<EntertainmentScheduleModel> entertainmentSchedules = [];
+  //
+  //   for (int i = 0; i < eventNames.length; i++) {
+  //     if (eventNames[i].trim().isEmpty ||
+  //         byValues[i].trim().isEmpty ||
+  //         selectedDays.length <= i ||
+  //         selectedDays[i] == null ||
+  //         selectedDays[i]!.trim().isEmpty ||
+  //         selectedDates.length <= i ||
+  //         selectedDates[i] == null ||
+  //         selectedTimes.length <= i ||
+  //         selectedTimes[i]["from"] == null ||
+  //         selectedTimes[i]["to"] == null) {
+  //       loadingDialog(
+  //           button: true,
+  //           message: 'Please fill in all details before continuing.');
+  //       return;
+  //     }
+  //
+  //     String formattedDate =
+  //         DateFormat('dd MMM, yyyy').format(selectedDates[i]!);
+  //
+  //     Map<String, dynamic> schedule = {
+  //       "eventName": eventNames[i],
+  //       "eventBy": byValues[i],
+  //       "day": selectedDays[i]!,
+  //       "date": formattedDate,
+  //       'startTime': selectedTimes[i]["from"]?.format(context) ?? '',
+  //       'endTime': selectedTimes[i]["to"]?.format(context) ?? '',
+  //       'isSelected':
+  //           checkBoxValues.length > i ? checkBoxValues[i] ?? false : false,
+  //     };
+  //
+  //     entertainmentSchedules.add(EntertainmentScheduleModel.fromMap(schedule));
+  //   }
+  //
+  //   // Delay state update until after the widget tree has finished building
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     restaurantModel.entertainmentScheduleList = entertainmentSchedules;
+  //
+  //     // Navigate only after updating state
+  //     Get.to(() => OperatingHourScreen1(isFromButtonClick: true));
+  //   });
+  // }
   void onTapEntertainment(BuildContext context) {
-    if (eventNames.isEmpty ||
-        byValues.isEmpty ||
-        selectedDays.isEmpty ||
-        selectedDates.isEmpty ||
-        selectedTimes.isEmpty) {
-      loadingDialog(
-          button: true,
-          message: 'Please fill in all details before continuing.');
+    bool hasStartedFilling = eventNames.any((name) => name.trim().isNotEmpty);
+
+    if (!hasStartedFilling) {
+      // No event names added, allow navigation
+      Get.to(() => OperatingHourScreen1(isFromButtonClick: true));
       return;
     }
 
     List<EntertainmentScheduleModel> entertainmentSchedules = [];
 
     for (int i = 0; i < eventNames.length; i++) {
-      if (eventNames[i].trim().isEmpty ||
-          byValues[i].trim().isEmpty ||
-          selectedDays.length <= i ||
-          selectedDays[i] == null ||
-          selectedDays[i]!.trim().isEmpty ||
-          selectedDates.length <= i ||
-          selectedDates[i] == null ||
-          selectedTimes.length <= i ||
-          selectedTimes[i]["from"] == null ||
-          selectedTimes[i]["to"] == null) {
-        loadingDialog(
-            button: true,
-            message: 'Please fill in all details before continuing.');
-        return;
+      if (eventNames[i].trim().isNotEmpty) {
+        // Ensure all details are provided if an event name exists
+        if (byValues.length <= i ||
+            byValues[i].trim().isEmpty ||
+            selectedDays.length <= i ||
+            selectedDays[i] == null ||
+            selectedDays[i]!.trim().isEmpty ||
+            selectedDates.length <= i ||
+            selectedDates[i] == null ||
+            selectedTimes.length <= i ||
+            selectedTimes[i]["from"] == null ||
+            selectedTimes[i]["to"] == null) {
+          loadingDialog(
+              button: true,
+              message: 'Please fill in all details before continuing.');
+          return;
+        }
+
+        String formattedDate =
+        DateFormat('dd MMM, yyyy').format(selectedDates[i]!);
+
+        Map<String, dynamic> schedule = {
+          "eventName": eventNames[i],
+          "eventBy": byValues[i],
+          "day": selectedDays[i]!,
+          "date": formattedDate,
+          'startTime': selectedTimes[i]["from"]?.format(context) ?? '',
+          'endTime': selectedTimes[i]["to"]?.format(context) ?? '',
+          'isSelected':
+          checkBoxValues.length > i ? checkBoxValues[i] ?? false : false,
+        };
+
+        entertainmentSchedules.add(EntertainmentScheduleModel.fromMap(schedule));
       }
-
-      String formattedDate =
-          DateFormat('dd MMM, yyyy').format(selectedDates[i]!);
-
-      Map<String, dynamic> schedule = {
-        "eventName": eventNames[i],
-        "eventBy": byValues[i],
-        "day": selectedDays[i]!,
-        "date": formattedDate,
-        'startTime': selectedTimes[i]["from"]?.format(context) ?? '',
-        'endTime': selectedTimes[i]["to"]?.format(context) ?? '',
-        'isSelected':
-            checkBoxValues.length > i ? checkBoxValues[i] ?? false : false,
-      };
-
-      entertainmentSchedules.add(EntertainmentScheduleModel.fromMap(schedule));
     }
 
-    // Delay state update until after the widget tree has finished building
+    // Update state after widget tree finishes building
     WidgetsBinding.instance.addPostFrameCallback((_) {
       restaurantModel.entertainmentScheduleList = entertainmentSchedules;
-
-      // Navigate only after updating state
       Get.to(() => OperatingHourScreen1(isFromButtonClick: true));
     });
   }

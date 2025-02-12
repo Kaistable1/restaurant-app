@@ -9,6 +9,7 @@ import 'package:restaurant_web_app/screens/main_screen/mainscreen_controller/mai
 import 'package:restaurant_web_app/universal_models/discount_model.dart';
 import 'package:restaurant_web_app/utils/responsive.dart';
 
+import '../../../widgets/account_settings_popup_widget.dart';
 import '../../../widgets/global_functions.dart';
 import '../../restaurant_detail_screen/widget/custom_tabbar.dart';
 import '../../restaurant_detail_screen/widget/star_widget_gen_discount.dart';
@@ -60,91 +61,8 @@ class EditDiscountScreen extends StatelessWidget {
                       ],
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Row(
-                        children: [
-                          const SizedBox(width: 8),
-                          const Text('Account Settings'),
-                          const Spacer(),
-                          PopupMenuButton<String>(
-                            icon: const Icon(
-                              Icons.keyboard_arrow_down_sharp,
-                              color: AppColors.primaryColor,
-                            ),
-                            onSelected: (value) {
-                              if (value == 'Logout') {
-                                mainController.showLogoutDialog(
-                                    context); // Show logout dialog
-                              } else {
-                                mainController.selectedMenuItem = value;
-                                mainController.isAddingRestaurant = false;
-                                mainController.update();
-
-                                Get.offAll(MainScreen());
-                              }
-                            },
-                            itemBuilder: (context) => [
-                              PopupMenuItem(
-                                value: 'Home',
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/home.png',
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                    const SizedBox(width: 16),
-                                    const Text('Home'),
-                                  ],
-                                ),
-                              ),
-                              PopupMenuItem(
-                                value: 'View Restaurant Details',
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/resturant_detail.png',
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                    const SizedBox(width: 16),
-                                    const Text('View Restaurant Details'),
-                                  ],
-                                ),
-                              ),
-                              PopupMenuItem(
-                                value: 'Change Password',
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/change_password.png',
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                    const SizedBox(width: 16),
-                                    const Text('Change Password'),
-                                  ],
-                                ),
-                              ),
-                              PopupMenuItem(
-                                value: 'Logout',
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/logout.png',
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                    const SizedBox(width: 16),
-                                    const Text('Logout'),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
+                        padding: const EdgeInsets.all(4.0),
+                        child: AccountSettingsPopupWidget()),
                   ),
                 ),
               ],
@@ -164,8 +82,9 @@ class EditDiscountScreen extends StatelessWidget {
                     "Happy Hours Specials",
                   ],
                   tabViews: [
-                    _buildDiscountTab(context),
-                    _buildDiscountTabHappy(context),
+                    _buildDiscountTab(context, "Percentage Off"),
+                    _buildDiscountTab(context, "Happy Hours Specials"),
+                    // _buildDiscountTabHappy(context),
                   ],
                   activeColor: AppColors.primaryColor,
                   inactiveColor: AppColors.darkGrey.withOpacity(.5),
@@ -228,7 +147,7 @@ class EditDiscountScreen extends StatelessWidget {
   }
 
   // Build Discount Tab
-  Widget _buildDiscountTab(BuildContext context) {
+  Widget _buildDiscountTab(BuildContext context, String selectedTab) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -255,15 +174,23 @@ class EditDiscountScreen extends StatelessWidget {
               } else if (constraints.maxWidth >= 1200) {
                 crossAxisCount = 6; // For desktop view, 6 containers
               }
+              // Apply Firestore query based on the selected tab
+              Query query = FirebaseFirestore.instance
+                  .collection('restaurants')
+                  .doc(auth.currentUser!.uid)
+                  .collection('MealMenu');
 
+              if (selectedTab == "Percentage Off") {
+                query =
+                    query.where('discountType', isEqualTo: 'Percentage Off');
+              } else if (selectedTab == "Happy Hours Specials") {
+                query = query.where('discountType',
+                    isEqualTo: 'Happy Hour Special ');
+              }
               return SizedBox(
                   height: 500,
                   child: StreamBuilder(
-                    stream: FirebaseFirestore.instance
-                        .collection('restaurants')
-                        .doc(auth.currentUser!.uid)
-                        .collection('MealMenu')
-                        .snapshots(),
+                    stream: query.snapshots(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return SizedBox(
@@ -282,6 +209,8 @@ class EditDiscountScreen extends StatelessWidget {
                       }
                       if (snapshot.data!.docs.isEmpty) {
                         print("Firestore Data: ${snapshot.data!.docs.length}");
+                        return const Center(
+                            child: Text("No Discounts Found."));
                       }
 
                       return GridView.builder(
@@ -299,8 +228,9 @@ class EditDiscountScreen extends StatelessWidget {
                           DiscountModel discountModel =
                               DiscountModel.fromJson(docData);
 
+                          String docID = snapshot.data!.docs[index].id;
                           return _buildCustomContainer(
-                              index, context, discountModel);
+                              index, context, discountModel, docID);
                         },
                       );
                     },
@@ -365,8 +295,8 @@ class EditDiscountScreen extends StatelessWidget {
   }
 
   // Build Custom Container
-  Widget _buildCustomContainer(
-      int index, BuildContext context, DiscountModel discountModel) {
+  Widget _buildCustomContainer(int index, BuildContext context,
+      DiscountModel discountModel, String docID) {
     double screenWidth = MediaQuery.of(context).size.width;
     bool isLargeScreen = screenWidth > 1600;
     return Container(
@@ -393,10 +323,10 @@ class EditDiscountScreen extends StatelessWidget {
               height: Responsive.isMobile(context)
                   ? 95
                   : (Responsive.isTablet(context)
-                  ? 120
-                  : isLargeScreen
-                  ? 210
-                  : 140),
+                      ? 120
+                      : isLargeScreen
+                          ? 210
+                          : 140),
               fit: BoxFit.fitHeight,
               errorBuilder: (context, error, stackTrace) {
                 return Container(
@@ -404,23 +334,33 @@ class EditDiscountScreen extends StatelessWidget {
                   height: Responsive.isMobile(context)
                       ? 100
                       : (Responsive.isTablet(context)
-                      ? 120
-                      : isLargeScreen
-                      ? 215
-                      : 140),
+                          ? 120
+                          : isLargeScreen
+                              ? 215
+                              : 140),
                   color: Colors.grey[300], // Placeholder background color
-                  child: Icon(Icons.image_not_supported, color: Colors.grey[600]),
+                  child:
+                      Icon(Icons.image_not_supported, color: Colors.grey[600]),
                 );
               },
             ),
-          )
-,
+          ),
           Positioned(
             top: 8,
             right: isLargeScreen ? 12 : 8,
             child: GestureDetector(
-              onTap: () {
-                discountItems.removeAt(index); // Remove item
+              onTap: () async {
+                await FirebaseFirestore.instance
+                    .collection('restaurants')
+                    .doc(auth.currentUser!.uid)
+                    .collection('MealMenu')
+                    .doc(docID)
+                    .delete()
+                    .then((value) {
+                  print('done');
+                }).onError((error, stackTrace) {
+                  print('error');
+                });
               },
               child: Container(
                 width: 20,
@@ -445,8 +385,9 @@ class EditDiscountScreen extends StatelessWidget {
             child: GestureDetector(
               onTap: () {
                 Get.to(() => UpdateDiscount(
-                      isFromButtonClick: true,
-                    )); // Navigate to edit screen
+                    isFromButtonClick: true,
+                    discountModel: discountModel,
+                    docID: docID)); // Navigate to edit screen
               },
               child: Image.asset(
                 'assets/images/btn_image.png',
@@ -470,12 +411,12 @@ class EditDiscountScreen extends StatelessWidget {
                     shape: BoxShape.rectangle,
                   ),
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 2.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 2.0),
                     child: Text(
                       discountModel.fromDate == '' && discountModel.toDate == ''
                           ? '  Lifetime  '
                           : '${formatDate(discountModel.fromDate)} - ${formatDate(discountModel.toDate)}',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w400,
                         color: AppColors.whiteColor,
@@ -495,7 +436,8 @@ class EditDiscountScreen extends StatelessWidget {
               children: [
                 Text(
                   discountModel.discountType,
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.w700),
                 ),
                 SizedBox(
                   height: Responsive.isMobile(context)
@@ -505,8 +447,7 @@ class EditDiscountScreen extends StatelessWidget {
                           : 50,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal, // Horizontal scrolling
-                    itemCount:
-                       discountModel.menu.length, // Number of items
+                    itemCount: discountModel.menu.length, // Number of items
                     itemBuilder: (context, index) {
                       CategoryModel menuModel = discountModel.menu[index];
                       return SizedBox(
@@ -516,7 +457,8 @@ class EditDiscountScreen extends StatelessWidget {
                                 ? 50
                                 : 40, // Width of each item
                         child: LocationStarWidget(
-                          timeText: '${menuModel.fromTime} - ${menuModel.toTime}',
+                          timeText:
+                              '${menuModel.fromTime} - ${menuModel.toTime}',
                           persentText: '${menuModel.percentageValue}% OFF',
                           persentTextStyle: TextStyle(
                             fontWeight: FontWeight.w700,
@@ -538,6 +480,8 @@ class EditDiscountScreen extends StatelessWidget {
                                     : 7,
                             fontFamily: 'Nunito-Regular',
                           ),
+                          isSelected: false,
+                          onTap: () {},
                         ),
                       );
                     },
@@ -587,8 +531,18 @@ class EditDiscountScreen extends StatelessWidget {
             top: 8,
             right: isLargeScreen ? 12 : 8,
             child: GestureDetector(
-              onTap: () {
-                discountItems.removeAt(index); // Remove item
+              onTap: () async {
+                // await FirebaseFirestore.instance
+                //     .collection('restaurants')
+                //     .doc(auth.currentUser!.uid)
+                //     .collection('MealMenu')
+                //     .doc(docID)
+                //     .delete()
+                //     .then((value) {
+                //   print('done');
+                // }).onError((error, stackTrace) {
+                //   print('error');
+                // });
               },
               child: Container(
                 width: 20,
@@ -612,9 +566,9 @@ class EditDiscountScreen extends StatelessWidget {
             right: isLargeScreen ? 14 : 10,
             child: GestureDetector(
               onTap: () {
-                Get.to(() => UpdateDiscount(
-                      isFromButtonClick: true,
-                    )); // Navigate to edit screen
+                // Get.to(() => UpdateDiscount(
+                //       isFromButtonClick: true,
+                //     )); // Navigate to edit screen
               },
               child: Image.asset(
                 'assets/images/btn_image.png',
@@ -705,6 +659,8 @@ class EditDiscountScreen extends StatelessWidget {
                                     : 7,
                             fontFamily: 'Nunito-Regular',
                           ),
+                          isSelected: false,
+                          onTap: () {},
                         ),
                       );
                     },

@@ -88,7 +88,7 @@ class RestaurantDetailController extends GetxController {
           .collection('restaurants')
           .doc(auth.currentUser!.uid)
           .collection('MealMenu')
-          .where('discountType', isEqualTo: 'Happy Hour Special')
+          .where('discountType', isEqualTo: 'Happy Hour Special ')
           .get();
       print(snapshot.docs.length);
       print('aefdjfd');
