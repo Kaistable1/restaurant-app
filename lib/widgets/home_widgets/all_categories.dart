@@ -174,7 +174,7 @@ class AllCategories extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.only(left: 8, right: 6),
                     child: SizedBox(
-                      height: 180,
+                      height: Get.height * 0.19,
                       child: ListView.builder(
                         controller: controller.scrollController,
                         scrollDirection: Axis.horizontal,
@@ -195,7 +195,7 @@ class AllCategories extends StatelessWidget {
                               },
                               isFavourite: false.obs,
                               isLocation: false,
-                              imgPath: 'assets/images/aa.png',
+                              imgPath: 'assets/images/aaa.jpg',
                               titleText: address,
                               descriptionText:
                                   '${restaurants.length.toString()} restaurants',
@@ -304,7 +304,7 @@ class AllCategories extends StatelessWidget {
             return Padding(
               padding: EdgeInsets.only(left: 8, right: 6),
               child: SizedBox(
-                height: 180,
+                height: Get.height * 0.19,
                 child: ListView.builder(
                   controller: controller.scrollController,
                   scrollDirection: Axis.horizontal,
@@ -326,7 +326,7 @@ class AllCategories extends StatelessWidget {
                         },
                         isFavourite: false.obs,
                         isLocation: false,
-                        imgPath: 'assets/images/aa.png',
+                        imgPath: 'assets/images/aaa.jpg',
                         titleText: cuisineName,
                         descriptionText:
                             '${restaurants.length.toString()} restaurants',

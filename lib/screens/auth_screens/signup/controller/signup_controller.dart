@@ -12,6 +12,7 @@ import 'package:kaistable_website/screens/auth_screens/verify/verify_page.dart';
 import 'package:kaistable_website/screens/general_preferences/screens_general/preference_1.dart';
 import 'package:kaistable_website/screens/onboarding_screen/onboarding_controller/onboarding_controller.dart';
 import 'package:kaistable_website/utils/loading.dart';
+import 'package:kaistable_website/widgets/global_functions.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server/gmail.dart';
 
@@ -208,6 +209,7 @@ class SignupController extends GetxController {
           .collection('users')
           .doc(auth.currentUser?.uid)
           .update({field: entry});
+      getCurrentUserData();
     } catch (e) {
       print('Error $e');
     }

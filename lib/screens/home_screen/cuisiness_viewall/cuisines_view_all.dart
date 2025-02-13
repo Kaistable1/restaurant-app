@@ -153,7 +153,7 @@ class CuisinesViewAll extends StatelessWidget {
                               shrinkWrap: true,
                               gridDelegate:
                                   const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 3,
+                                crossAxisCount: 2,
                                 crossAxisSpacing: 8.0,
                                 mainAxisSpacing: 8.0,
                                 childAspectRatio: 113 / 144,
@@ -171,12 +171,7 @@ class CuisinesViewAll extends StatelessWidget {
                                         offset: const Offset(0, 1),
                                       ),
                                     ],
-                                    borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(150),
-                                      topRight: Radius.circular(150),
-                                      bottomLeft: Radius.circular(25),
-                                      bottomRight: Radius.circular(25),
-                                    ),
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: Center(
                                     child: CircularProgressIndicator(
@@ -231,8 +226,8 @@ class CuisinesViewAll extends StatelessWidget {
                               child: GridView.builder(
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
-                                  mainAxisExtent: 165,
-                                  crossAxisCount: 3,
+                                  mainAxisExtent: Get.height * 0.18,
+                                  crossAxisCount: 2,
                                   crossAxisSpacing: 10.0,
                                   mainAxisSpacing: 10.0,
                                 ),
@@ -259,7 +254,7 @@ class CuisinesViewAll extends StatelessWidget {
                                     isLocation: false,
                                     height: 150,
                                     width: 115,
-                                    imgPath: 'assets/images/aa.png',
+                                    imgPath: 'assets/images/aaa.jpg',
                                     titleText: cuisineName,
                                     descriptionText:
                                         '${restaurants.length.toString()} restaurants',

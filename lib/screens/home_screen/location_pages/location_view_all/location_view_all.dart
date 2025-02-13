@@ -207,8 +207,8 @@ class LocationViewAll extends StatelessWidget {
                           shrinkWrap: true,
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
-                            mainAxisExtent: 165,
-                            crossAxisCount: 3,
+                            mainAxisExtent: Get.height * 0.18,
+                            crossAxisCount: 2,
                             crossAxisSpacing: 10.0,
                             mainAxisSpacing: 10.0,
                           ),
@@ -233,7 +233,7 @@ class LocationViewAll extends StatelessWidget {
                               isLocation: false,
                               height: 150,
                               width: 115,
-                              imgPath: 'assets/images/aa.png',
+                              imgPath: 'assets/images/aaa.jpg',
                               titleText: cuisineName,
                               descriptionText:
                                   '${restaurants.length.toString()} restaurants',

@@ -219,6 +219,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    getCurrentUserData();
     bool isOnboarding = onboradingController.selectedCountry.value != 'Country';
     String previousText = '';
 
@@ -274,17 +275,55 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                             country: currentUserDataModel?.value.country,
                           ));
                         },
-                        child: Text(
-                          isOnboarding
-                              ? '${onboradingController.selectedCountry.value}.${onboradingController.selectedCity.value}'
-                              : '${currentUserDataModel?.value.country}.${currentUserDataModel?.value.city}',
-                          style: TextStyle(
-                            color: AppColors.textColor,
-                            fontWeight: FontWeight.w800,
-                            fontFamily: 'Nunito-Regular',
-                            fontSize: 9,
-                          ),
+                        child: StreamBuilder<DocumentSnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(auth.currentUser
+                                  ?.uid) // Replace with your user ID
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData || snapshot.data == null) {
+                              return Text(
+                                "",
+                                style: TextStyle(
+                                  color: AppColors.textColor,
+                                  fontWeight: FontWeight.w800,
+                                  fontFamily: 'Nunito-Regular',
+                                  fontSize: 9,
+                                ),
+                              );
+                            }
+
+                            var userData =
+                                snapshot.data!.data() as Map<String, dynamic>;
+                            String country = userData['country'] ?? '';
+                            String city = userData['city'] ?? '';
+
+                            return Text(
+                              isOnboarding
+                                  ? '${onboradingController.selectedCountry.value}.${onboradingController.selectedCity.value}'
+                                  : '$country.$city',
+                              style: TextStyle(
+                                color: AppColors.textColor,
+                                fontWeight: FontWeight.w800,
+                                fontFamily: 'Nunito-Regular',
+                                fontSize: 9,
+                              ),
+                            );
+                          },
                         ),
+
+                        // Text(
+                        //   isOnboarding
+                        //       ? '${onboradingController.selectedCountry.value}.${onboradingController.selectedCity.value}'
+                        //       : '${currentUserDataModel?.value.country}.${currentUserDataModel?.value.city}',
+                        //   style: TextStyle(
+                        //     color: AppColors.textColor,
+                        //     fontWeight: FontWeight.w800,
+                        //     fontFamily: 'Nunito-Regular',
+                        //     fontSize: 9,
+                        //   ),
+                        // ),
                       ),
                       const SizedBox(width: 20),
                     ],
@@ -476,7 +515,6 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                           ConnectionState.waiting) {
                                         return SizedBox(
                                           height: Get.height * 0.5,
-                                         
                                         );
                                       }
 
