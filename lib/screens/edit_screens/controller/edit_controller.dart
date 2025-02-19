@@ -68,9 +68,7 @@ class EditScreenController extends GetxController {
       // Update Firestore
       await restaurantRef.update(updatedFields).then((_) {
         Get.snackbar('Update', 'Your data is successfully updated.');
-        Get.to(() => RestaurantDetailScreen(
-              isFromButtonClick: true,
-            ));
+        Get.close(2);
       }).catchError((error) {
         print("Update Error: $error");
         Get.snackbar("Error", "Failed to update data: $error");

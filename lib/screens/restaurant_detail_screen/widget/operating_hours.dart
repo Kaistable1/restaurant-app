@@ -10,6 +10,8 @@ class OperatingHoursClass extends StatelessWidget {
   final controller = Get.put(RestaurantDetailController());
   @override
   Widget build(BuildContext context) {
+    controller.fetchOperatingHours();
+
     // Determine responsive font size
     double baseFontSize = Responsive.isMobile(context) ? 12 : 16;
 
@@ -49,9 +51,14 @@ class OperatingHoursClass extends StatelessWidget {
                     children: _buildHeadingRow(baseFontSize),
                   ),
                   const Divider(thickness: 1),
-                  Column(
+                Obx((){
+                  controller.fetchOperatingHours();
+                  controller.isLoading.value = false;
+                  return controller.isLoading.value ==false?Column(
+                  children: _buildDataRows(baseFontSize),
+                ):Column(
                     children: _buildDataRows(baseFontSize),
-                  ),
+                  );})
                 ],
               ),
             ),

@@ -27,11 +27,14 @@ class HomeScreen extends StatelessWidget {
           children: [
             Row(
               children: [
-                Text(
-                  'Profile',
-                  style: TextStyle(
-                    fontSize: Responsive.isMobile(context) ? 24 : 40,
-                    fontWeight: FontWeight.w700,
+                Padding(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  child: Text(
+                    'Profile',
+                    style: TextStyle(
+                      fontSize: Responsive.isMobile(context) ? 24 : 40,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
                 const Spacer(),

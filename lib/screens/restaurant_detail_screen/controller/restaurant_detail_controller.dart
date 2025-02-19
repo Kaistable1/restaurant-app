@@ -23,7 +23,7 @@ class RestaurantDetailController extends GetxController {
   // }
 
   var operatingHours = <String, OperatingHours>{}.obs;
-  var isLoading = true.obs;
+  var isLoading = false.obs;
   // var discountModels = <DiscountModel>[].obs;
   // var discountModels2 = <DiscountModel>[].obs;
   var selectedIndex = 0.obs;
@@ -56,6 +56,7 @@ class RestaurantDetailController extends GetxController {
       <CategoryModel>[].obs; // Define menuItems as an observable list
   Future<void> fetchMenuData() async {
     try {
+      isLoading.value = true;
       QuerySnapshot snapshot = await FirebaseFirestore.instance
           .collection('restaurants')
           .doc(auth.currentUser!.uid)
@@ -76,6 +77,9 @@ class RestaurantDetailController extends GetxController {
       }
     } catch (e) {
       print("Error fetching menu data: $e");
+    }
+    finally{
+      isLoading.value = false;
     }
   }
 
@@ -142,6 +146,7 @@ class RestaurantDetailController extends GetxController {
       }
 
       operatingHours.assignAll(fetchedData);
+      operatingHours.refresh();
     } catch (e) {
       print("Error fetching operating hours: $e");
     } finally {

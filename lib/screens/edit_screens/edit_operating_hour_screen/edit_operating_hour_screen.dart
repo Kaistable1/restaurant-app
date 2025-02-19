@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:restaurant_web_app/main.dart';
+import 'package:restaurant_web_app/widgets/loading_dialog.dart';
 
 import '../../../constants/colors.dart';
 import '../../../utils/responsive.dart';
@@ -14,120 +15,31 @@ import '../../restaurant_detail_screen/restaurant_detail_screen.dart';
 
 class EditOperatingHourScreen extends GetxController {
   final TextEditingController aboutTextController = TextEditingController();
+
   ///add operating hour function
-  // Future<void> saveAllOperatingHours() async {
-  //   print("Saving Operating Hours...");
-  //
-  //   final uid = FirebaseAuth.instance.currentUser?.uid;
-  //   if (uid == null) {
-  //     print("Error: User not logged in.");
-  //     return;
-  //   }
-  //
-  //   // ✅ Make a **safe copy** of dayToggles to avoid state changes during iteration
-  //   final togglesSnapshot = Map<String, bool>.from(dayToggles);
-  //
-  //   // ✅ Force-refresh UI state to ensure it's fully updated
-  //    dayToggles.refresh();
-  //  cellToggles.refresh();
-  //   mealTimes.refresh();
-  //
-  //   print("Snapshot of dayToggles before processing: $togglesSnapshot");
-  //
-  //   for (var day in List.from(mealTimes.keys)) {
-  //     Map<String, dynamic> mealsMap = {};
-  //
-  //     // ✅ Use the snapshot to ensure toggle state remains correct
-  //     bool isDayToggledOff = togglesSnapshot.containsKey(day) && togglesSnapshot[day] == false;
-  //
-  //     print("Processing $day - Toggled: $isDayToggledOff | UI State: ${dayToggles[day]}");
-  //
-  //     if (isDayToggledOff) {
-  //       print("$day is toggled off. Saving all meals as closed...");
-  //       for (var meal in List.from(mealTimes[day]!.keys)) {
-  //         mealsMap[meal] = {"isClosed": true};
-  //       }
-  //     } else {
-  //       for (var meal in List.from(mealTimes[day]!.keys)) {
-  //         if (cellToggles[day]![meal] == false) {
-  //           mealsMap[meal] = {"isClosed": true};
-  //           continue;
-  //         }
-  //
-  //         final fromTime = mealTimes[day]![meal]!['From'];
-  //         final toTime = mealTimes[day]![meal]!['To'];
-  //
-  //         if (fromTime == null || fromTime.isEmpty || toTime == null || toTime.isEmpty) {
-  //           print("Skipping $meal on $day: Invalid times.");
-  //           mealsMap[meal] = {"isClosed": true};
-  //           continue;
-  //         }
-  //
-  //         mealsMap[meal] = {
-  //           "isClosed": false,
-  //           "startTime": fromTime,
-  //           "endTime": toTime,
-  //         };
-  //       }
-  //     }
-  //
-  //     // ✅ Always save toggled-off days
-  //     if (isDayToggledOff || mealsMap.isNotEmpty) {
-  //       try {
-  //         await FirebaseFirestore.instance
-  //             .collection('restaurants')
-  //             .doc(uid)
-  //             .collection('operatingHours')
-  //             .doc(day)
-  //             .set(mealsMap, SetOptions(merge: true));
-  //         print("$day saved successfully in Firestore.");
-  //       } catch (e) {
-  //         print("Error saving $day: $e");
-  //       }
-  //     } else {
-  //       print("Skipping save for $day as no changes were made.");
-  //     }
-  //   }
-  //
-  //   print("All operating hours saved successfully.");
-  // }
-  //
 
   Future<void> saveAllOperatingHours() async {
+    loadingDialog(message: 'Please wait !!', loading: true);
     print("Saving Operating Hours...");
-
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) {
       print("Error: User not logged in.");
       return;
     }
 
-    // ✅ First, force UI to update before taking snapshot
-    // controller.dayToggles.refresh();
-    // controller.cellToggles.refresh();
-    // controller.mealTimes.refresh();
+    // Creating a new map instead of modifying the original `mealTimes`
+    Map<String, Map<String, dynamic>> operatingHoursToSave = {};
 
-    // ✅ Now, take the snapshot **after** ensuring state is updated
-    await Future.delayed(Duration(milliseconds: 100)); // Ensures state is updated before reading
-    final togglesSnapshot = Map<String, bool>.from(dayToggles);
-
-    print("Snapshot of dayToggles before processing: $togglesSnapshot");
-
-    for (var day in List.from(mealTimes.keys)) {
+    for (var day in mealTimes.keys.toList()) {
       Map<String, dynamic> mealsMap = {};
 
-      // ✅ Use the **updated** snapshot to avoid state inconsistency
-      bool isDayToggledOff = togglesSnapshot.containsKey(day) && togglesSnapshot[day] == false;
-
-      print("Processing $day - Toggled: $isDayToggledOff | UI State: ${dayToggles[day]}");
-
-      if (isDayToggledOff) {
+      if (dayToggles[day] == false) {
         print("$day is toggled off. Saving all meals as closed...");
-        for (var meal in List.from(mealTimes[day]!.keys)) {
+        for (var meal in mealTimes[day]!.keys) {
           mealsMap[meal] = {"isClosed": true};
         }
       } else {
-        for (var meal in List.from(mealTimes[day]!.keys)) {
+        for (var meal in mealTimes[day]!.keys) {
           if (cellToggles[day]![meal] == false) {
             mealsMap[meal] = {"isClosed": true};
             continue;
@@ -136,7 +48,10 @@ class EditOperatingHourScreen extends GetxController {
           final fromTime = mealTimes[day]![meal]!['From'];
           final toTime = mealTimes[day]![meal]!['To'];
 
-          if (fromTime == null || fromTime.isEmpty || toTime == null || toTime.isEmpty) {
+          if (fromTime == null ||
+              fromTime.isEmpty ||
+              toTime == null ||
+              toTime.isEmpty) {
             print("Skipping $meal on $day: Invalid times.");
             mealsMap[meal] = {"isClosed": true};
             continue;
@@ -150,117 +65,34 @@ class EditOperatingHourScreen extends GetxController {
         }
       }
 
-      // ✅ Always save toggled-off days
-      if (isDayToggledOff || mealsMap.isNotEmpty) {
-        try {
-          await FirebaseFirestore.instance
-              .collection('restaurants')
-              .doc(uid)
-              .collection('operatingHours')
-              .doc(day)
-              .set(mealsMap, SetOptions(merge: true));
-          print("$day saved successfully in Firestore.");
-        } catch (e) {
-          print("Error saving $day: $e");
-        }
-      } else {
-        print("Skipping save for $day as no changes were made.");
+      // Store the result in a separate map
+      operatingHoursToSave[day] = mealsMap;
+    }
+
+    // Save all operating hours to Firestore
+    for (var day in operatingHoursToSave.keys) {
+      try {
+        await FirebaseFirestore.instance
+            .collection('restaurants')
+            .doc(uid)
+            .collection('operatingHours')
+            .doc(day)
+            .set(operatingHoursToSave[day]!)
+            .then(
+              (value) {},
+            );
+        print("$day saved successfully in Firestore.");
+      } catch (e) {
+        print("Error saving $day: $e");
       }
     }
+    Get.back();
+    Get.back();
 
     print("All operating hours saved successfully.");
   }
 
-///
-
-
-  // Future<void> saveAllOperatingHours() async {
-  //   print("Saving Operating Hours...");
-  //
-  //   final uid = FirebaseAuth.instance.currentUser?.uid;
-  //   if (uid == null) {
-  //     print("Error: User not logged in.");
-  //     return;
-  //   }
-  //
-  //   for (var day in mealTimes.keys) {
-  //     Map<String, dynamic> mealsMap = {};
-  //
-  //     if (dayToggles[day] == false) {
-  //       print("$day is toggled off. Saving all meals as closed...");
-  //       for (var meal in mealTimes[day]!.keys) {
-  //         mealsMap[meal] = {"isClosed": true};
-  //       }
-  //     } else {
-  //       for (var meal in mealTimes[day]!.keys) {
-  //         if (cellToggles[day]![meal] == false) {
-  //           mealsMap[meal] = {"isClosed": true};
-  //           continue;
-  //         }
-  //
-  //         final fromTime = mealTimes[day]![meal]!['From'];
-  //         final toTime = mealTimes[day]![meal]!['To'];
-  //
-  //         if (fromTime == null || fromTime.isEmpty || toTime == null || toTime.isEmpty) {
-  //           print("Skipping $meal on $day: Invalid times.");
-  //           mealsMap[meal] = {"isClosed": true};
-  //           continue;
-  //         }
-  //
-  //         mealsMap[meal] = {
-  //           "isClosed": false,
-  //           "startTime": fromTime,
-  //           "endTime": toTime,
-  //         };
-  //       }
-  //     }
-  //
-  //     // Save using `merge: true` to avoid overwriting existing fields
-  //     try {
-  //       await FirebaseFirestore.instance
-  //           .collection('restaurants')
-  //           .doc(uid)
-  //           .collection('operatingHours')
-  //           .doc(day)
-  //           .set(mealsMap, SetOptions(merge: true)); // Merging instead of replacing
-  //       print("$day saved successfully in Firestore.");
-  //     } catch (e) {
-  //       print("Error saving $day: $e");
-  //     }
-  //   }
-  //
-  //   print("All operating hours saved successfully.");
-  // }
-
-
   RxString aboutError = ''.obs;
-
-  void nextSave() {
-    bool isValid = true;
-    if (aboutTextController.text.isEmpty) {
-      aboutError.value = "Enter your Text";
-      isValid = false;
-    } else {
-      // You can add more validation rules here (e.g., minimum length, valid characters)
-      if (aboutTextController.text.length < 3) {
-        aboutError.value = "Text must be at least 3 characters";
-        isValid = false;
-      } else {
-        aboutError.value = '';
-      }
-
-      if (isValid) {
-        Get.snackbar("Success", "Data saved successfully!",
-            backgroundColor: AppColors.primaryColor,
-            colorText: Colors.white,
-            maxWidth: 400);
-        Get.to(() => EditRestaurantScreen(
-              isFromButtonClick: true,
-            ));
-        aboutTextController.clear();
-      }
-    }
-  }
 
   final List<String> days = [
     'Monday',
@@ -323,7 +155,7 @@ class EditOperatingHourScreen1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    bool isLargeScreen = screenWidth > 1600;
+
     controller.aboutError.value = '';
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
@@ -351,7 +183,7 @@ class EditOperatingHourScreen1 extends StatelessWidget {
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.1),
-                          offset: Offset(0, 4),
+                          offset: const Offset(0, 4),
                           blurRadius: 6,
                           spreadRadius: 0,
                         ),
@@ -361,11 +193,11 @@ class EditOperatingHourScreen1 extends StatelessWidget {
                       padding: const EdgeInsets.all(4.0),
                       child: Row(
                         children: [
-                          SizedBox(width: 8),
-                          Text('Account Settings'),
-                          Spacer(),
+                          const SizedBox(width: 8),
+                          const Text('Account Settings'),
+                          const Spacer(),
                           PopupMenuButton<String>(
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.keyboard_arrow_down_sharp,
                               color: AppColors.primaryColor,
                             ),
@@ -389,8 +221,8 @@ class EditOperatingHourScreen1 extends StatelessWidget {
                                       width: 24,
                                       height: 24,
                                     ),
-                                    SizedBox(width: 16),
-                                    Text('Home'),
+                                    const SizedBox(width: 16),
+                                    const Text('Home'),
                                   ],
                                 ),
                               ),
@@ -403,8 +235,8 @@ class EditOperatingHourScreen1 extends StatelessWidget {
                                       width: 24,
                                       height: 24,
                                     ),
-                                    SizedBox(width: 16),
-                                    Text('View Restaurant Details'),
+                                    const SizedBox(width: 16),
+                                    const Text('View Restaurant Details'),
                                   ],
                                 ),
                               ),
@@ -417,8 +249,8 @@ class EditOperatingHourScreen1 extends StatelessWidget {
                                       width: 24,
                                       height: 24,
                                     ),
-                                    SizedBox(width: 16),
-                                    Text('Change Password'),
+                                    const SizedBox(width: 16),
+                                    const Text('Change Password'),
                                   ],
                                 ),
                               ),
@@ -431,8 +263,8 @@ class EditOperatingHourScreen1 extends StatelessWidget {
                                       width: 24,
                                       height: 24,
                                     ),
-                                    SizedBox(width: 16),
-                                    Text('Logout'),
+                                    const SizedBox(width: 16),
+                                    const Text('Logout'),
                                   ],
                                 ),
                               ),
@@ -466,7 +298,7 @@ class EditOperatingHourScreen1 extends StatelessWidget {
                         BoxShadow(
                           color: Colors.black.withOpacity(0.2),
                           blurRadius: 6,
-                          offset: Offset(0, 3),
+                          offset: const Offset(0, 3),
                         ),
                       ],
                     ),
@@ -474,15 +306,15 @@ class EditOperatingHourScreen1 extends StatelessWidget {
                       iconSize: Responsive.isMobile(context)
                           ? 14
                           : (Responsive.isTablet(context) ? 16 : 18),
-                      icon:
-                          Icon(Icons.arrow_back, color: AppColors.primaryColor),
+                      icon: const Icon(Icons.arrow_back,
+                          color: AppColors.primaryColor),
                       onPressed: () {
                         Get.back();
                       },
                     ),
                   ),
-                  SizedBox(width: 10),
-                  Text(
+                  const SizedBox(width: 10),
+                  const Text(
                     'Edit Operating Hours',
                     style: TextStyle(
                       color: AppColors.blackColor,
@@ -493,571 +325,575 @@ class EditOperatingHourScreen1 extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               StreamBuilder(
-                  stream: FirebaseFirestore.instance
-                      .collection('restaurants')
-                      .doc(auth.currentUser!.uid)
-                      .collection('operatingHours')
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
-                    }
+                stream: FirebaseFirestore.instance
+                    .collection('restaurants')
+                    .doc(auth.currentUser!.uid)
+                    .collection('operatingHours')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                      return Center(child: Text("No operating hours found"));
-                    }
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return const Center(
+                        child: Text("No operating hours found"));
+                  }
 
-                    // Process data from Firestore
-                    var docs = snapshot.data!.docs;
+                  // Process data from Firestore
+                  var docs = snapshot.data!.docs;
 
-                    controller.mealTimes.clear();
-                    controller. dayToggles.clear();
-                    controller.cellToggles.clear();
+                  controller.mealTimes.clear();
+                  controller.dayToggles.clear();
+                  controller.cellToggles.clear();
 
-                    for (var doc in docs) {
-                      String day = doc.id;
-                      Map<String, dynamic> meals = doc.data() as Map<String, dynamic>;
+                  for (var doc in docs) {
+                    String day = doc.id;
+                    Map<String, dynamic> meals =
+                        doc.data() as Map<String, dynamic>;
 
-                      controller.dayToggles[day] = meals.values.any((meal) => !meal["isClosed"]);
-                      controller.cellToggles[day] = {};
-                      controller.mealTimes[day] = {};
+                    controller.dayToggles[day] =
+                        meals.values.any((meal) => !meal["isClosed"]);
+                    controller.cellToggles[day] = {};
+                    controller.mealTimes[day] = {};
 
-                      meals.forEach((mealName, mealData) {
-                        bool isClosed = mealData["isClosed"] ?? true;
-                        controller.cellToggles[day]![mealName] = !isClosed;
+                    meals.forEach((mealName, mealData) {
+                      bool isClosed = mealData["isClosed"] ?? true;
+                      controller.cellToggles[day]![mealName] = !isClosed;
 
-                        controller. mealTimes[day]![mealName] = {
-                          "From": isClosed ? "" : mealData["startTime"],
-                          "To": isClosed ? "" : mealData["endTime"],
-                        };
-                      });
-                    }
-                    return   LayoutBuilder(
-                      builder: (context, constraints) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(height: 10),
-                              RichText(
-                                text: TextSpan(
-                                  text: 'Operating hours ',
-                                  style: TextStyle(
-                                    fontSize: Responsive.isMobile(context)
-                                        ? 16
-                                        : Responsive.isTablet(context)
-                                        ? 18
-                                        : 24,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                  children: [
-                                    TextSpan(
-                                      text: '*', // Add the red asterisk
-                                      style: TextStyle(
-                                        fontSize: Responsive.isMobile(context)
-                                            ? 16
-                                            : Responsive.isTablet(context)
-                                            ? 18
-                                            : 24,
-                                        fontWeight: FontWeight.w700,
-                                        color: AppColors.red,
-                                      ),
-                                    ),
-                                  ],
+                      controller.mealTimes[day]![mealName] = {
+                        "From": isClosed ? "" : mealData["startTime"],
+                        "To": isClosed ? "" : mealData["endTime"],
+                      };
+                    });
+                  }
+                  return LayoutBuilder(
+                    builder: (context, constraints) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 10),
+                            RichText(
+                              text: TextSpan(
+                                text: 'Operating hours ',
+                                style: TextStyle(
+                                  fontSize: Responsive.isMobile(context)
+                                      ? 16
+                                      : Responsive.isTablet(context)
+                                          ? 18
+                                          : 24,
+                                  fontWeight: FontWeight.w700,
                                 ),
-                              ),
-                              SizedBox(height: 10),
-                              ConstrainedBox(
-                                constraints:
-                                BoxConstraints(minWidth: constraints.maxWidth),
-                                child: Obx(
-                                      () => SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Container(
-                                        padding: const EdgeInsets.all(30.0),
-                                        decoration: BoxDecoration(
-                                          color: Colors
-                                              .white, // Set background color to white
-                                          borderRadius: BorderRadius.circular(
-                                              10), // Set circular border with radius 6
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.grey.withOpacity(0.2),
-                                              spreadRadius: 2,
-                                              blurRadius: 4,
-                                              offset: Offset(0, 2),
-                                            ),
-                                          ],
-                                        ),
-                                        child: DataTable(
-                                          columnSpacing: 10,
-                                          columns: [
-                                            DataColumn(
-                                              label: Expanded(
-                                                child: Center(
-                                                  child: Text(
-                                                    'Days',
-                                                    style: TextStyle(
-                                                      fontSize:
-                                                      Responsive.isMobile(context)
-                                                          ? 12
-                                                          : Responsive.isTablet(
-                                                          context)
-                                                          ? 16
-                                                          : 18,
-                                                      fontWeight: FontWeight.w700,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            DataColumn(
-                                              label: Expanded(
-                                                child: Center(
-                                                  child: Text(
-                                                    'Breakfast',
-                                                    style: TextStyle(
-                                                      fontSize:
-                                                      Responsive.isMobile(context)
-                                                          ? 12
-                                                          : Responsive.isTablet(
-                                                          context)
-                                                          ? 16
-                                                          : 18,
-                                                      fontWeight: FontWeight.w700,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            DataColumn(
-                                              label: Expanded(
-                                                child: Center(
-                                                  child: Text(
-                                                    'Brunch',
-                                                    style: TextStyle(
-                                                      fontSize:
-                                                      Responsive.isMobile(context)
-                                                          ? 12
-                                                          : Responsive.isTablet(
-                                                          context)
-                                                          ? 16
-                                                          : 18,
-                                                      fontWeight: FontWeight.w700,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            DataColumn(
-                                              label: Expanded(
-                                                child: Center(
-                                                  child: Text(
-                                                    'Lunch',
-                                                    style: TextStyle(
-                                                      fontSize:
-                                                      Responsive.isMobile(context)
-                                                          ? 12
-                                                          : Responsive.isTablet(
-                                                          context)
-                                                          ? 16
-                                                          : 18,
-                                                      fontWeight: FontWeight.w700,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            DataColumn(
-                                              label: Expanded(
-                                                child: Center(
-                                                  child: Text(
-                                                    'Dinner',
-                                                    style: TextStyle(
-                                                      fontSize:
-                                                      Responsive.isMobile(context)
-                                                          ? 12
-                                                          : Responsive.isTablet(
-                                                          context)
-                                                          ? 16
-                                                          : 18,
-                                                      fontWeight: FontWeight.w700,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            DataColumn(
-                                              label: Expanded(
-                                                child: Center(
-                                                  child: Text(
-                                                    'Late Night',
-                                                    style: TextStyle(
-                                                      fontSize:
-                                                      Responsive.isMobile(context)
-                                                          ? 12
-                                                          : Responsive.isTablet(
-                                                          context)
-                                                          ? 16
-                                                          : 18,
-                                                      fontWeight: FontWeight.w700,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                          rows: controller.days.map((day) {
-                                            bool isDayActive =
-                                            controller.dayToggles[day]!;
-                                            return DataRow(cells: [
-                                              DataCell(
-                                                Row(
-                                                  children: [
-                                                    Transform.scale(
-                                                      scale: 0.6,
-                                                      child: Switch(
-                                                        value: isDayActive,
-                                                        activeColor:
-                                                        AppColors.whiteColor,
-                                                        activeTrackColor:
-                                                        AppColors.primaryColor,
-                                                        inactiveThumbColor:
-                                                        AppColors.primaryColor,
-                                                        onChanged: (value) {
-                                                          controller.dayToggles[day] =
-                                                              value;
-                                                          controller.dayToggles
-                                                              .refresh();
-                                                        },
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      day,
-                                                      style: TextStyle(
-                                                        fontSize: Responsive.isMobile(
-                                                            context)
-                                                            ? 12
-                                                            : Responsive.isTablet(
-                                                            context)
-                                                            ? 16
-                                                            : 18,
-                                                        fontWeight: FontWeight.w500,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              ...[
-                                                'Breakfast',
-                                                'Brunch',
-                                                'Lunch',
-                                                'Dinner',
-                                                'Late Night'
-                                              ].map((meal) {
-                                                bool isMealActive = controller
-                                                    .cellToggles[day]![meal]!;
-                                                return DataCell(
-                                                  isDayActive
-                                                      ? Row(
-                                                    children: [
-                                                      Expanded(
-                                                        child: InkWell(
-                                                          onTap: isMealActive
-                                                              ? () async {
-                                                            await controller
-                                                                .selectTime(
-                                                                context,
-                                                                day,
-                                                                meal,
-                                                                'From');
-                                                            await controller
-                                                                .selectTime(
-                                                                context,
-                                                                day,
-                                                                meal,
-                                                                'To');
-                                                          }
-                                                              : null,
-                                                          child: Container(
-                                                            height: 40,
-                                                            width: 150,
-                                                            alignment: Alignment
-                                                                .center,
-                                                            decoration:
-                                                            BoxDecoration(
-                                                              border: Border.all(
-                                                                  color: AppColors
-                                                                      .darkGrey
-                                                                      .withOpacity(
-                                                                      .1)),
-                                                              color: isMealActive
-                                                                  ? AppColors
-                                                                  .primaryColor
-                                                                  : AppColors
-                                                                  .darkGrey
-                                                                  .withOpacity(
-                                                                  .3),
-                                                              borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                  5),
-                                                            ),
-                                                            child: Text(
-                                                              isMealActive
-                                                                  ? (controller
-                                                                  .mealTimes[day]![meal]![
-                                                              'From']!
-                                                                  .isEmpty &&
-                                                                  controller
-                                                                      .mealTimes[day]![meal]!['To']!
-                                                                      .isEmpty
-                                                                  ? 'Set Time'
-                                                                  : '${controller.mealTimes[day]![meal]!['From']} - ${controller.mealTimes[day]![meal]!['To']}')
-                                                                  : 'Closed',
-                                                              style: TextStyle(
-                                                                  color: AppColors
-                                                                      .whiteColor),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(width: 8),
-                                                      Column(
-                                                        children: [
-                                                          ToggleButtons(
-                                                            isSelected: [
-                                                              isMealActive,
-                                                              !isMealActive,
-                                                            ],
-                                                            onPressed: (index) {
-                                                              controller.cellToggles[
-                                                              day]![
-                                                              meal] =
-                                                                  index == 0;
-                                                              controller
-                                                                  .cellToggles
-                                                                  .refresh();
-                                                            },
-                                                            direction:
-                                                            Axis.vertical,
-                                                            children: [
-                                                              Container(
-                                                                width: 30,
-                                                                height: 20,
-                                                                decoration:
-                                                                BoxDecoration(
-                                                                  borderRadius:
-                                                                  BorderRadius
-                                                                      .only(
-                                                                    topLeft: Radius
-                                                                        .circular(
-                                                                        6),
-                                                                    topRight: Radius
-                                                                        .circular(
-                                                                        6),
-                                                                  ),
-                                                                  color: isMealActive
-                                                                      ? AppColors
-                                                                      .primaryColor
-                                                                      : AppColors
-                                                                      .darkGrey
-                                                                      .withOpacity(
-                                                                      .3),
-                                                                ),
-                                                                alignment:
-                                                                Alignment
-                                                                    .center,
-                                                                child: Text(
-                                                                  'On',
-                                                                  style:
-                                                                  TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontSize:
-                                                                    12,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              Container(
-                                                                width: 30,
-                                                                height: 20,
-                                                                decoration:
-                                                                BoxDecoration(
-                                                                  borderRadius:
-                                                                  BorderRadius
-                                                                      .only(
-                                                                    bottomLeft:
-                                                                    Radius.circular(
-                                                                        6),
-                                                                    bottomRight:
-                                                                    Radius.circular(
-                                                                        6),
-                                                                  ),
-                                                                  color: !isMealActive
-                                                                      ? AppColors
-                                                                      .primaryColor
-                                                                      : AppColors
-                                                                      .darkGrey
-                                                                      .withOpacity(
-                                                                      .3),
-                                                                ),
-                                                                alignment:
-                                                                Alignment
-                                                                    .center,
-                                                                child: Text(
-                                                                  'Off',
-                                                                  style:
-                                                                  TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontSize:
-                                                                    12,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                            constraints:
-                                                            BoxConstraints(
-                                                                minWidth:
-                                                                30,
-                                                                minHeight:
-                                                                20),
-                                                            borderColor: Colors
-                                                                .transparent, // No outer border
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  )
-                                                      : Container(
-                                                    height: 40,
-                                                    alignment: Alignment.center,
-                                                    decoration: BoxDecoration(
-                                                      color: AppColors.darkGrey
-                                                          .withOpacity(.3),
-                                                      borderRadius:
-                                                      BorderRadius.circular(
-                                                          5),
-                                                    ),
-                                                    child: Text(
-                                                      'Closed',
-                                                      style: TextStyle(
-                                                        color: AppColors
-                                                            .whiteColor,
-                                                        fontWeight:
-                                                        FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              }).toList(),
-                                            ]);
-                                          }).toList(),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 20),
-                              RichText(
-                                text: TextSpan(
-                                  text: 'About ',
-                                  style: TextStyle(
-                                    fontSize: Responsive.isMobile(context)
-                                        ? 16
-                                        : Responsive.isTablet(context)
-                                        ? 18
-                                        : 24,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                  children: [
-                                    TextSpan(
-                                      text: '*', // Add the red asterisk
-                                      style: TextStyle(
-                                        fontSize: Responsive.isMobile(context)
-                                            ? 16
-                                            : Responsive.isTablet(context)
-                                            ? 18
-                                            : 24,
-                                        fontWeight: FontWeight.w700,
-                                        color: AppColors.red,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: 10),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 60.0),
-                                child: CustomTextField(
-                                  controller: controller.aboutTextController,
-                                  borderColor: AppColors.darkGrey.withOpacity(.1),
-                                  width:
-                                  isLargeScreen ? Get.width * .5 : Get.width * .9,
-                                  maxLine: 6,
-                                  borderRadius: 10,
-                                  hintText: "Add Text",
-                                  fillColor: AppColors.whiteColor,
-                                  cursorColor: AppColors.primaryColor,
-                                  inputStyle:
-                                  const TextStyle(color: AppColors.blackColor),
-                                  hintStyle:
-                                  const TextStyle(color: AppColors.blackColor),
-                                ),
-                              ),
-                              SizedBox(height: 10),
-                              Obx(() => controller.aboutError.value.isNotEmpty
-                                  ? Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 60.0),
-                                child: Text(
-                                  controller.aboutError.value,
-                                  style: const TextStyle(
-                                      color: Colors.red, fontSize: 12),
-                                ),
-                              )
-                                  : const SizedBox.shrink()),
-                              SizedBox(height: 20),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  CustomButton(
-                                    title: "Update",
-                                    textStyle: TextStyle(
-                                      color: AppColors.whiteColor,
-                                      fontSize:
-                                      Responsive.isMobile(context) ? 16 : 18,
-                                      fontWeight: FontWeight.w600,
+                                  TextSpan(
+                                    text: '*', // Add the red asterisk
+                                    style: TextStyle(
+                                      fontSize: Responsive.isMobile(context)
+                                          ? 16
+                                          : Responsive.isTablet(context)
+                                              ? 18
+                                              : 24,
+                                      fontWeight: FontWeight.w700,
+                                      color: AppColors.red,
                                     ),
-                                    backgroundColor: AppColors.primaryColor,
-                                    borderRadius: 8,
-                                    width: Responsive.isMobile(context)
-                                        ? Get.width * 0.4
-                                        : Get.width * 0.2,
-                                    onPressed: () {
-                                      controller.saveAllOperatingHours();
-                                      // Get.snackbar('Update',
-                                      //     'Your data is successfully updated.');
-                                      // Get.to(() => RestaurantDetailScreen(
-                                      //   isFromButtonClick: true,
-                                      // ));
-                                    },
                                   ),
                                 ],
                               ),
-                            ],
-                          ),
-                        );
-                      },
-                    );
-                  },)
+                            ),
+                            const SizedBox(height: 10),
+                            ConstrainedBox(
+                              constraints: BoxConstraints(
+                                  minWidth: constraints.maxWidth),
+                              child: Obx(
+                                () => SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      padding: const EdgeInsets.all(30.0),
+                                      decoration: BoxDecoration(
+                                        color: Colors
+                                            .white, // Set background color to white
+                                        borderRadius: BorderRadius.circular(
+                                            10), // Set circular border with radius 6
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.2),
+                                            spreadRadius: 2,
+                                            blurRadius: 4,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      child: DataTable(
+                                        columnSpacing: 10,
+                                        columns: [
+                                          DataColumn(
+                                            label: Expanded(
+                                              child: Center(
+                                                child: Text(
+                                                  'Days',
+                                                  style: TextStyle(
+                                                    fontSize: Responsive
+                                                            .isMobile(context)
+                                                        ? 12
+                                                        : Responsive.isTablet(
+                                                                context)
+                                                            ? 16
+                                                            : 18,
+                                                    fontWeight: FontWeight.w700,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          DataColumn(
+                                            label: Expanded(
+                                              child: Center(
+                                                child: Text(
+                                                  'Breakfast',
+                                                  style: TextStyle(
+                                                    fontSize: Responsive
+                                                            .isMobile(context)
+                                                        ? 12
+                                                        : Responsive.isTablet(
+                                                                context)
+                                                            ? 16
+                                                            : 18,
+                                                    fontWeight: FontWeight.w700,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          DataColumn(
+                                            label: Expanded(
+                                              child: Center(
+                                                child: Text(
+                                                  'Brunch',
+                                                  style: TextStyle(
+                                                    fontSize: Responsive
+                                                            .isMobile(context)
+                                                        ? 12
+                                                        : Responsive.isTablet(
+                                                                context)
+                                                            ? 16
+                                                            : 18,
+                                                    fontWeight: FontWeight.w700,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          DataColumn(
+                                            label: Expanded(
+                                              child: Center(
+                                                child: Text(
+                                                  'Lunch',
+                                                  style: TextStyle(
+                                                    fontSize: Responsive
+                                                            .isMobile(context)
+                                                        ? 12
+                                                        : Responsive.isTablet(
+                                                                context)
+                                                            ? 16
+                                                            : 18,
+                                                    fontWeight: FontWeight.w700,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          DataColumn(
+                                            label: Expanded(
+                                              child: Center(
+                                                child: Text(
+                                                  'Dinner',
+                                                  style: TextStyle(
+                                                    fontSize: Responsive
+                                                            .isMobile(context)
+                                                        ? 12
+                                                        : Responsive.isTablet(
+                                                                context)
+                                                            ? 16
+                                                            : 18,
+                                                    fontWeight: FontWeight.w700,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          DataColumn(
+                                            label: Expanded(
+                                              child: Center(
+                                                child: Text(
+                                                  'Late Night',
+                                                  style: TextStyle(
+                                                    fontSize: Responsive
+                                                            .isMobile(context)
+                                                        ? 12
+                                                        : Responsive.isTablet(
+                                                                context)
+                                                            ? 16
+                                                            : 18,
+                                                    fontWeight: FontWeight.w700,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                        rows: controller.days.map((day) {
+                                          bool isDayActive =
+                                              controller.dayToggles[day]!;
+                                          return DataRow(cells: [
+                                            DataCell(
+                                              Row(
+                                                children: [
+                                                  Transform.scale(
+                                                    scale: 0.6,
+                                                    child: Switch(
+                                                      value: isDayActive,
+                                                      activeColor:
+                                                          AppColors.whiteColor,
+                                                      activeTrackColor:
+                                                          AppColors
+                                                              .primaryColor,
+                                                      inactiveThumbColor:
+                                                          AppColors
+                                                              .primaryColor,
+                                                      onChanged: (value) {
+                                                        controller.dayToggles[
+                                                            day] = value;
+                                                        controller.dayToggles
+                                                            .refresh();
+                                                      },
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    day,
+                                                    style: TextStyle(
+                                                      fontSize: Responsive
+                                                              .isMobile(context)
+                                                          ? 12
+                                                          : Responsive.isTablet(
+                                                                  context)
+                                                              ? 16
+                                                              : 18,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            ...[
+                                              'Breakfast',
+                                              'Brunch',
+                                              'Lunch',
+                                              'Dinner',
+                                              'Late Night'
+                                            ].map((meal) {
+                                              bool isMealActive = controller
+                                                  .cellToggles[day]![meal]!;
+                                              return DataCell(
+                                                isDayActive
+                                                    ? Row(
+                                                        children: [
+                                                          Expanded(
+                                                            child: InkWell(
+                                                              onTap: isMealActive
+                                                                  ? () async {
+                                                                      await controller.selectTime(
+                                                                          context,
+                                                                          day,
+                                                                          meal,
+                                                                          'From');
+                                                                      await controller.selectTime(
+                                                                          context,
+                                                                          day,
+                                                                          meal,
+                                                                          'To');
+                                                                    }
+                                                                  : null,
+                                                              child: Container(
+                                                                height: 40,
+                                                                width: 150,
+                                                                alignment:
+                                                                    Alignment
+                                                                        .center,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  border: Border.all(
+                                                                      color: AppColors
+                                                                          .darkGrey
+                                                                          .withOpacity(
+                                                                              .1)),
+                                                                  color: isMealActive
+                                                                      ? AppColors
+                                                                          .primaryColor
+                                                                      : AppColors
+                                                                          .darkGrey
+                                                                          .withOpacity(
+                                                                              .3),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              5),
+                                                                ),
+                                                                child: Text(
+                                                                  isMealActive
+                                                                      ? (controller.mealTimes[day]![meal]!['From']!.isEmpty &&
+                                                                              controller.mealTimes[day]![meal]!['To']!.isEmpty
+                                                                          ? 'Set Time'
+                                                                          : '${controller.mealTimes[day]![meal]!['From']} - ${controller.mealTimes[day]![meal]!['To']}')
+                                                                      : 'Closed',
+                                                                  style: const TextStyle(
+                                                                      color: AppColors
+                                                                          .whiteColor),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                              width: 8),
+                                                          Column(
+                                                            children: [
+                                                              ToggleButtons(
+                                                                isSelected: [
+                                                                  isMealActive,
+                                                                  !isMealActive,
+                                                                ],
+                                                                onPressed:
+                                                                    (index) {
+                                                                  controller.cellToggles[
+                                                                              day]![
+                                                                          meal] =
+                                                                      index ==
+                                                                          0;
+                                                                  controller
+                                                                      .cellToggles
+                                                                      .refresh();
+                                                                },
+                                                                direction: Axis
+                                                                    .vertical,
+                                                                children: [
+                                                                  Container(
+                                                                    width: 30,
+                                                                    height: 20,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      borderRadius:
+                                                                          const BorderRadius
+                                                                              .only(
+                                                                        topLeft:
+                                                                            Radius.circular(6),
+                                                                        topRight:
+                                                                            Radius.circular(6),
+                                                                      ),
+                                                                      color: isMealActive
+                                                                          ? AppColors
+                                                                              .primaryColor
+                                                                          : AppColors
+                                                                              .darkGrey
+                                                                              .withOpacity(.3),
+                                                                    ),
+                                                                    alignment:
+                                                                        Alignment
+                                                                            .center,
+                                                                    child:
+                                                                        const Text(
+                                                                      'On',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        fontSize:
+                                                                            12,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    width: 30,
+                                                                    height: 20,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      borderRadius:
+                                                                          const BorderRadius
+                                                                              .only(
+                                                                        bottomLeft:
+                                                                            Radius.circular(6),
+                                                                        bottomRight:
+                                                                            Radius.circular(6),
+                                                                      ),
+                                                                      color: !isMealActive
+                                                                          ? AppColors
+                                                                              .primaryColor
+                                                                          : AppColors
+                                                                              .darkGrey
+                                                                              .withOpacity(.3),
+                                                                    ),
+                                                                    alignment:
+                                                                        Alignment
+                                                                            .center,
+                                                                    child:
+                                                                        const Text(
+                                                                      'Off',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        fontSize:
+                                                                            12,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                                constraints:
+                                                                    const BoxConstraints(
+                                                                        minWidth:
+                                                                            30,
+                                                                        minHeight:
+                                                                            20),
+                                                                borderColor: Colors
+                                                                    .transparent, // No outer border
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      )
+                                                    : Container(
+                                                        height: 40,
+                                                        width: 165,
+                                                        alignment:
+                                                            Alignment.center,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: AppColors
+                                                              .darkGrey
+                                                              .withOpacity(.3),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(5),
+                                                        ),
+                                                        child: const Text(
+                                                          'Closed',
+                                                          style: TextStyle(
+                                                            color: AppColors
+                                                                .whiteColor,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                      ),
+                                              );
+                                            }).toList(),
+                                          ]);
+                                        }).toList(),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            // RichText(
+                            //   text: TextSpan(
+                            //     text: 'About ',
+                            //     style: TextStyle(
+                            //       fontSize: Responsive.isMobile(context)
+                            //           ? 16
+                            //           : Responsive.isTablet(context)
+                            //           ? 18
+                            //           : 24,
+                            //       fontWeight: FontWeight.w700,
+                            //     ),
+                            //     children: [
+                            //       TextSpan(
+                            //         text: '*', // Add the red asterisk
+                            //         style: TextStyle(
+                            //           fontSize: Responsive.isMobile(context)
+                            //               ? 16
+                            //               : Responsive.isTablet(context)
+                            //               ? 18
+                            //               : 24,
+                            //           fontWeight: FontWeight.w700,
+                            //           color: AppColors.red,
+                            //         ),
+                            //       ),
+                            //     ],
+                            //   ),
+                            // ),
+                            // const SizedBox(height: 10),
+                            // Padding(
+                            //   padding: const EdgeInsets.symmetric(horizontal: 60.0),
+                            //   child: CustomTextField(
+                            //     controller: controller.aboutTextController,
+                            //     borderColor: AppColors.darkGrey.withOpacity(.1),
+                            //     width:
+                            //     isLargeScreen ? Get.width * .5 : Get.width * .9,
+                            //     maxLine: 6,
+                            //     borderRadius: 10,
+                            //     hintText: "Add Text",
+                            //     fillColor: AppColors.whiteColor,
+                            //     cursorColor: AppColors.primaryColor,
+                            //     inputStyle:
+                            //     const TextStyle(color: AppColors.blackColor),
+                            //     hintStyle:
+                            //     const TextStyle(color: AppColors.blackColor),
+                            //   ),
+                            // ),
+                            // const SizedBox(height: 10),
+                            // Obx(() => controller.aboutError.value.isNotEmpty
+                            //     ? Padding(
+                            //   padding: const EdgeInsets.symmetric(
+                            //       horizontal: 60.0),
+                            //   child: Text(
+                            //     controller.aboutError.value,
+                            //     style: const TextStyle(
+                            //         color: Colors.red, fontSize: 12),
+                            //   ),
+                            // )
+                            //     : const SizedBox.shrink()),
+                            // const SizedBox(height: 20),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                CustomButton(
+                                  title: "Update",
+                                  textStyle: TextStyle(
+                                    color: AppColors.whiteColor,
+                                    fontSize:
+                                        Responsive.isMobile(context) ? 16 : 18,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  backgroundColor: AppColors.primaryColor,
+                                  borderRadius: 8,
+                                  width: Responsive.isMobile(context)
+                                      ? Get.width * 0.4
+                                      : Get.width * 0.2,
+                                  onPressed: () {
+                                    controller.saveAllOperatingHours();
+                                    // Get.snackbar('Update',
+                                    //     'Your data is successfully updated.');
+                                    // Get.to(() => RestaurantDetailScreen(
+                                    //   isFromButtonClick: true,
+                                    // ));
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+              )
             ],
           ),
         ),

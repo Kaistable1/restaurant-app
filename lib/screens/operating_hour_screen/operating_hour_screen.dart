@@ -22,7 +22,6 @@ class OperatingHourScreen1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     double screenWidth = MediaQuery.of(context).size.width;
     bool isLargeScreen = screenWidth > 1600;
 
@@ -60,7 +59,11 @@ class OperatingHourScreen1 extends StatelessWidget {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(4.0),
-                      child: Obx(() => currentUserDataModel.value?.phoneNumber.text != ''? AccountSettingsPopupWidget():AccountNoAuthPopupWidget(),),
+                      child: Obx(
+                        () => currentUserDataModel.value?.phoneNumber.text != ''
+                            ? AccountSettingsPopupWidget()
+                            : AccountNoAuthPopupWidget(),
+                      ),
                     ),
                   ),
                 ),
@@ -95,8 +98,8 @@ class OperatingHourScreen1 extends StatelessWidget {
                       iconSize: Responsive.isMobile(context)
                           ? 14
                           : (Responsive.isTablet(context) ? 16 : 18),
-                      icon:
-                          const Icon(Icons.arrow_back, color: AppColors.primaryColor),
+                      icon: const Icon(Icons.arrow_back,
+                          color: AppColors.primaryColor),
                       onPressed: () {
                         Get.back();
                       },
@@ -454,7 +457,8 @@ class OperatingHourScreen1 extends StatelessWidget {
                                                                 alignment:
                                                                     Alignment
                                                                         .center,
-                                                                child: const Text(
+                                                                child:
+                                                                    const Text(
                                                                   'On',
                                                                   style:
                                                                       TextStyle(
@@ -491,7 +495,8 @@ class OperatingHourScreen1 extends StatelessWidget {
                                                                 alignment:
                                                                     Alignment
                                                                         .center,
-                                                                child: const Text(
+                                                                child:
+                                                                    const Text(
                                                                   'Off',
                                                                   style:
                                                                       TextStyle(
@@ -518,6 +523,7 @@ class OperatingHourScreen1 extends StatelessWidget {
                                                   )
                                                 : Container(
                                                     height: 40,
+                                                    width: 165,
                                                     alignment: Alignment.center,
                                                     decoration: BoxDecoration(
                                                       color: AppColors.darkGrey
@@ -546,7 +552,6 @@ class OperatingHourScreen1 extends StatelessWidget {
                             ),
                           ),
                         ),
-
                         const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,

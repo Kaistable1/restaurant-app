@@ -3353,8 +3353,8 @@ showDoneDialog(BuildContext context) {
                     height:
                         40, // Adjusted button height for better clickability
                     onPressed: () {
-                      Get.to(() => RestaurantDetailScreen(
-                            isFromButtonClick: true,
+                      Get.offAll(() => RestaurantDetailScreen(
+                            isFromButtonClick: false,
                           )); // Close the dialog
                     },
                   ),

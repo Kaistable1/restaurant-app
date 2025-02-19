@@ -151,7 +151,7 @@ class MapDetailWidget extends StatelessWidget {
 
               // Facilities Section
               Text(
-                'Facilities/services',
+                'Facilities/service',
                 style: TextStyle(
                   color: AppColors.headingTextColor,
                   fontSize: Responsive.isMobile(context) ? 6 : 14,

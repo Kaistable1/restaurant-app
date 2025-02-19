@@ -888,18 +888,34 @@ class FacilitiesScreen extends StatelessWidget {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text(
-                                          'Specials Conditions',
-                                          style: TextStyle(
-                                            color: AppColors.blackColor,
-                                            fontFamily: 'Nunito-Regular',
-                                            fontSize: Responsive.isMobile(
-                                                    context)
-                                                ? 16
-                                                : Responsive.isTablet(context)
-                                                    ? 18
-                                                    : 24,
-                                            fontWeight: FontWeight.w600,
+                                        RichText(
+                                          text: TextSpan(
+                                            text: 'Special Conditions ',
+                                            style: TextStyle(
+                                              fontSize: Responsive.isMobile(
+                                                  context)
+                                                  ? 16
+                                                  : Responsive.isTablet(context)
+                                                  ? 18
+                                                  : 24,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                            children: [
+                                              TextSpan(
+                                                text: '*', // Add the red asterisk
+                                                style: TextStyle(
+                                                  fontSize:
+                                                  Responsive.isMobile(context)
+                                                      ? 16
+                                                      : Responsive.isTablet(
+                                                      context)
+                                                      ? 18
+                                                      : 24,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: AppColors.red,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                         const SizedBox(height: 10),
@@ -924,17 +940,34 @@ class FacilitiesScreen extends StatelessWidget {
                                               color: AppColors.blackColor),
                                         ),
                                         const SizedBox(height: 10),
-                                        Text(
-                                          'Social media',
-                                          style: TextStyle(
-                                            fontFamily: 'Nunito-Regular',
-                                            fontSize: Responsive.isMobile(
-                                                    context)
-                                                ? 16
-                                                : Responsive.isTablet(context)
-                                                    ? 18
-                                                    : 24,
-                                            fontWeight: FontWeight.w600,
+                                        RichText(
+                                          text: TextSpan(
+                                            text: 'Social media ',
+                                            style: TextStyle(
+                                              fontSize: Responsive.isMobile(
+                                                  context)
+                                                  ? 16
+                                                  : Responsive.isTablet(context)
+                                                  ? 18
+                                                  : 24,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                            children: [
+                                              TextSpan(
+                                                text: '', // Add the red asterisk
+                                                style: TextStyle(
+                                                  fontSize:
+                                                  Responsive.isMobile(context)
+                                                      ? 16
+                                                      : Responsive.isTablet(
+                                                      context)
+                                                      ? 18
+                                                      : 24,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: AppColors.red,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                         const SizedBox(height: 10),
@@ -1000,17 +1033,34 @@ class FacilitiesScreen extends StatelessWidget {
                                           ),
                                         ),
                                         const SizedBox(height: 10),
-                                        Text(
-                                          'Link',
-                                          style: TextStyle(
-                                            fontFamily: 'Nunito-Regular',
-                                            fontSize: Responsive.isMobile(
-                                                    context)
-                                                ? 16
-                                                : Responsive.isTablet(context)
-                                                    ? 18
-                                                    : 24,
-                                            fontWeight: FontWeight.w600,
+                                        RichText(
+                                          text: TextSpan(
+                                            text: 'Link ',
+                                            style: TextStyle(
+                                              fontSize: Responsive.isMobile(
+                                                  context)
+                                                  ? 16
+                                                  : Responsive.isTablet(context)
+                                                  ? 18
+                                                  : 24,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                            children: [
+                                              TextSpan(
+                                                text: '*', // Add the red asterisk
+                                                style: TextStyle(
+                                                  fontSize:
+                                                  Responsive.isMobile(context)
+                                                      ? 16
+                                                      : Responsive.isTablet(
+                                                      context)
+                                                      ? 18
+                                                      : 24,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: AppColors.red,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                         const SizedBox(height: 10),

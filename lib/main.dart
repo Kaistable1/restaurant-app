@@ -17,6 +17,8 @@ import 'package:restaurant_web_app/testing.dart';
 import 'package:restaurant_web_app/universal_models/restaurant_model.dart';
 import 'package:restaurant_web_app/widgets/global_functions.dart';
 
+import 'screens/operating_hour_screen/operating_hour_screen.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -59,7 +61,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      // home: ItemListScreen(),
+      // home: OperatingHourScreen1(),
       // home: EditRestaurantScreen(),
       home:auth.currentUser != null? MainScreen():LoginScreen(),
       // home:auth.currentUser != null? EditRestaurantScreen():LoginScreen(),

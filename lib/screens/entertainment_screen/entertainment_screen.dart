@@ -469,7 +469,7 @@ class Entertainment_Screen extends StatelessWidget {
                           borderColor: AppColors.darkGrey.withOpacity(0.1),
                           borderRadius: 8,
                           controller: controller.customEventController,
-                          hintText: "Enter Event",
+                          hintText: "Event Name",
                           fillColor: AppColors.whiteColor,
                           cursorColor: AppColors.primaryColor,
                           inputStyle:
@@ -487,7 +487,7 @@ class Entertainment_Screen extends StatelessWidget {
                           borderColor: AppColors.darkGrey.withOpacity(0.1),
                           borderRadius: 8,
                           controller: controller.customByController,
-                          hintText: "Enter By",
+                          hintText: "Entered By",
                           fillColor: AppColors.whiteColor,
                           cursorColor: AppColors.primaryColor,
                           inputStyle:
@@ -561,7 +561,7 @@ class Entertainment_Screen extends StatelessWidget {
                           borderColor: AppColors.darkGrey.withOpacity(0.1),
                           borderRadius: 8,
                           controller: controller.customByController,
-                          hintText: "Enter By",
+                          hintText: "Entered By",
                           fillColor: AppColors.whiteColor,
                           cursorColor: AppColors.primaryColor,
                           inputStyle:

@@ -38,6 +38,8 @@ class RestaurantDetailScreen extends StatelessWidget {
   bool? isFromButtonClick;
   @override
   Widget build(BuildContext context) {
+
+
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     bool isLargeScreen = screenWidth > 1400;
@@ -125,7 +127,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                 RestaurantModel restaurantModel =
                     RestaurantModel.fromDocumentSnapshot(snapshot.data!
                         as DocumentSnapshot<Map<String, dynamic>>);
-
+                controller.fetchOperatingHours();
                 return Padding(
                   padding: EdgeInsets.symmetric(
                       horizontal: Responsive.isMobile(context) ? 22 : 22.0),

@@ -38,6 +38,22 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
+
+<script>
+  window.addEventListener('load', function(ev) {
+    // Download main.dart.js
+    _flutter.loader.loadEntrypoint({
+      serviceWorker: {
+        serviceWorkerVersion: flutter_service_worker_version,
+      },
+      onEntrypointLoaded: function(engineInitializer) {
+        engineInitializer.initializeEngine().then(function(appRunner) {
+          appRunner.runApp();
+        });
+      }
+    });
+  });
+</script>
   <script src="flutter_bootstrap.js" async></script>
 
 
@@ -55,12 +71,12 @@
     // For Firebase JS SDK v7.20.0 and later, measurementId is optional
     const firebaseConfig = {
       apiKey: "AIzaSyD-aHLAypbdgpbqlSNDl_5ofc257kKQPTI",
-  authDomain: "restaurantwebsite-4bdd8.firebaseapp.com",
-  projectId: "restaurantwebsite-4bdd8",
-  storageBucket: "restaurantwebsite-4bdd8.firebasestorage.app",
-  messagingSenderId: "404399548475",
-  appId: "1:404399548475:web:782d48d2dfe1e4604dd41e",
-  measurementId: "G-4ETNQB0PV4"
+      authDomain: "restaurantwebsite-4bdd8.firebaseapp.com",
+      projectId: "restaurantwebsite-4bdd8",
+      storageBucket: "restaurantwebsite-4bdd8.firebasestorage.app",
+      messagingSenderId: "404399548475",
+      appId: "1:404399548475:web:782d48d2dfe1e4604dd41e",
+      measurementId: "G-4ETNQB0PV4"
     };
 
     // Initialize Firebase
