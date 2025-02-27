@@ -11,7 +11,7 @@ void showFilterBottomSheet() {
 
   Get.bottomSheet(
     Container(
-      height: 800,
+      height: Get.height * 0.8,
       padding: const EdgeInsets.all(16),
       decoration: const BoxDecoration(
         color: Colors.white,

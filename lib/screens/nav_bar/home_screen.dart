@@ -185,7 +185,7 @@ class HomeScreen extends StatelessWidget {
                                 decoration: TextDecoration.underline,
                                 decorationColor: AppColors.primaryColor,
                                 fontFamily: 'Nunito-Regular',
-                                fontSize: 12,
+                                fontSize: 14,
                                 fontWeight: FontWeight.w500,
                                 color: AppColors.primaryColor),
                           ))
@@ -195,7 +195,7 @@ class HomeScreen extends StatelessWidget {
                 SizedBox(height: 10),
                 SizedBox(
                   height:
-                      Get.height * 0.2, // Fixed height for the horizontal list
+                      Get.height * 0.22, // Fixed height for the horizontal list
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: restaurants.length,
@@ -253,6 +253,7 @@ class HomeScreen extends StatelessWidget {
                     },
                   ),
                 ),
+                SizedBox(height: 20),
               ],
             );
           }),
@@ -294,7 +295,7 @@ class HomeScreen extends StatelessWidget {
 
             return Column(
               children: [
-                SizedBox(height: 10),
+                SizedBox(height: 20),
                 Padding(
                   padding: EdgeInsets.only(
                     left: 0,
@@ -327,7 +328,7 @@ class HomeScreen extends StatelessWidget {
                                 decoration: TextDecoration.underline,
                                 decorationColor: AppColors.primaryColor,
                                 fontFamily: 'Nunito-Regular',
-                                fontSize: 12,
+                                fontSize: 14,
                                 fontWeight: FontWeight.w500,
                                 color: AppColors.primaryColor),
                           ))
@@ -337,7 +338,7 @@ class HomeScreen extends StatelessWidget {
                 SizedBox(height: 10),
                 SizedBox(
                   height:
-                      Get.height * 0.2, // Fixed height for the horizontal list
+                      Get.height * 0.22, // Fixed height for the horizontal list
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: restaurants.length,
@@ -395,6 +396,7 @@ class HomeScreen extends StatelessWidget {
                     },
                   ),
                 ),
+                SizedBox(height: 20),
               ],
             );
           }),

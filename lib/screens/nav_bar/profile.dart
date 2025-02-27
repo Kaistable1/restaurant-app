@@ -1,12 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
 import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/screens/about_app/about_app.dart';
+import 'package:kaistable_website/screens/auth_screens/login/login_screen.dart';
 import 'package:kaistable_website/screens/change_pass/changePassword_dialoge.dart';
 import 'package:kaistable_website/screens/contact_us/contact_us.dart';
 import 'package:kaistable_website/screens/edit_profile/edit_profile_page.dart';
 import 'package:kaistable_website/screens/favorite_screen/favorite_screen.dart';
+import 'package:kaistable_website/screens/nav_bar/widgets/custom_button.dart';
 import 'package:kaistable_website/screens/privacy_policy/privacy_policy.dart';
 import 'package:kaistable_website/screens/terms_and_condition/terms_and_condition.dart';
 
@@ -31,9 +34,9 @@ class ProfileScreen extends StatelessWidget {
     ];
 
     return Scaffold(
-      backgroundColor: AppColors.bgColor,
+      backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
-        backgroundColor: AppColors.bgColor,
+        backgroundColor: AppColors.whiteColor,
         centerTitle: true,
         automaticallyImplyLeading: false,
         title: Text(
@@ -55,13 +58,13 @@ class ProfileScreen extends StatelessWidget {
               width: Get.width,
               height: 67,
               decoration: const BoxDecoration(
-                color: AppColors.bgColor,
+                color: AppColors.whiteColor,
               ),
               child: Row(
                 children: [
                   Container(
                     width: Get.width * 0.13,
-                    height: Get.width * 0.15,
+                    height: Get.width * 0.13,
                     margin: EdgeInsets.all(5),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
@@ -217,6 +220,24 @@ class ProfileScreen extends StatelessWidget {
                 );
               },
             ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 75),
+            child: CustomButton(
+              laBelText: 'Logout',
+              fontSize: 20,
+              textColor: Colors.white,
+              fontWeight: FontWeight.w600,
+              height: 43,
+              width: 200,
+              ontapp: () async {
+                await FirebaseAuth.instance.signOut();
+                Get.offAll(() => LoginScreen());
+              },
+            ),
+          ),
+          SizedBox(
+            height: Get.height * 0.1,
           ),
         ],
       ),

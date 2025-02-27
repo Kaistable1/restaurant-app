@@ -157,7 +157,6 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
         for (var timeOfDay in timeOfDayList) {
           if (operatingHours.containsKey(timeOfDay)) {
             var timeSlot = operatingHours[timeOfDay];
-            print('timeSlot $timeSlot');
             // Check if the restaurant is open for the selected time (i.e., 'isClosed' is false or null)
             var isClosed = timeSlot['isClosed'];
 
@@ -236,9 +235,9 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
       }
     });
     return Scaffold(
-        backgroundColor: AppColors.bgColor,
+        backgroundColor: AppColors.whiteColor,
         appBar: AppBar(
-          backgroundColor: AppColors.bgColor,
+          backgroundColor: AppColors.whiteColor,
           iconTheme: const IconThemeData(
             color: AppColors.primaryColor,
           ),
@@ -319,87 +318,6 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                 : const SizedBox.shrink(),
           ],
         ),
-        // drawer: isOnboarding
-        //     ? Drawer(
-        //         child: ListView(padding: EdgeInsets.zero, children: <Widget>[
-        //         DrawerHeader(
-        //           decoration: const BoxDecoration(
-        //             color: AppColors.primaryColor,
-        //           ),
-        //           child: Center(
-        //             child: Image.asset(
-        //               'assets/images/topbar_logo.png',
-        //               height: 200,
-        //               width: 200,
-        //             ),
-        //           ),
-        //         ),
-        //         Center(child: Text('Register to enable the drawer feature!')),
-        //         Padding(
-        //           padding:
-        //               const EdgeInsets.symmetric(horizontal: 75, vertical: 20),
-        //           child: CustomButton(
-        //             laBelText: 'Go back',
-        //             fontSize: 20,
-        //             textColor: Colors.white,
-        //             fontWeight: FontWeight.w600,
-        //             height: 43,
-        //             width: 200,
-        //             ontapp: () async {
-        //               Get.close(2);
-        //             },
-        //           ),
-        //         ),
-        //       ]))
-        //     : Drawer(
-        //         child: ListView(
-        //           padding: EdgeInsets.zero,
-        //           children: <Widget>[
-        //             DrawerHeader(
-        //               decoration: const BoxDecoration(
-        //                 color: AppColors.primaryColor,
-        //               ),
-        //               child: Center(
-        //                 child: Image.asset(
-        //                   'assets/images/topbar_logo.png',
-        //                   height: 200,
-        //                   width: 200,
-        //                 ),
-        //               ),
-        //             ),
-        //             _buildDrawerItem('Home', 0),
-        //             _buildDrawerItem('Favorites', 1),
-        //             _buildDrawerItem('Edit profile', 2),
-        //             _buildDrawerItem('Change Password', 3),
-        //             _buildDrawerItem('Terms and conditions', 4),
-        //             _buildDrawerItem('Privacy policy', 5),
-        //             _buildDrawerItem('About app', 6),
-        //             _buildDrawerItem('Contact us', 7),
-        //             SizedBox(
-        //               height: 30,
-        //             ),
-        //             Padding(
-        //               padding: const EdgeInsets.symmetric(horizontal: 75),
-        //               child: CustomButton(
-        //                 laBelText: 'Logout',
-        //                 fontSize: 20,
-        //                 textColor: Colors.white,
-        //                 fontWeight: FontWeight.w600,
-        //                 height: 43,
-        //                 width: 200,
-        //                 ontapp: () async {
-        //                   await FirebaseAuth.instance.signOut();
-        //                   Get.offAll(() => LoginScreen());
-        //                 },
-        //               ),
-        //             ),
-        //             SizedBox(
-        //               height: 30,
-        //             ),
-        //           ],
-        //         ),
-        //       ),
-
         body: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -530,6 +448,8 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                               .aggregatedFilters
                                               .contains(restaurant.country);
                                         }).toList();
+                                        print(
+                                            'restaurants after country filter ${restaurants.length}');
                                       }
 
                                       // Filter by City
@@ -543,6 +463,8 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                               .aggregatedFilters
                                               .contains(restaurant.city);
                                         }).toList();
+                                        print(
+                                            'restaurants after city filter ${restaurants.length}');
                                       }
 
                                       // Filter by Language
@@ -557,7 +479,14 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                                   .selectedLanguage.value
                                                   .trim();
                                         }).toList();
+                                        print(
+                                            'restaurants after language filter ${restaurants.length}');
                                       }
+                                      print(
+                                          'filterSelectionController.aggregatedFilters ${filterSelectionController.aggregatedFilters}');
+
+                                      print(
+                                          'filterSelectionController.selectedDiscounts ${filterSelectionController.selectedDiscounts}');
 
                                       // Filter by Discounts
                                       if (filterSelectionController
@@ -731,6 +660,8 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                         controller
                                             .initializeSelectors(restaurants);
                                       });
+                                      print(
+                                          'resutatnsta before future filter ${restaurants.length}');
 
                                       return FutureBuilder<
                                           List<RestaurantModel>>(
@@ -758,7 +689,18 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                             controller.filteredRestaurants =
                                                 timeOfDayRestaurants;
                                           }
+                                          print(
+                                              'resutatnsta after time of day filter ${restaurants.length}');
+                                          print(filterSelectionController
+                                              .selectedFilters);
+                                          print('cusines filter enable ');
 
+                                          print(filterSelectionController
+                                              .aggregatedFilters
+                                              .any((filter) =>
+                                                  filterSelectionController
+                                                      .selectedFilters
+                                                      .contains(filter)));
                                           // Handle the second FutureBuilder for cuisines
                                           return StreamBuilder<
                                               Map<String, List<String>>>(
@@ -770,8 +712,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                                             .contains(filter))
                                                 ? filterController
                                                     .getRestaurantsGroupedByCuisine()
-                                                : Stream.value(
-                                                    {}), // Provides a default empty map if no filters are selected
+                                                : null, // Provides a default empty map if no filters are selected
                                             builder: (context,
                                                 streamCuisineSnapshot) {
                                               if (streamCuisineSnapshot
@@ -848,7 +789,8 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                                         .toList();
                                                 controller.update();
                                               });
-
+                                              print(
+                                                  'resturants lenghth after all filters ${restaurants.length}');
                                               return GetBuilder<
                                                   HomeLocationController>(
                                                 builder: (controller) {

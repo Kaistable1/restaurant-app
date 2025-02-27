@@ -69,7 +69,7 @@ class FilterController extends GetxController {
     "Atmospheres": [
       'casual dining',
       'fine dining',
-      'fast casual',
+      'fast dining',
       'pop',
     ],
     "Facilities": [
@@ -121,33 +121,45 @@ class FilterController extends GetxController {
     } else {
       selectedFilters[category]!.add(option);
     }
-    if (category == 'Cuisines') {
-      filterSelectionController.selectedFilters.value =
-          selectedFilters.values.expand((rxList) => rxList.toList()).toList();
-    } else if (category == 'Discount Type') {
-      filterSelectionController.selectedDiscounts.value =
-          selectedFilters.values.expand((rxList) => rxList.toList()).toList();
-    } else if (category == 'Time of Day') {
-      filterSelectionController.selectedTimeOfDay.value =
-          selectedFilters.values.expand((rxList) => rxList.toList()).toList();
-    } else if (category == 'Atmospheres') {
-      filterSelectionController.selectedAtmosphere.value =
-          selectedFilters.values.expand((rxList) => rxList.toList()).toList();
-    } else if (category == 'Facilities') {
-      filterSelectionController.selectedFacilities.value =
-          selectedFilters.values.expand((rxList) => rxList.toList()).toList();
-    } else if (category == 'Dietary Preferences') {
-      filterSelectionController.selectedDietary.value =
-          selectedFilters.values.expand((rxList) => rxList.toList()).toList();
-    } else if (category == 'Entertainment') {
-      filterSelectionController.selectedEntertainment.value =
-          selectedFilters.values.expand((rxList) => rxList.toList()).toList();
-    } else if (category == 'Price Range') {
-      filterSelectionController.selectedPriceRange.value =
-          selectedFilters.values.expand((rxList) => rxList.toList()).toList();
+
+    // Update only the specific category filter in the controller
+    switch (category) {
+      case 'Cuisines':
+        filterSelectionController.selectedFilters.value =
+            selectedFilters[category]!.toList();
+        break;
+      case 'Discount Type':
+        filterSelectionController.selectedDiscounts.value =
+            selectedFilters[category]!.toList();
+        break;
+      case 'Time of Day':
+        filterSelectionController.selectedTimeOfDay.value =
+            selectedFilters[category]!.toList();
+        break;
+      case 'Atmospheres':
+        filterSelectionController.selectedAtmosphere.value =
+            selectedFilters[category]!.toList();
+        break;
+      case 'Facilities':
+        filterSelectionController.selectedFacilities.value =
+            selectedFilters[category]!.toList();
+        break;
+      case 'Dietary Preferences':
+        filterSelectionController.selectedDietary.value =
+            selectedFilters[category]!.toList();
+        break;
+      case 'Entertainment':
+        filterSelectionController.selectedEntertainment.value =
+            selectedFilters[category]!.toList();
+        break;
+      case 'Price Range':
+        filterSelectionController.selectedPriceRange.value =
+            selectedFilters[category]!.toList();
+        break;
     }
+
     filterSelectionController.update();
-    update(); // Ensure UI rebuilds
+    update(); // UI Refresh
   }
 
   int getSelectedCount(String category) =>

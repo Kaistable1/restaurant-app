@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
-import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_location_controller.dart';
 
 class HomeFilterController extends GetxController {
@@ -19,7 +18,6 @@ class HomeFilterController extends GetxController {
 
   Stream<Map<String, List<String>>> getRestaurantsGroupedByCuisine() async* {
     final firestore = FirebaseFirestore.instance;
-    print('testing----------');
 
     // Fetch the list of restaurants and their meal menus asynchronously
     final restaurantsSnapshot = await firestore.collection('restaurants').get();

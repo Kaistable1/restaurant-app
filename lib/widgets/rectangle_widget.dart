@@ -58,7 +58,7 @@ class RectangleWidget extends StatelessWidget {
             height: 102,
             width: Get.width * 0.6,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
+                borderRadius: BorderRadius.circular(10),
                 image: DecorationImage(
                     fit: BoxFit.fitWidth,
                     image: imagePath.contains('http')

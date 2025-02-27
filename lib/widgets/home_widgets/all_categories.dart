@@ -164,7 +164,7 @@ class AllCategories extends StatelessWidget {
                                   decoration: TextDecoration.underline,
                                   decorationColor: AppColors.primaryColor,
                                   fontFamily: 'Nunito-Regular',
-                                  fontSize: 12,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   color: AppColors.primaryColor),
                             ))
@@ -174,7 +174,7 @@ class AllCategories extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.only(left: 8, right: 6),
                     child: SizedBox(
-                      height: Get.height * 0.19,
+                      height: Get.height * 0.195,
                       child: ListView.builder(
                         controller: controller.scrollController,
                         scrollDirection: Axis.horizontal,
@@ -237,7 +237,7 @@ class AllCategories extends StatelessWidget {
                         decoration: TextDecoration.underline,
                         decorationColor: AppColors.primaryColor,
                         fontFamily: 'Nunito-Regular',
-                        fontSize: 12,
+                        fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: AppColors.primaryColor),
                   ))
@@ -304,7 +304,7 @@ class AllCategories extends StatelessWidget {
             return Padding(
               padding: EdgeInsets.only(left: 8, right: 6),
               child: SizedBox(
-                height: Get.height * 0.19,
+                height: Get.height * 0.195,
                 child: ListView.builder(
                   controller: controller.scrollController,
                   scrollDirection: Axis.horizontal,
@@ -399,7 +399,7 @@ class AllCategories extends StatelessWidget {
                                     decoration: TextDecoration.underline,
                                     decorationColor: AppColors.primaryColor,
                                     fontFamily: 'Nunito-Regular',
-                                    fontSize: 12,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.w500,
                                     color: AppColors.primaryColor),
                               ))
@@ -409,7 +409,7 @@ class AllCategories extends StatelessWidget {
                     SizedBox(height: 10),
                     SizedBox(
                       height: Get.height *
-                          0.27, // Fixed height for the horizontal list
+                          0.285, // Fixed height for the horizontal list
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: restaurants.length,
@@ -501,7 +501,7 @@ class AllCategories extends StatelessWidget {
                                   decorationColor: AppColors.primaryColor,
                                   fontFamily: 'Nunito-Regular',
                                   fontSize:
-                                      Responsive.isMobile(context) ? 12 : 20,
+                                      Responsive.isMobile(context) ? 14 : 20,
                                   fontWeight: FontWeight.w500,
                                   color: AppColors.primaryColor),
                             ))
@@ -642,7 +642,7 @@ class AllCategories extends StatelessWidget {
                                         decoration: TextDecoration.underline,
                                         decorationColor: AppColors.primaryColor,
                                         fontFamily: 'Nunito-Regular',
-                                        fontSize: 12,
+                                        fontSize: 14,
                                         fontWeight: FontWeight.w500,
                                         color: AppColors.primaryColor),
                                   ))

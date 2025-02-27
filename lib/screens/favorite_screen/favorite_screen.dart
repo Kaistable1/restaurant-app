@@ -31,9 +31,9 @@ class FavoriteScreen extends StatelessWidget {
         return false;
       },
       child: Scaffold(
-        backgroundColor: AppColors.bgColor,
+        backgroundColor: AppColors.whiteColor,
         appBar: AppBar(
-          backgroundColor: AppColors.bgColor,
+          backgroundColor: AppColors.whiteColor,
           iconTheme: IconThemeData(
             color: AppColors.primaryColor,
           ),
@@ -64,7 +64,7 @@ class FavoriteScreen extends StatelessWidget {
           //     ),
           //   ),
           // ),
-          
+
           title: Text(
             'Favorites',
             style: TextStyle(
@@ -75,7 +75,6 @@ class FavoriteScreen extends StatelessWidget {
             ),
           ),
         ),
-        
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.only(left: 16, right: 16),
