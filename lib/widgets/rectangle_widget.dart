@@ -94,15 +94,18 @@ class RectangleWidget extends StatelessWidget {
                 SizedBox(height: 2),
                 Row(
                   children: [
-                    Text(
-                      description,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 8,
-                        fontFamily: 'Nunito-Regular',
-                        color: AppColors.textColor,
+                    SizedBox(
+                      width: Get.width * 0.4,
+                      child: Text(
+                        description,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 8,
+                          fontFamily: 'Nunito-Regular',
+                          color: AppColors.textColor,
+                        ),
                       ),
                     ),
                   ],

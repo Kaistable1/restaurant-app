@@ -5,6 +5,8 @@ import 'package:kaistable_website/constants/app_colors.dart';
 import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/screens/auth_screens/login/login_screen.dart';
 import 'package:kaistable_website/screens/home_screen/my_home_screen.dart';
+import 'package:kaistable_website/screens/nav_bar/home_screen.dart';
+import 'package:kaistable_website/screens/nav_bar/main_screen.dart';
 import 'package:kaistable_website/screens/onboarding_screen/onboarding_controller/onboarding_controller.dart';
 import 'package:kaistable_website/screens/onboarding_screen/onboarding_screen.dart';
 
@@ -43,11 +45,8 @@ class _SplashScreenState extends State<SplashScreen>
 
     // Start the timer to navigate to the OnboardingScreen
     Timer(Duration(seconds: 3), () {
-      Get.offAll(() => auth.currentUser != null
-          ? MyHomeScreen(
-              countryName: OnboardingController().selectedCity.value,
-            )
-          : OnboardingScreen());
+      Get.offAll(
+          () => auth.currentUser != null ? MainScreen() : OnboardingScreen());
     });
   }
 

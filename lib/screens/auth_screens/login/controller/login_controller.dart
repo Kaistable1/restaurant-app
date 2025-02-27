@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/screens/home_screen/my_home_screen.dart';
+import 'package:kaistable_website/screens/nav_bar/main_screen.dart';
 import 'package:kaistable_website/screens/onboarding_screen/onboarding_controller/onboarding_controller.dart';
 import 'package:kaistable_website/utils/loading.dart';
 import 'package:kaistable_website/widgets/global_functions.dart';
@@ -59,12 +60,7 @@ class LoginController extends GetxController {
         Get.back();
 
         if (currentUserDataModel != null) {
-          // Navigate to the home screen if user data is valid
-          final onboardingController = Get.put(OnboardingController());
-          Get.offAll(() => MyHomeScreen(
-                countryName: onboardingController.selectedCountry.value,
-              ));
-
+          Get.offAll(() =>MainScreen());
           // Clear the email and password fields
           emailController.clear();
           passwordController.clear();

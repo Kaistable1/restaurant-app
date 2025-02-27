@@ -165,7 +165,7 @@ class LocationScreen extends StatelessWidget {
                           ),
                         ),
                         onChanged: (value) {
-                          if (value != '') {
+                          if (value.trim() != '') {
                             homeController.filterRestaurants(value);
                           }
                         },

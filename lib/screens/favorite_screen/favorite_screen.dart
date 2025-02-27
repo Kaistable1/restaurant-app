@@ -39,31 +39,32 @@ class FavoriteScreen extends StatelessWidget {
           ),
           centerTitle: true,
           automaticallyImplyLeading: true,
-          leading: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Container(
-              height: 16,
-              width: 16,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    spreadRadius: 1,
-                    blurRadius: 3,
-                    offset: const Offset(0, 1),
-                  ),
-                ],
-              ),
-              child: GestureDetector(
-                onTap: () {
-                  Get.off(MyHomeScreen());
-                },
-                child: Icon(Icons.arrow_back, size: 18),
-              ),
-            ),
-          ),
+          // leading: Padding(
+          //   padding: const EdgeInsets.all(12.0),
+          //   child: Container(
+          //     height: 16,
+          //     width: 16,
+          //     decoration: BoxDecoration(
+          //       color: Colors.white,
+          //       shape: BoxShape.circle,
+          //       boxShadow: [
+          //         BoxShadow(
+          //           color: Colors.black.withOpacity(0.1),
+          //           spreadRadius: 1,
+          //           blurRadius: 3,
+          //           offset: const Offset(0, 1),
+          //         ),
+          //       ],
+          //     ),
+          //     child: GestureDetector(
+          //       onTap: () {
+          //         Get.off(MyHomeScreen());
+          //       },
+          //       child: Icon(Icons.arrow_back, size: 18),
+          //     ),
+          //   ),
+          // ),
+          
           title: Text(
             'Favorites',
             style: TextStyle(
@@ -74,6 +75,7 @@ class FavoriteScreen extends StatelessWidget {
             ),
           ),
         ),
+        
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.only(left: 16, right: 16),

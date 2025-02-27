@@ -1,13 +1,11 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:kaistable_website/screens/nav_bar/widgets/bottom_sheet.dart';
+
 import '../../../constants/app_colors.dart';
 import '../../../utils/responsive.dart';
 import '../../custom_widget/separate_text_field.dart';
-import '../../dialoges/filter_dialog.dart';
 import '../../screens/home_screen/happy_hours/happy_hours.dart';
 import '../../screens/home_screen/home_controller/filter_selection_controller.dart';
 import '../../screens/home_screen/home_controller/home_location_controller.dart';
@@ -90,7 +88,8 @@ class FilterWidget extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  filterSelectionDialogueBox();
+                  showFilterBottomSheet();
+                  // filterSelectionDialogueBox();
                   // filterController.toggleFilterListVisibility();
                 },
                 child: Image.asset(
@@ -102,89 +101,89 @@ class FilterWidget extends StatelessWidget {
             ],
           ),
         ),
-        Obx(
-          () => filterController.aggregatedFilters.isNotEmpty
-              ? Column(
-                  children: [
-                    SizedBox(height: 10),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: SizedBox(
-                              width: 280,
-                              child: LayoutBuilder(
-                                builder: (context, constraints) {
-                                  double availableWidth = constraints.maxWidth;
-                                  return Obx(
-                                    () => Wrap(
-                                      direction: Axis.horizontal,
-                                      spacing: 7,
-                                      runSpacing: 10,
-                                      children: [
-                                        ...filterController.aggregatedFilters
-                                            .map((filterName) {
-                                          return ConstrainedBox(
-                                            constraints: BoxConstraints(
-                                              maxWidth: availableWidth / 1,
-                                            ),
-                                            child: SelectedFilterWidgets(
-                                              filterName: filterName,
-                                              onTap: () {
-                                                filterController
-                                                    .aggregatedFilters
-                                                    .remove(filterName);
-                                                // Hide the filter list if it's empty after removal
-                                                if (filterController
-                                                    .aggregatedFilters
-                                                    .isEmpty) {
-                                                  filterController
-                                                      .isFilterListVisible
-                                                      .value = false;
-                                                }
-                                                print('press-----');
-                                                controller.update();
-                                              },
-                                            ),
-                                          );
-                                        }).toList(),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              filterController.aggregatedFilters.clear();
-                              filterController.clearAll();
-                              // filterController.isFilterListVisible.value =
-                              //     false;
-                            },
-                            child: Text(
-                              'clear all',
-                              style: TextStyle(
-                                color: AppColors.primaryColor,
-                                fontFamily: "Nunito-Sans",
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                decoration: TextDecoration.underline,
-                                decorationColor: AppColors.primaryColor,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                  ],
-                )
-              : SizedBox.shrink(),
-        ),
+        // Obx(
+        //   () => filterController.aggregatedFilters.isNotEmpty
+        //       ? Column(
+        //           children: [
+        //             SizedBox(height: 10),
+        //             Padding(
+        //               padding: const EdgeInsets.symmetric(horizontal: 16),
+        //               child: Row(
+        //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //                 crossAxisAlignment: CrossAxisAlignment.start,
+        //                 children: [
+        //                   Expanded(
+        //                     child: SizedBox(
+        //                       width: 280,
+        //                       child: LayoutBuilder(
+        //                         builder: (context, constraints) {
+        //                           double availableWidth = constraints.maxWidth;
+        //                           return Obx(
+        //                             () => Wrap(
+        //                               direction: Axis.horizontal,
+        //                               spacing: 7,
+        //                               runSpacing: 10,
+        //                               children: [
+        //                                 ...filterController.aggregatedFilters
+        //                                     .map((filterName) {
+        //                                   return ConstrainedBox(
+        //                                     constraints: BoxConstraints(
+        //                                       maxWidth: availableWidth / 1,
+        //                                     ),
+        //                                     child: SelectedFilterWidgets(
+        //                                       filterName: filterName,
+        //                                       onTap: () {
+        //                                         filterController
+        //                                             .aggregatedFilters
+        //                                             .remove(filterName);
+        //                                         // Hide the filter list if it's empty after removal
+        //                                         if (filterController
+        //                                             .aggregatedFilters
+        //                                             .isEmpty) {
+        //                                           filterController
+        //                                               .isFilterListVisible
+        //                                               .value = false;
+        //                                         }
+        //                                         controller.update();
+        //                                       },
+        //                                     ),
+        //                                   );
+        //                                 }).toList(),
+        //                               ],
+        //                             ),
+        //                           );
+        //                         },
+        //                       ),
+        //                     ),
+        //                   ),
+        //                   GestureDetector(
+        //                     onTap: () {
+        //                       filterController.aggregatedFilters.clear();
+        //                       filterController.clearAll();
+        //                       final secondFilterController =
+        //                           Get.find<FilterController>();
+        //                       secondFilterController.clearAll();
+        //                     },
+        //                     child: Text(
+        //                       'clear all',
+        //                       style: TextStyle(
+        //                         color: AppColors.primaryColor,
+        //                         fontFamily: "Nunito-Sans",
+        //                         fontSize: 14,
+        //                         fontWeight: FontWeight.w400,
+        //                         decoration: TextDecoration.underline,
+        //                         decorationColor: AppColors.primaryColor,
+        //                       ),
+        //                     ),
+        //                   ),
+        //                 ],
+        //               ),
+        //             ),
+        //             SizedBox(height: 8),
+        //           ],
+        //         )
+        //       : SizedBox.shrink(),
+        // ),
       ],
     );
   }

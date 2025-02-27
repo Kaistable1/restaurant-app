@@ -173,7 +173,6 @@ class FilterSelectionController extends GetxController {
     if (selectedLanguage.value.isNotEmpty) {
       aggregatedFilters.add(selectedLanguage.value);
     }
-
     aggregatedFilters.addAll(selectedFilters);
     aggregatedFilters.addAll(selectedDiscounts);
     aggregatedFilters.addAll(selectedTimeOfDay);

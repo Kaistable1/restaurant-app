@@ -118,7 +118,8 @@ class _TrendingViewAllState extends State<TrendingViewAll> {
                         controller: homeController.searchController,
                         hintText: 'Try searching for restaurant name',
                         onChanged: (v) {
-                          homeController.filterRestaurants(v);
+                          if (v.trim().isNotEmpty)
+                            homeController.filterRestaurants(v);
                         },
                         hintStyle: TextStyle(
                           color: AppColors.hintText,

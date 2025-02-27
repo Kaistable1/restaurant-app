@@ -12,7 +12,6 @@ import '../../widgets/custom_text_field.dart';
 import '../../widgets/dropdown.dart';
 
 class ContactUs extends StatelessWidget {
-  final ScrollController scrollcontroller;
   final Function(int)? onNavigate;
   RxBool isDropdownOpen = false.obs;
   final List<String> items = [
@@ -27,7 +26,10 @@ class ContactUs extends StatelessWidget {
 
   final ContactUsController controller = Get.put(ContactUsController());
 
-  ContactUs({super.key, this.onNavigate, required this.scrollcontroller});
+  ContactUs({
+    super.key,
+    this.onNavigate,
+  });
 
   // Validation method
 
@@ -70,7 +72,7 @@ class ContactUs extends StatelessWidget {
               ),
               child: GestureDetector(
                 onTap: () {
-                  Get.off(MyHomeScreen());
+                  Get.back();
                 },
                 child: Icon(Icons.arrow_back, size: 18),
               ),

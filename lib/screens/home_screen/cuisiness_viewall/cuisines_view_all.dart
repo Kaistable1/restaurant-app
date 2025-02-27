@@ -203,7 +203,8 @@ class CuisinesViewAll extends StatelessWidget {
                               .where((entry) => entry.key
                                   .toLowerCase()
                                   .contains(controller.searchController.text
-                                      .toLowerCase()))
+                                      .toLowerCase()
+                                      .trim()))
                               .fold<Map<String, List<String>>>({},
                                   (map, entry) {
                             map[entry.key] = entry.value;

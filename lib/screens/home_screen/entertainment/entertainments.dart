@@ -6,16 +6,15 @@ import 'package:kaistable_website/widgets/rectangle_widget.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../custom_widget/separate_text_field.dart';
-import '../../../utils/responsive.dart';
 import '../home_controller/home_location_controller.dart';
 import '../home_controller/home_new_controller.dart';
 
-class NewViewall extends StatelessWidget {
+class EntertainmentsScreen extends StatelessWidget {
   final Function(int)? onNavigate;
   final HomeNewController newController = Get.put(HomeNewController());
   final HomeLocationController homeController =
       Get.put(HomeLocationController());
-  NewViewall({
+  EntertainmentsScreen({
     super.key,
     this.onNavigate,
   }) {
@@ -26,8 +25,6 @@ class NewViewall extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    bool isLargeScreen = screenWidth > 1400;
     return WillPopScope(
       onWillPop: () async {
         Get.back();
@@ -35,16 +32,6 @@ class NewViewall extends StatelessWidget {
       },
       child: LayoutBuilder(
         builder: (context, constraints) {
-          int itemsPerRow = Responsive.isMobile(context)
-              ? 2
-              : Responsive.isTablet(context)
-                  ? 3
-                  : 4;
-          double itemWidth = (constraints.maxWidth / itemsPerRow) - 16;
-          double itemHeight = Responsive.isMobile(context)
-              ? 320
-              : (isLargeScreen ? 500 : 500); // Set a fixed height for items
-
           return Scaffold(
             backgroundColor: AppColors.bgColor,
             appBar: AppBar(
@@ -85,7 +72,7 @@ class NewViewall extends StatelessWidget {
                 ),
               ),
               title: Text(
-                'New',
+                'Entertainments',
                 style: const TextStyle(
                   fontSize: 20,
                   color: AppColors.bottomSheetColor,
@@ -107,8 +94,7 @@ class NewViewall extends StatelessWidget {
                         controller: homeController.searchController,
                         hintText: 'Try searching for restaurant name',
                         onChanged: (v) {
-                          if (v.trim().isNotEmpty)
-                            homeController.filterRestaurants(v);
+                          if (v.isNotEmpty) homeController.filterRestaurants(v);
                         },
                         hintStyle: TextStyle(
                           color: AppColors.hintText,
@@ -169,7 +155,7 @@ class NewViewall extends StatelessWidget {
                     ),
                     SizedBox(height: 12),
                     StreamBuilder(
-                        stream: homeController.getRestaurants(),
+                        stream: homeController.getEntertainmentRestaurants(),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {

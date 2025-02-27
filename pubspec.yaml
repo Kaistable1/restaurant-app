@@ -58,6 +58,7 @@ dependencies:
   shared_preferences:
   intl:
   geocoding: ^2.0.1
+  persistent_bottom_nav_bar: ^6.2.1
 
 
 dev_dependencies:

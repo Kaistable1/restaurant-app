@@ -409,6 +409,24 @@ class HomeLocationController extends GetxController {
     });
   }
 
+  Stream<List<RestaurantModel>> getEntertainmentRestaurants() {
+    return FirebaseFirestore.instance
+        .collection('restaurants')
+        .where('entertainmentScheduleList',
+            isGreaterThan: []) // Ensures non-empty lists
+        .snapshots()
+        .asyncMap((snapshot) async {
+          final restaurants = await Future.wait(
+            snapshot.docs.map((doc) async {
+              final restaurant = RestaurantModel.fromDocumentSnapshot(doc);
+              restaurant.menuList = await _getMenuFromSubcollection(doc.id);
+              return restaurant;
+            }),
+          );
+          return restaurants;
+        });
+  }
+
   bool isOfferValidForCurrentDate(String fromDate, String toDate) {
     try {
       DateTime currentDate = DateTime.now().toLocal();
@@ -555,10 +573,11 @@ class HomeLocationController extends GetxController {
       filteredRestaurants = allRestaurants;
     } else {
       filteredRestaurants = allRestaurants
-          .where((restaurant) =>
-              restaurant.resName.toLowerCase().contains(query.toLowerCase()))
+          .where((restaurant) => restaurant.resName
+              .toLowerCase()
+              .contains(query.toLowerCase().trim()))
           .toList();
-      update();
     }
+    update();
   }
 }

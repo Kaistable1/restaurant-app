@@ -108,7 +108,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
         Get.to(const AboutApp());
         break;
       case 7:
-        Get.to(ContactUs(scrollcontroller: scrollController));
+        Get.to(ContactUs());
         break;
     }
   }
@@ -244,7 +244,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
           ),
           centerTitle: true,
           title: const Text(
-            'Home',
+            'Search',
             style: TextStyle(
               fontSize: 20,
               color: AppColors.bottomSheetColor,
@@ -312,18 +312,6 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                             );
                           },
                         ),
-
-                        // Text(
-                        //   isOnboarding
-                        //       ? '${onboradingController.selectedCountry.value}.${onboradingController.selectedCity.value}'
-                        //       : '${currentUserDataModel?.value.country}.${currentUserDataModel?.value.city}',
-                        //   style: TextStyle(
-                        //     color: AppColors.textColor,
-                        //     fontWeight: FontWeight.w800,
-                        //     fontFamily: 'Nunito-Regular',
-                        //     fontSize: 9,
-                        //   ),
-                        // ),
                       ),
                       const SizedBox(width: 20),
                     ],
@@ -331,86 +319,87 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                 : const SizedBox.shrink(),
           ],
         ),
-        drawer: isOnboarding
-            ? Drawer(
-                child: ListView(padding: EdgeInsets.zero, children: <Widget>[
-                DrawerHeader(
-                  decoration: const BoxDecoration(
-                    color: AppColors.primaryColor,
-                  ),
-                  child: Center(
-                    child: Image.asset(
-                      'assets/images/topbar_logo.png',
-                      height: 200,
-                      width: 200,
-                    ),
-                  ),
-                ),
-                Center(child: Text('Register to enable the drawer feature!')),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 75, vertical: 20),
-                  child: CustomButton(
-                    laBelText: 'Go back',
-                    fontSize: 20,
-                    textColor: Colors.white,
-                    fontWeight: FontWeight.w600,
-                    height: 43,
-                    width: 200,
-                    ontapp: () async {
-                      Get.close(2);
-                    },
-                  ),
-                ),
-              ]))
-            : Drawer(
-                child: ListView(
-                  padding: EdgeInsets.zero,
-                  children: <Widget>[
-                    DrawerHeader(
-                      decoration: const BoxDecoration(
-                        color: AppColors.primaryColor,
-                      ),
-                      child: Center(
-                        child: Image.asset(
-                          'assets/images/topbar_logo.png',
-                          height: 200,
-                          width: 200,
-                        ),
-                      ),
-                    ),
-                    _buildDrawerItem('Home', 0),
-                    _buildDrawerItem('Favorites', 1),
-                    _buildDrawerItem('Edit profile', 2),
-                    _buildDrawerItem('Change Password', 3),
-                    _buildDrawerItem('Terms and conditions', 4),
-                    _buildDrawerItem('Privacy policy', 5),
-                    _buildDrawerItem('About app', 6),
-                    _buildDrawerItem('Contact us', 7),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 75),
-                      child: CustomButton(
-                        laBelText: 'Logout',
-                        fontSize: 20,
-                        textColor: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        height: 43,
-                        width: 200,
-                        ontapp: () async {
-                          await FirebaseAuth.instance.signOut();
-                          Get.offAll(() => LoginScreen());
-                        },
-                      ),
-                    ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                  ],
-                ),
-              ),
+        // drawer: isOnboarding
+        //     ? Drawer(
+        //         child: ListView(padding: EdgeInsets.zero, children: <Widget>[
+        //         DrawerHeader(
+        //           decoration: const BoxDecoration(
+        //             color: AppColors.primaryColor,
+        //           ),
+        //           child: Center(
+        //             child: Image.asset(
+        //               'assets/images/topbar_logo.png',
+        //               height: 200,
+        //               width: 200,
+        //             ),
+        //           ),
+        //         ),
+        //         Center(child: Text('Register to enable the drawer feature!')),
+        //         Padding(
+        //           padding:
+        //               const EdgeInsets.symmetric(horizontal: 75, vertical: 20),
+        //           child: CustomButton(
+        //             laBelText: 'Go back',
+        //             fontSize: 20,
+        //             textColor: Colors.white,
+        //             fontWeight: FontWeight.w600,
+        //             height: 43,
+        //             width: 200,
+        //             ontapp: () async {
+        //               Get.close(2);
+        //             },
+        //           ),
+        //         ),
+        //       ]))
+        //     : Drawer(
+        //         child: ListView(
+        //           padding: EdgeInsets.zero,
+        //           children: <Widget>[
+        //             DrawerHeader(
+        //               decoration: const BoxDecoration(
+        //                 color: AppColors.primaryColor,
+        //               ),
+        //               child: Center(
+        //                 child: Image.asset(
+        //                   'assets/images/topbar_logo.png',
+        //                   height: 200,
+        //                   width: 200,
+        //                 ),
+        //               ),
+        //             ),
+        //             _buildDrawerItem('Home', 0),
+        //             _buildDrawerItem('Favorites', 1),
+        //             _buildDrawerItem('Edit profile', 2),
+        //             _buildDrawerItem('Change Password', 3),
+        //             _buildDrawerItem('Terms and conditions', 4),
+        //             _buildDrawerItem('Privacy policy', 5),
+        //             _buildDrawerItem('About app', 6),
+        //             _buildDrawerItem('Contact us', 7),
+        //             SizedBox(
+        //               height: 30,
+        //             ),
+        //             Padding(
+        //               padding: const EdgeInsets.symmetric(horizontal: 75),
+        //               child: CustomButton(
+        //                 laBelText: 'Logout',
+        //                 fontSize: 20,
+        //                 textColor: Colors.white,
+        //                 fontWeight: FontWeight.w600,
+        //                 height: 43,
+        //                 width: 200,
+        //                 ontapp: () async {
+        //                   await FirebaseAuth.instance.signOut();
+        //                   Get.offAll(() => LoginScreen());
+        //                 },
+        //               ),
+        //             ),
+        //             SizedBox(
+        //               height: 30,
+        //             ),
+        //           ],
+        //         ),
+        //       ),
+
         body: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -534,13 +523,9 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                       // Filter by Country
                                       if (filterSelectionController
                                           .selectedCountry.isNotEmpty) {
-                                        print(filterSelectionController
-                                            .aggregatedFilters);
                                         print('flag 1');
                                         restaurants =
                                             restaurants.where((restaurant) {
-                                          print(
-                                              'restaurant.country ${restaurant.country}');
                                           return filterSelectionController
                                               .aggregatedFilters
                                               .contains(restaurant.country);
@@ -551,6 +536,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                       if (filterSelectionController
                                           .selectedCity.isNotEmpty) {
                                         print('flag 2');
+
                                         restaurants =
                                             restaurants.where((restaurant) {
                                           return filterSelectionController
@@ -565,9 +551,11 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                         print('flag 3');
                                         restaurants =
                                             restaurants.where((restaurant) {
-                                          return restaurant.spokenLanguage ==
+                                          return restaurant.spokenLanguage
+                                                  .trim() ==
                                               filterSelectionController
-                                                  .selectedLanguage.value;
+                                                  .selectedLanguage.value
+                                                  .trim();
                                         }).toList();
                                       }
 

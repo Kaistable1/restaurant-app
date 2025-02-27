@@ -48,7 +48,7 @@ class PrivacyPolicy extends StatelessWidget {
               ),
               child: GestureDetector(
                 onTap: () {
-                  Get.off(MyHomeScreen());
+                  Get.back();
                 },
                 child: Icon(Icons.arrow_back, size: 18),
               ),

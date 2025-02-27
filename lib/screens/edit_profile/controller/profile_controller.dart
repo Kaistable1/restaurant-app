@@ -76,18 +76,30 @@ class ProfileController extends GetxController {
     try {
       // Show a loading dialog while updating the profile
       loadingDialog(message: 'Please wait!', height: 150, loading: true);
+      String imgUrl = '';
+      if (imagePath.value != '') {
+// Upload the selected image to Firebase and get its URL
+        imgUrl = await uploadImageToFirebase('profile', imageBytes!);
+      }
 
-      // Upload the selected image to Firebase and get its URL
-      String imgUrl = await uploadImageToFirebase('profile', imageBytes!);
-
-      // Update the user document in the Firestore database with the new data
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(auth.currentUser?.uid)
-          .update({
-        'userImage': imgUrl, // Update the profile image URL
-        'username': userNameController.text, // Update the username
-      });
+      if (imagePath.value != '') {
+// Update the user document in the Firestore database with the new data
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(auth.currentUser?.uid)
+            .update({
+          'userImage': imgUrl, // Update the profile image URL
+          'username': userNameController.text, // Update the username
+        });
+      } else {
+        // Update the user document in the Firestore database with the new data
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(auth.currentUser?.uid)
+            .update({
+          'username': userNameController.text, // Update the username
+        });
+      }
 
       // Fetch the updated user data to reflect changes
       getCurrentUserData();

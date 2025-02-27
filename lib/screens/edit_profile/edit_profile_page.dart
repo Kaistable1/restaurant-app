@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -6,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/screens/edit_profile/widget/image_picker.dart';
-import 'package:kaistable_website/screens/home_screen/my_home_screen.dart';
 
 import '../../constants/app_colors.dart';
 import '../../custom_widget/TextAndWidget.dart';
@@ -49,7 +47,8 @@ class EditProfilePage extends StatelessWidget {
             ),
             child: GestureDetector(
               onTap: () {
-                Get.off(MyHomeScreen());
+                Get.back();
+                // Get.off(MainScreen());
               },
               child: Icon(Icons.arrow_back, size: 18),
             ),
@@ -232,7 +231,10 @@ class EditProfilePage extends StatelessWidget {
                     width: 170,
                     ontapp: () async {
                       if (_formkey.currentState!.validate()) {
-                        if (controller.imagePath.isEmpty) {
+                        if (controller.imagePath.isEmpty &&
+                            (currentUserDataModel
+                                    ?.value.userImage.value.isEmpty ??
+                                false)) {
                           Get.snackbar(
                             'Image Required',
                             'Please upload a profile image.',
