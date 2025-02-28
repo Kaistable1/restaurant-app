@@ -1,8 +1,15 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:savrly_data_entry_app/screens/splash_screen/splash_screen.dart';
+import 'package:savrly_data_entry_app/teting.dart';
+
+import 'api_test/api_test.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Fireba
+  Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -16,6 +23,7 @@ class MyApp extends StatelessWidget {
       title: 'Savrly Data Entry App',
       debugShowCheckedModeBanner: false,
       home: SplashScreen(),
+      // home: YelpScreen(),
     );
   }
 }

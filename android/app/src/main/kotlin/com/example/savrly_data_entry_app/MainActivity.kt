@@ -1,4 +1,4 @@
-package com.example.savrly_data_entry_app
+package com.stable.data_entry
 
 import io.flutter.embedding.android.FlutterActivity
 

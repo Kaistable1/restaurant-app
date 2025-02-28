@@ -5,6 +5,7 @@ import '../../../constants/app_colors.dart';
 import '../../../constants/text_styles.dart';
 import '../../../widgets/custom_button.dart';
 import '../../../widgets/custom_textfield.dart';
+import '../../main_screen.dart';
 import 'controller/login_controller.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -109,7 +110,9 @@ class LoginScreen extends StatelessWidget {
                       headingText.copyWith(color: hintColor, fontSize: 18),
                   btnColor: white,
                   borderColor: white,
-                  onTap: () => controller.submitForm(),
+                  // onTap: () => controller.submitForm(),
+                  onTap: () => Get.offAll(() =>
+                      MainScreen()),
                 ),
               ],
             ),
