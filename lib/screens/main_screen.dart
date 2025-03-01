@@ -19,7 +19,9 @@ class MainScreen extends StatelessWidget {
   List<Widget> _buildScreens() {
     return [
       HomeScreen(),
-      RestaurantListScreen(),
+      RestaurantListScreen(
+        cityName: 'new york',
+      ),
       HistoryScreen(),
       ProfileScreen(),
     ];

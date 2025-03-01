@@ -17,7 +17,7 @@ class ProfileScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: Text("Profile", style: headingText),
+        title: Text("Profile (in process)", style: headingText),
         centerTitle: true,
       ),
       body: Padding(

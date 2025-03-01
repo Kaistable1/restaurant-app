@@ -1,16 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
+import 'package:savrly_data_entry_app/models/my_resturant.dart';
 import 'package:savrly_data_entry_app/screens/home/controller/home_controller.dart';
-import 'package:savrly_data_entry_app/screens/restaurants/restaurant_detail_screen/restaurant_detail_screen.dart';
+import 'package:savrly_data_entry_app/widgets/loading.dart';
 
 import '../../constants/app_colors.dart';
 import '../../constants/text_styles.dart';
-import 'controller/restaurant_list_controller.dart';
 
 class RestaurantListScreen extends StatelessWidget {
-  // final RestaurantListController controller = Get.put(RestaurantListController());
+  RestaurantListScreen({super.key, required this.cityName});
+  String cityName;
   final PlacesController placesController = Get.put(PlacesController());
 
   @override
@@ -69,14 +69,14 @@ class RestaurantListScreen extends StatelessWidget {
                 if (placesController.isGoogleLoading.value) {
                   return Center(child: CircularProgressIndicator());
                 }
-                if (placesController.businessListGoogle.isEmpty) {
+                if (placesController.yelpAPIRestaurants.isEmpty) {
                   return Center(child: Text("No businesses found"));
                 }
 
                 return ListView.builder(
-                  itemCount: placesController.businessListGoogle.length,
+                  itemCount: placesController.yelpAPIRestaurants.length,
                   itemBuilder: (context, index) {
-                    final business = placesController.businessListGoogle[index];
+                    final business = placesController.yelpAPIRestaurants[index];
                     return Card(
                       margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                       child: ListTile(
@@ -122,22 +122,86 @@ class RestaurantListScreen extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(40),
           ),
-          onPressed: () {
-            showSuccessDialog(
-                context, "Lahore"); // City name dynamic pass karein
+          onPressed: () async {
+            loadingDialog(message: 'Please wait!', loading: true, height: 150);
 
-            // if(Get.put(HomeController()).selectedOption.value == "Option 2"){
-            //   print("Yelp");
-            //   FirebaseFirestore.instance.collection("Restaurants").add({
-            //     "restaurants": placesController.businessListGoogle.map((business) => business).toList()
-            //   });
-            //
-            // }else{
-            //   print("Google");
-            //   FirebaseFirestore.instance.collection("Restaurants").add({
-            //     "restaurants": placesController.businessList.map((business) => business.toJson()).toList()
-            //   });
-            // }
+            List<RestaurantModel> restuants = [];
+
+            if (Get.put(HomeController()).selectedOption.value == "Option 2") {
+              print("Yelp");
+              for (var v in placesController.yelpAPIRestaurants) {
+                RestaurantModel restaurantModel = await RestaurantModel(
+                  about: "Coming Soon!! Stay tuned for something exciting!",
+                  address: v.address.split(',').first,
+                  city: v.address.split(',')[1],
+                  country: v.address.split(',').last,
+                  createdAt: DateTime.now(),
+                  docID: '',
+                  latitude: v.latitude,
+                  logoImage: v.imageUrl,
+                  longitude: v.longitude,
+                  password: '',
+                  priceRange: v.price,
+                  resEmail: '',
+                  resName: v.name,
+                  socialLink: '',
+                  socialMedia: '',
+                  specialConditions:
+                      "Coming Soon!! Stay tuned for something exciting!",
+                  spokenLanguage: '',
+                  zipCode: '',
+                  facilityList: [],
+                  entertainmentScheduleList: [],
+                  averageRating: 0,
+                  imagesList: [],
+                  dietaryList: [],
+                  atmopshereList: [],
+                );
+                restuants.add(restaurantModel);
+              }
+              restuants.forEach((item) => print('logo imge ${item.logoImage}'));
+              await placesController.addRestaurants(restuants);
+
+              Get.back();
+              showSuccessDialog(
+                  context, cityName); // City name dynamic pass karein
+            } else {
+              print("Google");
+              for (var v in placesController.businessList) {
+                RestaurantModel restaurantModel = RestaurantModel(
+                  about: "Coming Soon!! Stay tuned for something exciting!",
+                  address: extractSecondLastWord(v.formattedAddress),
+                  city: extractSecondLastWord(v.formattedAddress),
+                  country: v.formattedAddress.split(',').last.trim(),
+                  createdAt: DateTime.now(),
+                  docID: '',
+                  latitude: v.geometry.location.lat,
+                  logoImage: v.icon,
+                  longitude: v.geometry.location.lng,
+                  password: '',
+                  priceRange: '',
+                  resEmail: '',
+                  resName: v.name,
+                  socialLink: '',
+                  socialMedia: '',
+                  specialConditions:
+                      "Coming Soon!! Stay tuned for something exciting!",
+                  spokenLanguage: '',
+                  zipCode: '',
+                  facilityList: [],
+                  entertainmentScheduleList: [],
+                  averageRating: 0,
+                  imagesList: [],
+                  dietaryList: [],
+                  atmopshereList: [],
+                );
+                restuants.add(restaurantModel);
+              }
+              await placesController.addRestaurants(restuants);
+              Get.back();
+              showSuccessDialog(
+                  context, cityName); // City name dynamic pass karein
+            }
           },
           label: Text("    Save All    ",
               style: simpleText.copyWith(color: white)),
@@ -145,6 +209,15 @@ class RestaurantListScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+String extractSecondLastWord(String address) {
+  List<String> words =
+      address.split(RegExp(r'\s*,\s*| ')); // Split by spaces and commas
+  if (words.length >= 2) {
+    return "${words[words.length - 2]} ${words.last}"; // Get second last and last word
+  }
+  return address; // Return full address if it has less than two words
 }
 
 void showSuccessDialog(BuildContext context, String cityName) {
@@ -160,7 +233,8 @@ void showSuccessDialog(BuildContext context, String cityName) {
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text("OK", style: TextStyle(color: Colors.black,fontSize: 13)),
+            child:
+                Text("OK", style: TextStyle(color: Colors.black, fontSize: 13)),
           ),
         ],
       );

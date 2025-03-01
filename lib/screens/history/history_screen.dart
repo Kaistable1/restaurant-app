@@ -14,7 +14,7 @@ class HistoryScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
-          "History",
+          "History (in process)",
           style: headingText,
         ),
         centerTitle: true,

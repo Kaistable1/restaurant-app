@@ -108,10 +108,10 @@ class HomeScreen extends StatelessWidget {
                               controller.errorMessage.value = "Please enter the city name";
                             } else if(controller.selectedOption.value == "Option 1" ){
                               placesController.fetchRestaurants(controller.searchController.text);
-                              Get.to(RestaurantListScreen());
+                              Get.to(RestaurantListScreen(cityName: controller.searchController.text,));
                             } else{
                               placesController.fetchBusinessesGoogle(controller.searchController.text);
-                              Get.to(RestaurantListScreen());
+                              Get.to(RestaurantListScreen(cityName: controller.searchController.text,));
                             }
                             // placesController.fetchRestaurants(controller.searchController.text);
                             // Get.to(RestaurantListScreen());

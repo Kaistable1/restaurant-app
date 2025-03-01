@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:savrly_data_entry_app/models/my_resturant.dart';
 import 'package:savrly_data_entry_app/screens/service/yelp_api_model.dart';
 import '../../service/GoogleResponse.dart';
 import '../../restaurants/restaurant_list_screen.dart';
@@ -10,12 +11,10 @@ import '../../service/api_model.dart';
 import '../../service/service.dart';
 import 'package:http/http.dart' as http;
 
-
 class HomeController extends GetxController {
   // final YelpService _yelpService = YelpService();
   // final Business model = Business.initialize();
   // final YelApiBusiness yelpModel = YelApiBusiness.initialize();
-
 
   var businesses = <YelpBusiness>[].obs;
   var selectedOption = "Option 1".obs; // Default selected option
@@ -45,8 +44,10 @@ class HomeController extends GetxController {
 
         // if (results.isNotEmpty) {
         //   print("Found ${results} Restaurants");
-          Get.put(PlacesController()).fetchRestaurants(query);
-          Get.to(() => RestaurantListScreen());
+        Get.put(PlacesController()).fetchRestaurants(query);
+        Get.to(() => RestaurantListScreen(
+              cityName: query,
+            ));
         // } else {
         //   errorMessage.value = "No restaurants found in Google API";
         //   print("No results found!");
@@ -58,8 +59,10 @@ class HomeController extends GetxController {
 
         // if (results.isNotEmpty) {
         //   print("Found ${results.length} Restaurants from Yelp");
-          Get.put(PlacesController()).fetchBusinessesGoogle(query);
-          Get.to(() => RestaurantListScreen());
+        Get.put(PlacesController()).fetchBusinessesGoogle(query);
+        Get.to(() => RestaurantListScreen(
+              cityName: query,
+            ));
         // } else {
         //   errorMessage.value = "No restaurants found in Yelp API";
         //   print("No results found!");
@@ -72,20 +75,24 @@ class HomeController extends GetxController {
       isLoading.value = false;
     }
   }
-
-
-
-
 }
 
 class PlacesController extends GetxController {
   RxList<BusinessModel> businessList = <BusinessModel>[].obs;
   RxBool isLoading = false.obs;
+// google api calling for restaurants searching
+  RxList<YelApiBusiness> yelpAPIRestaurants = <YelApiBusiness>[].obs;
+  RxBool isGoogleLoading = false.obs;
+
+  final String googleApiKey =
+      "wBmUkpCxkFo-bia5ASkZDYq2fvAyymH_NngnIslr_38pMC5S2_uf7l9mOHUD4lGMFT3hvszGvfM0PKblG-VAVfVa9LTU_C5h5UEcDiCLuLhtnIM5j3G8tp33a928Z3Yx";
 
   Future<void> fetchRestaurants(String? query) async {
     isLoading.value = true;
     try {
-      String url = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=$query&key=AIzaSyCh8VHJnq_7G4_lZ2t9hDkxdd_P2KTYuoI";
+      String queryData = '$query resraurants';
+      String url =
+          "https://maps.googleapis.com/maps/api/place/textsearch/json?query=$queryData&key=AIzaSyCh8VHJnq_7G4_lZ2t9hDkxdd_P2KTYuoI";
       final response = await http.get(Uri.parse(url));
 
       print("Response Url: ${response.request}");
@@ -98,7 +105,7 @@ class PlacesController extends GetxController {
           results.map((json) => BusinessModel.fromJson(json)).toList(),
         );
         print("Number of restaurants received: ${businessList.length}");
-         } else {
+      } else {
         print("Error: ${response.reasonPhrase}");
       }
     } catch (e) {
@@ -107,17 +114,12 @@ class PlacesController extends GetxController {
     isLoading.value = false;
   }
 
-  // google api calling for restaurants searching
-  RxList<YelApiBusiness> businessListGoogle = <YelApiBusiness>[].obs;
-  RxBool isGoogleLoading = false.obs;
-
-  final String googleApiKey = "wBmUkpCxkFo-bia5ASkZDYq2fvAyymH_NngnIslr_38pMC5S2_uf7l9mOHUD4lGMFT3hvszGvfM0PKblG-VAVfVa9LTU_C5h5UEcDiCLuLhtnIM5j3G8tp33a928Z3Yx";
-
   Future<void> fetchBusinessesGoogle(query) async {
     isGoogleLoading.value = true;
     try {
       var headers = {
-        'Authorization': 'Bearer wBmUkpCxkFo-bia5ASkZDYq2fvAyymH_NngnIslr_38pMC5S2_uf7l9mOHUD4lGMFT3hvszGvfM0PKblG-VAVfVa9LTU_C5h5UEcDiCLuLhtnIM5j3G8tp33a928Z3Yx',
+        'Authorization':
+            'Bearer wBmUkpCxkFo-bia5ASkZDYq2fvAyymH_NngnIslr_38pMC5S2_uf7l9mOHUD4lGMFT3hvszGvfM0PKblG-VAVfVa9LTU_C5h5UEcDiCLuLhtnIM5j3G8tp33a928Z3Yx',
       };
 
       String url =
@@ -127,8 +129,8 @@ class PlacesController extends GetxController {
       print("Response Url: ${url}");
       print("Response Status Code: ${response.statusCode}");
       if (response.statusCode == 200) {
-        businessListGoogle.assignAll(YelApiBusiness.fromJsonList(response.body));
-        print("Number of restaurants received: ${businessListGoogle.length}");
+        yelpAPIRestaurants
+            .assignAll(YelApiBusiness.fromJsonList(response.body));
       } else {
         print("Error: ${response.reasonPhrase}");
       }
@@ -136,5 +138,28 @@ class PlacesController extends GetxController {
       print("Error: $e");
     }
     isGoogleLoading.value = false;
+  }
+
+  Future<void> addRestaurants(List<RestaurantModel> restaurants) async {
+    final CollectionReference restaurantsCollection =
+        FirebaseFirestore.instance.collection("restaurants");
+
+    for (var restaurant in restaurants) {
+      bool exists = await _checkIfRestaurantExists(restaurant.resName);
+
+      if (!exists) {
+        await restaurantsCollection.add(await restaurant.toMap());
+      }
+    }
+  }
+
+  Future<bool> _checkIfRestaurantExists(String resName) async {
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection("restaurants")
+        .where("resName", isEqualTo: resName)
+        .limit(1)
+        .get();
+
+    return querySnapshot.docs.isNotEmpty; // Returns true if restaurant exists
   }
 }
