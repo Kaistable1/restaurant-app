@@ -906,7 +906,7 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                 ),
                 Padding(
                   padding:
-                      const EdgeInsets.only(left: 16.0, right: 16, top: 145),
+                      const EdgeInsets.only(left: 35.0, right: 16, top: 130),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     // Clip the blur to the rounded corners

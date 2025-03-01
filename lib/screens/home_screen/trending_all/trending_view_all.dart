@@ -246,6 +246,7 @@ class _TrendingViewAllState extends State<TrendingViewAll> {
                                   );
                                 },
                               );
+                           
                             },
                           );
                         }),
