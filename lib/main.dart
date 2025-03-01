@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/models/usermodel.dart';
 import 'package:kaistable_website/splash_screen/splashscreen.dart';
@@ -24,7 +25,12 @@ Future<void> main() async {
   }
   preferences = await SharedPreferences.getInstance();
   remember_me_pref = await SharedPreferences.getInstance();
-  runApp(const MyApp());
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]).then((_) {
+    runApp(MyApp());
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -33,6 +39,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Kaistable',
@@ -40,4 +47,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-//usama

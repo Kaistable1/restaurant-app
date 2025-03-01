@@ -150,10 +150,10 @@ class FavoriteScreen extends StatelessWidget {
                               physics: const NeverScrollableScrollPhysics(),
                               gridDelegate:
                                   SliverGridDelegateWithFixedCrossAxisCount(
-                                mainAxisExtent: 220,
+                                mainAxisExtent: Get.height * 0.27,
                                 crossAxisCount: 2,
                                 crossAxisSpacing: 10,
-                                mainAxisSpacing: 10,
+                                mainAxisSpacing: 20,
                               ),
                               itemCount: favoriteRestaurants
                                   .length, // Set the item count to the length of favorite restaurants

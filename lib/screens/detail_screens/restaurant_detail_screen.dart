@@ -959,8 +959,10 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                                 height: 4,
                               ),
                               StreamBuilder<List<ReviewModel>>(
-                                  stream: homeLocationController.getReviews(
-                                      widget.restaurantModel?.docID ?? ''),
+                                  stream: widget.restaurantModel?.docID == ''
+                                      ? null
+                                      : homeLocationController.getReviews(
+                                          widget.restaurantModel?.docID ?? ''),
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {

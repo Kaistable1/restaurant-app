@@ -46,9 +46,9 @@ class NewViewall extends StatelessWidget {
               : (isLargeScreen ? 500 : 500); // Set a fixed height for items
 
           return Scaffold(
-            backgroundColor: AppColors.bgColor,
+            backgroundColor: AppColors.whiteColor,
             appBar: AppBar(
-              backgroundColor: AppColors.bgColor,
+              backgroundColor: AppColors.whiteColor,
               iconTheme: IconThemeData(
                 color: AppColors
                     .primaryColor, // Set your desired color for the drawer icon
@@ -185,8 +185,12 @@ class NewViewall extends StatelessWidget {
                           }
 
                           if (snapshot.data == null || snapshot.data!.isEmpty) {
-                            return Text(
-                                'No restaurants found'); // Handle the case where data is null or empty
+                            return SizedBox(
+                              height: Get.height * 0.5,
+                              child: Center(
+                                child: Text('No restaurants found'),
+                              ),
+                            ); // Handle the case where data is null or empty
                           }
 
                           List<RestaurantModel> restaurants = snapshot.data!;
@@ -201,10 +205,10 @@ class NewViewall extends StatelessWidget {
                                 physics: const NeverScrollableScrollPhysics(),
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
-                                  mainAxisExtent: 220,
+                                  mainAxisExtent: Get.height * 0.27,
                                   crossAxisCount: 2,
                                   crossAxisSpacing: 10,
-                                  mainAxisSpacing: 10,
+                                  mainAxisSpacing: 20,
                                 ),
                                 itemCount:
                                     controller.filteredRestaurants.length,

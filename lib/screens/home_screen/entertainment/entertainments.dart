@@ -33,9 +33,9 @@ class EntertainmentsScreen extends StatelessWidget {
       child: LayoutBuilder(
         builder: (context, constraints) {
           return Scaffold(
-            backgroundColor: AppColors.bgColor,
+            backgroundColor: AppColors.whiteColor,
             appBar: AppBar(
-              backgroundColor: AppColors.bgColor,
+              backgroundColor: AppColors.whiteColor,
               iconTheme: IconThemeData(
                 color: AppColors
                     .primaryColor, // Set your desired color for the drawer icon
@@ -187,10 +187,10 @@ class EntertainmentsScreen extends StatelessWidget {
                                 physics: const NeverScrollableScrollPhysics(),
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
-                                  mainAxisExtent: 220,
+                                  mainAxisExtent: Get.height * 0.27,
                                   crossAxisCount: 2,
                                   crossAxisSpacing: 10,
-                                  mainAxisSpacing: 10,
+                                  mainAxisSpacing: 20,
                                 ),
                                 itemCount:
                                     controller.filteredRestaurants.length,

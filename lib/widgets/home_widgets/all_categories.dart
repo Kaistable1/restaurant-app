@@ -174,7 +174,7 @@ class AllCategories extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.only(left: 8, right: 6),
                     child: SizedBox(
-                      height: Get.height * 0.195,
+                      height: Get.height * 0.25,
                       child: ListView.builder(
                         controller: controller.scrollController,
                         scrollDirection: Axis.horizontal,
@@ -304,7 +304,7 @@ class AllCategories extends StatelessWidget {
             return Padding(
               padding: EdgeInsets.only(left: 8, right: 6),
               child: SizedBox(
-                height: Get.height * 0.195,
+                height: Get.height * 0.25,
                 child: ListView.builder(
                   controller: controller.scrollController,
                   scrollDirection: Axis.horizontal,
@@ -654,7 +654,7 @@ class AllCategories extends StatelessWidget {
                           padding: const EdgeInsets.only(left: 14, right: 14),
                           child: SizedBox(
                             height: Get.height *
-                                0.26, // Fixed height for the horizontal list
+                                0.3, // Fixed height for the horizontal list
                             child: ListView.builder(
                               scrollDirection: Axis.horizontal,
                               itemCount: filteredRestaurants

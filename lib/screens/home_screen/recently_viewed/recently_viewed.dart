@@ -224,10 +224,10 @@ class RecentlyViewed extends StatelessWidget {
                                   physics: const NeverScrollableScrollPhysics(),
                                   gridDelegate:
                                       SliverGridDelegateWithFixedCrossAxisCount(
-                                    mainAxisExtent: 220,
+                                    mainAxisExtent: Get.height * 0.27,
                                     crossAxisCount: 2,
                                     crossAxisSpacing: 10,
-                                    mainAxisSpacing: 10,
+                                    mainAxisSpacing: 30,
                                   ),
                                   itemCount: filteredRestaurants.length,
                                   itemBuilder: (context, index) {

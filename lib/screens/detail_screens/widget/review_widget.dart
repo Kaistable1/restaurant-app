@@ -22,7 +22,9 @@ class ReviewWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<ReviewModel>>(
-      stream: controller.getReviews(restaurantModel?.docID ?? ''),
+      stream: restaurantModel?.docID == ''
+          ? null
+          : controller.getReviews(restaurantModel?.docID ?? ''),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());

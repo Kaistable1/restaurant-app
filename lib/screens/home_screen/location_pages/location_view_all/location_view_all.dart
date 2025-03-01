@@ -207,10 +207,10 @@ class LocationViewAll extends StatelessWidget {
                           shrinkWrap: true,
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
-                            mainAxisExtent: Get.height * 0.18,
+                            mainAxisExtent: Get.height * 0.23,
                             crossAxisCount: 2,
                             crossAxisSpacing: 10.0,
-                            mainAxisSpacing: 10.0,
+                            mainAxisSpacing: 20.0,
                           ),
                           itemCount: controller.cusinesMapFilter.keys.length,
                           itemBuilder: (context, index) {

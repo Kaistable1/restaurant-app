@@ -213,10 +213,10 @@ class _TrendingViewAllState extends State<TrendingViewAll> {
                                 physics: const NeverScrollableScrollPhysics(),
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
-                                  mainAxisExtent: 220,
+                                  mainAxisExtent: Get.height * 0.27,
                                   crossAxisCount: 2,
                                   crossAxisSpacing: 10,
-                                  mainAxisSpacing: 10,
+                                  mainAxisSpacing: 20,
                                 ),
                                 itemCount:
                                     controller.filteredRestaurants.length,

@@ -85,11 +85,13 @@ class MyAbout extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection('restaurants')
-            .doc(resturantID)
-            .collection('operatingHours')
-            .snapshots(),
+        stream: resturantID == ''
+            ? null
+            : FirebaseFirestore.instance
+                .collection('restaurants')
+                .doc(resturantID)
+                .collection('operatingHours')
+                .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
