@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
+import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/models/review_model.dart';
 import 'package:kaistable_website/screens/detail_screens/controller/restaurant_detail_controller.dart';
@@ -93,8 +94,10 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                 ),
               ),
               actions: [
-                HomeLocationController()
-                    .favoriteHeart(resturant_id: widget.restaurantModel?.docID),
+                auth.currentUser == null
+                    ? SizedBox()
+                    : HomeLocationController().favoriteHeart(
+                        resturant_id: widget.restaurantModel?.docID),
                 SizedBox(
                   width: 12,
                 )
@@ -872,6 +875,8 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                                   borderRadius: BorderRadius.circular(16)),
                               child: MapWidget(
                                 controller: controller,
+                                isCommingSoon: widget.restaurantModel?.about
+                                    .contains('Soon'),
                                 lat: widget.restaurantModel?.latitude ?? 0.0,
                                 long: widget.restaurantModel?.longitude ?? 0.0,
                               ),
@@ -880,6 +885,8 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                               width: 40,
                             ),
                             MapDetailWidget(
+                              isCommingSoon: widget.restaurantModel?.about
+                                  .contains('Soon'),
                               address: widget.restaurantModel?.address ?? '',
                               atmospher:
                                   widget.restaurantModel?.atmopshereList ?? [],

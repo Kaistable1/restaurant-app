@@ -46,7 +46,7 @@ class _SplashScreenState extends State<SplashScreen>
     // Start the timer to navigate to the OnboardingScreen
     Timer(Duration(seconds: 3), () {
       Get.offAll(
-          () => auth.currentUser != null ? MainScreen() : OnboardingScreen());
+          () => MainScreen() );
     });
   }
 

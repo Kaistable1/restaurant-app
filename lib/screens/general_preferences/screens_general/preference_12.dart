@@ -198,10 +198,14 @@ class Preference12 extends StatelessWidget {
                           );
                           return;
                         }
+                        if (controller.screen12Controller.text.isNotEmpty) {
+                          controller.selectedPreferences12
+                              .add(controller.screen12Controller.text);
+                        }
                         final signupController = Get.put(SignupController());
                         signupController.updateUserData(
                             field: 'favTypeOfLiveMusic',
-                            entry: controller.selectedPreferences12.first);
+                            entry: controller.selectedPreferences12.last);
                         Get.to(() => Preference13());
                       }
                     },

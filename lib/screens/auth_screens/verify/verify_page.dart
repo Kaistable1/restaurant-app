@@ -143,10 +143,7 @@ class VerifyPage extends StatelessWidget {
                             controller.verifyController.text ==
                                 signupController.verificationCode.toString()) {
                           await signupController.createAccount();
-                          print('----------------signup------------');
-                          print(
-                              'code--------- ${controller.verifyController.text} == ${signupController.verificationCode.toString()}');
-
+                      
                           signupController.resetTextFields();
                           controller.onClick.value = false;
                           controller.verifyController.clear();

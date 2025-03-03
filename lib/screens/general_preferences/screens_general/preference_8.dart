@@ -209,6 +209,10 @@ class Preference8 extends StatelessWidget {
                           );
                           return;
                         }
+                        if (controller.screen8Controller.text.isNotEmpty) {
+                          controller.selectedPreferences8
+                              .add(controller.screen8Controller.text);
+                        }
                         final signupController = Get.put(SignupController());
                         signupController.updateUserData(
                             field: 'notifyLiveEntertainment',

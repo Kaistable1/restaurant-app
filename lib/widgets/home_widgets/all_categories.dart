@@ -2,17 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
-import 'package:kaistable_website/screens/home_screen/explore_restaurants/explore_restaurant.dart';
-import 'package:kaistable_website/screens/home_screen/location_pages/location_screen.dart';
-import 'package:kaistable_website/screens/home_screen/location_pages/location_view_all/location_view_all.dart';
 import 'package:kaistable_website/screens/onboarding_screen/onboarding_controller/onboarding_controller.dart';
 
 import '../../../constants/app_colors.dart';
-import '../../../utils/responsive.dart';
-import '../../../widgets/circle_container_widget.dart';
 import '../../../widgets/rectangle_widget.dart';
 import '../../screens/detail_screens/restaurant_detail_screen.dart';
-import '../../screens/home_screen/cuisiness_viewall/cuisines_view_all.dart';
 import '../../screens/home_screen/home_controller/home_cusiness_controller.dart';
 import '../../screens/home_screen/home_controller/home_filter_controller.dart';
 import '../../screens/home_screen/home_controller/home_location_controller.dart';
@@ -20,8 +14,6 @@ import '../../screens/home_screen/home_controller/home_new_controller.dart';
 import '../../screens/home_screen/home_controller/home_recently_viewed_controller.dart';
 import '../../screens/home_screen/home_controller/home_theme_controller.dart';
 import '../../screens/home_screen/home_controller/home_trending_controller.dart';
-import '../../screens/home_screen/new_view_all/new_viewall.dart';
-import '../../screens/home_screen/trending_all/trending_view_all.dart';
 
 class AllCategories extends StatelessWidget {
   final HomeLocationController controller = Get.put(HomeLocationController());
@@ -40,7 +32,6 @@ class AllCategories extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isOnboarding = onboradingController.selectedCountry.value != 'Country';
     return Column(
       children: [
         _buildTopSection(),
@@ -51,21 +42,18 @@ class AllCategories extends StatelessWidget {
 
   Widget _buildTopSection() {
     final HomeLocationController controller = Get.put(HomeLocationController());
-    final onboradingController = Get.put(OnboardingController());
-
-    bool isOnboarding = onboradingController.selectedCountry.value != 'Country';
-
     return Padding(
       padding: const EdgeInsets.only(left: 14, right: 14),
       child: StreamBuilder(
-          stream: controller.getRestaurants(
-            city: isOnboarding
-                ? onboradingController.selectedCity.value ?? ''
-                : currentUserDataModel?.value.city ?? "",
-          ),
+          stream: controller.getRestaurants(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return SizedBox(); // Show loading indicator
+              return SizedBox(
+                  height: Get.height * 0.7,
+                  child: Center(
+                      child: CircularProgressIndicator(
+                    color: AppColors.primaryColor,
+                  )));
             }
 
             if (snapshot.hasError) {
@@ -76,77 +64,122 @@ class AllCategories extends StatelessWidget {
             if (snapshot.data == null || snapshot.data!.isEmpty) {
               return Text(''); // Handle the case where data is null or empty
             }
-            List<RestaurantModel> restaurants = snapshot.data!;
+            List<RestaurantModel> all_restaurants = snapshot.data!;
             // Initialize state after the widget build phase
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              controller.initailizedSelectors(resaturantsList: restaurants);
+              controller.initailizedSelectors(resaturantsList: all_restaurants);
             });
 
-            return Column(
-              children: [
-                SizedBox(height: 10),
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: 0,
-                    right: 18,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "You May Like",
-                            style: TextStyle(
-                              color: AppColors.bottomSheetColor,
-                              fontFamily: 'aftika-regular',
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
+            return FutureBuilder(
+                future: controller.getNearbyRestaurants(all_restaurants, 50000),
+                builder: (context, futureSnapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return SizedBox(
+                        height: Get.height * 0.5,
+                        child: Center(child: CircularProgressIndicator()));
+                  }
+                  if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  }
+                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Text('No nearby restaurants found.');
+                  }
+                  print('futureSnapshot.data: ${futureSnapshot.data?.length}');
+
+                  List<RestaurantModel> restaurants = futureSnapshot.data ?? [];
+                  if (restaurants.isEmpty) {
+                    return Column(
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "You May Like",
+                              style: TextStyle(
+                                color: AppColors.bottomSheetColor,
+                                fontFamily: 'aftika-regular',
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
+                        SizedBox(
+                            height: Get.height * 0.5,
+                            child: Center(
+                                child: Text('No nearby restaurants found.'))),
+                      ],
+                    );
+                  }
+
+                  return Column(
+                    children: [
+                      SizedBox(height: 10),
+                      Padding(
+                        padding: EdgeInsets.only(
+                          left: 0,
+                          right: 18,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "You May Like",
+                                  style: TextStyle(
+                                    color: AppColors.bottomSheetColor,
+                                    fontFamily: 'aftika-regular',
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          mainAxisExtent: Get.height * 0.27,
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 20,
+                        ),
+                        itemCount: restaurants.length,
+                        itemBuilder: (context, index) {
+                          final item = restaurants[index];
+                          return InkWell(
+                            onTap: () {
+                              Get.to(RestaurantDetailScreen(
+                                restaurantModel: item,
+                              ));
+                            },
+                            child: RectangleWidget(
+                              title: item.resName,
+                              description: item.about,
+                              resturant_id: item.docID,
+                              imagePath: item.logoImage,
+                              timetext: '10 AM',
+                              percentText: '25%',
+                              endTimeText: '9 PM',
+                              percentageOff: item.menuList.percentageOff,
+                              happyhour: item.menuList.happyHourSpecials,
+                              isFavorite: false.obs,
+                            ),
+                          );
+                        },
                       ),
                     ],
-                  ),
-                ),
-                SizedBox(height: 10),
-                GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    mainAxisExtent: Get.height * 0.27,
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 20,
-                  ),
-                  itemCount: restaurants.length,
-                  itemBuilder: (context, index) {
-                    final item = restaurants[index];
-                    return InkWell(
-                      onTap: () {
-                        Get.to(RestaurantDetailScreen(
-                          restaurantModel: item,
-                        ));
-                      },
-                      child: RectangleWidget(
-                        title: item.resName,
-                        description: item.about,
-                        resturant_id: item.docID,
-                        imagePath: item.logoImage,
-                        timetext: '10 AM',
-                        percentText: '25%',
-                        endTimeText: '9 PM',
-                        percentageOff: item.menuList.percentageOff,
-                        happyhour: item.menuList.happyHourSpecials,
-                        isFavorite: false.obs,
-                      ),
-                    );
-                  },
-                ),
-              ],
-            );
+                  );
+                });
           }),
     );
   }
+
+
 }

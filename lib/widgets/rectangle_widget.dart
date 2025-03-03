@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kaistable_website/main.dart';
 
 import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_location_controller.dart';
@@ -84,8 +85,10 @@ class RectangleWidget extends StatelessWidget {
                       ),
                     ),
                     Spacer(),
-                    HomeLocationController()
-                        .favoriteHeart(resturant_id: resturant_id),
+                    auth.currentUser == null
+                        ? SizedBox()
+                        : HomeLocationController()
+                            .favoriteHeart(resturant_id: resturant_id),
                     SizedBox(
                       width: 6,
                     )

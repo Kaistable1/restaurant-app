@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
+import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/models/review_model.dart';
+import 'package:kaistable_website/screens/auth_screens/signup/signup_screen.dart';
 import 'package:kaistable_website/screens/detail_screens/restaurant_detail_screen.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_location_controller.dart';
 import 'package:kaistable_website/screens/onboarding_screen/onboarding_controller/onboarding_controller.dart';
@@ -161,12 +163,7 @@ class ReviewWidget extends StatelessWidget {
                   padding: const EdgeInsets.all(16.0),
                   child: CustomButton(
                     ontapp: () {
-                      final onboradingController =
-                          Get.put(OnboardingController());
-                      bool isOnboarding =
-                          onboradingController.selectedCountry.value !=
-                              'Country';
-                      if (!isOnboarding) {
+                      if (auth.currentUser != null) {
                         Get.bottomSheet(
                           UploadImageSection(
                             restaurantId: restaurantModel?.docID ?? '',
@@ -180,8 +177,7 @@ class ReviewWidget extends StatelessWidget {
                           ),
                         );
                       } else {
-                        Get.snackbar(
-                            'SAVRLY', 'Please signup for this operation!');
+                        showSignupDialog();
                       }
                     },
                     laBelText: 'Write a review',
@@ -353,11 +349,7 @@ class ReviewWidget extends StatelessWidget {
                 padding: const EdgeInsets.all(16.0),
                 child: CustomButton(
                   ontapp: () {
-                    final onboradingController =
-                        Get.put(OnboardingController());
-                    bool isOnboarding =
-                        onboradingController.selectedCountry.value != 'Country';
-                    if (!isOnboarding) {
+                    if (auth.currentUser != null) {
                       Get.bottomSheet(
                         UploadImageSection(
                           restaurantId: restaurantModel?.docID ?? '',
@@ -371,8 +363,7 @@ class ReviewWidget extends StatelessWidget {
                         ),
                       );
                     } else {
-                      Get.snackbar(
-                          'SAVRLY', 'Please signup for this operation!');
+                      showSignupDialog();
                     }
                   },
                   laBelText: 'Write a review',
@@ -388,6 +379,62 @@ class ReviewWidget extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  void showSignupDialog() {
+    Get.defaultDialog(
+      title: "Signup/Login Required",
+      titleStyle: TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+        color: AppColors.primaryColor,
+        fontFamily: 'Nunito-Bold',
+      ),
+      middleText: "Please sign up to continue with this operation.",
+      middleTextStyle: TextStyle(
+        fontSize: 14,
+        color: AppColors.textColor,
+        fontFamily: 'Nunito-Regular',
+      ),
+      backgroundColor: Colors.white,
+      radius: 12,
+      contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              CustomButton(
+                ontapp: () {
+                  Get.back();
+                },
+                laBelText: 'Cancel',
+                height: 40,
+                width: Get.width * 0.3,
+                textColor: AppColors.whiteColor,
+                fontSize: 15,
+                fontFamily: 'Nunito-SemiBold',
+                fontWeight: FontWeight.w600,
+              ),
+              CustomButton(
+                ontapp: () {
+                  Get.back(); // Close the dialog
+                  Get.to(SignupScreen(), transition: Transition.rightToLeft);
+                },
+                laBelText: 'Sign Up',
+                height: 40,
+                width: Get.width * 0.3,
+                textColor: AppColors.whiteColor,
+                fontSize: 15,
+                fontFamily: 'Nunito-SemiBold',
+                fontWeight: FontWeight.w600,
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

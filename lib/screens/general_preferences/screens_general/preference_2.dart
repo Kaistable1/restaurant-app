@@ -196,10 +196,15 @@ class Preference2 extends StatelessWidget {
                           );
                           return;
                         }
+                        if (controller.screen2Controller.text.isNotEmpty) {
+                          controller.selectedPreferences2
+                              .add(controller.screen2Controller.text);
+                        }
+                     
                         final signupController = Get.put(SignupController());
                         signupController.updateUserData(
                             field: 'dietaryPref',
-                            entry: controller.selectedPreferences2.first);
+                            entry: controller.selectedPreferences2.last);
                         Get.to(() => Preference3());
                       }
                     },

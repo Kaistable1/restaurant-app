@@ -16,6 +16,7 @@ class Preference1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    controller.fetchUserPreferences();
     final _formKey = GlobalKey<FormState>();
     return Scaffold(
       backgroundColor: AppColors.bgColor,
@@ -208,7 +209,10 @@ class Preference1 extends StatelessWidget {
                           );
                           return;
                         }
-
+                        if (controller.screen1Controller.text.isNotEmpty) {
+                          controller.selectedPreferences
+                              .add(controller.screen1Controller.text);
+                        }
                         final signupController = Get.put(SignupController());
                         signupController.updateUserData(
                             field: 'topThreeCuisines',

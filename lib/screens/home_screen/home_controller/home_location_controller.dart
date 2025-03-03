@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
@@ -215,7 +216,7 @@ class HomeLocationController extends GetxController {
         }
 
         // Check if the restaurant exists in the favorite collection
-        bool isFavorite = snapshot.data!.docs.isNotEmpty;
+        bool isFavorite = snapshot.data?.docs.isNotEmpty ?? false;
 
         return InkWell(
           onTap: () {
@@ -579,5 +580,46 @@ class HomeLocationController extends GetxController {
           .toList();
     }
     update();
+  }
+
+  //Geofencing
+
+  Future<Position> getCurrentLocation() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.deniedForever) {
+        return Future.error('Location permissions are permanently denied.');
+      }
+    }
+
+    return await Geolocator.getCurrentPosition();
+  }
+
+  bool isWithinRadius(
+      Position userLocation, double restLat, double restLng, double radiusKm) {
+    double distance = Geolocator.distanceBetween(
+        userLocation.latitude, userLocation.longitude, restLat, restLng);
+
+    return distance <= radiusKm * 1000; // Convert km to meters
+  }
+
+  Future<List<RestaurantModel>> getNearbyRestaurants(
+      List<RestaurantModel> allRestaurants, double radiusKm) async {
+    Position userLocation = await getCurrentLocation();
+
+    return allRestaurants.where((restaurant) {
+      return isWithinRadius(
+        userLocation,
+        restaurant.latitude,
+        restaurant.longitude,
+        radiusKm,
+      );
+    }).toList();
   }
 }

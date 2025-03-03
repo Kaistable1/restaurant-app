@@ -251,72 +251,72 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
               fontFamily: 'Nunito-Bold',
             ),
           ),
-          actions: [
-            const SizedBox(width: 20),
-            _selectedIndex == 0 // Only show on the home screen
-                ? Row(
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          Get.to(LocationScreen());
-                        },
-                        child: const Image(
-                          image: AssetImage('assets/images/location_icon.png'),
-                          height: 12,
-                          width: 12,
-                        ),
-                      ),
-                      const SizedBox(width: 1),
-                      InkWell(
-                        onTap: () {
-                          Get.to(LocationScreen(
-                            city: currentUserDataModel?.value.city,
-                            country: currentUserDataModel?.value.country,
-                          ));
-                        },
-                        child: StreamBuilder<DocumentSnapshot>(
-                          stream: FirebaseFirestore.instance
-                              .collection('users')
-                              .doc(auth.currentUser
-                                  ?.uid) // Replace with your user ID
-                              .snapshots(),
-                          builder: (context, snapshot) {
-                            if (!snapshot.hasData || snapshot.data == null) {
-                              return Text(
-                                "",
-                                style: TextStyle(
-                                  color: AppColors.textColor,
-                                  fontWeight: FontWeight.w800,
-                                  fontFamily: 'Nunito-Regular',
-                                  fontSize: 9,
-                                ),
-                              );
-                            }
+          // actions: [
+          //   const SizedBox(width: 20),
+          //   _selectedIndex == 0 // Only show on the home screen
+          //       ? Row(
+          //           children: [
+          //             // InkWell(
+          //             //   onTap: () {
+          //             //     Get.to(LocationScreen());
+          //             //   },
+          //             //   child: const Image(
+          //             //     image: AssetImage('assets/images/location_icon.png'),
+          //             //     height: 12,
+          //             //     width: 12,
+          //             //   ),
+          //             // ),
+          //             // const SizedBox(width: 1),
+          //             // InkWell(
+          //             //   onTap: () {
+          //             //     Get.to(LocationScreen(
+          //             //       city: currentUserDataModel?.value.city,
+          //             //       country: currentUserDataModel?.value.country,
+          //             //     ));
+          //             //   },
+          //             //   child: StreamBuilder<DocumentSnapshot>(
+          //             //     stream: FirebaseFirestore.instance
+          //             //         .collection('users')
+          //             //         .doc(auth.currentUser
+          //             //             ?.uid) // Replace with your user ID
+          //             //         .snapshots(),
+          //             //     builder: (context, snapshot) {
+          //             //       if (!snapshot.hasData || snapshot.data == null) {
+          //             //         return Text(
+          //             //           "",
+          //             //           style: TextStyle(
+          //             //             color: AppColors.textColor,
+          //             //             fontWeight: FontWeight.w800,
+          //             //             fontFamily: 'Nunito-Regular',
+          //             //             fontSize: 9,
+          //             //           ),
+          //             //         );
+          //             //       }
 
-                            var userData =
-                                snapshot.data!.data() as Map<String, dynamic>;
-                            String country = userData['country'] ?? '';
-                            String city = userData['city'] ?? '';
+          //             //       var userData =
+          //             //           snapshot.data!.data() as Map<String, dynamic>;
+          //             //       String country = userData['country'] ?? '';
+          //             //       String city = userData['city'] ?? '';
 
-                            return Text(
-                              isOnboarding
-                                  ? '${onboradingController.selectedCountry.value}.${onboradingController.selectedCity.value}'
-                                  : '$country.$city',
-                              style: TextStyle(
-                                color: AppColors.textColor,
-                                fontWeight: FontWeight.w800,
-                                fontFamily: 'Nunito-Regular',
-                                fontSize: 9,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 20),
-                    ],
-                  )
-                : const SizedBox.shrink(),
-          ],
+          //             //       return Text(
+          //             //         isOnboarding
+          //             //             ? '${onboradingController.selectedCountry.value}.${onboradingController.selectedCity.value}'
+          //             //             : '$country.$city',
+          //             //         style: TextStyle(
+          //             //           color: AppColors.textColor,
+          //             //           fontWeight: FontWeight.w800,
+          //             //           fontFamily: 'Nunito-Regular',
+          //             //           fontSize: 9,
+          //             //         ),
+          //             //       );
+          //             //     },
+          //             //   ),
+          //             // ),
+          //             // const SizedBox(width: 20),
+          //           ],
+          //         )
+          //       : const SizedBox.shrink(),
+          // ],
         ),
         body: SingleChildScrollView(
           child: Column(

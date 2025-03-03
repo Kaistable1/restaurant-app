@@ -18,6 +18,7 @@ Future<void> main() async {
   try {
     await Firebase.initializeApp();
     await getCurrentUserData();
+    await requestLocationPermission();
   } on FirebaseAuthException catch (e) {
     print('Error: ${e.code} - ${e.message}');
   } catch (e) {

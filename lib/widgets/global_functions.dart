@@ -1,11 +1,18 @@
 import 'dart:typed_data';
-
+import 'package:geolocator/geolocator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/models/usermodel.dart';
+
+Future<void> requestLocationPermission() async {
+  LocationPermission permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied) {
+    permission = await Geolocator.requestPermission();
+  }
+}
 
 Future<void> getCurrentUserData() async {
   if (auth.currentUser != null) {

@@ -13,6 +13,7 @@ import 'package:kaistable_website/screens/home_screen/location_pages/location_sc
 import 'package:kaistable_website/screens/home_screen/new_view_all/new_viewall.dart';
 import 'package:kaistable_website/screens/home_screen/recently_viewed/recently_viewed.dart';
 import 'package:kaistable_website/screens/home_screen/trending_all/trending_view_all.dart';
+import 'package:kaistable_website/screens/nav_bar/near_by_all.dart';
 import 'package:kaistable_website/screens/onboarding_screen/onboarding_controller/onboarding_controller.dart';
 import 'package:kaistable_website/widgets/rectangle_widget.dart';
 import 'controller/home_controller.dart';
@@ -67,6 +68,7 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               _buildTopSection(),
+              _buildNearBySection(),
             ],
           ),
         ),
@@ -355,7 +357,7 @@ class HomeScreen extends StatelessWidget {
                       SizedBox(height: 12),
                       SizedBox(
                         height: Get.height *
-                            0.3, // Fixed height for the horizontal list
+                            0.2, // Fixed height for the horizontal list
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
                           itemCount: filteredRestaurants
@@ -381,8 +383,8 @@ class HomeScreen extends StatelessWidget {
                                     timetext: '10 AM',
                                     percentText: '25%',
                                     endTimeText: '9 PM',
-                                    percentageOff: item.menuList.percentageOff,
-                                    happyhour: item.menuList.happyHourSpecials,
+                                    // percentageOff: item.menuList.percentageOff,
+                                    // happyhour: item.menuList.happyHourSpecials,
                                     isFavorite: false.obs,
                                   ),
                                 ),
@@ -399,6 +401,126 @@ class HomeScreen extends StatelessWidget {
               },
             ),
           );
+        },
+      ),
+    );
+  }
+
+  Widget _buildNearBySection() {
+    final HomeLocationController controller = Get.put(HomeLocationController());
+    return Padding(
+      padding: const EdgeInsets.only(left: 14, right: 14),
+      child: StreamBuilder(
+        stream: controller.getRestaurants(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return SizedBox(); // Show loading indicator
+          }
+
+          if (snapshot.hasError) {
+            print('Error during stream call ${snapshot.error}');
+            return Text(''); // Show error message if any
+          }
+
+          if (snapshot.data == null || snapshot.data!.isEmpty) {
+            return Text(''); // Handle the case where data is null or empty
+          }
+          List<RestaurantModel> all_restaurants = snapshot.data!;
+
+          return FutureBuilder(
+              future: controller.getNearbyRestaurants(all_restaurants, 5000),
+              builder: (context, futureSnapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return SizedBox(
+                      height: Get.height * 0.5,
+                      child: Center(child: CircularProgressIndicator()));
+                }
+                if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                }
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Text('No nearby restaurants found.');
+                }
+
+                List<RestaurantModel> restaurants = futureSnapshot.data ?? [];
+                if (restaurants.isEmpty) {
+                  return SizedBox();
+                }
+                return Column(
+                  children: [
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Near By Restaurants',
+                          style: TextStyle(
+                            color: AppColors.bottomSheetColor,
+                            fontFamily: 'aftika-regular',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        InkWell(
+                            onTap: () {
+                              Get.to(NearByAll());
+                            },
+                            child: Text(
+                              "view all",
+                              style: TextStyle(
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: AppColors.primaryColor,
+                                  fontFamily: 'Nunito-Regular',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColors.primaryColor),
+                            ))
+                      ],
+                    ),
+                    SizedBox(height: 12),
+                    SizedBox(
+                      height: Get.height *
+                          0.2, // Fixed height for the horizontal list
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount:
+                            restaurants.length, // Use filtered list length
+                        itemBuilder: (context, index) {
+                          final item = restaurants[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(
+                                right: 10), // Space between items
+                            child: InkWell(
+                              onTap: () {
+                                Get.to(RestaurantDetailScreen(
+                                  restaurantModel: item,
+                                ));
+                              },
+                              child: SizedBox(
+                                width: Get.width * 0.45,
+                                child: RectangleWidget(
+                                  title: item.resName,
+                                  description: item.about,
+                                  resturant_id: item.docID,
+                                  imagePath: item.logoImage,
+                                  timetext: '10 AM',
+                                  percentText: '25%',
+                                  endTimeText: '9 PM',
+                                  // percentageOff: item.menuList.percentageOff,
+                                  // happyhour: item.menuList.happyHourSpecials,
+                                  isFavorite: false.obs,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              });
         },
       ),
     );
