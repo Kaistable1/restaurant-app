@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:savrly_data_entry_app/constants/text_styles.dart';
@@ -49,6 +51,7 @@ Widget logoutBottomSheet(
                 ),
                 GestureDetector(
                   onTap: () async {
+                    await FirebaseAuth.instance.signOut();
                     Get.offAll(LoginScreen());
                   },
                   child: Padding(

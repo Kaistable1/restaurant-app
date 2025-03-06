@@ -20,7 +20,6 @@ class MyApp extends StatelessWidget {
       title: 'Savrly Data Entry App',
       debugShowCheckedModeBanner: false,
       home: SplashScreen(),
-      // home: YelpScreen(),
     );
   }
 }

@@ -133,8 +133,8 @@ class RestaurantListScreen extends StatelessWidget {
                 RestaurantModel restaurantModel = await RestaurantModel(
                   about: "Coming Soon!! Stay tuned for something exciting!",
                   address: v.address.split(',').first,
-                  city: v.address.split(',')[1],
-                  country: v.address.split(',').last,
+                  city: v.city,
+                  country: v.country,
                   createdAt: DateTime.now(),
                   docID: '',
                   latitude: v.latitude,
@@ -159,12 +159,16 @@ class RestaurantListScreen extends StatelessWidget {
                 );
                 restuants.add(restaurantModel);
               }
-              restuants.forEach((item) => print('logo imge ${item.logoImage}'));
-              await placesController.addRestaurants(restuants);
+              Map<String, int> result =
+                  await placesController.addRestaurants(restuants);
 
               Get.back();
               showSuccessDialog(
-                  context, cityName); // City name dynamic pass karein
+                context,
+                cityName,
+                totalDuplications: result["duplicates"],
+                newlyAdded: result["added"],
+              ); // City name dynamic pass karein
             } else {
               print("Google");
               for (var v in placesController.businessList) {
@@ -197,10 +201,16 @@ class RestaurantListScreen extends StatelessWidget {
                 );
                 restuants.add(restaurantModel);
               }
-              await placesController.addRestaurants(restuants);
+              Map<String, int> result =
+                  await placesController.addRestaurants(restuants);
+
               Get.back();
               showSuccessDialog(
-                  context, cityName); // City name dynamic pass karein
+                context,
+                cityName,
+                totalDuplications: result["duplicates"],
+                newlyAdded: result["added"],
+              ); // City name dynamic pass karein
             }
           },
           label: Text("    Save All    ",
@@ -220,7 +230,8 @@ String extractSecondLastWord(String address) {
   return address; // Return full address if it has less than two words
 }
 
-void showSuccessDialog(BuildContext context, String cityName) {
+void showSuccessDialog(BuildContext context, String cityName,
+    {totalDuplications, newlyAdded}) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -229,7 +240,7 @@ void showSuccessDialog(BuildContext context, String cityName) {
         title: Text("Success",
             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
         content: Text(
-            "Restaurant data has been successfully added to Firebase.\n\nCity: $cityName"),
+            "Restaurant data has been successfully added to Firebase.\n\nCity: $cityName\n\nTotal Duplications: $totalDuplications\n\nNewly Added: $newlyAdded"),
         actions: [
           TextButton(
             onPressed: () => Get.back(),

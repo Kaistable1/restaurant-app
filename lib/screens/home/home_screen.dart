@@ -9,10 +9,20 @@ import '../../constants/app_colors.dart';
 import '../../widgets/custom_button.dart';
 import 'controller/home_controller.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   final HomeController controller = Get.put(HomeController());
+
   final PlacesController placesController = Get.put(PlacesController());
+
+  int selectedValue = 10;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,51 +107,39 @@ class HomeScreen extends StatelessWidget {
                     ],
                   )),
               SizedBox(height: 20),
+              Obx(() => controller.selectedOption.value == 'Option 2'
+                  ? myDropDown()
+                  : SizedBox()),
+              SizedBox(height: 20),
               Center(
                 child: Obx(
                   () => controller.isLoading.value
                       ? CircularProgressIndicator() // Show loading when isLoading is true
                       : CustomButton(
                           btnText: 'Search',
-                          onTap: () {
-                            if(controller.searchController.text.isEmpty){
-                              controller.errorMessage.value = "Please enter the city name";
-                            } else if(controller.selectedOption.value == "Option 1" ){
-                              placesController.fetchRestaurants(controller.searchController.text);
-                              Get.to(RestaurantListScreen(cityName: controller.searchController.text,));
-                            } else{
-                              placesController.fetchBusinessesGoogle(controller.searchController.text);
-                              Get.to(RestaurantListScreen(cityName: controller.searchController.text,));
+                          onTap: () async {
+                            if (controller.searchController.text.isEmpty) {
+                              controller.errorMessage.value =
+                                  "Please enter the city name";
+                            } else if (controller.selectedOption.value ==
+                                "Option 1") {
+                              placesController.fetchRestaurantsGoogle(
+                                  controller.searchController.text);
+                              Get.to(RestaurantListScreen(
+                                cityName: controller.searchController.text,
+                              ));
+                            } else {
+                              placesController.fetchRestaurantsYelp(
+                                  controller.searchController.text,
+                                  limit: selectedValue);
+                              Get.to(RestaurantListScreen(
+                                cityName: controller.searchController.text,
+                              ));
                             }
-                            // placesController.fetchRestaurants(controller.searchController.text);
-                            // Get.to(RestaurantListScreen());
-                            /* if (selectedOption.value == "Option 1") {
-        // Google API Call
-        print("Searching restaurants in: $query using Google API");
-        var results = await model.name;
-
-        if (results.isNotEmpty) {
-          print("Found ${results} Restaurants");
-          Get.put(PlacesController()).fetchRestaurants(query);
-          Get.to(() => RestaurantListScreen(), arguments: results);
-        } else {
-          errorMessage.value = "No restaurants found in Google API";
-          print("No results found!");
-        }
-      } else {
-        // Yelp API Call
-        print("Searching restaurants in: $query using Yelp API");
-        var results = await _yelpService.fetchBusinesses(query);
-
-        if (results.isNotEmpty) {
-          print("Found ${results.length} Restaurants from Yelp");
-          Get.put(PlacesController()).fetchBusinessesGoogle(query);
-          Get.to(() => RestaurantListScreen(), arguments: results);
-        } else {
-          errorMessage.value = "No restaurants found in Yelp API";
-          print("No results found!");
-        }*/
-                            // controller.search(controller.searchController.text);
+                            if (controller.searchController.text.isNotEmpty) {
+                              await controller.addHistory(
+                                  text: controller.searchController.text);
+                            }
                           },
                         ),
                 ),
@@ -149,6 +147,32 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget myDropDown() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: DropdownButtonFormField<int>(
+        decoration: InputDecoration(
+          labelText: "Select a limit",
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ),
+        value: selectedValue,
+        items: [5, 10, 20, 30, 40, 50].map((int value) {
+          return DropdownMenuItem<int>(
+            value: value,
+            child: Text(value.toString()),
+          );
+        }).toList(),
+        onChanged: (newValue) {
+          setState(() {
+            selectedValue = newValue ?? 10;
+          });
+        },
       ),
     );
   }

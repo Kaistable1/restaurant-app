@@ -110,9 +110,9 @@ class LoginScreen extends StatelessWidget {
                       headingText.copyWith(color: hintColor, fontSize: 18),
                   btnColor: white,
                   borderColor: white,
-                  // onTap: () => controller.submitForm(),
-                  onTap: () => Get.offAll(() =>
-                      MainScreen()),
+                  onTap: () => controller.submitForm(),
+                  // onTap: () => Get.offAll(() =>
+                  //     MainScreen()),
                 ),
               ],
             ),

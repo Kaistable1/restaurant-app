@@ -12,6 +12,9 @@ class YelApiBusiness {
   double latitude;
   double longitude;
   String price;
+  String country;
+  String city;
+
   String address;
   String phone;
   bool isOpenNow;
@@ -20,6 +23,8 @@ class YelApiBusiness {
     required this.id,
     required this.name,
     required this.imageUrl,
+    required this.country,
+    required this.city,
     required this.isClosed,
     required this.url,
     required this.reviewCount,
@@ -36,6 +41,8 @@ class YelApiBusiness {
   factory YelApiBusiness.fromJson(Map<String, dynamic> json) {
     return YelApiBusiness(
       id: json["id"],
+      country: json["location"]["country"],
+      city: json["location"]["city"],
       name: json["name"],
       imageUrl: json["image_url"] ?? "",
       isClosed: json["is_closed"],

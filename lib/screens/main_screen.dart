@@ -52,7 +52,7 @@ class MainScreen extends StatelessWidget {
       PersistentBottomNavBarItem(
         icon: Icon(Icons.person, color: blackColor, size: 25),
         inactiveIcon: Icon(Icons.person_outline, color: blackColor, size: 20),
-        title: 'Profile',
+        title: 'Log Out',
         activeColorPrimary: blackColor,
       ),
     ];

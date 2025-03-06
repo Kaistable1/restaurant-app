@@ -6,16 +6,10 @@ import 'package:get/get.dart';
 import 'package:savrly_data_entry_app/models/my_resturant.dart';
 import 'package:savrly_data_entry_app/screens/service/yelp_api_model.dart';
 import '../../service/GoogleResponse.dart';
-import '../../restaurants/restaurant_list_screen.dart';
 import '../../service/api_model.dart';
-import '../../service/service.dart';
 import 'package:http/http.dart' as http;
 
 class HomeController extends GetxController {
-  // final YelpService _yelpService = YelpService();
-  // final Business model = Business.initialize();
-  // final YelApiBusiness yelpModel = YelApiBusiness.initialize();
-
   var businesses = <YelpBusiness>[].obs;
   var selectedOption = "Option 1".obs; // Default selected option
   var isLoading = false.obs; // Loading state
@@ -26,53 +20,14 @@ class HomeController extends GetxController {
   void setSelected(String value) {
     selectedOption.value = value;
   }
-
-  void search(String query) async {
-    if (query.trim().isEmpty) {
-      errorMessage.value = "Please enter the city name";
-      return;
-    }
-
-    errorMessage.value = "";
-    isLoading.value = true;
-
+   addHistory({text}) async {
     try {
-      if (selectedOption.value == "Option 1") {
-        // Google API Call
-        print("Searching restaurants in: $query using Google API");
-        // var results = await model.name;
-
-        // if (results.isNotEmpty) {
-        //   print("Found ${results} Restaurants");
-        Get.put(PlacesController()).fetchRestaurants(query);
-        Get.to(() => RestaurantListScreen(
-              cityName: query,
-            ));
-        // } else {
-        //   errorMessage.value = "No restaurants found in Google API";
-        //   print("No results found!");
-        // }
-      } else {
-        // Yelp API Call
-        print("Searching restaurants in: $query using Yelp API");
-        // var results = await _yelpService.fetchBusinesses(query);
-
-        // if (results.isNotEmpty) {
-        //   print("Found ${results.length} Restaurants from Yelp");
-        Get.put(PlacesController()).fetchBusinessesGoogle(query);
-        Get.to(() => RestaurantListScreen(
-              cityName: query,
-            ));
-        // } else {
-        //   errorMessage.value = "No restaurants found in Yelp API";
-        //   print("No results found!");
-        // }
-      }
+      await FirebaseFirestore.instance.collection('history').add({
+        'searchText': text,
+        'createdAt': DateTime.now(),
+      });
     } catch (e) {
-      print("Error: $e");
-      errorMessage.value = "Error fetching data";
-    } finally {
-      isLoading.value = false;
+      print('Error $e');
     }
   }
 }
@@ -87,7 +42,7 @@ class PlacesController extends GetxController {
   final String googleApiKey =
       "wBmUkpCxkFo-bia5ASkZDYq2fvAyymH_NngnIslr_38pMC5S2_uf7l9mOHUD4lGMFT3hvszGvfM0PKblG-VAVfVa9LTU_C5h5UEcDiCLuLhtnIM5j3G8tp33a928Z3Yx";
 
-  Future<void> fetchRestaurants(String? query) async {
+  Future<void> fetchRestaurantsGoogle(String? query) async {
     isLoading.value = true;
     try {
       String queryData = '$query resraurants';
@@ -114,16 +69,18 @@ class PlacesController extends GetxController {
     isLoading.value = false;
   }
 
-  Future<void> fetchBusinessesGoogle(query) async {
+  int offset = 0;
+
+  Future<void> fetchRestaurantsYelp(query, {limit}) async {
     isGoogleLoading.value = true;
     try {
+      offset += int.parse(limit.toString());
       var headers = {
         'Authorization':
             'Bearer wBmUkpCxkFo-bia5ASkZDYq2fvAyymH_NngnIslr_38pMC5S2_uf7l9mOHUD4lGMFT3hvszGvfM0PKblG-VAVfVa9LTU_C5h5UEcDiCLuLhtnIM5j3G8tp33a928Z3Yx',
       };
-
       String url =
-          "https://api.yelp.com/v3/businesses/search?location=$query&limit=10";
+          "https://api.yelp.com/v3/businesses/search?location=$query&limit=$limit&offset=$offset";
       final response = await http.get(Uri.parse(url), headers: headers);
 
       print("Response Url: ${url}");
@@ -140,17 +97,29 @@ class PlacesController extends GetxController {
     isGoogleLoading.value = false;
   }
 
-  Future<void> addRestaurants(List<RestaurantModel> restaurants) async {
+  Future<Map<String, int>> addRestaurants(
+      List<RestaurantModel> restaurants) async {
     final CollectionReference restaurantsCollection =
         FirebaseFirestore.instance.collection("restaurants");
+
+    int duplicateCount = 0;
+    int addedCount = 0;
 
     for (var restaurant in restaurants) {
       bool exists = await _checkIfRestaurantExists(restaurant.resName);
 
-      if (!exists) {
+      if (exists) {
+        duplicateCount++; // Increment if restaurant already exists
+      } else {
         await restaurantsCollection.add(await restaurant.toMap());
+        addedCount++; // Increment if a new restaurant is added
       }
     }
+
+    return {
+      "duplicates": duplicateCount,
+      "added": addedCount,
+    };
   }
 
   Future<bool> _checkIfRestaurantExists(String resName) async {
@@ -162,4 +131,6 @@ class PlacesController extends GetxController {
 
     return querySnapshot.docs.isNotEmpty; // Returns true if restaurant exists
   }
+
+ 
 }

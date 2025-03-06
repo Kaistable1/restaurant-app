@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -44,8 +45,6 @@ class LoginController extends GetxController {
   }
 
   void _validateForm() {
-    // Reset error messages before validation
-
     emailError.value = '';
     passwordError.value = '';
 
@@ -66,22 +65,32 @@ class LoginController extends GetxController {
 
     // If there are no errors, proceed with form submission (e.g., API call, etc.)
     if (emailError.isEmpty && passwordError.isEmpty) {
-      // Show a success snackbar
-      Get.snackbar(
-        'Success',
-        'Congratulations! You have successfully logged in to your account.',
-        backgroundColor: Colors.white,
+      loginUser();
+    }
+  }
 
-        snackPosition: SnackPosition.TOP,
-        duration:
-            Duration(seconds: 2), // Duration before the snackbar disappears
+  //make a functiuon for login user
+  loginUser() async {
+    try {
+      Get.dialog(Center(child: CircularProgressIndicator()));
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
       );
-
-      // After showing the snackbar, navigate to the HomeScreen
-      Future.delayed(Duration(seconds: 2), () {
-        Get.offAll(() =>
-            MainScreen()); // Navigate to HomeScreen after snackbar is dismissed
-      });
+      Get.back();
+      Get.offAll(() => MainScreen());
+      Get.snackbar(
+        'Loged In',
+        'Congratulations! You have successfully logged',
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        backgroundColor: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        duration: Duration(seconds: 2),
+      );
     }
   }
 }

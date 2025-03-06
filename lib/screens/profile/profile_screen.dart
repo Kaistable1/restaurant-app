@@ -17,52 +17,54 @@ class ProfileScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: Text("Profile (in process)", style: headingText),
+        title: Text("Log Out", style: headingText),
         centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(height: 20),
-            Obx(() => CircleAvatar(
-                  radius: 50,
-                  backgroundImage: AssetImage(controller.profileImage.value),
-                )),
-            SizedBox(height: 10),
-            Obx(() => Text(
-                  controller.userName.value,
-                  style: headingText,
-                )),
-            Obx(() => Text(
-                  controller.bio.value,
-                  style: hintText,
-                )),
-            SizedBox(height: 20),
-            CustomButton(
-                btnText: 'Edit Profile',
-                btnTextStyle:
-                    headingText.copyWith(color: hintColor, fontSize: 18),
-                btnColor: white,
-                borderColor: white,
-                onTap: () {}),
-            SizedBox(height: 10),
-            CustomButton(
-                btnText: 'Privacy Policy',
-                btnTextStyle:
-                    headingText.copyWith(color: hintColor, fontSize: 18),
-                btnColor: white,
-                borderColor: white,
-                onTap: () {}),
-            SizedBox(height: 10),
-            CustomButton(
-                btnText: 'About us',
-                btnTextStyle:
-                    headingText.copyWith(color: hintColor, fontSize: 18),
-                btnColor: white,
-                borderColor: white,
-                onTap: () {}),
-            SizedBox(height: 20),
+            // SizedBox(height: 20),
+            // Obx(() => CircleAvatar(
+            //       radius: 50,
+            //       backgroundImage: AssetImage(controller.profileImage.value),
+            //     )),
+            // SizedBox(height: 10),
+            // Obx(() => Text(
+            //       controller.userName.value,
+            //       style: headingText,
+            //     )),
+            // Obx(() => Text(
+            //       controller.bio.value,
+            //       style: hintText,
+            //     )),
+            // SizedBox(height: 20),
+            // CustomButton(
+            //     btnText: 'Edit Profile',
+            //     btnTextStyle:
+            //         headingText.copyWith(color: hintColor, fontSize: 18),
+            //     btnColor: white,
+            //     borderColor: white,
+            //     onTap: () {}),
+            // SizedBox(height: 10),
+            // CustomButton(
+            //     btnText: 'Privacy Policy',
+            //     btnTextStyle:
+            //         headingText.copyWith(color: hintColor, fontSize: 18),
+            //     btnColor: white,
+            //     borderColor: white,
+            //     onTap: () {}),
+            // SizedBox(height: 10),
+            // CustomButton(
+            //     btnText: 'About us',
+            //     btnTextStyle:
+            //         headingText.copyWith(color: hintColor, fontSize: 18),
+            //     btnColor: white,
+            //     borderColor: white,
+            //     onTap: () {}),
+            // SizedBox(height: 20),
+
             CustomButton(
                 btnText: 'Logout',
                 onTap: () {
