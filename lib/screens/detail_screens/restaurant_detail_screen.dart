@@ -38,7 +38,8 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
   @override
   void initState() {
     homeLocationController.addRecentView(
-        restaurantID: widget.restaurantModel?.docID ?? '');
+        restaurantID: widget.restaurantModel?.docID ?? '',
+        resName: widget.restaurantModel?.resName ?? '');
 
     super.initState();
   }

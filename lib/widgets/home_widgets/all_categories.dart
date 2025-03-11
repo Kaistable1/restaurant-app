@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/models/recent_view.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
 import '../../../constants/app_colors.dart';
@@ -28,7 +29,14 @@ class AllCategories extends StatelessWidget {
         stream: controller.getRestaurants(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return SizedBox(); // Show loading indicator
+            return SizedBox(
+              height: Get.height * 0.6,
+              child: const Center(
+                child: CircularProgressIndicator(
+                  color: AppColors.primaryColor,
+                ),
+              ),
+            ); // Show loading indicator
           }
 
           if (snapshot.hasError) {
@@ -45,98 +53,85 @@ class AllCategories extends StatelessWidget {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             controller.initailizedSelectors(resaturantsList: restaurants);
           });
-          return SizedBox(
-            child: StreamBuilder<List<RecentViewModel>>(
-              stream: controller.getRecentViews(),
-              builder: (context, snapshot) {
-                List<RecentViewModel> restaurantIDs = snapshot.data ?? [];
+          List filteredRestaurants = [];
 
-                // Sort the `restaurantIDs` list by `dateTime` in descending order
-                restaurantIDs.sort((a, b) =>
-                    b.dateTime.compareTo(a.dateTime)); // Descending order
+          // Filter the restaurant list based on the sorted IDs and maintain the same order
+          if (restaurants.isNotEmpty) {
+            List<String> recentView =
+                preferences?.getStringList('recentView') ?? [];
 
-                // Map restaurant IDs from the sorted `restaurantIDs` list
-                List<String> sortedRestaurantIds = restaurantIDs
-                    .map((recentView) => recentView.restaurantID)
-                    .toList();
+            filteredRestaurants = recentView
+                .map((resName) => restaurants.firstWhere(
+                      (restaurant) =>
+                          restaurant.resName.toLowerCase() ==
+                          resName.toLowerCase(),
+                    ))
+                .cast<
+                    RestaurantModel>() // Cast back to proper type if necessary
+                .toList();
+          }
 
-                List filteredRestaurants = [];
-
-                // Filter the restaurant list based on the sorted IDs and maintain the same order
-                if (restaurants.isNotEmpty) {
-                  filteredRestaurants = sortedRestaurantIds
-                      .map((id) {
-                        // Find the restaurant with the matching docID using where
-                        return restaurants
-                            .where((restaurant) => restaurant.docID == id)
-                            .toList();
-                      })
-                      .expand((element) => element) // Flatten the nested lists
-                      .toList();
-                }
-
-                if (filteredRestaurants.isNotEmpty) {
-                  return Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Recently Viewed',
-                            style: TextStyle(
-                              color: AppColors.bottomSheetColor,
-                              fontFamily: 'aftika-regular',
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
+          if (filteredRestaurants.isNotEmpty) {
+            return Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Recently Viewed',
+                      style: TextStyle(
+                        color: AppColors.bottomSheetColor,
+                        fontFamily: 'aftika-regular',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
                       ),
-                      SizedBox(height: 12),
-                      GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          mainAxisExtent: Get.height * 0.27,
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 30,
+                    ),
+                  ],
+                ),
+                SizedBox(height: 12),
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    mainAxisExtent: Get.height * 0.27,
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 30,
+                  ),
+                  itemCount:
+                      filteredRestaurants.length, // Use filtered list length
+                  itemBuilder: (context, index) {
+                    final item = filteredRestaurants[index];
+                    return InkWell(
+                      onTap: () {
+                        Get.to(RestaurantDetailScreen(
+                          restaurantModel: item,
+                        ));
+                      },
+                      child: SizedBox(
+                        width: Get.width * 0.45,
+                        child: RectangleWidget(
+                          title: item.resName,
+                          description: item.about,
+                          resturant_id: item.docID,
+                          imagePath: item.logoImage,
+                          timetext: '10 AM',
+                          percentText: '25%',
+                          endTimeText: '9 PM',
+                          // percentageOff: item.menuList.percentageOff,
+                          // happyhour: item.menuList.happyHourSpecials,
+                          isFavorite: false.obs,
                         ),
-                        itemCount: filteredRestaurants
-                            .length, // Use filtered list length
-                        itemBuilder: (context, index) {
-                          final item = filteredRestaurants[index];
-                          return InkWell(
-                            onTap: () {
-                              Get.to(RestaurantDetailScreen(
-                                restaurantModel: item,
-                              ));
-                            },
-                            child: SizedBox(
-                              width: Get.width * 0.45,
-                              child: RectangleWidget(
-                                title: item.resName,
-                                description: item.about,
-                                resturant_id: item.docID,
-                                imagePath: item.logoImage,
-                                timetext: '10 AM',
-                                percentText: '25%',
-                                endTimeText: '9 PM',
-                                // percentageOff: item.menuList.percentageOff,
-                                // happyhour: item.menuList.happyHourSpecials,
-                                isFavorite: false.obs,
-                              ),
-                            ),
-                          );
-                        },
                       ),
-                    ],
-                  );
-                }
-
-                return SizedBox();
-              },
-            ),
+                    );
+                  },
+                ),
+              ],
+            );
+          }
+          return SizedBox(
+            height: Get.height * 0.6,
+            child: const Center(child: Text('No Resturants Found!')),
           );
         },
       ),

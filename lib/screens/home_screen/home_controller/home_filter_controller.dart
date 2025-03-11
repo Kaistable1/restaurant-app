@@ -17,6 +17,7 @@ class HomeFilterController extends GetxController {
   }
 
   Stream<Map<String, List<String>>> getRestaurantsGroupedByCuisine() async* {
+    print('cuisnies list ----------------------------');
     final firestore = FirebaseFirestore.instance;
 
     // Fetch the list of restaurants and their meal menus asynchronously

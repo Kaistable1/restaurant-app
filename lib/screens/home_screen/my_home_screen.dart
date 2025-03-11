@@ -439,20 +439,19 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                       print(
                                           'filterSelectionController.aggregatedFilters ${filterSelectionController.aggregatedFilters}');
                                       print(
-                                          'restaurants length ${restaurants.length}');
-                                      // Filter by Country
-                                      if (filterSelectionController
-                                          .selectedCountry.isNotEmpty) {
-                                        print('flag 1');
-                                        restaurants =
-                                            restaurants.where((restaurant) {
-                                          return filterSelectionController
-                                              .aggregatedFilters
-                                              .contains(restaurant.city);
-                                        }).toList();
-                                      }
-                                      print(
-                                          'restaurants  filter ${restaurants.length}');
+                                          'total restaurants length ${restaurants.length}');
+                                      // // Filter by Country
+                                      // if (filterSelectionController
+                                      //     .selectedCountry.isNotEmpty) {
+                                      //   print('flag 1');
+                                      //   restaurants =
+                                      //       restaurants.where((restaurant) {
+                                      //     return filterSelectionController
+                                      //         .aggregatedFilters
+                                      //         .contains(restaurant.city);
+                                      //   }).toList();
+                                      // }
+
                                       // Filter by City
                                       if (filterSelectionController
                                           .selectedCity.isNotEmpty) {
@@ -471,50 +470,32 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                           return isCityMatched;
                                         }).toList();
                                       }
-
-                                      // Filter by Language
-                                      if (filterSelectionController
-                                          .selectedLanguage.isNotEmpty) {
-                                        print('flag 3');
-                                        restaurants =
-                                            restaurants.where((restaurant) {
-                                          return restaurant.spokenLanguage
-                                                  .trim() ==
-                                              filterSelectionController
-                                                  .selectedLanguage.value
-                                                  .trim();
-                                        }).toList();
-                                        print(
-                                            'restaurants after language filter ${restaurants.length}');
-                                      }
-                                      print(
-                                          'filterSelectionController.aggregatedFilters ${filterSelectionController.aggregatedFilters}');
-
-                                      print(
-                                          'filterSelectionController.selectedDiscounts ${filterSelectionController.selectedDiscounts}');
-
+                                      print(filterSelectionController
+                                          .selectedDiscounts);
                                       // Filter by Discounts
                                       if (filterSelectionController
                                           .selectedDiscounts.isNotEmpty) {
                                         print('flag 4');
                                         restaurants =
                                             restaurants.where((restaurant) {
-                                          return (filterSelectionController
-                                                      .aggregatedFilters
-                                                      .contains(
-                                                          'percentage off') &&
+                                          final lowercasedFilters =
+                                              filterSelectionController
+                                                  .aggregatedFilters
+                                                  .map((e) => e.toLowerCase())
+                                                  .toList();
+
+                                          return (lowercasedFilters.contains(
+                                                      'percentage off') &&
                                                   restaurant
                                                       .menuList
                                                       .percentageOff
                                                       .isNotEmpty) ||
-                                              filterSelectionController
-                                                      .aggregatedFilters
-                                                      .contains(
-                                                          'happy hour specials') &&
+                                              (lowercasedFilters.contains(
+                                                      'happy hour specials') &&
                                                   restaurant
                                                       .menuList
                                                       .happyHourSpecials
-                                                      .isNotEmpty;
+                                                      .isNotEmpty);
                                         }).toList();
                                       }
 
@@ -648,14 +629,11 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                         print('flag 9');
                                         restaurants =
                                             restaurants.where((restaurant) {
-                                          print(
-                                              'restaurant.priceRange ${restaurant.priceRange}');
-                                          print(
-                                              'filterSelectionController.aggregatedFilters ${filterSelectionController.aggregatedFilters}');
-
                                           return filterSelectionController
                                               .aggregatedFilters
-                                              .contains(restaurant.priceRange);
+                                              .map((e) => e.toLowerCase())
+                                              .contains(restaurant.priceRange
+                                                  .toLowerCase());
                                         }).toList();
                                       }
 
@@ -684,28 +662,21 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                           List<RestaurantModel>
                                               timeOfDayRestaurants =
                                               futureSnapshot.data ?? [];
-
+                                          print(
+                                              'timeOfDayRestaurants----------------${timeOfDayRestaurants.length}');
                                           if (filterSelectionController
                                               .aggregatedFilters
+                                              .map((e) => e.toLowerCase())
                                               .any((filter) =>
                                                   filterSelectionController
                                                       .selectedTimeOfDay
+                                                      .map((e) =>
+                                                          e.toLowerCase())
                                                       .contains(filter))) {
                                             controller.filteredRestaurants =
                                                 timeOfDayRestaurants;
                                           }
-                                          print(
-                                              'resutatnsta after time of day filter ${restaurants.length}');
-                                          print(filterSelectionController
-                                              .selectedFilters);
-                                          print('cusines filter enable ');
 
-                                          print(filterSelectionController
-                                              .aggregatedFilters
-                                              .any((filter) =>
-                                                  filterSelectionController
-                                                      .selectedFilters
-                                                      .contains(filter)));
                                           // Handle the second FutureBuilder for cuisines
                                           return StreamBuilder<
                                               Map<String, List<String>>>(
@@ -828,33 +799,6 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
             ],
           ),
         ));
-  }
-
-  Widget _buildDrawerItem(String title, int index) {
-    return Column(
-      children: [
-        ListTile(
-          title: Text(
-            title,
-            style: TextStyle(
-              decoration: _selectedIndex == index
-                  ? TextDecoration.underline
-                  : TextDecoration.none,
-              decorationThickness: 1.5,
-              decorationColor: AppColors.primaryColor,
-              fontSize: 14,
-              fontFamily: 'Nunito-Bold',
-              color: _selectedIndex == index
-                  ? AppColors.primaryColor
-                  : AppColors.textColor,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          onTap: () =>
-              _onItemTapped(index, isHome: title == 'Home' ? true : false),
-        ),
-      ],
-    );
   }
 
 // Helper functions for UI components

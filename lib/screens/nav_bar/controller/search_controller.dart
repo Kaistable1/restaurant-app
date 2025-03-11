@@ -386,6 +386,8 @@ class FilterController extends GetxController {
 
   void clearAll() {
     filterSelectionController.aggregatedFilters.clear();
+    filterSelectionController.selectedCity.value = '';
+    filterSelectionController.selectedCountry.value = '';
     selectedFilters.forEach((key, value) => value.clear());
     update();
     Get.back();

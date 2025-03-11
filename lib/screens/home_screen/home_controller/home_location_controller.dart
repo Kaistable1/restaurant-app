@@ -333,9 +333,18 @@ class HomeLocationController extends GetxController {
     });
   }
 
-  addRecentView({
-    required String restaurantID,
-  }) async {
+  addRecentView({required String restaurantID, resName}) async {
+    List<String> localStoreResturatnstID =
+        preferences?.getStringList('recentView') ?? [];
+
+    if (!localStoreResturatnstID.contains(resName)) {
+      localStoreResturatnstID.add(resName);
+      await preferences?.setStringList('recentView', localStoreResturatnstID);
+    }
+
+    print(
+        'recent view list -------------------------- ${localStoreResturatnstID.toString()}');
+
     try {
       var reviewCollection = FirebaseFirestore.instance
           .collection('users')
@@ -395,10 +404,8 @@ class HomeLocationController extends GetxController {
   Stream<List<RestaurantModel>> getRestaurants({city}) {
     return FirebaseFirestore.instance
         .collection('restaurants')
-        // .where('city', isEqualTo: city)
         .snapshots()
         .asyncMap((snapshot) async {
-      // Fetch all restaurants and their menus
       final restaurants = await Future.wait(
         snapshot.docs.map((doc) async {
           final restaurant = RestaurantModel.fromDocumentSnapshot(doc);
