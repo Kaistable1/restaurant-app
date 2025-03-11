@@ -5,7 +5,6 @@ import '../../../constants/app_colors.dart';
 import '../../../constants/text_styles.dart';
 import '../../../widgets/custom_button.dart';
 import '../../../widgets/custom_textfield.dart';
-import '../../main_screen.dart';
 import 'controller/login_controller.dart';
 
 class LoginScreen extends StatelessWidget {

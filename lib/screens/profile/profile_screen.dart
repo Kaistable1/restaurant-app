@@ -4,7 +4,6 @@ import 'package:savrly_data_entry_app/constants/text_styles.dart';
 import 'package:savrly_data_entry_app/screens/profile/controller/profile_controller.dart';
 import 'package:savrly_data_entry_app/widgets/custom_button.dart';
 
-import '../../constants/app_colors.dart';
 import '../../widgets/logout_widget.dart';
 
 class ProfileScreen extends StatelessWidget {

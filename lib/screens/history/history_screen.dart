@@ -35,7 +35,7 @@ class HistoryScreen extends StatelessWidget {
             }
             controller.restaurants.clear();
             for (var doc in snapshot.data!.docs) {
-              Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+              Map<String, dynamic> data = doc.data();
               String searchText = data['searchText'] ?? 'N/A';
               Timestamp timestamp = data['createdAt'] as Timestamp;
               DateTime dateTime = timestamp.toDate();
