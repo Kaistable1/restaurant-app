@@ -85,7 +85,7 @@ class RectangleWidget extends StatelessWidget {
                       ),
                     ),
                     Spacer(),
-                    auth.currentUser == null
+                    auth.currentUser == null || resturant_id == ''
                         ? SizedBox()
                         : HomeLocationController()
                             .favoriteHeart(resturant_id: resturant_id),
@@ -98,7 +98,7 @@ class RectangleWidget extends StatelessWidget {
                 Row(
                   children: [
                     SizedBox(
-                      width: Get.width * 0.4,
+                      width: Get.width * 0.37,
                       child: Text(
                         description,
                         maxLines: 2,

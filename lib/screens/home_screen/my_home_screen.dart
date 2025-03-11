@@ -344,10 +344,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                             height: 16,
                           ),
                           StreamBuilder(
-                            stream: controller.getRestaurants(
-                                city: isOnboarding
-                                    ? onboradingController.selectedCity.value
-                                    : currentUserDataModel?.value.city),
+                            stream: controller.getRestaurants(),
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
@@ -437,7 +434,12 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                       // Apply filtering logic here
                                       List<RestaurantModel> restaurants =
                                           snapshot.data!;
-
+                                      print(
+                                          'filterSelectionController.selectedCountry ${filterSelectionController.selectedCountry}');
+                                      print(
+                                          'filterSelectionController.aggregatedFilters ${filterSelectionController.aggregatedFilters}');
+                                      print(
+                                          'restaurants length ${restaurants.length}');
                                       // Filter by Country
                                       if (filterSelectionController
                                           .selectedCountry.isNotEmpty) {
@@ -446,12 +448,11 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                             restaurants.where((restaurant) {
                                           return filterSelectionController
                                               .aggregatedFilters
-                                              .contains(restaurant.country);
+                                              .contains(restaurant.city);
                                         }).toList();
-                                        print(
-                                            'restaurants after country filter ${restaurants.length}');
                                       }
-
+                                      print(
+                                          'restaurants  filter ${restaurants.length}');
                                       // Filter by City
                                       if (filterSelectionController
                                           .selectedCity.isNotEmpty) {
@@ -459,12 +460,16 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
 
                                         restaurants =
                                             restaurants.where((restaurant) {
-                                          return filterSelectionController
-                                              .aggregatedFilters
-                                              .contains(restaurant.city);
+                                          bool isCityMatched =
+                                              filterSelectionController
+                                                  .aggregatedFilters
+                                                  .map((e) => e.toLowerCase())
+                                                  .any((filter) => restaurant
+                                                      .city
+                                                      .toLowerCase()
+                                                      .contains(filter));
+                                          return isCityMatched;
                                         }).toList();
-                                        print(
-                                            'restaurants after city filter ${restaurants.length}');
                                       }
 
                                       // Filter by Language

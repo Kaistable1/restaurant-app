@@ -395,7 +395,7 @@ class HomeLocationController extends GetxController {
   Stream<List<RestaurantModel>> getRestaurants({city}) {
     return FirebaseFirestore.instance
         .collection('restaurants')
-        .where('city', isEqualTo: city)
+        // .where('city', isEqualTo: city)
         .snapshots()
         .asyncMap((snapshot) async {
       // Fetch all restaurants and their menus

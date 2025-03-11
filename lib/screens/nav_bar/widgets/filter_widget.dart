@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
+import 'package:kaistable_website/screens/home_screen/home_controller/filter_selection_controller.dart';
 import '../controller/search_controller.dart';
 
 // Build a selectable filter row (Country, City, Language)
@@ -96,10 +97,14 @@ Widget buildFilterSection(String title, List<String> options,
 
 // Build expandable filters with checkboxes
 Widget buildCheckboxFilter(String title, FilterController controller) {
+  FilterSelectionController filterController =
+      Get.put(FilterSelectionController());
   return Column(
     children: [
       Obx(() {
         int selectedCount = controller.getSelectedCount(title);
+        print('selected Cuntry ${filterController.selectedCountry.value}');
+
         return Theme(
           data: ThemeData(
             dividerColor: Colors.transparent, // No divider inside the dropdown
@@ -132,10 +137,20 @@ Widget buildCheckboxFilter(String title, FilterController controller) {
             ),
             trailing: const Icon(Icons.keyboard_arrow_down,
                 color: AppColors.primaryColor),
-            children: controller.filterOptions[title]!.map((option) {
+            children: (title == 'City'
+                    ? filterController.selectedCountry.value.trim() ==
+                            'Los Angeles'
+                        ? controller.losAngelusCities
+                        : filterController.selectedCountry.value.trim() ==
+                                'New York'
+                            ? controller.newYorkCitiesList
+                            : controller.filterOptions[title]
+                    : controller.filterOptions[title])!
+                .map((option) {
               return Obx(() {
                 bool isChecked =
                     controller.selectedFilters[title]!.contains(option);
+
                 return ListTile(
                   contentPadding: EdgeInsets.zero, // Reduce vertical padding
                   dense: true,

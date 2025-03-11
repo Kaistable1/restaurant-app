@@ -41,13 +41,14 @@ void showFilterBottomSheet() {
             ),
             const SizedBox(height: 10),
 
-            // Country, City, and Language Selection
-            Obx(() => buildFilterSection("Country", controller.countries,
-                controller.selectedCountry, controller.selectCountry)),
-            Obx(() => buildFilterSection("City", controller.cities,
-                controller.selectedCity, controller.selectCity)),
-            Obx(() => buildFilterSection("Language", controller.languages,
-                controller.selectedLanguage, controller.selectLanguage)),
+            // // Country, City, and Language Selection
+            // Obx(() => buildFilterSection("Country", controller.countries,
+            //     controller.selectedCountry, controller.selectCountry)),
+            // Obx(() => buildFilterSection("City", controller.cities,
+            //     controller.selectedCity, controller.selectCity)),
+            // Obx(() => buildFilterSection("Language", controller.languages,
+            //     controller.selectedLanguage, controller.selectLanguage)),
+
             Text(
               'Filter',
               style: TextStyle(

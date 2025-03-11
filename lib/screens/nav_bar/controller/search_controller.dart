@@ -7,15 +7,15 @@ class FilterController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    filterSelectionController.selectedCity.value = 'New York';
-    filterSelectionController.selectedCountry.value = 'USA';
-    filterSelectionController.selectedLanguage.value = 'English';
+    filterSelectionController.selectedCity.value = '';
+    filterSelectionController.selectedCountry.value = '';
+    filterSelectionController.selectedLanguage.value = '';
   }
 
   // Single Selection Variables
-  var selectedCountry = "USA".obs;
-  var selectedCity = "New York".obs;
-  var selectedLanguage = "English".obs;
+  var selectedCountry = "".obs;
+  var selectedCity = "".obs;
+  var selectedLanguage = "".obs;
 
   List<String> countries = ["USA", "France"];
   List<String> cities = [
@@ -47,17 +47,36 @@ class FilterController extends GetxController {
   // Multi-Selection Lists with Checkboxes
   var selectedFilters = <String, RxList<String>>{}.obs;
   var filterOptions = <String, List<String>>{
+    "States": [
+      "New York",
+      "Los Angeles",
+    ],
+    "City": [],
     "Cuisines": [
-      'italian',
-      'mexican',
-      'asian',
-      'vegetarian',
-      'vegan',
-      'american',
+      "American",
+      "Mexican",
+      "Italian",
+      "French",
+      "Chinese",
+      "Japanese",
+      "Thai",
+      "Indian",
+      "Korean",
+      "Vietnamese",
+      "Mediterranean",
+      "Caribbean",
+      "African",
+      "Middle Eastern",
+      "Spanish",
+      "Filipino",
+      "Brazilian",
+      "Peruvian",
+      "Russian",
+      "German",
     ],
     "Discount Type": [
-      'percentage off',
-      'happy hour specials',
+      'Percentage off',
+      'Happy hour specials',
     ],
     "Time of Day": [
       'Breakfast',
@@ -67,38 +86,57 @@ class FilterController extends GetxController {
       'Late Night',
     ],
     "Atmospheres": [
-      'casual dining',
-      'fine dining',
-      'fast dining',
-      'pop',
+      "Casual Dining",
+      "Fine Dining",
+      "Fast Food",
+      "Date Night",
+      "Candlelit",
+      "Outdoor",
     ],
     "Facilities": [
-      'free wi-fi',
-      'private dinning',
-      'parking',
-      'takeout',
-      'drive-thru',
-      'outdoor seating',
-      'kid-Friendly',
-      'pet-Friendly',
-      'rest room',
-      'wheelchair accessibility',
-      'high chairs',
+      'Free wi-fi',
+      'Private dinning',
+      'Parking',
+      'Takeout',
+      'Drive-thru',
+      'Outdoor seating',
+      'Kid-Friendly',
+      'Pet-Friendly',
+      'Rest room',
+      'Wheelchair accessibility',
+      'High chairs',
     ],
     "Dietary Preferences": [
-      'vegetarian',
-      'vegan',
-      'gluten-free',
-      'dairy-free',
-      'keto-friendly',
+      "Vegan & Plant-Based",
+      "Vegetarian",
+      "Gluten-Free",
+      "Pescatarian",
+      "Flexitarian",
+      "Raw Food",
+      "Keto",
+      "Paleo",
     ],
     "Entertainment": [
-      'live music',
-      'dj nights',
-      'karaoke',
-      'trivia nights',
-      'sports screenings',
-      'hookah',
+      "Live Music",
+      "Dj Night",
+      "Silent Party",
+      "Karaoke",
+      "Trivia Nights",
+      "Sports screenings",
+      "Hookah",
+      "Sip & Paint",
+    ],
+    'Trendy & Social': [
+      "TRENDY & SOCIAL",
+      "Rooftop Bar",
+      "Speakeasy",
+      "Live Music Venue",
+      "Jazz Lounge",
+      "Tiki Bar",
+      "Game Bar / Arcade",
+      "Sports Bar",
+      "Wine Bar",
+      "Themed Restaurant",
     ],
     "Price Range": [
       '\$(Budget-Friendly)',
@@ -107,6 +145,170 @@ class FilterController extends GetxController {
       '\$\$\$\$(Luxury)',
     ],
   }.obs;
+
+  List<String> losAngelusCities = [
+    "Beverly Hills",
+    "Santa Monica",
+    "West Hollywood",
+    "Downtown LA",
+    "Hollywood",
+    "Pasadena",
+    "Long Beach",
+    "Malibu",
+    "Glendale",
+    "Burbank",
+    "Culver City",
+    "Torrance",
+    "Manhattan Beach",
+    "Redondo Beach",
+    "Hermosa Beach",
+    "Inglewood",
+    "Compton",
+    "Carson",
+    "Downey",
+    "Norwalk",
+    "Whittier",
+    "Arcadia",
+    "Monterey Park",
+    "Alhambra",
+    "San Gabriel",
+    "Rosemead",
+    "El Monte",
+    "West Covina",
+    "Pomona",
+    "Diamond Bar",
+    "Walnut",
+    "La Puente",
+    "Baldwin Park",
+    "Industry",
+    "Duarte",
+    "Monrovia",
+    "Sierra Madre",
+    "San Marino",
+    "South Pasadena",
+    "La Canada Flintridge",
+    "Altadena",
+    "North Hollywood",
+    "Studio City",
+    "Sherman Oaks",
+    "Encino",
+    "Tarzana",
+    "Woodland Hills",
+    "Calabasas",
+    "Agoura Hills",
+    "Westlake Village",
+    "Thousand Oaks",
+    "Simi Valley",
+    "Chatsworth",
+    "Granada Hills",
+    "Porter Ranch",
+    "Northridge",
+    "Reseda",
+    "Van Nuys",
+    "Panorama City",
+    "Mission Hills",
+    "Sylmar",
+    "San Fernando",
+    "Sun Valley",
+    "Sunland",
+    "Tujunga",
+    "La Crescenta",
+    "Montrose",
+    "Eagle Rock",
+    "Highland Park",
+    "Glassell Park",
+    "Atwater Village",
+    "Los Feliz",
+    "Silver Lake",
+    "Echo Park",
+    "Koreatown",
+    "Mid-City",
+    "West Adams",
+    "Leimert Park",
+    "Crenshaw",
+  ];
+
+  List<String> newYorkCitiesList = [
+    "Manhattan",
+    "Brooklyn",
+    "Queens",
+    "The Bronx",
+    "Staten Island",
+    "Long Island City",
+    "Astoria",
+    "Flushing",
+    "Forest Hills",
+    "Jackson Heights",
+    "Sunnyside",
+    "Woodside",
+    "Bayside",
+    "Whitestone",
+    "College Point",
+    "Jamaica",
+    "Richmond Hill",
+    "Ozone Park",
+    "Howard Beach",
+    "Rockaway Beach",
+    "Far Rockaway",
+    "Coney Island",
+    "Brighton Beach",
+    "Sheepshead Bay",
+    "Bay Ridge",
+    "Park Slope",
+    "Williamsburg",
+    "Greenpoint",
+    "Bushwick",
+    "Bedford-Stuyvesant",
+    "Crown Heights",
+    "Flatbush",
+    "East Flatbush",
+    "Brownsville",
+    "East New York",
+    "Sunset Park",
+    "Bensonhurst",
+    "Dyker Heights",
+    "Midwood",
+    "Gravesend",
+    "Borough Park",
+    "Flatlands",
+    "Canarsie",
+    "Mill Basin",
+    "Marine Park",
+    "Bergen Beach",
+    "Downtown Brooklyn",
+    "Brooklyn Heights",
+    "DUMBO",
+    "Carroll Gardens",
+    "Cobble Hill",
+    "Red Hook",
+    "Gowanus",
+    "Prospect Heights",
+    "Fort Greene",
+    "Clinton Hill",
+    "Boerum Hill",
+    "Windsor Terrace",
+    "Kensington",
+    "Ditmas Park",
+    "Prospect Lefferts Gardens",
+    "New Lots",
+    "Spring Creek",
+    "City Island",
+    "Riverdale",
+    "Kingsbridge",
+    "Fordham",
+    "University Heights",
+    "Morris Heights",
+    "Mount Eden",
+    "Highbridge",
+    "Concourse",
+    "Mott Haven",
+    "Melrose",
+    "Hunts Point",
+    "Longwood",
+    "Morrisania",
+    "Crotona Park East",
+    "East Tremont",
+  ];
 
   // Initialize selected filters
   FilterController() {
@@ -118,7 +320,21 @@ class FilterController extends GetxController {
   void toggleFilter(String category, String option) {
     if (selectedFilters[category]!.contains(option)) {
       selectedFilters[category]!.remove(option);
+      if (category == 'States') {
+        filterSelectionController.selectedCountry.value = '';
+      } else if (category == 'City') {
+        filterSelectionController.selectedCity.value = '';
+      }
     } else {
+      if (category == 'States') {
+        selectedFilters[category]!.clear();
+
+        filterSelectionController.selectedCountry.value = option;
+      } else if (category == 'City') {
+        selectedFilters[category]!.clear();
+
+        filterSelectionController.selectedCity.value = option;
+      }
       selectedFilters[category]!.add(option);
     }
 
