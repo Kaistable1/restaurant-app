@@ -27,7 +27,11 @@ class RestaurantListScreen extends StatelessWidget {
           style: headingText,
         ),
         centerTitle: true,
-        leading: Icon(Icons.home, color: blackColor, size: 30),
+        leading: GestureDetector(
+            onTap: () {
+              Get.back();
+            },
+            child: Icon(Icons.home, color: blackColor, size: 30)),
       ),
       body: Obx(
         () => Get.put(HomeController()).selectedOption.value == "Option 1"

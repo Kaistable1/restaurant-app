@@ -84,6 +84,7 @@ class LoginController extends GetxController {
         'Congratulations! You have successfully logged',
       );
     } catch (e) {
+      Get.back();
       Get.snackbar(
         'Error',
         e.toString(),
