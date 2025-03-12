@@ -64,7 +64,7 @@ class Preference14 extends StatelessWidget {
             padding: const EdgeInsets.only(right: 12.0),
             child: Center(
               child: Text(
-                '14/14',
+                '11/11',
                 style: TextStyle(
                   fontSize: 12,
                   fontFamily: 'Nunito-Sans',

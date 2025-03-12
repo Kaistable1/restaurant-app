@@ -16,6 +16,8 @@ class Preference3 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    controller.fetchUserPreferences();
+
     return Scaffold(
       backgroundColor: AppColors.bgColor,
       appBar: AppBar(
@@ -64,7 +66,7 @@ class Preference3 extends StatelessWidget {
             padding: const EdgeInsets.only(right: 12.0),
             child: Center(
               child: Text(
-                '3/14',
+                '3/9',
                 style: TextStyle(
                   fontSize: 12,
                   fontFamily: 'Nunito-Sans',
@@ -86,7 +88,7 @@ class Preference3 extends StatelessWidget {
                 height: 8,
               ),
               Text(
-                'What Types Of Deals Are You Most Interested In?',
+                'How do you usually choose where to eat? (Select up to 2)',
                 style: TextStyle(
                   fontFamily: 'Nunito-Sans',
                   color: AppColors.lightGrey,
@@ -159,10 +161,10 @@ class Preference3 extends StatelessWidget {
                   fontSize: 20,
                   textColor: Colors.white,
                   ontapp: () {
-                    if (controller.selectedPreferences3.length < 1) {
+                    if (controller.selectedPreferences3.length < 2) {
                       Get.snackbar(
                         'Selection Incomplete',
-                        'Please select at least 1 preference to proceed.',
+                        'Please select at least 2 preference to proceed.',
                         backgroundColor: AppColors.primaryColor,
                         colorText: Colors.white,
                         snackPosition: SnackPosition.TOP,
@@ -172,8 +174,8 @@ class Preference3 extends StatelessWidget {
                     } else {
                       final signupController = Get.put(SignupController());
                       signupController.updateUserData(
-                          field: 'interestedDeals',
-                          entry: controller.selectedPreferences3.first);
+                          field: 'whereToEat',
+                          entry: controller.selectedPreferences3);
                       Get.to(() => Preference4());
                     }
                   },

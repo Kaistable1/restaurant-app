@@ -12,20 +12,14 @@ class UserModel {
   String userID;
   RxString userImage;
   List<String> topThreeCuisines = [];
-  String dietaryPref = '';
-  String interestedDeals = '';
-  List<String> prefRestSettingList = [];
-  List<String> notifyLiveEntertainment = [];
-  String notifyDiningOpportunities = '';
-  String notifyHappyHour = '';
-  String restaurantReviewImp = '';
-  String enjoyDiningRestEnter = '';
-  String attendingHolidays = '';
-  String enjoyDiningActivities = '';
-  String favTypeOfLiveMusic = '';
-  TextEditingController zipCode;
-  String country = '';
-  String city = '';
+  List<String> dietaryPrefList = [];
+  List<String> whereToEat = [];
+  List<String> impDiningOut = [];
+  List<String> diningExp = [];
+  List<String> willingToTravel = [];
+  List<String> notificationType = [];
+  String planner = '';
+  String notifiedDiningOpp = '';
 
   // Constructor
   UserModel({
@@ -36,7 +30,6 @@ class UserModel {
     this.token,
     required this.userID,
     required this.userImage,
-    required this.zipCode,
   });
 
   // Factory method to initialize with default values
@@ -48,7 +41,6 @@ class UserModel {
       confirmpass: TextEditingController(),
       userID: '',
       userImage: ''.obs,
-      zipCode: TextEditingController(),
     );
   }
 
@@ -63,20 +55,14 @@ class UserModel {
       'userID': userID,
       'userImage': userImage.value,
       'topThreeCuisines': topThreeCuisines,
-      'dietaryPref': dietaryPref,
-      'interestedDeals': interestedDeals,
-      'prefRestSettingList': prefRestSettingList,
-      'notifyLiveEntertainment': notifyLiveEntertainment,
-      'notifyDiningOpportunities': notifyDiningOpportunities,
-      'notifyHappyHour': notifyHappyHour,
-      'restaurantReviewImp': restaurantReviewImp,
-      'enjoyDiningRestEnter': enjoyDiningRestEnter,
-      'attendingHolidays': attendingHolidays,
-      'enjoyDiningActivities': enjoyDiningActivities,
-      'favTypeOfLiveMusic': favTypeOfLiveMusic,
-      'zipCode': zipCode.text,
-      'country': country,
-      'city': city,
+      'dietaryPrefList': dietaryPrefList,
+      'whereToEat': whereToEat,
+      'impDiningOut': impDiningOut,
+      'diningExp': diningExp,
+      'willingToTravel': willingToTravel,
+      'notificationType': notificationType,
+      'planner': planner,
+      'notifiedDiningOpp': notifiedDiningOpp,
     };
   }
 
@@ -90,28 +76,12 @@ class UserModel {
       token: map['token'],
       userID: map['userID'] ?? '',
       userImage: RxString(map['userImage'] ?? ''),
-      zipCode: TextEditingController(text: map['zipCode'] ?? ''),
-    )
-      ..topThreeCuisines = List<String>.from(map['topThreeCuisines'] ?? [])
-      ..dietaryPref = map['dietaryPref'] ?? ''
-      ..interestedDeals = map['interestedDeals'] ?? ''
-      ..prefRestSettingList =
-          List<String>.from(map['prefRestSettingList'] ?? [])
-      ..notifyLiveEntertainment =
-          List<String>.from(map['notifyLiveEntertainment'] ?? [])
-      ..notifyDiningOpportunities = map['notifyDiningOpportunities'] ?? ''
-      ..notifyHappyHour = map['notifyHappyHour'] ?? ''
-      ..restaurantReviewImp = map['restaurantReviewImp'] ?? ''
-      ..enjoyDiningRestEnter = map['enjoyDiningRestEnter'] ?? ''
-      ..attendingHolidays = map['attendingHolidays'] ?? ''
-      ..enjoyDiningActivities = map['enjoyDiningActivities'] ?? ''
-      ..favTypeOfLiveMusic = map['favTypeOfLiveMusic'] ?? ''
-      ..country = map['country'] ?? ''
-      ..city = map['city'] ?? '';
+    )..topThreeCuisines = List<String>.from(map['topThreeCuisines'] ?? []);
   }
 
   // Create a model instance from a Firestore DocumentSnapshot
-  factory UserModel.fromDocumentSnapshot(DocumentSnapshot<Map<String, dynamic>> doc) {
+  factory UserModel.fromDocumentSnapshot(
+      DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data()!;
     return UserModel(
       userEmail: TextEditingController(text: data['userEmail'] ?? ''),
@@ -119,23 +89,9 @@ class UserModel {
       username: TextEditingController(text: data['username'] ?? ''),
       confirmpass: TextEditingController(text: data['confirmpass'] ?? ''),
       token: data['token'],
-      userID: data['userID'] ?? doc.id, // Fallback to document ID if userID is missing
+      userID: data['userID'] ??
+          doc.id, // Fallback to document ID if userID is missing
       userImage: RxString(data['userImage'] ?? ''),
-      zipCode: TextEditingController(text: data['zipCode'] ?? ''),
-    )
-      ..topThreeCuisines = List<String>.from(data['topThreeCuisines'] ?? [])
-      ..dietaryPref = data['dietaryPref'] ?? ''
-      ..interestedDeals = data['interestedDeals'] ?? ''
-      ..prefRestSettingList = List<String>.from(data['prefRestSettingList'] ?? [])
-      ..notifyLiveEntertainment = List<String>.from(data['notifyLiveEntertainment'] ?? [])
-      ..notifyDiningOpportunities = data['notifyDiningOpportunities'] ?? ''
-      ..notifyHappyHour = data['notifyHappyHour'] ?? ''
-      ..restaurantReviewImp = data['restaurantReviewImp'] ?? ''
-      ..enjoyDiningRestEnter = data['enjoyDiningRestEnter'] ?? ''
-      ..attendingHolidays = data['attendingHolidays'] ?? ''
-      ..enjoyDiningActivities = data['enjoyDiningActivities'] ?? ''
-      ..favTypeOfLiveMusic = data['favTypeOfLiveMusic'] ?? ''
-      ..country = data['country'] ?? ''
-      ..city = data['city'] ?? '';
+    )..topThreeCuisines = List<String>.from(data['topThreeCuisines'] ?? []);
   }
 }

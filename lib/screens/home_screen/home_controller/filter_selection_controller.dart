@@ -22,6 +22,7 @@ class FilterSelectionController extends GetxController {
   final selectedDietary = <String>[].obs;
   final selectedPriceRange = <String>[].obs;
   final selectedTimeOfDay = <String>[].obs;
+  final selectedTrending = <String>[].obs;
   void clearAll() {
     selectedCountry.value = ''; // Clear selected country
     selectedCity.value = ''; // Clear selected city

@@ -108,7 +108,7 @@ class HomeFilterController extends GetxController {
     // Fetch all restaurants
     QuerySnapshot restaurantsSnapshot = await firestore
         .collection('restaurants')
-        .where('city', isEqualTo: city)
+        // .where('city', isEqualTo: city)
         .get();
 
     // Map to hold address as key and list of restaurants as value

@@ -16,6 +16,8 @@ class Preference2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    controller.fetchUserPreferences();
+
     final formKey = GlobalKey<FormState>();
     return Scaffold(
       backgroundColor: AppColors.bgColor,
@@ -65,7 +67,7 @@ class Preference2 extends StatelessWidget {
             padding: const EdgeInsets.only(right: 12.0),
             child: Center(
               child: Text(
-                '2/14',
+                '2/9',
                 style: TextStyle(
                   fontSize: 12,
                   fontFamily: 'Nunito-Sans',
@@ -200,11 +202,11 @@ class Preference2 extends StatelessWidget {
                           controller.selectedPreferences2
                               .add(controller.screen2Controller.text);
                         }
-                     
+
                         final signupController = Get.put(SignupController());
                         signupController.updateUserData(
-                            field: 'dietaryPref',
-                            entry: controller.selectedPreferences2.last);
+                            field: 'dietaryPrefList',
+                            entry: controller.selectedPreferences2);
                         Get.to(() => Preference3());
                       }
                     },

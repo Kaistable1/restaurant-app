@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
 import 'package:kaistable_website/screens/auth_screens/signup/controller/signup_controller.dart';
-import 'package:kaistable_website/screens/general_preferences/screens_general/preference_10.dart';
+import 'package:kaistable_website/screens/home_screen/my_home_screen.dart';
+import 'package:kaistable_website/screens/nav_bar/main_screen.dart';
 
 import '../../../custom_widget/separate_text_field.dart';
 import '../../../widgets/custom_button.dart';
@@ -51,7 +52,7 @@ class Preference9 extends StatelessWidget {
           ),
         ),
         title: Text(
-          'Entertainment & Event',
+          'General Preferences',
           style: TextStyle(
             fontSize: 20,
             color: AppColors.bottomSheetColor,
@@ -65,7 +66,7 @@ class Preference9 extends StatelessWidget {
             padding: const EdgeInsets.only(right: 12.0),
             child: Center(
               child: Text(
-                '9/14',
+                '9/9',
                 style: TextStyle(
                   fontSize: 12,
                   fontFamily: 'Nunito-Sans',
@@ -87,7 +88,7 @@ class Preference9 extends StatelessWidget {
                 height: 8,
               ),
               Text(
-                'Do You Enjoy Attending Seasonal Or Holiday Events At Restaurants?',
+                'How often would you like to be notified about dining opportunities?',
                 style: TextStyle(
                   fontFamily: 'Nunito-Sans',
                   color: AppColors.lightGrey,
@@ -173,9 +174,11 @@ class Preference9 extends StatelessWidget {
                     } else {
                       final signupController = Get.put(SignupController());
                       signupController.updateUserData(
-                          field: 'attendingHolidays',
-                          entry: controller.selectedPreferences9.first);
-                      Get.to(() => Preference10());
+                          field: 'notifiedDiningOpp',
+                          entry: controller.selectedPreferences9.last);
+                      Get.offAll(
+                        () => MainScreen(),
+                      );
                     }
                   },
                 ),

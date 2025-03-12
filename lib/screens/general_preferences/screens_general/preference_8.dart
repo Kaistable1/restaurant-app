@@ -16,6 +16,8 @@ class Preference8 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    controller.fetchUserPreferences();
+
     final formKey = GlobalKey<FormState>();
     return Scaffold(
       backgroundColor: AppColors.bgColor,
@@ -52,7 +54,7 @@ class Preference8 extends StatelessWidget {
           ),
         ),
         title: Text(
-          'Entertainment & Event',
+          'General Preferences',
           style: TextStyle(
             fontSize: 20,
             color: AppColors.bottomSheetColor,
@@ -66,7 +68,7 @@ class Preference8 extends StatelessWidget {
             padding: const EdgeInsets.only(right: 12.0),
             child: Center(
               child: Text(
-                '8/14',
+                '8/9',
                 style: TextStyle(
                   fontSize: 12,
                   fontFamily: 'Nunito-Sans',
@@ -90,24 +92,12 @@ class Preference8 extends StatelessWidget {
                   height: 8,
                 ),
                 Text(
-                  'What Type Of Live Entertainment Would You Like To Be Notified About?',
+                  'What type of notifications would you like to receive? ',
                   style: TextStyle(
                     fontFamily: 'Nunito-Sans',
                     color: AppColors.lightGrey,
                     fontWeight: FontWeight.w600,
                     fontSize: 16,
-                  ),
-                ),
-                SizedBox(
-                  height: 4,
-                ),
-                Text(
-                  '(Choose up to 2)',
-                  style: TextStyle(
-                    fontFamily: 'Nunito-Sans',
-                    color: AppColors.lightGrey,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 14,
                   ),
                 ),
                 SizedBox(
@@ -197,10 +187,10 @@ class Preference8 extends StatelessWidget {
                           );
                           return;
                         }
-                        if (controller.selectedPreferences8.length < 2) {
+                        if (controller.selectedPreferences8.length < 1) {
                           Get.snackbar(
                             'Selection Incomplete',
-                            'Please select at least 2 preferences to proceed.',
+                            'Please select at least 1 preferences to proceed.',
                             backgroundColor: AppColors.primaryColor,
                             colorText: Colors.white,
                             snackPosition: SnackPosition.TOP,
@@ -215,7 +205,7 @@ class Preference8 extends StatelessWidget {
                         }
                         final signupController = Get.put(SignupController());
                         signupController.updateUserData(
-                            field: 'notifyLiveEntertainment',
+                            field: 'notificationType',
                             entry: controller.selectedPreferences8);
                         Get.to(() => Preference9());
                       }

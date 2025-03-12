@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/models/usermodel.dart';
+import 'package:kaistable_website/screens/general_preferences/screens_general/preference_1.dart';
 import 'package:kaistable_website/splash_screen/splashscreen.dart';
 import 'package:kaistable_website/widgets/global_functions.dart';
 import 'package:shared_preferences/shared_preferences.dart';

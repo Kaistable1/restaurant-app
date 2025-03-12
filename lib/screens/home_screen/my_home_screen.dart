@@ -470,8 +470,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                           return isCityMatched;
                                         }).toList();
                                       }
-                                      print(filterSelectionController
-                                          .selectedDiscounts);
+                                   
                                       // Filter by Discounts
                                       if (filterSelectionController
                                           .selectedDiscounts.isNotEmpty) {

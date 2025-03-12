@@ -97,9 +97,7 @@ class LocationScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
-                      isOnboarding
-                          ? onboradingController.selectedCity.value ?? ''
-                          : currentUserDataModel?.value.city ?? "",
+                     '',
                       style: TextStyle(
                         color: AppColors.primaryColor,
                         fontFamily: 'aftika-regular',
@@ -184,9 +182,7 @@ class LocationScreen extends StatelessWidget {
                     SizedBox(height: 12),
                     StreamBuilder(
                       stream: homeController.getRestaurants(
-                        city: isOnboarding
-                            ? onboradingController.selectedCity.value ?? ''
-                            : currentUserDataModel?.value.city ?? "",
+                       
                       ),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==

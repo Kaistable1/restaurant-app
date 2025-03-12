@@ -2,6 +2,9 @@ import 'dart:ffi';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'dart:ffi';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class RestaurantModel {
   String resName;
   String docID;
@@ -27,7 +30,12 @@ class RestaurantModel {
   List<EntertainmentScheduleModel> entertainmentScheduleList;
   MenuModel menuList;
   String about;
-  String country;  // New field added
+  String country;
+  // New Fields
+  String facebookLink;
+  String instaLink;
+  String xLink;
+  String youtubeLink;
 
   // Constructor
   RestaurantModel({
@@ -55,7 +63,12 @@ class RestaurantModel {
     required this.spokenLanguage,
     required this.about,
     required this.createdAt,
-    required this.country,  // Initialize in constructor
+    required this.country,
+    // New Fields
+    required this.facebookLink,
+    required this.instaLink,
+    required this.xLink,
+    required this.youtubeLink,
   });
 
   // Initialize the model with defaults
@@ -85,11 +98,15 @@ class RestaurantModel {
       menuList: MenuModel.initialize(),
       about: '',
       createdAt: DateTime.now(),
-      country: '', // Default to empty string for country
+      country: '',
+      facebookLink: '',
+      instaLink: '',
+      xLink: '',
+      youtubeLink: '',
     );
   }
 
-  // Convert the model instance to a map for Firestore
+  // Convert to Map
   Future<Map<String, dynamic>> toMap() async {
     logoImage = '';
     List<Map<String, dynamic>> data = [];
@@ -124,11 +141,16 @@ class RestaurantModel {
       'priceRange': priceRange,
       'about': about,
       'createdAt': createdAt.toIso8601String(),
-      'country': country, // Add country to Firestore map
+      'country': country,
+      // New Fields
+      'facebookLink': facebookLink,
+      'instaLink': instaLink,
+      'xLink': xLink,
+      'youtubeLink': youtubeLink,
     };
   }
 
-  // Create a model instance from a DocumentSnapshot
+  // From Firestore Document
   static RestaurantModel fromDocumentSnapshot(
       DocumentSnapshot<Map<String, dynamic>> snapshot) {
     final data = snapshot.data()!;
@@ -164,7 +186,12 @@ class RestaurantModel {
         ),
       ),
       menuList: MenuModel.initialize(),
-      country: data['country'] ?? '', // Fetch country from Firestore
+      country: data['country'] ?? '',
+      // New Fields
+      facebookLink: data['facebookLink'] ?? '',
+      instaLink: data['instaLink'] ?? '',
+      xLink: data['xLink'] ?? '',
+      youtubeLink: data['youtubeLink'] ?? '',
     );
   }
 }

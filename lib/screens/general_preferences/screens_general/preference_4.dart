@@ -16,6 +16,8 @@ class Preference4 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    controller.fetchUserPreferences();
+
     return Scaffold(
       backgroundColor: AppColors.bgColor,
       appBar: AppBar(
@@ -51,7 +53,7 @@ class Preference4 extends StatelessWidget {
           ),
         ),
         title: Text(
-          'Dining Experience Preferences',
+          'General Preferences',
           style: TextStyle(
             fontSize: 17,
             color: AppColors.bottomSheetColor,
@@ -64,7 +66,7 @@ class Preference4 extends StatelessWidget {
             padding: const EdgeInsets.only(right: 12.0),
             child: Center(
               child: Text(
-                '4/14',
+                '4/9',
                 style: TextStyle(
                   fontSize: 12,
                   fontFamily: 'Nunito-Sans',
@@ -86,24 +88,12 @@ class Preference4 extends StatelessWidget {
                 height: 8,
               ),
               Text(
-                'What Type Of Restaurant Settings Do You Prefer?',
+                'Are you more of a planner or a spontaneous diner?',
                 style: TextStyle(
                   fontFamily: 'Nunito-Sans',
                   color: AppColors.lightGrey,
                   fontWeight: FontWeight.w600,
                   fontSize: 16,
-                ),
-              ),
-              SizedBox(
-                height: 4,
-              ),
-              Text(
-                '(Choose any 2)',
-                style: TextStyle(
-                  fontFamily: 'Nunito-Sans',
-                  color: AppColors.lightGrey,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14,
                 ),
               ),
               SizedBox(
@@ -171,10 +161,10 @@ class Preference4 extends StatelessWidget {
                   fontSize: 20,
                   textColor: Colors.white,
                   ontapp: () {
-                    if (controller.selectedPreferences4.length < 2) {
+                    if (controller.selectedPreferences4.length < 1) {
                       Get.snackbar(
                         'Selection Incomplete',
-                        'Please select at least 2 preferences to proceed.',
+                        'Please select at least 1 preferences to proceed.',
                         backgroundColor: AppColors.primaryColor,
                         colorText: Colors.white,
                         snackPosition: SnackPosition.TOP,
@@ -184,8 +174,8 @@ class Preference4 extends StatelessWidget {
                     } else {
                       final signupController = Get.put(SignupController());
                       signupController.updateUserData(
-                          field: 'prefRestSettingList',
-                          entry: controller.selectedPreferences4);
+                          field: 'planner',
+                          entry: controller.selectedPreferences4.last);
                       Get.to(() => Preference5());
                     }
                   },

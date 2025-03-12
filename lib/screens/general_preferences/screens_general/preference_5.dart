@@ -16,6 +16,7 @@ class Preference5 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    controller.fetchUserPreferences();
     return Scaffold(
       backgroundColor: AppColors.bgColor,
       appBar: AppBar(
@@ -51,7 +52,7 @@ class Preference5 extends StatelessWidget {
           ),
         ),
         title: Text(
-          'User Behavior Preferences',
+          'General Preferences',
           style: TextStyle(
             fontSize: 19,
             color: AppColors.bottomSheetColor,
@@ -64,7 +65,7 @@ class Preference5 extends StatelessWidget {
             padding: const EdgeInsets.only(right: 12.0),
             child: Center(
               child: Text(
-                '5/14',
+                '5/9',
                 style: TextStyle(
                   fontSize: 12,
                   fontFamily: 'Nunito-Sans',
@@ -86,7 +87,7 @@ class Preference5 extends StatelessWidget {
                 height: 8,
               ),
               Text(
-                'How Often Would You Like To Be Notified About Dining Opportunities?',
+                'What’s most important to you when dining out? (Rank in order of importance 1-6)',
                 style: TextStyle(
                   fontFamily: 'Nunito-Sans',
                   color: AppColors.lightGrey,
@@ -172,8 +173,8 @@ class Preference5 extends StatelessWidget {
                     } else {
                       final signupController = Get.put(SignupController());
                       signupController.updateUserData(
-                          field: 'notifyDiningOpportunities',
-                          entry: controller.selectedPreferences5.first);
+                          field: 'impDiningOut',
+                          entry: controller.selectedPreferences5);
                       Get.to(() => Preference6());
                     }
                   },

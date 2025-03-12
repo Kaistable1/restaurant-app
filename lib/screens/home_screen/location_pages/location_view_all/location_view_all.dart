@@ -131,9 +131,7 @@ class LocationViewAll extends StatelessWidget {
               SizedBox(height: 16),
               FutureBuilder(
                 future: filterController.getRestaurantsGroupedByAddress(
-                  city: isOnboarding
-                      ? onboradingController.selectedCity.value
-                      : currentUserDataModel?.value.city,
+                 
                 ),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {

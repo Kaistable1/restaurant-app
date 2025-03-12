@@ -35,73 +35,38 @@ class GeneralPreferencesController extends GetxController {
       if (userDoc.exists) {
         Map<String, dynamic> data = userDoc.data() as Map<String, dynamic>;
 
-        // print("Fetched User Data: $data"); // Debugging
         selectedPreferences.value =
             List<String>.from(data["topThreeCuisines"] ?? []);
 
-        selectedPreferences2.value = data["dietaryPref"] is List
-            ? List<String>.from(data["dietaryPref"])
-            : [data["dietaryPref"] ?? ''];
+        selectedPreferences2.value = data["dietaryPrefList"] is List
+            ? List<String>.from(data["dietaryPrefList"])
+            : [data["dietaryPrefList"] ?? ''];
+        selectedPreferences3.value = data["whereToEat"] is List
+            ? List<String>.from(data["whereToEat"])
+            : [data["whereToEat"] ?? ''];
 
-        selectedPreferences3.value = data["interestedDeals"] is List
-            ? List<String>.from(data["interestedDeals"])
-            : [data["interestedDeals"] ?? ''];
+        selectedPreferences4.value = data["planner"] is List
+            ? List<String>.from(data["planner"])
+            : [data["planner"] ?? ''];
 
-        selectedPreferences4.value =
-            List<String>.from(data["prefRestSettingList"] ?? []);
+        selectedPreferences5.value = data["impDiningOut"] is List
+            ? List<String>.from(data["impDiningOut"])
+            : [data["impDiningOut"] ?? ''];
 
-        selectedPreferences5.value = data["notifyDiningOpportunities"] is List
-            ? List<String>.from(data["notifyDiningOpportunities"])
-            : [data["notifyDiningOpportunities"] ?? ''];
+        selectedPreferences6.value = data["diningExp"] is List
+            ? List<String>.from(data["diningExp"])
+            : [data["diningExp"] ?? ''];
 
-        selectedPreferences6.value = data["restaurantReviewImp"] is List
-            ? List<String>.from(data["restaurantReviewImp"])
-            : [data["restaurantReviewImp"] ?? ''];
-
-        selectedPreferences7.value = data["enjoyDiningRestEnter"] is List
-            ? List<String>.from(data["enjoyDiningRestEnter"])
-            : [data["enjoyDiningRestEnter"] ?? ''];
+        selectedPreferences7.value = data["willingToTravel"] is List
+            ? List<String>.from(data["willingToTravel"])
+            : [data["willingToTravel"] ?? ''];
 
         selectedPreferences8.value =
-            List<String>.from(data["notifyLiveEntertainment"] ?? []);
+            List<String>.from(data["notificationType"] ?? []);
 
-        selectedPreferences9.value = data["attendingHolidays"] is List
-            ? List<String>.from(data["attendingHolidays"])
-            : [data["attendingHolidays"] ?? ''];
-
-        selectedPreferences10.value = data["enjoyDiningActivities"] is List
-            ? List<String>.from(data["enjoyDiningActivities"])
-            : [data["enjoyDiningActivities"] ?? ''];
-
-        selectedPreferences11.value = data["notifyHappyHour"] is List
-            ? List<String>.from(data["notifyHappyHour"])
-            : [data["notifyHappyHour"] ?? ''];
-
-        selectedPreferences12.value = data["favTypeOfLiveMusic"] is List
-            ? List<String>.from(data["favTypeOfLiveMusic"])
-            : [data["favTypeOfLiveMusic"] ?? ''];
-
-        zipCodeController.text = data["zipCode"] ?? '';
-        selectedCountry.value = data["country"] ?? '';
-        selectedCity.value = data["city"] ?? '';
-        if (selectedPreferences.contains('Other')) {
-          screen1Controller.text = selectedPreferences.last;
-        }
-        if (selectedPreferences2.contains('Other')) {
-          screen2Controller.text = selectedPreferences2.last;
-        }
-        if (selectedPreferences3.contains('Other')) {
-          screen3Controller.text = selectedPreferences3.last;
-        }
-        if (selectedPreferences4.contains('Other')) {
-          screen4Controller.text = selectedPreferences4.last;
-        }
-        if (selectedPreferences5.contains('Other')) {
-          screen4Controller.text = selectedPreferences5.last;
-        }
-        if (selectedPreferences8.contains('Other')) {
-          screen8Controller.text = selectedPreferences8.last;
-        }
+        selectedPreferences9.value = data["notifiedDiningOpp"] is List
+            ? List<String>.from(data["notifiedDiningOpp"])
+            : [data["notifiedDiningOpp"] ?? ''];
       } else {
         print("User document does not exist");
       }
@@ -111,13 +76,21 @@ class GeneralPreferencesController extends GetxController {
   }
 
   final preferences = [
-    {
-      "name": "Private Dining Rooms",
-      "image": "assets/images/dinning_image..png"
-    },
-    {"name": "Outdoor Seating", "image": "assets/images/dinning_image..png"},
-    {"name": "Family Friendly", "image": "assets/images/dinning_image..png"},
-    {"name": "Other", "image": "assets/images/dinning_image..png"},
+    {"name": "American", "image": "assets/images/dinning_image..png"},
+    {"name": "Caribbean", "image": "assets/images/dinning_image..png"},
+    {"name": "Chinese", "image": "assets/images/dinning_image..png"},
+    {"name": "Creole/Cajun", "image": "assets/images/dinning_image..png"},
+    {"name": "Ethiopian", "image": "assets/images/dinning_image..png"},
+    {"name": "French", "image": "assets/images/dinning_image..png"},
+    {"name": "Greek", "image": "assets/images/dinning_image..png"},
+    {"name": "Indian", "image": "assets/images/dinning_image..png"},
+    {"name": "Italian", "image": "assets/images/dinning_image..png"},
+    {"name": "Japanese", "image": "assets/images/dinning_image..png"},
+    {"name": "Mexican", "image": "assets/images/dinning_image..png"},
+    {"name": "Middle Eastern", "image": "assets/images/dinning_image..png"},
+    {"name": "Southern", "image": "assets/images/dinning_image..png"},
+    {"name": "Thai", "image": "assets/images/dinning_image..png"},
+    {"name": "Vietnamese", "image": "assets/images/dinning_image..png"},
   ];
 
   var selectedPreferences = <String>[].obs;
@@ -136,19 +109,25 @@ class GeneralPreferencesController extends GetxController {
   void toggleSelection2(String name) {
     if (selectedPreferences2.contains(name)) {
       selectedPreferences2.remove(name);
-    } else if (selectedPreferences2.length < 1) {
+    } else
+    // if (selectedPreferences2.length < 1)
+    {
       selectedPreferences2.add(name);
     }
   }
 
   final preferences2 = [
-    {"name": "None", "image": "assets/images/dinning_image..png"},
+    {
+      "name": "Vegan & Plant-Based",
+      "image": "assets/images/dinning_image..png"
+    },
     {"name": "Vegetarian", "image": "assets/images/dinning_image..png"},
-    {"name": "Vegan", "image": "assets/images/dinning_image..png"},
     {"name": "Gluten-Free", "image": "assets/images/dinning_image..png"},
-    {"name": "Halal", "image": "assets/images/dinning_image..png"},
-    {"name": "Kosher", "image": "assets/images/dinning_image..png"},
-    {"name": "Other", "image": "assets/images/dinning_image..png"},
+    {"name": "Pescatarian", "image": "assets/images/dinning_image..png"},
+    {"name": "Flexitarian", "image": "assets/images/dinning_image..png"},
+    {"name": "Raw Food", "image": "assets/images/dinning_image..png"},
+    {"name": "Keto", "image": "assets/images/dinning_image..png"},
+    {"name": "Paleo", "image": "assets/images/dinning_image..png"},
   ];
 
   ///------------------------------------------------------------------------///
@@ -158,26 +137,30 @@ class GeneralPreferencesController extends GetxController {
   void toggleSelection3(String name) {
     if (selectedPreferences3.contains(name)) {
       selectedPreferences3.remove(name);
-    } else if (selectedPreferences3.length < 1) {
+    } else if (selectedPreferences3.length < 3) {
       selectedPreferences3.add(name);
     }
   }
 
   final preferences3 = [
     {
-      "name": "Discounts Off The Bill",
+      "name": "Recommendations from friends/family",
       "image": "assets/images/dinning_image..png"
     },
     {
-      "name": "Buy One, Get One Free",
+      "name": "Online reviews & ratings",
       "image": "assets/images/dinning_image..png"
     },
     {
-      "name": "Happy Hour Specials",
+      "name": "Social media posts & food influencers",
       "image": "assets/images/dinning_image..png"
     },
     {
-      "name": "Set Menus Or Combo Deals",
+      "name": "Special promotions & discounts",
+      "image": "assets/images/dinning_image..png"
+    },
+    {
+      "name": "Restaurant ambiance & atmosphere",
       "image": "assets/images/dinning_image..png"
     },
   ];
@@ -189,24 +172,21 @@ class GeneralPreferencesController extends GetxController {
   void toggleSelection4(String name) {
     if (selectedPreferences4.contains(name)) {
       selectedPreferences4.remove(name);
-    } else if (selectedPreferences4.length < 2) {
+    } else if (selectedPreferences4.length < 1) {
       selectedPreferences4.add(name);
     }
   }
 
   final preferences4 = [
-    {"name": "Casual Dinning", "image": "assets/images/dinning_image..png"},
-    {"name": "Fine Dinning", "image": "assets/images/dinning_image..png"},
-    {"name": "Outdoor Seating", "image": "assets/images/dinning_image..png"},
     {
-      "name": "Family Friendly Dinning",
+      "name": "I plan my meals in advance",
       "image": "assets/images/dinning_image..png"
     },
-    {"name": "Group Dinning", "image": "assets/images/dinning_image..png"},
     {
-      "name": "Themed Or Unique Dining Experiences",
+      "name": "I like to go with the flow and decide last minute",
       "image": "assets/images/dinning_image..png"
     },
+    {"name": "A mix of both", "image": "assets/images/dinning_image..png"},
   ];
 
   ///------------------------------------------------------------------------///
@@ -216,15 +196,21 @@ class GeneralPreferencesController extends GetxController {
   void toggleSelection5(String name) {
     if (selectedPreferences5.contains(name)) {
       selectedPreferences5.remove(name);
-    } else if (selectedPreferences5.length < 1) {
+    } else if (selectedPreferences5.length < 7) {
       selectedPreferences5.add(name);
     }
   }
 
   final preferences5 = [
-    {"name": "Daily", "image": "assets/images/dinning_image..png"},
-    {"name": "Weekly", "image": "assets/images/dinning_image..png"},
-    {"name": "Occasionally", "image": "assets/images/dinning_image..png"},
+    {"name": "Food quality", "image": "assets/images/dinning_image..png"},
+    {"name": "Service", "image": "assets/images/dinning_image..png"},
+    {"name": "Atmosphere & decor", "image": "assets/images/dinning_image..png"},
+    {
+      "name": "Entertainment (live music, DJs, etc.)",
+      "image": "assets/images/dinning_image..png"
+    },
+    {"name": "Pricing & discount", "image": "assets/images/dinning_image..png"},
+    {"name": "Location/Proximity", "image": "assets/images/dinning_image..png"},
   ];
 
   ///------------------------------------------------------------------------///
@@ -234,15 +220,20 @@ class GeneralPreferencesController extends GetxController {
   void toggleSelection6(String name) {
     if (selectedPreferences6.contains(name)) {
       selectedPreferences6.remove(name);
-    } else if (selectedPreferences6.length < 1) {
+    } else {
       selectedPreferences6.add(name);
     }
   }
 
   final preferences6 = [
-    {"name": "Very Important", "image": "assets/images/dinning_image..png"},
-    {"name": "Somewhat Important", "image": "assets/images/dinning_image..png"},
-    {"name": "Not Important", "image": "assets/images/dinning_image..png"},
+    {"name": "Cozy & intimate", "image": "assets/images/dinning_image..png"},
+    {"name": "Trendy & social", "image": "assets/images/dinning_image..png"},
+    {
+      "name": "Lively with entertainment",
+      "image": "assets/images/dinning_image..png"
+    },
+    {"name": "Outdoor & scenic", "image": "assets/images/dinning_image..png"},
+    {"name": "Family-friendly", "image": "assets/images/dinning_image..png"},
   ];
 
   ///------------------------------------------------------------------------///
@@ -252,16 +243,17 @@ class GeneralPreferencesController extends GetxController {
   void toggleSelection7(String name) {
     if (selectedPreferences7.contains(name)) {
       selectedPreferences7.remove(name);
-    } else if (selectedPreferences7.length < 1) {
+    } else if (selectedPreferences7.length < 2) {
       selectedPreferences7.add(name);
     }
   }
 
   final preferences7 = [
-    {"name": "Yes, I Love it", "image": "assets/images/dinning_image..png"},
-    {"name": "Occasionally", "image": "assets/images/dinning_image..png"},
+    {"name": "Under 5 miles", "image": "assets/images/dinning_image..png"},
+    {"name": "5-15 miles", "image": "assets/images/dinning_image..png"},
+    {"name": "15-30 miles", "image": "assets/images/dinning_image..png"},
     {
-      "name": "Prefer Quiet Settings",
+      "name": "I’d travel anywhere for an amazing meal",
       "image": "assets/images/dinning_image..png"
     },
   ];
@@ -279,16 +271,26 @@ class GeneralPreferencesController extends GetxController {
   }
 
   final preferences8 = [
-    {"name": "DJs", "image": "assets/images/dinning_image..png"},
-    {"name": "Live Bands", "image": "assets/images/dinning_image..png"},
     {
-      "name": "Acoustic Performances",
+      "name": "New restaurant openings",
       "image": "assets/images/dinning_image..png"
     },
-    {"name": "Karaoke Nights", "image": "assets/images/dinning_image..png"},
-    {"name": "Comedy Shows", "image": "assets/images/dinning_image..png"},
-    {"name": "Trivia Nights", "image": "assets/images/dinning_image..png"},
-    {"name": "Other", "image": "assets/images/dinning_image..png"},
+    {
+      "name": "Happy Hour & special discounts",
+      "image": "assets/images/dinning_image..png"
+    },
+    {
+      "name": "Live entertainment events",
+      "image": "assets/images/dinning_image..png"
+    },
+    {
+      "name": "Personalized dining recommendations",
+      "image": "assets/images/dinning_image..png"
+    },
+    {
+      "name": "No notifications, I prefer browsing on my own",
+      "image": "assets/images/dinning_image..png"
+    },
   ];
 
   ///------------------------------------------------------------------------///
@@ -298,21 +300,15 @@ class GeneralPreferencesController extends GetxController {
   void toggleSelection9(String name) {
     if (selectedPreferences9.contains(name)) {
       selectedPreferences9.remove(name);
-    } else if (selectedPreferences9.length < 1) {
+    } else if (selectedPreferences9.length < 2) {
       selectedPreferences9.add(name);
     }
   }
 
   final preferences9 = [
-    {"name": "Yes, I Love Them", "image": "assets/images/dinning_image..png"},
-    {
-      "name": "Occasionally, For Major Holidays",
-      "image": "assets/images/dinning_image..png"
-    },
-    {
-      "name": "No, I Prefer Regular Dinning Experiences",
-      "image": "assets/images/dinning_image..png"
-    },
+    {"name": "Daily", "image": "assets/images/dinning_image..png"},
+    {"name": "Weekly", "image": "assets/images/dinning_image..png"},
+    {"name": "Occasionally", "image": "assets/images/dinning_image..png"},
   ];
 
   ///------------------------------------------------------------------------///

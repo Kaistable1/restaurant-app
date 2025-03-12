@@ -350,7 +350,7 @@ class HomeScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "you May Like This",
+                                "You May Like This",
                                 style: TextStyle(
                                   color: AppColors.bottomSheetColor,
                                   fontFamily: 'aftika-regular',
@@ -426,4 +426,7 @@ class HomeScreen extends StatelessWidget {
           }),
     );
   }
+  
+
+
 }

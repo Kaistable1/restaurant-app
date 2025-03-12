@@ -126,18 +126,6 @@ class FilterController extends GetxController {
       "Hookah",
       "Sip & Paint",
     ],
-    'Trendy & Social': [
-      "TRENDY & SOCIAL",
-      "Rooftop Bar",
-      "Speakeasy",
-      "Live Music Venue",
-      "Jazz Lounge",
-      "Tiki Bar",
-      "Game Bar / Arcade",
-      "Sports Bar",
-      "Wine Bar",
-      "Themed Restaurant",
-    ],
     "Price Range": [
       '\$(Budget-Friendly)',
       '\$\$(Moderate)',

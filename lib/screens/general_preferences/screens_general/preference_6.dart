@@ -16,6 +16,8 @@ class Preference6 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    controller.fetchUserPreferences();
+
     return Scaffold(
       backgroundColor: AppColors.bgColor,
       appBar: AppBar(
@@ -51,7 +53,7 @@ class Preference6 extends StatelessWidget {
           ),
         ),
         title: Text(
-          'User Behavior Preferences',
+          'General Preferences',
           style: TextStyle(
             fontSize: 19,
             color: AppColors.bottomSheetColor,
@@ -64,7 +66,7 @@ class Preference6 extends StatelessWidget {
             padding: const EdgeInsets.only(right: 12.0),
             child: Center(
               child: Text(
-                '6/14',
+                '6/9',
                 style: TextStyle(
                   fontSize: 12,
                   fontFamily: 'Nunito-Sans',
@@ -86,7 +88,7 @@ class Preference6 extends StatelessWidget {
                 height: 8,
               ),
               Text(
-                'How Important Are Restaurant Reviews In Your Decision-Making?',
+                'What kind of dining experiences do you enjoy the most?',
                 style: TextStyle(
                   fontFamily: 'Nunito-Sans',
                   color: AppColors.lightGrey,
@@ -172,8 +174,8 @@ class Preference6 extends StatelessWidget {
                     } else {
                       final signupController = Get.put(SignupController());
                       signupController.updateUserData(
-                          field: 'restaurantReviewImp',
-                          entry: controller.selectedPreferences6.first);
+                          field: 'diningExp',
+                          entry: controller.selectedPreferences6);
                       Get.to(() => Preference7());
                     }
                   },
