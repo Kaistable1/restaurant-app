@@ -98,55 +98,7 @@ class Preference5 extends StatelessWidget {
               SizedBox(
                 height: 16,
               ),
-              ListView.builder(
-                padding: EdgeInsets.zero,
-                shrinkWrap: true,
-                primary: false,
-                itemCount: controller.preferences5.length,
-                itemBuilder: (context, index) {
-                  final preference = controller.preferences5[index];
-                  return Obx(() {
-                    final isSelected = controller.selectedPreferences5
-                        .contains(preference["name"]);
-                    final isOther = preference["name"] == "Other";
-
-                    return GestureDetector(
-                      onTap: () =>
-                          controller.toggleSelection5(preference["name"]!),
-                      child: isOther && isSelected
-                          ? Container(
-                              height: 66,
-                              width: Get.width,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
-                                    spreadRadius: 1,
-                                    blurRadius: 6,
-                                    offset: Offset(0, 3),
-                                  ),
-                                ],
-                              ),
-                              child: Center(
-                                child: CustomSeparateTextField(
-                                  hintText: 'Enter text',
-                                  controller: controller.screen4Controller,
-                                  keyboardType: TextInputType.name,
-                                  isShadow: false,
-                                ),
-                              ),
-                            )
-                          : PreferencesSelectionWidget(
-                              name: preference["name"]!,
-                              dinningImage: preference["image"]!,
-                              isSelected: isSelected,
-                            ),
-                    );
-                  });
-                },
-              ),
+              prefList(),
               SizedBox(
                 height: 24,
               ),
@@ -187,6 +139,83 @@ class Preference5 extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  ListView prefList() {
+    return ListView.builder(
+      padding: EdgeInsets.zero,
+      shrinkWrap: true,
+      primary: false,
+      itemCount: controller.preferences5.length,
+      itemBuilder: (context, index) {
+        final preference = controller.preferences5[index];
+        return Obx(() {
+          final isSelected =
+              controller.selectedPreferences5.contains(preference["name"]);
+          final isOther = preference["name"] == "Other";
+
+          // Get the selection number (index in selected list + 1)
+          final selectionNumber =
+              controller.selectedPreferences5.indexOf(preference["name"]) + 1;
+
+          return GestureDetector(
+            onTap: () => controller.toggleSelection5(preference["name"]!),
+            child: isOther && isSelected
+                ? Container(
+                    height: 66,
+                    width: Get.width,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 1,
+                          blurRadius: 6,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: CustomSeparateTextField(
+                        hintText: 'Enter text',
+                        controller: controller.screen4Controller,
+                        keyboardType: TextInputType.name,
+                        isShadow: false,
+                      ),
+                    ),
+                  )
+                : Stack(
+                    children: [
+                      PreferencesSelectionWidget(
+                        name: preference["name"]!,
+                        dinningImage: preference["image"]!,
+                        isSelected: isSelected,
+                      ),
+                      // Show selection number if selected
+                      if (isSelected)
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: CircleAvatar(
+                            radius: 12,
+                            backgroundColor: Colors.red,
+                            child: Text(
+                              '$selectionNumber',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+          );
+        });
+      },
     );
   }
 }

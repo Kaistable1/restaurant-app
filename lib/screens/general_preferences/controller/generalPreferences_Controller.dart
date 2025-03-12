@@ -40,33 +40,33 @@ class GeneralPreferencesController extends GetxController {
 
         selectedPreferences2.value = data["dietaryPrefList"] is List
             ? List<String>.from(data["dietaryPrefList"])
-            : [data["dietaryPrefList"] ?? ''];
+            : [data["dietaryPrefList"]];
         selectedPreferences3.value = data["whereToEat"] is List
             ? List<String>.from(data["whereToEat"])
-            : [data["whereToEat"] ?? ''];
+            : [data["whereToEat"]];
 
         selectedPreferences4.value = data["planner"] is List
             ? List<String>.from(data["planner"])
-            : [data["planner"] ?? ''];
+            : [data["planner"]];
 
         selectedPreferences5.value = data["impDiningOut"] is List
             ? List<String>.from(data["impDiningOut"])
-            : [data["impDiningOut"] ?? ''];
+            : [data["impDiningOut"]];
 
         selectedPreferences6.value = data["diningExp"] is List
             ? List<String>.from(data["diningExp"])
-            : [data["diningExp"] ?? ''];
+            : [data["diningExp"]];
 
         selectedPreferences7.value = data["willingToTravel"] is List
             ? List<String>.from(data["willingToTravel"])
-            : [data["willingToTravel"] ?? ''];
+            : [data["willingToTravel"]];
 
         selectedPreferences8.value =
             List<String>.from(data["notificationType"] ?? []);
 
         selectedPreferences9.value = data["notifiedDiningOpp"] is List
             ? List<String>.from(data["notifiedDiningOpp"])
-            : [data["notifiedDiningOpp"] ?? ''];
+            : [data["notifiedDiningOpp"]];
       } else {
         print("User document does not exist");
       }
