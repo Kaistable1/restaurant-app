@@ -24,7 +24,11 @@ class RestaurantModel {
   DateTime createdAt;
   List<EntertainmentScheduleModel> entertainmentScheduleList;
   String about;
-  String country; // New field added
+  String country;
+  String fbLink; // New field
+  String instaLink; // New field
+  String tiktokLink; // New field
+  String twitterLink; // New field
 
   // Constructor
   RestaurantModel({
@@ -51,7 +55,11 @@ class RestaurantModel {
     required this.spokenLanguage,
     required this.about,
     required this.createdAt,
-    required this.country, // Initialize in constructor
+    required this.country,
+    required this.fbLink,
+    required this.instaLink,
+    required this.tiktokLink,
+    required this.twitterLink,
   });
 
   // Initialize the model with defaults
@@ -80,7 +88,11 @@ class RestaurantModel {
       entertainmentScheduleList: [],
       about: '',
       createdAt: DateTime.now(),
-      country: '', // Default to empty string for country
+      country: '',
+      fbLink: '',
+      instaLink: '',
+      tiktokLink: '',
+      twitterLink: '',
     );
   }
 
@@ -118,7 +130,11 @@ class RestaurantModel {
       'priceRange': priceRange,
       'about': about,
       'createdAt': createdAt,
-      'country': country, // Add country to Firestore map
+      'country': country,
+      'fbLink': fbLink,
+      'instaLink': instaLink,
+      'tiktokLink': tiktokLink,
+      'twitterLink': twitterLink,
     };
   }
 
@@ -157,7 +173,11 @@ class RestaurantModel {
           (e) => EntertainmentScheduleModel.fromMap(e as Map<String, dynamic>),
         ),
       ),
-      country: data['country'] ?? '', // Fetch country from Firestore
+      country: data['country'] ?? '',
+      fbLink: data['fbLink'] ?? '',
+      instaLink: data['instaLink'] ?? '',
+      tiktokLink: data['tiktokLink'] ?? '',
+      twitterLink: data['twitterLink'] ?? '',
     );
   }
 }

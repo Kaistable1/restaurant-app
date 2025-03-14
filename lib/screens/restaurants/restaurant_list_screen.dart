@@ -159,6 +159,10 @@ class RestaurantListScreen extends StatelessWidget {
                   imagesList: [],
                   dietaryList: [],
                   atmopshereList: [],
+                  fbLink: '',
+                  instaLink: '',
+                  tiktokLink: '',
+                  twitterLink: '',
                 );
                 restuants.add(restaurantModel);
               }
@@ -201,6 +205,10 @@ class RestaurantListScreen extends StatelessWidget {
                   imagesList: [],
                   dietaryList: [],
                   atmopshereList: [],
+                  fbLink: '',
+                  instaLink: '',
+                  tiktokLink: '',
+                  twitterLink: '',
                 );
                 restuants.add(restaurantModel);
               }
