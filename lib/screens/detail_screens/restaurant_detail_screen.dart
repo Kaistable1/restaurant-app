@@ -143,21 +143,13 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                             SizedBox(width: 22),
                             GestureDetector(
                               onTap: () async {
-                                String link = widget.restaurantModel?.socialLink
-                                            .contains('facebook') ??
-                                        false
-                                    ? widget.restaurantModel?.socialLink ?? ''
-                                    : '';
+                                String link =
+                                    widget.restaurantModel?.fbLink ?? '';
                                 if (link == '') {
                                   Get.snackbar('Oops!', 'URl not available');
                                 } else {
                                   await launchUrl(
-                                    Uri.parse(widget.restaurantModel?.socialLink
-                                                .contains('facebook') ??
-                                            false
-                                        ? widget.restaurantModel?.socialLink ??
-                                            ''
-                                        : ''),
+                                    Uri.parse(link),
                                   );
                                 }
                               },
@@ -171,21 +163,13 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                             // Instagram Icon
                             GestureDetector(
                               onTap: () async {
-                                String link = widget.restaurantModel?.socialLink
-                                            .contains('instagram') ??
-                                        false
-                                    ? widget.restaurantModel?.socialLink ?? ''
-                                    : '';
+                                String link =
+                                    widget.restaurantModel?.instaLink ?? '';
                                 if (link == '') {
                                   Get.snackbar('Oops!', 'URl not available');
                                 } else {
                                   await launchUrl(
-                                    Uri.parse(widget.restaurantModel?.socialLink
-                                                .contains('instagram') ??
-                                            false
-                                        ? widget.restaurantModel?.socialLink ??
-                                            ''
-                                        : ''),
+                                    Uri.parse(link),
                                   );
                                 }
                               },
@@ -198,27 +182,21 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                             Spacer(),
                             GestureDetector(
                               onTap: () async {
-                                String link = widget.restaurantModel?.socialLink
-                                            .contains('youtube') ??
-                                        false
-                                    ? widget.restaurantModel?.socialLink ?? ''
-                                    : '';
+                                String link =
+                                    widget.restaurantModel?.tiktokLink ?? '';
+                                ;
                                 if (link == '') {
                                   Get.snackbar('Oops!', 'URl not available');
                                 } else {
                                   await launchUrl(
-                                    Uri.parse(widget.restaurantModel?.socialLink
-                                                .contains('youtube') ??
-                                            false
-                                        ? widget.restaurantModel?.socialLink ??
-                                            ''
-                                        : ''),
+                                    Uri.parse(link),
                                   );
                                 }
                               },
                               child: Image.asset(
-                                "assets/images/youtube.png",
+                                "assets/images/tik-tok.png",
                                 height: 22,
+                                color: AppColors.primaryColor,
                                 width: 22,
                               ),
                             ),
@@ -226,21 +204,13 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                             // X (Twitter) Icon
                             GestureDetector(
                               onTap: () async {
-                                String link = widget.restaurantModel?.socialLink
-                                            .contains('twitter') ??
-                                        false
-                                    ? widget.restaurantModel?.socialLink ?? ''
-                                    : '';
+                                String link =
+                                    widget.restaurantModel?.twitterLink ?? '';
                                 if (link == '') {
                                   Get.snackbar('Oops!', 'URl not available');
                                 } else {
                                   await launchUrl(
-                                    Uri.parse(widget.restaurantModel?.socialLink
-                                                .contains('twitter') ??
-                                            false
-                                        ? widget.restaurantModel?.socialLink ??
-                                            ''
-                                        : ''),
+                                    Uri.parse(link),
                                   );
                                 }
                               },

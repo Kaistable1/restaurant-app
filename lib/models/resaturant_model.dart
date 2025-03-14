@@ -32,10 +32,10 @@ class RestaurantModel {
   String about;
   String country;
   // New Fields
-  String facebookLink;
-  String instaLink;
-  String xLink;
-  String youtubeLink;
+  String fbLink; //https://facebook.com/
+  String instaLink; //https://instagram.com/
+  String tiktokLink; //https://tiktok.com
+  String twitterLink; // https://twitter.com
 
   // Constructor
   RestaurantModel({
@@ -65,10 +65,10 @@ class RestaurantModel {
     required this.createdAt,
     required this.country,
     // New Fields
-    required this.facebookLink,
+    required this.fbLink,
     required this.instaLink,
-    required this.xLink,
-    required this.youtubeLink,
+    required this.tiktokLink,
+    required this.twitterLink,
   });
 
   // Initialize the model with defaults
@@ -99,10 +99,10 @@ class RestaurantModel {
       about: '',
       createdAt: DateTime.now(),
       country: '',
-      facebookLink: '',
+      fbLink: '',
       instaLink: '',
-      xLink: '',
-      youtubeLink: '',
+      tiktokLink: '',
+      twitterLink: '',
     );
   }
 
@@ -143,10 +143,10 @@ class RestaurantModel {
       'createdAt': createdAt.toIso8601String(),
       'country': country,
       // New Fields
-      'facebookLink': facebookLink,
+      'facebookLink': fbLink,
       'instaLink': instaLink,
-      'xLink': xLink,
-      'youtubeLink': youtubeLink,
+      'xLink': tiktokLink,
+      'youtubeLink': twitterLink,
     };
   }
 
@@ -188,10 +188,10 @@ class RestaurantModel {
       menuList: MenuModel.initialize(),
       country: data['country'] ?? '',
       // New Fields
-      facebookLink: data['facebookLink'] ?? '',
+      fbLink: data['fbLink'] ?? '',
       instaLink: data['instaLink'] ?? '',
-      xLink: data['xLink'] ?? '',
-      youtubeLink: data['youtubeLink'] ?? '',
+      tiktokLink: data['tiktokLink'] ?? '',
+      twitterLink: data['twitterLink'] ?? '',
     );
   }
 }
