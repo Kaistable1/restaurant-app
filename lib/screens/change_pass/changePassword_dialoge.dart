@@ -187,7 +187,7 @@ void changePasswordDialogBox() {
                             height: 40,
                             laBelText: 'Save',
                             textColor: AppColors.whiteColor,
-                            fontSize: 20,
+                            fontSize: 17,
                             fontWeight: FontWeight.w600,
                             fontFamily: 'Nunito-Sans',
                             ontapp: () async {
@@ -213,7 +213,7 @@ void changePasswordDialogBox() {
                             containerColor: Colors.white,
                             borderColor: AppColors.primaryColor,
                             textColor: AppColors.primaryColor,
-                            fontSize: 20,
+                            fontSize: 17,
                             fontWeight: FontWeight.w600,
                             fontFamily: 'Nunito-Sans',
                             isBorder: true,

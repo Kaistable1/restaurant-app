@@ -53,7 +53,7 @@ class ReviewWidget extends StatelessWidget {
                             '(0)',
                             style: TextStyle(
                               fontFamily: 'Nunito-Bold',
-                              fontSize: 20,
+                              fontSize: 17,
                               fontWeight: FontWeight.w500,
                               color: const Color(0xFF281717),
                             ),
@@ -184,7 +184,7 @@ class ReviewWidget extends StatelessWidget {
                     height: 48,
                     width: 200,
                     textColor: AppColors.whiteColor,
-                    fontSize: 20,
+                    fontSize: 17,
                     fontFamily: 'Nunito-Regular',
                     fontWeight: FontWeight.w600,
                   ),
@@ -217,7 +217,7 @@ class ReviewWidget extends StatelessWidget {
                           '(${(reviews.map((e) => e.starRating).reduce((a, b) => a! + b!)! / reviews.length).toStringAsFixed(1)})',
                           style: TextStyle(
                             fontFamily: 'Nunito-Bold',
-                            fontSize: 20,
+                            fontSize: 17,
                             fontWeight: FontWeight.w500,
                             color: const Color(0xFF281717),
                           ),
@@ -370,7 +370,7 @@ class ReviewWidget extends StatelessWidget {
                   height: 48,
                   width: 200,
                   textColor: AppColors.whiteColor,
-                  fontSize: 20,
+                  fontSize: 17,
                   fontFamily: 'Nunito-Regular',
                   fontWeight: FontWeight.w600,
                 ),
@@ -386,7 +386,7 @@ class ReviewWidget extends StatelessWidget {
     Get.defaultDialog(
       title: "Signup/Login Required",
       titleStyle: TextStyle(
-        fontSize: 20,
+        fontSize: 17,
         fontWeight: FontWeight.bold,
         color: AppColors.primaryColor,
         fontFamily: 'Nunito-Bold',

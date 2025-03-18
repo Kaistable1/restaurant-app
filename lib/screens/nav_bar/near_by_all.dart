@@ -55,7 +55,7 @@ class NearByAll extends StatelessWidget {
         title: Text(
           'Near By Restaurants',
           style: const TextStyle(
-            fontSize: 20,
+            fontSize: 17,
             color: AppColors.bottomSheetColor,
             fontWeight: FontWeight.w700,
             fontFamily: 'Nunito-Bold',
@@ -127,7 +127,7 @@ class NearByAll extends StatelessWidget {
                             style: TextStyle(
                               color: AppColors.bottomSheetColor,
                               fontFamily: 'aftika-regular',
-                              fontSize: 18,
+                              fontSize: 15,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
@@ -160,7 +160,7 @@ class NearByAll extends StatelessWidget {
                                 style: TextStyle(
                                   color: AppColors.bottomSheetColor,
                                   fontFamily: 'aftika-regular',
-                                  fontSize: 18,
+                                  fontSize: 15,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
@@ -174,7 +174,7 @@ class NearByAll extends StatelessWidget {
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        mainAxisExtent: Get.height * 0.27,
+                        mainAxisExtent: Get.height * 0.2,
                         crossAxisCount: 2,
                         crossAxisSpacing: 10,
                         mainAxisSpacing: 20,
@@ -190,14 +190,16 @@ class NearByAll extends StatelessWidget {
                           },
                           child: RectangleWidget(
                             title: item.resName,
-                            description: item.about,
+                            description: item.about.contains('Stay tuned')
+                                ? item.address
+                                : item.about,
                             resturant_id: item.docID,
                             imagePath: item.logoImage,
                             timetext: '10 AM',
                             percentText: '25%',
                             endTimeText: '9 PM',
-                            percentageOff: item.menuList.percentageOff,
-                            happyhour: item.menuList.happyHourSpecials,
+                            // percentageOff: item.menuList.percentageOff,
+                            // happyhour: item.menuList.happyHourSpecials,
                             isFavorite: false.obs,
                           ),
                         );

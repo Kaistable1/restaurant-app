@@ -93,7 +93,7 @@ class AllCategories extends StatelessWidget {
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    mainAxisExtent: Get.height * 0.27,
+                    mainAxisExtent: Get.height * 0.2,
                     crossAxisCount: 2,
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 30,
@@ -112,7 +112,9 @@ class AllCategories extends StatelessWidget {
                         width: Get.width * 0.45,
                         child: RectangleWidget(
                           title: item.resName,
-                          description: item.about,
+                          description: item.about.contains('Stay tuned')
+                              ? item.address
+                              : item.about,
                           resturant_id: item.docID,
                           imagePath: item.logoImage,
                           timetext: '10 AM',

@@ -55,7 +55,7 @@ class AboutApp extends StatelessWidget {
           title: const Text(
             'About app',
             style: TextStyle(
-              fontSize: 20,
+              fontSize: 17,
               color: AppColors.bottomSheetColor,
               fontWeight: FontWeight.w700,
               fontFamily: 'Nunito-Bold',

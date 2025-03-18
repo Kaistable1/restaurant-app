@@ -72,7 +72,7 @@ class FavoriteScreen extends StatelessWidget {
           title: Text(
             'Favorites',
             style: TextStyle(
-              fontSize: 20,
+              fontSize: 17,
               color: AppColors.bottomSheetColor,
               fontWeight: FontWeight.w700,
               fontFamily: 'Nunito-Bold',
@@ -96,7 +96,7 @@ class FavoriteScreen extends StatelessWidget {
                           children: [
                             CustomButton(
                               laBelText: 'Log in',
-                              fontSize: 20,
+                              fontSize: 17,
                               textColor: Colors.white,
                               fontWeight: FontWeight.w600,
                               height: 43,
@@ -111,7 +111,7 @@ class FavoriteScreen extends StatelessWidget {
                             ),
                             CustomButton(
                               laBelText: 'Register',
-                              fontSize: 20,
+                              fontSize: 17,
                               textColor: Colors.white,
                               fontWeight: FontWeight.w600,
                               height: 43,

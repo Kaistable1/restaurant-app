@@ -46,7 +46,7 @@ class ProfileScreen extends StatelessWidget {
         title: Text(
           'Profile',
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 17,
             color: AppColors.bottomSheetColor,
             fontWeight: FontWeight.w700,
             fontFamily: 'Nunito-Bold',
@@ -65,7 +65,7 @@ class ProfileScreen extends StatelessWidget {
                     children: [
                       CustomButton(
                         laBelText: 'Log in',
-                        fontSize: 20,
+                        fontSize: 17,
                         textColor: Colors.white,
                         fontWeight: FontWeight.w600,
                         height: 43,
@@ -77,7 +77,7 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       CustomButton(
                         laBelText: 'Register',
-                        fontSize: 20,
+                        fontSize: 17,
                         textColor: Colors.white,
                         fontWeight: FontWeight.w600,
                         height: 43,
@@ -150,7 +150,7 @@ class ProfileScreen extends StatelessWidget {
                             Text(
                               currentUserDataModel?.value.username.text ?? '',
                               style: TextStyle(
-                                fontSize: 14,
+                                fontSize: 12,
                                 color: AppColors.bottomSheetColor,
                                 fontWeight: FontWeight.w400,
                                 fontFamily: 'Nunito-Bold',
@@ -160,7 +160,7 @@ class ProfileScreen extends StatelessWidget {
                             Text(
                               currentUserDataModel?.value.userEmail.text ?? '',
                               style: TextStyle(
-                                fontSize: 14,
+                                fontSize: 12,
                                 color: AppColors.bottomSheetColor,
                                 fontWeight: FontWeight.w400,
                                 fontFamily: 'Nunito-Bold',
@@ -185,7 +185,7 @@ class ProfileScreen extends StatelessWidget {
                                 child: Text(
                                   'Edit Profile',
                                   style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 12,
                                     color: AppColors.whiteColor,
                                     fontWeight: FontWeight.w400,
                                     fontFamily: 'Nunito-Bold',
@@ -250,7 +250,7 @@ class ProfileScreen extends StatelessWidget {
                         title: Text(
                           tilesNames[adjustedIndex],
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: 12,
                             color: AppColors.bottomSheetColor,
                             fontWeight: FontWeight.w400,
                             fontFamily: 'Nunito-Bold',
@@ -275,7 +275,7 @@ class ProfileScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 75),
                   child: CustomButton(
                     laBelText: 'Logout',
-                    fontSize: 20,
+                    fontSize: 15,
                     textColor: Colors.white,
                     fontWeight: FontWeight.w600,
                     height: 43,

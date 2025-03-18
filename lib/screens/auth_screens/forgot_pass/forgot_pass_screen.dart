@@ -103,7 +103,7 @@ class ForgotPassScreen extends StatelessWidget {
                   Center(
                     child: CustomButton(
                       laBelText: 'Submit',
-                      fontSize: 20,
+                      fontSize: 17,
                       fontWeight: FontWeight.w600,
                       fontFamily: 'Nunito-Sans',
                       textColor: Colors.white,

@@ -68,7 +68,7 @@ class CuisinesViewAll extends StatelessWidget {
               title: const Text(
                 'Cuisines',
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 17,
                   color: AppColors.bottomSheetColor,
                   fontWeight: FontWeight.w700,
                   fontFamily: 'Nunito-Bold',
@@ -135,7 +135,7 @@ class CuisinesViewAll extends StatelessWidget {
                       style: TextStyle(
                         color: AppColors.bottomSheetColor,
                         fontFamily: 'aftika-regular',
-                        fontSize: 18,
+                        fontSize: 15,
                         fontWeight: FontWeight.w400,
                       ),
                     ),

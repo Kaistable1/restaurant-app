@@ -56,7 +56,7 @@ class Preference8 extends StatelessWidget {
         title: Text(
           'General Preferences',
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 17,
             color: AppColors.bottomSheetColor,
             fontWeight: FontWeight.w700,
             fontFamily: 'Nunito-Sans',
@@ -170,7 +170,7 @@ class Preference8 extends StatelessWidget {
                     width: 190,
                     fontFamily: 'Nunito-Sans',
                     fontWeight: FontWeight.w600,
-                    fontSize: 20,
+                    fontSize: 17,
                     textColor: Colors.white,
                     ontapp: () {
                       if (formKey.currentState!.validate()) {

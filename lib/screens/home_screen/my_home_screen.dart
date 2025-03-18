@@ -245,7 +245,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
           title: const Text(
             'Search',
             style: TextStyle(
-              fontSize: 20,
+              fontSize: 17,
               color: AppColors.bottomSheetColor,
               fontWeight: FontWeight.w700,
               fontFamily: 'Nunito-Bold',
@@ -336,7 +336,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                             style: TextStyle(
                               color: AppColors.bottomSheetColor,
                               fontFamily: 'aftika-regular',
-                              fontSize: 18,
+                              fontSize: 15,
                               fontWeight: FontWeight.w400,
                             ),
                           ),
@@ -405,7 +405,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                     style: TextStyle(
                                       color: AppColors.bottomSheetColor,
                                       fontFamily: 'aftika-regular',
-                                      fontSize: 18,
+                                      fontSize: 15,
                                       fontWeight: FontWeight.w400,
                                     ),
                                   ),
@@ -470,7 +470,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                           return isCityMatched;
                                         }).toList();
                                       }
-                                   
+
                                       // Filter by Discounts
                                       if (filterSelectionController
                                           .selectedDiscounts.isNotEmpty) {

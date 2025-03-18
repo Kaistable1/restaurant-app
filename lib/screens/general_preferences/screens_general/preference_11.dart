@@ -53,7 +53,7 @@ class Preference11 extends StatelessWidget {
         title: Text(
           'Social Preferences',
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 17,
             color: AppColors.bottomSheetColor,
             fontWeight: FontWeight.w700,
             fontFamily: 'Nunito-Sans',
@@ -157,7 +157,7 @@ class Preference11 extends StatelessWidget {
                   width: 190,
                   fontFamily: 'Nunito-Sans',
                   fontWeight: FontWeight.w600,
-                  fontSize: 20,
+                  fontSize: 17,
                   textColor: Colors.white,
                   ontapp: () {
                     if (controller.selectedPreferences11.length < 1) {

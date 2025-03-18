@@ -85,7 +85,7 @@ class VerifyPage extends StatelessWidget {
                   closeKeyboardWhenCompleted: true,
                   defaultPinTheme: PinTheme(
                     textStyle: TextStyle(
-                      fontSize: 18,
+                      fontSize: 15,
                       fontWeight: FontWeight.w600,
                       fontFamily: 'Nunito-Sans',
                       color: AppColors.darkGrey,
@@ -126,7 +126,7 @@ class VerifyPage extends StatelessWidget {
                 child: CustomButton(
                   laBelText: 'Verify code',
                   width: 200,
-                  fontSize: 20,
+                  fontSize: 17,
                   fontWeight: FontWeight.w600,
                   fontFamily: 'Nunito-Sans',
                   textColor: Colors.white,
@@ -143,7 +143,7 @@ class VerifyPage extends StatelessWidget {
                             controller.verifyController.text ==
                                 signupController.verificationCode.toString()) {
                           await signupController.createAccount();
-                      
+
                           signupController.resetTextFields();
                           controller.onClick.value = false;
                           controller.verifyController.clear();

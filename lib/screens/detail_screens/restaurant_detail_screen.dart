@@ -106,7 +106,7 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
               title: const Text(
                 'Restaurant details',
                 style: const TextStyle(
-                  fontSize: 20,
+                  fontSize: 17,
                   color: AppColors.bottomSheetColor,
                   fontWeight: FontWeight.w700,
                   fontFamily: 'Nunito-Bold',
@@ -746,7 +746,7 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                                                 style: TextStyle(
                                                   color: AppColors
                                                       .headingTextColor,
-                                                  fontSize: 20,
+                                                  fontSize: 17,
                                                   fontFamily: 'aftika-regular',
                                                   fontWeight: FontWeight.w400,
                                                 ),
@@ -777,7 +777,7 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                           'Map',
                           style: TextStyle(
                             color: AppColors.headingTextColor,
-                            fontSize: 20,
+                            fontSize: 17,
                             fontFamily: 'aftika-regular',
                             fontWeight: FontWeight.w400,
                           ),

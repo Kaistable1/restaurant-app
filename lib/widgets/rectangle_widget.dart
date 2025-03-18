@@ -78,7 +78,7 @@ class RectangleWidget extends StatelessWidget {
                         maxLines: 1,
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
-                          fontSize: 14,
+                          fontSize: 12,
                           fontFamily: 'Nunito-Regular',
                           color: AppColors.textColor,
                         ),

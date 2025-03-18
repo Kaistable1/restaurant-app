@@ -168,7 +168,7 @@ class Preference12 extends StatelessWidget {
                     width: 190,
                     fontFamily: 'Nunito-Sans',
                     fontWeight: FontWeight.w600,
-                    fontSize: 20,
+                    fontSize: 17,
                     textColor: Colors.white,
                     ontapp: () {
                       if (formKey.currentState!.validate()) {

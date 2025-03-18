@@ -316,7 +316,7 @@ class UploadImageSectionState extends State<UploadImageSection> {
                 textColor: AppColors.whiteColor,
                 width: 200,
                 height: 48,
-                fontSize: 20,
+                fontSize: 17,
                 fontFamily: 'Nunito-Regular',
                 fontWeight: FontWeight.w700,
                 laBelText: 'Submit',

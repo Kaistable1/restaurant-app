@@ -2,26 +2,24 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
-import 'package:kaistable_website/main.dart';
-import 'package:kaistable_website/models/recent_view.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/screens/detail_screens/restaurant_detail_screen.dart';
 import 'package:kaistable_website/screens/home_screen/cuisiness_viewall/cuisines_view_all.dart';
 import 'package:kaistable_website/screens/home_screen/entertainment/entertainments.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_location_controller.dart';
-import 'package:kaistable_website/screens/home_screen/location_pages/location_screen.dart';
 import 'package:kaistable_website/screens/home_screen/new_view_all/new_viewall.dart';
-import 'package:kaistable_website/screens/home_screen/recently_viewed/recently_viewed.dart';
 import 'package:kaistable_website/screens/home_screen/trending_all/trending_view_all.dart';
 import 'package:kaistable_website/screens/nav_bar/near_by_all.dart';
-import 'package:kaistable_website/screens/onboarding_screen/onboarding_controller/onboarding_controller.dart';
+import 'package:kaistable_website/widgets/global_functions.dart';
 import 'package:kaistable_website/widgets/rectangle_widget.dart';
+
 import 'controller/home_controller.dart';
 
 class HomeScreen extends StatelessWidget {
   final HomeController controller = Get.put(HomeController());
   @override
   Widget build(BuildContext context) {
+    requestLocationPermission();
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       body: SafeArea(
@@ -57,8 +55,8 @@ class HomeScreen extends StatelessWidget {
                       style: TextStyle(
                         color: AppColors.bottomSheetColor,
                         fontFamily: 'aftika-regular',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ],
@@ -133,7 +131,7 @@ class HomeScreen extends StatelessWidget {
                     Text(
                       category["name"] as String,
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 12,
                         color: AppColors.bottomSheetColor,
                         fontWeight: FontWeight.w500,
                         fontFamily: 'Nunito-Sans',
@@ -195,8 +193,8 @@ class HomeScreen extends StatelessWidget {
                                 style: TextStyle(
                                   color: AppColors.bottomSheetColor,
                                   fontFamily: 'aftika-regular',
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
                               Text(
@@ -204,7 +202,7 @@ class HomeScreen extends StatelessWidget {
                                 style: TextStyle(
                                   color: AppColors.bottomSheetColor,
                                   fontFamily: 'aftika-regular',
-                                  fontSize: 12,
+                                  fontSize: 10,
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),
@@ -222,7 +220,7 @@ class HomeScreen extends StatelessWidget {
                                 decoration: TextDecoration.underline,
                                 decorationColor: AppColors.primaryColor,
                                 fontFamily: 'Nunito-Regular',
-                                fontSize: 14,
+                                fontSize: 12,
                                 fontWeight: FontWeight.w500,
                                 color: AppColors.primaryColor),
                           ))
@@ -265,7 +263,7 @@ class HomeScreen extends StatelessWidget {
                             Text(
                               item.resName,
                               style: TextStyle(
-                                fontSize: 14,
+                                fontSize: 12,
                                 color: AppColors.headingTextColor,
                                 fontWeight: FontWeight.w700,
                                 fontFamily: 'Nunito-Sans',
@@ -277,7 +275,7 @@ class HomeScreen extends StatelessWidget {
                                 "${item.about}",
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 10,
                                   color: AppColors.textColor,
                                   fontWeight: FontWeight.w600,
                                   fontFamily: 'Nunito-Sans',
@@ -354,7 +352,7 @@ class HomeScreen extends StatelessWidget {
                                 style: TextStyle(
                                   color: AppColors.bottomSheetColor,
                                   fontFamily: 'aftika-regular',
-                                  fontSize: 16,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
@@ -363,7 +361,7 @@ class HomeScreen extends StatelessWidget {
                                 style: TextStyle(
                                   color: AppColors.bottomSheetColor,
                                   fontFamily: 'aftika-regular',
-                                  fontSize: 12,
+                                  fontSize: 10,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -390,7 +388,7 @@ class HomeScreen extends StatelessWidget {
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          mainAxisExtent: Get.height * 0.22,
+                          mainAxisExtent: Get.height * 0.2,
                           crossAxisCount: 2,
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 20,
@@ -407,7 +405,9 @@ class HomeScreen extends StatelessWidget {
                             },
                             child: RectangleWidget(
                               title: item.resName,
-                              description: item.about,
+                              description: item.about.contains('Stay tuned')
+                                  ? item.address
+                                  : item.about,
                               resturant_id: item.docID,
                               imagePath: item.logoImage,
                               timetext: '10 AM',
@@ -426,7 +426,4 @@ class HomeScreen extends StatelessWidget {
           }),
     );
   }
-  
-
-
 }

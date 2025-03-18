@@ -82,7 +82,7 @@ class LocationScreen extends StatelessWidget {
               title: Text(
                 'Available restaurants',
                 style: const TextStyle(
-                  fontSize: 20,
+                  fontSize: 17,
                   color: AppColors.bottomSheetColor,
                   fontWeight: FontWeight.w700,
                   fontFamily: 'Nunito-Bold',
@@ -97,7 +97,7 @@ class LocationScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
-                     '',
+                      '',
                       style: TextStyle(
                         color: AppColors.primaryColor,
                         fontFamily: 'aftika-regular',
@@ -175,15 +175,13 @@ class LocationScreen extends StatelessWidget {
                       style: TextStyle(
                         color: AppColors.bottomSheetColor,
                         fontFamily: 'aftika-regular',
-                        fontSize: 18,
+                        fontSize: 15,
                         fontWeight: FontWeight.w400,
                       ),
                     ),
                     SizedBox(height: 12),
                     StreamBuilder(
-                      stream: homeController.getRestaurants(
-                       
-                      ),
+                      stream: homeController.getRestaurants(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {

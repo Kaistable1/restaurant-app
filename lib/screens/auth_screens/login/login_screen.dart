@@ -67,7 +67,7 @@ class LoginScreen extends StatelessWidget {
                       color: AppColors.blackColor,
                       fontWeight: FontWeight.w600,
                       fontFamily: 'Nunito-Sans',
-                      fontSize: 18,
+                      fontSize: 15,
                     ),
                   ),
                   SizedBox(
@@ -212,7 +212,7 @@ class LoginScreen extends StatelessWidget {
                   Center(
                     child: CustomButton(
                       laBelText: 'Login',
-                      fontSize: 18,
+                      fontSize: 15,
                       fontWeight: FontWeight.w600,
                       fontFamily: 'Nunito-Sans',
                       textColor: Colors.white,

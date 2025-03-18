@@ -74,7 +74,7 @@ class EntertainmentsScreen extends StatelessWidget {
               title: Text(
                 'Entertainments',
                 style: const TextStyle(
-                  fontSize: 20,
+                  fontSize: 17,
                   color: AppColors.bottomSheetColor,
                   fontWeight: FontWeight.w700,
                   fontFamily: 'Nunito-Bold',
@@ -147,7 +147,7 @@ class EntertainmentsScreen extends StatelessWidget {
                           style: TextStyle(
                             color: AppColors.bottomSheetColor,
                             fontFamily: 'aftika-regular',
-                            fontSize: 18,
+                            fontSize: 15,
                             fontWeight: FontWeight.w400,
                           ),
                         ),

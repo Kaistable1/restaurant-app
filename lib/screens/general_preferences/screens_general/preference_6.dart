@@ -158,7 +158,7 @@ class Preference6 extends StatelessWidget {
                   width: 190,
                   fontFamily: 'Nunito-Sans',
                   fontWeight: FontWeight.w600,
-                  fontSize: 20,
+                  fontSize: 17,
                   textColor: Colors.white,
                   ontapp: () {
                     if (controller.selectedPreferences6.length < 1) {

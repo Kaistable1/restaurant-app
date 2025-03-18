@@ -64,7 +64,7 @@ class SignupScreen extends StatelessWidget {
                       color: AppColors.blackColor,
                       fontWeight: FontWeight.w600,
                       fontFamily: 'Nunito-Sans',
-                      fontSize: 18,
+                      fontSize: 15,
                     ),
                   ),
                   SizedBox(
@@ -259,7 +259,7 @@ class SignupScreen extends StatelessWidget {
                   Center(
                     child: CustomButton(
                       laBelText: 'Sign-up',
-                      fontSize: 20,
+                      fontSize: 17,
                       fontWeight: FontWeight.w600,
                       fontFamily: 'Nunito-Sans',
                       textColor: Colors.white,

@@ -41,7 +41,7 @@ void filterSelectionDialogueBox() {
                         style: TextStyle(
                           color: AppColors.bottomSheetColor,
                           fontFamily: "Nunito-Bold",
-                          fontSize: 18,
+                          fontSize: 15,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -587,7 +587,7 @@ void filterSelectionDialogueBox() {
                               laBelText: 'Apply',
                               height: 40,
                               width: 170,
-                              fontSize: 20,
+                              fontSize: 17,
                               fontWeight: FontWeight.w500,
                               fontFamily: 'Nunito-Sans',
                               textColor: Colors.white,

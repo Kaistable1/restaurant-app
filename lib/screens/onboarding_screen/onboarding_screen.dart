@@ -205,7 +205,7 @@ class ChooseLocationWidget extends StatelessWidget {
             children: [
               CustomButton(
                 laBelText: 'Signup',
-                fontSize: 18,
+                fontSize: 15,
                 fontWeight: FontWeight.w600,
                 fontFamily: 'Nunito-Sans',
                 textColor: Colors.white,
@@ -217,7 +217,7 @@ class ChooseLocationWidget extends StatelessWidget {
               ),
               CustomButton(
                 laBelText: 'Explore',
-                fontSize: 18,
+                fontSize: 15,
                 fontWeight: FontWeight.w600,
                 fontFamily: 'Nunito-Sans',
                 textColor: AppColors.primaryColor,

@@ -81,7 +81,7 @@ class ContactUs extends StatelessWidget {
           title: Text(
             'Contact us',
             style: const TextStyle(
-              fontSize: 20,
+              fontSize: 17,
               color: AppColors.bottomSheetColor,
               fontWeight: FontWeight.w700,
               fontFamily: 'Nunito-Bold',

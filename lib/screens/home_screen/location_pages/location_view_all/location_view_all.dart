@@ -28,7 +28,7 @@ class LocationViewAll extends StatelessWidget {
         title: const Text(
           'Location',
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 17,
             color: AppColors.bottomSheetColor,
             fontWeight: FontWeight.w700,
             fontFamily: 'Nunito-Bold',
@@ -124,15 +124,13 @@ class LocationViewAll extends StatelessWidget {
                 style: TextStyle(
                   color: AppColors.bottomSheetColor,
                   fontFamily: 'aftika-regular',
-                  fontSize: 18,
+                  fontSize: 15,
                   fontWeight: FontWeight.w400,
                 ),
               ),
               SizedBox(height: 16),
               FutureBuilder(
-                future: filterController.getRestaurantsGroupedByAddress(
-                 
-                ),
+                future: filterController.getRestaurantsGroupedByAddress(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Padding(

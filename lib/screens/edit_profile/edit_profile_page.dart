@@ -57,7 +57,7 @@ class EditProfilePage extends StatelessWidget {
         title: Text(
           'Edit Profile',
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 17,
             color: AppColors.bottomSheetColor,
             fontWeight: FontWeight.w700,
             fontFamily: 'Nunito-Bold',
@@ -224,7 +224,7 @@ class EditProfilePage extends StatelessWidget {
                   child: CustomButton(
                     laBelText: 'Save',
                     fontFamily: 'Nunito-Sans',
-                    fontSize: 20,
+                    fontSize: 17,
                     textColor: Colors.white,
                     fontWeight: FontWeight.w600,
                     height: 43,

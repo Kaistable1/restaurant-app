@@ -52,7 +52,7 @@ class TermsAndCondition extends StatelessWidget {
           title: Text(
             'Terms and conditions',
             style: const TextStyle(
-              fontSize: 20,
+              fontSize: 17,
               color: AppColors.bottomSheetColor,
               fontWeight: FontWeight.w700,
               fontFamily: 'Nunito-Bold',

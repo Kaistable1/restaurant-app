@@ -70,7 +70,7 @@ class ExploreRestaurant extends StatelessWidget {
               title: Text(
                 cuisneName ?? '',
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 17,
                   color: AppColors.bottomSheetColor,
                   fontWeight: FontWeight.w700,
                   fontFamily: 'Nunito-Bold',
@@ -138,7 +138,7 @@ class ExploreRestaurant extends StatelessWidget {
                       style: TextStyle(
                         color: AppColors.bottomSheetColor,
                         fontFamily: 'aftika-regular',
-                        fontSize: 18,
+                        fontSize: 15,
                         fontWeight: FontWeight.w400,
                       ),
                     ),
