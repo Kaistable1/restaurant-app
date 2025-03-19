@@ -62,7 +62,14 @@ class HomeLocationController extends GetxController {
   ];
   RxString selectedTop = ''.obs;
   var selectedDiscount = '10%'.obs;
-  // Define the selectIndex methodi
+  RxList<RestaurantModel> restaurants = <RestaurantModel>[].obs;
+  List<RestaurantModel> allRestaurants = [];
+  List<RestaurantModel> filteredRestaurants = [];
+  Map<String, List<String>> cusinesMapFilter = {};
+  DocumentSnapshot? lastDocument;
+  bool isLoading = false;
+  int limit = 10;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // List of CircleContainerModel objects
   final List<CircleContainerModel> circleItems = [
@@ -111,6 +118,8 @@ class HomeLocationController extends GetxController {
     scrollController.dispose(); // Dispose the controller when not in use
     super.onClose();
   }
+  
+  
 
   List<RestaurantModel> resaturant_list = [];
 
@@ -187,88 +196,6 @@ class HomeLocationController extends GetxController {
       Get.back();
       print('Error adding review: $e');
     }
-  }
-
-  Widget favoriteHeart({resturant_id}) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('users')
-          .doc(auth.currentUser?.uid) // Current user's document
-          .collection('favorite')
-          .where('resturantID',
-              isEqualTo: resturant_id) // Filter by restaurantID
-          .snapshots(), // Stream the snapshot for real-time updates
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Icon(
-            Icons.favorite_border_outlined,
-            size: 22,
-            color: AppColors.primaryColor,
-          ); // Show loading indicator while waiting for data
-        }
-
-        if (snapshot.hasError) {
-          return Icon(
-            Icons.favorite_border_outlined,
-            size: 22,
-            color: AppColors.primaryColor,
-          ); // Show error icon if there's an error
-        }
-
-        // Check if the restaurant exists in the favorite collection
-        bool isFavorite = snapshot.data?.docs.isNotEmpty ?? false;
-
-        return InkWell(
-          onTap: () {
-            // Toggle favorite status
-            if (isFavorite) {
-              // Remove the restaurant from favorites
-              FirebaseFirestore.instance
-                  .collection('users')
-                  .doc(auth.currentUser!.uid)
-                  .collection('favorite')
-                  .where('resturantID', isEqualTo: resturant_id)
-                  .get()
-                  .then((snapshot) {
-                for (var doc in snapshot.docs) {
-                  doc.reference.delete(); // Remove from favorites
-                }
-              });
-            } else {
-              // Add the restaurant to favorites
-              String favId = FirebaseFirestore.instance
-                  .collection('users')
-                  .doc(auth.currentUser!.uid)
-                  .collection('favorite')
-                  .doc()
-                  .id;
-
-              FirebaseFirestore.instance
-                  .collection('users')
-                  .doc(auth.currentUser!.uid)
-                  .collection('favorite')
-                  .doc(favId)
-                  .set({
-                'resturantID': resturant_id,
-                'favID': favId,
-              });
-            }
-          },
-          child: isFavorite
-              ? Image.asset(
-                  'assets/images/heart_icon.png',
-                  color: AppColors.primaryColor,
-                  height: 22,
-                  width: 22,
-                )
-              : Icon(
-                  Icons.favorite_border_outlined,
-                  size: 22,
-                  color: AppColors.primaryColor,
-                ),
-        );
-      },
-    );
   }
 
   Stream<List<ReviewModel>> getReviews(String restaurantID) {
@@ -401,19 +328,93 @@ class HomeLocationController extends GetxController {
     });
   }
 
-  Stream<List<RestaurantModel>> getRestaurants({city}) {
-    return FirebaseFirestore.instance
+  /// Fetches initial restaurants with pagination support
+  Stream<List<RestaurantModel>> getRestaurants() {
+    return _firestore
         .collection('restaurants')
+        .orderBy('createdAt', descending: true) // Order for pagination
+        .limit(limit)
         .snapshots()
         .asyncMap((snapshot) async {
-      final restaurants = await Future.wait(
+      if (snapshot.docs.isNotEmpty) {
+        lastDocument = snapshot.docs.last; // Track last document for pagination
+      }
+
+      List<RestaurantModel> restaurantsList = await Future.wait(
         snapshot.docs.map((doc) async {
           final restaurant = RestaurantModel.fromDocumentSnapshot(doc);
           restaurant.menuList = await _getMenuFromSubcollection(doc.id);
           return restaurant;
         }),
       );
-      return restaurants; // Return List<RestaurantModel>
+
+      restaurants.assignAll(restaurantsList.where((item) => item.resName
+          .toLowerCase()
+          .contains(searchController.text
+              .toLowerCase()))); // Use `.assignAll` for observable list
+      update(); // Ensure UI updates
+      return restaurantsList;
+    });
+  }
+
+  /// Loads more restaurants for pagination
+  Future<void> loadMoreRestaurants() async {
+    if (isLoading || lastDocument == null) return;
+
+    isLoading = true;
+    update(); // Ensure loading indicator updates
+
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('restaurants')
+        .orderBy('createdAt',
+            descending: true) // Ensure order is same as initial fetch
+        .startAfterDocument(lastDocument!)
+        .limit(limit)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      lastDocument = querySnapshot.docs.last; // Update last document
+
+      final newRestaurants = await Future.wait(
+        querySnapshot.docs.map((doc) async {
+          final restaurant = RestaurantModel.fromDocumentSnapshot(
+              doc as DocumentSnapshot<Map<String, dynamic>>);
+          restaurant.menuList = await _getMenuFromSubcollection(doc.id);
+          return restaurant;
+        }),
+      );
+
+      restaurants.addAll(newRestaurants); // Append new data to observable list
+      print('restaurants updated: ${restaurants.length}');
+    }
+
+    isLoading = false;
+    update(); // Ensure UI updates
+  }
+
+  /// Fetches initial restaurants with pagination support
+  Stream<List<RestaurantModel>> getAllRestaurants() {
+    return _firestore
+        .collection('restaurants')
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .asyncMap((snapshot) async {
+      if (snapshot.docs.isNotEmpty) {
+        lastDocument = snapshot.docs.last; // Track last document for pagination
+      }
+
+      List<RestaurantModel> restaurantsList = await Future.wait(
+        snapshot.docs.map((doc) async {
+          final restaurant = RestaurantModel.fromDocumentSnapshot(doc);
+          restaurant.menuList = await _getMenuFromSubcollection(doc.id);
+          return restaurant;
+        }),
+      );
+
+      restaurants
+          .assignAll(restaurantsList); // Use `.assignAll` for observable list
+      update(); // Ensure UI updates
+      return restaurantsList;
     });
   }
 
@@ -559,13 +560,10 @@ class HomeLocationController extends GetxController {
     }
   }
 
-  List<RestaurantModel> allRestaurants = [];
-  List<RestaurantModel> filteredRestaurants = [];
-  Map<String, List<String>> cusinesMapFilter = {};
   // Initialize restaurants list
-  void initializeSelectors(List<RestaurantModel> restaurants) {
-    allRestaurants = restaurants;
-    filteredRestaurants = restaurants;
+  void initializeSelectors(List<RestaurantModel> screenRestaurants) {
+    allRestaurants = screenRestaurants;
+    restaurants.value = screenRestaurants;
     update();
   }
 
@@ -628,5 +626,87 @@ class HomeLocationController extends GetxController {
         radiusKm,
       );
     }).toList();
+  }
+
+  Widget favoriteHeart({resturant_id}) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('users')
+          .doc(auth.currentUser?.uid) // Current user's document
+          .collection('favorite')
+          .where('resturantID',
+              isEqualTo: resturant_id) // Filter by restaurantID
+          .snapshots(), // Stream the snapshot for real-time updates
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Icon(
+            Icons.favorite_border_outlined,
+            size: 22,
+            color: AppColors.primaryColor,
+          ); // Show loading indicator while waiting for data
+        }
+
+        if (snapshot.hasError) {
+          return Icon(
+            Icons.favorite_border_outlined,
+            size: 22,
+            color: AppColors.primaryColor,
+          ); // Show error icon if there's an error
+        }
+
+        // Check if the restaurant exists in the favorite collection
+        bool isFavorite = snapshot.data?.docs.isNotEmpty ?? false;
+
+        return InkWell(
+          onTap: () {
+            // Toggle favorite status
+            if (isFavorite) {
+              // Remove the restaurant from favorites
+              FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(auth.currentUser!.uid)
+                  .collection('favorite')
+                  .where('resturantID', isEqualTo: resturant_id)
+                  .get()
+                  .then((snapshot) {
+                for (var doc in snapshot.docs) {
+                  doc.reference.delete(); // Remove from favorites
+                }
+              });
+            } else {
+              // Add the restaurant to favorites
+              String favId = FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(auth.currentUser!.uid)
+                  .collection('favorite')
+                  .doc()
+                  .id;
+
+              FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(auth.currentUser!.uid)
+                  .collection('favorite')
+                  .doc(favId)
+                  .set({
+                'resturantID': resturant_id,
+                'favID': favId,
+              });
+            }
+          },
+          child: isFavorite
+              ? Image.asset(
+                  'assets/images/heart_icon.png',
+                  color: AppColors.primaryColor,
+                  height: 22,
+                  width: 22,
+                )
+              : Icon(
+                  Icons.favorite_border_outlined,
+                  size: 22,
+                  color: AppColors.primaryColor,
+                ),
+        );
+      },
+    );
   }
 }

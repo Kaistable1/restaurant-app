@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/main.dart';
-import 'package:kaistable_website/models/recent_view.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
+import 'package:kaistable_website/widgets/global_functions.dart';
+
 import '../../../constants/app_colors.dart';
 import '../../../widgets/rectangle_widget.dart';
 import '../../screens/detail_screens/restaurant_detail_screen.dart';
@@ -29,14 +30,7 @@ class AllCategories extends StatelessWidget {
         stream: controller.getRestaurants(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return SizedBox(
-              height: Get.height * 0.6,
-              child: const Center(
-                child: CircularProgressIndicator(
-                  color: AppColors.primaryColor,
-                ),
-              ),
-            ); // Show loading indicator
+            return buildShimmerEffect(); // Show shimmer while loading
           }
 
           if (snapshot.hasError) {
@@ -112,9 +106,7 @@ class AllCategories extends StatelessWidget {
                         width: Get.width * 0.45,
                         child: RectangleWidget(
                           title: item.resName,
-                          description: item.about.contains('Stay tuned')
-                              ? item.address
-                              : item.about,
+                          description: item.address,
                           resturant_id: item.docID,
                           imagePath: item.logoImage,
                           timetext: '10 AM',

@@ -272,7 +272,7 @@ class HomeScreen extends StatelessWidget {
                             SizedBox(
                               width: Get.width * 0.3,
                               child: Text(
-                                "${item.about}",
+                                "${item.address}",
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   fontSize: 10,
@@ -405,9 +405,7 @@ class HomeScreen extends StatelessWidget {
                             },
                             child: RectangleWidget(
                               title: item.resName,
-                              description: item.about.contains('Stay tuned')
-                                  ? item.address
-                                  : item.about,
+                              description: item.address,
                               resturant_id: item.docID,
                               imagePath: item.logoImage,
                               timetext: '10 AM',

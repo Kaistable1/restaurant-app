@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/screens/detail_screens/restaurant_detail_screen.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_location_controller.dart';
+import 'package:kaistable_website/widgets/global_functions.dart';
 import 'package:kaistable_website/widgets/rectangle_widget.dart';
 
 import '../../../constants/app_colors.dart';
@@ -74,15 +75,10 @@ class NearByAll extends StatelessWidget {
   Widget _buildTopSection() {
     final HomeLocationController controller = Get.put(HomeLocationController());
     return StreamBuilder(
-        stream: controller.getRestaurants(),
+        stream: controller.getAllRestaurants(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return SizedBox(
-                height: Get.height * 0.7,
-                child: Center(
-                    child: CircularProgressIndicator(
-                  color: AppColors.primaryColor,
-                )));
+            return buildShimmerEffect(); // Show shimmer while loading
           }
 
           if (snapshot.hasError) {
@@ -103,17 +99,11 @@ class NearByAll extends StatelessWidget {
               future: controller.getNearbyRestaurants(all_restaurants, 50000),
               builder: (context, futureSnapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return SizedBox(
-                      height: Get.height * 0.5,
-                      child: Center(child: CircularProgressIndicator()));
+                  return buildShimmerEffect(); // Show shimmer while loading
                 }
                 if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 }
-                if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Text('No nearby restaurants found.');
-                }
-                print('futureSnapshot.data: ${futureSnapshot.data?.length}');
 
                 List<RestaurantModel> restaurants = futureSnapshot.data ?? [];
                 if (restaurants.isEmpty) {
@@ -190,9 +180,7 @@ class NearByAll extends StatelessWidget {
                           },
                           child: RectangleWidget(
                             title: item.resName,
-                            description: item.about.contains('Stay tuned')
-                                ? item.address
-                                : item.about,
+                            description: item.address,
                             resturant_id: item.docID,
                             imagePath: item.logoImage,
                             timetext: '10 AM',
