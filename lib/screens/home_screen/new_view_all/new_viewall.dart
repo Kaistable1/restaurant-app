@@ -140,9 +140,22 @@ class NewViewall extends StatelessWidget {
                     if (snapshot.data == null || snapshot.data!.isEmpty) {
                       return Center(child: Text('No restaurants found'));
                     }
+                    List<RestaurantModel> filterResturatns = [];
+                    filterResturatns = homeController.restaurants;
 
                     return GetBuilder<HomeLocationController>(
                       builder: (controller) {
+                        controller.searchController.addListener(() {
+                          String inputText =
+                              controller.searchController.text.trim();
+                          filterResturatns = controller.restaurants
+                              .where((item) => item.resName
+                                  .toLowerCase()
+                                  .contains(inputText))
+                              .toList();
+                          controller.update();
+                        });
+
                         return NotificationListener<ScrollNotification>(
                           onNotification: (ScrollNotification scrollInfo) {
                             if (scrollInfo.metrics.pixels >=
@@ -150,6 +163,7 @@ class NewViewall extends StatelessWidget {
                                 !homeController.isLoading) {
                               homeController
                                   .loadMoreRestaurants(); // Load more when scrolling down
+                              filterResturatns = homeController.restaurants;
                             }
                             return true;
                           },
@@ -167,9 +181,9 @@ class NewViewall extends StatelessWidget {
                                     crossAxisSpacing: 10,
                                     mainAxisSpacing: 20,
                                   ),
-                                  itemCount: controller.restaurants.length,
+                                  itemCount: filterResturatns.length,
                                   itemBuilder: (context, index) {
-                                    final item = controller.restaurants[index];
+                                    final item = filterResturatns[index];
                                     return InkWell(
                                       onTap: () {
                                         Get.to(RestaurantDetailScreen(

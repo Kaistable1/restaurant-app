@@ -71,8 +71,7 @@ class HomeLocationController extends GetxController {
   bool isLoading = false;
   int limit = 10;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FilterSelectionController filterSelectionController =
-      Get.find<FilterSelectionController>();
+
   // List of CircleContainerModel objects
   final List<CircleContainerModel> circleItems = [
     CircleContainerModel(
@@ -332,7 +331,7 @@ class HomeLocationController extends GetxController {
   Stream<List<RestaurantModel>> getRestaurants() {
     return _firestore
         .collection('restaurants')
-        .orderBy('createdAt', descending: true) // Order for pagination
+        .orderBy('createdAt', descending: true)
         .limit(limit)
         .snapshots()
         .asyncMap((snapshot) async {
@@ -385,6 +384,7 @@ class HomeLocationController extends GetxController {
       );
 
       restaurants.addAll(newRestaurants); // Append new data to observable list
+      update();
       print('restaurants updated: ${restaurants.length}');
     }
 
@@ -417,8 +417,8 @@ class HomeLocationController extends GetxController {
       return restaurantsList;
     });
   }
-  
-   /// Fetches initial restaurants with pagination support
+
+  /// Fetches initial restaurants with pagination support
   Stream<List<RestaurantModel>> getFilteredRestaurants() {
     return _firestore
         .collection('restaurants')
@@ -444,7 +444,6 @@ class HomeLocationController extends GetxController {
       return restaurantsList;
     });
   }
-
 
   Stream<List<RestaurantModel>> getEntertainmentRestaurants() {
     return FirebaseFirestore.instance

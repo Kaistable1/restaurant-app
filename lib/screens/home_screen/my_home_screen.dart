@@ -366,11 +366,27 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
 
                                       List<RestaurantModel> restaurants =
                                           snapshot.data!;
+                                      if (filterSelectionController
+                                          .selectedCountry.isNotEmpty) {
+                                        print('flag 1 ');
 
+                                        restaurants =
+                                            restaurants.where((restaurant) {
+                                          bool isCityMatched =
+                                              filterSelectionController
+                                                  .aggregatedFilters
+                                                  .map((e) => e.toLowerCase())
+                                                  .any((filter) => restaurant
+                                                      .city
+                                                      .toLowerCase()
+                                                      .contains(filter));
+                                          return isCityMatched;
+                                        }).toList();
+                                      }
                                       // Filter by City
                                       if (filterSelectionController
                                           .selectedCity.isNotEmpty) {
-                                        print('flag 2');
+                                        print('flag 2 ');
 
                                         restaurants =
                                             restaurants.where((restaurant) {
@@ -557,7 +573,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                         controller
                                             .initializeSelectors(restaurants);
                                       });
-                                     
+
                                       return FutureBuilder<
                                           List<RestaurantModel>>(
                                         future: filterSelectionController
@@ -691,11 +707,8 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                           );
                                         },
                                       );
-                                 
-                                 
                                     },
                                   ),
-                                
                                   SizedBox(
                                     height: 16,
                                   ),
