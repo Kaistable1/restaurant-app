@@ -220,7 +220,7 @@ class GeneralPreferencesController extends GetxController {
   void toggleSelection6(String name) {
     if (selectedPreferences6.contains(name)) {
       selectedPreferences6.remove(name);
-    } else {
+    } else if (selectedPreferences6.length < 1) {
       selectedPreferences6.add(name);
     }
   }
@@ -243,7 +243,7 @@ class GeneralPreferencesController extends GetxController {
   void toggleSelection7(String name) {
     if (selectedPreferences7.contains(name)) {
       selectedPreferences7.remove(name);
-    } else if (selectedPreferences7.length < 2) {
+    } else if (selectedPreferences7.length < 1) {
       selectedPreferences7.add(name);
     }
   }
@@ -300,7 +300,7 @@ class GeneralPreferencesController extends GetxController {
   void toggleSelection9(String name) {
     if (selectedPreferences9.contains(name)) {
       selectedPreferences9.remove(name);
-    } else if (selectedPreferences9.length < 2) {
+    } else if (selectedPreferences9.length < 1) {
       selectedPreferences9.add(name);
     }
   }

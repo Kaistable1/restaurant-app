@@ -176,7 +176,7 @@ class Preference9 extends StatelessWidget {
                       signupController.updateUserData(
                           field: 'notifiedDiningOpp',
                           entry: controller.selectedPreferences9.last);
-                      Get.offAll(
+                      Get.off(
                         () => MainScreen(),
                       );
                     }

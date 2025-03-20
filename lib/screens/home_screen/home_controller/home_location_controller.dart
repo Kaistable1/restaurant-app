@@ -12,6 +12,7 @@ import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/models/recent_view.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/models/review_model.dart';
+import 'package:kaistable_website/screens/home_screen/home_controller/filter_selection_controller.dart';
 import 'package:kaistable_website/utils/loading.dart';
 import 'package:kaistable_website/widgets/global_functions.dart';
 import '../model/home-model.dart';
@@ -70,7 +71,8 @@ class HomeLocationController extends GetxController {
   bool isLoading = false;
   int limit = 10;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
+  final FilterSelectionController filterSelectionController =
+      Get.find<FilterSelectionController>();
   // List of CircleContainerModel objects
   final List<CircleContainerModel> circleItems = [
     CircleContainerModel(
@@ -118,8 +120,6 @@ class HomeLocationController extends GetxController {
     scrollController.dispose(); // Dispose the controller when not in use
     super.onClose();
   }
-  
-  
 
   List<RestaurantModel> resaturant_list = [];
 
@@ -417,6 +417,34 @@ class HomeLocationController extends GetxController {
       return restaurantsList;
     });
   }
+  
+   /// Fetches initial restaurants with pagination support
+  Stream<List<RestaurantModel>> getFilteredRestaurants() {
+    return _firestore
+        .collection('restaurants')
+        .orderBy('createdAt', descending: true)
+        .limit(limit)
+        .snapshots()
+        .asyncMap((snapshot) async {
+      if (snapshot.docs.isNotEmpty) {
+        lastDocument = snapshot.docs.last; // Track last document for pagination
+      }
+
+      List<RestaurantModel> restaurantsList = await Future.wait(
+        snapshot.docs.map((doc) async {
+          final restaurant = RestaurantModel.fromDocumentSnapshot(doc);
+          restaurant.menuList = await _getMenuFromSubcollection(doc.id);
+          return restaurant;
+        }),
+      );
+
+      restaurants
+          .assignAll(restaurantsList); // Use `.assignAll` for observable list
+      update(); // Ensure UI updates
+      return restaurantsList;
+    });
+  }
+
 
   Stream<List<RestaurantModel>> getEntertainmentRestaurants() {
     return FirebaseFirestore.instance
@@ -563,7 +591,7 @@ class HomeLocationController extends GetxController {
   // Initialize restaurants list
   void initializeSelectors(List<RestaurantModel> screenRestaurants) {
     allRestaurants = screenRestaurants;
-    restaurants.value = screenRestaurants;
+    filteredRestaurants = screenRestaurants;
     update();
   }
 

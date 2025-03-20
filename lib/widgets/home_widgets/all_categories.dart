@@ -27,7 +27,7 @@ class AllCategories extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(left: 14, right: 14),
       child: StreamBuilder(
-        stream: controller.getRestaurants(),
+        stream: controller.getAllRestaurants(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return buildShimmerEffect(); // Show shimmer while loading

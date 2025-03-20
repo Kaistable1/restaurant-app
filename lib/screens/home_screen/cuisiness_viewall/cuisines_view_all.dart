@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_filter_controller.dart';
+import 'package:kaistable_website/widgets/global_functions.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../custom_widget/separate_text_field.dart';
@@ -145,43 +146,7 @@ class CuisinesViewAll extends StatelessWidget {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: GridView.builder(
-                              physics: const NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                crossAxisSpacing: 8.0,
-                                mainAxisSpacing: 8.0,
-                                childAspectRatio: 113 / 144,
-                              ),
-                              itemCount: 12, // Number of items in the grid
-                              itemBuilder: (context, index) {
-                                return Container(
-                                  decoration: BoxDecoration(
-                                    color: AppColors.whiteColor,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.1),
-                                        spreadRadius: 0,
-                                        blurRadius: 2,
-                                        offset: const Offset(0, 1),
-                                      ),
-                                    ],
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Center(
-                                    child: CircularProgressIndicator(
-                                      color: AppColors.primaryColor,
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          );
+                          return buildShimmerEffect();
                         }
 
                         if (snapshot.hasError) {

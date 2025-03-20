@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
@@ -18,30 +19,55 @@ class MapWidget extends StatelessWidget {
   bool? isCommingSoon;
   double lat, long;
   final RestaurantDetailController controller;
+  GoogleMapController? _controller;
 
   @override
   Widget build(BuildContext context) {
-    print('lat----$lat    long-----$long');
     return ClipRRect(
       borderRadius: BorderRadius.only(
           topRight: Radius.circular(10), topLeft: Radius.circular(10)),
-      child: GoogleMap(
-        markers: {
-          Marker(
-            markerId: MarkerId('Property location'),
-            position: LatLng(lat, long),
-          ),
-        },
-        mapType: MapType.normal,
-        initialCameraPosition: CameraPosition(
-          target: LatLng(lat, long),
-          zoom: 14.4746,
+      child: googleMap(),
+    );
+  }
+
+  Future<void> _setMapStyle() async {
+    String style = await rootBundle.loadString('assets/map_style.json');
+    _controller?.setMapStyle(style);
+  }
+
+  void _zoomIn() {
+    _controller?.getZoomLevel().then((zoom) {
+      _controller?.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(target: LatLng(lat, long), zoom: zoom + 1),
+      ));
+    });
+  }
+
+  void _zoomOut() {
+    _controller?.getZoomLevel().then((zoom) {
+      _controller?.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(target: LatLng(lat, long), zoom: zoom - 1),
+      ));
+    });
+  }
+
+  GoogleMap googleMap() {
+    return GoogleMap(
+      markers: {
+        Marker(
+          markerId: MarkerId('Property location'),
+          position: LatLng(lat, long),
         ),
-        // ListPropertyController.kGooglePlex,
-        onMapCreated: (GoogleMapController gController) {
-          // controller.completer.complete(gController);
-        },
+      },
+      mapType: MapType.satellite,
+      initialCameraPosition: CameraPosition(
+        target: LatLng(lat, long),
+        zoom: 14.4746,
       ),
+      onMapCreated: (GoogleMapController gController) {
+        _controller = gController;
+        _setMapStyle();
+      },
     );
   }
 }
