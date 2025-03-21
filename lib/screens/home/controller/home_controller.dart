@@ -20,7 +20,8 @@ class HomeController extends GetxController {
   void setSelected(String value) {
     selectedOption.value = value;
   }
-   addHistory({text}) async {
+
+  addHistory({text}) async {
     try {
       await FirebaseFirestore.instance.collection('history').add({
         'searchText': text,
@@ -111,7 +112,9 @@ class PlacesController extends GetxController {
       if (exists) {
         duplicateCount++; // Increment if restaurant already exists
       } else {
-        await restaurantsCollection.add(await restaurant.toMap());
+        String docID = restaurantsCollection.doc().id;
+        restaurant.docID = docID;
+        await restaurantsCollection.doc(docID).set(await restaurant.toMap());
         addedCount++; // Increment if a new restaurant is added
       }
     }
@@ -131,6 +134,4 @@ class PlacesController extends GetxController {
 
     return querySnapshot.docs.isNotEmpty; // Returns true if restaurant exists
   }
-
- 
 }
