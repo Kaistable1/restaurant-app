@@ -216,7 +216,9 @@ class ProfileScreen extends StatelessWidget {
                         changePasswordDialogBox();
                         break;
                       case 1:
-                        Get.to(Preference1());
+                        Get.to(Preference1(
+                          isComeFromSetting: true,
+                        ));
                         break;
                       case 2:
                         Get.to(TermsAndCondition());

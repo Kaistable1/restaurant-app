@@ -59,7 +59,7 @@ class MapWidget extends StatelessWidget {
           position: LatLng(lat, long),
         ),
       },
-      mapType: MapType.satellite,
+      mapType: MapType.terrain,
       initialCameraPosition: CameraPosition(
         target: LatLng(lat, long),
         zoom: 14.4746,

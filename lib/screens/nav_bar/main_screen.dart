@@ -68,6 +68,7 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: _currentIndex == 0
           ? AppBar(
+              automaticallyImplyLeading: false,
               backgroundColor: AppColors.whiteColor,
               elevation: 0,
               centerTitle: true,

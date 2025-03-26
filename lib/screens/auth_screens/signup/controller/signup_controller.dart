@@ -56,56 +56,67 @@ class SignupController extends GetxController {
 
   // Function to send a verification email
   sendEmail({bool isFromResendOtp = false}) async {
-    loadingDialog(
-      message: "Sending email verification code!",
-      loading: true,
-      height: 170,
-    );
+    bool emailExists =
+        await checkIfEmailExists(email: userModel.userEmail.text);
+    if (emailExists) {
+      loadingDialog(
+        message: "Sending email verification code!",
+        loading: true,
+        height: 170,
+      );
 
-    // Gmail credentials for SMTP
-    String username = 'emannoor5236@gmail.com';
-    String password = 'aduo tgwi qsvu xfxd';
+      // Gmail credentials for SMTP
+      String username = 'emannoor5236@gmail.com';
+      String password = 'aduo tgwi qsvu xfxd';
 
-    // Generate a 6-digit verification code
-    verificationCode = 100000 + Random().nextInt(90000);
-    if (verificationCode!.bitLength > 6) {
-      verificationCode = 100000 + Random().nextInt(99999);
-    }
-    update();
-    print("========== $verificationCode");
-
-    // Create an SMTP server instance
-    final smtpServer = gmail(username, password);
-
-    // Email message details
-    final message = Message()
-      ..from = Address(username, "SAVRLY")
-      ..recipients.add(userModel.userEmail.text)
-      ..subject = 'SAVRLY'
-      ..text = 'This is the plain text.\nThis is line 2 of the text part.'
-      ..html =
-          "<p>$verificationCode is verification code for ${userModel.userEmail.text}</p>";
-
-    try {
-      // Send the email
-      final sendReport = await send(message, smtpServer);
-      print('Message sent: $sendReport');
-      Get.back();
-
-      // Navigate to verification page if this is not a resend request
-      if (!isFromResendOtp) {
-        Get.to(() => VerifyPage(
-              email: userModel.userEmail.text,
-            ));
+      // Generate a 6-digit verification code
+      verificationCode = 100000 + Random().nextInt(90000);
+      if (verificationCode!.bitLength > 6) {
+        verificationCode = 100000 + Random().nextInt(99999);
       }
-    } on MailerException catch (e) {
-      // Handle email sending failure
-      Get.back();
-      print('Message not sent. Error: $e');
-      for (var problem in e.problems) {
-        print('Problem: ${problem.code}: ${problem.msg}');
+      update();
+      print("========== $verificationCode");
+
+      // Create an SMTP server instance
+      final smtpServer = gmail(username, password);
+
+      // Email message details
+      final message = Message()
+        ..from = Address(username, "SAVRLY")
+        ..recipients.add(userModel.userEmail.text)
+        ..subject = 'SAVRLY'
+        ..text = 'This is the plain text.\nThis is line 2 of the text part.'
+        ..html =
+            "<p>$verificationCode is verification code for ${userModel.userEmail.text}</p>";
+
+      try {
+        // Send the email
+        final sendReport = await send(message, smtpServer);
+        print('Message sent: $sendReport');
+        Get.back();
+
+        // Navigate to verification page if this is not a resend request
+        if (!isFromResendOtp) {
+          Get.to(() => VerifyPage(
+                email: userModel.userEmail.text,
+              ));
+        }
+      } on MailerException catch (e) {
+        // Handle email sending failure
+        Get.back();
+        print('Message not sent. Error: $e');
+        for (var problem in e.problems) {
+          print('Problem: ${problem.code}: ${problem.msg}');
+        }
+        loadingDialog(
+            message: "Failed to send verification code", button: true);
       }
-      loadingDialog(message: "Failed to send verification code", button: true);
+    } else {
+      loadingDialog(
+          message: "Email already exists!",
+          button: true,
+          isWrongPassword: true,
+          height: 150);
     }
   }
 
