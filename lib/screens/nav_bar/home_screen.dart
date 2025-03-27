@@ -12,83 +12,119 @@ import 'package:kaistable_website/screens/home_screen/trending_all/trending_view
 import 'package:kaistable_website/screens/nav_bar/near_by_all.dart';
 import 'package:kaistable_website/widgets/global_functions.dart';
 import 'package:kaistable_website/widgets/rectangle_widget.dart';
+import 'package:showcaseview/showcaseview.dart';
 
+import '../../widgets/showcase_container.dart';
 import 'controller/home_controller.dart';
 
 class HomeScreen extends StatelessWidget {
+
   final HomeController controller = Get.put(HomeController());
+  final GlobalKey _carouselKey = GlobalKey();
+  final GlobalKey _categoryKey = GlobalKey();
+  final GlobalKey _trendingKey = GlobalKey();
+  final GlobalKey _youMayLikeThis = GlobalKey();
+  bool hasStartedShowcase = false;
+
   @override
   Widget build(BuildContext context) {
     requestLocationPermission();
-    return Scaffold(
-      backgroundColor: AppColors.whiteColor,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 15),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CarouselSlider(
-                options: CarouselOptions(
-                  height: 190,
-                  viewportFraction: 1.0,
-                  autoPlay: true,
-                  enlargeCenterPage: true,
-                  onPageChanged: (index, reason) {
-                    controller.currentIndex.value = index;
-                  },
-                ),
-                items: controller.carouselImages.map((image) {
-                  return ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Image.asset(image,
-                        fit: BoxFit.contain, width: double.infinity),
-                  );
-                }).toList(),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 14),
-                child: Row(
-                  children: [
-                    Text(
-                      'Explore By Category',
-                      style: TextStyle(
-                        color: AppColors.bottomSheetColor,
-                        fontFamily: 'aftika-regular',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
+    return ShowCaseWidget(
+      builder: (context) {
+        if (!hasStartedShowcase) {
+          hasStartedShowcase = true;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            ShowCaseWidget.of(context).startShowCase([
+              _carouselKey,
+              _categoryKey,
+              _trendingKey,
+              _youMayLikeThis,
+            ]);
+          });
+        }
+        return Scaffold(
+          backgroundColor: AppColors.whiteColor,
+          body: SafeArea(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Showcase.withWidget(
+                    height: 100,
+                    targetPadding: const EdgeInsets.symmetric(vertical: 8),
+                    width: Get.width - 24,
+                    key: _carouselKey,
+                    container: ShowCaseContainer(
+                      width: Get.width - 32,
+                      text: "Explore new features and highlights.",
+                      showcaseContext: context,
+                      last: false,
+                    ),
+                    child: CarouselSlider(
+                      options: CarouselOptions(
+                        height: 190,
+                        viewportFraction: 1.0,
+                        autoPlay: true,
+                        enlargeCenterPage: true,
+                        onPageChanged: (index, reason) {
+                          controller.currentIndex.value = index;
+                        },
                       ),
+                      items: controller.carouselImages.map((image) {
+                        return ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.asset(image,
+                              fit: BoxFit.contain, width: double.infinity),
+                        );
+                      }).toList(),
                     ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              _buildCategories(),
-              _buildTrendingSection(),
-              Container(
-                width: Get.width,
-                height: 150,
-                decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(18),
-                  image: DecorationImage(
-                    image: AssetImage(
-                      'assets/images/ad1.png',
-                    ),
-                    fit: BoxFit.cover,
                   ),
-                ),
+
+                  SizedBox(height: 10),
+                  Showcase.withWidget(
+                    height: 200,
+                    width: Get.width - 24,
+                    key: _categoryKey,
+                    container: ShowCaseContainer(
+                      width: Get.width - 32,
+                      text: "Browse categories to find what you need.",
+                      showcaseContext: context,
+                      last: false,
+                    ),
+                    child: _buildCategories(),
+                  ),
+                  SizedBox(height: 10),
+                  Showcase.withWidget(
+                    height: 200,
+                    width: Get.width - 24,
+                    key: _trendingKey,
+                    container: ShowCaseContainer(
+                      width: Get.width - 32,
+                      text: "Check out trending items.",
+                      showcaseContext: context,
+                      last: false,
+                    ),
+                    child: _buildTrendingSection(),
+                  ),
+                  SizedBox(height: 10),
+                  Showcase.withWidget(
+                      height: 200,
+                      width: Get.width - 24,
+                      key: _youMayLikeThis,
+                      container: ShowCaseContainer(
+                        width: Get.width - 32,
+                        text: "Personalized recommendations for you.",
+                        showcaseContext: context,
+                        last: true,
+                      ),
+                      child: _buildNearBySection()),
+                ],
               ),
-              SizedBox(
-                height: 10,
-              ),
-              _buildNearBySection(),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -232,6 +268,7 @@ class HomeScreen extends StatelessWidget {
                   height:
                       Get.height * 0.22, // Fixed height for the horizontal list
                   child: ListView.builder(
+                    padding: EdgeInsets.zero,
                     scrollDirection: Axis.horizontal,
                     itemCount: restaurants.length,
                     itemBuilder: (context, index) {
@@ -388,7 +425,7 @@ class HomeScreen extends StatelessWidget {
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          mainAxisExtent: Get.height * 0.2,
+                          mainAxisExtent: Get.height * 0.22,
                           crossAxisCount: 2,
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 20,
