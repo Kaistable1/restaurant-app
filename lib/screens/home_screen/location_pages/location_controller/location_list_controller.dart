@@ -1,54 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
+import 'package:get/get.dart';
 class LocationListController extends GetxController {
   ScrollController scrollController = ScrollController();
-  final List<LocationListModel> circleItems = [
-    LocationListModel(
-      timeText: '20:20',
-      timeText2: '22:20',
-      percentageText: '12%',
-    ),
-    LocationListModel(
-      timeText: '20:20',
-      timeText2: '22:20',
-      percentageText: '12%',
-    ),
-    LocationListModel(
-      timeText: '20:20',
-      timeText2: '22:20',
-      percentageText: '12%',
-    ),
-    LocationListModel(
-      timeText: '20:20',
-      timeText2: '22:20',
-      percentageText: '12%',
-    ),
-    LocationListModel(
-      timeText: '20:20',
-      timeText2: '22:20',
-      percentageText: '12%',
-    ),
-    LocationListModel(
-      timeText: '20:20',
-      timeText2: '22:20',
-      percentageText: '12% ',
-    ),
-    LocationListModel(
-      timeText: '20:20',
-      timeText2: '22:20',
-      percentageText: '12%',
-    ),
-    LocationListModel(
-      timeText: '20:20',
-      timeText2: '22:20',
-      percentageText: '12%',
-    ),
-    LocationListModel(
-      timeText: '20:20',
-      timeText2: '22:20',
-      percentageText: '12%',
-    ),
-  ];
+
   void scrollLeft() {
     scrollController.animateTo(
       scrollController.offset - 300, // Scroll left by 300 pixels

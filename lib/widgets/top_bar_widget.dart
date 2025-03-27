@@ -107,7 +107,7 @@
 //         title: Text(
 //           _titles[_selectedIndex], // Display the title of the selected screen
 //           style: const TextStyle(
-//             fontSize: 20,
+//             fontSize: 17,
 //             color: AppColors.primaryColor,
 //             fontWeight: FontWeight.w700,
 //             fontFamily: 'Nunito-Bold',

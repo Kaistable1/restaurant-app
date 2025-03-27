@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
+import 'package:kaistable_website/screens/auth_screens/signup/controller/signup_controller.dart';
 import 'package:kaistable_website/screens/general_preferences/screens_general/preference_2.dart';
 
 import '../../../custom_widget/separate_text_field.dart';
@@ -9,12 +10,13 @@ import '../controller/generalPreferences_Controller.dart';
 import '../widget/preferencesSelectionWidget.dart';
 
 class Preference1 extends StatelessWidget {
-  Preference1({super.key});
+  Preference1({super.key, this.isComeFromSetting});
 
   final controller = Get.put(GeneralPreferencesController());
-
+  bool? isComeFromSetting;
   @override
   Widget build(BuildContext context) {
+    controller.fetchUserPreferences();
     final _formKey = GlobalKey<FormState>();
     return Scaffold(
       backgroundColor: AppColors.bgColor,
@@ -24,36 +26,38 @@ class Preference1 extends StatelessWidget {
           color: AppColors.primaryColor,
         ),
         centerTitle: true,
-        automaticallyImplyLeading: true,
-        leading: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Container(
-            height: 16,
-            width: 16,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  spreadRadius: 1,
-                  blurRadius: 3,
-                  offset: const Offset(0, 1),
+        automaticallyImplyLeading: false,
+        leading: isComeFromSetting != true
+            ? null
+            : Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Container(
+                  height: 16,
+                  width: 16,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        spreadRadius: 1,
+                        blurRadius: 3,
+                        offset: const Offset(0, 1),
+                      ),
+                    ],
+                  ),
+                  child: GestureDetector(
+                    onTap: () {
+                      Get.back();
+                    },
+                    child: Icon(Icons.arrow_back, size: 18),
+                  ),
                 ),
-              ],
-            ),
-            child: GestureDetector(
-              onTap: () {
-                Get.back();
-              },
-              child: Icon(Icons.arrow_back, size: 18),
-            ),
-          ),
-        ),
+              ),
         title: Text(
           'General Preferences',
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 17,
             color: AppColors.bottomSheetColor,
             fontWeight: FontWeight.w700,
             fontFamily: 'Nunito-Bold',
@@ -64,7 +68,7 @@ class Preference1 extends StatelessWidget {
             padding: const EdgeInsets.only(right: 12.0),
             child: Center(
               child: Text(
-                '1/14',
+                '1/9',
                 style: TextStyle(
                   fontSize: 12,
                   fontFamily: 'Nunito-Sans',
@@ -178,9 +182,9 @@ class Preference1 extends StatelessWidget {
                     width: 190,
                     fontFamily: 'Nunito-Sans',
                     fontWeight: FontWeight.w600,
-                    fontSize: 20,
+                    fontSize: 17,
                     textColor: Colors.white,
-                    ontapp: () {
+                    ontapp: () async {
                       if (_formKey.currentState!.validate()) {
                         if (controller.selectedPreferences.contains("Other") &&
                             controller.screen1Controller.text.isEmpty) {
@@ -207,6 +211,14 @@ class Preference1 extends StatelessWidget {
                           );
                           return;
                         }
+                        if (controller.screen1Controller.text.isNotEmpty) {
+                          controller.selectedPreferences
+                              .add(controller.screen1Controller.text);
+                        }
+                        final signupController = Get.put(SignupController());
+                        signupController.updateUserData(
+                            field: 'topThreeCuisines',
+                            entry: controller.selectedPreferences);
                         Get.to(() => Preference2());
                       }
                     },

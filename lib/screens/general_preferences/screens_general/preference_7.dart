@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
+import 'package:kaistable_website/screens/auth_screens/signup/controller/signup_controller.dart';
 import 'package:kaistable_website/screens/general_preferences/screens_general/preference_8.dart';
 
 import '../../../custom_widget/separate_text_field.dart';
@@ -15,6 +16,8 @@ class Preference7 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    controller.fetchUserPreferences();
+
     return Scaffold(
       backgroundColor: AppColors.bgColor,
       appBar: AppBar(
@@ -50,9 +53,9 @@ class Preference7 extends StatelessWidget {
           ),
         ),
         title: Text(
-          'Entertainment & Event',
+          'General Preferences',
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 17,
             color: AppColors.bottomSheetColor,
             fontWeight: FontWeight.w700,
             fontFamily: 'Nunito-Sans',
@@ -64,7 +67,7 @@ class Preference7 extends StatelessWidget {
             padding: const EdgeInsets.only(right: 12.0),
             child: Center(
               child: Text(
-                '7/14',
+                '7/9',
                 style: TextStyle(
                   fontSize: 12,
                   fontFamily: 'Nunito-Sans',
@@ -86,7 +89,7 @@ class Preference7 extends StatelessWidget {
                 height: 8,
               ),
               Text(
-                'Do You Enjoy Dining At Restaurants Entertainment?',
+                'How far are you willing to travel for a great dining experience?',
                 style: TextStyle(
                   fontFamily: 'Nunito-Sans',
                   color: AppColors.lightGrey,
@@ -156,7 +159,7 @@ class Preference7 extends StatelessWidget {
                   width: 190,
                   fontFamily: 'Nunito-Sans',
                   fontWeight: FontWeight.w600,
-                  fontSize: 20,
+                  fontSize: 17,
                   textColor: Colors.white,
                   ontapp: () {
                     if (controller.selectedPreferences7.length < 1) {
@@ -170,7 +173,10 @@ class Preference7 extends StatelessWidget {
                         borderRadius: 10,
                       );
                     } else {
-                      // controller.screen1Controller.clear();
+                      final signupController = Get.put(SignupController());
+                      signupController.updateUserData(
+                          field: 'willingToTravel',
+                          entry: controller.selectedPreferences7.last);
                       Get.to(() => Preference8());
                     }
                   },

@@ -1,39 +1,38 @@
-import 'dart:ui';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
-import 'package:kaistable_website/screens/auth_screens/login/login_screen.dart';
-import 'package:kaistable_website/screens/detail_screens/restaurant_detail_screen.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:kaistable_website/models/usermodel.dart';
 import 'package:kaistable_website/screens/general_preferences/screens_general/preference_1.dart';
-import 'package:kaistable_website/screens/general_preferences/screens_general/preference_10.dart';
-import 'package:kaistable_website/screens/general_preferences/screens_general/preference_12.dart';
-import 'package:kaistable_website/screens/general_preferences/screens_general/preference_14.dart';
-import 'package:kaistable_website/screens/general_preferences/screens_general/preference_3.dart';
-import 'package:kaistable_website/screens/general_preferences/screens_general/preference_4.dart';
-import 'package:kaistable_website/screens/general_preferences/screens_general/preference_5.dart';
-import 'package:kaistable_website/screens/general_preferences/screens_general/preference_6.dart';
-import 'package:kaistable_website/screens/general_preferences/screens_general/preference_7.dart';
-import 'package:kaistable_website/screens/general_preferences/screens_general/preference_8.dart';
-import 'package:kaistable_website/screens/general_preferences/screens_general/preference_9.dart';
-
-import 'package:kaistable_website/screens/onboarding_screen/onboarding_screen.dart';
-import 'package:kaistable_website/screens/profile_screens/profile_screen.dart';
 import 'package:kaistable_website/splash_screen/splashscreen.dart';
-import 'package:kaistable_website/widgets/top_bar_widget.dart';
-
-import 'firebase_options.dart';
-import 'landing_screen.dart';
-import 'screens/home_screen/my_home_screen.dart';
+import 'package:kaistable_website/widgets/global_functions.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 bool myFlag = false;
-
+final auth = FirebaseAuth.instance;
+SharedPreferences? preferences;
+SharedPreferences? remember_me_pref;
+Rx<UserModel>? currentUserDataModel;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
-  runApp(const MyApp());
+  try {
+    await Firebase.initializeApp();
+    await getCurrentUserData();
+    await requestLocationPermission();
+  } on FirebaseAuthException catch (e) {
+    print('Error: ${e.code} - ${e.message}');
+  } catch (e) {
+    print('Unhandled error: $e');
+  }
+  preferences = await SharedPreferences.getInstance();
+  remember_me_pref = await SharedPreferences.getInstance();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]).then((_) {
+    runApp(MyApp());
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -42,20 +41,12 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    
     return GetMaterialApp(
-      // scrollBehavior:const MaterialScrollBehavior().copyWith(dragDevices:{
-      //   PointerDeviceKind.invertedStylus,
-      //   PointerDeviceKind.mouse,
-      //   PointerDeviceKind.stylus,
-      //   PointerDeviceKind.touch,
-      //   PointerDeviceKind.trackpad,
-      //   PointerDeviceKind.unknown,
-      // }),
       debugShowCheckedModeBanner: false,
       title: 'Kaistable',
       home: SplashScreen(),
-      // home:  OnboardingScreen (),
-      // home:MyHomeScreen(countryName: 'New York',)
     );
   }
 }
+//

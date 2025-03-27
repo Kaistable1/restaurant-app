@@ -9,7 +9,35 @@ import '../home_controller/home_location_controller.dart';
 import '../location_pages/location_controller/location_controller.dart';
 
 class FilterScreen extends StatelessWidget {
-  final List<String> letters = ['#', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+  final List<String> letters = [
+    '#',
+    'A',
+    'B',
+    'C',
+    'D',
+    'E',
+    'F',
+    'G',
+    'H',
+    'I',
+    'J',
+    'K',
+    'L',
+    'M',
+    'N',
+    'O',
+    'P',
+    'Q',
+    'R',
+    'S',
+    'T',
+    'U',
+    'V',
+    'W',
+    'X',
+    'Y',
+    'Z'
+  ];
 
   final HomeLocationController controller = Get.put(HomeLocationController());
   final Function(int)? onNavigate;
@@ -17,17 +45,20 @@ class FilterScreen extends StatelessWidget {
   final RxBool showFilterOptions = false.obs;
   final LocationController locationController = Get.put(LocationController());
 
-  FilterScreen({super.key,this.onNavigate,});
+  FilterScreen({
+    super.key,
+    this.onNavigate,
+  });
   @override
   Widget build(BuildContext context) {
     // Get the selected letter passed from the previous screen
-    String selectedLetter = Get.arguments ?? '';  // Retrieve the letter passed via Get.to()
+    String selectedLetter =
+        Get.arguments ?? ''; // Retrieve the letter passed via Get.to()
 
     return WillPopScope(
-      onWillPop: ()async{
+      onWillPop: () async {
         Get.back();
         return false;
-
       },
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -35,8 +66,10 @@ class FilterScreen extends StatelessWidget {
           double itemWidth = (constraints.maxWidth / itemsPerRow) - 16;
           double itemHeight = 320;
 
-          return Scaffold(backgroundColor: AppColors.bgColor,
-            appBar: AppBar(backgroundColor: AppColors.bgColor,
+          return Scaffold(
+            backgroundColor: AppColors.bgColor,
+            appBar: AppBar(
+              backgroundColor: AppColors.bgColor,
               iconTheme: IconThemeData(
                 color: AppColors.primaryColor,
               ),
@@ -67,27 +100,30 @@ class FilterScreen extends StatelessWidget {
                   ),
                 ),
               ),
-
-              title: Text('Available restaurants',
+              title: Text(
+                'Available restaurants',
                 style: const TextStyle(
-                  fontSize: 20,
+                  fontSize: 17,
                   color: AppColors.bottomSheetColor,
                   fontWeight: FontWeight.w700,
                   fontFamily: 'Nunito-Bold',
-                ),),
+                ),
+              ),
               actions: [
                 GestureDetector(
                   onTap: () {
                     isTapped.value = !isTapped.value;
                     showFilterOptions.value = !showFilterOptions.value;
-                    Get.back();// Toggle visibility of filter options
+                    Get.back(); // Toggle visibility of filter options
                   },
                   child: Obx(
-                        () => Container(
+                    () => Container(
                       height: 38,
                       width: 38,
                       decoration: BoxDecoration(
-                        color: isTapped.value ? AppColors.primaryColor : AppColors.whiteColor,
+                        color: isTapped.value
+                            ? AppColors.primaryColor
+                            : AppColors.whiteColor,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Center(
@@ -95,13 +131,17 @@ class FilterScreen extends StatelessWidget {
                           "assets/images/filter_white.png",
                           height: 24,
                           width: 24,
-                          color: isTapped.value ? Colors.white : AppColors.primaryColor,
+                          color: isTapped.value
+                              ? Colors.white
+                              : AppColors.primaryColor,
                         ),
                       ),
                     ),
                   ),
                 ),
-                SizedBox(width: 10,)
+                SizedBox(
+                  width: 10,
+                )
               ],
             ),
             body: SingleChildScrollView(
@@ -189,21 +229,19 @@ class FilterScreen extends StatelessWidget {
                       style: TextStyle(
                         color: AppColors.bottomSheetColor,
                         fontFamily: 'Nunito-Bold',
-                        fontSize: Responsive.isMobile(context) ? 18: 16,
+                        fontSize: Responsive.isMobile(context) ? 18 : 16,
                         fontWeight: FontWeight.w400,
                       ),
                     ),
                   ),
                   SizedBox(height: Responsive.isMobile(context) ? 10 : 18),
 
-
-
                   SizedBox(height: Responsive.isMobile(context) ? 20 : 22),
                   Obx(() {
                     return Padding(
                       padding: EdgeInsets.only(
                         left: 14,
-                        right:14,
+                        right: 14,
                       ),
                       child: GridView.builder(
                         shrinkWrap: true,
@@ -244,7 +282,9 @@ class FilterScreen extends StatelessWidget {
                       ),
                     );
                   }),
-                  SizedBox(height: 30,)
+                  SizedBox(
+                    height: 30,
+                  )
                 ],
               ),
             ),

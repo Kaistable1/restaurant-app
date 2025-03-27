@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:kaistable_website/screens/auth_screens/signup/controller/signup_controller.dart';
 import 'package:kaistable_website/screens/general_preferences/screens_general/preference_14.dart';
 
 import '../../../constants/app_colors.dart';
@@ -65,7 +66,7 @@ class Preference13 extends StatelessWidget {
             padding: const EdgeInsets.only(right: 12.0),
             child: Center(
               child: Text(
-                '13/14',
+                '10/11',
                 style: TextStyle(
                   fontSize: 12,
                   fontFamily: 'Nunito-Sans',
@@ -124,10 +125,14 @@ class Preference13 extends StatelessWidget {
                     width: 190,
                     fontFamily: 'Nunito-Sans',
                     fontWeight: FontWeight.w600,
-                    fontSize: 20,
+                    fontSize: 17,
                     textColor: Colors.white,
                     ontapp: () {
                       if (_formKey.currentState!.validate()) {
+                        final signupController = Get.put(SignupController());
+                        signupController.updateUserData(
+                            field: 'zipCode',
+                            entry: controller.zipCodeController.text);
                         Get.to(() => Preference14());
                       }
                     },

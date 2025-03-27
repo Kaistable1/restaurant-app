@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
+import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/screens/auth_screens/login/controller/login_controller.dart';
 
 import '../../../custom_widget/TextAndWidget.dart';
@@ -18,6 +19,7 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    controller.checkRememberMe();
     final _formKey = GlobalKey<FormState>();
     return GestureDetector(
       onTap: () {
@@ -65,7 +67,7 @@ class LoginScreen extends StatelessWidget {
                       color: AppColors.blackColor,
                       fontWeight: FontWeight.w600,
                       fontFamily: 'Nunito-Sans',
-                      fontSize: 18,
+                      fontSize: 15,
                     ),
                   ),
                   SizedBox(
@@ -159,6 +161,16 @@ class LoginScreen extends StatelessWidget {
                         onTap: () {
                           controller.rememberMe.value =
                               !controller.rememberMe.value;
+                          if (controller.rememberMe.value) {
+                            remember_me_pref!.setString('remember_me',
+                                controller.passwordController.text);
+                            remember_me_pref!.setString('remember_me_email',
+                                controller.emailController.text);
+                            remember_me_pref!.setBool('is_remember_me', true);
+                          } else {
+                            remember_me_pref!.clear();
+                            controller.update();
+                          }
                         },
                         child: Obx(
                           () => Container(
@@ -197,28 +209,22 @@ class LoginScreen extends StatelessWidget {
                   SizedBox(
                     height: 40,
                   ),
-
-                      Center(
-                        child: CustomButton(
-                          laBelText: 'Login',
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: 'Nunito-Sans',
-                          textColor: Colors.white,
-                          width: 150,
-                          height: 43,
-                          ontapp: () {
-                            if (_formKey.currentState!.validate()) {
-                              controller.emailController.clear();
-                              controller.passwordController.clear();
-                              Get.to(() => MyHomeScreen(
-                                    countryName: 'USA',
-                                  ));
-                            }
-                          },
-                        ),
-                      ),
-
+                  Center(
+                    child: CustomButton(
+                      laBelText: 'Login',
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'Nunito-Sans',
+                      textColor: Colors.white,
+                      width: 150,
+                      height: 43,
+                      ontapp: () async {
+                        if (_formKey.currentState!.validate()) {
+                          await controller.login();
+                        }
+                      },
+                    ),
+                  ),
                   SizedBox(
                     height: 24,
                   ),

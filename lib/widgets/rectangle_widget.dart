@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:kaistable_website/main.dart';
+
+import 'package:kaistable_website/models/resaturant_model.dart';
+import 'package:kaistable_website/screens/home_screen/home_controller/home_location_controller.dart';
 
 import '../constants/app_colors.dart';
-import '../screens/detail_screens/restaurant_detail_screen.dart';
-import '../utils/responsive.dart';
 
 class RectangleWidget extends StatelessWidget {
   final String title;
@@ -16,123 +15,150 @@ class RectangleWidget extends StatelessWidget {
   final String? endTimeText;
   final String percentText;
   final RxBool isFavorite;
+  List<OfferModel>? percentageOff;
+  List<OfferModel>? happyhour;
+
+  String? resturant_id;
   final Function(int)? onNavigate;
 
-  const RectangleWidget(
-      {super.key,
-      required this.title,
-      required this.imagePath,
-      required this.description,
-      required this.timetext,
-      required this.percentText,
-      required this.isFavorite,
-      this.onNavigate,
-      this.endTimeText,
-      });
+  RectangleWidget({
+    super.key,
+    required this.title,
+    this.percentageOff,
+    this.happyhour,
+    this.resturant_id,
+    required this.imagePath,
+    required this.description,
+    required this.timetext,
+    required this.percentText,
+    required this.isFavorite,
+    this.onNavigate,
+    this.endTimeText,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Get.to(RestaurantDetailScreen());
-      },
-      child: Container(
-        height: 173,
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.4),
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 6,
-              spreadRadius: 1,
-              offset: Offset(2, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              height: 102,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  image: DecorationImage(
-                      fit: BoxFit.cover, image: AssetImage(imagePath))),
-            ),
-            SizedBox(height: 8),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(
+            width: 172,
+            height: 124,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.transparent,
+                image: DecorationImage(
+                    fit: BoxFit.fill,
+                    image: imagePath.contains('http')
+                        ? NetworkImage(
+                            imagePath,
+                          )
+                        : AssetImage(imagePath))),
+          ),
+          SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            child: Column(
               children: [
-                Text(
-                  title, // 'Buffet',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 14,
-                    fontFamily: 'Nunito-Regular',
-                    color: AppColors.textColor,
-                  ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 100,
+                      child: Text(
+                        title,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 12,
+                          fontFamily: 'Nunito-Regular',
+                          color: AppColors.textColor,
+                        ),
+                      ),
+                    ),
+                    Spacer(),
+                    auth.currentUser == null || resturant_id == ''
+                        ? SizedBox()
+                        : HomeLocationController()
+                            .favoriteHeart(resturant_id: resturant_id),
+                    SizedBox(
+                      width: 6,
+                    )
+                  ],
                 ),
-                Spacer(),
-                Obx(() {
-                  return InkWell(
-                      onTap: () {
-                        print('jksdb');
-                        isFavorite.value = !isFavorite.value;
-                      },
-                      child: isFavorite.value
-                          ? Image.asset(
-                              'assets/images/heart_icon.png',
-                              color: AppColors.primaryColor,
-                              height: 16,
-                              width: 16,
-                            )
-                          : Icon(
-                              Icons.favorite_border_outlined,
-                              size: 18,
-                              color: AppColors.primaryColor,
-                            ));
-                }),
-                SizedBox(
-                  width: 6,
-                )
+                SizedBox(height: 2),
+                Row(
+                  children: [
+                    SizedBox(
+                      width: Get.width * 0.37,
+                      child: Text(
+                        description,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 8,
+                          fontFamily: 'Nunito-Regular',
+                          color: AppColors.textColor,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
-            SizedBox(height: 2),
-            Text(
-              description,
-              style: TextStyle(
-                fontWeight: FontWeight.w400,
-                fontSize: 8,
-                fontFamily: 'Nunito-Regular',
-                color: AppColors.textColor,
-              ),
-            ),
-            SizedBox(
-              height: 6,
-            ),
-            Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildStarBox(context),
-                  SizedBox(
-                    width: 2,
-                  ),
-                  _buildStarBox(context),
-                ]),
-          ],
-        ),
+          ),
+          SizedBox(
+            height: 6,
+          ),
+          percentageOff?.isNotEmpty ?? false
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Dynamically build StarBoxes based on the percentageOff list
+                    ...percentageOff!.take(2).map((item) => Padding(
+                          padding: const EdgeInsets.only(
+                              right: 2.0), // Add spacing between items
+                          child: _buildStarBox(context,
+                              item:
+                                  item), // Pass item to _buildStarBox if needed
+                        )),
+                  ],
+                )
+              : happyhour?.isNotEmpty ?? false
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Dynamically build StarBoxes based on the percentageOff list
+                        ...happyhour!.take(2).map((item) => Padding(
+                              padding: const EdgeInsets.only(
+                                  right: 2.0), // Add spacing between items
+                              child: _buildStarBox(context,
+                                  item:
+                                      item), // Pass item to _buildStarBox if needed
+                            )),
+                      ],
+                    )
+                  : SizedBox(),
+        ],
       ),
     );
   }
 
-  Widget _buildStarBox(BuildContext context) {
+  Widget _buildStarBox(BuildContext context, {required OfferModel item}) {
     return Container(
-      height: 55,
-      width: 55,
+      height: Get.height * 0.065,
+      width: Get.height * 0.065,
       decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/images/star_img.png'),
@@ -145,7 +171,7 @@ class RectangleWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              '${timetext} to',
+              '${item.startTime} to',
               style: TextStyle(
                 fontFamily: 'Nunito-Regular',
                 fontSize: 7,
@@ -154,7 +180,7 @@ class RectangleWidget extends StatelessWidget {
               ),
             ),
             Text(
-              "$endTimeText",
+              "${item.endTime}",
               style: TextStyle(
                 fontFamily: 'Nunito-Regular',
                 fontSize: 7,
@@ -163,7 +189,7 @@ class RectangleWidget extends StatelessWidget {
               ),
             ),
             Text(
-              '${percentText} off',
+              '${item.percentage} off',
               style: TextStyle(
                 fontFamily: 'Nunito-Regular',
                 fontSize: 7,

@@ -6,23 +6,24 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:kaistable_website/screens/home_screen/home_controller/home_location_controller.dart';
 import '../constants/app_colors.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_text_field.dart';
 import '../utils/responsive.dart';
 
 class UploadImageSection extends StatefulWidget {
-  const UploadImageSection({super.key});
-
+  UploadImageSection({super.key, required this.restaurantId});
+  String restaurantId;
   @override
   UploadImageSectionState createState() => UploadImageSectionState();
 }
 
 class UploadImageSectionState extends State<UploadImageSection> {
   List<File> _selectedImages = []; // For storing selected images on mobile
-
+  HomeLocationController homeLocationController =
+      Get.find<HomeLocationController>();
   final TextEditingController _reviewController = TextEditingController();
-  final TextEditingController _nameController = TextEditingController();
   String? _errorMessage;
   final PageController _pageController = PageController();
 
@@ -34,39 +35,53 @@ class UploadImageSectionState extends State<UploadImageSection> {
         allowMultiple: true,
       );
       if (result != null) {
-        // Handle web images if necessary
+        // Check if the number of selected images exceeds the limit (3 in this case)
+        if (result.files.length > 3) {
+          // Show a message or handle the restriction
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('You can only pick up to 3 images.')),
+          );
+        } else {
+          // Handle web images if necessary
+        }
       }
     } else {
       // Use image_picker for mobile platforms
       final ImagePicker picker = ImagePicker();
       final List<XFile>? images = await picker.pickMultiImage();
       if (images != null) {
-        setState(() {
-          _selectedImages = images.map((image) => File(image.path)).toList();
-        });
+        // Check if the number of selected images exceeds the limit (3 in this case)
+        if (images.length > 3) {
+          Get.snackbar('Limit Exceeded', 'You can only pick up to 3 images.');
+        } else {
+          setState(() {
+            _selectedImages = images.map((image) => File(image.path)).toList();
+          });
+        }
       }
     }
   }
 
-  void _validateAndSubmit() {
-    setState(() {
-      if (_nameController.text.isEmpty) {
-        _errorMessage = "Please enter your name.";
-      } else if (_reviewController.text.isEmpty) {
-        _errorMessage = "Please enter your  review.";
-      } else if (_selectedImages.isEmpty) {
-        _errorMessage = "Please upload at least one image.";
-      } else {
-        _errorMessage = null;
-        Get.snackbar("Thank you for your feedback! ",
-            "Your review has been successfully added.",
-            colorText: AppColors.whiteColor,
-            backgroundColor: AppColors.primaryColor);
-        Navigator.pop(context);
-      }
-    });
+  void _validateAndSubmit() async {
+    if (_reviewController.text.isEmpty) {
+      _errorMessage = "Please enter your  review.";
+    } else {
+      await homeLocationController.addRestaurantReview(
+          restaurantID: widget.restaurantId,
+          description: _reviewController.text,
+          images: _selectedImages,
+          starRating: ratingStars);
+      _errorMessage = null;
+      Get.snackbar("Thank you for your feedback! ",
+          "Your review has been successfully added.",
+          colorText: AppColors.whiteColor,
+          backgroundColor: AppColors.primaryColor);
+      Navigator.pop(context);
+    }
+    setState(() {});
   }
 
+  double ratingStars = 1.0;
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -99,7 +114,7 @@ class UploadImageSectionState extends State<UploadImageSection> {
                 child: RatingBar(
                   itemSize: 18,
                   ignoreGestures: false,
-                  initialRating: 3,
+                  initialRating: 1,
                   minRating: 1,
                   direction: Axis.horizontal,
                   allowHalfRating: true,
@@ -113,23 +128,12 @@ class UploadImageSectionState extends State<UploadImageSection> {
                         height: 14),
                   ),
                   itemPadding: const EdgeInsets.only(left: 2.0),
-                  onRatingUpdate: (rating) {},
+                  onRatingUpdate: (rating) {
+                    ratingStars = rating;
+                    setState(() {});
+                  },
                 ),
               ),
-              // const SizedBox(height: 12),
-              // CustomTextFormField(
-              //   controller: _nameController,
-              //   maxLines: 5,
-              //   width: 326,
-              //   height: 48,
-              //   isShadow: false,
-              //   hintfontsize: Responsive.isMobile(context) ? 12 : 14,
-              //   fontfamily: 'Nunito-Regular',
-              //   hintfontWeight: FontWeight.w500,
-              //   textColor: const Color(0xFF606060),
-              //   containerColor: const Color(0xFFEEEFF1),
-              //   hintText: 'Enter your name',
-              // ),
               const SizedBox(height: 12),
               CustomTextFormField(
                 controller: _reviewController,
@@ -294,7 +298,6 @@ class UploadImageSectionState extends State<UploadImageSection> {
                   ),
                 ),
               ),
-
               SizedBox(height: Responsive.isMobile(context) ? 14 : 20),
               if (_errorMessage != null)
                 Padding(
@@ -313,7 +316,7 @@ class UploadImageSectionState extends State<UploadImageSection> {
                 textColor: AppColors.whiteColor,
                 width: 200,
                 height: 48,
-                fontSize: 20,
+                fontSize: 17,
                 fontFamily: 'Nunito-Regular',
                 fontWeight: FontWeight.w700,
                 laBelText: 'Submit',

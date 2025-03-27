@@ -31,97 +31,65 @@ class CircleContainerWidget extends StatelessWidget {
     return InkWell(
       onTap: ontap,
       child: Container(
-        width: width ?? 113,
-        height: height ?? 144,
+        width: Get.width * 0.45,
         decoration: BoxDecoration(
-          color: AppColors.whiteColor,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              spreadRadius: 0,
-              blurRadius: 2,
-              offset: const Offset(0, 1),
-            ),
-          ],
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(150),
-            topRight: Radius.circular(150),
-            bottomLeft: Radius.circular(25),
-            bottomRight: Radius.circular(25),
-          ),
-        ),
+            color: Colors.transparent, borderRadius: BorderRadius.circular(10)),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              height: 95,
-              width: 95,
+              width: 172,
+              height: 124,
               decoration: BoxDecoration(
-                shape: BoxShape.circle,
+                borderRadius: BorderRadius.circular(10),
                 image: DecorationImage(
+                  fit: BoxFit.fill,
                   image: AssetImage(imgPath),
                 ),
               ),
             ),
-            // Positioned(
-            //   left: 12,
-            //   top: 16,
-            //   child: Obx(() {
-            //     return InkWell(
-            //         onTap: () {
-            //           isFavourite.value = !isFavourite.value;
-            //         },
-            //         child: isFavourite.value
-            //             ? Icon(
-            //                 size: 18,
-            //                 Icons.favorite,
-            //                 color: AppColors.primaryColor,
-            //               )
-            //             : Icon(
-            //                 Icons.favorite,
-            //                 size: 18,
-            //                 color: AppColors.whiteColor,
-            //               ));
-            //   }),
-            //   height: 10,
-            //   width: 10,
-            // )
-
             SizedBox(
-              height: 16,
+              height: 5,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (isLocation)
-                  Icon(
-                    Icons.location_on,
-                    color: AppColors.primaryColor,
-                    size: 14,
+            Padding(
+              padding: const EdgeInsets.only(left: 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  if (isLocation)
+                    Icon(
+                      Icons.location_on,
+                      color: AppColors.primaryColor,
+                      size: 14,
+                    ),
+                  const SizedBox(width: 4),
+                  Text(
+                    titleText, // 'Super mega sale'
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                      fontFamily: 'Nunito-Bold',
+                      color: AppColors.bottomSheetColor,
+                    ),
                   ),
-                const SizedBox(width: 4),
-                Text(
-                  titleText, // 'Super mega sale'
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 9,
-                    fontFamily: 'Nunito-Bold',
-                    color: AppColors.bottomSheetColor,
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Row(
+                children: [
+                  Text(
+                    descriptionText,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 13,
+                      fontFamily: 'Nunito-Regular',
+                      color: AppColors.textColor,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 6,
-            ),
-            Text(
-              descriptionText,
-              style: TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 9,
-                fontFamily: 'Nunito-Regular',
-                color: AppColors.textColor,
+                ],
               ),
             ),
             SizedBox(

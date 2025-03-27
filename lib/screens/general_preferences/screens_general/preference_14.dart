@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kaistable_website/screens/auth_screens/signup/controller/signup_controller.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../widgets/custom_button.dart';
@@ -63,7 +64,7 @@ class Preference14 extends StatelessWidget {
             padding: const EdgeInsets.only(right: 12.0),
             child: Center(
               child: Text(
-                '14/14',
+                '11/11',
                 style: TextStyle(
                   fontSize: 12,
                   fontFamily: 'Nunito-Sans',
@@ -122,11 +123,14 @@ class Preference14 extends StatelessWidget {
                         fontfamily: 'Nunito-Sans',
                         hintfontsize: 14,
                         dropdownItemWidth: 100,
-                        items: const [
-                          "New York",
-                          "Los Angeles",
-                          "Paris",
-                        ],
+                        items: controller.selectedCountry.value == 'USA'
+                            ? const [
+                                "New York",
+                                "Los Angeles",
+                              ]
+                            : const [
+                                "Paris",
+                              ],
                         selectedValue: controller.selectedCity.value,
                         onChanged: (value) {
                           controller.selectedCity.value = value!;
@@ -149,7 +153,7 @@ class Preference14 extends StatelessWidget {
                   width: 190,
                   fontFamily: 'Nunito-Sans',
                   fontWeight: FontWeight.w600,
-                  fontSize: 20,
+                  fontSize: 17,
                   textColor: Colors.white,
                   ontapp: () {
                     print(controller.selectedCountry.value);
@@ -164,8 +168,14 @@ class Preference14 extends StatelessWidget {
                         margin: EdgeInsets.all(16),
                       );
                     } else {
+                      final signupController = Get.put(SignupController());
+                      signupController.updateUserData(
+                          field: 'country',
+                          entry: controller.selectedCountry.value);
+                      signupController.updateUserData(
+                          field: 'city', entry: controller.selectedCity.value);
                       Get.offAll(
-                            () => MyHomeScreen(
+                        () => MyHomeScreen(
                           countryName: controller.selectedCity.value,
                         ),
                       );

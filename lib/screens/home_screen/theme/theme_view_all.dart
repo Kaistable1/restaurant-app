@@ -8,7 +8,6 @@ import '../home_controller/home_theme_controller.dart';
 import '../location_pages/location_screen.dart';
 import '../my_home_screen.dart';
 
-
 class ThemeViewAll extends StatelessWidget {
   final HomeThemeController themeController = Get.put(HomeThemeController());
   ThemeViewAll({super.key});
@@ -23,7 +22,7 @@ class ThemeViewAll extends StatelessWidget {
         title: const Text(
           'Theme',
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 17,
             color: AppColors.bottomSheetColor,
             fontWeight: FontWeight.w700,
             fontFamily: 'Nunito-Bold',
@@ -60,7 +59,7 @@ class ThemeViewAll extends StatelessWidget {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.only(left: 12.0,right: 12),
+        padding: const EdgeInsets.only(left: 12.0, right: 12),
         child: GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             mainAxisExtent: 165,
@@ -69,7 +68,8 @@ class ThemeViewAll extends StatelessWidget {
             mainAxisSpacing: 10.0, // Space between rows
             // childAspectRatio: 18.0, // Ratio to control the size of the items
           ),
-          itemCount: themeController.circleItems.length, // Number of items (3 rows * 3 columns = 9)
+          itemCount: themeController
+              .circleItems.length, // Number of items (3 rows * 3 columns = 9)
           itemBuilder: (context, index) {
             final item = themeController.circleItems[index];
             return CircleContainerWidget(
@@ -80,7 +80,8 @@ class ThemeViewAll extends StatelessWidget {
               isLocation: true,
               imgPath: item.imgPath,
               titleText: item.titleText,
-              descriptionText: item.descriptionText,// Example dynamic description
+              descriptionText:
+                  item.descriptionText, // Example dynamic description
             );
           },
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
+import 'package:kaistable_website/screens/auth_screens/signup/controller/signup_controller.dart';
 import 'package:kaistable_website/screens/general_preferences/screens_general/preference_13.dart';
 
 import '../../../custom_widget/separate_text_field.dart';
@@ -167,7 +168,7 @@ class Preference12 extends StatelessWidget {
                     width: 190,
                     fontFamily: 'Nunito-Sans',
                     fontWeight: FontWeight.w600,
-                    fontSize: 20,
+                    fontSize: 17,
                     textColor: Colors.white,
                     ontapp: () {
                       if (formKey.currentState!.validate()) {
@@ -197,6 +198,14 @@ class Preference12 extends StatelessWidget {
                           );
                           return;
                         }
+                        if (controller.screen12Controller.text.isNotEmpty) {
+                          controller.selectedPreferences12
+                              .add(controller.screen12Controller.text);
+                        }
+                        final signupController = Get.put(SignupController());
+                        signupController.updateUserData(
+                            field: 'favTypeOfLiveMusic',
+                            entry: controller.selectedPreferences12.last);
                         Get.to(() => Preference13());
                       }
                     },

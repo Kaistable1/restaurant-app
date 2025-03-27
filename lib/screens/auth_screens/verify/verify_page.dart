@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kaistable_website/screens/auth_screens/signup/controller/signup_controller.dart';
+import 'package:kaistable_website/screens/general_preferences/screens_general/preference_1.dart';
+import 'package:kaistable_website/utils/loading.dart';
 import 'package:pinput/pinput.dart';
 import '../../../constants/app_colors.dart';
 import '../../../dialoges/reset_dialog.dart';
 import '../../../utils/validations.dart';
 import '../../../widgets/custom_button.dart';
-import '../../general_preferences/screens_general/preference_1.dart';
 import 'controller/verify_controller.dart';
 
 class VerifyPage extends StatelessWidget {
-  VerifyPage({super.key});
+  VerifyPage({super.key, required this.email});
 
   final controller = Get.put(VerifyController());
+  final signupController = Get.put(SignupController());
 
+  String email;
   @override
   Widget build(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
@@ -28,13 +32,34 @@ class VerifyPage extends StatelessWidget {
               SizedBox(
                 height: 50,
               ),
-              Center(
-                child: Image.asset(
-                  'assets/images/botomsheet_logo.png',
-                  height: 74,
-                  width: 196,
-                  color: AppColors.primaryColor,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Get.back();
+                    },
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 20),
+                        child: Image.asset(
+                          'assets/images/arrow_back.png',
+                          height: 74,
+                          width: 50,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Center(
+                    child: Image.asset(
+                      'assets/images/botomsheet_logo.png',
+                      height: 74,
+                      width: 196,
+                      color: AppColors.primaryColor,
+                    ),
+                  ),
+                  SizedBox(),
+                ],
               ),
               SizedBox(
                 height: 53,
@@ -52,7 +77,7 @@ class VerifyPage extends StatelessWidget {
                 height: 14,
               ),
               Text(
-                'Enter the 6 digit code we have sent to abc@gmail.com',
+                'Enter the 6 digit code we have sent to ${signupController.userModel.userEmail.text}',
                 style: TextStyle(
                   color: AppColors.blackColor,
                   fontWeight: FontWeight.w300,
@@ -81,7 +106,7 @@ class VerifyPage extends StatelessWidget {
                   closeKeyboardWhenCompleted: true,
                   defaultPinTheme: PinTheme(
                     textStyle: TextStyle(
-                      fontSize: 18,
+                      fontSize: 15,
                       fontWeight: FontWeight.w600,
                       fontFamily: 'Nunito-Sans',
                       color: AppColors.darkGrey,
@@ -122,11 +147,11 @@ class VerifyPage extends StatelessWidget {
                 child: CustomButton(
                   laBelText: 'Verify code',
                   width: 200,
-                  fontSize: 20,
+                  fontSize: 17,
                   fontWeight: FontWeight.w600,
                   fontFamily: 'Nunito-Sans',
                   textColor: Colors.white,
-                  ontapp: () {
+                  ontapp: () async {
                     controller.onClick.value = !controller.onClick.value;
                     String enteredCode =
                         controller.verifyController.text.trim();
@@ -135,8 +160,21 @@ class VerifyPage extends StatelessWidget {
                           !RegExp(r'^[0-9]+$').hasMatch(enteredCode)) {
                         controller.onClick.value = false;
                       } else if (enteredCode.length == 6) {
-                        controller.verifyController.clear();
-                        Get.to(() => Preference1());
+                        if (controller.verifyController.length == 6 &&
+                            controller.verifyController.text ==
+                                signupController.verificationCode.toString()) {
+                          await signupController.createAccount();
+
+                          signupController.resetTextFields();
+                          controller.onClick.value = false;
+                          controller.verifyController.clear();
+                          Get.offAll(() => Preference1());
+                        } else {
+                          loadingDialog(
+                              message:
+                                  'The OTP you entered is incorrect. Please try again.',
+                              button: true);
+                        }
                       }
                     }
                   },
@@ -161,7 +199,9 @@ class VerifyPage extends StatelessWidget {
               ),
               Center(
                 child: GestureDetector(
-                  onTap: () {
+                  onTap: () async {
+                    await signupController.sendEmail(isFromResendOtp: true);
+
                     dialogueBox(
                         text: 'The code has been sent to your email address.',
                         color: AppColors.primaryColor,

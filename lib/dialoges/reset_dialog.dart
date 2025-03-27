@@ -60,7 +60,7 @@ void dialogueBox({
                   Center(
                     child: CustomButton(
                       width: 180,
-                      fontSize: 20,
+                      fontSize: 17,
                       fontWeight: FontWeight.w600,
                       fontFamily: 'Nunito-Regular',
                       textColor: Colors.white,

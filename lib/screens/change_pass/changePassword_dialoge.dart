@@ -1,14 +1,15 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kaistable_website/main.dart';
+import 'package:kaistable_website/screens/change_pass/change_controller.dart';
 
 import '../../constants/app_colors.dart';
 import '../../custom_widget/TextAndWidget.dart';
 import '../../utils/validations.dart';
 import '../../widgets/custom_button.dart';
-import '../edit_profile/controller/profile_controller.dart';
 
-final controller = Get.put(ProfileController());
+final controller = Get.put(ChangePasswordController());
 
 void changePasswordDialogBox() {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -52,33 +53,34 @@ void changePasswordDialogBox() {
                       ),
                       Obx(
                         () => TextAndFieldWidget(
-                          controller: controller.passwordController,
+                          controller: controller.currentPasswordController,
                           hintText: 'Password',
                           labelText: 'Password',
                           isSuffixIcon: true,
                           validator: (value) {
                             return isPasswordValid(value!);
                           },
-                          obscureText: controller.isPasswordHidden.value,
+                          obscureText: controller.isNewPasswordVisible.value,
                           suffixIcon: Padding(
                             padding: const EdgeInsets.only(
                                 top: 13, bottom: 13, right: 13, left: 13),
                             child: GestureDetector(
                               onTap: () {
-                                controller.isPasswordHidden.value =
-                                    !controller.isPasswordHidden.value;
+                                controller.isNewPasswordVisible.value =
+                                    !controller.isNewPasswordVisible.value;
                               },
-                              child: controller.isPasswordHidden.value == true
-                                  ? Image.asset(
-                                      'assets/images/open_eye.png',
-                                      height: 16,
-                                      width: 22,
-                                    )
-                                  : Image.asset(
-                                      'assets/images/closed_eye.png',
-                                      height: 16,
-                                      width: 22,
-                                    ),
+                              child:
+                                  controller.isNewPasswordVisible.value == true
+                                      ? Image.asset(
+                                          'assets/images/open_eye.png',
+                                          height: 16,
+                                          width: 22,
+                                        )
+                                      : Image.asset(
+                                          'assets/images/closed_eye.png',
+                                          height: 16,
+                                          width: 22,
+                                        ),
                             ),
                           ),
                         ),
@@ -93,7 +95,7 @@ void changePasswordDialogBox() {
                             if (value!.isEmpty) {
                               return 'Enter your New password.';
                             } else if (value ==
-                                controller.passwordController.text) {
+                                controller.currentPasswordController.text) {
                               return 'New Password should not match with old password';
                             }
                             if (value.length < 8) {
@@ -108,17 +110,17 @@ void changePasswordDialogBox() {
                             }
                             return null;
                           },
-                          obscureText: controller.isNewPasswordHidden.value,
+                          obscureText: controller.isNewPasswordVisible.value,
                           suffixIcon: Padding(
                             padding: const EdgeInsets.only(
                                 top: 13, bottom: 13, right: 13, left: 13),
                             child: GestureDetector(
                               onTap: () {
-                                controller.isNewPasswordHidden.value =
-                                    !controller.isNewPasswordHidden.value;
+                                controller.isNewPasswordVisible.value =
+                                    !controller.isNewPasswordVisible.value;
                               },
                               child:
-                                  controller.isNewPasswordHidden.value == true
+                                  controller.isNewPasswordVisible.value == true
                                       ? Image.asset(
                                           'assets/images/open_eye.png',
                                           height: 16,
@@ -143,32 +145,35 @@ void changePasswordDialogBox() {
                             if (value == null || value.isEmpty) {
                               return 'Please enter a confirm password';
                             }
-                            if (value != controller.newPasswordController.text) {
+                            if (value !=
+                                controller.newPasswordController.text) {
                               return 'Passwords do not match';
                             }
                             return null;
                           },
-                          obscureText: controller.isConfirmPasswordHidden.value,
+                          obscureText:
+                              controller.isConfirmPasswordVisible.value,
                           suffixIcon: Padding(
                             padding: const EdgeInsets.only(
                                 top: 13, bottom: 13, right: 13, left: 13),
                             child: GestureDetector(
                               onTap: () {
-                                controller.isConfirmPasswordHidden.value =
-                                    !controller.isConfirmPasswordHidden.value;
+                                controller.isConfirmPasswordVisible.value =
+                                    !controller.isConfirmPasswordVisible.value;
                               },
-                              child: controller.isConfirmPasswordHidden.value ==
-                                      true
-                                  ? Image.asset(
-                                      'assets/images/open_eye.png',
-                                      height: 16,
-                                      width: 22,
-                                    )
-                                  : Image.asset(
-                                      'assets/images/closed_eye.png',
-                                      height: 16,
-                                      width: 22,
-                                    ),
+                              child:
+                                  controller.isConfirmPasswordVisible.value ==
+                                          true
+                                      ? Image.asset(
+                                          'assets/images/open_eye.png',
+                                          height: 16,
+                                          width: 22,
+                                        )
+                                      : Image.asset(
+                                          'assets/images/closed_eye.png',
+                                          height: 16,
+                                          width: 22,
+                                        ),
                             ),
                           ),
                         ),
@@ -182,13 +187,20 @@ void changePasswordDialogBox() {
                             height: 40,
                             laBelText: 'Save',
                             textColor: AppColors.whiteColor,
-                            fontSize: 20,
+                            fontSize: 17,
                             fontWeight: FontWeight.w600,
                             fontFamily: 'Nunito-Sans',
-                            ontapp: () {
+                            ontapp: () async {
+                              print(
+                                  'password ${currentUserDataModel!.value.userEmail.text}');
                               if (formKey.currentState!.validate()) {
+                                if (formKey.currentState!.validate()) {
+                                  await controller.changePassword(
+                                      email: currentUserDataModel!
+                                          .value.userEmail.text);
+                                }
                                 Get.back();
-                                controller.passwordController.clear();
+                                controller.newPasswordController.clear();
                                 controller.newPasswordController.clear();
                                 controller.confirmPasswordController.clear();
                               }
@@ -201,7 +213,7 @@ void changePasswordDialogBox() {
                             containerColor: Colors.white,
                             borderColor: AppColors.primaryColor,
                             textColor: AppColors.primaryColor,
-                            fontSize: 20,
+                            fontSize: 17,
                             fontWeight: FontWeight.w600,
                             fontFamily: 'Nunito-Sans',
                             isBorder: true,

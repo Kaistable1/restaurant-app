@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
+import 'package:kaistable_website/screens/auth_screens/signup/controller/signup_controller.dart';
 import 'package:kaistable_website/screens/general_preferences/screens_general/preference_7.dart';
 
 import '../../../custom_widget/separate_text_field.dart';
@@ -15,6 +16,8 @@ class Preference6 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    controller.fetchUserPreferences();
+
     return Scaffold(
       backgroundColor: AppColors.bgColor,
       appBar: AppBar(
@@ -50,7 +53,7 @@ class Preference6 extends StatelessWidget {
           ),
         ),
         title: Text(
-          'User Behavior Preferences',
+          'General Preferences',
           style: TextStyle(
             fontSize: 19,
             color: AppColors.bottomSheetColor,
@@ -63,7 +66,7 @@ class Preference6 extends StatelessWidget {
             padding: const EdgeInsets.only(right: 12.0),
             child: Center(
               child: Text(
-                '6/14',
+                '6/9',
                 style: TextStyle(
                   fontSize: 12,
                   fontFamily: 'Nunito-Sans',
@@ -85,7 +88,7 @@ class Preference6 extends StatelessWidget {
                 height: 8,
               ),
               Text(
-                'How Important Are Restaurant Reviews In Your Decision-Making?',
+                'What kind of dining experiences do you enjoy the most?',
                 style: TextStyle(
                   fontFamily: 'Nunito-Sans',
                   color: AppColors.lightGrey,
@@ -113,34 +116,34 @@ class Preference6 extends StatelessWidget {
                           controller.toggleSelection6(preference["name"]!),
                       child: isOther && isSelected
                           ? Container(
-                        height: 66,
-                        width: Get.width,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              spreadRadius: 1,
-                              blurRadius: 6,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Center(
-                          child: CustomSeparateTextField(
-                            hintText: 'Enter text',
-                            controller: controller.screen4Controller,
-                            keyboardType: TextInputType.name,
-                            isShadow: false,
-                          ),
-                        ),
-                      )
+                              height: 66,
+                              width: Get.width,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    spreadRadius: 1,
+                                    blurRadius: 6,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: Center(
+                                child: CustomSeparateTextField(
+                                  hintText: 'Enter text',
+                                  controller: controller.screen4Controller,
+                                  keyboardType: TextInputType.name,
+                                  isShadow: false,
+                                ),
+                              ),
+                            )
                           : PreferencesSelectionWidget(
-                        name: preference["name"]!,
-                        dinningImage: preference["image"]!,
-                        isSelected: isSelected,
-                      ),
+                              name: preference["name"]!,
+                              dinningImage: preference["image"]!,
+                              isSelected: isSelected,
+                            ),
                     );
                   });
                 },
@@ -155,7 +158,7 @@ class Preference6 extends StatelessWidget {
                   width: 190,
                   fontFamily: 'Nunito-Sans',
                   fontWeight: FontWeight.w600,
-                  fontSize: 20,
+                  fontSize: 17,
                   textColor: Colors.white,
                   ontapp: () {
                     if (controller.selectedPreferences6.length < 1) {
@@ -169,7 +172,10 @@ class Preference6 extends StatelessWidget {
                         borderRadius: 10,
                       );
                     } else {
-                      // controller.screen1Controller.clear();
+                      final signupController = Get.put(SignupController());
+                      signupController.updateUserData(
+                          field: 'diningExp',
+                          entry: controller.selectedPreferences6);
                       Get.to(() => Preference7());
                     }
                   },

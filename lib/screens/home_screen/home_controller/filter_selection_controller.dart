@@ -10,7 +10,33 @@ class FilterSelectionController extends GetxController {
     'vegan',
     'american',
   ];
+  RxString selectedCountry = ''.obs;
+  RxString selectedCity = ''.obs;
+  RxString selectedLanguage = ''.obs;
+
   final selectedFilters = <String>[].obs;
+  final selectedDiscounts = <String>[].obs;
+  final selectedAtmosphere = <String>[].obs;
+  final selectedFacilities = <String>[].obs;
+  final selectedEntertainment = <String>[].obs;
+  final selectedDietary = <String>[].obs;
+  final selectedPriceRange = <String>[].obs;
+  final selectedTimeOfDay = <String>[].obs;
+  final selectedTrending = <String>[].obs;
+  void clearAll() {
+    selectedCountry.value = ''; // Clear selected country
+    selectedCity.value = ''; // Clear selected city
+    selectedLanguage.value = ''; // Clear selected language
+
+    selectedFilters.clear(); // Clear selected filters
+    selectedDiscounts.clear(); // Clear selected discounts
+    selectedAtmosphere.clear(); // Clear selected atmosphere
+    selectedFacilities.clear(); // Clear selected facilities
+    selectedEntertainment.clear(); // Clear selected entertainment
+    selectedDietary.clear(); // Clear selected dietary preferences
+    selectedPriceRange.clear(); // Clear selected price range
+    selectedTimeOfDay.clear(); // Clear selected time of day
+  }
 
   void toggleFilter(String name) {
     if (selectedFilters.contains(name)) {
@@ -24,7 +50,6 @@ class FilterSelectionController extends GetxController {
     'percentage off',
     'happy hour specials',
   ];
-  final selectedDiscounts = <String>[].obs;
 
   void toggleDiscounts(String name) {
     if (selectedDiscounts.contains(name)) {
@@ -35,13 +60,12 @@ class FilterSelectionController extends GetxController {
   }
 
   final timeOfDay = [
-    'breakfast',
-    'brunch',
-    'lunch',
-    'dinner',
-    'late night',
+    'Breakfast',
+    'Brunch',
+    'Lunch',
+    'Dinner',
+    'Late Night',
   ];
-  final selectedTimeOfDay = <String>[].obs;
 
   void toggleTimeOfDay(String name) {
     if (selectedTimeOfDay.contains(name)) {
@@ -52,12 +76,11 @@ class FilterSelectionController extends GetxController {
   }
 
   final atmosphere = [
-    'casual dinning',
-    'fine dinning',
+    'casual dining',
+    'fine dining',
     'fast casual',
     'pop',
   ];
-  final selectedAtmosphere = <String>[].obs;
 
   void toggleAtmosphere(String name) {
     if (selectedAtmosphere.contains(name)) {
@@ -68,7 +91,7 @@ class FilterSelectionController extends GetxController {
   }
 
   final facilities = [
-    'free  wi-fi',
+    'free wi-fi',
     'private dinning',
     'parking',
     'takeout',
@@ -80,7 +103,6 @@ class FilterSelectionController extends GetxController {
     'wheelchair accessibility',
     'high chairs',
   ];
-  final selectedFacilities = <String>[].obs;
 
   void toggleFacilities(String name) {
     if (selectedFacilities.contains(name)) {
@@ -98,7 +120,6 @@ class FilterSelectionController extends GetxController {
     'sports screenings',
     'hookah',
   ];
-  final selectedEntertainment = <String>[].obs;
 
   void toggleEntertainment(String name) {
     if (selectedEntertainment.contains(name)) {
@@ -107,6 +128,7 @@ class FilterSelectionController extends GetxController {
       selectedEntertainment.add(name);
     }
   }
+
   final dietaryPreferences = [
     'vegetarian',
     'vegan',
@@ -114,7 +136,6 @@ class FilterSelectionController extends GetxController {
     'dairy-free',
     'keto-friendly',
   ];
-  final selectedDietary = <String>[].obs;
 
   void toggleDietary(String name) {
     if (selectedDietary.contains(name)) {
@@ -123,13 +144,13 @@ class FilterSelectionController extends GetxController {
       selectedDietary.add(name);
     }
   }
+
   final priceRange = [
-    '\$ (budget-friendly)',
-    '\$\$ (moderate)',
-    '\$\$\$ {premium)',
-    '\$\$\$\$ (luxury)',
+    '\$(Budget-Friendly)',
+    '\$\$(Moderate)',
+    '\$\$\$(Premium)',
+    '\$\$\$\$(Luxury)',
   ];
-  final selectedPriceRange= <String>[].obs;
 
   void togglePriceRange(String name) {
     if (selectedPriceRange.contains(name)) {
@@ -139,7 +160,7 @@ class FilterSelectionController extends GetxController {
     }
   }
 
-///-----------------------------------------------------///
+  ///-----------------------------------------------------///
   var aggregatedFilters = <String>[].obs;
 
   void aggregateSelectedFilters() {
@@ -153,7 +174,6 @@ class FilterSelectionController extends GetxController {
     if (selectedLanguage.value.isNotEmpty) {
       aggregatedFilters.add(selectedLanguage.value);
     }
-
     aggregatedFilters.addAll(selectedFilters);
     aggregatedFilters.addAll(selectedDiscounts);
     aggregatedFilters.addAll(selectedTimeOfDay);
@@ -169,106 +189,4 @@ class FilterSelectionController extends GetxController {
   void toggleFilterListVisibility() {
     isFilterListVisible.value = !isFilterListVisible.value;
   }
-
-  RxString selectedCountry = ''.obs;
-  RxString selectedCity = ''.obs;
-  RxString selectedLanguage = ''.obs;
-
-
-  // bool areFiltersEmpty() {
-  //   final empty = selectedFacilities.isEmpty &&
-  //       selectedDietary.isEmpty &&
-  //       selectedEntertainment.isEmpty &&
-  //       selectedPriceRange.isEmpty &&
-  //       selectedCity.isEmpty &&
-  //       selectedCountry.isEmpty &&
-  //       selectedFilters.isEmpty &&
-  //       selectedLanguage.isEmpty &&
-  //       selectedDiscounts.isEmpty &&
-  //       selectedTimeOfDay.isEmpty &&
-  //       selectedAtmosphere.isEmpty;
-  //   print('Are filters empty: $empty');
-  //   return empty;
-  // }
-  //
-  // void showSnackbarForEmptyFilters() {
-  //   if (selectedCountry.isEmpty) {
-  //     Get.snackbar(
-  //       "Country",
-  //       "Please select the country.",
-  //       snackPosition: SnackPosition.TOP,
-  //     );
-  //   }
-  //   if (selectedCity.isEmpty) {
-  //     Get.snackbar(
-  //       "City",
-  //       "Please select city.",
-  //       snackPosition: SnackPosition.TOP,
-  //     );
-  //   }
-  //   if (selectedLanguage.isEmpty) {
-  //     Get.snackbar(
-  //       "Language",
-  //       "Please select language.",
-  //       snackPosition: SnackPosition.TOP,
-  //     );
-  //   }
-  //   if (selectedFilters.isEmpty) {
-  //     Get.snackbar(
-  //       "Cuisines",
-  //       "Please select cuisines.",
-  //       snackPosition: SnackPosition.TOP,
-  //     );
-  //   }
-  //   if (selectedDiscounts.isEmpty) {
-  //     Get.snackbar(
-  //       "Discount Type",
-  //       "Please select discount type.",
-  //       snackPosition: SnackPosition.TOP,
-  //     );
-  //   }
-  //   if (selectedTimeOfDay.isEmpty) {
-  //     Get.snackbar(
-  //       "Time of Day",
-  //       "Please select time of day.",
-  //       snackPosition: SnackPosition.TOP,
-  //     );
-  //   }
-  //   if (selectedAtmosphere.isEmpty) {
-  //     Get.snackbar(
-  //       "Atmosphere",
-  //       "Please select atmosphere.",
-  //       snackPosition: SnackPosition.TOP,
-  //     );
-  //   }
-  //   if (selectedFacilities.isEmpty) {
-  //     Get.snackbar(
-  //       "Facilities",
-  //       "Please select at least one facility.",
-  //       snackPosition: SnackPosition.TOP,
-  //     );
-  //   }
-  //
-  //   if (selectedDietary.isEmpty) {
-  //     Get.snackbar(
-  //       "Dietary Preferences",
-  //       "Please select at least one dietary preference.",
-  //       snackPosition: SnackPosition.TOP,
-  //     );
-  //   }
-  //   if (selectedEntertainment.isEmpty) {
-  //     Get.snackbar(
-  //       "Entertainment",
-  //       "Please select at least one entertainment option.",
-  //       snackPosition: SnackPosition.TOP,
-  //     );
-  //   }
-  //   if (selectedPriceRange.isEmpty) {
-  //     Get.snackbar(
-  //       "Price Range",
-  //       "Please select a price range.",
-  //       snackPosition: SnackPosition.TOP,
-  //     );
-  //   }
-  // }
 }

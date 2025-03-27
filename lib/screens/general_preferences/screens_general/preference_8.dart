@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
+import 'package:kaistable_website/screens/auth_screens/signup/controller/signup_controller.dart';
 import 'package:kaistable_website/screens/general_preferences/screens_general/preference_9.dart';
 
 import '../../../custom_widget/separate_text_field.dart';
@@ -15,6 +16,8 @@ class Preference8 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    controller.fetchUserPreferences();
+
     final formKey = GlobalKey<FormState>();
     return Scaffold(
       backgroundColor: AppColors.bgColor,
@@ -51,9 +54,9 @@ class Preference8 extends StatelessWidget {
           ),
         ),
         title: Text(
-          'Entertainment & Event',
+          'General Preferences',
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 17,
             color: AppColors.bottomSheetColor,
             fontWeight: FontWeight.w700,
             fontFamily: 'Nunito-Sans',
@@ -65,7 +68,7 @@ class Preference8 extends StatelessWidget {
             padding: const EdgeInsets.only(right: 12.0),
             child: Center(
               child: Text(
-                '8/14',
+                '8/9',
                 style: TextStyle(
                   fontSize: 12,
                   fontFamily: 'Nunito-Sans',
@@ -89,24 +92,12 @@ class Preference8 extends StatelessWidget {
                   height: 8,
                 ),
                 Text(
-                  'What Type Of Live Entertainment Would You Like To Be Notified About?',
+                  'What type of notifications would you like to receive? ',
                   style: TextStyle(
                     fontFamily: 'Nunito-Sans',
                     color: AppColors.lightGrey,
                     fontWeight: FontWeight.w600,
                     fontSize: 16,
-                  ),
-                ),
-                SizedBox(
-                  height: 4,
-                ),
-                Text(
-                  '(Choose up to 2)',
-                  style: TextStyle(
-                    fontFamily: 'Nunito-Sans',
-                    color: AppColors.lightGrey,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 14,
                   ),
                 ),
                 SizedBox(
@@ -179,7 +170,7 @@ class Preference8 extends StatelessWidget {
                     width: 190,
                     fontFamily: 'Nunito-Sans',
                     fontWeight: FontWeight.w600,
-                    fontSize: 20,
+                    fontSize: 17,
                     textColor: Colors.white,
                     ontapp: () {
                       if (formKey.currentState!.validate()) {
@@ -196,10 +187,10 @@ class Preference8 extends StatelessWidget {
                           );
                           return;
                         }
-                        if (controller.selectedPreferences8.length < 2) {
+                        if (controller.selectedPreferences8.length < 1) {
                           Get.snackbar(
                             'Selection Incomplete',
-                            'Please select at least 2 preferences to proceed.',
+                            'Please select at least 1 preferences to proceed.',
                             backgroundColor: AppColors.primaryColor,
                             colorText: Colors.white,
                             snackPosition: SnackPosition.TOP,
@@ -208,7 +199,14 @@ class Preference8 extends StatelessWidget {
                           );
                           return;
                         }
-
+                        if (controller.screen8Controller.text.isNotEmpty) {
+                          controller.selectedPreferences8
+                              .add(controller.screen8Controller.text);
+                        }
+                        final signupController = Get.put(SignupController());
+                        signupController.updateUserData(
+                            field: 'notificationType',
+                            entry: controller.selectedPreferences8);
                         Get.to(() => Preference9());
                       }
                     },

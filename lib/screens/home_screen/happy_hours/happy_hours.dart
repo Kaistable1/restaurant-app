@@ -15,7 +15,6 @@ class HappyHours extends StatelessWidget {
 
   HappyHours({super.key, this.onNavigate});
 
-
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -26,11 +25,13 @@ class HappyHours extends StatelessWidget {
         Get.back(); // Navigate back to the home screen
         return false; // Prevent the default back navigation
       },
-      child: Scaffold( backgroundColor: AppColors.bgColor,
+      child: Scaffold(
+        backgroundColor: AppColors.bgColor,
         appBar: AppBar(
           backgroundColor: AppColors.bgColor,
           iconTheme: IconThemeData(
-            color: AppColors.primaryColor, // Set your desired color for the drawer icon
+            color: AppColors
+                .primaryColor, // Set your desired color for the drawer icon
           ),
           centerTitle: true,
           automaticallyImplyLeading: true,
@@ -53,45 +54,46 @@ class HappyHours extends StatelessWidget {
               ),
               child: GestureDetector(
                 onTap: () {
-                  Get.back();; // Navigate back to the home screen
+                  Get.back();
+                  ; // Navigate back to the home screen
                 },
                 child: Icon(Icons.arrow_back, size: 18),
               ),
             ),
           ),
-
-          title: Text('Happy hour',
+          title: Text(
+            'Happy hour',
             style: TextStyle(
-              fontSize: 20,
+              fontSize: 17,
               color: AppColors.bottomSheetColor,
               fontWeight: FontWeight.w700,
               fontFamily: 'Nunito-Bold',
-            ),),
+            ),
+          ),
         ),
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.only(left: 6,right: 6),
+            padding: const EdgeInsets.only(left: 6, right: 6),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SizedBox(height:  10 ),
+                SizedBox(height: 10),
                 FilterBox(),
-                SizedBox(height:  10 ),
+                SizedBox(height: 10),
                 Obx(() {
                   return Padding(
-                      padding: EdgeInsets.only(
-                          left: 8,
-                          right: 8
-                      ),
+                      padding: EdgeInsets.only(left: 8, right: 8),
                       child: GridView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           mainAxisExtent: 220,
                           crossAxisCount: 2,
-                          crossAxisSpacing: 10,      // Adjust this if needed for column spacing
-                          mainAxisSpacing: 5,        // Reduced mainAxisSpacing to minimize row spacing
+                          crossAxisSpacing:
+                              10, // Adjust this if needed for column spacing
+                          mainAxisSpacing:
+                              5, // Reduced mainAxisSpacing to minimize row spacing
                         ),
                         itemCount: controller.happyHoursItems.length,
                         itemBuilder: (context, index) {
@@ -107,24 +109,14 @@ class HappyHours extends StatelessWidget {
                             endTimeText: item.endTimeText,
                           );
                         },
-                      )
-
-                  );
-
-
+                      ));
                 }),
-                SizedBox(height:  30 ),
-
-
-
-
+                SizedBox(height: 30),
               ],
             ),
           ),
         ),
       ),
     );
-
-
   }
 }

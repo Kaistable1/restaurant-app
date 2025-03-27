@@ -21,15 +21,9 @@ class DefaultFirebaseOptions {
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for android - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -61,4 +55,22 @@ class DefaultFirebaseOptions {
     storageBucket: 'restaurant-app-125ea.appspot.com',
     measurementId: 'G-E6JS783WLX',
   );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyBMGN5MlDf2YqA3HG6uDGdXpDGSQQVny60',
+    appId: '1:404399548475:ios:6d891f6994bb50284dd41e',
+    messagingSenderId: '404399548475',
+    projectId: 'restaurantwebsite-4bdd8',
+    storageBucket: 'restaurantwebsite-4bdd8.firebasestorage.app',
+    iosBundleId: 'com.kaistable.restaurantWebsite',
+  );
+
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyDSzo86iMcwW-mjuAXgh1lQ7t9NJLZV0ro',
+    appId: '1:404399548475:android:c7ef5610488496554dd41e',
+    messagingSenderId: '404399548475',
+    projectId: 'restaurantwebsite-4bdd8',
+    storageBucket: 'restaurantwebsite-4bdd8.firebasestorage.app',
+  );
+
 }

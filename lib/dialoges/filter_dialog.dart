@@ -41,7 +41,7 @@ void filterSelectionDialogueBox() {
                         style: TextStyle(
                           color: AppColors.bottomSheetColor,
                           fontFamily: "Nunito-Bold",
-                          fontSize: 18,
+                          fontSize: 15,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -115,11 +115,15 @@ void filterSelectionDialogueBox() {
                                     fontfamily: 'Nunito-Sans',
                                     hintfontsize: 14,
                                     dropdownItemWidth: 100,
-                                    items: const [
-                                      "New York",
-                                      "Los Angeles",
-                                      "Paris",
-                                    ],
+                                    items: controller.selectedCountry.value ==
+                                            'USA'
+                                        ? const [
+                                            "New York",
+                                            "Los Angeles",
+                                          ]
+                                        : const [
+                                            "Paris",
+                                          ],
                                     selectedValue:
                                         controller.selectedCity.value,
                                     onChanged: (value) {
@@ -580,23 +584,17 @@ void filterSelectionDialogueBox() {
                           ),
                           Center(
                             child: CustomButton(
-                                laBelText: 'Apply',
-                                height: 40,
-                                width: 170,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'Nunito-Sans',
-                                textColor: Colors.white,
-                                ontapp: () {
-                                  controller.aggregateSelectedFilters();
-                                  Get.back();
-                                  // if (controller.areFiltersEmpty()) {
-                                  //   controller.showSnackbarForEmptyFilters();
-                                  // } else {
-                                  //   controller.aggregateSelectedFilters();
-                                  //   Get.back();
-                                  // }
-                                },
+                              laBelText: 'Apply',
+                              height: 40,
+                              width: 170,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'Nunito-Sans',
+                              textColor: Colors.white,
+                              ontapp: () {
+                                controller.aggregateSelectedFilters();
+                                Get.back();
+                              },
                             ),
                           ),
                           SizedBox(

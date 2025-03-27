@@ -1,67 +1,52 @@
-
-
-import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:kaistable_website/screens/home_screen/my_home_screen.dart';
-import 'package:kaistable_website/widgets/home_widgets/filter_widget.dart';
+import 'package:kaistable_website/main.dart';
+import 'package:kaistable_website/models/resaturant_model.dart';
+import 'package:kaistable_website/screens/onboarding_screen/onboarding_controller/onboarding_controller.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../custom_widget/separate_text_field.dart';
-import '../../../utils/responsive.dart';
-import '../../../widgets/fav_rectangle_widget.dart';
 import '../../../widgets/rectangle_widget.dart';
 import '../../detail_screens/restaurant_detail_screen.dart';
 import '../home_controller/home_location_controller.dart';
 import 'location_controller/location_controller.dart';
 
 class LocationScreen extends StatelessWidget {
- // final ScrollController scrollcontroller;
+  // final ScrollController scrollcontroller;
   final Function(int)? onNavigate;
-  final List<String> items = [
-    '10%',
-    '20%',
-    '30%',
-    '40%',
-    '50%',
 
-  ];
   final LocationController locationController = Get.put(LocationController());
-  final HomeLocationController mycontroller = Get.put(HomeLocationController());
-  LocationScreen({super.key, this.onNavigate,})
-  {
-    mycontroller.selectedTop.value='';
+  final HomeLocationController homeController =
+      Get.put(HomeLocationController());
+  LocationScreen({
+    super.key,
+    this.onNavigate,
+    this.city,
+    this.country,
+  }) {
+    homeController.selectedTop.value = '';
   }
-
+  List<RestaurantModel> filteredRestaurants = [];
+  String? city;
+  String? country;
+  final onboradingController = Get.put(OnboardingController());
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    bool isLargeScreen = screenWidth > 1400;
+    bool isOnboarding = onboradingController.selectedCountry.value != 'Country';
     return WillPopScope(
-      onWillPop: ()async{
-         Get.back();
+      onWillPop: () async {
+        Get.back();
         return false;
-
       },
       child: LayoutBuilder(
         builder: (context, constraints) {
-          int itemsPerRow = Responsive.isMobile(context)
-              ? 2
-              : Responsive.isTablet(context)
-              ? 3
-              : 4;
-          double itemWidth = (constraints.maxWidth / itemsPerRow) - 16;
-          double itemHeight = Responsive.isMobile(context)
-              ? 320
-              : (isLargeScreen ? 500 : 500); // Set a fixed height for items
-
           return Scaffold(
             backgroundColor: AppColors.bgColor,
-            appBar: AppBar(backgroundColor: AppColors.bgColor,
+            appBar: AppBar(
+              backgroundColor: AppColors.bgColor,
               iconTheme: IconThemeData(
-                color: AppColors.primaryColor, // Set your desired color for the drawer icon
+                color: AppColors
+                    .primaryColor, // Set your desired color for the drawer icon
               ),
               centerTitle: true,
               automaticallyImplyLeading: true,
@@ -86,18 +71,23 @@ class LocationScreen extends StatelessWidget {
                     onTap: () {
                       Get.back(); // Navigate back to the home screen
                     },
-                    child: Icon(Icons.arrow_back, size: 18,color: AppColors.primaryColor,),
+                    child: Icon(
+                      Icons.arrow_back,
+                      size: 18,
+                      color: AppColors.primaryColor,
+                    ),
                   ),
                 ),
               ),
-
-              title: Text('Available restaurants',
+              title: Text(
+                'Available restaurants',
                 style: const TextStyle(
-                  fontSize: 20,
+                  fontSize: 17,
                   color: AppColors.bottomSheetColor,
                   fontWeight: FontWeight.w700,
                   fontFamily: 'Nunito-Bold',
-                ),),
+                ),
+              ),
             ),
             body: SingleChildScrollView(
               child: Padding(
@@ -107,7 +97,7 @@ class LocationScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
-                      'New york',
+                      '',
                       style: TextStyle(
                         color: AppColors.primaryColor,
                         fontFamily: 'aftika-regular',
@@ -115,7 +105,7 @@ class LocationScreen extends StatelessWidget {
                         fontWeight: FontWeight.w400,
                       ),
                     ),
-                    SizedBox(height:  8),
+                    SizedBox(height: 8),
                     Text(
                       'The area is lively with restaurants, bars and nightlife.',
                       style: TextStyle(
@@ -125,11 +115,11 @@ class LocationScreen extends StatelessWidget {
                         fontWeight: FontWeight.w400,
                       ),
                     ),
-                    SizedBox(height:  10),
+                    SizedBox(height: 10),
                     SizedBox(
                       height: 38,
                       child: CustomSeparateTextField(
-                        controller: mycontroller.searchController,
+                        controller: homeController.searchController,
                         hintText: 'Try searching for restaurant name',
                         hintStyle: TextStyle(
                           color: AppColors.hintText,
@@ -172,51 +162,102 @@ class LocationScreen extends StatelessWidget {
                             ),
                           ),
                         ),
+                        onChanged: (value) {
+                          if (value.trim() != '') {
+                            homeController.filterRestaurants(value);
+                          }
+                        },
                       ),
                     ),
-                    SizedBox(height:  16),
+                    SizedBox(height: 16),
                     Text(
                       'Explore Restaurants',
                       style: TextStyle(
                         color: AppColors.bottomSheetColor,
                         fontFamily: 'aftika-regular',
-                        fontSize: 18,
+                        fontSize: 15,
                         fontWeight: FontWeight.w400,
                       ),
                     ),
-                    SizedBox(height:  12),
-                    Obx(() {
-                      return GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          mainAxisExtent: 220,
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
-                          childAspectRatio: itemWidth / itemHeight,
-                        ),
-                        itemCount: locationController.locationItem.length,
-                        itemBuilder: (context, index) {
-                          final item = locationController.locationItem[index];
-                          return InkWell(
-                            onTap: () {
-                              Get.to(RestaurantDetailScreen());
-                            },
-                            child: RectangleWidget(
-                              onNavigate: onNavigate,
-                              title: item.title,
-                              description: item.description,
-                              imagePath: item.imagePath,
-                              timetext: item.timetext,
-                              percentText: item.percentText,
-                              endTimeText: item.endTimeText,
-                              isFavorite: false.obs,
-                            ),
+                    SizedBox(height: 12),
+                    StreamBuilder(
+                      stream: homeController.getRestaurants(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return SizedBox(
+                            height: Get.height * 0.5,
+                            child: Center(child: CircularProgressIndicator()),
                           );
-                        },
-                      );
-                    }),
+                        }
+
+                        if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        }
+
+                        if (snapshot.data == null || snapshot.data!.isEmpty) {
+                          return SizedBox(
+                              height: Get.height * 0.5,
+                              child:
+                                  Center(child: Text('No restaurants found')));
+                        }
+
+                        List<RestaurantModel> restaurants = snapshot.data!;
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          homeController.initializeSelectors(restaurants);
+                        });
+
+                        return GetBuilder<HomeLocationController>(
+                          builder: (controller) {
+                            if (city != null && country != null) {
+                              controller.filteredRestaurants = controller
+                                  .filteredRestaurants
+                                  .where((restaurant) {
+                                return restaurant.city == city &&
+                                    restaurant.country == country;
+                              }).toList();
+                            }
+
+                            return GridView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                mainAxisExtent: Get.height * 0.27,
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 10,
+                                mainAxisSpacing: 20,
+                              ),
+                              itemCount: controller.filteredRestaurants.length,
+                              itemBuilder: (context, index) {
+                                final item =
+                                    controller.filteredRestaurants[index];
+                                return InkWell(
+                                  onTap: () {
+                                    Get.to(RestaurantDetailScreen(
+                                      restaurantModel: item,
+                                    ));
+                                  },
+                                  child: RectangleWidget(
+                                    onNavigate: onNavigate,
+                                    title: item.resName,
+                                    description: item.about,
+                                    resturant_id: item.docID,
+                                    imagePath: item.logoImage,
+                                    timetext: '10 AM',
+                                    percentText: '25%',
+                                    endTimeText: '9 PM',
+                                    percentageOff: item.menuList.percentageOff,
+                                    happyhour: item.menuList.happyHourSpecials,
+                                    isFavorite: false.obs,
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        );
+                      },
+                    ),
                     const SizedBox(height: 30),
                   ],
                 ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
+import 'package:kaistable_website/screens/auth_screens/signup/controller/signup_controller.dart';
 import 'package:kaistable_website/screens/general_preferences/screens_general/preference_5.dart';
 
 import '../../../custom_widget/separate_text_field.dart';
@@ -15,6 +16,8 @@ class Preference4 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    controller.fetchUserPreferences();
+
     return Scaffold(
       backgroundColor: AppColors.bgColor,
       appBar: AppBar(
@@ -50,7 +53,7 @@ class Preference4 extends StatelessWidget {
           ),
         ),
         title: Text(
-          'Dining Experience Preferences',
+          'General Preferences',
           style: TextStyle(
             fontSize: 17,
             color: AppColors.bottomSheetColor,
@@ -63,7 +66,7 @@ class Preference4 extends StatelessWidget {
             padding: const EdgeInsets.only(right: 12.0),
             child: Center(
               child: Text(
-                '4/14',
+                '4/9',
                 style: TextStyle(
                   fontSize: 12,
                   fontFamily: 'Nunito-Sans',
@@ -85,24 +88,12 @@ class Preference4 extends StatelessWidget {
                 height: 8,
               ),
               Text(
-                'What Type Of Restaurant Settings Do You Prefer?',
+                'Are you more of a planner or a spontaneous diner?',
                 style: TextStyle(
                   fontFamily: 'Nunito-Sans',
                   color: AppColors.lightGrey,
                   fontWeight: FontWeight.w600,
                   fontSize: 16,
-                ),
-              ),
-              SizedBox(
-                height: 4,
-              ),
-              Text(
-                '(Choose any 2)',
-                style: TextStyle(
-                  fontFamily: 'Nunito-Sans',
-                  color: AppColors.lightGrey,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14,
                 ),
               ),
               SizedBox(
@@ -125,34 +116,34 @@ class Preference4 extends StatelessWidget {
                           controller.toggleSelection4(preference["name"]!),
                       child: isOther && isSelected
                           ? Container(
-                        height: 66,
-                        width: Get.width,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              spreadRadius: 1,
-                              blurRadius: 6,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Center(
-                          child: CustomSeparateTextField(
-                            hintText: 'Enter text',
-                            controller: controller.screen4Controller,
-                            keyboardType: TextInputType.name,
-                            isShadow: false,
-                          ),
-                        ),
-                      )
+                              height: 66,
+                              width: Get.width,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    spreadRadius: 1,
+                                    blurRadius: 6,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: Center(
+                                child: CustomSeparateTextField(
+                                  hintText: 'Enter text',
+                                  controller: controller.screen4Controller,
+                                  keyboardType: TextInputType.name,
+                                  isShadow: false,
+                                ),
+                              ),
+                            )
                           : PreferencesSelectionWidget(
-                        name: preference["name"]!,
-                        dinningImage: preference["image"]!,
-                        isSelected: isSelected,
-                      ),
+                              name: preference["name"]!,
+                              dinningImage: preference["image"]!,
+                              isSelected: isSelected,
+                            ),
                     );
                   });
                 },
@@ -167,13 +158,13 @@ class Preference4 extends StatelessWidget {
                   width: 190,
                   fontFamily: 'Nunito-Sans',
                   fontWeight: FontWeight.w600,
-                  fontSize: 20,
+                  fontSize: 17,
                   textColor: Colors.white,
                   ontapp: () {
-                    if (controller.selectedPreferences4.length < 2) {
+                    if (controller.selectedPreferences4.length < 1) {
                       Get.snackbar(
                         'Selection Incomplete',
-                        'Please select at least 2 preferences to proceed.',
+                        'Please select at least 1 preferences to proceed.',
                         backgroundColor: AppColors.primaryColor,
                         colorText: Colors.white,
                         snackPosition: SnackPosition.TOP,
@@ -181,7 +172,10 @@ class Preference4 extends StatelessWidget {
                         borderRadius: 10,
                       );
                     } else {
-                      // controller.screen1Controller.clear();
+                      final signupController = Get.put(SignupController());
+                      signupController.updateUserData(
+                          field: 'planner',
+                          entry: controller.selectedPreferences4.last);
                       Get.to(() => Preference5());
                     }
                   },

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
+import 'package:kaistable_website/screens/home_screen/my_home_screen.dart';
 
 class TermsAndCondition extends StatelessWidget {
   final Function(int)? onNavigate;
@@ -10,13 +11,14 @@ class TermsAndCondition extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: ()async{
+      onWillPop: () async {
         Get.back();
         return false;
-
       },
-      child: Scaffold( backgroundColor: AppColors.bgColor,
-        appBar: AppBar( backgroundColor: AppColors.bgColor,
+      child: Scaffold(
+        backgroundColor: AppColors.bgColor,
+        appBar: AppBar(
+          backgroundColor: AppColors.bgColor,
           iconTheme: IconThemeData(
             color: AppColors.primaryColor,
           ),
@@ -41,38 +43,40 @@ class TermsAndCondition extends StatelessWidget {
               ),
               child: GestureDetector(
                 onTap: () {
-                  Get.back();  // Navigate back to the home screen
+                  Get.back();
                 },
                 child: Icon(Icons.arrow_back, size: 18),
               ),
             ),
           ),
-
-          title: Text('Terms and conditions',
+          title: Text(
+            'Terms and conditions',
             style: const TextStyle(
-              fontSize: 20,
+              fontSize: 17,
               color: AppColors.bottomSheetColor,
               fontWeight: FontWeight.w700,
               fontFamily: 'Nunito-Bold',
-            ),),
+            ),
+          ),
         ),
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.only(left: 16.0,right: 16,top: 2),
+            padding: const EdgeInsets.only(left: 16.0, right: 16, top: 2),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: 20,),
-                Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+                SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
                   textAlign: TextAlign.justify,
                   style: TextStyle(
-
                       fontSize: 16,
                       fontFamily: "Nunito-Regular",
-                      color:Color(0xFF656D7B),
-                      fontWeight: FontWeight.w400
-                  ),
+                      color: Color(0xFF656D7B),
+                      fontWeight: FontWeight.w400),
                 ),
                 // Add some spacing at the top
                 // Text(
@@ -154,7 +158,9 @@ class TermsAndCondition extends StatelessWidget {
                 //   ),
                 // ),
                 // More terms...
-                SizedBox(height: 2,), // Add spacing at the bottom if needed
+                SizedBox(
+                  height: 2,
+                ), // Add spacing at the bottom if needed
               ],
             ),
           ),
