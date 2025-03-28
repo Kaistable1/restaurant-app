@@ -8,12 +8,14 @@ import 'package:kaistable_website/screens/general_preferences/screens_general/pr
 import 'package:kaistable_website/splash_screen/splashscreen.dart';
 import 'package:kaistable_website/widgets/global_functions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 bool myFlag = false;
 final auth = FirebaseAuth.instance;
 SharedPreferences? preferences;
 SharedPreferences? remember_me_pref;
 Rx<UserModel>? currentUserDataModel;
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
@@ -34,14 +36,13 @@ Future<void> main() async {
     runApp(MyApp());
   });
 }
-
+RxBool showcaseInProgress = false.obs;
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Kaistable',
