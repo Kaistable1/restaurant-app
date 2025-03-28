@@ -1,7 +1,4 @@
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
@@ -14,7 +11,6 @@ import 'package:kaistable_website/screens/home_screen/trending_all/trending_view
 import 'package:kaistable_website/screens/nav_bar/near_by_all.dart';
 import 'package:kaistable_website/widgets/global_functions.dart';
 import 'package:kaistable_website/widgets/rectangle_widget.dart';
-
 import '../home_screen/events_screen/common_widget/days_tile.dart';
 import '../home_screen/events_screen/controller/events_controller.dart';
 import '../home_screen/events_screen/event_screen.dart';
@@ -37,13 +33,13 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Image.asset('assets/images/top_banner.png',height: 183,width: Get.width,),
+              Image.asset('assets/images/top_banner.png',height: 180,width: Get.width,),
 
               SizedBox(
                 height: 10,
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 14),
+                padding: const EdgeInsets.only(left: 12),
                 child: Row(
                   children: [
                     Text(
@@ -57,6 +53,20 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ],
                 ),
+              ),
+              SizedBox(
+                height: 8,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: Text('Explore our diverse categories to find delicious food',
+                  textAlign: TextAlign.justify,
+                  style: TextStyle(
+                    color: AppColors.bottomSheetColor,
+                    fontFamily: 'Nunito-Regular',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),),
               ),
               SizedBox(
                 height: 14,
@@ -85,7 +95,7 @@ class HomeScreen extends StatelessWidget {
               _buildNearBySection(),
               SizedBox(height: 10,),
               Padding(
-                padding: const EdgeInsets.only(left: 14,right: 14),
+                padding: const EdgeInsets.only(left: 12,right: 14),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -118,13 +128,26 @@ class HomeScreen extends StatelessWidget {
               ),
               SizedBox(height: 10,),
               Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: Text('Enjoy unique dining experiences with adventures.',
+                  textAlign: TextAlign.justify,
+                  style: TextStyle(
+                    color: AppColors.bottomSheetColor,
+                    fontFamily: 'Nunito-Regular',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),),
+              ),
+
+              SizedBox(height: 10,),
+              Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4.0),
                 child: StreamBuilder(
                   stream: homeController.getEntertainmentRestaurants(),
                   builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return buildShimmerEffect();
-                    }
+                    // if (snapshot.connectionState == ConnectionState.waiting) {
+                    //   return CircularProgressIndicator(color: AppColors.primaryColor,);
+                    // }
 
                     if (snapshot.hasError) {
                       print('Error during stream call ${snapshot.error}');
@@ -222,7 +245,8 @@ class HomeScreen extends StatelessWidget {
               SizedBox(height: 10,),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt labore magna aliqua.',
+                child: Text('Exciting events with music & dining.',
+                  textAlign: TextAlign.justify,
                   style: TextStyle(
                     color: AppColors.bottomSheetColor,
                     fontFamily: 'Nunito-Regular',
@@ -267,7 +291,7 @@ class HomeScreen extends StatelessWidget {
   }
  Widget _featuredCategory(){
     return  Container(
-      height: 426,
+      height: 444,
       width: Get.width,
       decoration: BoxDecoration(
           color:Color(0xFF708780)
@@ -289,7 +313,8 @@ class HomeScreen extends StatelessWidget {
             ),
             SizedBox(height: 12,),
             Text(
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt labore magna aliqua.',
+              'Discover our featured selections, showcasing top-rated dishes, exclusive events, and must-try dining experiences curated just for you.',
+              textAlign: TextAlign.justify,
               style: TextStyle(
                 color: AppColors.bottomSheetColor,
                 fontFamily: 'Nunito-Regular',
@@ -311,7 +336,8 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     Image.asset('assets/images/feature_img.png',height: 169,width:Get.width),
                     SizedBox(height: 8,),
-                    Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniamexercitation ullamco laboris aliquip ex ea commodo consequat.',
+                    Text('Explore our featured selections with top-rated dishes, exclusive events, and unforgettable dining experiences, carefully curated for a memorable culinary journey.',
+                      textAlign: TextAlign.justify,
                       style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
@@ -387,7 +413,7 @@ class HomeScreen extends StatelessWidget {
     final HomeLocationController controller = Get.put(HomeLocationController());
 
     return Padding(
-      padding: const EdgeInsets.only(left: 14, right: 14),
+      padding: const EdgeInsets.only(left: 12, ),
       child: StreamBuilder(
           stream: controller.getTrendingRestaurants(),
           builder: (context, snapshot) {
@@ -437,11 +463,12 @@ class HomeScreen extends StatelessWidget {
                               ),
                               Text(
                                 'Places that are popular',
+                                textAlign: TextAlign.justify,
                                 style: TextStyle(
                                   color: AppColors.bottomSheetColor,
-                                  fontFamily: 'aftika-regular',
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w400,
+                                  fontFamily: 'Nunito-Regular',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ],
@@ -551,12 +578,10 @@ class HomeScreen extends StatelessWidget {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return SizedBox();
             }
-
             if (snapshot.hasError) {
               print('Error during stream call ${snapshot.error}');
               return Text(''); // Show error message if any
             }
-
             if (snapshot.data == null || snapshot.data!.isEmpty) {
               return Text(''); // Handle the case where data is null or empty
             }
@@ -565,7 +590,6 @@ class HomeScreen extends StatelessWidget {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               controller.initailizedSelectors(resaturantsList: all_restaurants);
             });
-
             return FutureBuilder(
                 future: controller.getNearbyRestaurants(all_restaurants, 50000),
                 builder: (context, futureSnapshot) {
@@ -578,12 +602,10 @@ class HomeScreen extends StatelessWidget {
                   if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Text('');
                   }
-
                   List<RestaurantModel> restaurants = futureSnapshot.data ?? [];
                   if (restaurants.isEmpty) {
                     return SizedBox();
                   }
-
                   return Column(
                     children: [
                       Row(
@@ -594,7 +616,7 @@ class HomeScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "You May Like This",
+                                "You my like",
                                 style: TextStyle(
                                   color: AppColors.bottomSheetColor,
                                   fontFamily: 'aftika-regular',
@@ -604,10 +626,11 @@ class HomeScreen extends StatelessWidget {
                               ),
                               Text(
                                 "For your best delicious food",
+                                textAlign: TextAlign.justify,
                                 style: TextStyle(
                                   color: AppColors.bottomSheetColor,
-                                  fontFamily: 'aftika-regular',
-                                  fontSize: 10,
+                                  fontFamily: 'Nunito-Regular',
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),

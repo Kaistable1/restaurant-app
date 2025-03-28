@@ -83,11 +83,11 @@ class _MainScreenState extends State<MainScreen> {
           GestureDetector(
             onTap: ()=>Get.to(NotificationScreen()),
             child: Container(
-                height: 32,
-                width: 32,
+                height: 30,
+                width: 30,
                 decoration: BoxDecoration(
                   color: AppColors.whiteColor,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(6),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(.2),
@@ -97,7 +97,7 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                   ],
                 ),
-                child: Icon(Icons.email,color: AppColors.primaryColor,)),
+                child: Icon(Icons.email,color: AppColors.primaryColor,size: 22,)),
           ),
         SizedBox(width: 12,)],
         
