@@ -13,7 +13,7 @@ class HomeController extends GetxController {
     {"name": "Cuisines", "image": 'assets/images/cuisines.png'},
     {"name": "New", "image": 'assets/images/new.png'},
     {"name": "Trending", "image": 'assets/images/trending.png'},
-    {"name": "Entertainment", "image": 'assets/images/entertainment.png'},
+    {"name": "Experience", "image": 'assets/images/entertainment.png'},
     {"name": "Events", "image": 'assets/images/new.png'},
   ].obs;
 

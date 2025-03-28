@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
@@ -23,11 +24,13 @@ import 'controller/home_controller.dart';
 class HomeScreen extends StatelessWidget {
   final HomeController controller = Get.put(HomeController());
   final EventsController eventController = Get.put(EventsController());
+  final HomeLocationController homeController =
+  Get.put(HomeLocationController());
   @override
   Widget build(BuildContext context) {
     requestLocationPermission();
     return Scaffold(
-      backgroundColor: AppColors.whiteColor,
+      backgroundColor: AppColors.bgColor,
       body: SafeArea(
         child: SingleChildScrollView(
 
@@ -87,6 +90,109 @@ class HomeScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
+                      'Experience',
+                      style: TextStyle(
+                        color: AppColors.bottomSheetColor,
+                        fontFamily: 'aftika-regular',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    InkWell(
+                        onTap: () {
+                          Get.to(EntertainmentsScreen());
+                        },
+                        child: Text(
+                          "view all",
+                          style: TextStyle(
+                              decoration: TextDecoration.underline,
+                              decorationColor: AppColors.primaryColor,
+                              fontFamily: 'Nunito-Regular',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.primaryColor),
+                        ))
+
+                  ],
+                ),
+              ),
+              SizedBox(height: 10,),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                child: StreamBuilder(
+                  stream: homeController.getEntertainmentRestaurants(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return buildShimmerEffect();
+                    }
+
+                    if (snapshot.hasError) {
+                      print('Error during stream call ${snapshot.error}');
+                      return Text(''); // Show error message if any
+                    }
+
+                    if (snapshot.data == null || snapshot.data!.isEmpty) {
+                      return Text('No restaurants found'); // Handle empty case
+                    }
+
+                    List<RestaurantModel> restaurants = snapshot.data!;
+
+                    // Initialize filtered restaurants
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      homeController.initializeSelectors(restaurants);
+                    });
+
+                    return GetBuilder<HomeLocationController>(
+                      builder: (controller) {
+                        return SizedBox(
+                          height: 270, // Set an appropriate height for horizontal scrolling
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal, // Enable horizontal scrolling
+                            itemCount: controller.filteredRestaurants.length ,
+                            itemBuilder: (context, index) {
+                              final item = controller.filteredRestaurants[index];
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8.0), // Add spacing
+                                child: InkWell(
+                                  onTap: () {
+                                    Get.to(RestaurantDetailScreen(
+                                      restaurantModel: item,
+                                    ));
+                                  },
+                                  child: RectangleWidget(
+                                    boxColor: AppColors.whiteColor,
+                                    imgHeight: 203,
+                                    height:304 ,
+                                    width: 230,
+                                    title: item.resName,
+                                    description: item.about,
+                                    resturant_id: item.docID,
+                                    imagePath: item.logoImage,
+                                    timetext: '10 AM',
+                                    percentText: '25%',
+                                    endTimeText: '9 PM',
+                                    percentageOff: item.menuList.percentageOff,
+                                    happyhour: item.menuList.happyHourSpecials,
+                                    isFavorite: false.obs,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+
+              SizedBox(height: 10,),
+              Padding(
+                padding: const EdgeInsets.only(left: 14,right: 14),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
                       'Events',
                       style: TextStyle(
                         color: AppColors.bottomSheetColor,
@@ -114,33 +220,45 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 10,),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt labore magna aliqua.',
+                  style: TextStyle(
+                    color: AppColors.bottomSheetColor,
+                    fontFamily: 'Nunito-Regular',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),),
+              ),
+              SizedBox(height: 10,),
+              ListView.builder(
+                shrinkWrap: true, // Ensures it takes only the necessary space
+                physics: ScrollPhysics(), // Prevents scrolling if inside another scrollable view
+                itemCount: 3,
+                itemBuilder: (context, index) {
+                  final event = eventController.eventsList[index];
+                  return Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                        child: DaysTile(
+                          onTap: ()=>Get.to(EventDetailsScreen()),
+                          image: event.image,
+                          title: event.title,
+                          location: event.location,
+                        ),
+                      ),
+                      if (index != eventController.eventsList.length - 1) // Avoid divider after last item
+                        Divider(
+                          thickness: 1,
+                          color: AppColors.primaryColor.withOpacity(.2),
+                        ),
+                    ],
+                  );
+                },
+              )
 
-      ListView.builder(
-          shrinkWrap: true, // Ensures it takes only the necessary space
-          physics: ScrollPhysics(), // Prevents scrolling if inside another scrollable view
-          itemCount: 3,
-          itemBuilder: (context, index) {
-            final event = eventController.eventsList[index];
-            return Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                  child: DaysTile(
-                    onTap: ()=>Get.to(EventDetailsScreen()),
-                    image: event.image,
-                    title: event.title,
-                    location: event.location,
-                  ),
-                ),
-                if (index != eventController.eventsList.length - 1) // Avoid divider after last item
-                  Divider(
-                    thickness: 1,
-                    color: AppColors.primaryColor.withOpacity(.2),
-                  ),
-              ],
-            );
-          },
-        )
+
             ],
           ),
         ),
@@ -226,7 +344,7 @@ class HomeScreen extends StatelessWidget {
                     Get.to(NewViewall());
                   } else if (category['name'] == 'Trending') {
                     Get.to(TrendingViewAll());
-                  } else if (category['name'] == 'Experiences') {
+                  } else if (category['name'] == 'Experience') {
                     Get.to(EntertainmentsScreen());
                   }else if (category['name'] == 'Events') {
                     Get.to(EventScreen());
@@ -512,17 +630,12 @@ class HomeScreen extends StatelessWidget {
                         ],
                       ),
                       SizedBox(height: 10),
-                      GridView.builder(
+                      ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          mainAxisExtent: Get.height * 0.2,
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 20,
-                        ),
+
                         itemCount:
-                            restaurants.length > 4 ? 4 : restaurants.length,
+                            restaurants.length > 2 ? 2 : restaurants.length,
                         itemBuilder: (context, index) {
                           final item = restaurants[index];
                           return InkWell(

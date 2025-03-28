@@ -236,7 +236,7 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                     ),
                     SizedBox(height: 2),
                     Obx(() {
-                      return controller.selectedTop.value == 'Entertainment'
+                      return controller.selectedTop.value == 'Experience'
                           ? Column(
                               children: [
                                 SizedBox(

@@ -73,7 +73,7 @@ class EntertainmentsScreen extends StatelessWidget {
                 ),
               ),
               title: Text(
-                'Entertainments',
+                'Experience',
                 style: const TextStyle(
                   fontSize: 17,
                   color: AppColors.bottomSheetColor,

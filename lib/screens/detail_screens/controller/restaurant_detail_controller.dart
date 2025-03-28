@@ -11,9 +11,9 @@ class RestaurantDetailController extends GetxController {
     "Assumenda deleniti corporis exercitationem ut blanditiis id aut quo. Nisi cupiditate nihil velit. Beatae similique suscipit dolor neque ut.",
     "Assumenda deleniti corporis exercitationem ut blanditiis id aut quo. Nisi cupiditate nihil velit. Beatae similique suscipit dolor neque ut."
   ];
-  List top = ['Menu', 'Entertainment', 'About', 'Reviews'];
+  List top = ['Menu', 'Experience', 'About', 'Reviews'];
   RxBool isFavorite = false.obs;
-  RxString selectedTop = 'Menu'.obs;
+  RxString  selectedTop = 'Menu'.obs;
   RxString selectedMenu = 'Percentage Off'.obs;
   List menuList = [
     'Percentage Off',
