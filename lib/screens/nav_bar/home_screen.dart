@@ -21,7 +21,7 @@ class HomeScreen extends StatelessWidget {
   final HomeController controller = Get.put(HomeController());
   final EventsController eventController = Get.put(EventsController());
   final HomeLocationController homeController =
-  Get.put(HomeLocationController());
+      Get.put(HomeLocationController());
   @override
   Widget build(BuildContext context) {
     requestLocationPermission();
@@ -29,11 +29,14 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: AppColors.bgColor,
       body: SafeArea(
         child: SingleChildScrollView(
-
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Image.asset('assets/images/top_banner.png',height: 180,width: Get.width,),
+              Image.asset(
+                'assets/images/top_banner.png',
+                height: 180,
+                width: Get.width,
+              ),
 
               SizedBox(
                 height: 10,
@@ -59,20 +62,23 @@ class HomeScreen extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: Text('Explore our diverse categories to find delicious food',
+                child: Text(
+                  'Explore our diverse categories to find delicious food',
                   textAlign: TextAlign.justify,
                   style: TextStyle(
                     color: AppColors.bottomSheetColor,
                     fontFamily: 'Nunito-Regular',
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                  ),),
+                  ),
+                ),
               ),
               SizedBox(
                 height: 14,
               ),
               _buildCategories(),
               _buildTrendingSection(),
+
               ///Add image
               // Container(
               //   width: Get.width,
@@ -93,9 +99,11 @@ class HomeScreen extends StatelessWidget {
                 height: 10,
               ),
               _buildNearBySection(),
-              SizedBox(height: 10,),
+              SizedBox(
+                height: 10,
+              ),
               Padding(
-                padding: const EdgeInsets.only(left: 12,right: 14),
+                padding: const EdgeInsets.only(left: 12, right: 14),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -122,24 +130,29 @@ class HomeScreen extends StatelessWidget {
                               fontWeight: FontWeight.w500,
                               color: AppColors.primaryColor),
                         ))
-
                   ],
                 ),
               ),
-              SizedBox(height: 10,),
+              SizedBox(
+                height: 10,
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: Text('Enjoy unique dining experiences with adventures.',
+                child: Text(
+                  'Enjoy unique dining experiences with adventures.',
                   textAlign: TextAlign.justify,
                   style: TextStyle(
                     color: AppColors.bottomSheetColor,
                     fontFamily: 'Nunito-Regular',
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                  ),),
+                  ),
+                ),
               ),
 
-              SizedBox(height: 10,),
+              SizedBox(
+                height: 10,
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4.0),
                 child: StreamBuilder(
@@ -168,14 +181,18 @@ class HomeScreen extends StatelessWidget {
                     return GetBuilder<HomeLocationController>(
                       builder: (controller) {
                         return SizedBox(
-                          height: 270, // Set an appropriate height for horizontal scrolling
+                          height:
+                              270, // Set an appropriate height for horizontal scrolling
                           child: ListView.builder(
-                            scrollDirection: Axis.horizontal, // Enable horizontal scrolling
-                            itemCount: controller.filteredRestaurants.length ,
+                            scrollDirection:
+                                Axis.horizontal, // Enable horizontal scrolling
+                            itemCount: controller.filteredRestaurants.length,
                             itemBuilder: (context, index) {
-                              final item = controller.filteredRestaurants[index];
+                              final item =
+                                  controller.filteredRestaurants[index];
                               return Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0), // Add spacing
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8.0), // Add spacing
                                 child: InkWell(
                                   onTap: () {
                                     Get.to(RestaurantDetailScreen(
@@ -183,10 +200,10 @@ class HomeScreen extends StatelessWidget {
                                     ));
                                   },
                                   child: RectangleWidget(
-                                    boxColor: AppColors.whiteColor,
-                                    imgHeight: 203,
-                                    height:304 ,
-                                    width: 230,
+                                   boxColor: AppColors.whiteColor,
+                                   imgHeight: 203,
+                                   height: 304,
+                                   width: 230,
                                     title: item.resName,
                                     description: item.about,
                                     resturant_id: item.docID,
@@ -209,9 +226,11 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(height: 10,),
+              SizedBox(
+                height: 10,
+              ),
               Padding(
-                padding: const EdgeInsets.only(left: 14,right: 14),
+                padding: const EdgeInsets.only(left: 14, right: 14),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -238,41 +257,50 @@ class HomeScreen extends StatelessWidget {
                               fontWeight: FontWeight.w500,
                               color: AppColors.primaryColor),
                         ))
-
                   ],
                 ),
               ),
-              SizedBox(height: 10,),
+              SizedBox(
+                height: 10,
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: Text('Exciting events with music & dining.',
+                child: Text(
+                  'Exciting events with music & dining.',
                   textAlign: TextAlign.justify,
                   style: TextStyle(
                     color: AppColors.bottomSheetColor,
                     fontFamily: 'Nunito-Regular',
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                  ),),
+                  ),
+                ),
               ),
-              SizedBox(height: 10,),
+              SizedBox(
+                height: 10,
+              ),
               ListView.builder(
                 shrinkWrap: true, // Ensures it takes only the necessary space
-                physics: ScrollPhysics(), // Prevents scrolling if inside another scrollable view
+                physics:
+                    ScrollPhysics(), // Prevents scrolling if inside another scrollable view
                 itemCount: 3,
                 itemBuilder: (context, index) {
                   final event = eventController.eventsList[index];
                   return Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 8.0),
                         child: DaysTile(
-                          onTap: ()=>Get.to(EventDetailsScreen()),
+                          onTap: () => Get.to(EventDetailsScreen()),
                           image: event.image,
                           title: event.title,
                           location: event.location,
                         ),
                       ),
-                      if (index != eventController.eventsList.length - 1) // Avoid divider after last item
+                      if (index !=
+                          eventController.eventsList.length -
+                              1) // Avoid divider after last item
                         Divider(
                           thickness: 1,
                           color: AppColors.primaryColor.withOpacity(.2),
@@ -281,27 +309,26 @@ class HomeScreen extends StatelessWidget {
                   );
                 },
               )
-
-
             ],
           ),
         ),
       ),
     );
   }
- Widget _featuredCategory(){
-    return  Container(
+
+  Widget _featuredCategory() {
+    return Container(
       height: 444,
       width: Get.width,
-      decoration: BoxDecoration(
-          color:Color(0xFF708780)
-      ),
+      decoration: BoxDecoration(color: Color(0xFF708780)),
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 10,),
+            SizedBox(
+              height: 10,
+            ),
             Text(
               'Featured',
               style: TextStyle(
@@ -311,7 +338,9 @@ class HomeScreen extends StatelessWidget {
                 fontWeight: FontWeight.w700,
               ),
             ),
-            SizedBox(height: 12,),
+            SizedBox(
+              height: 12,
+            ),
             Text(
               'Discover our featured selections, showcasing top-rated dishes, exclusive events, and must-try dining experiences curated just for you.',
               textAlign: TextAlign.justify,
@@ -322,29 +351,33 @@ class HomeScreen extends StatelessWidget {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            SizedBox(height: 18,),
+            SizedBox(
+              height: 18,
+            ),
             Container(
               height: 300,
               width: Get.width,
               decoration: BoxDecoration(
                   color: AppColors.whiteColor,
-                  borderRadius: BorderRadius.circular(10)
-              ),
+                  borderRadius: BorderRadius.circular(10)),
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Column(
                   children: [
-                    Image.asset('assets/images/feature_img.png',height: 169,width:Get.width),
-                    SizedBox(height: 8,),
-                    Text('Explore our featured selections with top-rated dishes, exclusive events, and unforgettable dining experiences, carefully curated for a memorable culinary journey.',
+                    Image.asset('assets/images/feature_img.png',
+                        height: 169, width: Get.width),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Text(
+                      'Explore our featured selections with top-rated dishes, exclusive events, and unforgettable dining experiences, carefully curated for a memorable culinary journey.',
                       textAlign: TextAlign.justify,
                       style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                           color: AppColors.headingTextColor,
-                          fontFamily: 'Nunito-Regular'
-                      ),)
-
+                          fontFamily: 'Nunito-Regular'),
+                    )
                   ],
                 ),
               ),
@@ -353,7 +386,8 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
     );
- }
+  }
+
   Widget _buildCategories() {
     return Obx(() => SizedBox(
           height: 100,
@@ -372,7 +406,7 @@ class HomeScreen extends StatelessWidget {
                     Get.to(TrendingViewAll());
                   } else if (category['name'] == 'Experience') {
                     Get.to(EntertainmentsScreen());
-                  }else if (category['name'] == 'Events') {
+                  } else if (category['name'] == 'Events') {
                     Get.to(EventScreen());
                   }
                 },
@@ -413,7 +447,9 @@ class HomeScreen extends StatelessWidget {
     final HomeLocationController controller = Get.put(HomeLocationController());
 
     return Padding(
-      padding: const EdgeInsets.only(left: 12, ),
+      padding: const EdgeInsets.only(
+        left: 12,
+      ),
       child: StreamBuilder(
           stream: controller.getTrendingRestaurants(),
           builder: (context, snapshot) {
@@ -525,7 +561,9 @@ class HomeScreen extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 6,),
+                            SizedBox(
+                              height: 6,
+                            ),
                             Text(
                               item.resName,
                               style: TextStyle(
@@ -535,13 +573,21 @@ class HomeScreen extends StatelessWidget {
                                 fontFamily: 'Nunito-Sans',
                               ),
                             ),
-                            SizedBox(height: 6,),
+                            SizedBox(
+                              height: 6,
+                            ),
                             SizedBox(
                               width: Get.width * 0.3,
                               child: Row(
                                 children: [
-                                  Image.asset('assets/images/location_icon2.png',height: 16,width: 16,),
-                                  SizedBox(width: 4,),
+                                  Image.asset(
+                                    'assets/images/location_icon2.png',
+                                    height: 16,
+                                    width: 16,
+                                  ),
+                                  SizedBox(
+                                    width: 4,
+                                  ),
                                   Text(
                                     "${item.address}",
                                     overflow: TextOverflow.ellipsis,
@@ -656,7 +702,6 @@ class HomeScreen extends StatelessWidget {
                       ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-
                         itemCount:
                             restaurants.length > 2 ? 2 : restaurants.length,
                         itemBuilder: (context, index) {
@@ -668,6 +713,7 @@ class HomeScreen extends StatelessWidget {
                               ));
                             },
                             child: RectangleWidget(
+                              imgHeight: 169,
                               title: item.resName,
                               description: item.address,
                               resturant_id: item.docID,
