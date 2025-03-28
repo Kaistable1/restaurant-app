@@ -1,5 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
@@ -12,122 +14,320 @@ import 'package:kaistable_website/screens/home_screen/trending_all/trending_view
 import 'package:kaistable_website/screens/nav_bar/near_by_all.dart';
 import 'package:kaistable_website/widgets/global_functions.dart';
 import 'package:kaistable_website/widgets/rectangle_widget.dart';
-import 'package:showcaseview/showcaseview.dart';
 
-import '../../widgets/showcase_container.dart';
+import '../home_screen/events_screen/common_widget/days_tile.dart';
+import '../home_screen/events_screen/controller/events_controller.dart';
+import '../home_screen/events_screen/event_screen.dart';
+import '../home_screen/events_screen/events_details_screen/event_details_screen.dart';
 import 'controller/home_controller.dart';
 
 class HomeScreen extends StatelessWidget {
-
   final HomeController controller = Get.put(HomeController());
-  final GlobalKey _carouselKey = GlobalKey();
-  final GlobalKey _categoryKey = GlobalKey();
-  final GlobalKey _trendingKey = GlobalKey();
-  final GlobalKey _youMayLikeThis = GlobalKey();
-  bool hasStartedShowcase = false;
-
+  final EventsController eventController = Get.put(EventsController());
+  final HomeLocationController homeController =
+  Get.put(HomeLocationController());
   @override
   Widget build(BuildContext context) {
     requestLocationPermission();
-    return ShowCaseWidget(
-      builder: (context) {
-        if (!hasStartedShowcase) {
-          hasStartedShowcase = true;
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            ShowCaseWidget.of(context).startShowCase([
-              _carouselKey,
-              _categoryKey,
-              _trendingKey,
-              _youMayLikeThis,
-            ]);
-          });
-        }
-        return Scaffold(
-          backgroundColor: AppColors.whiteColor,
-          body: SafeArea(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 15),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Showcase.withWidget(
-                    height: 100,
-                    targetPadding: const EdgeInsets.symmetric(vertical: 8),
-                    width: Get.width - 24,
-                    key: _carouselKey,
-                    container: ShowCaseContainer(
-                      width: Get.width - 32,
-                      text: "Explore new features and highlights.",
-                      showcaseContext: context,
-                      last: false,
-                    ),
-                    child: CarouselSlider(
-                      options: CarouselOptions(
-                        height: 190,
-                        viewportFraction: 1.0,
-                        autoPlay: true,
-                        enlargeCenterPage: true,
-                        onPageChanged: (index, reason) {
-                          controller.currentIndex.value = index;
-                        },
-                      ),
-                      items: controller.carouselImages.map((image) {
-                        return ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Image.asset(image,
-                              fit: BoxFit.contain, width: double.infinity),
-                        );
-                      }).toList(),
-                    ),
-                  ),
+    return Scaffold(
+      backgroundColor: AppColors.bgColor,
+      body: SafeArea(
+        child: SingleChildScrollView(
 
-                  SizedBox(height: 10),
-                  Showcase.withWidget(
-                    height: 200,
-                    width: Get.width - 24,
-                    key: _categoryKey,
-                    container: ShowCaseContainer(
-                      width: Get.width - 32,
-                      text: "Browse categories to find what you need.",
-                      showcaseContext: context,
-                      last: false,
-                    ),
-                    child: _buildCategories(),
-                  ),
-                  SizedBox(height: 10),
-                  Showcase.withWidget(
-                    height: 200,
-                    width: Get.width - 24,
-                    key: _trendingKey,
-                    container: ShowCaseContainer(
-                      width: Get.width - 32,
-                      text: "Check out trending items.",
-                      showcaseContext: context,
-                      last: false,
-                    ),
-                    child: _buildTrendingSection(),
-                  ),
-                  SizedBox(height: 10),
-                  Showcase.withWidget(
-                      height: 200,
-                      width: Get.width - 24,
-                      key: _youMayLikeThis,
-                      container: ShowCaseContainer(
-                        width: Get.width - 32,
-                        text: "Personalized recommendations for you.",
-                        showcaseContext: context,
-                        last: true,
-                      ),
-                      child: _buildNearBySection()),
-                ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Image.asset('assets/images/top_banner.png',height: 183,width: Get.width,),
+
+              SizedBox(
+                height: 10,
               ),
-            ),
+              Padding(
+                padding: const EdgeInsets.only(left: 14),
+                child: Row(
+                  children: [
+                    Text(
+                      'Explore By Category',
+                      style: TextStyle(
+                        color: AppColors.bottomSheetColor,
+                        fontFamily: 'aftika-regular',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 14,
+              ),
+              _buildCategories(),
+              _buildTrendingSection(),
+              ///Add image
+              // Container(
+              //   width: Get.width,
+              //   height: 150,
+              //   decoration: BoxDecoration(
+              //     shape: BoxShape.rectangle,
+              //     borderRadius: BorderRadius.circular(18),
+              //     image: DecorationImage(
+              //       image: AssetImage(
+              //         'assets/images/ad1.png',
+              //       ),
+              //       fit: BoxFit.cover,
+              //     ),
+              //   ),
+              // ),
+              _featuredCategory(),
+              SizedBox(
+                height: 10,
+              ),
+              _buildNearBySection(),
+              SizedBox(height: 10,),
+              Padding(
+                padding: const EdgeInsets.only(left: 14,right: 14),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Experience',
+                      style: TextStyle(
+                        color: AppColors.bottomSheetColor,
+                        fontFamily: 'aftika-regular',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    InkWell(
+                        onTap: () {
+                          Get.to(EntertainmentsScreen());
+                        },
+                        child: Text(
+                          "view all",
+                          style: TextStyle(
+                              decoration: TextDecoration.underline,
+                              decorationColor: AppColors.primaryColor,
+                              fontFamily: 'Nunito-Regular',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.primaryColor),
+                        ))
+
+                  ],
+                ),
+              ),
+              SizedBox(height: 10,),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                child: StreamBuilder(
+                  stream: homeController.getEntertainmentRestaurants(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return buildShimmerEffect();
+                    }
+
+                    if (snapshot.hasError) {
+                      print('Error during stream call ${snapshot.error}');
+                      return Text(''); // Show error message if any
+                    }
+
+                    if (snapshot.data == null || snapshot.data!.isEmpty) {
+                      return Text('No restaurants found'); // Handle empty case
+                    }
+
+                    List<RestaurantModel> restaurants = snapshot.data!;
+
+                    // Initialize filtered restaurants
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      homeController.initializeSelectors(restaurants);
+                    });
+
+                    return GetBuilder<HomeLocationController>(
+                      builder: (controller) {
+                        return SizedBox(
+                          height: 270, // Set an appropriate height for horizontal scrolling
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal, // Enable horizontal scrolling
+                            itemCount: controller.filteredRestaurants.length ,
+                            itemBuilder: (context, index) {
+                              final item = controller.filteredRestaurants[index];
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8.0), // Add spacing
+                                child: InkWell(
+                                  onTap: () {
+                                    Get.to(RestaurantDetailScreen(
+                                      restaurantModel: item,
+                                    ));
+                                  },
+                                  child: RectangleWidget(
+                                    boxColor: AppColors.whiteColor,
+                                    imgHeight: 203,
+                                    height:304 ,
+                                    width: 230,
+                                    title: item.resName,
+                                    description: item.about,
+                                    resturant_id: item.docID,
+                                    imagePath: item.logoImage,
+                                    timetext: '10 AM',
+                                    percentText: '25%',
+                                    endTimeText: '9 PM',
+                                    percentageOff: item.menuList.percentageOff,
+                                    happyhour: item.menuList.happyHourSpecials,
+                                    isFavorite: false.obs,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+
+              SizedBox(height: 10,),
+              Padding(
+                padding: const EdgeInsets.only(left: 14,right: 14),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Events',
+                      style: TextStyle(
+                        color: AppColors.bottomSheetColor,
+                        fontFamily: 'aftika-regular',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    InkWell(
+                        onTap: () {
+                          Get.to(EventScreen());
+                        },
+                        child: Text(
+                          "view all",
+                          style: TextStyle(
+                              decoration: TextDecoration.underline,
+                              decorationColor: AppColors.primaryColor,
+                              fontFamily: 'Nunito-Regular',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.primaryColor),
+                        ))
+
+                  ],
+                ),
+              ),
+              SizedBox(height: 10,),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt labore magna aliqua.',
+                  style: TextStyle(
+                    color: AppColors.bottomSheetColor,
+                    fontFamily: 'Nunito-Regular',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),),
+              ),
+              SizedBox(height: 10,),
+              ListView.builder(
+                shrinkWrap: true, // Ensures it takes only the necessary space
+                physics: ScrollPhysics(), // Prevents scrolling if inside another scrollable view
+                itemCount: 3,
+                itemBuilder: (context, index) {
+                  final event = eventController.eventsList[index];
+                  return Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                        child: DaysTile(
+                          onTap: ()=>Get.to(EventDetailsScreen()),
+                          image: event.image,
+                          title: event.title,
+                          location: event.location,
+                        ),
+                      ),
+                      if (index != eventController.eventsList.length - 1) // Avoid divider after last item
+                        Divider(
+                          thickness: 1,
+                          color: AppColors.primaryColor.withOpacity(.2),
+                        ),
+                    ],
+                  );
+                },
+              )
+
+
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
+ Widget _featuredCategory(){
+    return  Container(
+      height: 426,
+      width: Get.width,
+      decoration: BoxDecoration(
+          color:Color(0xFF708780)
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 10,),
+            Text(
+              'Featured',
+              style: TextStyle(
+                color: AppColors.bottomSheetColor,
+                fontFamily: 'aftika-regular',
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            SizedBox(height: 12,),
+            Text(
+              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt labore magna aliqua.',
+              style: TextStyle(
+                color: AppColors.bottomSheetColor,
+                fontFamily: 'Nunito-Regular',
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            SizedBox(height: 18,),
+            Container(
+              height: 300,
+              width: Get.width,
+              decoration: BoxDecoration(
+                  color: AppColors.whiteColor,
+                  borderRadius: BorderRadius.circular(10)
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  children: [
+                    Image.asset('assets/images/feature_img.png',height: 169,width:Get.width),
+                    SizedBox(height: 8,),
+                    Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniamexercitation ullamco laboris aliquip ex ea commodo consequat.',
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.headingTextColor,
+                          fontFamily: 'Nunito-Regular'
+                      ),)
 
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+ }
   Widget _buildCategories() {
     return Obx(() => SizedBox(
           height: 100,
@@ -144,8 +344,10 @@ class HomeScreen extends StatelessWidget {
                     Get.to(NewViewall());
                   } else if (category['name'] == 'Trending') {
                     Get.to(TrendingViewAll());
-                  } else if (category['name'] == 'Entertainment') {
+                  } else if (category['name'] == 'Experience') {
                     Get.to(EntertainmentsScreen());
+                  }else if (category['name'] == 'Events') {
+                    Get.to(EventScreen());
                   }
                 },
                 child: Column(
@@ -266,9 +468,8 @@ class HomeScreen extends StatelessWidget {
                 SizedBox(height: 10),
                 SizedBox(
                   height:
-                      Get.height * 0.22, // Fixed height for the horizontal list
+                      Get.height * 0.3, // Fixed height for the horizontal list
                   child: ListView.builder(
-                    padding: EdgeInsets.zero,
                     scrollDirection: Axis.horizontal,
                     itemCount: restaurants.length,
                     itemBuilder: (context, index) {
@@ -285,8 +486,8 @@ class HomeScreen extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.only(right: 16.0),
                               child: Container(
-                                width: 172,
-                                height: 124,
+                                width: 274,
+                                height: 181,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.rectangle,
                                   borderRadius: BorderRadius.circular(10),
@@ -297,26 +498,34 @@ class HomeScreen extends StatelessWidget {
                                 ),
                               ),
                             ),
+                            SizedBox(height: 6,),
                             Text(
                               item.resName,
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: 14,
                                 color: AppColors.headingTextColor,
                                 fontWeight: FontWeight.w700,
                                 fontFamily: 'Nunito-Sans',
                               ),
                             ),
+                            SizedBox(height: 6,),
                             SizedBox(
                               width: Get.width * 0.3,
-                              child: Text(
-                                "${item.address}",
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: AppColors.textColor,
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: 'Nunito-Sans',
-                                ),
+                              child: Row(
+                                children: [
+                                  Image.asset('assets/images/location_icon2.png',height: 16,width: 16,),
+                                  SizedBox(width: 4,),
+                                  Text(
+                                    "${item.address}",
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: AppColors.textColor,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: 'Nunito-Sans',
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
@@ -421,17 +630,12 @@ class HomeScreen extends StatelessWidget {
                         ],
                       ),
                       SizedBox(height: 10),
-                      GridView.builder(
+                      ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          mainAxisExtent: Get.height * 0.22,
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 20,
-                        ),
+
                         itemCount:
-                            restaurants.length > 4 ? 4 : restaurants.length,
+                            restaurants.length > 2 ? 2 : restaurants.length,
                         itemBuilder: (context, index) {
                           final item = restaurants[index];
                           return InkWell(

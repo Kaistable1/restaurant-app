@@ -6,12 +6,10 @@ import '../../constants/app_colors.dart';
 import 'custom_button.dart';
 import 'filter_widget.dart';
 
-
 void showFilterBottomSheet() {
   final FilterController controller = Get.find<FilterController>();
 
   Get.bottomSheet(
-
     Container(
       height: 700,
       padding: const EdgeInsets.all(16),
@@ -31,33 +29,41 @@ void showFilterBottomSheet() {
               children: [
                 GestureDetector(
                   onTap: () => Get.back(),
-                  child: const Text("Cancel", style: TextStyle(color: Colors.red, fontSize: 16)),
+                  child: const Text("Cancel",
+                      style: TextStyle(color: Colors.red, fontSize: 16)),
                 ),
                 GestureDetector(
                   onTap: controller.clearAll,
-                  child: const Text("Clear all", style: TextStyle(color: Colors.red, fontSize: 16)),
+                  child: const Text("Clear all",
+                      style: TextStyle(color: Colors.red, fontSize: 16)),
                 ),
               ],
             ),
             const SizedBox(height: 10),
 
             // Country, City, and Language Selection
-            Obx(() => buildFilterSection("Country", controller.countries, controller.selectedCountry, controller.selectCountry)),
-            Obx(() => buildFilterSection("City", controller.cities, controller.selectedCity, controller.selectCity)),
-            Obx(() => buildFilterSection("Language", controller.languages, controller.selectedLanguage, controller.selectLanguage)),
-            Text('Filter', style: TextStyle(
-              fontSize: 16,
-              color: AppColors.headingTextColor,
-              fontWeight: FontWeight.w700,
-              fontFamily: 'Nunito-Sans',
-            ),),
+            Obx(() => buildFilterSection("Country", controller.countries,
+                controller.selectedCountry, controller.selectCountry)),
+            Obx(() => buildFilterSection("City", controller.cities,
+                controller.selectedCity, controller.selectCity)),
+            Obx(() => buildFilterSection("Language", controller.languages,
+                controller.selectedLanguage, controller.selectLanguage)),
+            Text(
+              'Filter',
+              style: TextStyle(
+                fontSize: 16,
+                color: AppColors.headingTextColor,
+                fontWeight: FontWeight.w700,
+                fontFamily: 'Nunito-Sans',
+              ),
+            ),
 
             // Expandable Filter Sections with Checkboxes
-            ...controller.filterOptions.keys.map((category) => buildCheckboxFilter(category, controller)).toList(),
+            ...controller.filterOptions.keys
+                .map((category) => buildCheckboxFilter(category, controller))
+                .toList(),
 
             const SizedBox(height: 20),
-
-
 
             // Apply Button
             CustomButton(

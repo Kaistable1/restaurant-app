@@ -219,34 +219,45 @@ class HomeLocationController extends GetxController {
         .collection('restaurants')
         .snapshots()
         .asyncMap((snapshot) async {
-      final List<Future<RestaurantModel?>> futures = snapshot.docs.map((doc) async {
-        final reviewsSnapshot = await doc.reference.collection('reviews').get();
+      // Fetch all restaurants and their menus
+      final restaurants = await Future.wait(
+        snapshot.docs.map((doc) async {
+          final reviewsSnapshot =
+              await doc.reference.collection('reviews').get();
 
-        int totalReviews = reviewsSnapshot.size;
-        if (totalReviews == 0) return null; // Skip restaurants without reviews
+          int totalReviews = reviewsSnapshot.size;
+          double totalRating = reviewsSnapshot.docs
+              .map((e) => double.parse(e['starRating'].toString()))
+              .fold(0.0, (prev, rating) => prev + rating);
+          double averageRating =
+              totalReviews > 0 ? totalRating / totalReviews : 0.0;
 
-        double totalRating = reviewsSnapshot.docs.fold(0.0, (prev, e) {
-          return prev + (e.data()['starRating'] as num?)!.toDouble() ?? 0.0;
-        });
+          // Filter out restaurants without reviews
+          if (totalReviews > 0) {
+            // Fetch menu list from subcollection
+            final restaurant = RestaurantModel.fromDocumentSnapshot(doc);
+            restaurant.menuList = await _getMenuFromSubcollection(doc.id);
 
-        // Fetch menu list in parallel with reviews processing
-        final menuFuture = _getMenuFromSubcollection(doc.id);
+            // Set average rating
+            restaurant.averageRating = averageRating;
 
-        final restaurant = RestaurantModel.fromDocumentSnapshot(doc);
-        restaurant.menuList = await menuFuture; // Wait for menu fetch
-        restaurant.averageRating = totalRating / totalReviews;
+            return restaurant;
+          }
+          return null;
+        }).toList(),
+      );
 
-        return restaurant;
-      }).toList(); // <- Ye Iterable<Future<RestaurantModel?>> ka List bana raha hai
+      // Filter out null restaurants (those without reviews)
+      final trendingRestaurants =
+          restaurants.whereType<RestaurantModel>().toList();
 
-      // Execute all futures in parallel for efficiency
-      final restaurants = await Future.wait(futures);
+      // Sort by average rating in descending order
+      trendingRestaurants
+          .sort((a, b) => b.averageRating.compareTo(a.averageRating));
 
-      // Convert to List explicitly
-      return restaurants.whereType<RestaurantModel>().toList();
+      return trendingRestaurants; // Return List<RestaurantModel>
     });
   }
-
 
   addRecentView({required String restaurantID, resName}) async {
     List<String> localStoreResturatnstID =

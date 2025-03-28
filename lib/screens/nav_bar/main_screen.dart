@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
 import 'package:kaistable_website/screens/favorite_screen/favorite_screen.dart';
 import 'package:kaistable_website/screens/home_screen/my_home_screen.dart';
 import 'package:kaistable_website/screens/nav_bar/profile.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 
+import '../home_screen/notification_screen/notification_screen.dart';
 import 'home_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -76,6 +78,33 @@ class _MainScreenState extends State<MainScreen> {
                 'assets/images/logo.png', // Replace with your logo path
                 height: 40, // Adjust as needed
               ),
+              actions: [
+                GestureDetector(
+                  onTap: () => Get.to(NotificationScreen()),
+                  child: Container(
+                      height: 32,
+                      width: 32,
+                      decoration: BoxDecoration(
+                        color: AppColors.whiteColor,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(.2),
+                            spreadRadius: 0,
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Icon(
+                        Icons.email,
+                        color: AppColors.primaryColor,
+                      )),
+                ),
+                SizedBox(
+                  width: 12,
+                )
+              ],
             )
           : null, // Hide AppBar for other screens
       body: PersistentTabView(

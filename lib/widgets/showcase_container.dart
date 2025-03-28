@@ -40,7 +40,7 @@ class ShowCaseContainer extends StatelessWidget {
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           CustomButton(
             ontapp: () {
-              showcaseInProgress.value = false;
+              // showcaseInProgress.value = false;
               ShowCaseWidget.of(showcaseContext).dismiss();
               Get.offAll(MainScreen());
               },
