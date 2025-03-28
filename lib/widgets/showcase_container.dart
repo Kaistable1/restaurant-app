@@ -40,10 +40,16 @@ class ShowCaseContainer extends StatelessWidget {
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           CustomButton(
             ontapp: () {
+              if (ShowCaseWidget.of(showcaseContext) != null) {
+                ShowCaseWidget.of(showcaseContext).dismiss();
+              }
+
               showcaseInProgress.value = false;
-              ShowCaseWidget.of(showcaseContext).dismiss();
-              Get.offAll(MainScreen());
-              },
+
+              Future.delayed(Duration(milliseconds: 300), () {
+                Get.offAll(MainScreen());
+              });
+            },
             laBelText: 'Skip',
             fontSize: 12,
             fontWeight: FontWeight.w300,

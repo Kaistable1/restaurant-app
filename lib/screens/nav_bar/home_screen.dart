@@ -34,15 +34,17 @@ class HomeScreen extends StatelessWidget {
   final GlobalKey _experienceKey = GlobalKey();
   final GlobalKey _eventsKey = GlobalKey();
   bool hasStartedShowcase = false;
+  final ScrollController _scrollController = ScrollController(); // Add this
 
   @override
   Widget build(BuildContext context) {
     requestLocationPermission();
     return ShowCaseWidget(
+      enableAutoScroll: true,
       builder: (context) {
         if (!hasStartedShowcase) {
-          hasStartedShowcase = true;
           WidgetsBinding.instance.addPostFrameCallback((_) {
+            hasStartedShowcase = true;
             ShowCaseWidget.of(context).startShowCase([
               _carouselKey,
               _categoryKey,
@@ -58,6 +60,7 @@ class HomeScreen extends StatelessWidget {
           backgroundColor: AppColors.bgColor,
           body: SafeArea(
             child: SingleChildScrollView(
+              controller: _scrollController, // Attach ScrollController
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -65,7 +68,9 @@ class HomeScreen extends StatelessWidget {
                     key: _carouselKey,
                     height: 190,
                     width: Get.width - 24,
-                    targetPadding: const EdgeInsets.symmetric(vertical: 8),
+                    tooltipPosition: TooltipPosition.bottom,
+                    // targetPadding: EdgeInsets.only(top: 80),
+                    targetBorderRadius: BorderRadius.circular(20),
                     container: ShowCaseContainer(
                       width: Get.width - 32,
                       text: "Check out the latest deals and promotions here!",

@@ -107,35 +107,36 @@ class _MainScreenState extends State<MainScreen> {
               ],
             )
           : null, // Hide AppBar for other screens
-      body: PersistentTabView(
-        context,
-        controller: _controller,
-        screens: _buildScreens(),
-        items: _navBarsItems(),
-        handleAndroidBackButtonPress: true,
-        resizeToAvoidBottomInset: true,
-        stateManagement: true,
-        hideNavigationBarWhenKeyboardAppears: true,
-        popBehaviorOnSelectedNavBarItemPress: PopBehavior.all,
-        backgroundColor: AppColors.whiteColor,
-        decoration: NavBarDecoration(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-          colorBehindNavBar: AppColors.whiteColor.withOpacity(.3),
-        ),
-        isVisible: true,
-        confineToSafeArea: true,
-        navBarHeight: 60,
-        padding: EdgeInsets.zero,
-        navBarStyle: NavBarStyle.style3,
-        onItemSelected: (index) {
-          setState(() {
-            _currentIndex = index; // Update the AppBar visibility dynamically
-          });
-        },
-      ),
+      body: HomeScreen(),
+      // PersistentTabView(
+      //   context,
+      //   controller: _controller,
+      //   screens: _buildScreens(),
+      //   items: _navBarsItems(),
+      //   handleAndroidBackButtonPress: true,
+      //   // resizeToAvoidBottomInset: true,
+      //   // stateManagement: true,
+      //   hideNavigationBarWhenKeyboardAppears: true,
+      //   popBehaviorOnSelectedNavBarItemPress: PopBehavior.all,
+      //   backgroundColor: AppColors.whiteColor,
+      //   decoration: NavBarDecoration(
+      //     borderRadius: BorderRadius.only(
+      //       topLeft: Radius.circular(20),
+      //       topRight: Radius.circular(20),
+      //     ),
+      //     colorBehindNavBar: AppColors.whiteColor.withOpacity(.3),
+      //   ),
+      //   isVisible: true,
+      //   // confineToSafeArea: true,
+      //   navBarHeight: 60,
+      //   padding: EdgeInsets.zero,
+      //   navBarStyle: NavBarStyle.style3,
+      //   onItemSelected: (index) {
+      //     setState(() {
+      //       _currentIndex = index; // Update the AppBar visibility dynamically
+      //     });
+      //   },
+      // ),
     );
   }
 }
