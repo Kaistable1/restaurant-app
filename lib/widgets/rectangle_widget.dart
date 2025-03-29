@@ -55,7 +55,7 @@ class RectangleWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(
-            height: imgHeight??169,
+            height: imgHeight??82,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
                 color: Colors.transparent,
@@ -63,8 +63,8 @@ class RectangleWidget extends StatelessWidget {
                     fit: BoxFit.cover,
                     image: imagePath.contains('http')
                         ? NetworkImage(
-                            imagePath,
-                          )
+                      imagePath,
+                    )
                         : AssetImage(imagePath))),
           ),
           SizedBox(height: 8),
@@ -76,22 +76,25 @@ class RectangleWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text(
-                      title,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 14,
-                        fontFamily: 'Nunito-Regular',
-                        color: AppColors.textColor,
+                    SizedBox(
+
+                      child: Text(
+                        title,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                          fontFamily: 'Nunito-Regular',
+                          color: AppColors.textColor,
+                        ),
                       ),
                     ),
                     Spacer(),
                     auth.currentUser == null || resturant_id == ''
                         ? SizedBox()
                         : HomeLocationController()
-                            .favoriteHeart(resturant_id: resturant_id),
+                        .favoriteHeart(resturant_id: resturant_id),
                     SizedBox(
                       width: 6,
                     )
@@ -125,35 +128,35 @@ class RectangleWidget extends StatelessWidget {
           ),
           percentageOff?.isNotEmpty ?? false
               ? Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Dynamically build StarBoxes based on the percentageOff list
-                    ...percentageOff!.take(2).map((item) => Padding(
-                          padding: const EdgeInsets.only(
-                              right: 2.0), // Add spacing between items
-                          child: _buildStarBox(context,
-                              item:
-                                  item), // Pass item to _buildStarBox if needed
-                        )),
-                  ],
-                )
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Dynamically build StarBoxes based on the percentageOff list
+              ...percentageOff!.take(2).map((item) => Padding(
+                padding: const EdgeInsets.only(
+                    right: 2.0), // Add spacing between items
+                child: _buildStarBox(context,
+                    item:
+                    item), // Pass item to _buildStarBox if needed
+              )),
+            ],
+          )
               : happyhour?.isNotEmpty ?? false
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Dynamically build StarBoxes based on the percentageOff list
-                        ...happyhour!.take(2).map((item) => Padding(
-                              padding: const EdgeInsets.only(
-                                  right: 2.0), // Add spacing between items
-                              child: _buildStarBox(context,
-                                  item:
-                                      item), // Pass item to _buildStarBox if needed
-                            )),
-                      ],
-                    )
-                  : SizedBox(),
+              ? Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Dynamically build StarBoxes based on the percentageOff list
+              ...happyhour!.take(2).map((item) => Padding(
+                padding: const EdgeInsets.only(
+                    right: 2.0), // Add spacing between items
+                child: _buildStarBox(context,
+                    item:
+                    item), // Pass item to _buildStarBox if needed
+              )),
+            ],
+          )
+              : SizedBox(),
         ],
       ),
     );

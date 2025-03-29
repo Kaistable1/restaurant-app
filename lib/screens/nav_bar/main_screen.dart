@@ -78,33 +78,29 @@ class _MainScreenState extends State<MainScreen> {
                 'assets/images/logo.png', // Replace with your logo path
                 height: 40, // Adjust as needed
               ),
-              actions: [
-                GestureDetector(
-                  onTap: () => Get.to(NotificationScreen()),
-                  child: Container(
-                      height: 32,
-                      width: 32,
-                      decoration: BoxDecoration(
-                        color: AppColors.whiteColor,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(.2),
-                            spreadRadius: 0,
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Icon(
-                        Icons.email,
-                        color: AppColors.primaryColor,
-                      )),
+        actions: [
+          GestureDetector(
+            onTap: ()=>Get.to(NotificationScreen()),
+            child: Container(
+                height: 30,
+                width: 30,
+                decoration: BoxDecoration(
+                  color: AppColors.whiteColor,
+                  borderRadius: BorderRadius.circular(6),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(.2),
+                      spreadRadius: 0,
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
-                SizedBox(
-                  width: 12,
-                )
-              ],
+                child: Icon(Icons.email,color: AppColors.primaryColor,size: 22,)),
+          ),
+        SizedBox(width: 12,)],
+        
+        
             )
           : null, // Hide AppBar for other screens
       body: HomeScreen(),
