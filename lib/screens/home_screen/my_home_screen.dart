@@ -118,7 +118,13 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
   void initState() {
     super.initState();
     getCurrentUserData();
+    // fun();
     selectedCountry = widget.countryName ?? 'USA';
+  }
+
+  fun() async {
+    print('start deleteing -------------------------');
+    await controller.delete300Restaurants();
   }
 
   Future<Map<String, dynamic>?> getOperatingHours(String restaurantId) async {
@@ -366,6 +372,8 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
 
                                       List<RestaurantModel> restaurants =
                                           snapshot.data!;
+                                      print(
+                                          'all resturants length ${restaurants.length}');
                                       if (filterSelectionController
                                           .selectedCountry.isNotEmpty) {
                                         print('flag 1 ');
@@ -762,7 +770,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        mainAxisExtent: Get.height * 0.27,
+        mainAxisExtent: Get.height * 0.17,
         crossAxisCount: 2,
         crossAxisSpacing: 10,
         mainAxisSpacing: 20,
@@ -776,14 +784,14 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
           },
           child: RectangleWidget(
             title: item.resName,
-            description: item.about,
+            description: item.address,
             resturant_id: item.docID,
             imagePath: item.logoImage,
             timetext: '10 AM',
             percentText: '25%',
             endTimeText: '9 PM',
-            percentageOff: item.menuList.percentageOff,
-            happyhour: item.menuList.happyHourSpecials,
+            // percentageOff: item.menuList.percentageOff,
+            // happyhour: item.menuList.happyHourSpecials,
             isFavorite: false.obs,
           ),
         );

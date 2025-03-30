@@ -203,7 +203,8 @@ class VerifyPage extends StatelessWidget {
                     await signupController.sendEmail(isFromResendOtp: true);
 
                     dialogueBox(
-                        text: 'The code has been sent to your email address.',
+                        text:
+                            'The code has been sent to your email address.\nCheck your Spam folder if you do not receive it.',
                         color: AppColors.primaryColor,
                         onPressed: () {
                           Get.back();

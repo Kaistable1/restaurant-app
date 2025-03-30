@@ -418,6 +418,22 @@ class HomeLocationController extends GetxController {
     });
   }
 
+  Future<void> delete300Restaurants() async {
+    final QuerySnapshot snapshot = await _firestore
+        .collection('restaurants')
+        .limit(100) // Get only 300 documents
+        .get();
+
+    final batch = _firestore.batch();
+
+    for (var doc in snapshot.docs) {
+      batch.delete(doc.reference);
+    }
+
+    await batch.commit(); // Execute all deletions in a batch
+    print('300 restaurants deleted successfully!');
+  }
+
   /// Fetches initial restaurants with pagination support
   Stream<List<RestaurantModel>> getFilteredRestaurants() {
     return _firestore

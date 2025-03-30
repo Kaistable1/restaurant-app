@@ -185,7 +185,7 @@ class EntertainmentsScreen extends StatelessWidget {
                                 physics: const NeverScrollableScrollPhysics(),
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
-                                  mainAxisExtent: Get.height * 0.27,
+                                  mainAxisExtent: Get.height * 0.18,
                                   crossAxisCount: 2,
                                   crossAxisSpacing: 10,
                                   mainAxisSpacing: 20,
@@ -203,16 +203,16 @@ class EntertainmentsScreen extends StatelessWidget {
                                     },
                                     child: RectangleWidget(
                                       title: item.resName,
-                                      description: item.about,
+                                      description: item.address,
                                       resturant_id: item.docID,
                                       imagePath: item.logoImage,
                                       timetext: '10 AM',
                                       percentText: '25%',
                                       endTimeText: '9 PM',
-                                      percentageOff:
-                                          item.menuList.percentageOff,
-                                      happyhour:
-                                          item.menuList.happyHourSpecials,
+                                      // percentageOff:
+                                      //     item.menuList.percentageOff,
+                                      // happyhour:
+                                      //     item.menuList.happyHourSpecials,
                                       isFavorite: false.obs,
                                     ),
                                   );

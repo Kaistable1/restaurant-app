@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kaistable_website/screens/nav_bar/controller/home_controller.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 import '../main.dart';
@@ -20,7 +21,7 @@ class ShowCaseContainer extends StatelessWidget {
     required this.last,
     this.onNext,
   });
-
+  final controller = Get.put(HomeController());
   @override
   Widget build(BuildContext context) {
     return Column(children: [
@@ -39,16 +40,12 @@ class ShowCaseContainer extends StatelessWidget {
         child:
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           CustomButton(
-            ontapp: () {
-              if (ShowCaseWidget.of(showcaseContext) != null) {
-                ShowCaseWidget.of(showcaseContext).dismiss();
-              }
+            ontapp: ()async{
+              controller.isSpotlightFinish.value = true;
+              controller.update();
+              ShowCaseWidget.of(showcaseContext).dismiss();
+                    await preferences?.setBool('isSpotLightViewd', true);
 
-              showcaseInProgress.value = false;
-
-              Future.delayed(Duration(milliseconds: 300), () {
-                Get.offAll(MainScreen());
-              });
             },
             laBelText: 'Skip',
             fontSize: 12,
@@ -59,13 +56,17 @@ class ShowCaseContainer extends StatelessWidget {
             radius: BorderRadius.circular(15),
           ),
           CustomButton(
-            ontapp: onNext ?? () {
-              if (last) {
-                ShowCaseWidget.of(showcaseContext).dismiss();
-              } else {
-                ShowCaseWidget.of(showcaseContext).next();
-              }
-            },
+            ontapp: onNext ??
+                () async {
+                  if (last) {
+                    controller.isSpotlightFinish.value = true;
+                    controller.update();
+                    ShowCaseWidget.of(showcaseContext).dismiss();
+                    await preferences?.setBool('isSpotLightViewd', true);
+                  } else {
+                    ShowCaseWidget.of(showcaseContext).next();
+                  }
+                },
             laBelText: last ? 'Done' : 'Next',
             fontSize: 12,
             fontWeight: FontWeight.w300,

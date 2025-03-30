@@ -133,7 +133,7 @@ class GeneralPreferencesController extends GetxController {
   void toggleSelection3(String name) {
     if (selectedPreferences3.contains(name)) {
       selectedPreferences3.remove(name);
-    } else if (selectedPreferences3.length < 3) {
+    } else if (selectedPreferences3.length < 2) {
       selectedPreferences3.add(name);
     }
   }

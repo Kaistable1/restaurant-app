@@ -18,8 +18,8 @@ class RectangleWidget extends StatelessWidget {
   List<OfferModel>? percentageOff;
   List<OfferModel>? happyhour;
   final double? width;
-  final double?height;
-  final double?imgHeight;
+  final double? height;
+  final double? imgHeight;
   final Color? boxColor;
 
   String? resturant_id;
@@ -37,17 +37,20 @@ class RectangleWidget extends StatelessWidget {
     required this.percentText,
     required this.isFavorite,
     this.onNavigate,
-    this.endTimeText, this.width, this.height, this.imgHeight, this.boxColor,
+    this.endTimeText,
+    this.width,
+    this.height,
+    this.imgHeight,
+    this.boxColor,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: width??Get.width,
-      height: height??234,
-
+      width: width ?? Get.width,
+      height: height ?? 234,
       decoration: BoxDecoration(
-        color: boxColor??Colors.transparent,
+        color: boxColor ?? Colors.transparent,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -55,7 +58,7 @@ class RectangleWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(
-            height: imgHeight??82,
+            height: imgHeight ?? 82,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
                 color: Colors.transparent,
@@ -63,8 +66,8 @@ class RectangleWidget extends StatelessWidget {
                     fit: BoxFit.cover,
                     image: imagePath.contains('http')
                         ? NetworkImage(
-                      imagePath,
-                    )
+                            imagePath,
+                          )
                         : AssetImage(imagePath))),
           ),
           SizedBox(height: 8),
@@ -77,7 +80,7 @@ class RectangleWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     SizedBox(
-
+                      width: 140,
                       child: Text(
                         title,
                         overflow: TextOverflow.ellipsis,
@@ -94,7 +97,7 @@ class RectangleWidget extends StatelessWidget {
                     auth.currentUser == null || resturant_id == ''
                         ? SizedBox()
                         : HomeLocationController()
-                        .favoriteHeart(resturant_id: resturant_id),
+                            .favoriteHeart(resturant_id: resturant_id),
                     SizedBox(
                       width: 6,
                     )
@@ -103,10 +106,12 @@ class RectangleWidget extends StatelessWidget {
                 SizedBox(height: 2),
                 Row(
                   children: [
-                    Image.asset('assets/images/location_icon2.png',height:16 ,width: 16,),
-
+                    Image.asset(
+                      'assets/images/location_icon2.png',
+                      height: 16,
+                      width: 16,
+                    ),
                     SizedBox(
-                      width: 200,
                       child: Text(
                         description,
                         overflow: TextOverflow.ellipsis,
@@ -128,38 +133,39 @@ class RectangleWidget extends StatelessWidget {
           ),
           percentageOff?.isNotEmpty ?? false
               ? Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Dynamically build StarBoxes based on the percentageOff list
-              ...percentageOff!.take(2).map((item) => Padding(
-                padding: const EdgeInsets.only(
-                    right: 2.0), // Add spacing between items
-                child: _buildStarBox(context,
-                    item:
-                    item), // Pass item to _buildStarBox if needed
-              )),
-            ],
-          )
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Dynamically build StarBoxes based on the percentageOff list
+                    ...percentageOff!.take(2).map((item) => Padding(
+                          padding: const EdgeInsets.only(
+                              right: 2.0), // Add spacing between items
+                          child: _buildStarBox(context,
+                              item:
+                                  item), // Pass item to _buildStarBox if needed
+                        )),
+                  ],
+                )
               : happyhour?.isNotEmpty ?? false
-              ? Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Dynamically build StarBoxes based on the percentageOff list
-              ...happyhour!.take(2).map((item) => Padding(
-                padding: const EdgeInsets.only(
-                    right: 2.0), // Add spacing between items
-                child: _buildStarBox(context,
-                    item:
-                    item), // Pass item to _buildStarBox if needed
-              )),
-            ],
-          )
-              : SizedBox(),
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Dynamically build StarBoxes based on the percentageOff list
+                        ...happyhour!.take(2).map((item) => Padding(
+                              padding: const EdgeInsets.only(
+                                  right: 2.0), // Add spacing between items
+                              child: _buildStarBox(context,
+                                  item:
+                                      item), // Pass item to _buildStarBox if needed
+                            )),
+                      ],
+                    )
+                  : SizedBox(),
         ],
       ),
     );
+  
   }
 
   Widget _buildStarBox(BuildContext context, {required OfferModel item}) {

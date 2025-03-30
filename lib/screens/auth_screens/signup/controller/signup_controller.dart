@@ -66,8 +66,8 @@ class SignupController extends GetxController {
       );
 
       // Gmail credentials for SMTP
-      String username = 'emannoor5236@gmail.com';
-      String password = 'aduo tgwi qsvu xfxd';
+      String username = "uzairmehmood754@gmail.com";
+      String password = "qnua ednv vafr vcxz";
 
       // Generate a 6-digit verification code
       verificationCode = 100000 + Random().nextInt(90000);

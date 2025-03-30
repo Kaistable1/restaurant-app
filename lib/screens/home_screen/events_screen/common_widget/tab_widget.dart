@@ -15,15 +15,14 @@ class CategoryController extends GetxController {
 
 
 class HorizontalCategorySelector extends StatelessWidget {
-  final List<String> categories = ["Concert", "Festival", "Sports"];
-   final List<String> categoriesImages = ["assets/images/concert_icon.png", "assets/images/festival_icon.png", "assets/images/sports_icon.png"];
+  final List<String> categories = ["Concert", "Festival", "Sports",'Distance'];
+   final List<String> categoriesImages = ["assets/images/concert_icon.png", "assets/images/festival_icon.png", "assets/images/sports_icon.png", "assets/images/distance.png"];
   final CategoryController controller = Get.put(CategoryController());
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 35,
-
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: categories.length,

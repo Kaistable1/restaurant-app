@@ -4,11 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/models/usermodel.dart';
-import 'package:kaistable_website/screens/general_preferences/screens_general/preference_1.dart';
 import 'package:kaistable_website/splash_screen/splashscreen.dart';
 import 'package:kaistable_website/widgets/global_functions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:showcaseview/showcaseview.dart';
 
 bool myFlag = false;
 final auth = FirebaseAuth.instance;
@@ -29,6 +27,7 @@ Future<void> main() async {
   }
   preferences = await SharedPreferences.getInstance();
   remember_me_pref = await SharedPreferences.getInstance();
+  preferences?.clear();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
