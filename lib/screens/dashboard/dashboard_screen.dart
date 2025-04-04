@@ -5,6 +5,7 @@ import '../../constants/app_colors.dart';
 import '../../constants/text_styles.dart';
 import '../../controllers/dashboard_controller.dart';
 import '../../controllers/drawer_controller.dart';
+import 'dashboard_widget.dart';
 
 final controller1 = ScrollController();
 
@@ -25,17 +26,76 @@ class DashboardScreen extends StatelessWidget {
     double graphWidth = screenWidth * 0.9;
     double graphHeight = screenHeight * 0.3;
 
-
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
           children: [
-
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(children: [Text('Dashboard', style: headingText)]),
+                Row(
+                  children: [
+                    Image.asset(
+                      'assets/images/notifications_icon.png',
+                      height: iconSize,
+                      width: iconSize,
+                    ),
+                    SizedBox(width: 10),
+                    Container(
+                      padding: EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: primaryColor,
+                      ),
+                      child: Image.asset(
+                        'assets/images/profile_image.png',
+                        height: iconSize,
+                        width: iconSize,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Text('Guy Hawkins', style: simpleText),
+                  ],
+                ),
+              ],
+            ),
+            SizedBox(height: 80),
+            Row(
+              children: [
+                DashboardCard(
+                  imagePath: 'assets/images/dash_con_1_icons.png',
+                  title: "Total Events",
+                  count: '125',
+                ),
+                SizedBox(width: 24),
+                DashboardCard(
+                  imagePath: 'assets/images/dash_con_2_icons.png',
+                  title: "Total Restaurants",
+                  count: '129',
+                ),
+              ],
+            ),
+            SizedBox(height: 60),
+            Row(
+              children: [
+                DashboardCard(
+                  imagePath: 'assets/images/dash_con_3_icons.png',
+                  title: "Registered Restaurants",
+                  count: ' 25',
+                ),
+                SizedBox(width: 24),
+                DashboardCard(
+                  imagePath: 'assets/images/dash_con_4_icons.png',
+                  title: "Pending Restaurants",
+                  count: '1250',
+                ),
+              ],
+            ),
           ],
         ),
       ),
     );
   }
 }
-

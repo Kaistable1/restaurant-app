@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:savrly/constants/text_styles.dart';
 
 import '../../auth/login/login_screen.dart';
 import '../../constants/app_colors.dart';
@@ -255,7 +256,7 @@ class CustomDrawer extends StatelessWidget {
 
                 Text(
                   title,
-                  style: TextStyle(
+                  style: simpleText.copyWith(
                     color:
                         controller.selectedScreen.value == number
                             ? selectedColor
