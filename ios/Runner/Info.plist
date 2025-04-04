@@ -26,24 +26,25 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>We need your location to show nearby restaurants.</string>
-
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>We use your location to detect when you're near a restaurant.</string>
-
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>We need your location to provide geofencing alerts.</string>
-
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>location</string>
-	</array>
-
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>We use your location to detect when you're near a restaurant.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need your location to show nearby restaurants.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>We use your photo library to allow you to upload images for a better experience in the app.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -61,10 +62,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-	<key>NSAllowsArbitraryLoads</key>
-	<true/>
-	</dict>
 </dict>
 </plist>

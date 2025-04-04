@@ -27,7 +27,7 @@ Future<void> main() async {
   }
   preferences = await SharedPreferences.getInstance();
   remember_me_pref = await SharedPreferences.getInstance();
-  preferences?.clear();
+  // preferences?.clear();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -35,7 +35,9 @@ Future<void> main() async {
     runApp(MyApp());
   });
 }
+
 RxBool showcaseInProgress = false.obs;
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
