@@ -21,7 +21,7 @@ class CustomDrawer extends StatelessWidget {
             : MediaQuery.of(context).size.width * 0.2;
     double iconSize = MediaQuery.of(context).size.width < 600 ? 20 : 24;
     double textSize = MediaQuery.of(context).size.width < 600 ? 14 : 16;
-    Color hoverColor = lightColor;
+    Color hoverColor = lightColor.withOpacity(0.3);
     Color selectedColor = white;
 
     return Container(
@@ -35,7 +35,7 @@ class CustomDrawer extends StatelessWidget {
       ),
       child: Column(
         children: [
-          SizedBox(height: 70),
+          SizedBox(height: 80),
           Container(
             height: 70,
             width: Get.width,
@@ -56,7 +56,8 @@ class CustomDrawer extends StatelessWidget {
                 children: [
                   _buildDrawerItem(
                     controller,
-                    Icons.dashboard,
+                    'assets/images/dashboard_icon.png',
+                    'assets/images/selected_dashboard_icon.png',
                     0,
                     "Dashboard",
                     iconSize,
@@ -66,7 +67,8 @@ class CustomDrawer extends StatelessWidget {
                   ),
                   _buildDrawerItem(
                     controller,
-                    Icons.shopping_cart,
+                    'assets/images/drawer_fork_icon.png',
+                    'assets/images/selected_fork_icon.png',
                     1,
                     "Restaurant Management",
                     iconSize,
@@ -77,7 +79,8 @@ class CustomDrawer extends StatelessWidget {
 
                   _buildDrawerItem(
                     controller,
-                    Icons.shopping_cart,
+                    'assets/images/event_icon.png',
+                    'assets/images/selected_event_icon.png',
                     3,
                     "Event Management",
                     iconSize,
@@ -87,7 +90,8 @@ class CustomDrawer extends StatelessWidget {
                   ),
                   _buildDrawerItem(
                     controller,
-                    Icons.list_alt,
+                    'assets/images/claims_icon.png',
+                    'assets/images/selected_claims_icon.png',
                     4,
                     "Restaurant Claims",
                     iconSize,
@@ -97,7 +101,8 @@ class CustomDrawer extends StatelessWidget {
                   ),
                   _buildDrawerItem(
                     controller,
-                    Icons.delivery_dining,
+                    'assets/images/banner_icon.png',
+                    'assets/images/selected_banner_icon.png',
                     5,
                     "Banner",
                     iconSize,
@@ -107,7 +112,8 @@ class CustomDrawer extends StatelessWidget {
                   ),
                   _buildDrawerItem(
                     controller,
-                    Icons.card_giftcard,
+                    'assets/images/sub_admin_icon.png',
+                    'assets/images/sub_admin_icon.png',
                     6,
                     "Sub Admin",
                     iconSize,
@@ -117,7 +123,8 @@ class CustomDrawer extends StatelessWidget {
                   ),
                   _buildDrawerItem(
                     controller,
-                    Icons.local_offer,
+                    'assets/images/privacy_icon.png',
+                    'assets/images/selected_sub_admin_icon.png',
                     7,
                     "Privacy Policy",
                     iconSize,
@@ -127,7 +134,8 @@ class CustomDrawer extends StatelessWidget {
                   ),
                   _buildDrawerItem(
                     controller,
-                    Icons.bar_chart,
+                    'assets/images/info_icon.png',
+                    'assets/images/selected_about_icon.png',
                     8,
                     "About App",
                     iconSize,
@@ -137,7 +145,8 @@ class CustomDrawer extends StatelessWidget {
                   ),
                   _buildDrawerItem(
                     controller,
-                    Icons.payment,
+                    'assets/images/terms-and-conditions _icon.png',
+                    'assets/images/selected_terms_icon.png',
                     9,
                     "Terms and Conditions",
                     iconSize,
@@ -147,7 +156,8 @@ class CustomDrawer extends StatelessWidget {
                   ),
                   _buildDrawerItem(
                     controller,
-                    Icons.account_circle,
+                    'assets/images/contact_us.png',
+                    'assets/images/selected_contact_icon.png',
                     10,
                     "Contact Us",
                     iconSize,
@@ -163,8 +173,8 @@ class CustomDrawer extends StatelessWidget {
             padding: EdgeInsets.only(bottom: 20.0),
             child: CustomButton(
               laBelText: 'Logout',
-              width: drawerWidth * 0.6,
-              height: drawerHeight * 0.059,
+              width: drawerWidth * 0.53,
+              height: drawerHeight * 0.057,
               textColor: Colors.red,
               fontSize: 14,
               containerColor: white,
@@ -186,7 +196,8 @@ class CustomDrawer extends StatelessWidget {
 
   Widget _buildDrawerItem(
     DrawerControllerX controller,
-    IconData icon,
+    String iconImage,
+      String selectedIconImage,
     int number,
     String title,
     double iconSize,
@@ -214,10 +225,8 @@ class CustomDrawer extends StatelessWidget {
                       : Colors.transparent,
               borderRadius: BorderRadius.circular(8),
             ),
-            // padding: const EdgeInsets.symmetric(vertical: 12),
             child: Row(
               children: [
-                // Left white strip for hover & selection
                 Container(
                   width: 5,
                   height: Get.height,
@@ -227,29 +236,23 @@ class CustomDrawer extends StatelessWidget {
                       topRight: Radius.circular(6),
                     ),
                     color:
-                    controller.selectedScreen.value == number ||
-                        controller.hoveredItem.value == "$number"
-                        ? Colors.white
-                        : Colors.transparent,
+                        controller.selectedScreen.value == number ||
+                                controller.hoveredItem.value == "$number"
+                            ? Colors.white
+                            : Colors.transparent,
                   ),
-
                 ),
-                const SizedBox(width: 10),
+                SizedBox(width: 10),
 
-                // Icon
-                Icon(
-                  icon,
-                  color:
-                      controller.selectedScreen.value == number
-                          ? selectedColor
-                          : controller.hoveredItem.value == "$number"
-                          ? lightColor
-                          : Colors.white,
-                  size: iconSize,
+                Image.asset(
+                  controller.selectedScreen.value == number
+                      ? selectedIconImage
+                      : iconImage,
+                  height: iconSize,
+                  width: iconSize,
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12),
 
-                // Title Text
                 Text(
                   title,
                   style: TextStyle(
