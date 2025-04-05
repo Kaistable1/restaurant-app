@@ -23,21 +23,14 @@ class DrawerControllerX extends GetxController {
 
   //SubScreens
   RxBool showNotifications = false.obs;
-  RxBool newNotificationsSend = false.obs;
-  RxBool orderDetails = false.obs;
-
-
+  RxBool showProfile = false.obs;
   RxBool addRestaurants = false.obs;
 
 
 
   void resetAllBooleans() {
     showNotifications.value = false;
-    newNotificationsSend.value = false;
-    orderDetails.value = false;
-
-
-
+    showProfile.value = false;
     addRestaurants.value = false;
 
   }

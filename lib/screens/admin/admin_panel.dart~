@@ -52,7 +52,9 @@ class AdminPanel extends StatelessWidget {
     if (controller.showNotifications.value) {
       screen = NotificationScreen();
     } else if (controller.showProfile.value) {
-      screen = ProfileScreen();
+      screen = ProfileScreen( );
+    if (controller.orderDetails.value) {
+      screen = SizedBox();
     } else if (controller.addRestaurants.value) {
       screen = AddRestaurantsScreen();
     } else {

@@ -20,6 +20,13 @@ isTitle(String value) {
   return null;
 }
 
+isDescription(String value) {
+  if (value.isEmpty) {
+    return 'Enter Description.';
+  }
+  return null;
+}
+
 isDuration(String value) {
   if (value.isEmpty) {
     return 'Enter Duration.';
@@ -37,6 +44,19 @@ isGlass(String value) {
 isUserNameValid(String value) {
   if (value.isEmpty) {
     return 'Enter your username.';
+  }
+  return null;
+}
+
+isFirstNameValid(String value) {
+  if (value.isEmpty) {
+    return 'Enter your first name.';
+  }
+  return null;
+}
+isLastNameValid(String value) {
+  if (value.isEmpty) {
+    return 'Enter your last name.';
   }
   return null;
 }
@@ -64,14 +84,17 @@ isAmountValid(String value) {
   return null;
 }
 
-isPhoneNumberValid(String value) {
+String? isPhoneNumberValid(String value) {
   if (value.isEmpty) {
     return 'Enter your phone number.';
-  } else if (value.length < 8) {
+  } else if (!RegExp(r'^\d+$').hasMatch(value)) {
+    return 'Phone number must contain only digits.';
+  } else if (value.length < 10) {
     return 'Enter a valid phone number.';
   }
   return null;
 }
+
 
 isPasswordValid(String value) {
   if (value.isEmpty) {
