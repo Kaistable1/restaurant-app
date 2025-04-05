@@ -20,6 +20,13 @@ isTitle(String value) {
   return null;
 }
 
+isDescription(String value) {
+  if (value.isEmpty) {
+    return 'Enter Description.';
+  }
+  return null;
+}
+
 isDuration(String value) {
   if (value.isEmpty) {
     return 'Enter Duration.';
@@ -37,6 +44,19 @@ isGlass(String value) {
 isUserNameValid(String value) {
   if (value.isEmpty) {
     return 'Enter your username.';
+  }
+  return null;
+}
+
+isFirstNameValid(String value) {
+  if (value.isEmpty) {
+    return 'Enter your first name.';
+  }
+  return null;
+}
+isLastNameValid(String value) {
+  if (value.isEmpty) {
+    return 'Enter your last name.';
   }
   return null;
 }

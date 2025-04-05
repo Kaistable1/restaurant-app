@@ -66,10 +66,11 @@ class ContactUsScreen extends StatelessWidget {
                   left: 12,
                   right: isLargeScreen?380:isMobile?24:280.0),
               child: CustomTextField(
+
                 controller: controller.emailController,
                 validator: (value) => isEmailValid(value!),
                 hintText: 'Admin@example.com',
-                hintTextColor: secondaryColor,
+
 
               ),
             ),
@@ -93,10 +94,11 @@ class ContactUsScreen extends StatelessWidget {
                   left: 12,
                   right: isLargeScreen?380:isMobile?24:280.0),
               child: CustomTextField(
+
                 controller: controller.phoneController,
                 validator: (value) => isPhoneNumberValid(value!),
                 hintText: '+7153 34646464',
-                hintTextColor: secondaryColor,
+
 
               ),
             ),

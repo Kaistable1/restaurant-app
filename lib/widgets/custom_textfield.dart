@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../constants/app_colors.dart';
 import '../constants/text_styles.dart';
@@ -24,6 +26,9 @@ class CustomTextField extends StatelessWidget {
   final String? errorText;
   final List<TextInputFormatter>? inputFormatters;
 
+  final double? maxHeight;
+  final double? maxWidth;
+
   const CustomTextField({
     super.key,
     this.controller,
@@ -41,50 +46,65 @@ class CustomTextField extends StatelessWidget {
     this.validator,
     this.readOnly = false,
     this.maxLines = 1,
-    this.errorText, this.inputFormatters, // Initialize errorText
+    this.errorText,
+    this.inputFormatters,
+    this.maxHeight,
+    this.maxWidth,
   });
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      obscureText: isObscure,
-      keyboardType: keyboardType,
-      readOnly: readOnly,
-      maxLines: maxLines,
-      validator: validator,inputFormatters: inputFormatters,
-      decoration: InputDecoration(
-        hintText: hintText,
-        labelText: labelText,
-        labelStyle: simpleText.copyWith(
-            fontSize: 16, color: backgroundBlack, fontWeight: FontWeight.w500),
-        hintStyle:
-            TextStyle(color: hintTextColor ?? secondaryColor.withOpacity(0.4)),
-        floatingLabelBehavior: FloatingLabelBehavior.auto,
-        alignLabelWithHint: true,
-        filled: isFilled,
-        fillColor: fillColor,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(borderRadius),
-          borderSide: BorderSide(color: borderColor),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // TextFormField remains with fixed height even with errors
+        TextFormField(
+          style: TextStyle(fontFamily: GoogleFonts.nunitoSans().fontFamily),
+          controller: controller,
+          obscureText: isObscure,
+          keyboardType: keyboardType,
+          readOnly: readOnly,
+          maxLines: maxLines,
+          validator: validator,
+          inputFormatters: inputFormatters,
+          decoration: InputDecoration(
+            hintText: hintText,
+            labelText: labelText,
+            labelStyle: simpleText.copyWith(
+                fontSize: 16, color: backgroundBlack, fontWeight: FontWeight.w500),
+            hintStyle: TextStyle(
+              fontFamily: GoogleFonts.nunitoSans().fontFamily,
+              color: hintTextColor ?? secondaryColor.withOpacity(0.7),
+            ),
+            floatingLabelBehavior: FloatingLabelBehavior.auto,
+            alignLabelWithHint: true,
+            filled: isFilled,
+            fillColor: fillColor,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(borderRadius),
+              borderSide: BorderSide(color: borderColor),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(borderRadius),
+              borderSide: BorderSide(color: borderColor),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(borderRadius),
+              borderSide: BorderSide(color: borderColor),
+            ),
+
+            prefixIcon: prefixIcon,
+            prefixIconConstraints: BoxConstraints(
+              minWidth: 40,
+              minHeight: 40,
+            ),
+            suffixIcon: suffixIcon,
+            contentPadding: EdgeInsets.symmetric(vertical: 19, horizontal: 16),
+            errorText: errorText, // Ensuring error text is always in place
+          ),
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(borderRadius),
-          borderSide: BorderSide(color: borderColor),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(borderRadius),
-          borderSide: BorderSide(color: borderColor),
-        ),
-        prefixIcon: prefixIcon,
-        prefixIconConstraints: BoxConstraints(
-          minWidth: 40,
-          minHeight: 40,
-        ),
-        suffixIcon: suffixIcon,
-        contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-        errorText: errorText,
-      ),
+      ],
     );
   }
 }
+

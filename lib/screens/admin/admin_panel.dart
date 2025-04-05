@@ -6,6 +6,8 @@ import '../about_app/about_app.dart';
 import '../contact_us/contact_us_screen.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../../controllers/drawer_controller.dart';
+import '../dashboard/notification_screen/notification_screen.dart';
+import '../dashboard/profile_screen/profile_screen.dart';
 import '../drawer/drawer_screen.dart';
 import '../privacy_policy/privacy_policy.dart';
 import '../sub_admin/sub_admin_screens.dart';
@@ -17,7 +19,7 @@ class AdminPanel extends StatelessWidget {
     final DrawerControllerX controller = Get.put(DrawerControllerX());
 
     return Scaffold(
-      backgroundColor: white,
+      backgroundColor: bgColor,
       appBar: MediaQuery.of(context).size.width < 800
           ? AppBar(
               leading: Builder(
@@ -44,10 +46,10 @@ class AdminPanel extends StatelessWidget {
   Widget _getScreen(DrawerControllerX controller) {
     Widget screen;
 
-    if (controller.addEditIngredient.value) {
-      screen = SizedBox();
-    } else if (controller.driverSetTarget.value) {
-      screen = SizedBox( );
+    if (controller.showNotifications.value) {
+      screen = NotificationScreen();
+    } else if (controller.showProfile.value) {
+      screen = ProfileScreen( );
     } else {
       if (controller.selectedScreen.value == 0) {
         screen = DashboardScreen();

@@ -31,22 +31,32 @@ class DashboardScreen extends StatelessWidget {
                 Row(children: [Text('Dashboard', style: headingText)]),
                 Row(
                   children: [
-                    Image.asset(
-                      'assets/images/notifications_icon.png',
-                      height: iconSize,
-                      width: iconSize,
-                    ),
-                    SizedBox(width: 10),
-                    Container(
-                      padding: EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: primaryColor,
-                      ),
+                    InkWell(
+                      onTap: (){
+                        drawerController.showNotifications.value =true;
+                      },
                       child: Image.asset(
-                        'assets/images/profile_image.png',
+                        'assets/images/notifications_icon.png',
                         height: iconSize,
                         width: iconSize,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    InkWell(
+                      onTap: (){
+                        drawerController.showProfile.value =true;
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: primaryColor,
+                        ),
+                        child: Image.asset(
+                          'assets/images/profile_image.png',
+                          height: iconSize,
+                          width: iconSize,
+                        ),
                       ),
                     ),
                     SizedBox(width: 10),

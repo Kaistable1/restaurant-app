@@ -1,6 +1,7 @@
  import 'package:flutter/material.dart';
 
 const white = Color(0xFFFFFFFF);
+const bgColor=Color(0xFFF5F7F8);
 const backgroundBlack = Color(0xFF151515);
 const primaryColor = Color(0xFF4ECCA3);
 const secondaryColor = Color(0xFF777777);
@@ -13,6 +14,7 @@ const switchColor = Color(0xFFd1d2d2);
 const green = Color(0xFF00BA00);
 const dimWhite = Color(0xFFEDEFF2);
 const purple = Color(0xFF9747FF);
+const blackColor = Color(0xFF232931);
 
 
 
