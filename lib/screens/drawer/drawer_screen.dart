@@ -182,14 +182,15 @@ class CustomDrawer extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(bottom: 20.0),
+            padding: EdgeInsets.only(top: 20.0,bottom: 18),
+            // Adjusted 'custom' to 'top' assuming it was a typo
             child: CustomButton(
               laBelText: 'Logout',
               width: drawerWidth * 0.53,
               height: drawerHeight * 0.057,
               textColor: Colors.red,
               fontSize: 14,
-              containerColor: white,
+              containerColor: Colors.white,
               isPrefixIcon: true,
               iconWidget: Icon(
                 Icons.logout_outlined,
@@ -197,7 +198,57 @@ class CustomDrawer extends StatelessWidget {
                 size: iconSize,
               ),
               ontapp: () {
-                Get.offAll(() => LoginScreen());
+                // Show confirmation dialog
+                showDialog(
+                  context: Get.context!,
+                  // Use Get.context to access the current context
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      title: Text(
+                        'Logout',
+                        style: headingText.copyWith(fontSize: 18),
+                      ),
+                      content: Text(
+                        'Are you sure you want to logout?',
+                        style: simpleText.copyWith(
+                          fontSize: 16,
+                          color: secondaryColor,
+                        ),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Close the dialog
+                          },
+                          child: Text(
+                            'Cancel',
+                            style: headingText.copyWith(
+                              fontSize: 14,
+                              color: Colors.blueAccent,
+                            ),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Close the dialog
+                            Get.offAll(() => LoginScreen()); // Perform logout
+                          },
+                          child: Text(
+                            'Logout',
+                            style: headingText.copyWith(
+                              fontSize: 14,
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
               },
             ),
           ),
