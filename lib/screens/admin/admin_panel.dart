@@ -5,6 +5,7 @@ import '../../constants/app_colors.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../../controllers/drawer_controller.dart';
 import '../drawer/drawer_screen.dart';
+import '../user_management/user_management_screen.dart';
 
 class AdminPanel extends StatelessWidget {
   @override
@@ -13,24 +14,24 @@ class AdminPanel extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: white,
-      appBar: MediaQuery.of(context).size.width < 800
-          ? AppBar(
-              leading: Builder(
-                builder: (context) => IconButton(
-                  icon: Icon(Icons.menu),
-                  onPressed: () => Scaffold.of(context).openDrawer(),
+      appBar:
+          MediaQuery.of(context).size.width < 800
+              ? AppBar(
+                leading: Builder(
+                  builder:
+                      (context) => IconButton(
+                        icon: Icon(Icons.menu, color: primaryColor),
+                        onPressed: () => Scaffold.of(context).openDrawer(),
+                      ),
                 ),
-              ),
-            )
-          : null,
+              )
+              : null,
       drawer: MediaQuery.of(context).size.width < 800 ? CustomDrawer() : null,
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (MediaQuery.of(context).size.width >= 800) CustomDrawer(),
-          Expanded(
-            child: Obx(() => _getScreen(controller)),
-          ),
+          Expanded(child: Obx(() => _getScreen(controller))),
         ],
       ),
     );
@@ -42,12 +43,12 @@ class AdminPanel extends StatelessWidget {
     if (controller.addEditIngredient.value) {
       screen = SizedBox();
     } else if (controller.driverSetTarget.value) {
-      screen = SizedBox( );
+      screen = SizedBox();
     } else {
       if (controller.selectedScreen.value == 0) {
         screen = DashboardScreen();
       } else if (controller.selectedScreen.value == 1) {
-        screen = SizedBox();
+        screen = UserManagementScreen();
       } else if (controller.selectedScreen.value == 2) {
         screen = SizedBox();
       } else if (controller.selectedScreen.value == 3) {
@@ -56,15 +57,17 @@ class AdminPanel extends StatelessWidget {
         screen = SizedBox();
       } else if (controller.selectedScreen.value == 5) {
         screen = SizedBox();
-      }else if (controller.selectedScreen.value == 6) {
+      } else if (controller.selectedScreen.value == 6) {
         screen = SizedBox();
-      }  else if (controller.selectedScreen.value == 7) {
+      } else if (controller.selectedScreen.value == 7) {
         screen = SizedBox();
       } else if (controller.selectedScreen.value == 8) {
         screen = SizedBox();
       } else if (controller.selectedScreen.value == 9) {
         screen = SizedBox();
-      }  else {
+      } else if (controller.selectedScreen.value == 10) {
+        screen = SizedBox();
+      } else {
         screen = DashboardScreen();
       }
     }

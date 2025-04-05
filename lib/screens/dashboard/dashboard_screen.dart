@@ -17,18 +17,12 @@ class DashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    double containerWidth =
-        screenWidth < 600 ? screenWidth * 0.9 : screenWidth * 0.22;
-    double containerHeight = screenHeight * 0.15;
+    double paddingValue = screenWidth < 900 ? 16 : 24;
     double iconSize = screenWidth < 600 ? 18 : 30;
-    double textSize = screenWidth < 600 ? 14 : 16;
-
-    double graphWidth = screenWidth * 0.9;
-    double graphHeight = screenHeight * 0.3;
 
     return SingleChildScrollView(
       child: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(paddingValue),
         child: Column(
           children: [
             Row(
