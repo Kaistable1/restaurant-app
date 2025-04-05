@@ -11,7 +11,7 @@ const lightColor = Color(0xFFCECECE);
 const stroke1Color = Color(0xFF0A0B0C);
 const switchColor = Color(0xFFd1d2d2);
 const green = Color(0xFF00BA00);
-const lightBlue = Color(0xFF007BFF);
+const dimWhite = Color(0xFFEDEFF2);
 const purple = Color(0xFF9747FF);
 
 

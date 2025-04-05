@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:savrly/constants/text_styles.dart';
 
 import '../../auth/login/login_screen.dart';
 import '../../constants/app_colors.dart';
@@ -67,9 +68,20 @@ class CustomDrawer extends StatelessWidget {
                   ),
                   _buildDrawerItem(
                     controller,
+                    'assets/images/sub_admin_icon.png',
+                    'assets/images/selected_sub_admin_icon.png',
+                    1,
+                    "User Management",
+                    iconSize,
+                    textSize,
+                    hoverColor,
+                    selectedColor,
+                  ),
+                  _buildDrawerItem(
+                    controller,
                     'assets/images/drawer_fork_icon.png',
                     'assets/images/selected_fork_icon.png',
-                    1,
+                    2,
                     "Restaurant Management",
                     iconSize,
                     textSize,
@@ -113,7 +125,7 @@ class CustomDrawer extends StatelessWidget {
                   _buildDrawerItem(
                     controller,
                     'assets/images/sub_admin_icon.png',
-                    'assets/images/sub_admin_icon.png',
+                    'assets/images/selected_sub_admin_icon.png',
                     6,
                     "Sub Admin",
                     iconSize,
@@ -124,7 +136,7 @@ class CustomDrawer extends StatelessWidget {
                   _buildDrawerItem(
                     controller,
                     'assets/images/privacy_icon.png',
-                    'assets/images/selected_sub_admin_icon.png',
+                    'assets/images/selected_privacy_icon.png',
                     7,
                     "Privacy Policy",
                     iconSize,
@@ -255,7 +267,7 @@ class CustomDrawer extends StatelessWidget {
 
                 Text(
                   title,
-                  style: TextStyle(
+                  style: simpleText.copyWith(
                     color:
                         controller.selectedScreen.value == number
                             ? selectedColor
