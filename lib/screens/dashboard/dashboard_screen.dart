@@ -5,6 +5,7 @@ import '../../constants/app_colors.dart';
 import '../../constants/text_styles.dart';
 import '../../controllers/dashboard_controller.dart';
 import '../../controllers/drawer_controller.dart';
+import '../../widgets/customheader_widget.dart';
 import 'dashboard_widget.dart';
 
 final controller1 = ScrollController();
@@ -16,8 +17,8 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double paddingValue = screenWidth < 900 ? 16 : 24;
+    bool mobileView = screenWidth < 900;
+    double paddingValue = mobileView ? 16 : 24;
     double iconSize = screenWidth < 600 ? 18 : 30;
 
     return SingleChildScrollView(
@@ -28,7 +29,13 @@ class DashboardScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(children: [Text('Dashboard', style: headingText)]),
+                Row(
+                  children: [
+                    CustomHeaderWidget(
+                      title: 'Dashboard',
+                    ),
+                  ],
+                ),
                 Row(
                   children: [
                     Image.asset(

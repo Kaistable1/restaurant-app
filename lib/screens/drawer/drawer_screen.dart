@@ -209,7 +209,7 @@ class CustomDrawer extends StatelessWidget {
   Widget _buildDrawerItem(
     DrawerControllerX controller,
     String iconImage,
-      String selectedIconImage,
+    String selectedIconImage,
     int number,
     String title,
     double iconSize,
@@ -219,6 +219,7 @@ class CustomDrawer extends StatelessWidget {
   ) {
     return Obx(
       () => MouseRegion(
+        cursor: SystemMouseCursors.click,
         onEnter: (event) => controller.hoveredItem.value = "$number",
         onExit: (event) => controller.hoveredItem.value = "",
         child: GestureDetector(

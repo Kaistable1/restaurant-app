@@ -26,7 +26,7 @@ class CustomButton extends StatelessWidget {
     super.key,
     required this.laBelText,
     this.ontapp,
-    this.height = 48,
+    this.height = 45,
     this.width,
     this.textColor,
     this.borderColor,
@@ -89,7 +89,7 @@ class CustomButton extends StatelessWidget {
                   laBelText,
                   style: headingText.copyWith(
                     color: textColor ?? white,
-                    fontSize: fontSize ?? 20,
+                    fontSize: fontSize ?? 16,
                     fontWeight: fontWeight ?? FontWeight.w400,
                     fontFamily: fontFamily ?? 'Russo Regular' ,
                   ),

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -41,25 +40,34 @@ class CustomTextField extends StatelessWidget {
     this.validator,
     this.readOnly = false,
     this.maxLines = 1,
-    this.errorText, this.inputFormatters, // Initialize errorText
+    this.errorText,
+    this.inputFormatters, // Initialize errorText
   });
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool mobileView = screenWidth < 900;
     return TextFormField(
       controller: controller,
       obscureText: isObscure,
       keyboardType: keyboardType,
       readOnly: readOnly,
       maxLines: maxLines,
-      validator: validator,inputFormatters: inputFormatters,
+      validator: validator,
+      inputFormatters: inputFormatters,
       decoration: InputDecoration(
         hintText: hintText,
         labelText: labelText,
         labelStyle: simpleText.copyWith(
-            fontSize: 16, color: backgroundBlack, fontWeight: FontWeight.w500),
-        hintStyle:
-            TextStyle(color: hintTextColor ?? secondaryColor.withOpacity(0.4)),
+          fontSize: 16,
+          color: backgroundBlack,
+          fontWeight: FontWeight.w500,
+        ),
+        hintStyle: simpleText.copyWith(
+          color: hintTextColor ?? secondaryColor.withOpacity(0.4),
+          fontSize: mobileView ? 14 : 16,
+        ),
         floatingLabelBehavior: FloatingLabelBehavior.auto,
         alignLabelWithHint: true,
         filled: isFilled,
@@ -77,12 +85,9 @@ class CustomTextField extends StatelessWidget {
           borderSide: BorderSide(color: borderColor),
         ),
         prefixIcon: prefixIcon,
-        prefixIconConstraints: BoxConstraints(
-          minWidth: 40,
-          minHeight: 40,
-        ),
+        prefixIconConstraints: BoxConstraints(minWidth: 40, minHeight: 40),
         suffixIcon: suffixIcon,
-        contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+        contentPadding: EdgeInsets.symmetric(vertical: 19, horizontal: 16),
         errorText: errorText,
       ),
     );
