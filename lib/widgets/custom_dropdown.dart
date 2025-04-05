@@ -39,7 +39,7 @@ class DropDownButton extends StatelessWidget {
     return Obx(
       () => SizedBox(
         width: width,
-        height: height,
+        // height: height,
         child: DropdownButtonHideUnderline(
           child: DropdownButton2<String>(
             isExpanded: true,
@@ -115,9 +115,7 @@ class DropDownButton extends StatelessWidget {
                 thickness: MaterialStateProperty.all<double>(2),
                 thumbVisibility: MaterialStateProperty.all<bool>(true),
               ),
-              maxHeight: isScrollable
-                  ? 140.0
-                  : null,
+              // maxHeight: isScrollable ? 140.0 : null,
             ),
             menuItemStyleData: const MenuItemStyleData(
               // height: 40,

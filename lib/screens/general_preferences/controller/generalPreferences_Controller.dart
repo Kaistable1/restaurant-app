@@ -45,8 +45,8 @@ class GeneralPreferencesController extends GetxController {
             ? List<String>.from(data["whereToEat"])
             : [data["whereToEat"]];
 
-        selectedPreferences4.value = data["planner"];
-
+        selectedPreferences4.value = [data["planner"]];
+        print('selectedPreferences4 ${selectedPreferences4}');
         selectedPreferences5.value = data["impDiningOut"] is List
             ? List<String>.from(data["impDiningOut"])
             : [data["impDiningOut"]];
@@ -62,7 +62,9 @@ class GeneralPreferencesController extends GetxController {
         selectedPreferences8.value =
             List<String>.from(data["notificationType"] ?? []);
 
-        selectedPreferences9.value = data["notifiedDiningOpp"];
+        selectedPreferences9.value = [data["notifiedDiningOpp"]];
+        selectedCity.value = data["city"];
+        selectedCountry.value = data["country"];
       } else {
         print("User document does not exist");
       }
