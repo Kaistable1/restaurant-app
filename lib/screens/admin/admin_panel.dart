@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../constants/app_colors.dart';
+import '../about_app/about_app.dart';
+import '../contact_us/contact_us_screen.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../../controllers/drawer_controller.dart';
 import '../drawer/drawer_screen.dart';
+import '../privacy_policy/privacy_policy.dart';
+import '../sub_admin/sub_admin_screens.dart';
+import '../terms_and_conditions/terms_and_conditon.dart';
 
 class AdminPanel extends StatelessWidget {
   @override
@@ -57,15 +62,15 @@ class AdminPanel extends StatelessWidget {
       } else if (controller.selectedScreen.value == 5) {
         screen = SizedBox();
       }else if (controller.selectedScreen.value == 6) {
-        screen = SizedBox();
+        screen = SubAdminScreens();
       }  else if (controller.selectedScreen.value == 7) {
-        screen = SizedBox();
+        screen = PrivacyPolicy();
       } else if (controller.selectedScreen.value == 8) {
-        screen = SizedBox();
+        screen = AboutApp();
       } else if (controller.selectedScreen.value == 9) {
-        screen = SizedBox();
+        screen = TermsAndConditions();
       }  else {
-        screen = DashboardScreen();
+        screen = ContactUsScreen();
       }
     }
     return screen;

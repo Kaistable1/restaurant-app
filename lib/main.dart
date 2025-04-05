@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:savrly/screens/admin/admin_panel.dart';
 
 import 'auth/login/login_screen.dart';
 
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Savrly',
       debugShowCheckedModeBanner: false,
-      home:  LoginScreen(),
+      home:  AdminPanel(),
     );
   }
 }
