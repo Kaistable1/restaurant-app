@@ -6,11 +6,13 @@ class CustomDropDownWidget extends StatelessWidget {
   final String hint;
   final List<String> items;
   final Function(String?) onChanged;
+  final String? Function(String?)? validator;
 
   const CustomDropDownWidget({
     required this.hint,
     required this.items,
     required this.onChanged,
+    this.validator,
     super.key,
   });
 
@@ -55,6 +57,7 @@ class CustomDropDownWidget extends StatelessWidget {
             );
           }).toList(),
       onChanged: onChanged,
+      validator: validator,
     );
   }
 }

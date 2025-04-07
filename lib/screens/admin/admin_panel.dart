@@ -23,24 +23,24 @@ class AdminPanel extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: bgColor,
-      appBar: MediaQuery.of(context).size.width < 800
-          ? AppBar(
-              leading: Builder(
-                builder: (context) => IconButton(
-                  icon: Icon(Icons.menu),
-                  onPressed: () => Scaffold.of(context).openDrawer(),
+      appBar:
+          MediaQuery.of(context).size.width < 800
+              ? AppBar(backgroundColor: bgColor,
+                leading: Builder(
+                  builder:
+                      (context) => IconButton(
+                        icon: Icon(Icons.menu, color: primaryColor),
+                        onPressed: () => Scaffold.of(context).openDrawer(),
+                      ),
                 ),
-              ),
-            )
-          : null,
+              )
+              : null,
       drawer: MediaQuery.of(context).size.width < 800 ? CustomDrawer() : null,
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (MediaQuery.of(context).size.width >= 800) CustomDrawer(),
-          Expanded(
-            child: Obx(() => _getScreen(controller)),
-          ),
+          Expanded(child: Obx(() => _getScreen(controller))),
         ],
       ),
     );
@@ -68,15 +68,15 @@ class AdminPanel extends StatelessWidget {
         screen = SizedBox();
       } else if (controller.selectedScreen.value == 5) {
         screen = SizedBox();
-      }else if (controller.selectedScreen.value == 6) {
+      } else if (controller.selectedScreen.value == 6) {
         screen = SubAdminScreens();
-      }  else if (controller.selectedScreen.value == 7) {
+      } else if (controller.selectedScreen.value == 7) {
         screen = PrivacyPolicy();
       } else if (controller.selectedScreen.value == 8) {
         screen = AboutApp();
       } else if (controller.selectedScreen.value == 9) {
         screen = TermsAndConditions();
-      }  else {
+      } else {
         screen = ContactUsScreen();
       }
     }
