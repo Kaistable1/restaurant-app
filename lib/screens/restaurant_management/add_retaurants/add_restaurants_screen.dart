@@ -150,10 +150,14 @@ class AddRestaurantsScreen extends StatelessWidget {
                           //   tabController.selectedIndex.value++;
                           // }
                         } else if (selectedIndex == 2) {
-                          // Validate Experiences tab (no snackbar)
-                          if (experiencesController.hasEvents()) {
-                            tabController.selectedIndex.value++;
-                          }
+                          tabController.selectedIndex.value++;
+                          // Validate Experiences tab with feedback
+                          // if (experiencesController.hasEvents()) {
+                          //   tabController.selectedIndex.value++;
+                          // } else {
+                          //   // Show form validation errors without a snackbar
+                          //   experiencesController.validateForm(); // Triggers inline error messages
+                          // }
                         } else {
                           tabController.selectedIndex.value++;
                         }
@@ -273,9 +277,12 @@ class AddRestaurantsScreen extends StatelessWidget {
                             tabController.selectedIndex.value++;
                           }
                         } else if (selectedIndex == 2) {
-                          // Validate Experiences tab (no snackbar)
+                          // Validate Experiences tab with feedback
                           if (experiencesController.hasEvents()) {
                             tabController.selectedIndex.value++;
+                          } else {
+                            // Show form validation errors without a snackbar
+                            experiencesController.validateForm(); // Triggers inline error messages
                           }
                         } else {
                           tabController.selectedIndex.value++;
