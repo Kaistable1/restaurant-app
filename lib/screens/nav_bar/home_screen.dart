@@ -748,19 +748,22 @@ class _HomeScreenState extends State<HomeScreen> {
                     itemCount: restaurants.length > 2 ? 2 : restaurants.length,
                     itemBuilder: (context, index) {
                       final item = restaurants[index];
-                      return InkWell(
-                        onTap: () => Get.to(
-                            RestaurantDetailScreen(restaurantModel: item)),
-                        child: RectangleWidget(
-                          imgHeight: 169,
-                          title: item.resName,
-                          description: item.address,
-                          resturant_id: item.docID,
-                          imagePath: item.logoImage,
-                          timetext: '10 AM',
-                          percentText: '25%',
-                          endTimeText: '9 PM',
-                          isFavorite: false.obs,
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: InkWell(
+                          onTap: () => Get.to(
+                              RestaurantDetailScreen(restaurantModel: item)),
+                          child: RectangleWidget(
+                            imgHeight: 169,
+                            title: item.resName,
+                            description: item.address,
+                            resturant_id: item.docID,
+                            imagePath: item.logoImage,
+                            timetext: '10 AM',
+                            percentText: '25%',
+                            endTimeText: '9 PM',
+                            isFavorite: false.obs,
+                          ),
                         ),
                       );
                     },

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -44,10 +46,15 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Kaistable',
-      home: SplashScreen(),
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(
+          textScaler: TextScaler.linear(
+              min(MediaQuery.of(context).textScaleFactor, 1.0))),
+      child: GetMaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Kaistable',
+        home: SplashScreen(),
+      ),
     );
   }
 }
