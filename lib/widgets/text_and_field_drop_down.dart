@@ -18,6 +18,9 @@ class TextAndFieldsOrDropDown extends StatelessWidget {
     this.onChanged,
     this.labelText,
     this.inputFormatters,
+    this.fieldSuffixIcon,
+    this.isObscure = false,
+    this.dropDownValidator,
   });
 
   final bool isDropDown;
@@ -30,6 +33,9 @@ class TextAndFieldsOrDropDown extends StatelessWidget {
   final TextInputType keyboardType;
   final dynamic Function(String?)? onChanged;
   final List<TextInputFormatter>? inputFormatters;
+  final Widget? fieldSuffixIcon;
+  final bool isObscure;
+  final String? Function(String?)? dropDownValidator;
 
   @override
   Widget build(BuildContext context) {
@@ -50,11 +56,14 @@ class TextAndFieldsOrDropDown extends StatelessWidget {
               validator: fieldValidator,
               keyboardType: keyboardType,
               inputFormatters: inputFormatters,
+              suffixIcon: fieldSuffixIcon,
+              isObscure: isObscure,
             )
             : CustomDropDownWidget(
               hint: dropHintText!,
               items: items!,
               onChanged: onChanged!,
+          validator: dropDownValidator,
             ),
         SizedBox(height: 16),
       ],
