@@ -94,4 +94,8 @@ class ExperiencesSubScreenController extends GetxController {
   bool hasEvents() {
     return events.isNotEmpty;
   }
+  // Validate current form fields (new method for "Next")
+  bool validateForm() {
+    return experienceSubScreenFormKey.currentState!.validate();
+  }
 }

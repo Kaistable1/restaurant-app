@@ -19,10 +19,11 @@ class CustomDropDownWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<String>(
+      
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: simpleText.copyWith(
-          color: secondaryColor,
+          color: secondaryColor.withOpacity(0.4),
           fontSize: 16,
           fontWeight: FontWeight.w400,
         ),
@@ -51,7 +52,7 @@ class CustomDropDownWidget extends StatelessWidget {
                 style: simpleText.copyWith(
                   fontSize: 16,
                   fontWeight: FontWeight.w400,
-                  color: secondaryColor,
+                  color: blackColor,
                 ),
               ),
             );
