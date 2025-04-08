@@ -3,12 +3,15 @@ import 'package:get/get.dart';
 import 'package:savrly/constants/text_styles.dart';
 
 import '../../constants/app_colors.dart';
+import '../../controllers/drawer_controller.dart';
 import '../../controllers/user_management_controller.dart';
 import '../../widgets/custom_textfield.dart';
 import '../../widgets/customheader_widget.dart';
 
 class UserManagementScreen extends StatelessWidget {
-  const UserManagementScreen({super.key});
+  UserManagementScreen({super.key});
+
+  final drawerController = Get.put(DrawerControllerX());
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +34,7 @@ class UserManagementScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CustomHeaderWidget(
-            title: 'User  Management',
-          ),
+          CustomHeaderWidget(title: 'User  Management'),
           SizedBox(height: 30),
           CustomTextField(
             controller: controller.searchController,
@@ -160,13 +161,17 @@ class UserManagementScreen extends StatelessWidget {
                                           onSelected: (value) {
                                             if (value == 'delete') {
                                               controller.deleteUser(index);
+                                            } else if (value == 'view') {
+                                              drawerController
+                                                  .userDetails
+                                                  .value = true;
                                             }
                                           },
                                           itemBuilder:
                                               (context) => [
                                                 PopupMenuItem(
-                                                  value: 'edit',
-                                                  child: Text('Edit'),
+                                                  value: 'view',
+                                                  child: Text('View'),
                                                 ),
                                                 PopupMenuItem(
                                                   value: 'delete',

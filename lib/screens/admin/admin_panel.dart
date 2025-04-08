@@ -17,6 +17,7 @@ import '../events_managements/view_events/widget/event_details_gallary.dart';
 import '../restaurant_management/add_retaurants/add_restaurants_screen.dart';
 import '../restaurant_management/restaurant_management_screen.dart';
 import '../restaurant_management/view_restaurant_details/view_restaurant_details.dart';
+import '../user_management/user_details/user_details_screen.dart';
 import '../user_management/user_management_screen.dart';
 import '../privacy_policy/privacy_policy.dart';
 import '../sub_admin/sub_admin_screens.dart';
@@ -31,7 +32,8 @@ class AdminPanel extends StatelessWidget {
       backgroundColor: bgColor,
       appBar:
           MediaQuery.of(context).size.width < 800
-              ? AppBar(backgroundColor: bgColor,
+              ? AppBar(
+                backgroundColor: bgColor,
                 leading: Builder(
                   builder:
                       (context) => IconButton(
@@ -55,13 +57,15 @@ class AdminPanel extends StatelessWidget {
   Widget _getScreen(DrawerControllerX controller) {
     Widget screen;
 
-    if (controller.showCreateNotifications.value) {
+    if (controller.userDetails.value) {
+      screen = UserDetailsScreen();
+    } else if (controller.showCreateNotifications.value) {
       screen = CreateNotificationScreen();
     } else if (controller.showProfile.value) {
       screen = ProfileScreen();
     } else if (controller.viewRestaurantsDetails.value) {
       screen = ViewRestaurantDetails();
-    }else if (controller.addRestaurants.value) {
+    } else if (controller.addRestaurants.value) {
       screen = AddRestaurantsScreen();
     } else {
       if (controller.selectedScreen.value == 0) {

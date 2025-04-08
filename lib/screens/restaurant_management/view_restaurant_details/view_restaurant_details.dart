@@ -34,71 +34,74 @@ class ViewRestaurantDetails extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(paddingValue),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  height: screenHeight * 0.24,
-                  width: mobileView ? screenWidth : screenWidth * 0.35,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    image: DecorationImage(
-                      image: AssetImage(
-                        'assets/images/restaurant_details_img.png',
+          child: ScrollConfiguration(
+            behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(paddingValue),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    height: screenHeight * 0.24,
+                    width: mobileView ? screenWidth : screenWidth * 0.35,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      image: DecorationImage(
+                        image: AssetImage(
+                          'assets/images/restaurant_details_img.png',
+                        ),
+                        fit: BoxFit.cover,
                       ),
-                      fit: BoxFit.cover,
                     ),
                   ),
-                ),
-                SizedBox(height: 16),
-                BasicInfoContainer(
-                  screenHeight: screenHeight,
-                  mobileView: mobileView,
-                  screenWidth: screenWidth,
-                  title: 'Basic Information',
-                  restaurantName: 'Sushi Haven',
-                  location: 'Islamabad',
-                  contact: '92323356564',
-                  social: 'Instagram, Tiktok',
-                ),
-                SizedBox(height: 16),
-                FacilitiesContainer(
-                  screenHeight: screenHeight,
-                  mobileView: mobileView,
-                  screenWidth: screenWidth,
-                  title: 'Facilities & Services',
-                ),
-                const SizedBox(height: 16),
-                DietaryPreferencesContainer(
-                  screenHeight: screenHeight,
-                  mobileView: mobileView,
-                  screenWidth: screenWidth,
-                  title: 'Dietary Preferences',
-                ),
-                SizedBox(height: 16),
-                AtmospherePriceRangeContainer(
-                  screenHeight: screenHeight,
-                  mobileView: mobileView,
-                  screenWidth: screenWidth,
-                  title: 'Atmosphere & Price Range',
-                ),
-                const SizedBox(height: 16),
-                SpecialConditionsContainer(
-                  screenHeight: screenHeight,
-                  mobileView: mobileView,
-                  screenWidth: screenWidth,
-                  title: 'Special Conditions',
-                ),
-                const SizedBox(height: 16),
-                OperatingHoursContainer(
-                  screenHeight: screenHeight,
-                  mobileView: mobileView,
-                  screenWidth: screenWidth,
-                  title: 'Operating Hours',
-                ),
-              ],
+                  SizedBox(height: 16),
+                  BasicInfoContainer(
+                    screenHeight: screenHeight,
+                    mobileView: mobileView,
+                    screenWidth: screenWidth,
+                    title: 'Basic Information',
+                    restaurantName: 'Sushi Haven',
+                    location: 'Islamabad',
+                    contact: '92323356564',
+                    social: 'Instagram, Tiktok',
+                  ),
+                  SizedBox(height: 16),
+                  FacilitiesContainer(
+                    screenHeight: screenHeight,
+                    mobileView: mobileView,
+                    screenWidth: screenWidth,
+                    title: 'Facilities & Services',
+                  ),
+                  const SizedBox(height: 16),
+                  DietaryPreferencesContainer(
+                    screenHeight: screenHeight,
+                    mobileView: mobileView,
+                    screenWidth: screenWidth,
+                    title: 'Dietary Preferences',
+                  ),
+                  SizedBox(height: 16),
+                  AtmospherePriceRangeContainer(
+                    screenHeight: screenHeight,
+                    mobileView: mobileView,
+                    screenWidth: screenWidth,
+                    title: 'Atmosphere & Price Range',
+                  ),
+                  const SizedBox(height: 16),
+                  SpecialConditionsContainer(
+                    screenHeight: screenHeight,
+                    mobileView: mobileView,
+                    screenWidth: screenWidth,
+                    title: 'Special Conditions',
+                  ),
+                  const SizedBox(height: 16),
+                  OperatingHoursContainer(
+                    screenHeight: screenHeight,
+                    mobileView: mobileView,
+                    screenWidth: screenWidth,
+                    title: 'Operating Hours',
+                  ),
+                ],
+              ),
             ),
           ),
         ),
