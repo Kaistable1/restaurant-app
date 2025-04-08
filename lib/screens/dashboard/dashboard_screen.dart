@@ -40,7 +40,8 @@ class DashboardScreen extends StatelessWidget {
                   children: [
                     InkWell(
                       onTap: (){
-                        drawerController.showNotifications.value =true;
+                        drawerController.showCreateNotifications.value =true;
+                        //drawerController.showNotifications.value=true;
                       },
                       child: Image.asset(
                         'assets/images/notifications_icon.png',

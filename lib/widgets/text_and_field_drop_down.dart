@@ -21,6 +21,7 @@ class TextAndFieldsOrDropDown extends StatelessWidget {
     this.fieldSuffixIcon,
     this.isObscure = false,
     this.dropDownValidator,
+    this.maxLines,   this.readOnly = false, this.ontap,
   });
 
   final bool isDropDown;
@@ -36,6 +37,9 @@ class TextAndFieldsOrDropDown extends StatelessWidget {
   final Widget? fieldSuffixIcon;
   final bool isObscure;
   final String? Function(String?)? dropDownValidator;
+  final int? maxLines;
+  final bool readOnly;
+  final VoidCallback? ontap;
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +55,10 @@ class TextAndFieldsOrDropDown extends StatelessWidget {
         SizedBox(height: 10),
         isDropDown == false
             ? CustomTextField(
+          ontap:ontap ,
+          readOnly: readOnly,
+
+          maxLines: maxLines,
               controller: fieldController,
               hintText: fieldHintText,
               validator: fieldValidator,
@@ -60,6 +68,7 @@ class TextAndFieldsOrDropDown extends StatelessWidget {
               isObscure: isObscure,
             )
             : CustomDropDownWidget(
+
               hint: dropHintText!,
               items: items!,
               onChanged: onChanged!,
