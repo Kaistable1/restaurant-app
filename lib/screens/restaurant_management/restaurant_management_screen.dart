@@ -51,12 +51,13 @@ class _RestaurantManagementScreenState
     controller.currentSearchQuery.value = '';
     controller.currentCityFilter.value = '';
     controller.currentCuisineFilter.value = '';
-    controller.searchResults.clear();
+    controller.filteredResults.clear();
     controller.fetchRestaurants(isRefresh: true);
   }
 
   @override
   Widget build(BuildContext context) {
+    clearFilters();
     double screenWidth = MediaQuery.of(context).size.width;
     bool mobileView = screenWidth < 900;
 
@@ -110,7 +111,7 @@ class _RestaurantManagementScreenState
                         // Trigger search logic when search text changes
                         controller.currentSearchQuery.value = value ?? '';
                         if (value == null || value.isEmpty) {
-                          controller.searchResults.clear();
+                          controller.filteredResults.clear();
                           controller.fetchRestaurants(isRefresh: true);
                         }
                       },
@@ -121,9 +122,11 @@ class _RestaurantManagementScreenState
                       items: controller.cityList,
                       onChanged: (value) {
                         controller.selectedCity.value = value!;
-                        print('value ---$value');
-                        controller.fetchRestaurants(
-                            isRefresh: true, cityFilter: value);
+                        controller.currentCityFilter.value = value;
+                        if (value.isEmpty || value == 'All') {
+                          controller.filteredResults.clear();
+                          controller.fetchRestaurants(isRefresh: true);
+                        }
                       },
                     ),
                     SizedBox(height: 16),
@@ -131,8 +134,10 @@ class _RestaurantManagementScreenState
                       hint: 'Filter by Cuisine',
                       items: controller.cuisineList,
                       onChanged: (value) {
-                        controller.selectedCuisine.value = value!;
-                        controller.fetchRestaurants(isRefresh: true);
+                        controller.restaurants.clear();
+                        // controller.selectedCuisine.value = value!;
+                        // controller.fetchRestaurants(
+                        //     isRefresh: true, searchQuery: value);
                       },
                     ),
                   ],
@@ -146,8 +151,12 @@ class _RestaurantManagementScreenState
                         items: controller.cityList,
                         onChanged: (value) {
                           controller.selectedCity.value = value!;
-                          controller.fetchRestaurants(
-                              isRefresh: true, cityFilter: value);
+                          controller.currentCityFilter.value = value;
+
+                          if (value.isEmpty || value == 'All') {
+                            controller.filteredResults.clear();
+                            controller.fetchRestaurants(isRefresh: true);
+                          }
                         },
                       ),
                     ),
@@ -158,8 +167,12 @@ class _RestaurantManagementScreenState
                         hint: 'Filter by Cuisine',
                         items: controller.cuisineList,
                         onChanged: (value) {
+                          controller.hasMoreData.value = false;
+                          controller.restaurants.clear();
+
                           controller.selectedCuisine.value = value!;
-                          controller.fetchRestaurants(isRefresh: true);
+                          // controller.fetchRestaurants(
+                          //     isRefresh: true, searchQuery: '1');
                         },
                       ),
                     ),
@@ -176,7 +189,7 @@ class _RestaurantManagementScreenState
                           // Trigger search logic when search text changes
                           controller.currentSearchQuery.value = value ?? '';
                           if (value == null || value.isEmpty) {
-                            controller.searchResults.clear();
+                            controller.filteredResults.clear();
                             controller.fetchRestaurants(isRefresh: true);
                           }
                         },
