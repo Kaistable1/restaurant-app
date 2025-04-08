@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:get/get.dart';
-import 'package:savrly/constants/text_styles.dart';
-
+import 'package:responsive_table/responsive_table.dart';
 import '../../../../constants/app_colors.dart';
+import '../../../../constants/text_styles.dart';
 import '../../../../controllers/operating_hours_sub_screen_controller.dart';
 import '../../../../widgets/button.dart';
 
@@ -13,518 +13,582 @@ class OperatingHoursSubScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    // Define breakpoints for mobile, tablet, and desktop
-    bool isMobile = screenWidth < 600; // Mobile: < 600px
-    bool isTablet =
-        screenWidth >= 600 && screenWidth < 1000; // Tablet: 600px - 999px
-    bool isDesktop = screenWidth >= 1000; // Desktop: >= 1000px
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    bool isMobile = screenWidth < 600;
+    bool isTablet = screenWidth >= 600 && screenWidth < 1000;
+    bool isDesktop = screenWidth >= 1000;
 
     final controller = Get.put(OperatingHoursSubScreenController());
 
-    // Adjust font sizes and padding based on screen size
-    double headerFontSize =
-        isMobile
-            ? 14
-            : isTablet
-            ? 16
-            : 18;
-    double cellFontSize =
-        isMobile
-            ? 12
-            : isTablet
-            ? 14
-            : 16;
-    double cellPadding =
-        isMobile
-            ? 6.0
-            : isTablet
-            ? 8.0
-            : 12.0;
-    double buttonHeight =
-        isMobile
-            ? 36
-            : isTablet
-            ? 40
-            : 44;
-    double buttonFontSize =
-        isMobile
-            ? 10
-            : isTablet
-            ? 12
-            : 14;
-    double onOffContainerWidth =
-        isMobile
-            ? 20
-            : isTablet
-            ? 22
-            : 26;
-    double onOffContainerHeight =
-        isMobile
-            ? 32
-            : isTablet
-            ? 36
-            : 40;
-    double onOffFontSize =
-        isMobile
-            ? 8
-            : isTablet
-            ? 9
-            : 10;
+    double headerFontSize = screenWidth.clamp(300, 1200) / 80;
+    double cellFontSize = screenWidth.clamp(300, 1200) / 90;
+    double cellPadding = screenWidth.clamp(300, 1200) / 120;
+    double buttonHeight = screenWidth.clamp(300, 1200) / 40;
+    double buttonFontSize = screenWidth.clamp(300, 1200) / 110;
+    double onOffContainerWidth = screenWidth.clamp(300, 1200) / 80;
+    double onOffContainerHeight = screenWidth.clamp(300, 1200) / 50;
+    double onOffFontSize = screenWidth.clamp(300, 1200) / 160;
 
-    // Calculate total table width to fit the screen
-    double totalTableWidth =
-        screenWidth - 32; // Subtract padding (16 on each side)
+    double buttonWidth = isMobile ? 50 : isTablet ? 70 : 90;
 
-    return Expanded(
-      child: SingleChildScrollView(
+    return SingleChildScrollView(
+      child: Padding(
+        padding:  EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
           children: [
             const SizedBox(height: 16),
-            // Table for operating hours
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Container(
-                width: totalTableWidth, // Set table width to fit screen
-                child: Obx(
-                  () => Table(
-                    // Modified border to show only horizontal lines
-                    border: const TableBorder(
-                      horizontalInside: BorderSide(
-                        color: dimWhite,
-                        width: 1,
-                      ), // Only horizontal lines
-                    ),
-                    columnWidths: {
-                      0: FractionColumnWidth(
-                        isMobile
-                            ? 0.12
-                            : isTablet
-                            ? 0.10
-                            : 0.03,
-                      ),
-                      1: FractionColumnWidth(
-                        isMobile
-                            ? 0.12
-                            : isTablet
-                            ? 0.12
-                            : 0.03,
-                      ),
-                      2: FractionColumnWidth(
-                        isMobile
-                            ? 0.12
-                            : isTablet
-                            ? 0.12
-                            : 0.03,
-                      ),
-                      3: FractionColumnWidth(
-                        isMobile
-                            ? 0.12
-                            : isTablet
-                            ? 0.12
-                            : 0.03,
-                      ),
-                      4: FractionColumnWidth(
-                        isMobile
-                            ? 0.12
-                            : isTablet
-                            ? 0.12
-                            : 0.03,
-                      ),
-                    },
-                    children: [
-                      // Header Row
-                      TableRow(
-                        decoration: BoxDecoration(color: secondaryColor.withOpacity(0.16)) ,
-                        children: [
-                          _buildTableCell(
-                            'Days',
-                            isHeader: true,
-                            fontSize: headerFontSize,
-                            padding: cellPadding,
-                          ),
-                          _buildTableCell(
-                            'Breakfast',
-                            isHeader: true,
-                            fontSize: headerFontSize,
-                            padding: cellPadding,
-                          ),
-                          _buildTableCell(
-                            'Brunch',
-                            isHeader: true,
-                            fontSize: headerFontSize,
-                            padding: cellPadding,
-                          ),
-                          _buildTableCell(
-                            'Lunch',
-                            isHeader: true,
-                            fontSize: headerFontSize,
-                            padding: cellPadding,
-                          ),
-                          _buildTableCell(
-                            'Dinner',
-                            isHeader: true,
-                            fontSize: headerFontSize,
-                            padding: cellPadding,
-                          ),
-                        ],
-                      ),
-                      // Data Rows
-                      ...controller.daySwitches.keys.map((day) {
-                        return TableRow(
-                          decoration: BoxDecoration(
-                            color: secondaryColor.withOpacity(0.1),
-                          ),
-                          // Removed decoration to avoid background overlap with lines
+            SizedBox(
+              height: screenHeight - 96,
+              width: screenWidth - 32,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Obx(() {
+                  if (controller.daySwitches.isEmpty) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  List<Map<String, dynamic>> source = controller.daySwitches.keys
+                      .map((day) => {"day": day})
+                      .toList();
+
+                  List<DatatableHeader> headers = [
+                    DatatableHeader(
+                      text: "Day",
+                      value: "day",
+                      flex: isMobile ? 1 : isTablet ? 1 : 1,
+                      sortable: false,
+                      sourceBuilder: (value, row) {
+                        String day = row['day'] ?? 'Unknown';
+                        bool isEnabled = controller.daySwitches[day] ?? false;
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            // Days column with switch (centered)
-                            TableCell(
-                              child: Padding(
-                                padding: EdgeInsets.all(cellPadding),
-                                child: SizedBox(
-                                  width:
-                                      isMobile
-                                          ? 50.0
-                                          : isTablet
-                                          ? 60.0
-                                          : 70.0,
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      FlutterSwitch(
-                                        width:
-                                            isMobile
-                                                ? 35.0
-                                                : isTablet
-                                                ? 40.0
-                                                : 45.0,
-                                        height:
-                                            isMobile
-                                                ? 20.0
-                                                : isTablet
-                                                ? 23.0
-                                                : 28.0,
-                                        value:
-                                            controller
-                                                .daySwitchControllers[day]!
-                                                .value,
-                                        activeColor: primaryColor,
-                                        inactiveColor: white,
-                                        toggleColor: white,
-                                        inactiveToggleColor: primaryColor,
-                                        borderRadius: 50.0,
-                                        padding: 2.0,
-                                        showOnOff: false,
-                                        toggleSize:
-                                            isMobile
-                                                ? 16.0
-                                                : isTablet
-                                                ? 20.0
-                                                : 24.0,
-                                        onToggle: (val) {
-                                          controller
-                                              .daySwitchControllers[day]!
-                                              .value = val;
-                                        },
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        day,
-                                        style: simpleText.copyWith(
-                                          fontSize: cellFontSize,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                            FlutterSwitch(
+                              width: screenWidth.clamp(300.0, 1200.0) / 30,
+                              height: screenWidth.clamp(300.0, 1200.0) / 60,
+                              value: isEnabled,
+                              activeColor: primaryColor,
+                              inactiveColor: white,
+                              toggleColor: white,
+                              inactiveToggleColor: primaryColor,
+                              borderRadius: 50.0,
+                              padding: 1.0,
+                              showOnOff: false,
+                              toggleSize: screenWidth.clamp(300.0, 1200.0) / 80,
+                              onToggle: (val) {
+                                controller.daySwitchControllers[day]?.value = val;
+                              },
                             ),
-                            // Breakfast
-                            _buildSlotCell(
-                              controller,
+                            const SizedBox(width: 2),
+                            Text(
                               day,
-                              'Breakfast',
-                              isDinner: false,
-                              buttonHeight: buttonHeight,
-                              buttonFontSize: buttonFontSize,
-                              onOffContainerWidth: onOffContainerWidth,
-                              onOffContainerHeight: onOffContainerHeight,
-                              onOffFontSize: onOffFontSize,
-                              cellFontSize: cellFontSize,
-                              padding: cellPadding,
-                              isMobile: isMobile,
-                              isTablet: isTablet,
-                            ),
-                            // Brunch
-                            _buildSlotCell(
-                              controller,
-                              day,
-                              'Brunch',
-                              isDinner: false,
-                              buttonHeight: buttonHeight,
-                              buttonFontSize: buttonFontSize,
-                              onOffContainerWidth: onOffContainerWidth,
-                              onOffContainerHeight: onOffContainerHeight,
-                              onOffFontSize: onOffFontSize,
-                              cellFontSize: cellFontSize,
-                              padding: cellPadding,
-                              isMobile: isMobile,
-                              isTablet: isTablet,
-                            ),
-                            // Lunch
-                            _buildSlotCell(
-                              controller,
-                              day,
-                              'Lunch',
-                              isDinner: false,
-                              buttonHeight: buttonHeight,
-                              buttonFontSize: buttonFontSize,
-                              onOffContainerWidth: onOffContainerWidth,
-                              onOffContainerHeight: onOffContainerHeight,
-                              onOffFontSize: onOffFontSize,
-                              cellFontSize: cellFontSize,
-                              padding: cellPadding,
-                              isMobile: isMobile,
-                              isTablet: isTablet,
-                            ),
-                            // Dinner
-                            _buildSlotCell(
-                              controller,
-                              day,
-                              'Dinner',
-                              isDinner: true,
-                              buttonHeight: buttonHeight,
-                              buttonFontSize: buttonFontSize,
-                              onOffContainerWidth: onOffContainerWidth,
-                              onOffContainerHeight: onOffContainerHeight,
-                              onOffFontSize: onOffFontSize,
-                              cellFontSize: cellFontSize,
-                              padding: cellPadding,
-                              isMobile: isMobile,
-                              isTablet: isTablet,
+                              style: simpleText.copyWith(fontSize: cellFontSize),
                             ),
                           ],
                         );
-                      }).toList(),
-                    ],
-                  ),
-                ),
+                      },
+                    ),
+                    DatatableHeader(
+                      text: "Breakfast",
+                      value: "breakfast",
+                      flex: isMobile ? 2 : isTablet ? 2 : 2,
+                      sortable: false,
+                      sourceBuilder: (value, row) {
+                        String day = row['day'] ?? 'Unknown';
+                        bool isDayEnabled = controller.daySwitches[day] ?? false;
+                        if (!isDayEnabled) {
+                          return const Center(
+                            child: Text(
+                              'Closed',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          );
+                        }
+                        final daySlotStates = controller.slotStates[day] ?? {'Breakfast': false};
+                        final daySlotTimes = controller.slotTimes[day] ?? {'Breakfast': ''};
+                        bool isSlotOn = daySlotStates['Breakfast'] ?? false;
+                        String time = daySlotTimes['Breakfast'] ?? '';
+                        bool hasTime = time.isNotEmpty;
+                        String buttonText = isSlotOn ? (hasTime ? time : 'Set Time') : 'Closed';
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CustomButton(
+                              laBelText: buttonText,
+                              fontSize: buttonFontSize,
+                              height: buttonHeight,
+                              width: buttonWidth,
+                              containerColor: isSlotOn ? primaryColor : secondaryColor.withOpacity(0.2),
+                              textColor: white,
+                              ontapp: () {
+                                if (isSlotOn) {
+                                  controller.setTime(Get.context!, day, 'Breakfast');
+                                }
+                              },
+                            ),
+                            const SizedBox(width: 2),
+                            MouseRegion(
+                              cursor: SystemMouseCursors.click,
+                              child: Container(
+                                height: onOffContainerHeight,
+                                width: onOffContainerWidth,
+                                decoration: BoxDecoration(
+                                  color: white,
+                                  border: Border.all(
+                                    color: secondaryColor.withOpacity(0.2),
+                                    width: 1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Expanded(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          if (!isSlotOn) {
+                                            controller.toggleSlotState(day, 'Breakfast');
+                                          }
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: isSlotOn ? primaryColor : white,
+                                            borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              'On',
+                                              style: simpleText.copyWith(
+                                                color: isSlotOn ? white : blackColor,
+                                                fontSize: onOffFontSize,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          if (isSlotOn) {
+                                            controller.toggleSlotState(day, 'Breakfast');
+                                          }
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: !isSlotOn ? secondaryColor.withOpacity(0.2) : white,
+                                            borderRadius: const BorderRadius.vertical(bottom: Radius.circular(4)),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              'Off',
+                                              style: simpleText.copyWith(
+                                                color: !isSlotOn ? white : blackColor,
+                                                fontSize: onOffFontSize,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            if (isSlotOn && hasTime)
+                              Flexible(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 2.0),
+                                  child: Text(
+                                    time,
+                                    style: simpleText.copyWith(fontSize: cellFontSize),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        );
+                      },
+                    ),
+                    DatatableHeader(
+                      text: "Brunch",
+                      value: "brunch",
+                      flex: isMobile ? 2 : isTablet ? 2 : 2,
+                      sortable: false,
+                      sourceBuilder: (value, row) {
+                        String day = row['day'] ?? 'Unknown';
+                        bool isDayEnabled = controller.daySwitches[day] ?? false;
+                        if (!isDayEnabled) {
+                          return const Center(
+                            child: Text(
+                              'Closed',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          );
+                        }
+                        final daySlotStates = controller.slotStates[day] ?? {'Brunch': false};
+                        final daySlotTimes = controller.slotTimes[day] ?? {'Brunch': ''};
+                        bool isSlotOn = daySlotStates['Brunch'] ?? false;
+                        String time = daySlotTimes['Brunch'] ?? '';
+                        bool hasTime = time.isNotEmpty;
+                        String buttonText = isSlotOn ? (hasTime ? time : 'Set Time') : 'Closed';
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CustomButton(
+                              laBelText: buttonText,
+                              fontSize: buttonFontSize,
+                              height: buttonHeight,
+                              width: buttonWidth,
+                              containerColor: isSlotOn ? primaryColor : secondaryColor.withOpacity(0.2),
+                              textColor: white,
+                              ontapp: () {
+                                if (isSlotOn) {
+                                  controller.setTime(Get.context!, day, 'Brunch');
+                                }
+                              },
+                            ),
+                            const SizedBox(width: 2),
+                            MouseRegion(
+                              cursor: SystemMouseCursors.click,
+                              child: Container(
+                                height: onOffContainerHeight,
+                                width: onOffContainerWidth,
+                                decoration: BoxDecoration(
+                                  color: white,
+                                  border: Border.all(
+                                    color: secondaryColor.withOpacity(0.2),
+                                    width: 1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Expanded(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          if (!isSlotOn) {
+                                            controller.toggleSlotState(day, 'Brunch');
+                                          }
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: isSlotOn ? primaryColor : white,
+                                            borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              'On',
+                                              style: simpleText.copyWith(
+                                                color: isSlotOn ? white : blackColor,
+                                                fontSize: onOffFontSize,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          if (isSlotOn) {
+                                            controller.toggleSlotState(day, 'Brunch');
+                                          }
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: !isSlotOn ? secondaryColor.withOpacity(0.2) : white,
+                                            borderRadius: const BorderRadius.vertical(bottom: Radius.circular(4)),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              'Off',
+                                              style: simpleText.copyWith(
+                                                color: !isSlotOn ? white : blackColor,
+                                                fontSize: onOffFontSize,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            if (isSlotOn && hasTime)
+                              Flexible(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 2.0),
+                                  child: Text(
+                                    time,
+                                    style: simpleText.copyWith(fontSize: cellFontSize),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        );
+                      },
+                    ),
+                    DatatableHeader(
+                      text: "Lunch",
+                      value: "lunch",
+                      flex: isMobile ? 2 : isTablet ? 2 : 2,
+                      sortable: false,
+                      sourceBuilder: (value, row) {
+                        String day = row['day'] ?? 'Unknown';
+                        bool isDayEnabled = controller.daySwitches[day] ?? false;
+                        if (!isDayEnabled) {
+                          return const Center(
+                            child: Text(
+                              'Closed',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          );
+                        }
+                        final daySlotStates = controller.slotStates[day] ?? {'Lunch': false};
+                        final daySlotTimes = controller.slotTimes[day] ?? {'Lunch': ''};
+                        bool isSlotOn = daySlotStates['Lunch'] ?? false;
+                        String time = daySlotTimes['Lunch'] ?? '';
+                        bool hasTime = time.isNotEmpty;
+                        String buttonText = isSlotOn ? (hasTime ? time : 'Set Time') : 'Closed';
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CustomButton(
+                              laBelText: buttonText,
+                              fontSize: buttonFontSize,
+                              height: buttonHeight,
+                              width: buttonWidth,
+                              containerColor: isSlotOn ? primaryColor : secondaryColor.withOpacity(0.2),
+                              textColor: white,
+                              ontapp: () {
+                                if (isSlotOn) {
+                                  controller.setTime(Get.context!, day, 'Lunch');
+                                }
+                              },
+                            ),
+                            const SizedBox(width: 2),
+                            MouseRegion(
+                              cursor: SystemMouseCursors.click,
+                              child: Container(
+                                height: onOffContainerHeight,
+                                width: onOffContainerWidth,
+                                decoration: BoxDecoration(
+                                  color: white,
+                                  border: Border.all(
+                                    color: secondaryColor.withOpacity(0.2),
+                                    width: 1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Expanded(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          if (!isSlotOn) {
+                                            controller.toggleSlotState(day, 'Lunch');
+                                          }
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: isSlotOn ? primaryColor : white,
+                                            borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              'On',
+                                              style: simpleText.copyWith(
+                                                color: isSlotOn ? white : blackColor,
+                                                fontSize: onOffFontSize,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          if (isSlotOn) {
+                                            controller.toggleSlotState(day, 'Lunch');
+                                          }
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: !isSlotOn ? secondaryColor.withOpacity(0.2) : white,
+                                            borderRadius: const BorderRadius.vertical(bottom: Radius.circular(4)),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              'Off',
+                                              style: simpleText.copyWith(
+                                                color: !isSlotOn ? white : blackColor,
+                                                fontSize: onOffFontSize,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            if (isSlotOn && hasTime)
+                              Flexible(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 2.0),
+                                  child: Text(
+                                    time,
+                                    style: simpleText.copyWith(fontSize: cellFontSize),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        );
+                      },
+                    ),
+                    DatatableHeader(
+                      text: "Dinner",
+                      value: "dinner",
+                      flex: isMobile ? 2 : isTablet ? 2 : 2,
+                      sortable: false,
+                      sourceBuilder: (value, row) {
+                        String day = row['day'] ?? 'Unknown';
+                        bool isDayEnabled = controller.daySwitches[day] ?? false;
+                        if (!isDayEnabled) {
+                          return const Center(
+                            child: Text(
+                              'Closed',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          );
+                        }
+                        final daySlotStates = controller.slotStates[day] ?? {'Dinner': false};
+                        final daySlotTimes = controller.slotTimes[day] ?? {'Dinner': ''};
+                        bool isSlotOn = daySlotStates['Dinner'] ?? false;
+                        String time = daySlotTimes['Dinner'] ?? '';
+                        bool hasTime = time.isNotEmpty;
+                        String buttonText = isSlotOn ? (hasTime ? time : 'Set Time') : 'Closed';
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CustomButton(
+                              laBelText: buttonText,
+                              fontSize: buttonFontSize,
+                              height: buttonHeight,
+                              width: buttonWidth,
+                              containerColor: isSlotOn ? primaryColor : secondaryColor.withOpacity(0.2),
+                              textColor: white,
+                              ontapp: () {
+                                if (isSlotOn) {
+                                  controller.setTime(Get.context!, day, 'Dinner');
+                                }
+                              },
+                            ),
+                            const SizedBox(width: 2),
+                            MouseRegion(
+                              cursor: SystemMouseCursors.click,
+                              child: Container(
+                                height: onOffContainerHeight,
+                                width: onOffContainerWidth,
+                                decoration: BoxDecoration(
+                                  color: white,
+                                  border: Border.all(
+                                    color: secondaryColor.withOpacity(0.2),
+                                    width: 1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Expanded(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          if (!isSlotOn) {
+                                            controller.toggleSlotState(day, 'Dinner');
+                                          }
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: isSlotOn ? primaryColor : white,
+                                            borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              'On',
+                                              style: simpleText.copyWith(
+                                                color: isSlotOn ? white : blackColor,
+                                                fontSize: onOffFontSize,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          if (isSlotOn) {
+                                            controller.toggleSlotState(day, 'Dinner');
+                                          }
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: !isSlotOn ? secondaryColor.withOpacity(0.2) : white,
+                                            borderRadius: const BorderRadius.vertical(bottom: Radius.circular(4)),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              'Off',
+                                              style: simpleText.copyWith(
+                                                color: !isSlotOn ? white : blackColor,
+                                                fontSize: onOffFontSize,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            if (isSlotOn && hasTime)
+                              Flexible(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 2.0),
+                                  child: Text(
+                                    time,
+                                    style: simpleText.copyWith(fontSize: cellFontSize),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        );
+                      },
+                    ),
+                  ];
+
+                  return ResponsiveDatatable(
+                    headers: headers,
+                    source: source,
+                    showSelect: false,
+                    footers: [],
+                    isLoading: false,
+                    autoHeight: false,
+                  );
+                }),
               ),
             ),
             const SizedBox(height: 24),
           ],
         ),
-      ),
-    );
-  }
-
-  // Helper to build table header cells
-  Widget _buildTableCell(
-    String text, {
-    bool isHeader = false,
-    required double fontSize,
-    required double padding,
-  }) {
-    return Padding(
-      padding: EdgeInsets.all(padding),
-      child: Center(
-        child: Text(
-          text,
-          textAlign: TextAlign.center, // Center align text
-          style: simpleText.copyWith(
-            fontWeight: isHeader ? FontWeight.bold : FontWeight.normal,
-            fontSize: fontSize,
-          ),
-        ),
-      ),
-    );
-  }
-
-  // Helper to build slot cells (Breakfast, Brunch, Lunch, Dinner)
-  Widget _buildSlotCell(
-    OperatingHoursSubScreenController controller,
-    String day,
-    String slot, {
-    required bool isDinner, // Flag to handle Dinner column differently
-    required double buttonHeight,
-    required double buttonFontSize,
-    required double onOffContainerWidth,
-    required double onOffContainerHeight,
-    required double onOffFontSize,
-    required double cellFontSize,
-    required double padding,
-    required bool isMobile,
-    required bool isTablet,
-  }) {
-    bool isDayEnabled = controller.daySwitches[day]!;
-    bool isSlotOn = controller.slotStates[day]![slot]!;
-    String buttonText =
-        isSlotOn
-            ? (isDinner && controller.slotTimes[day]![slot]!.isNotEmpty
-                ? controller.slotTimes[day]![slot]!
-                : 'Set Time')
-            : 'Closed';
-
-    // Calculate button width dynamically based on text length
-    final textPainter = TextPainter(
-      text: TextSpan(
-        text: buttonText,
-        style: simpleText.copyWith(fontSize: buttonFontSize),
-      ),
-      maxLines: 1,
-      textDirection: TextDirection.ltr,
-    )..layout();
-    double buttonWidth =
-        textPainter.width + 32; // Add padding (16 on each side)
-
-    // Ensure minimum width for readability
-    buttonWidth = buttonWidth.clamp(
-      isMobile
-          ? 100
-          : isTablet
-          ? 120
-          : 140,
-      double.infinity,
-    );
-
-    return TableCell(
-      child: Padding(
-        padding: EdgeInsets.all(padding),
-        child:
-            isDayEnabled
-                ? Row(
-                  mainAxisAlignment: MainAxisAlignment.center, // Center align
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CustomButton(
-                      laBelText: buttonText,
-                      fontSize: buttonFontSize,
-                      height: buttonHeight,
-                      width: buttonWidth,
-                      // Dynamic width based on text
-                      containerColor:
-                          isSlotOn
-                              ? primaryColor
-                              : secondaryColor.withOpacity(0.2),
-                      textColor: white,
-                      shadow: [],
-                      ontapp: () {
-                        if (isSlotOn) {
-                          controller.setTime(Get.context!, day, slot);
-                        }
-                      },
-                    ),
-                    const SizedBox(width: 8),
-                    MouseRegion(
-                      cursor: SystemMouseCursors.click,
-                      child: Container(
-                        height: onOffContainerHeight,
-                        width: onOffContainerWidth,
-                        decoration: BoxDecoration(
-                          color: white,
-                          border: Border.all(
-                            color: secondaryColor.withOpacity(0.2),
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min, // Prevent overflow
-                          children: [
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  if (!isSlotOn) {
-                                    // Only toggle to "On" if currently "Off"
-                                    controller.toggleSlotState(day, slot);
-                                  }
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: isSlotOn ? primaryColor : white,
-                                    border: Border.all(
-                                      color:
-                                          isSlotOn
-                                              ? primaryColor
-                                              : Colors.transparent,
-                                    ),
-                                    borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(6),
-                                      topRight: Radius.circular(6),
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      'On',
-                                      style: simpleText.copyWith(
-                                        color: isSlotOn ? white : blackColor,
-                                        fontSize: onOffFontSize,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  if (isSlotOn) {
-                                    // Only toggle to "Off" if currently "On"
-                                    controller.toggleSlotState(day, slot);
-                                  }
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color:
-                                        !isSlotOn
-                                            ? secondaryColor.withOpacity(0.2)
-                                            : white,
-                                    borderRadius: const BorderRadius.only(
-                                      bottomLeft: Radius.circular(6),
-                                      bottomRight: Radius.circular(6),
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      'Off',
-                                      style: simpleText.copyWith(
-                                        color: !isSlotOn ? white : blackColor,
-                                        fontSize: onOffFontSize,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    // Remove separate time text for Dinner column
-                    if (!isDinner &&
-                        isSlotOn &&
-                        controller.slotTimes[day]![slot]!.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Text(
-                          controller.slotTimes[day]![slot]!,
-                          style: simpleText.copyWith(fontSize: cellFontSize),
-                        ),
-                      ),
-                  ],
-                )
-                : Center(
-                  child: Text(
-                    'Closed',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: cellFontSize,
-                    ),
-                  ),
-                ),
       ),
     );
   }

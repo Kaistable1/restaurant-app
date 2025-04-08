@@ -10,21 +10,8 @@ class ExperiencesSubScreenController extends GetxController {
   final timeController = TextEditingController();
 
   final experienceSubScreenFormKey = GlobalKey<FormState>();
-
-  // Observable for dropdown and stored events
-  RxString selectedDay = ''.obs;
   RxList<Map<String, dynamic>> events = <Map<String, dynamic>>[].obs;
 
-  RxList<String> dayList =
-      <String>[
-        'Monday',
-        'Tuesday',
-        'Wednesday',
-        'Thursday',
-        'Friday',
-        'Saturday',
-        'Sunday',
-      ].obs;
 
   // Select date using DatePicker
   Future<void> selectDate(BuildContext context) async {
@@ -59,7 +46,6 @@ class ExperiencesSubScreenController extends GetxController {
       events.add({
         'eventName': eventNameController.text.trim(),
         'hostedBy': hostedByController.text.trim(),
-        'state': selectedDay.value,
         'date': dateController.text.trim(),
         'time': timeController.text.trim(),
       });
@@ -83,19 +69,22 @@ class ExperiencesSubScreenController extends GetxController {
     }
   }
 
+// Validate if all fields are filled
+  bool areExperienceFieldsFilled() {
+    return eventNameController.text.trim().isNotEmpty &&
+        hostedByController.text.trim().isNotEmpty &&
+        dateController.text.trim().isNotEmpty &&
+        timeController.text.trim().isNotEmpty;
+  }
+
   // Clear all fields for the next event
   void clearFields() {
     eventNameController.clear();
     hostedByController.clear();
-    selectedDay.value = '';
     dateController.clear();
     timeController.clear();
   }
   bool hasEvents() {
     return events.isNotEmpty;
-  }
-  // Validate current form fields (new method for "Next")
-  bool validateForm() {
-    return experienceSubScreenFormKey.currentState!.validate();
   }
 }

@@ -63,12 +63,19 @@ class AmenitiesSubScreenController extends GetxController {
     priceRange.refresh();
   }
 
-  // Add new items with dialogs
+  // // Add new items with dialogs
+  // Future<void> addFacilities() async {
+  //   final result = await _showAddDialog('Add Facility/Service');
+  //   if (result != null) {
+  //     facilities.add({'name': result, 'isChecked': false});
+  //     facilities.refresh();
+  //   }
+  // }
   Future<void> addFacilities() async {
-    final result = await _showAddDialog('Add Facility/Service');
-    if (result != null) {
-      facilities.add({'name': result, 'isChecked': false});
-      facilities.refresh();
+    // Example: Add a new facility (could be from user input via dialog)
+    String newFacility = await _showAddFacilityDialog(); // Hypothetical method
+    if (newFacility.isNotEmpty) {
+      facilities.add({'name': newFacility, 'isChecked': false});
     }
   }
 
@@ -79,6 +86,7 @@ class AmenitiesSubScreenController extends GetxController {
       dietaryPreferences.refresh();
     }
   }
+
 
   Future<void> addAtmosphere() async {
     final result = await _showAddDialog('Add Atmosphere');
@@ -143,5 +151,59 @@ class AmenitiesSubScreenController extends GetxController {
       'atmosphere': atmosphereValid,
       'priceRange': priceRangeValid,
     };
+  }
+  // Clear all fields
+  void clearFields() {
+    for (var item in facilities) {
+      item['isChecked'] = false;
+    }
+    for (var item in dietaryPreferences) {
+      item['isChecked'] = false;
+    }
+    for (var item in atmosphere) {
+      item['isChecked'] = false;
+    }
+    for (var item in priceRange) {
+      item['isChecked'] = false;
+    }
+    facilities.refresh();
+    dietaryPreferences.refresh();
+    atmosphere.refresh();
+    priceRange.refresh();
+  }
+
+  List<String> getSelectedDietaryPreferences() {
+    return dietaryPreferences
+        .where((item) => item['isChecked'] == true)
+        .map((item) => item['name'] as String)
+        .toList();
+  }
+
+  // Helper to get selected facilities
+  List<String> getSelectedFacilities() {
+    return facilities
+        .where((item) => item['isChecked'] == true)
+        .map((item) => item['name'] as String)
+        .toList();
+  }
+
+  List<String> getSelectedAtmosphere() {
+    return atmosphere
+        .where((item) => item['isChecked'] == true)
+        .map((item) => item['name'] as String)
+        .toList();
+  }
+
+  List<String> getSelectedPriceRange() {
+    return priceRange
+        .where((item) => item['isChecked'] == true)
+        .map((item) => item['name'] as String)
+        .toList();
+  }
+
+  // Placeholder for adding a new facility (implement as needed)
+  Future<String> _showAddFacilityDialog() async {
+    // Add your dialog logic here to get user input
+    return 'New Facility'; // Example return
   }
 }

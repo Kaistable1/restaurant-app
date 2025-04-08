@@ -42,6 +42,7 @@ dependencies:
   dotted_border:
   intl: ^0.20.2
   flutter_switch: ^0.3.2
+  responsive_table: ^0.2.0+2
 #  flutter_advanced_switch: ^3.1.0
 
 dev_dependencies:

@@ -12,6 +12,7 @@ import '../../../controllers/add_restaurants_controller.dart';
 import '../../../controllers/amenities_sub_screen_controller.dart';
 import '../../../controllers/drawer_controller.dart';
 import '../../../controllers/experiences_sub_screen_controller.dart';
+import '../../../controllers/menu_sub_screen_controller.dart';
 import '../../../widgets/button.dart';
 
 import 'package:flutter/gestures.dart';
@@ -23,6 +24,7 @@ class AddRestaurantsScreen extends StatelessWidget {
   final tabController = Get.put(AddRestaurantTabController());
   final amenitiesController = Get.put(AmenitiesSubScreenController());
   final experiencesController = Get.put(ExperiencesSubScreenController());
+  final menuController = Get.put(MenuSubScreenController());
   final ScrollController scrollController = ScrollController();
 
   @override
@@ -44,130 +46,171 @@ class AddRestaurantsScreen extends StatelessWidget {
               drawerController.addRestaurants.value = false;
             },
             end: true,
-            endWidget: !mobileView
-                ? Obx(() {
-              int selectedIndex = tabController.selectedIndex.value;
-              if (selectedIndex == 4) {
-                return Row(
-                  children: [
-                    CustomButton(
-                      laBelText: 'Previous',
-                      fontSize: buttonTextSize,
-                      height: 45,
-                      width: 130,
-                      shadow: [],
-                      containerColor: secondaryColor.withOpacity(0.2),
-                      textColor: blackColor,
-                      ontapp: () {
-                        tabController.selectedIndex.value--;
-                      },
-                    ),
-                    const SizedBox(width: 8),
-                    CustomButton(
-                      laBelText: 'Save',
-                      fontSize: buttonTextSize,
-                      height: 45,
-                      width: 130,
-                      shadow: [],
-                      containerColor: primaryColor,
-                      ontapp: () {
-                        // Save logic here
-                      },
-                    ),
-                  ],
-                );
-              }
-              return Row(
-                children: [
-                  if (selectedIndex > 0)
-                    CustomButton(
-                      laBelText: 'Previous',
-                      fontSize: buttonTextSize,
-                      height: 45,
-                      width: 130,
-                      shadow: [],
-                      containerColor: secondaryColor.withOpacity(0.2),
-                      textColor: blackColor,
-                      ontapp: () {
-                        tabController.selectedIndex.value--;
-                      },
-                    ),
-                  const SizedBox(width: 8),
-                  CustomButton(
-                    laBelText: 'Next',
-                    fontSize: buttonTextSize,
-                    height: 45,
-                    width: 130,
-                    shadow: [],
-                    containerColor: primaryColor,
-                    ontapp: () {
-                      if (selectedIndex < 4) {
-                        if (selectedIndex == 0) {
-                          tabController.selectedIndex.value++;
-                          // Validate Basic Info tab (commented as per your code)
-                          // final basicInfoFormKey = tabController.basicInfoFormKey;
-                          // final formState = basicInfoFormKey.currentState;
-                          // if (tabController.uploadedImages.isEmpty) {
-                          //   Get.snackbar(
-                          //     'Error',
-                          //     'Please upload at least one restaurant image',
-                          //     snackPosition: SnackPosition.TOP,
-                          //     backgroundColor: Colors.red,
-                          //     colorText: Colors.white,
-                          //   );
-                          // } else if (formState != null &&
-                          //     formState.validate() &&
-                          //     tabController.areBasicInfoFieldsFilled()) {
-                          //   tabController.selectedIndex.value++;
-                          // }
-                        } else if (selectedIndex == 1) {
-                          tabController.selectedIndex.value++;
-                          // Validate Amenities tab (commented as per your code)
-                          // final amenitiesValidation = amenitiesController.areAmenitiesValid();
-                          // if (!amenitiesValidation.values.every((valid) => valid)) {
-                          //   List<String> errors = [];
-                          //   if (!amenitiesValidation['facilities']!) {
-                          //     errors.add('Please select at least one Facility/Service.');
-                          //   }
-                          //   if (!amenitiesValidation['dietary']!) {
-                          //     errors.add('Please select at least one Dietary Preference.');
-                          //   }
-                          //   if (!amenitiesValidation['atmosphere']!) {
-                          //     errors.add('Please select at least one Atmosphere option.');
-                          //   }
-                          //   if (!amenitiesValidation['priceRange']!) {
-                          //     errors.add('Please select at least one Price Range.');
-                          //   }
-                          //   Get.snackbar(
-                          //     'Error',
-                          //     errors.join('\n'),
-                          //     snackPosition: SnackPosition.TOP,
-                          //     backgroundColor: Colors.red,
-                          //     colorText: Colors.white,
-                          //     duration: const Duration(seconds: 5),
-                          //   );
-                          // } else {
-                          //   tabController.selectedIndex.value++;
-                          // }
-                        } else if (selectedIndex == 2) {
-                          tabController.selectedIndex.value++;
-                          // Validate Experiences tab with feedback
-                          // if (experiencesController.hasEvents()) {
-                          //   tabController.selectedIndex.value++;
-                          // } else {
-                          //   // Show form validation errors without a snackbar
-                          //   experiencesController.validateForm(); // Triggers inline error messages
-                          // }
-                        } else {
-                          tabController.selectedIndex.value++;
-                        }
+            endWidget:
+                !mobileView
+                    ? Obx(() {
+                      int selectedIndex = tabController.selectedIndex.value;
+                      if (selectedIndex == 4) {
+                        return Row(
+                          children: [
+                            CustomButton(
+                              laBelText: 'Previous',
+                              fontSize: buttonTextSize,
+                              height: 45,
+                              width: 130,
+                              shadow: [],
+                              containerColor: secondaryColor.withOpacity(0.2),
+                              textColor: blackColor,
+                              ontapp: () {
+                                tabController.selectedIndex.value--;
+                              },
+                            ),
+                            const SizedBox(width: 8),
+                            CustomButton(
+                              laBelText: 'Save',
+                              fontSize: buttonTextSize,
+                              height: 45,
+                              width: 130,
+                              shadow: [],
+                              containerColor: primaryColor,
+                              ontapp: () {
+                                if (menuController.areMenuFieldsFilled()) {
+                                  menuController.clearFields();
+                                  Get.dialog(
+                                    AlertDialog(
+                                      title: const Text('Success'),
+                                      content: const Text(
+                                        'Data added successfully!',
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Get.back(); // Close dialog
+                                            drawerController
+                                                .addRestaurants
+                                                .value = false;
+                                            tabController.selectedIndex.value =
+                                                0;
+                                          },
+                                          child: const Text('OK'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                } else {
+                                  Get.snackbar(
+                                    'Error',
+                                    'Please upload at least one image and select a menu type.',
+                                    snackPosition: SnackPosition.TOP,
+                                    backgroundColor: Colors.red,
+                                    colorText: Colors.white,
+                                  );
+                                }
+                              },
+                            ),
+                          ],
+                        );
                       }
-                    },
-                  ),
-                ],
-              );
-            })
-                : null,
+                      return Row(
+                        children: [
+                          if (selectedIndex > 0)
+                            CustomButton(
+                              laBelText: 'Previous',
+                              fontSize: buttonTextSize,
+                              height: 45,
+                              width: 130,
+                              shadow: [],
+                              containerColor: secondaryColor.withOpacity(0.2),
+                              textColor: blackColor,
+                              ontapp: () {
+                                tabController.selectedIndex.value--;
+                              },
+                            ),
+                          const SizedBox(width: 8),
+                          CustomButton(
+                            laBelText: 'Next',
+                            fontSize: buttonTextSize,
+                            height: 45,
+                            width: 130,
+                            shadow: [],
+                            containerColor: primaryColor,
+                            ontapp: () {
+                              int selectedIndex = tabController.selectedIndex.value; // Get current index
+                              if (selectedIndex < 4) {
+                                if (selectedIndex == 0) {
+                                  // Validate Basic Info tab
+                                  final basicInfoFormKey = tabController.basicInfoFormKey;
+                                  final formState = basicInfoFormKey.currentState;
+                                  if (tabController.uploadedImages.isEmpty) {
+                                    Get.snackbar(
+                                      'Error',
+                                      'Please upload at least one restaurant image',
+                                      snackPosition: SnackPosition.TOP,
+                                      backgroundColor: Colors.red,
+                                      colorText: Colors.white,
+                                    );
+                                  } else if (formState != null &&
+                                      formState.validate() &&
+                                      tabController.areBasicInfoFieldsFilled()) {
+                                    tabController.clearFields(); // Clear Basic Info fields
+                                    tabController.selectedIndex.value++;
+                                  }
+                                } else if (selectedIndex == 1) {
+                                  // Validate Amenities tab
+                                  final amenitiesValidation = amenitiesController.areAmenitiesValid();
+                                  if (!amenitiesValidation.values.every((valid) => valid)) {
+                                    List<String> errors = [];
+                                    if (!amenitiesValidation['facilities']!) {
+                                      errors.add('Please select at least one Facility/Service.');
+                                    }
+                                    if (!amenitiesValidation['dietary']!) {
+                                      errors.add('Please select at least one Dietary Preference.');
+                                    }
+                                    if (!amenitiesValidation['atmosphere']!) {
+                                      errors.add('Please select at least one Atmosphere option.');
+                                    }
+                                    if (!amenitiesValidation['priceRange']!) {
+                                      errors.add('Please select at least one Price Range.');
+                                    }
+                                    Get.snackbar(
+                                      'Error',
+                                      errors.join('\n'),
+                                      snackPosition: SnackPosition.TOP,
+                                      backgroundColor: Colors.red,
+                                      colorText: Colors.white,
+                                      duration: const Duration(seconds: 5),
+                                    );
+                                  } else {
+                                    amenitiesController.clearFields(); // Clear Amenities fields
+                                    tabController.selectedIndex.value++;
+                                  }
+                                } else if (selectedIndex == 2) {
+                                  print("Validating Tab 2...");
+                                  if (experiencesController.experienceSubScreenFormKey.currentState!.validate() &&
+                                      experiencesController.areExperienceFieldsFilled()) {
+                                    print("Tab 2 validated, moving to Tab 3");
+                                    experiencesController.clearFields(); // Already clearing here
+                                    tabController.selectedIndex.value++;
+                                  } else {
+                                    print("Tab 2 validation failed");
+                                    Get.snackbar(
+                                      'Error',
+                                      'Please add at least one event or fill all event fields.',
+                                      snackPosition: SnackPosition.TOP,
+                                      backgroundColor: Colors.red,
+                                      colorText: Colors.white,
+                                    );
+                                  }
+                                } else {
+                                  tabController.selectedIndex.value++;
+                                }
+                              }
+                            },
+                          ),
+                        ],
+                      );
+                    })
+                    : null,
           ),
           SizedBox(height: mobileView ? 16 : 0),
           if (mobileView)
@@ -198,7 +241,34 @@ class AddRestaurantsScreen extends StatelessWidget {
                       shadow: [],
                       containerColor: primaryColor,
                       ontapp: () {
-                        // Save logic here
+                        if (menuController.areMenuFieldsFilled()) {
+                          menuController.clearFields();
+                          Get.dialog(
+                            AlertDialog(
+                              title: const Text('Success'),
+                              content: const Text('Data added successfully!'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Get.back(); // Close dialog
+                                    drawerController.addRestaurants.value =
+                                        false;
+                                    tabController.selectedIndex.value = 0;
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            ),
+                          );
+                        } else {
+                          Get.snackbar(
+                            'Error',
+                            'Please upload at least one image and select a menu type.',
+                            snackPosition: SnackPosition.TOP,
+                            backgroundColor: Colors.red,
+                            colorText: Colors.white,
+                          );
+                        }
                       },
                     ),
                   ],
@@ -224,11 +294,12 @@ class AddRestaurantsScreen extends StatelessWidget {
                   CustomButton(
                     laBelText: 'Next',
                     fontSize: buttonTextSize,
-                    height: 40,
+                    height: 45,
                     width: 130,
                     shadow: [],
                     containerColor: primaryColor,
                     ontapp: () {
+                      int selectedIndex = tabController.selectedIndex.value; // Get current index
                       if (selectedIndex < 4) {
                         if (selectedIndex == 0) {
                           // Validate Basic Info tab
@@ -245,12 +316,12 @@ class AddRestaurantsScreen extends StatelessWidget {
                           } else if (formState != null &&
                               formState.validate() &&
                               tabController.areBasicInfoFieldsFilled()) {
+                            tabController.clearFields(); // Clear Basic Info fields
                             tabController.selectedIndex.value++;
                           }
                         } else if (selectedIndex == 1) {
                           // Validate Amenities tab
-                          final amenitiesValidation =
-                          amenitiesController.areAmenitiesValid();
+                          final amenitiesValidation = amenitiesController.areAmenitiesValid();
                           if (!amenitiesValidation.values.every((valid) => valid)) {
                             List<String> errors = [];
                             if (!amenitiesValidation['facilities']!) {
@@ -274,15 +345,25 @@ class AddRestaurantsScreen extends StatelessWidget {
                               duration: const Duration(seconds: 5),
                             );
                           } else {
+                            amenitiesController.clearFields(); // Clear Amenities fields
                             tabController.selectedIndex.value++;
                           }
                         } else if (selectedIndex == 2) {
-                          // Validate Experiences tab with feedback
-                          if (experiencesController.hasEvents()) {
+                          print("Validating Tab 2...");
+                          if (experiencesController.experienceSubScreenFormKey.currentState!.validate() &&
+                              experiencesController.areExperienceFieldsFilled()) {
+                            print("Tab 2 validated, moving to Tab 3");
+                            experiencesController.clearFields(); // Already clearing here
                             tabController.selectedIndex.value++;
                           } else {
-                            // Show form validation errors without a snackbar
-                            experiencesController.validateForm(); // Triggers inline error messages
+                            print("Tab 2 validation failed");
+                            Get.snackbar(
+                              'Error',
+                              'Please add at least one event or fill all event fields.',
+                              snackPosition: SnackPosition.TOP,
+                              backgroundColor: Colors.red,
+                              colorText: Colors.white,
+                            );
                           }
                         } else {
                           tabController.selectedIndex.value++;
@@ -295,7 +376,7 @@ class AddRestaurantsScreen extends StatelessWidget {
             }),
           SizedBox(height: 24),
           Obx(
-                () => SizedBox(
+            () => SizedBox(
               height: 40,
               child: GestureDetector(
                 onHorizontalDragUpdate: (details) {
@@ -321,8 +402,11 @@ class AddRestaurantsScreen extends StatelessWidget {
                     controller: scrollController,
                     physics: const AlwaysScrollableScrollPhysics(),
                     child: Row(
-                      children: List.generate(tabController.tabs.length, (index) {
-                        bool isSelected = tabController.selectedIndex.value == index;
+                      children: List.generate(tabController.tabs.length, (
+                        index,
+                      ) {
+                        bool isSelected =
+                            tabController.selectedIndex.value == index;
                         return GestureDetector(
                           onTap: () {
                             // tabController.selectedIndex.value = index; // Disabled
@@ -338,7 +422,10 @@ class AddRestaurantsScreen extends StatelessWidget {
                               decoration: BoxDecoration(
                                 border: Border(
                                   bottom: BorderSide(
-                                    color: isSelected ? primaryColor : Colors.transparent,
+                                    color:
+                                        isSelected
+                                            ? primaryColor
+                                            : Colors.transparent,
                                     width: 2,
                                   ),
                                 ),
@@ -346,7 +433,8 @@ class AddRestaurantsScreen extends StatelessWidget {
                               child: Text(
                                 tabController.tabs[index],
                                 style: TextStyle(
-                                  color: isSelected ? primaryColor : Colors.black,
+                                  color:
+                                      isSelected ? primaryColor : Colors.black,
                                   fontWeight: FontWeight.w600,
                                   fontSize: mobileView ? 14 : 16,
                                 ),
@@ -365,17 +453,23 @@ class AddRestaurantsScreen extends StatelessWidget {
           Obx(() {
             switch (tabController.selectedIndex.value) {
               case 0:
-                return BasicInfoSubScreen(formKey: tabController.basicInfoFormKey);
+                return BasicInfoSubScreen(
+                  formKey: tabController.basicInfoFormKey,
+                );
               case 1:
                 return AmenitiesSubScreen();
               case 2:
-                return ExperiencesSubScreen(formKey: experiencesController.experienceSubScreenFormKey);
+                return ExperiencesSubScreen(
+                  formKey: experiencesController.experienceSubScreenFormKey,
+                );
               case 3:
                 return OperatingHoursSubScreen();
               case 4:
                 return MenuSubScreen();
               default:
-                return BasicInfoSubScreen(formKey: tabController.basicInfoFormKey);
+                return BasicInfoSubScreen(
+                  formKey: tabController.basicInfoFormKey,
+                );
             }
           }),
         ],

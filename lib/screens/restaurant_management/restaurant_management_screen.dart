@@ -358,10 +358,18 @@ class RestaurantManagementScreen extends StatelessWidget {
                                               controller.deleteRestaurant(
                                                 index,
                                               );
-                                            }
+                                            } else if (value == 'view') {
+                                              drawerController
+                                                  .viewRestaurantsDetails
+                                                  .value = true;
+                                            } else if (value == 'edit') {}
                                           },
                                           itemBuilder:
                                               (context) => [
+                                                PopupMenuItem(
+                                                  value: 'view',
+                                                  child: Text('View'),
+                                                ),
                                                 PopupMenuItem(
                                                   value: 'edit',
                                                   child: Text('Edit'),
