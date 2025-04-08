@@ -22,6 +22,7 @@ class CustomTextField extends StatelessWidget {
   final int? maxLines;
   final String? errorText;
   final List<TextInputFormatter>? inputFormatters;
+  final VoidCallback? ontap;
 
   const CustomTextField({
     super.key,
@@ -41,7 +42,7 @@ class CustomTextField extends StatelessWidget {
     this.readOnly = false,
     this.maxLines = 1,
     this.errorText,
-    this.inputFormatters, // Initialize errorText
+    this.inputFormatters, this.ontap, // Initialize errorText
   });
 
   @override
@@ -49,6 +50,7 @@ class CustomTextField extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     bool mobileView = screenWidth < 900;
     return TextFormField(
+      onTap: ontap,
       controller: controller,
       obscureText: isObscure,
       keyboardType: keyboardType,
