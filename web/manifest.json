@@ -1,6 +1,6 @@
 {
-    "name": "savrly",
-    "short_name": "savrly",
+    "name": "savrly admin",
+    "short_name": "savrly admin",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

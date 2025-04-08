@@ -2,10 +2,9 @@ import 'package:get/get.dart';
 
 class DrawerControllerX extends GetxController {
   // Active screen state
-  RxInt selectedScreen = 0.obs;
+  RxInt selectedScreen = 2.obs;
   var isUserManagementExpanded = false.obs;
   var hoveredItem = "".obs;
-
 
   void changeScreen(int screenNumber) {
     selectedScreen.value = screenNumber;
@@ -26,12 +25,9 @@ class DrawerControllerX extends GetxController {
   RxBool showProfile = false.obs;
   RxBool addRestaurants = false.obs;
 
-
-
   void resetAllBooleans() {
     showNotifications.value = false;
     showProfile.value = false;
     addRestaurants.value = false;
-
   }
 }
