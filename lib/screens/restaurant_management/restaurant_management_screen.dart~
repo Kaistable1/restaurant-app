@@ -24,7 +24,6 @@ class RestaurantManagementScreen extends StatelessWidget {
     // Responsive padding logic
     double paddingValue = mobileView ? 16 : 24;
     double tableTextSize = mobileView ? 9 : 14;
-    double titleTextSize = mobileView ? 24 : 32;
     double buttonTextSize = mobileView ? 11 : 16;
     double tableHeaderTextSize = mobileView ? 12 : 20;
     double imageSize = mobileView ? 30 : 50;
@@ -359,10 +358,18 @@ class RestaurantManagementScreen extends StatelessWidget {
                                               controller.deleteRestaurant(
                                                 index,
                                               );
-                                            }
+                                            } else if (value == 'view') {
+                                              drawerController
+                                                  .viewRestaurantsDetails
+                                                  .value = false;
+                                            } else if (value == 'edit') {}
                                           },
                                           itemBuilder:
                                               (context) => [
+                                                PopupMenuItem(
+                                                  value: 'view',
+                                                  child: Text('View'),
+                                                ),
                                                 PopupMenuItem(
                                                   value: 'edit',
                                                   child: Text('Edit'),
