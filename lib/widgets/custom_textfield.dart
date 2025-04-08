@@ -18,11 +18,13 @@ class CustomTextField extends StatelessWidget {
   final TextInputType keyboardType;
   final double borderRadius;
   final String? Function(String?)? validator;
+  final String? Function(String?)? onChanged;
+
   final bool readOnly;
   final int? maxLines;
   final String? errorText;
   final List<TextInputFormatter>? inputFormatters;
-
+  
   const CustomTextField({
     super.key,
     this.controller,
@@ -39,6 +41,7 @@ class CustomTextField extends StatelessWidget {
     this.borderRadius = 12.0,
     this.validator,
     this.readOnly = false,
+    this.onChanged,
     this.maxLines = 1,
     this.errorText,
     this.inputFormatters, // Initialize errorText
@@ -56,6 +59,7 @@ class CustomTextField extends StatelessWidget {
       maxLines: maxLines,
       validator: validator,
       inputFormatters: inputFormatters,
+      onChanged: onChanged,
       decoration: InputDecoration(
         hintText: hintText,
         labelText: labelText,
@@ -89,6 +93,7 @@ class CustomTextField extends StatelessWidget {
         suffixIcon: suffixIcon,
         contentPadding: EdgeInsets.symmetric(vertical: 19, horizontal: 16),
         errorText: errorText,
+        
       ),
     );
   }

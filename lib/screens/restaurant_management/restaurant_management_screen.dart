@@ -43,6 +43,18 @@ class _RestaurantManagementScreenState
     super.dispose();
   }
 
+  // Method to clear all filters
+  void clearFilters() {
+    controller.searchController.clear();
+    controller.selectedCity.value = '';
+    controller.selectedCuisine.value = '';
+    controller.currentSearchQuery.value = '';
+    controller.currentCityFilter.value = '';
+    controller.currentCuisineFilter.value = '';
+    controller.searchResults.clear();
+    controller.fetchRestaurants(isRefresh: true);
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -68,7 +80,7 @@ class _RestaurantManagementScreenState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CustomHeaderWidget(
-            title: 'Restaurant  Management',
+            title: 'Restaurant Management',
             end: true,
             endWidget: CustomButton(
               laBelText: 'Add Restaurant',
@@ -94,20 +106,34 @@ class _RestaurantManagementScreenState
                       borderColor: primaryColor,
                       hintTextColor: primaryColor,
                       prefixIcon: Icon(Icons.search, color: primaryColor),
+                      onChanged: (value) {
+                        // Trigger search logic when search text changes
+                        controller.currentSearchQuery.value = value ?? '';
+                        if (value == null || value.isEmpty) {
+                          controller.searchResults.clear();
+                          controller.fetchRestaurants(isRefresh: true);
+                        }
+                      },
                     ),
                     SizedBox(height: 16),
                     CustomDropDownWidget(
                       hint: 'Filter by City',
                       items: controller.cityList,
-                      onChanged: (value) =>
-                          controller.selectedCity.value = value!,
+                      onChanged: (value) {
+                        controller.selectedCity.value = value!;
+                        print('value ---$value');
+                        controller.fetchRestaurants(
+                            isRefresh: true, cityFilter: value);
+                      },
                     ),
                     SizedBox(height: 16),
                     CustomDropDownWidget(
                       hint: 'Filter by Cuisine',
                       items: controller.cuisineList,
-                      onChanged: (value) =>
-                          controller.selectedCuisine.value = value!,
+                      onChanged: (value) {
+                        controller.selectedCuisine.value = value!;
+                        controller.fetchRestaurants(isRefresh: true);
+                      },
                     ),
                   ],
                 )
@@ -118,8 +144,11 @@ class _RestaurantManagementScreenState
                       child: CustomDropDownWidget(
                         hint: 'Filter by City',
                         items: controller.cityList,
-                        onChanged: (value) =>
-                            controller.selectedCity.value = value!,
+                        onChanged: (value) {
+                          controller.selectedCity.value = value!;
+                          controller.fetchRestaurants(
+                              isRefresh: true, cityFilter: value);
+                        },
                       ),
                     ),
                     SizedBox(width: 16),
@@ -128,8 +157,10 @@ class _RestaurantManagementScreenState
                       child: CustomDropDownWidget(
                         hint: 'Filter by Cuisine',
                         items: controller.cuisineList,
-                        onChanged: (value) =>
-                            controller.selectedCuisine.value = value!,
+                        onChanged: (value) {
+                          controller.selectedCuisine.value = value!;
+                          controller.fetchRestaurants(isRefresh: true);
+                        },
                       ),
                     ),
                     SizedBox(width: 16),
@@ -141,6 +172,14 @@ class _RestaurantManagementScreenState
                         borderColor: primaryColor,
                         hintTextColor: primaryColor,
                         prefixIcon: Icon(Icons.search, color: primaryColor),
+                        onChanged: (value) {
+                          // Trigger search logic when search text changes
+                          controller.currentSearchQuery.value = value ?? '';
+                          if (value == null || value.isEmpty) {
+                            controller.searchResults.clear();
+                            controller.fetchRestaurants(isRefresh: true);
+                          }
+                        },
                       ),
                     ),
                   ],

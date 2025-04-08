@@ -8,6 +8,8 @@ class RestaurantManagementController extends GetxController {
   RxString selectedCity = ''.obs;
   RxString selectedCuisine = ''.obs;
   RxList<RestaurantModel> restaurants = <RestaurantModel>[].obs;
+  RxList<RestaurantModel> searchResults =
+      <RestaurantModel>[].obs; // For search results
   DocumentSnapshot? lastDocument;
   RxBool hasMoreData = true.obs;
   RxBool isLoading = false.obs;
@@ -28,7 +30,11 @@ class RestaurantManagementController extends GetxController {
     getAllRestaurantsLength();
     searchController.addListener(() {
       currentSearchQuery.value = searchController.text;
-      fetchRestaurants(isRefresh: true);
+      if (currentSearchQuery.value.isNotEmpty) {
+        fetchAllRestaurantsForSearch(); // Fetch all for search
+      } else {
+        fetchRestaurants(isRefresh: true); // Reset to normal pagination
+      }
       getAllRestaurantsLength();
     });
     ever(selectedCity, (_) {
@@ -51,29 +57,121 @@ class RestaurantManagementController extends GetxController {
           FirebaseFirestore.instance.collection('restaurants');
       Query query = restaurantsRef;
 
+      QuerySnapshot querySnapshot = await query.get();
+      List<RestaurantModel> restaurants = querySnapshot.docs.map((doc) {
+        return RestaurantModel.fromDocumentSnapshot(
+            doc as DocumentSnapshot<Map<String, dynamic>>);
+      }).toList();
+
       if (searchQuery != null && searchQuery.isNotEmpty) {
-        query = query
-            .where('resName', isGreaterThanOrEqualTo: searchQuery)
-            .where('resName', isLessThanOrEqualTo: '$searchQuery\uf8ff');
+        restaurants = restaurants
+            .where((restaurant) => restaurant.resName
+                .toLowerCase()
+                .contains(searchQuery.toLowerCase()))
+            .toList();
       }
 
       if (cityFilter != null && cityFilter.isNotEmpty && cityFilter != 'All') {
-        query = query.where('city', isEqualTo: cityFilter);
+        restaurants = restaurants
+            .where((restaurant) =>
+                restaurant.city.toLowerCase() == cityFilter.toLowerCase())
+            .toList();
       }
 
       if (cuisineFilter != null &&
           cuisineFilter.isNotEmpty &&
           cuisineFilter != 'All') {
-        query = query.where('dietaryList', arrayContains: cuisineFilter);
+        restaurants = restaurants
+            .where((restaurant) => restaurant.dietaryList
+                .map((cuisine) => cuisine.toLowerCase())
+                .contains(cuisineFilter.toLowerCase()))
+            .toList();
       }
 
-      QuerySnapshot querySnapshot = await query.get();
-      totalRestaurantsLength.value = querySnapshot.docs.length;
+      totalRestaurantsLength.value = restaurants.length;
       print('Total restaurants in database: ${totalRestaurantsLength.value}');
     } catch (e) {
       print('Error fetching total restaurants length: $e');
       totalRestaurantsLength.value = 0;
     }
+  }
+
+  // Fetch all restaurants for search
+  Future<void> fetchAllRestaurantsForSearch() async {
+    try {
+      isLoading.value = true;
+      CollectionReference restaurantsRef =
+          FirebaseFirestore.instance.collection('restaurants');
+      Query query = restaurantsRef;
+
+      QuerySnapshot querySnapshot = await query.get();
+      List<RestaurantModel> allRestaurants = querySnapshot.docs.map((doc) {
+        return RestaurantModel.fromDocumentSnapshot(
+            doc as DocumentSnapshot<Map<String, dynamic>>);
+      }).toList();
+
+      // Apply search filter
+      searchResults.value = allRestaurants
+          .where((restaurant) => restaurant.resName
+              .toLowerCase()
+              .contains(currentSearchQuery.value.toLowerCase()))
+          .toList();
+
+      // Apply city and cuisine filters if active
+      if (currentCityFilter.value.isNotEmpty &&
+          currentCityFilter.value != 'All') {
+        searchResults.value = searchResults
+            .where((restaurant) =>
+                restaurant.city.toLowerCase() ==
+                currentCityFilter.value.toLowerCase())
+            .toList();
+      }
+
+      if (currentCuisineFilter.value.isNotEmpty &&
+          currentCuisineFilter.value != 'All') {
+        searchResults.value = searchResults
+            .where((restaurant) => restaurant.dietaryList
+                .map((cuisine) => cuisine.toLowerCase())
+                .contains(currentCuisineFilter.value.toLowerCase()))
+            .toList();
+      }
+
+      // Reset restaurants list and paginate search results
+      restaurants.clear();
+      lastDocument = null;
+      hasMoreData.value = true;
+      paginateSearchResults();
+    } catch (e) {
+      print('Error fetching all restaurants for search: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // Paginate the search results
+  void paginateSearchResults() {
+    if (!hasMoreData.value) {
+      print('No more search results to paginate');
+      return;
+    }
+
+    int startIndex = restaurants.length;
+    int endIndex = startIndex + pageSize;
+    if (endIndex >= searchResults.length) {
+      endIndex = searchResults.length;
+      hasMoreData.value = false;
+    }
+
+    if (startIndex >= searchResults.length) {
+      hasMoreData.value = false;
+      return;
+    }
+
+    List<RestaurantModel> newRestaurants =
+        searchResults.sublist(startIndex, endIndex);
+    restaurants.addAll(newRestaurants);
+    print('Paginated ${newRestaurants.length} search results');
+    print('Total restaurants in list: ${restaurants.length}');
   }
 
   Future<List<RestaurantModel>> getRestaurantsWithPagination({
@@ -88,30 +186,10 @@ class RestaurantManagementController extends GetxController {
           FirebaseFirestore.instance.collection('restaurants');
       Query query = restaurantsRef;
 
-      // Apply search filter without orderBy
-      if (searchQuery != null && searchQuery.isNotEmpty) {
-        print('Applying search filter: $searchQuery');
-        // Search will be handled client-side
-      }
+      // Apply pagination limit (fetch more than pageSize to account for client-side filtering)
+      query = query.limit(pageSize * 2);
 
-      // Apply city filter
-      if (cityFilter != null && cityFilter.isNotEmpty && cityFilter != 'All') {
-        print('Applying city filter: $cityFilter');
-        query = query.where('city', isEqualTo: cityFilter);
-      }
-
-      // Apply cuisine filter
-      if (cuisineFilter != null &&
-          cuisineFilter.isNotEmpty &&
-          cuisineFilter != 'All') {
-        print('Applying cuisine filter: $cuisineFilter');
-        query = query.where('dietaryList', arrayContains: cuisineFilter);
-      }
-
-      // Apply pagination limit
-      query = query.limit(pageSize);
-
-      // Start after the last document if it exists (using the full DocumentSnapshot)
+      // Start after the last document if it exists
       if (lastDocument != null) {
         print('Starting after document: ${lastDocument.id}');
         query = query.startAfterDocument(lastDocument);
@@ -126,16 +204,38 @@ class RestaurantManagementController extends GetxController {
             doc as DocumentSnapshot<Map<String, dynamic>>);
       }).toList();
 
-      // Apply search filter client-side if searchQuery is provided
+      // Apply all filters client-side
       if (searchQuery != null && searchQuery.isNotEmpty) {
         restaurants = restaurants
             .where((restaurant) => restaurant.resName
                 .toLowerCase()
                 .contains(searchQuery.toLowerCase()))
             .toList();
-        print(
-            'After client-side search filter: ${restaurants.length} restaurants');
+        print('After search filter: ${restaurants.length} restaurants');
       }
+
+      if (cityFilter != null && cityFilter.isNotEmpty && cityFilter != 'All') {
+        restaurants = restaurants
+            .where((restaurant) =>
+                restaurant.city.toLowerCase() == cityFilter.toLowerCase())
+            .toList();
+        print('After city filter: ${restaurants.length} restaurants');
+      }
+
+      if (cuisineFilter != null &&
+          cuisineFilter.isNotEmpty &&
+          cuisineFilter != 'All') {
+        restaurants = restaurants
+            .where((restaurant) => restaurant.dietaryList
+                .map((cuisine) => cuisine.toLowerCase())
+                .contains(cuisineFilter.toLowerCase()))
+            .toList();
+        print('After cuisine filter: ${restaurants.length} restaurants');
+      }
+
+      // Limit to pageSize after filtering
+      restaurants = restaurants.take(pageSize).toList();
+      print('After limiting to pageSize: ${restaurants.length} restaurants');
 
       // Update lastDocument for the next fetch
       this.lastDocument =
@@ -164,6 +264,17 @@ class RestaurantManagementController extends GetxController {
       return;
     }
 
+    // If search query is active, paginate search results instead
+    if (currentSearchQuery.value.isNotEmpty) {
+      isLoading.value = true;
+      try {
+        paginateSearchResults();
+      } finally {
+        isLoading.value = false;
+      }
+      return;
+    }
+
     isLoading.value = true;
     print('Starting fetchRestaurants (isRefresh: $isRefresh)');
 
@@ -189,6 +300,7 @@ class RestaurantManagementController extends GetxController {
       }
 
       print('Fetching restaurants with pageSize: $pageSize');
+      print('currentCityFilter.value ----------- ${cityFilter}');
       List<RestaurantModel> newRestaurants = await getRestaurantsWithPagination(
         pageSize: pageSize,
         lastDocument: lastDocument,
@@ -215,7 +327,6 @@ class RestaurantManagementController extends GetxController {
       print('Finished fetchRestaurants');
     }
   }
-  //
 
   void deleteRestaurant(int index) async {
     try {
@@ -225,6 +336,9 @@ class RestaurantManagementController extends GetxController {
           .doc(docID)
           .delete();
       restaurants.removeAt(index);
+      if (currentSearchQuery.value.isNotEmpty) {
+        searchResults.removeWhere((restaurant) => restaurant.docID == docID);
+      }
       getAllRestaurantsLength(
         searchQuery: currentSearchQuery.value,
         cityFilter: currentCityFilter.value,
