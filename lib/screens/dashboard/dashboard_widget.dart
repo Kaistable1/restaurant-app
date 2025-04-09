@@ -4,6 +4,7 @@ class DashboardCard extends StatefulWidget {
   final String imagePath;
   final String title;
   final String count;
+  final double? width;
   final void Function()? onTap;
 
   const DashboardCard({
@@ -12,6 +13,7 @@ class DashboardCard extends StatefulWidget {
     required this.title,
     required this.count,
     this.onTap,
+    this.width,
   });
 
   @override
@@ -69,7 +71,7 @@ class _DashboardCardState extends State<DashboardCard> {
         cursor: SystemMouseCursors.click,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
-          width: cardWidth,
+          width: widget.width ?? cardWidth,
           height: cardHeight,
           transform: _isTapped
               ? Matrix4.identity().scaled(1.03) // Scale up slightly
