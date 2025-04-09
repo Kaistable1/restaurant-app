@@ -17,7 +17,6 @@ class AddEvents extends StatelessWidget {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final drawerController = Get.put(DrawerControllerX());
   final controller = Get.put(AddEventController());
-
   AddEvents({super.key});
 
   @override
@@ -63,14 +62,12 @@ class AddEvents extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 30),
-
               Padding(
                 padding: const EdgeInsets.only(left: 2.0),
                 child: Container(
-                  width:
-                      isTablet
-                          ? screenWidth * .9
-                          : isMobile
+                  width: isTablet
+                      ? screenWidth * .9
+                      : isMobile
                           ? screenWidth * .9
                           : screenWidth * .6,
                   height:
@@ -95,10 +92,8 @@ class AddEvents extends StatelessWidget {
                         Text(
                           'Event images',
                           style: headingText.copyWith(
-                            fontSize: isMobile ? 16 : 20,
-                          ),
+                              fontSize: isMobile ? 16 : 20),
                         ),
-
                         const SizedBox(height: 10),
                         Obx(
                           () => SizedBox(
@@ -109,13 +104,12 @@ class AddEvents extends StatelessWidget {
                                 // Handle mouse drag
                                 final newOffset =
                                     horizontalScrollController.offset -
-                                    details.delta.dx;
+                                        details.delta.dx;
                                 horizontalScrollController.jumpTo(
                                   newOffset.clamp(
                                     0.0,
                                     horizontalScrollController
-                                        .position
-                                        .maxScrollExtent,
+                                        .position.maxScrollExtent,
                                   ),
                                 );
                               },
@@ -123,8 +117,8 @@ class AddEvents extends StatelessWidget {
                                 controller: horizontalScrollController,
                                 thumbVisibility:
                                     controller.uploadedImages.length *
-                                        (imageWidth + 12) >
-                                    screenWidth,
+                                            (imageWidth + 12) >
+                                        screenWidth,
                                 // Show scrollbar only when content exceeds width
                                 child: Listener(
                                   onPointerSignal: (PointerSignalEvent event) {
@@ -147,62 +141,54 @@ class AddEvents extends StatelessWidget {
                                         ...controller.uploadedImages
                                             .asMap()
                                             .entries
-                                            .map((entry) {
-                                              int index = entry.key;
-                                              Uint8List imageData = entry.value;
+                                            .map((
+                                          entry,
+                                        ) {
+                                          int index = entry.key;
+                                          Uint8List imageData = entry.value;
 
-                                              return Stack(
-                                                children: [
-                                                  Container(
-                                                    width: imageWidth,
-                                                    height: imageHeight,
-                                                    margin:
-                                                        const EdgeInsets.only(
-                                                          right: 12,
-                                                        ),
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            8,
-                                                          ),
-                                                      image: DecorationImage(
-                                                        image: MemoryImage(
-                                                          imageData,
-                                                        ),
-                                                        fit: BoxFit.cover,
+                                          return Stack(
+                                            children: [
+                                              Container(
+                                                width: imageWidth,
+                                                height: imageHeight,
+                                                margin: const EdgeInsets.only(
+                                                    right: 12),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                  image: DecorationImage(
+                                                    image:
+                                                        MemoryImage(imageData),
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                              ),
+                                              Positioned(
+                                                top: 4,
+                                                right: 4,
+                                                child: GestureDetector(
+                                                  onTap: () => controller
+                                                      .removeImage(index),
+                                                  child: const MouseRegion(
+                                                    cursor: SystemMouseCursors
+                                                        .click,
+                                                    child: CircleAvatar(
+                                                      radius: 10,
+                                                      backgroundColor:
+                                                          Colors.red,
+                                                      child: Icon(
+                                                        Icons.close,
+                                                        size: 13,
+                                                        color: Colors.white,
                                                       ),
                                                     ),
                                                   ),
-                                                  Positioned(
-                                                    top: 4,
-                                                    right: 4,
-                                                    child: GestureDetector(
-                                                      onTap:
-                                                          () => controller
-                                                              .removeImage(
-                                                                index,
-                                                              ),
-                                                      child: const MouseRegion(
-                                                        cursor:
-                                                            SystemMouseCursors
-                                                                .click,
-                                                        child: CircleAvatar(
-                                                          radius: 10,
-                                                          backgroundColor:
-                                                              Colors.red,
-                                                          child: Icon(
-                                                            Icons.close,
-                                                            size: 13,
-                                                            color: Colors.white,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              );
-                                            })
-                                            .toList(),
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        }).toList(),
 
                                         // Upload Image Box
                                         MouseRegion(
@@ -262,7 +248,6 @@ class AddEvents extends StatelessWidget {
                             ),
                           ),
                         ),
-
                         const SizedBox(height: 10),
                         TextAndFieldsOrDropDown(
                           labelText: 'Event name',
@@ -276,14 +261,12 @@ class AddEvents extends StatelessWidget {
                             return null;
                           },
                         ),
-
                         TextAndFieldsOrDropDown(
                           labelText: 'Event type',
                           dropHintText: 'Concert',
                           items: controller.events,
-                          currentValue: controller.selectEvent.value,
-                          onChanged:
-                              (value) => controller.selectEvent.value = value!,
+                          onChanged: (value) =>
+                              controller.selectEvent.value = value!,
                           dropDownValidator: (value) {
                             if (value == null || value.trim().isEmpty) {
                               return 'Please select an event type.';
@@ -310,8 +293,7 @@ class AddEvents extends StatelessWidget {
                           fieldHintText: 'June 15-17, 2024',
                           fieldController: controller.dateController,
                           isDropDown: false,
-                          readOnly: true,
-                          // Make field read-only
+                          readOnly: true, // Make field read-only
                           ontap: () async {
                             DateTime? pickedDate = await showDatePicker(
                               context: context,
@@ -320,9 +302,8 @@ class AddEvents extends StatelessWidget {
                               lastDate: DateTime(2100),
                             );
                             if (pickedDate != null) {
-                              controller.dateController.text = DateFormat(
-                                'yyyy-MM-dd',
-                              ).format(pickedDate);
+                              controller.dateController.text =
+                                  DateFormat('yyyy-MM-dd').format(pickedDate);
                             }
                           },
                           fieldValidator: (value) {
@@ -360,7 +341,6 @@ class AddEvents extends StatelessWidget {
                             return null;
                           },
                         ),
-
                         TextAndFieldsOrDropDown(
                           labelText: 'Phone number',
                           fieldHintText: '0899787878787',
@@ -372,9 +352,8 @@ class AddEvents extends StatelessWidget {
                             }
 
                             final trimmedValue = value.trim();
-                            final phoneRegExp = RegExp(
-                              r'^[0-9]+$',
-                            ); // Only digits
+                            final phoneRegExp =
+                                RegExp(r'^[0-9]+$'); // Only digits
 
                             if (!phoneRegExp.hasMatch(trimmedValue)) {
                               return 'Phone number must contain digits only.';
@@ -421,59 +400,60 @@ class AddEvents extends StatelessWidget {
                             return null;
                           },
                         ),
-                        SizedBox(height: 30),
-
+                        SizedBox(
+                          height: 30,
+                        ),
                         Center(
                           child: CustomButton(
-                            ontapp: () {
-                              if (formKey.currentState!.validate()) {
-                                if (controller.uploadedImages.isEmpty) {
+                              ontapp: () {
+                                if (formKey.currentState!.validate()) {
+                                  if (controller.uploadedImages.isEmpty) {
+                                    Get.snackbar(
+                                      'Image Required',
+                                      'Please upload at least one image for the event.',
+                                      maxWidth: 400,
+                                      backgroundColor: primaryColor,
+                                      colorText: Colors.white,
+                                      snackPosition: SnackPosition.TOP,
+                                    );
+                                    return;
+                                  }
+
+                                  // Success logic
                                   Get.snackbar(
-                                    'Image Required',
-                                    'Please upload at least one image for the event.',
+                                    'Success!',
+                                    "Data saved successfully",
                                     maxWidth: 400,
                                     backgroundColor: primaryColor,
                                     colorText: Colors.white,
-                                    snackPosition: SnackPosition.TOP,
+                                    snackPosition: SnackPosition.BOTTOM,
                                   );
-                                  return;
+                                  drawerController.addEvent.value = false;
+                                  // Clear all controllers
+                                  controller.eventNameController.clear();
+                                  controller.events
+                                      .clear(); // Only clear selected value if needed
+                                  controller.locationController.clear();
+                                  controller.descriptionController.clear();
+                                  controller.urlController.clear();
+                                  controller.phoneNumberController.clear();
+                                  controller.timeController.clear();
+                                  controller.dateController.clear();
+                                  controller.uploadedImages
+                                      .clear(); // Clear images as well
                                 }
-
-                                // Success logic
-                                Get.snackbar(
-                                  'Success!',
-                                  "Data saved successfully",
-                                  maxWidth: 400,
-                                  backgroundColor: primaryColor,
-                                  colorText: Colors.white,
-                                  snackPosition: SnackPosition.BOTTOM,
-                                );
-                                drawerController.addEvent.value = false;
-                                // Clear all controllers
-                                controller.eventNameController.clear();
-                                controller.events
-                                    .clear(); // Only clear selected value if needed
-                                controller.locationController.clear();
-                                controller.descriptionController.clear();
-                                controller.urlController.clear();
-                                controller.phoneNumberController.clear();
-                                controller.timeController.clear();
-                                controller.dateController.clear();
-                                controller.uploadedImages
-                                    .clear(); // Clear images as well
-                              }
-                            },
-
-                            width: 169,
-                            laBelText: 'Save',
-                          ),
-                        ),
+                              },
+                              width: 169,
+                              laBelText: 'Save'),
+                        )
                       ],
                     ),
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              SizedBox(
+                height: 20,
+              ),
             ],
           ),
         ),
