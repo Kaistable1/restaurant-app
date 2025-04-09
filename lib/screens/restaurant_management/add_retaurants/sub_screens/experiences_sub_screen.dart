@@ -68,26 +68,12 @@ class ExperiencesSubScreen extends StatelessWidget {
                           return null;
                         },
                       ),
-                      TextAndFieldsOrDropDown(
-                        labelText: 'Day',
-                        dropHintText: 'Day',
-                        items: controller.dayList,
-                        onChanged:
-                            (value) => controller.selectedDay.value = value!,
-                        dropDownValidator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Please select a state.';
-                          }
-                          return null;
-                        },
-                        isDropDown: true,
-                      ),
                       GestureDetector(
                         onTap: () => controller.selectDate(context),
                         child: AbsorbPointer(
                           child: TextAndFieldsOrDropDown(
                             labelText: 'Date',
-                            fieldHintText: 'June 15-17, 2024',
+                            fieldHintText: '17 June 2024',
                             fieldController: controller.dateController,
                             isDropDown: false,
                             fieldValidator: (value) {

@@ -1,13 +1,27 @@
-import 'dart:html' as html;
+// import 'dart:html' as html;
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:typed_data';
 
 class AddRestaurantTabController extends GetxController {
+  final basicInfoFormKey = GlobalKey<FormState>();
+  final restaurantNameController = TextEditingController();
+  final contactController = TextEditingController();
+  final emailController = TextEditingController();
+  final assignPasswordController = TextEditingController();
+  final areaController = TextEditingController();
+  final tiktokLinkController = TextEditingController();
+  final instagramController = TextEditingController();
+  var isPasswordVisible = false.obs;
   RxInt selectedIndex = 0.obs;
   RxString selectedState = ''.obs;
   RxString selectedCity = ''.obs;
   RxString selectedSpokenLanguage = ''.obs;
+
+  void togglePasswordVisibility() {
+    isPasswordVisible.value = !isPasswordVisible.value;
+  }
 
   RxList<String> spokenLanguageList =
       <String>['Urdu', 'Punjabi', 'Spanish',].obs;
@@ -47,4 +61,47 @@ class AddRestaurantTabController extends GetxController {
       print("No file selected");
     }
   }
+  void removeImage(int index) {
+    if (index >= 0 && index < uploadedImages.length) {
+      uploadedImages.removeAt(index);
+    }
+  }
+
+
+  bool areBasicInfoFieldsFilled() {
+    // Check all required text controllers
+    bool textFieldsValid = restaurantNameController.text.trim().isNotEmpty &&
+        contactController.text.trim().isNotEmpty &&
+        emailController.text.trim().isNotEmpty &&
+        assignPasswordController.text.trim().isNotEmpty &&
+        areaController.text.trim().isNotEmpty &&
+        instagramController.text.trim().isNotEmpty &&
+        tiktokLinkController.text.trim().isNotEmpty;
+
+    // Check dropdowns
+    bool dropdownsValid = selectedState.value.isNotEmpty &&
+        selectedCity.value.isNotEmpty &&
+        selectedSpokenLanguage.value.isNotEmpty;
+
+    // Check if at least one image is uploaded
+    bool imagesValid = uploadedImages.isNotEmpty;
+
+    return textFieldsValid && dropdownsValid && imagesValid;
+  }
+
+  void clearFields() {
+    restaurantNameController.clear();
+    contactController.clear();
+    emailController.clear();
+    assignPasswordController.clear();
+    areaController.clear();
+    instagramController.clear();
+    tiktokLinkController.clear();
+    uploadedImages.clear();
+    selectedState.value = '';
+    selectedCity.value = '';
+    selectedSpokenLanguage.value = '';
+    isPasswordVisible.value = false; // Reset visibility
+  }
+
 }

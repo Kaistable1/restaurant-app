@@ -1,4 +1,4 @@
-import 'dart:html' as html;
+// import 'dart:html' as html;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -69,25 +69,31 @@ class AddRestaurantTabController extends GetxController {
 
 
   bool areBasicInfoFieldsFilled() {
-    // Check all required text controllers
-    bool textFieldsValid = restaurantNameController.text.trim().isNotEmpty &&
+    return restaurantNameController.text.trim().isNotEmpty &&
         contactController.text.trim().isNotEmpty &&
         emailController.text.trim().isNotEmpty &&
         assignPasswordController.text.trim().isNotEmpty &&
         areaController.text.trim().isNotEmpty &&
         instagramController.text.trim().isNotEmpty &&
-        tiktokLinkController.text.trim().isNotEmpty;
-
-    // Check dropdowns
-    bool dropdownsValid = selectedState.value.isNotEmpty &&
+        tiktokLinkController.text.trim().isNotEmpty &&
+        selectedState.value.isNotEmpty &&
         selectedCity.value.isNotEmpty &&
         selectedSpokenLanguage.value.isNotEmpty;
-
-    // Check if at least one image is uploaded
-    bool imagesValid = uploadedImages.isNotEmpty;
-
-    return textFieldsValid && dropdownsValid && imagesValid;
   }
 
+  void clearFields() {
+    restaurantNameController.clear();
+    contactController.clear();
+    emailController.clear();
+    assignPasswordController.clear();
+    areaController.clear();
+    instagramController.clear();
+    tiktokLinkController.clear();
+    uploadedImages.clear();
+    selectedState.value = '';
+    selectedCity.value = '';
+    selectedSpokenLanguage.value = '';
+    isPasswordVisible.value = false; // Reset visibility
+  }
 
 }

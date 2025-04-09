@@ -16,16 +16,17 @@ class TextAndFieldsOrDropDown extends StatelessWidget {
     this.fieldValidator,
     this.keyboardType = TextInputType.text,
     this.onChanged,
-    this.labelText,
+    required this.labelText,
     this.inputFormatters,
     this.fieldSuffixIcon,
     this.isObscure = false,
     this.dropDownValidator,
-    this.maxLines,   this.readOnly = false, this.ontap,
+    this.maxLines = 1,
+       this.readOnly = false, this.ontap,
   });
 
   final bool isDropDown;
-  final String? labelText;
+  final String labelText;
   final String? fieldHintText;
   final String? dropHintText;
   final List<String>? items;
@@ -37,7 +38,7 @@ class TextAndFieldsOrDropDown extends StatelessWidget {
   final Widget? fieldSuffixIcon;
   final bool isObscure;
   final String? Function(String?)? dropDownValidator;
-  final int? maxLines;
+  final int maxLines;
   final bool readOnly;
   final VoidCallback? ontap;
 
@@ -49,7 +50,7 @@ class TextAndFieldsOrDropDown extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          labelText!,
+          labelText,
           style: headingText.copyWith(fontSize: mobileView ? 16 : 20),
         ),
         SizedBox(height: 10),
@@ -72,7 +73,7 @@ class TextAndFieldsOrDropDown extends StatelessWidget {
               hint: dropHintText!,
               items: items!,
               onChanged: onChanged!,
-          validator: dropDownValidator,
+              validator: dropDownValidator,
             ),
         SizedBox(height: 16),
       ],

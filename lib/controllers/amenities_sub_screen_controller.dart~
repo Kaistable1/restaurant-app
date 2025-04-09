@@ -86,7 +86,12 @@ class AmenitiesSubScreenController extends GetxController {
       dietaryPreferences.refresh();
     }
   }
-
+  List<String> getSelectedDietaryPreferences() {
+    return dietaryPreferences
+        .where((item) => item['isChecked'] == true)
+        .map((item) => item['name'] as String)
+        .toList();
+  }
 
   Future<void> addAtmosphere() async {
     final result = await _showAddDialog('Add Atmosphere');
@@ -172,30 +177,11 @@ class AmenitiesSubScreenController extends GetxController {
     priceRange.refresh();
   }
 
-  List<String> getSelectedDietaryPreferences() {
-    return dietaryPreferences
-        .where((item) => item['isChecked'] == true)
-        .map((item) => item['name'] as String)
-        .toList();
-  }
+
 
   // Helper to get selected facilities
   List<String> getSelectedFacilities() {
     return facilities
-        .where((item) => item['isChecked'] == true)
-        .map((item) => item['name'] as String)
-        .toList();
-  }
-
-  List<String> getSelectedAtmosphere() {
-    return atmosphere
-        .where((item) => item['isChecked'] == true)
-        .map((item) => item['name'] as String)
-        .toList();
-  }
-
-  List<String> getSelectedPriceRange() {
-    return priceRange
         .where((item) => item['isChecked'] == true)
         .map((item) => item['name'] as String)
         .toList();
