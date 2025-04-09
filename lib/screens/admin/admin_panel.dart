@@ -5,6 +5,9 @@ import 'package:savrly/screens/events_managements/view_events/view_event.dart';
 
 import '../../constants/app_colors.dart';
 import '../about_app/about_app.dart';
+import '../banner_management/add_banner/add_banner.dart';
+import '../banner_management/banner_details/banner_details_screen.dart';
+import '../banner_management/banner_management.dart';
 import '../contact_us/contact_us_screen.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../../controllers/drawer_controller.dart';
@@ -14,6 +17,8 @@ import '../drawer/drawer_screen.dart';
 import '../events_managements/add_event/add_events.dart';
 import '../events_managements/events_managements.dart';
 import '../events_managements/view_events/widget/event_details_gallary.dart';
+import '../restaurant_claims/cliams_details/restaurants_claims_details.dart';
+import '../restaurant_claims/restaurants_claims_screen.dart';
 import '../restaurant_management/add_retaurants/add_restaurants_screen.dart';
 import '../restaurant_management/restaurant_management_screen.dart';
 import '../restaurant_management/view_restaurant_details/view_restaurant_details.dart';
@@ -67,7 +72,30 @@ class AdminPanel extends StatelessWidget {
       screen = ViewRestaurantDetails();
     } else if (controller.addRestaurants.value) {
       screen = AddRestaurantsScreen();
-    } else {
+
+    }
+    else if (controller.addEvent.value) {
+      screen = AddEvents();
+    }
+    else if (controller.viewEvents.value) {
+      screen = ViewEvent();
+    }
+    else if (controller.viewEventsGallery.value) {
+      screen = EventDetailsGallery();
+    } else if (controller.showNotifications.value) {
+      screen = NotificationScreen( );
+    }
+    else if(controller.viewClaimsDetails.value){
+      screen=RestaurantsClaimsDetails();
+    }
+    else if (controller.viewBannerDetails.value){
+      screen=BannerDetailsScreen();
+    }
+    else if(controller.addBanner.value){
+      screen=AddBanner();
+    }
+
+    else {
       if (controller.selectedScreen.value == 0) {
         screen = DashboardScreen();
       } else if (controller.selectedScreen.value == 1) {
@@ -77,9 +105,9 @@ class AdminPanel extends StatelessWidget {
       } else if (controller.selectedScreen.value == 3) {
         screen = EventsManagements();
       } else if (controller.selectedScreen.value == 4) {
-        screen = SizedBox();
+        screen = RestaurantsClaimsScreen();
       } else if (controller.selectedScreen.value == 5) {
-        screen = SizedBox();
+        screen = BannerManagement();
       } else if (controller.selectedScreen.value == 6) {
         screen = SubAdminScreens();
       } else if (controller.selectedScreen.value == 7) {
