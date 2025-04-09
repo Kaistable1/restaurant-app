@@ -68,26 +68,12 @@ class ExperiencesSubScreen extends StatelessWidget {
                           return null;
                         },
                       ),
-                      TextAndFieldsOrDropDown(
-                        labelText: 'Day',
-                        dropHintText: 'Day',
-                        items: controller.dayList,
-                        onChanged:
-                            (value) => controller.selectedDay.value = value!,
-                        dropDownValidator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Please select a state.';
-                          }
-                          return null;
-                        },
-                        isDropDown: true,
-                      ),
                       GestureDetector(
                         onTap: () => controller.selectDate(context),
                         child: AbsorbPointer(
                           child: TextAndFieldsOrDropDown(
                             labelText: 'Date',
-                            fieldHintText: 'June 15-17, 2024',
+                            fieldHintText: '17 June 2024',
                             fieldController: controller.dateController,
                             isDropDown: false,
                             fieldValidator: (value) {
@@ -103,9 +89,26 @@ class ExperiencesSubScreen extends StatelessWidget {
                         onTap: () => controller.selectTime(context),
                         child: AbsorbPointer(
                           child: TextAndFieldsOrDropDown(
-                            labelText: 'Time',
+                            labelText: 'Start Time',
                             fieldHintText: '9:00 am',
                             fieldController: controller.timeController,
+                            isDropDown: false,
+                            fieldValidator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Please select a time.';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => controller.selectEndTime(context),
+                        child: AbsorbPointer(
+                          child: TextAndFieldsOrDropDown(
+                            labelText: 'End Time',
+                            fieldHintText: '12:00 am',
+                            fieldController: controller.endTimeController,
                             isDropDown: false,
                             fieldValidator: (value) {
                               if (value!.isEmpty) {

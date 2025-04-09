@@ -21,13 +21,30 @@ class DrawerControllerX extends GetxController {
   }
 
   //SubScreens
+  RxBool showCreateNotifications = false.obs;
   RxBool showNotifications = false.obs;
   RxBool showProfile = false.obs;
   RxBool addRestaurants = false.obs;
+  RxBool viewRestaurantsDetails = false.obs;
+  RxBool userDetails = false.obs;
+
+
+  RxBool viewEvents=false.obs;
+  RxBool viewEventsGallery=false.obs;
+  RxBool addEvent=false.obs;
+
+
 
   void resetAllBooleans() {
-    showNotifications.value = false;
+    showCreateNotifications.value = false;
+     showNotifications.value = false;
     showProfile.value = false;
     addRestaurants.value = false;
+    viewEvents.value=false;
+    viewEventsGallery.value=false;
+    addEvent.value=false;
+    viewRestaurantsDetails.value = false;
+    userDetails.value = false;
+
   }
 }

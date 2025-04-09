@@ -65,7 +65,7 @@ class BasicInfoSubScreen extends StatelessWidget {
                       controller: horizontalScrollController,
                       thumbVisibility:
                           controller.uploadedImages.length * (imageWidth + 12) >
-                          screenWidth,
+                              screenWidth,
                       // Show scrollbar only when content exceeds width
                       child: Listener(
                         onPointerSignal: (PointerSignalEvent event) {
@@ -107,8 +107,8 @@ class BasicInfoSubScreen extends StatelessWidget {
                                       top: 4,
                                       right: 4,
                                       child: GestureDetector(
-                                        onTap:
-                                            () => controller.removeImage(index),
+                                        onTap: () =>
+                                            controller.removeImage(index),
                                         child: const MouseRegion(
                                           cursor: SystemMouseCursors.click,
                                           child: CircleAvatar(
@@ -197,21 +197,6 @@ class BasicInfoSubScreen extends StatelessWidget {
                       },
                     ),
                   ),
-                  const SizedBox(width: 24),
-                  Expanded(
-                    child: TextAndFieldsOrDropDown(
-                      labelText: 'Contact',
-                      fieldHintText: '09876766363',
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(11),
-                        FilteringTextInputFormatter.digitsOnly,
-                      ],
-                      fieldController: controller.contactController,
-                      fieldValidator: (value) => isPhoneNumberValid(value!),
-                      isDropDown: false,
-                    ),
-                  ),
                 ],
               ),
               Row(
@@ -256,8 +241,9 @@ class BasicInfoSubScreen extends StatelessWidget {
                       labelText: 'State',
                       dropHintText: 'State',
                       items: controller.stateList,
-                      onChanged:
-                          (value) => controller.selectedState.value = value!,
+                      currentValue: controller.selectedState.value,
+                      onChanged: (value) =>
+                          controller.selectedState.value = value!,
                       dropDownValidator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return 'Please select a state.';
@@ -272,9 +258,12 @@ class BasicInfoSubScreen extends StatelessWidget {
                     child: TextAndFieldsOrDropDown(
                       labelText: 'City',
                       dropHintText: 'City',
-                      items: controller.cityList,
-                      onChanged:
-                          (value) => controller.selectedCity.value = value!,
+                      currentValue: controller.selectedCity.value,
+                      items: controller.selectedState.value == 'Los Angeles'
+                          ? controller.losAngelusCities
+                          : controller.newYorkCitiesList,
+                      onChanged: (value) =>
+                          controller.selectedCity.value = value!,
                       dropDownValidator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return 'Please select a city.';
@@ -308,9 +297,9 @@ class BasicInfoSubScreen extends StatelessWidget {
                       labelText: 'Spoken Language',
                       dropHintText: 'Language',
                       items: controller.spokenLanguageList,
-                      onChanged:
-                          (value) =>
-                              controller.selectedSpokenLanguage.value = value!,
+                      currentValue: controller.selectedSpokenLanguage.value,
+                      onChanged: (value) =>
+                          controller.selectedSpokenLanguage.value = value!,
                       dropDownValidator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return 'Please select a spoken language.';

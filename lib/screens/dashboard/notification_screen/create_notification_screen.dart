@@ -15,12 +15,12 @@ import '../../../widgets/button.dart';
 import '../../../widgets/custom_textfield.dart';
 import '../../../widgets/customheader_widget.dart';
 
-class NotificationScreen extends StatelessWidget {
+class CreateNotificationScreen extends StatelessWidget {
   final drawerController = Get.put(DrawerControllerX());
   final controller=Get.put(NotificationController());
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-   NotificationScreen({super.key});
+  CreateNotificationScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -40,26 +40,12 @@ class NotificationScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomHeaderWidget(
-                title: 'Notification',
+                title: 'Create New Notifications',
                 back: true,
                 onBackTap: () {
-                  drawerController.showNotifications.value=false;
+                  drawerController.showCreateNotifications.value=false;
                 },
-                end: true,
-                endWidget: CustomButton(
-                  ontapp: () {},
-                  laBelText: 'New Notification',
-                  isPrefixIcon: true,
-                  iconWidget: Image.asset(
-                    'assets/images/notification_icon.png',
-                    color: Colors.white,
-                    height: isMobile ? 14 : 24,
-                    width: isMobile ? 14 : 24,
-                  ),
-                  width: isMobile ? 160 : 234,
-                  height: isMobile ? 32 : 48,
-                  fontSize: isMobile ? 12 : 16,
-                ),
+
               ),
               SizedBox(
                 height: isMobile ? 16 : 32,
@@ -259,15 +245,8 @@ class NotificationScreen extends StatelessWidget {
                           icon: Icon(Icons.error, color: Colors.white),
                         );
                       } else {
-                        Get.snackbar(
-                          'Success',
-                          'Notification added successfully',
-                          snackPosition: SnackPosition.TOP,
-                          backgroundColor: primaryColor,
-                          colorText: Colors.white,
-                          maxWidth: 400,
-
-                        );
+                        drawerController.showCreateNotifications.value=false;
+                        drawerController.showNotifications.value=true;
                         controller.titleController.clear();
                         controller.descriptionController.clear();
                         controller.selectedImage.value = null;
