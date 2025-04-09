@@ -5,13 +5,14 @@ import '../constants/app_colors.dart';
 class CustomDropDownWidget extends StatelessWidget {
   final String hint;
   final List<String> items;
+  final String? value; // Add this to set the current selected value
   final Function(String?) onChanged;
   final String? Function(String?)? validator;
 
   const CustomDropDownWidget({
     required this.hint,
     required this.items,
-    required this.onChanged,
+    required this.onChanged,this.value,
     this.validator,
     super.key,
   });
@@ -19,7 +20,7 @@ class CustomDropDownWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<String>(
-      
+      value: value != null && items.contains(value) ? value : null, // Set the current value
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: simpleText.copyWith(
@@ -41,22 +42,20 @@ class CustomDropDownWidget extends StatelessWidget {
         ),
       ),
       icon: Icon(Icons.arrow_drop_down, color: primaryColor),
-      // arrow icon color
-      value: null,
       items:
-          items.map((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(
-                value,
-                style: simpleText.copyWith(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
-                  color: blackColor,
-                ),
-              ),
-            );
-          }).toList(),
+      items.map((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(
+            value,
+            style: simpleText.copyWith(
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+              color: blackColor,
+            ),
+          ),
+        );
+      }).toList(),
       onChanged: onChanged,
       validator: validator,
     );

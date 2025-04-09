@@ -12,6 +12,7 @@ class TextAndFieldsOrDropDown extends StatelessWidget {
     this.fieldHintText,
     this.dropHintText,
     this.items,
+    this.currentValue, // Add this to pass the current dropdown value
     this.fieldController,
     this.fieldValidator,
     this.keyboardType = TextInputType.text,
@@ -22,7 +23,8 @@ class TextAndFieldsOrDropDown extends StatelessWidget {
     this.isObscure = false,
     this.dropDownValidator,
     this.maxLines = 1,
-       this.readOnly = false, this.ontap,
+    this.readOnly = false,
+    this.ontap,
   });
 
   final bool isDropDown;
@@ -30,6 +32,7 @@ class TextAndFieldsOrDropDown extends StatelessWidget {
   final String? fieldHintText;
   final String? dropHintText;
   final List<String>? items;
+  final String? currentValue; // New parameter for the current dropdown value
   final TextEditingController? fieldController;
   final String? Function(String?)? fieldValidator;
   final TextInputType keyboardType;
@@ -56,25 +59,24 @@ class TextAndFieldsOrDropDown extends StatelessWidget {
         SizedBox(height: 10),
         isDropDown == false
             ? CustomTextField(
-          ontap:ontap ,
+          ontap: ontap,
           readOnly: readOnly,
-
           maxLines: maxLines,
-              controller: fieldController,
-              hintText: fieldHintText,
-              validator: fieldValidator,
-              keyboardType: keyboardType,
-              inputFormatters: inputFormatters,
-              suffixIcon: fieldSuffixIcon,
-              isObscure: isObscure,
-            )
+          controller: fieldController,
+          hintText: fieldHintText,
+          validator: fieldValidator,
+          keyboardType: keyboardType,
+          inputFormatters: inputFormatters,
+          suffixIcon: fieldSuffixIcon,
+          isObscure: isObscure,
+        )
             : CustomDropDownWidget(
-
-              hint: dropHintText!,
-              items: items!,
-              onChanged: onChanged!,
-              validator: dropDownValidator,
-            ),
+          hint: dropHintText!,
+          items: items!,
+          value: currentValue, // Pass the current value to the dropdown
+          onChanged: onChanged!,
+          validator: dropDownValidator,
+        ),
         SizedBox(height: 16),
       ],
     );

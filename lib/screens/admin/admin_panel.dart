@@ -17,6 +17,7 @@ import '../events_managements/view_events/widget/event_details_gallary.dart';
 import '../restaurant_management/add_retaurants/add_restaurants_screen.dart';
 import '../restaurant_management/restaurant_management_screen.dart';
 import '../restaurant_management/view_restaurant_details/view_restaurant_details.dart';
+import '../sub_admin/add_sub_admin/add_sub_admin_screen.dart';
 import '../user_management/user_details/user_details_screen.dart';
 import '../user_management/user_management_screen.dart';
 import '../privacy_policy/privacy_policy.dart';
@@ -67,7 +68,9 @@ class AdminPanel extends StatelessWidget {
       screen = ViewRestaurantDetails();
     } else if (controller.addRestaurants.value) {
       screen = AddRestaurantsScreen();
-    } else {
+    } else if (controller.addSubAdmin.value) {
+      screen = AddSubAdminScreen();
+    }else {
       if (controller.selectedScreen.value == 0) {
         screen = DashboardScreen();
       } else if (controller.selectedScreen.value == 1) {

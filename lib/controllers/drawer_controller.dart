@@ -28,6 +28,7 @@ class DrawerControllerX extends GetxController {
   RxBool addRestaurants = false.obs;
   RxBool viewRestaurantsDetails = false.obs;
   RxBool userDetails = false.obs;
+  RxBool addSubAdmin = false.obs;
 
 
   RxBool viewEvents=false.obs;
@@ -46,6 +47,7 @@ class DrawerControllerX extends GetxController {
     addEvent.value=false;
     viewRestaurantsDetails.value = false;
     userDetails.value = false;
+    addSubAdmin.value = false;
 
   }
 }

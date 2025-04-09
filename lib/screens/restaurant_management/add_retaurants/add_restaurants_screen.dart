@@ -76,6 +76,9 @@ class AddRestaurantsScreen extends StatelessWidget {
                               ontapp: () {
                                 if (menuController.areMenuFieldsFilled()) {
                                   menuController.clearFields();
+                                  tabController.clearFields(); // Clear Basic Info fields
+                                  amenitiesController.clearFields(); // Clear Amenities fields
+                                  experiencesController.clearFields(); // Already clearing here
                                   Get.dialog(
                                     AlertDialog(
                                       title: const Text('Success'),
@@ -138,69 +141,70 @@ class AddRestaurantsScreen extends StatelessWidget {
                               int selectedIndex = tabController.selectedIndex.value; // Get current index
                               if (selectedIndex < 4) {
                                 if (selectedIndex == 0) {
+                                  tabController.selectedIndex.value++;
                                   // Validate Basic Info tab
-                                  final basicInfoFormKey = tabController.basicInfoFormKey;
-                                  final formState = basicInfoFormKey.currentState;
-                                  if (tabController.uploadedImages.isEmpty) {
-                                    Get.snackbar(
-                                      'Error',
-                                      'Please upload at least one restaurant image',
-                                      snackPosition: SnackPosition.TOP,
-                                      backgroundColor: Colors.red,
-                                      colorText: Colors.white,
-                                    );
-                                  } else if (formState != null &&
-                                      formState.validate() &&
-                                      tabController.areBasicInfoFieldsFilled()) {
-                                    tabController.clearFields(); // Clear Basic Info fields
-                                    tabController.selectedIndex.value++;
-                                  }
+                                  // final basicInfoFormKey = tabController.basicInfoFormKey;
+                                  // final formState = basicInfoFormKey.currentState;
+                                  // if (tabController.uploadedImages.isEmpty) {
+                                  //   Get.snackbar(
+                                  //     'Error',
+                                  //     'Please upload at least one restaurant image',
+                                  //     snackPosition: SnackPosition.TOP,
+                                  //     backgroundColor: Colors.red,
+                                  //     colorText: Colors.white,
+                                  //   );
+                                  // } else if (formState != null &&
+                                  //     formState.validate() &&
+                                  //     tabController.areBasicInfoFieldsFilled()) {
+                                  //   tabController.selectedIndex.value++;
+                                  // }
                                 } else if (selectedIndex == 1) {
+                                  tabController.selectedIndex.value++;
                                   // Validate Amenities tab
-                                  final amenitiesValidation = amenitiesController.areAmenitiesValid();
-                                  if (!amenitiesValidation.values.every((valid) => valid)) {
-                                    List<String> errors = [];
-                                    if (!amenitiesValidation['facilities']!) {
-                                      errors.add('Please select at least one Facility/Service.');
-                                    }
-                                    if (!amenitiesValidation['dietary']!) {
-                                      errors.add('Please select at least one Dietary Preference.');
-                                    }
-                                    if (!amenitiesValidation['atmosphere']!) {
-                                      errors.add('Please select at least one Atmosphere option.');
-                                    }
-                                    if (!amenitiesValidation['priceRange']!) {
-                                      errors.add('Please select at least one Price Range.');
-                                    }
-                                    Get.snackbar(
-                                      'Error',
-                                      errors.join('\n'),
-                                      snackPosition: SnackPosition.TOP,
-                                      backgroundColor: Colors.red,
-                                      colorText: Colors.white,
-                                      duration: const Duration(seconds: 5),
-                                    );
-                                  } else {
-                                    amenitiesController.clearFields(); // Clear Amenities fields
-                                    tabController.selectedIndex.value++;
-                                  }
+                                  // final amenitiesValidation = amenitiesController.areAmenitiesValid();
+                                  // if (!amenitiesValidation.values.every((valid) => valid)) {
+                                  //   List<String> errors = [];
+                                  //   if (!amenitiesValidation['facilities']!) {
+                                  //     errors.add('Please select at least one Facility/Service.');
+                                  //   }
+                                  //   if (!amenitiesValidation['dietary']!) {
+                                  //     errors.add('Please select at least one Dietary Preference.');
+                                  //   }
+                                  //   if (!amenitiesValidation['atmosphere']!) {
+                                  //     errors.add('Please select at least one Atmosphere option.');
+                                  //   }
+                                  //   if (!amenitiesValidation['priceRange']!) {
+                                  //     errors.add('Please select at least one Price Range.');
+                                  //   }
+                                  //   Get.snackbar(
+                                  //     'Error',
+                                  //     errors.join('\n'),
+                                  //     snackPosition: SnackPosition.TOP,
+                                  //     backgroundColor: Colors.red,
+                                  //     colorText: Colors.white,
+                                  //     duration: const Duration(seconds: 5),
+                                  //   );
+                                  // } else {
+                                  //
+                                  //   tabController.selectedIndex.value++;
+                                  // }
                                 } else if (selectedIndex == 2) {
                                   print("Validating Tab 2...");
-                                  if (experiencesController.experienceSubScreenFormKey.currentState!.validate() &&
-                                      experiencesController.areExperienceFieldsFilled()) {
-                                    print("Tab 2 validated, moving to Tab 3");
-                                    experiencesController.clearFields(); // Already clearing here
-                                    tabController.selectedIndex.value++;
-                                  } else {
-                                    print("Tab 2 validation failed");
-                                    Get.snackbar(
-                                      'Error',
-                                      'Please add at least one event or fill all event fields.',
-                                      snackPosition: SnackPosition.TOP,
-                                      backgroundColor: Colors.red,
-                                      colorText: Colors.white,
-                                    );
-                                  }
+                                  tabController.selectedIndex.value++;
+                                  // if (experiencesController.experienceSubScreenFormKey.currentState!.validate() &&
+                                  //     experiencesController.areExperienceFieldsFilled()) {
+                                  //   print("Tab 2 validated, moving to Tab 3");
+                                  //   tabController.selectedIndex.value++;
+                                  // } else {
+                                  //   print("Tab 2 validation failed");
+                                  //   Get.snackbar(
+                                  //     'Error',
+                                  //     'Please add at least one event or fill all event fields.',
+                                  //     snackPosition: SnackPosition.TOP,
+                                  //     backgroundColor: Colors.red,
+                                  //     colorText: Colors.white,
+                                  //   );
+                                  // }
                                 } else {
                                   tabController.selectedIndex.value++;
                                 }
@@ -243,6 +247,9 @@ class AddRestaurantsScreen extends StatelessWidget {
                       ontapp: () {
                         if (menuController.areMenuFieldsFilled()) {
                           menuController.clearFields();
+                          tabController.clearFields(); // Clear Basic Info fields
+                          amenitiesController.clearFields(); // Clear Amenities fields
+                          experiencesController.clearFields(); // Already clearing here
                           Get.dialog(
                             AlertDialog(
                               title: const Text('Success'),
@@ -316,7 +323,6 @@ class AddRestaurantsScreen extends StatelessWidget {
                           } else if (formState != null &&
                               formState.validate() &&
                               tabController.areBasicInfoFieldsFilled()) {
-                            tabController.clearFields(); // Clear Basic Info fields
                             tabController.selectedIndex.value++;
                           }
                         } else if (selectedIndex == 1) {
@@ -345,7 +351,6 @@ class AddRestaurantsScreen extends StatelessWidget {
                               duration: const Duration(seconds: 5),
                             );
                           } else {
-                            amenitiesController.clearFields(); // Clear Amenities fields
                             tabController.selectedIndex.value++;
                           }
                         } else if (selectedIndex == 2) {
@@ -353,7 +358,6 @@ class AddRestaurantsScreen extends StatelessWidget {
                           if (experiencesController.experienceSubScreenFormKey.currentState!.validate() &&
                               experiencesController.areExperienceFieldsFilled()) {
                             print("Tab 2 validated, moving to Tab 3");
-                            experiencesController.clearFields(); // Already clearing here
                             tabController.selectedIndex.value++;
                           } else {
                             print("Tab 2 validation failed");

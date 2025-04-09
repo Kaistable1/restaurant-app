@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Savrly',
       debugShowCheckedModeBanner: false,
-      home:  LoginScreen(),
+      home:  AdminPanel(),
     );
   }
 }

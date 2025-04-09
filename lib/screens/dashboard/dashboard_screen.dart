@@ -80,12 +80,18 @@ class DashboardScreen extends StatelessWidget {
                   imagePath: 'assets/images/dash_con_1_icons.png',
                   title: "Total Events",
                   count: '125',
+                  onTap: () {
+                    drawerController.selectedScreen.value = 3;
+                  },
                 ),
                 SizedBox(width: 24),
                 DashboardCard(
                   imagePath: 'assets/images/dash_con_2_icons.png',
                   title: "Total Restaurants",
                   count: '129',
+                  onTap: () {
+                    drawerController.selectedScreen.value = 2;
+                  },
                 ),
               ],
             ),
