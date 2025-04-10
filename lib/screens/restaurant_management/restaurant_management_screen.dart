@@ -19,7 +19,7 @@ class RestaurantManagementScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(RestaurantManagementController());
     double screenWidth = MediaQuery.of(context).size.width;
-    bool mobileView = screenWidth < 900;
+    bool mobileView = screenWidth < 1000;
 
     // Responsive padding logic
     double paddingValue = mobileView ? 16 : 24;

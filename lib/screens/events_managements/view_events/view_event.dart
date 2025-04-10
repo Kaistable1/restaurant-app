@@ -63,7 +63,7 @@ class ViewEvent extends StatelessWidget {
             Stack(
               children: [
                 // Main container with background image
-                Container(
+                Container (
                   width:
                       isLargeScreen ? 680 : 500, // Fixed width as per your code
                   height: isLargeScreen
@@ -79,12 +79,7 @@ class ViewEvent extends StatelessWidget {
                     ),
                   ),
                   // Add content inside the container if needed
-                  child: const Center(
-                    child: Text(
-                      'Event Details Container',
-                      style: TextStyle(fontSize: 18, color: Colors.black54),
-                    ),
-                  ),
+
                 ),
                 // Small container positioned at the bottom center with blur effect
                 Positioned(

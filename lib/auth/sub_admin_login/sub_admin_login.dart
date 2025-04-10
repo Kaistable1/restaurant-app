@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
+import 'package:savrly/auth/login/login_screen.dart';
 import 'package:savrly/constants/app_colors.dart';
 
 import '../../constants/text_styles.dart';
 import '../../controllers/login_controller.dart';
 import '../../screens/admin/admin_panel.dart';
+import '../../screens/sub_admin_panel/sub_admin_panel.dart';
 import '../../utils/validations.dart';
 import '../../widgets/button.dart';
 import '../../widgets/custom_textfield.dart';
 import '../forgot_pass/forgot_pass.dart';
-import '../sub_admin_login/sub_admin_login.dart';
 
-class LoginScreen extends StatelessWidget {
-  LoginScreen({super.key});
+class SubAdminLogin extends StatelessWidget {
+  SubAdminLogin({super.key});
 
   final controller = Get.put(LoginController());
 
@@ -49,8 +50,9 @@ class LoginScreen extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  // Left align text
                   children: [
-                    Center(child: Text("Login", style: headingText)),
+                    Center(child: Text("Sub Admin Login", style: headingText)),
                     const SizedBox(height: 24),
 
                     // Email Field
@@ -63,7 +65,7 @@ class LoginScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 6),
                     CustomTextField(
-                      controller: controller.emailController,
+                      controller: controller.subAdminEmailController,
                       hintText: 'abc@yahoo.com',
                       validator: (value) => isEmailValid(value!),
                       prefixIcon: Icon(
@@ -85,22 +87,22 @@ class LoginScreen extends StatelessWidget {
                     SizedBox(height: 6),
                     Obx(
                           () => CustomTextField(
-                        controller: controller.passwordController,
+                        controller: controller.subAdminPasswordController,
                         hintText: 'Password',
                         validator: (value) => isPasswordValid(value!),
-                        isObscure: !controller.isPasswordVisible.value,
+                        isObscure: !controller.isSubAdminPasswordVisible.value,
                         prefixIcon: Icon(
                           Icons.lock_open_outlined,
                           color: primaryColor,
                         ),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            controller.isPasswordVisible.value
+                            controller.isSubAdminPasswordVisible.value
                                 ? Icons.visibility_off
                                 : Icons.visibility,
                             color: primaryColor,
                           ),
-                          onPressed: controller.togglePasswordVisibility,
+                          onPressed: controller.toggleSubAdminPasswordVisibility,
                         ),
                       ),
                     ),
@@ -125,12 +127,17 @@ class LoginScreen extends StatelessWidget {
                     SizedBox(height: 25),
                     Center(
                       child: CustomButton(
-                        laBelText: 'Login',
+                        laBelText: 'Sub Admin Login',
                         width: 250,
                         shadow: [],
                         containerColor: primaryColor,
                         ontapp: () {
-                          Get.to(() => AdminPanel());
+                          Get.to(() => SubAdminPanel());
+                          // if (formKey.currentState!.validate()) {
+                          //   controller.emailController.clear();
+                          //   controller.passwordController.clear();
+                          //   Get.to(() => AdminPanel());
+                          // }
                         },
                       ),
                     ),
@@ -138,10 +145,10 @@ class LoginScreen extends StatelessWidget {
                     Center(
                       child: TextButton(
                         onPressed: () {
-                          Get.to(() => SubAdminLogin());
+                          Get.to(() => LoginScreen());
                         },
                         child: Text(
-                          "Go to Sub Admin Login Screen",
+                          "Go to Admin Login Screen",
                           style: simpleText.copyWith(
                             fontSize: 16,
                             fontWeight: FontWeight.w500,

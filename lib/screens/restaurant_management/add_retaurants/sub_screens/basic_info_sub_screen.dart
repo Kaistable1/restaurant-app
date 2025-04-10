@@ -256,6 +256,7 @@ class BasicInfoSubScreen extends StatelessWidget {
                       labelText: 'State',
                       dropHintText: 'State',
                       items: controller.stateList,
+                      currentValue: controller.selectedState.value,
                       onChanged:
                           (value) => controller.selectedState.value = value!,
                       dropDownValidator: (value) {
@@ -272,6 +273,7 @@ class BasicInfoSubScreen extends StatelessWidget {
                     child: TextAndFieldsOrDropDown(
                       labelText: 'City',
                       dropHintText: 'City',
+                      currentValue: controller.selectedCity.value,
                       items: controller.cityList,
                       onChanged:
                           (value) => controller.selectedCity.value = value!,
@@ -306,6 +308,7 @@ class BasicInfoSubScreen extends StatelessWidget {
                   Expanded(
                     child: TextAndFieldsOrDropDown(
                       labelText: 'Spoken Language',
+                      currentValue: controller.selectedSpokenLanguage.value,
                       dropHintText: 'Language',
                       items: controller.spokenLanguageList,
                       onChanged:
