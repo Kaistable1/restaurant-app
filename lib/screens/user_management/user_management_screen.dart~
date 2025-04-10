@@ -17,16 +17,6 @@ class UserManagementScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Add scroll listener to detect when user reaches the bottom
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent &&
-          controller.hasMoreData.value &&
-          !controller.isLoading.value) {
-        controller.fetchUsers(); // Fetch more users when scrolled to bottom
-      }
-    });
-
     double screenWidth = MediaQuery.of(context).size.width;
     bool mobileView = screenWidth < 900;
 
@@ -54,7 +44,7 @@ class UserManagementScreen extends StatelessWidget {
           ),
           SizedBox(height: 10),
           Obx(
-                () => Text(
+            () => Text(
               'Total Users: ${controller.totalUsersLength.value}',
               style: simpleText.copyWith(
                 fontSize: tableTextSize,
@@ -97,7 +87,7 @@ class UserManagementScreen extends StatelessWidget {
                           controller.userManagement.isEmpty) {
                         return Center(
                             child:
-                            CircularProgressIndicator(color: primaryColor));
+                                CircularProgressIndicator(color: primaryColor));
                       }
                       if (controller.userManagement.isEmpty &&
                           !controller.hasMoreData.value) {
@@ -125,16 +115,16 @@ class UserManagementScreen extends StatelessWidget {
                                 child: Center(
                                   child: controller.isLoading.value
                                       ? CircularProgressIndicator(
-                                    color: primaryColor,
-                                  )
+                                          color: primaryColor,
+                                        )
                                       : Text(
-                                    'Loading more users...', // Updated text to indicate automatic loading
-                                    style: simpleText.copyWith(
-                                      fontSize: tableTextSize,
-                                      color: primaryColor,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
+                                          'Load More',
+                                          style: simpleText.copyWith(
+                                            fontSize: tableTextSize,
+                                            color: primaryColor,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
                                 ),
                               );
                             } else {
@@ -196,7 +186,7 @@ class UserManagementScreen extends StatelessWidget {
                                             drawerController
                                                 .selectedUser(user);
                                             drawerController.userDetails.value =
-                                            true;
+                                                true;
                                           }
                                         },
                                         itemBuilder: (context) => [
@@ -228,9 +218,9 @@ class UserManagementScreen extends StatelessWidget {
   }
 
   TextStyle _headerStyle(double fontSize) => simpleText.copyWith(
-    fontSize: fontSize,
-    fontWeight: FontWeight.w700,
-  );
+        fontSize: fontSize,
+        fontWeight: FontWeight.w700,
+      );
 
   TextStyle _textStyle(double fontSize) =>
       simpleText.copyWith(fontSize: fontSize);

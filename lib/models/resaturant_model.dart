@@ -15,7 +15,7 @@ class RestaurantModel {
   List<String> facilityList;
   List<String> imagesList;
   List<String> dietaryList;
-  List<String> atmopshereList;
+  List<String> atmosphereList;
   String spokenLanguage;
   String socialMedia;
   String priceRange;
@@ -50,7 +50,7 @@ class RestaurantModel {
     required this.address,
     required this.socialMedia,
     required this.priceRange,
-    required this.atmopshereList,
+    required this.atmosphereList,
     required this.zipCode,
     required this.logoImage,
     required this.spokenLanguage,
@@ -75,7 +75,7 @@ class RestaurantModel {
       logoImage: '',
       facilityList: <String>[],
       dietaryList: <String>[],
-      atmopshereList: <String>[],
+      atmosphereList: <String>[],
       imagesList: <String>[],
       specialConditions: '',
       password: '',
@@ -111,7 +111,7 @@ class RestaurantModel {
       'docID': docID,
       'facilityList': facilityList,
       'dietaryList': dietaryList,
-      'atmopshereList': atmopshereList,
+      'atmopshereList': atmosphereList,
       'resEmail': resEmail,
       'averageRating': averageRating,
       'socialLink': socialLink,
@@ -155,7 +155,7 @@ class RestaurantModel {
       latitude: (data['latitude'] ?? 0).toDouble(),
       longitude: (data['longitude'] ?? 0).toDouble(),
       facilityList: List<String>.from(data['facilityList'] ?? []),
-      atmopshereList: List<String>.from(data['atmopshereList'] ?? []),
+      atmosphereList: List<String>.from(data['atmopshereList'] ?? []),
       dietaryList: List<String>.from(data['dietaryList'] ?? []),
       specialConditions: data['specialConditions'] ?? '',
       password: data['password'] ?? '',

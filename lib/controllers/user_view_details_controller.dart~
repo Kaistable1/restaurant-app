@@ -1,0 +1,7 @@
+import 'package:get/get.dart';
+
+import '../models/user_management_model.dart';
+
+class UserViewDetailsController extends GetxController {
+  RxList<UserManagementModel> userManagement = <UserManagementModel>[].obs;
+}
