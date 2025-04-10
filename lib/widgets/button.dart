@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../constants/app_colors.dart';
 import '../constants/text_styles.dart';
 
@@ -93,7 +94,7 @@ class CustomButton extends StatelessWidget {
                       color: textColor ?? white,
                       fontSize: fontSize ?? 16,
                       fontWeight: fontWeight ?? FontWeight.w400,
-                      fontFamily: fontFamily ?? 'Russo Regular',
+                      fontFamily: fontFamily ?? GoogleFonts.nunitoSans().fontFamily,
                     ),
                   ),
                 ),

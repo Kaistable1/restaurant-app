@@ -43,19 +43,19 @@ class CustomDropDownWidget extends StatelessWidget {
       ),
       icon: Icon(Icons.arrow_drop_down, color: primaryColor),
       items:
-          items.map((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(
-                value,
-                style: simpleText.copyWith(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
-                  color: blackColor,
-                ),
-              ),
-            );
-          }).toList(),
+      items.map((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(
+            value,
+            style: simpleText.copyWith(
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+              color: blackColor,
+            ),
+          ),
+        );
+      }).toList(),
       onChanged: onChanged,
       validator: validator,
     );

@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,8 +16,8 @@ import '../../../widgets/text_and_field_drop_down.dart';
 class AddEvents extends StatelessWidget {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final drawerController = Get.put(DrawerControllerX());
-  final controller=Get.put(AddEventController());
-   AddEvents({super.key});
+  final controller = Get.put(AddEventController());
+  AddEvents({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -64,12 +62,16 @@ class AddEvents extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 30),
-
               Padding(
                 padding: const EdgeInsets.only(left: 2.0),
                 child: Container(
-                  width: isTablet?screenWidth*.9:isMobile?screenWidth*.9:screenWidth*.6,
-                  height: isLargeScreen?screenHeight*2.1:screenHeight*3.1,
+                  width: isTablet
+                      ? screenWidth * .9
+                      : isMobile
+                          ? screenWidth * .9
+                          : screenWidth * .6,
+                  height:
+                      isLargeScreen ? screenHeight * 2.1 : screenHeight * 3.1,
                   decoration: BoxDecoration(
                     color: dimWhite,
                     borderRadius: BorderRadius.circular(20),
@@ -89,51 +91,59 @@ class AddEvents extends StatelessWidget {
                       children: [
                         Text(
                           'Event images',
-                          style: headingText.copyWith(fontSize: isMobile ? 16 : 20),
+                          style: headingText.copyWith(
+                              fontSize: isMobile ? 16 : 20),
                         ),
-
                         const SizedBox(height: 10),
                         Obx(
-                              () => SizedBox(
+                          () => SizedBox(
                             height: imageHeight + 20,
                             // Fixed height for scrollable area
                             child: GestureDetector(
                               onHorizontalDragUpdate: (details) {
                                 // Handle mouse drag
                                 final newOffset =
-                                    horizontalScrollController.offset - details.delta.dx;
+                                    horizontalScrollController.offset -
+                                        details.delta.dx;
                                 horizontalScrollController.jumpTo(
                                   newOffset.clamp(
                                     0.0,
-                                    horizontalScrollController.position.maxScrollExtent,
+                                    horizontalScrollController
+                                        .position.maxScrollExtent,
                                   ),
                                 );
                               },
                               child: Scrollbar(
                                 controller: horizontalScrollController,
                                 thumbVisibility:
-                                controller.uploadedImages.length * (imageWidth + 12) >
-                                    screenWidth,
+                                    controller.uploadedImages.length *
+                                            (imageWidth + 12) >
+                                        screenWidth,
                                 // Show scrollbar only when content exceeds width
                                 child: Listener(
                                   onPointerSignal: (PointerSignalEvent event) {
                                     if (event is PointerScrollEvent) {
                                       final scrollDelta = event.scrollDelta.dy;
                                       horizontalScrollController.jumpTo(
-                                        horizontalScrollController.offset + scrollDelta,
+                                        horizontalScrollController.offset +
+                                            scrollDelta,
                                       );
                                     }
                                   },
                                   child: SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
                                     controller: horizontalScrollController,
-                                    physics: const AlwaysScrollableScrollPhysics(),
+                                    physics:
+                                        const AlwaysScrollableScrollPhysics(),
                                     child: Row(
                                       children: [
                                         // Uploaded Images with Remove Button
-                                        ...controller.uploadedImages.asMap().entries.map((
-                                            entry,
-                                            ) {
+                                        ...controller.uploadedImages
+                                            .asMap()
+                                            .entries
+                                            .map((
+                                          entry,
+                                        ) {
                                           int index = entry.key;
                                           Uint8List imageData = entry.value;
 
@@ -142,11 +152,14 @@ class AddEvents extends StatelessWidget {
                                               Container(
                                                 width: imageWidth,
                                                 height: imageHeight,
-                                                margin: const EdgeInsets.only(right: 12),
+                                                margin: const EdgeInsets.only(
+                                                    right: 12),
                                                 decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(8),
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
                                                   image: DecorationImage(
-                                                    image: MemoryImage(imageData),
+                                                    image:
+                                                        MemoryImage(imageData),
                                                     fit: BoxFit.cover,
                                                   ),
                                                 ),
@@ -155,13 +168,15 @@ class AddEvents extends StatelessWidget {
                                                 top: 4,
                                                 right: 4,
                                                 child: GestureDetector(
-                                                  onTap:
-                                                      () => controller.removeImage(index),
+                                                  onTap: () => controller
+                                                      .removeImage(index),
                                                   child: const MouseRegion(
-                                                    cursor: SystemMouseCursors.click,
+                                                    cursor: SystemMouseCursors
+                                                        .click,
                                                     child: CircleAvatar(
                                                       radius: 10,
-                                                      backgroundColor: Colors.red,
+                                                      backgroundColor:
+                                                          Colors.red,
                                                       child: Icon(
                                                         Icons.close,
                                                         size: 13,
@@ -184,15 +199,18 @@ class AddEvents extends StatelessWidget {
                                               width: imageWidth,
                                               height: imageHeight,
                                               decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(8),
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
                                                 border: Border.all(
-                                                  color: primaryColor.withOpacity(0.4),
+                                                  color: primaryColor
+                                                      .withOpacity(0.4),
                                                   width: 0.6,
                                                 ),
                                                 color: Colors.white,
                                                 boxShadow: [
                                                   BoxShadow(
-                                                    color: Colors.black.withOpacity(0.1),
+                                                    color: Colors.black
+                                                        .withOpacity(0.1),
                                                     spreadRadius: 1,
                                                     blurRadius: 6,
                                                     offset: const Offset(0, 2),
@@ -201,10 +219,11 @@ class AddEvents extends StatelessWidget {
                                               ),
                                               child: Column(
                                                 mainAxisAlignment:
-                                                MainAxisAlignment.center,
+                                                    MainAxisAlignment.center,
                                                 children: [
                                                   Icon(
-                                                    Icons.add_circle_outline_rounded,
+                                                    Icons
+                                                        .add_circle_outline_rounded,
                                                     color: primaryColor,
                                                     size: 40,
                                                   ),
@@ -212,7 +231,8 @@ class AddEvents extends StatelessWidget {
                                                   Text(
                                                     'Add More Photos',
                                                     style: simpleText.copyWith(
-                                                      fontWeight: FontWeight.w500,
+                                                      fontWeight:
+                                                          FontWeight.w500,
                                                     ),
                                                   ),
                                                 ],
@@ -228,12 +248,11 @@ class AddEvents extends StatelessWidget {
                             ),
                           ),
                         ),
-
                         const SizedBox(height: 10),
                         TextAndFieldsOrDropDown(
                           labelText: 'Event name',
                           fieldHintText: 'Music and Arts Festival 2024',
-                         fieldController: controller.eventNameController,
+                          fieldController: controller.eventNameController,
                           isDropDown: false,
                           fieldValidator: (value) {
                             if (value!.isEmpty) {
@@ -242,13 +261,12 @@ class AddEvents extends StatelessWidget {
                             return null;
                           },
                         ),
-
                         TextAndFieldsOrDropDown(
                           labelText: 'Event type',
                           dropHintText: 'Concert',
                           items: controller.events,
-                          onChanged:
-                              (value) => controller.selectEvent.value = value!,
+                          onChanged: (value) =>
+                              controller.selectEvent.value = value!,
                           dropDownValidator: (value) {
                             if (value == null || value.trim().isEmpty) {
                               return 'Please select an event type.';
@@ -270,15 +288,7 @@ class AddEvents extends StatelessWidget {
                           },
                         ),
                         Image.asset('assets/images/map_event.png'),
-                        TextAndFieldsOrDropDown
-
-
-
-
-
-
-
-                          (
+                        TextAndFieldsOrDropDown(
                           labelText: 'Date',
                           fieldHintText: 'June 15-17, 2024',
                           fieldController: controller.dateController,
@@ -292,7 +302,8 @@ class AddEvents extends StatelessWidget {
                               lastDate: DateTime(2100),
                             );
                             if (pickedDate != null) {
-                              controller.dateController.text = DateFormat('yyyy-MM-dd').format(pickedDate);
+                              controller.dateController.text =
+                                  DateFormat('yyyy-MM-dd').format(pickedDate);
                             }
                           },
                           fieldValidator: (value) {
@@ -330,7 +341,6 @@ class AddEvents extends StatelessWidget {
                             return null;
                           },
                         ),
-
                         TextAndFieldsOrDropDown(
                           labelText: 'Phone number',
                           fieldHintText: '0899787878787',
@@ -342,19 +352,20 @@ class AddEvents extends StatelessWidget {
                             }
 
                             final trimmedValue = value.trim();
-                            final phoneRegExp = RegExp(r'^[0-9]+$'); // Only digits
+                            final phoneRegExp =
+                                RegExp(r'^[0-9]+$'); // Only digits
 
                             if (!phoneRegExp.hasMatch(trimmedValue)) {
                               return 'Phone number must contain digits only.';
                             }
 
-                            if (trimmedValue.length < 10 || trimmedValue.length > 15) {
+                            if (trimmedValue.length < 10 ||
+                                trimmedValue.length > 15) {
                               return 'Phone number must be between 10 to 15 digits.';
                             }
 
                             return null;
                           },
-
                         ),
                         TextAndFieldsOrDropDown(
                           labelText: 'URL',
@@ -366,7 +377,8 @@ class AddEvents extends StatelessWidget {
                               return 'Please enter a URL.';
                             }
 
-                            final urlPattern = r'^(https?:\/\/)?(www\.)?[a-zA-Z0-9\-]+\.[a-zA-Z]{2,}(\S*)?$';
+                            final urlPattern =
+                                r'^(https?:\/\/)?(www\.)?[a-zA-Z0-9\-]+\.[a-zA-Z]{2,}(\S*)?$';
                             final urlRegExp = RegExp(urlPattern);
 
                             if (!urlRegExp.hasMatch(value.trim())) {
@@ -388,8 +400,9 @@ class AddEvents extends StatelessWidget {
                             return null;
                           },
                         ),
-                        SizedBox(height: 30,),
-
+                        SizedBox(
+                          height: 30,
+                        ),
                         Center(
                           child: CustomButton(
                               ontapp: () {
@@ -418,29 +431,29 @@ class AddEvents extends StatelessWidget {
                                   drawerController.addEvent.value = false;
                                   // Clear all controllers
                                   controller.eventNameController.clear();
-                                  controller.events.clear(); // Only clear selected value if needed
+                                  controller.events
+                                      .clear(); // Only clear selected value if needed
                                   controller.locationController.clear();
                                   controller.descriptionController.clear();
                                   controller.urlController.clear();
                                   controller.phoneNumberController.clear();
                                   controller.timeController.clear();
                                   controller.dateController.clear();
-                                  controller.uploadedImages.clear(); // Clear images as well
+                                  controller.uploadedImages
+                                      .clear(); // Clear images as well
                                 }
                               },
-
                               width: 169,
                               laBelText: 'Save'),
                         )
-
-
                       ],
                     ),
                   ),
                 ),
               ),
-              SizedBox(height: 20,),
-
+              SizedBox(
+                height: 20,
+              ),
             ],
           ),
         ),

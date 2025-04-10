@@ -295,9 +295,9 @@ class BasicInfoSubScreen extends StatelessWidget {
                   Expanded(
                     child: TextAndFieldsOrDropDown(
                       labelText: 'Spoken Language',
+                      currentValue: controller.selectedSpokenLanguage.value,
                       dropHintText: 'Language',
                       items: controller.spokenLanguageList,
-                      currentValue: controller.selectedSpokenLanguage.value,
                       onChanged: (value) =>
                           controller.selectedSpokenLanguage.value = value!,
                       dropDownValidator: (value) {

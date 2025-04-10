@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
       }),
       title: 'Savrly',
       debugShowCheckedModeBanner: false,
-      home: Scaffold(body: MenuSubScreen()),
+      home: AdminPanel(),
     );
   }
 }

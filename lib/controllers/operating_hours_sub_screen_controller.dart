@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:savrly/controllers/add_restaurants_controller.dart';
 import 'package:savrly/widgets/global_functions.dart';
 
 class OperatingHoursSubScreenController extends GetxController {
+
   Map<String, ValueNotifier<bool>> daySwitchControllers = {};
 
   @override
@@ -65,25 +65,27 @@ class OperatingHoursSubScreenController extends GetxController {
   RxMap slotTimes = {}.obs;
 
   void toggleDaySwitch(String day) {
-    daySwitches[day] = !(daySwitches[day] ?? false);
+    daySwitches[day] = !daySwitches[day]!;
     if (!daySwitches[day]!) {
+      // If day is disabled, set all slots to "Off" and clear times
       slotStates[day]!.updateAll((key, value) => false);
       slotTimes[day]!.updateAll((key, value) => '');
     }
-    daySwitches.refresh();
-    slotStates.refresh();
-    slotTimes.refresh();
+    daySwitches.refresh(); // Ensure UI updates
   }
 
+// Toggle the "On/Off" state for a slot
   void toggleSlotState(String day, String slot) {
-    slotStates[day]![slot] = !(slotStates[day]![slot] ?? false);
+    slotStates[day]![slot] = !slotStates[day]![slot]!;
     if (!slotStates[day]![slot]!) {
+      // If slot is turned "Off", clear the time
       slotTimes[day]![slot] = '';
     }
-    slotStates.refresh();
-    slotTimes.refresh();
+    slotStates.refresh(); // Ensure UI updates
+    slotTimes.refresh(); // Ensure time updates
   }
 
+// Set time for a slot using TimePicker
   Future<void> setTime(BuildContext context, String day, String slot) async {
     final TimeOfDay? startTime = await showTimePicker(
       context: context,
@@ -98,9 +100,9 @@ class OperatingHoursSubScreenController extends GetxController {
         final start = startTime.format(context);
         final end = endTime.format(context);
         slotTimes[day]![slot] = '$start - $end';
-        slotStates[day]![slot] = true;
-        slotTimes.refresh();
-        slotStates.refresh();
+        slotStates[day]![slot] = true; // Ensure slot is "On" when time is set
+        slotTimes.refresh(); // Update UI
+        slotStates.refresh(); // Update UI
       }
     }
   }

@@ -59,7 +59,7 @@ class _RestaurantManagementScreenState
   Widget build(BuildContext context) {
     clearFilters();
     double screenWidth = MediaQuery.of(context).size.width;
-    bool mobileView = screenWidth < 900;
+    bool mobileView = screenWidth < 1000;
 
     double paddingValue = mobileView ? 16 : 24;
     double tableTextSize = mobileView ? 9 : 14;

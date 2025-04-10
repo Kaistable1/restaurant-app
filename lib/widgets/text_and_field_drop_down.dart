@@ -25,6 +25,7 @@ class TextAndFieldsOrDropDown extends StatelessWidget {
     this.maxLines = 1,
     this.readOnly = false,
     this.ontap,
+
   });
 
   final bool isDropDown;

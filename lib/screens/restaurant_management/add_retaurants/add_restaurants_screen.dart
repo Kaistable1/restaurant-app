@@ -190,8 +190,7 @@ class AddRestaurantsScreen extends StatelessWidget {
                                     duration: const Duration(seconds: 5),
                                   );
                                 } else {
-                                  // await amenitiesController.addAmenities();
-                                  tabController.selectedIndex.value++;
+                                  await amenitiesController.addAmenities();
                                 }
                               } else if (selectedIndex == 2) {
                                 await experiencesController.addExperience();
@@ -247,6 +246,12 @@ class AddRestaurantsScreen extends StatelessWidget {
                           amenitiesController.clearFields();
                           experiencesController.clearFields();
                           menuController.clearFields();
+                          tabController
+                              .clearFields(); // Clear Basic Info fields
+                          amenitiesController
+                              .clearFields(); // Clear Amenities fields
+                          experiencesController
+                              .clearFields(); // Already clearing here
                           Get.dialog(
                             AlertDialog(
                               title: const Text('Success'),
