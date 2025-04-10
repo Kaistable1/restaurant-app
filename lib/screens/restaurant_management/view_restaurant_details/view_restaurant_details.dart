@@ -1,24 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:savrly/constants/text_styles.dart';
+import 'package:savrly/controllers/add_restaurants_controller.dart';
+import 'package:savrly/controllers/restaurant_management_controller.dart';
+import 'package:savrly/models/operatingHour.dart';
+import 'package:savrly/models/resaturant_model.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../controllers/amenities_sub_screen_controller.dart';
 import '../../../controllers/drawer_controller.dart';
-import '../../../controllers/menu_sub_screen_controller.dart';
 import '../../../widgets/customheader_widget.dart';
 
 class ViewRestaurantDetails extends StatelessWidget {
   ViewRestaurantDetails({super.key});
 
   final drawerController = Get.put(DrawerControllerX());
-
+  final resturantController = Get.find<RestaurantManagementController>();
+  final addRestaurantController = Get.find<AddRestaurantTabController>();
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     bool mobileView = screenWidth < 1000;
     double paddingValue = mobileView ? 16 : 24;
+    RestaurantModel restaurant = addRestaurantController.restaurantModel!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -35,7 +40,8 @@ class ViewRestaurantDetails extends StatelessWidget {
         ),
         Expanded(
           child: ScrollConfiguration(
-            behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+            behavior:
+                ScrollConfiguration.of(context).copyWith(scrollbars: false),
             child: SingleChildScrollView(
               padding: EdgeInsets.all(paddingValue),
               child: Column(
@@ -47,8 +53,9 @@ class ViewRestaurantDetails extends StatelessWidget {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       image: DecorationImage(
-                        image: AssetImage(
-                          'assets/images/restaurant_details_img.png',
+                        image: NetworkImage(
+                          restaurant.logoImage ??
+                              'https://via.placeholder.com/150',
                         ),
                         fit: BoxFit.cover,
                       ),
@@ -60,10 +67,9 @@ class ViewRestaurantDetails extends StatelessWidget {
                     mobileView: mobileView,
                     screenWidth: screenWidth,
                     title: 'Basic Information',
-                    restaurantName: 'Sushi Haven',
-                    location: 'Islamabad',
-                    contact: '92323356564',
-                    social: 'Instagram, Tiktok',
+                    restaurantName: restaurant.resName,
+                    location: restaurant.address,
+                    social: '${restaurant.instaLink}, ${restaurant.tiktokLink}',
                   ),
                   SizedBox(height: 16),
                   FacilitiesContainer(
@@ -71,12 +77,14 @@ class ViewRestaurantDetails extends StatelessWidget {
                     mobileView: mobileView,
                     screenWidth: screenWidth,
                     title: 'Facilities & Services',
+                    entries: restaurant.facilityList.join(', '),
                   ),
                   const SizedBox(height: 16),
                   DietaryPreferencesContainer(
                     screenHeight: screenHeight,
                     mobileView: mobileView,
                     screenWidth: screenWidth,
+                    entries: restaurant.dietaryList.join(', '),
                     title: 'Dietary Preferences',
                   ),
                   SizedBox(height: 16),
@@ -84,6 +92,8 @@ class ViewRestaurantDetails extends StatelessWidget {
                     screenHeight: screenHeight,
                     mobileView: mobileView,
                     screenWidth: screenWidth,
+                    atmosphere: restaurant.atmopshereList.join(', '),
+                    priceRange: restaurant.priceRange,
                     title: 'Atmosphere & Price Range',
                   ),
                   const SizedBox(height: 16),
@@ -92,6 +102,14 @@ class ViewRestaurantDetails extends StatelessWidget {
                     mobileView: mobileView,
                     screenWidth: screenWidth,
                     title: 'Special Conditions',
+                    selectedMenuTypes: restaurant.menuList.isEmpty
+                        ? MenuModel(
+                            cuisineType: '', foodImages: [], menuType: '')
+                        : restaurant.menuList.first,
+                    specialConditions: restaurant.specialConditions,
+                    uploadedImages: restaurant.menuList.isNotEmpty
+                        ? restaurant.menuList[0].foodImages
+                        : [],
                   ),
                   const SizedBox(height: 16),
                   OperatingHoursContainer(
@@ -119,7 +137,6 @@ class BasicInfoContainer extends StatelessWidget {
     required this.title,
     required this.restaurantName,
     required this.location,
-    required this.contact,
     required this.social,
   });
 
@@ -129,7 +146,6 @@ class BasicInfoContainer extends StatelessWidget {
   final String title;
   final String restaurantName;
   final String location;
-  final String contact;
   final String social;
 
   @override
@@ -206,28 +222,6 @@ class BasicInfoContainer extends StatelessWidget {
             text: TextSpan(
               children: [
                 TextSpan(
-                  text: 'Contact: ',
-                  style: simpleText.copyWith(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                  ),
-                ),
-                TextSpan(
-                  text: contact,
-                  style: simpleText.copyWith(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14,
-                    color: secondaryColor,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 12),
-          RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
                   text: 'Social: ',
                   style: simpleText.copyWith(
                     fontWeight: FontWeight.w600,
@@ -257,6 +251,7 @@ class FacilitiesContainer extends StatelessWidget {
     required this.screenHeight,
     required this.mobileView,
     required this.screenWidth,
+    required this.entries,
     required this.title,
   });
 
@@ -264,6 +259,7 @@ class FacilitiesContainer extends StatelessWidget {
   final bool mobileView;
   final double screenWidth;
   final String title;
+  final String entries;
 
   @override
   Widget build(BuildContext context) {
@@ -302,7 +298,7 @@ class FacilitiesContainer extends StatelessWidget {
 
             if (selectedFacilities.isEmpty) {
               return Text(
-                'No facilities selected',
+                entries,
                 style: simpleText.copyWith(
                   fontWeight: FontWeight.w500,
                   fontSize: 14,
@@ -314,27 +310,26 @@ class FacilitiesContainer extends StatelessWidget {
             return Wrap(
               spacing: 8.0, // Horizontal spacing between items
               runSpacing: 8.0, // Vertical spacing between rows
-              children:
-                  selectedFacilities.map((facility) {
-                    return Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: primaryColor.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        facility,
-                        style: simpleText.copyWith(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14,
-                          color: secondaryColor,
-                        ),
-                      ),
-                    );
-                  }).toList(),
+              children: selectedFacilities.map((facility) {
+                return Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: primaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    facility,
+                    style: simpleText.copyWith(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                      color: secondaryColor,
+                    ),
+                  ),
+                );
+              }).toList(),
             );
           }),
         ],
@@ -348,6 +343,7 @@ class DietaryPreferencesContainer extends StatelessWidget {
     super.key,
     required this.screenHeight,
     required this.mobileView,
+    required this.entries,
     required this.screenWidth,
     required this.title,
   });
@@ -356,6 +352,7 @@ class DietaryPreferencesContainer extends StatelessWidget {
   final bool mobileView;
   final double screenWidth;
   final String title;
+  final String entries;
 
   @override
   Widget build(BuildContext context) {
@@ -395,7 +392,7 @@ class DietaryPreferencesContainer extends StatelessWidget {
 
             if (selectedDietaryPreferences.isEmpty) {
               return Text(
-                'No dietary preferences selected',
+                entries,
                 style: simpleText.copyWith(
                   fontWeight: FontWeight.w500,
                   fontSize: 14,
@@ -407,27 +404,26 @@ class DietaryPreferencesContainer extends StatelessWidget {
             return Wrap(
               spacing: 8.0, // Horizontal spacing between items
               runSpacing: 8.0, // Vertical spacing between rows
-              children:
-                  selectedDietaryPreferences.map((preference) {
-                    return Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: primaryColor.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        preference,
-                        style: simpleText.copyWith(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14,
-                          color: secondaryColor,
-                        ),
-                      ),
-                    );
-                  }).toList(),
+              children: selectedDietaryPreferences.map((preference) {
+                return Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: primaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    preference,
+                    style: simpleText.copyWith(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                      color: secondaryColor,
+                    ),
+                  ),
+                );
+              }).toList(),
             );
           }),
         ],
@@ -442,6 +438,8 @@ class AtmospherePriceRangeContainer extends StatelessWidget {
     required this.screenHeight,
     required this.mobileView,
     required this.screenWidth,
+    required this.atmosphere,
+    required this.priceRange,
     required this.title,
   });
 
@@ -449,6 +447,8 @@ class AtmospherePriceRangeContainer extends StatelessWidget {
   final bool mobileView;
   final double screenWidth;
   final String title;
+  final String atmosphere;
+  final String priceRange;
 
   @override
   Widget build(BuildContext context) {
@@ -503,43 +503,41 @@ class AtmospherePriceRangeContainer extends StatelessWidget {
                       ),
                     ),
                     Expanded(
-                      child:
-                          selectedAtmosphere.isEmpty
-                              ? Text(
-                                'None selected',
-                                style: simpleText.copyWith(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                  color: secondaryColor,
-                                ),
-                              )
-                              : Wrap(
-                                spacing: 8.0,
-                                runSpacing: 8.0,
-                                children:
-                                    selectedAtmosphere.map((atmosphere) {
-                                      return Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 6,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: primaryColor.withOpacity(0.1),
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          atmosphere,
-                                          style: simpleText.copyWith(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 14,
-                                            color: secondaryColor,
-                                          ),
-                                        ),
-                                      );
-                                    }).toList(),
+                      child: selectedAtmosphere.isEmpty
+                          ? Text(
+                              atmosphere,
+                              style: simpleText.copyWith(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                                color: secondaryColor,
                               ),
+                            )
+                          : Wrap(
+                              spacing: 8.0,
+                              runSpacing: 8.0,
+                              children: selectedAtmosphere.map((atmosphere) {
+                                return Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: primaryColor.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(
+                                      12,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    atmosphere,
+                                    style: simpleText.copyWith(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 14,
+                                      color: secondaryColor,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
                     ),
                   ],
                 ),
@@ -556,43 +554,41 @@ class AtmospherePriceRangeContainer extends StatelessWidget {
                       ),
                     ),
                     Expanded(
-                      child:
-                          selectedPriceRange.isEmpty
-                              ? Text(
-                                'None selected',
-                                style: simpleText.copyWith(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                  color: secondaryColor,
-                                ),
-                              )
-                              : Wrap(
-                                spacing: 8.0,
-                                runSpacing: 8.0,
-                                children:
-                                    selectedPriceRange.map((price) {
-                                      return Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 6,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: primaryColor.withOpacity(0.1),
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          price,
-                                          style: simpleText.copyWith(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 14,
-                                            color: secondaryColor,
-                                          ),
-                                        ),
-                                      );
-                                    }).toList(),
+                      child: selectedPriceRange.isEmpty
+                          ? Text(
+                              priceRange,
+                              style: simpleText.copyWith(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                                color: secondaryColor,
                               ),
+                            )
+                          : Wrap(
+                              spacing: 8.0,
+                              runSpacing: 8.0,
+                              children: selectedPriceRange.map((price) {
+                                return Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: primaryColor.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(
+                                      12,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    price,
+                                    style: simpleText.copyWith(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 14,
+                                      color: secondaryColor,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
                     ),
                   ],
                 ),
@@ -611,6 +607,9 @@ class SpecialConditionsContainer extends StatelessWidget {
     required this.screenHeight,
     required this.mobileView,
     required this.screenWidth,
+    required this.specialConditions,
+    required this.uploadedImages,
+    required this.selectedMenuTypes,
     required this.title,
   });
 
@@ -618,11 +617,11 @@ class SpecialConditionsContainer extends StatelessWidget {
   final bool mobileView;
   final double screenWidth;
   final String title;
-
+  final specialConditions;
+  final MenuModel selectedMenuTypes;
+  final uploadedImages;
   @override
   Widget build(BuildContext context) {
-    final menuController = Get.put(MenuSubScreenController(), permanent: false);
-
     return Container(
       width: mobileView ? screenWidth : screenWidth * 0.35,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
@@ -646,177 +645,148 @@ class SpecialConditionsContainer extends StatelessWidget {
             style: headingText.copyWith(fontSize: mobileView ? 16 : 20),
           ),
           const SizedBox(height: 16),
-          Obx(() {
-            final specialConditions = menuController.getSpecialConditions();
-            final selectedMenuTypes = menuController.getSelectedMenuTypes();
-            final uploadedImages = menuController.getUploadedImages();
-
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Special Conditions Section
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Special Conditions: ',
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Special Conditions Section
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Special Conditions: ',
+                    style: simpleText.copyWith(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      specialConditions,
                       style: simpleText.copyWith(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                        color: secondaryColor,
                       ),
                     ),
-                    Expanded(
-                      child: Text(
-                        specialConditions.isEmpty
-                            ? 'None provided'
-                            : specialConditions,
-                        style: simpleText.copyWith(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14,
-                          color: secondaryColor,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
 
-                // Menu Type Section
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Menu Type: ',
-                      style: simpleText.copyWith(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                      ),
+              // Menu Type Section
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Menu Type: ',
+                    style: simpleText.copyWith(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
                     ),
-                    Expanded(
-                      child:
-                          selectedMenuTypes.isEmpty
-                              ? Text(
-                                'None selected',
-                                style: simpleText.copyWith(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                  color: secondaryColor,
-                                ),
-                              )
-                              : Wrap(
-                                spacing: 8.0,
-                                runSpacing: 8.0,
-                                children:
-                                    selectedMenuTypes.map((type) {
-                                      return Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 6,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: primaryColor.withOpacity(0.1),
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          type,
-                                          style: simpleText.copyWith(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 14,
-                                            color: secondaryColor,
-                                          ),
-                                        ),
-                                      );
-                                    }).toList(),
-                              ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
+                  ),
+                  Expanded(
+                    child: selectedMenuTypes.menuType.isEmpty
+                        ? Text(
+                            'None selected',
+                            style: simpleText.copyWith(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                              color: secondaryColor,
+                            ),
+                          )
+                        : Text(
+                            selectedMenuTypes.menuType,
+                            style: simpleText.copyWith(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                              color: secondaryColor,
+                            ),
+                          ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
 
-                // Discount Type Section (Hardcoded as "Coming Soon")
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Discount Type: ',
+              // Discount Type Section (Hardcoded as "Coming Soon")
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Discount Type: ',
+                    style: simpleText.copyWith(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      'Coming Soon',
                       style: simpleText.copyWith(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                        color: secondaryColor,
                       ),
                     ),
-                    Expanded(
-                      child: Text(
-                        'Coming Soon',
-                        style: simpleText.copyWith(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14,
-                          color: secondaryColor,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
 
-                // Food Images Section
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Food Images: ',
-                      style: simpleText.copyWith(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                      ),
+              // Food Images Section
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Food Images: ',
+                    style: simpleText.copyWith(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
                     ),
-                    Expanded(
-                      child:
-                          uploadedImages.isEmpty
-                              ? Text(
-                                'No images uploaded',
-                                style: simpleText.copyWith(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                  color: secondaryColor,
-                                ),
-                              )
-                              : SizedBox(
-                                height: mobileView ? 100 : 130,
-                                child: ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: uploadedImages.length,
-                                  itemBuilder: (context, index) {
-                                    return Padding(
-                                      padding: const EdgeInsets.only(
-                                        right: 8.0,
+                  ),
+                  Expanded(
+                    child: uploadedImages.isEmpty
+                        ? Text(
+                            'No images uploaded',
+                            style: simpleText.copyWith(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                              color: secondaryColor,
+                            ),
+                          )
+                        : SizedBox(
+                            height: mobileView ? 100 : 130,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: uploadedImages.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(
+                                    right: 8.0,
+                                  ),
+                                  child: Container(
+                                    width: mobileView ? 140 : 180,
+                                    height: mobileView ? 100 : 130,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(
+                                        8,
                                       ),
-                                      child: Container(
-                                        width: mobileView ? 140 : 180,
-                                        height: mobileView ? 100 : 130,
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                          image: DecorationImage(
-                                            image: MemoryImage(
-                                              uploadedImages[index],
-                                            ),
-                                            fit: BoxFit.cover,
-                                          ),
+                                      image: DecorationImage(
+                                        image: NetworkImage(
+                                          uploadedImages[index],
                                         ),
+                                        fit: BoxFit.cover,
                                       ),
-                                    );
-                                  },
-                                ),
-                              ),
-                    ),
-                  ],
-                ),
-              ],
-            );
-          }),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -824,7 +794,7 @@ class SpecialConditionsContainer extends StatelessWidget {
 }
 
 class OperatingHoursContainer extends StatelessWidget {
-  const OperatingHoursContainer({
+  OperatingHoursContainer({
     super.key,
     required this.screenHeight,
     required this.mobileView,
@@ -836,146 +806,197 @@ class OperatingHoursContainer extends StatelessWidget {
   final bool mobileView;
   final double screenWidth;
   final String title;
+  final controller = Get.find<RestaurantManagementController>();
+  final addController = Get.find<AddRestaurantTabController>();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: mobileView ? screenWidth : screenWidth * 0.52,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: dimWhite,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 4,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: headingText.copyWith(fontSize: mobileView ? 16 : 20),
-          ),
-          const SizedBox(height: 16),
-          // Table-like structure using Row and Column
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Heading Row
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      'Days',
-                      style: simpleText.copyWith(
-                        fontWeight: FontWeight.w600,
-                        fontSize: mobileView ? 14 : 18,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      'Breakfast',
-                      style: simpleText.copyWith(
-                        fontWeight: FontWeight.w600,
-                        fontSize: mobileView ? 14 : 18,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      'Lunch',
-                      style: simpleText.copyWith(
-                        fontWeight: FontWeight.w600,
-                        fontSize: mobileView ? 14 : 18,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      'Brunch',
-                      style: simpleText.copyWith(
-                        fontWeight: FontWeight.w600,
-                        fontSize: mobileView ? 14 : 18,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      'Dinner',
-                      style: simpleText.copyWith(
-                        fontWeight: FontWeight.w600,
-                        fontSize: mobileView ? 14 : 18,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              // Data Rows
-              buildDayRow(
-                'Monday',
-                '8:00AM - 11:00AM',
-                '12:00PM - 3:00PM',
-                '-',
-                '6:00PM - 10:00PM',
-              ),
-              buildDayRow(
-                'Tuesday',
-                '8:00AM - 11:00AM',
-                '12:00PM - 3:00PM',
-                '-',
-                '6:00PM - 10:00PM',
-              ),
-              buildDayRow(
-                'Wednesday',
-                '8:00AM - 11:00AM',
-                '12:00PM - 3:00PM',
-                '-',
-                '6:00PM - 10:00PM',
-              ),
-              buildDayRow(
-                'Thursday',
-                '8:00AM - 11:00AM',
-                '12:00PM - 3:00PM',
-                '-',
-                '6:00PM - 10:00PM',
-              ),
-              buildDayRow(
-                'Friday',
-                '8:00AM - 11:00AM',
-                '12:00PM - 3:00PM',
-                '3:00PM - 5:00PM',
-                '6:00PM - 11:00PM',
-              ),
-              buildDayRow(
-                'Saturday',
-                '-',
-                '12:00PM - 3:00PM',
-                '3:00PM - 5:00PM',
-                '6:00PM - 11:00PM',
-              ),
-              buildDayRow(
-                'Sunday',
-                '-',
-                '-',
-                '10:00AM - 2:00PM',
-                '6:00PM - 9:00PM',
+    return StreamBuilder<List<OperatingHours>>(
+      stream:
+          controller.getOperatingHours(addController.restaurantModel?.docID ?? ''),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Container(
+            width: mobileView ? screenWidth : screenWidth * 0.52,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: dimWhite,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 2,
+                  blurRadius: 4,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Text('Error: ${snapshot.error}'),
+          );
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Container(
+            width: mobileView ? screenWidth : screenWidth * 0.52,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: dimWhite,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 2,
+                  blurRadius: 4,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: const Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Container(
+            width: mobileView ? screenWidth : screenWidth * 0.52,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: dimWhite,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 2,
+                  blurRadius: 4,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: const Text('No operating hours available'),
+          );
+        }
+
+        final operatingHoursList = snapshot.data!;
+
+        // Sort days in the correct order (Monday to Sunday)
+        final List<String> daysOrder = [
+          'Monday',
+          'Tuesday',
+          'Wednesday',
+          'Thursday',
+          'Friday',
+          'Saturday',
+          'Sunday'
+        ];
+        operatingHoursList.sort((a, b) =>
+            daysOrder.indexOf(a.day).compareTo(daysOrder.indexOf(b.day)));
+
+        return Container(
+          width: mobileView ? screenWidth : screenWidth * 0.52,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: dimWhite,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 2,
+                blurRadius: 4,
+                offset: const Offset(0, 3),
               ),
             ],
           ),
-        ],
-      ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: headingText.copyWith(fontSize: mobileView ? 16 : 20),
+              ),
+              const SizedBox(height: 16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Heading Row
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Days',
+                          style: simpleText.copyWith(
+                            fontWeight: FontWeight.w600,
+                            fontSize: mobileView ? 14 : 18,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          'Breakfast',
+                          style: simpleText.copyWith(
+                            fontWeight: FontWeight.w600,
+                            fontSize: mobileView ? 14 : 18,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          'Lunch',
+                          style: simpleText.copyWith(
+                            fontWeight: FontWeight.w600,
+                            fontSize: mobileView ? 14 : 18,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          'Brunch',
+                          style: simpleText.copyWith(
+                            fontWeight: FontWeight.w600,
+                            fontSize: mobileView ? 14 : 18,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          'Dinner',
+                          style: simpleText.copyWith(
+                            fontWeight: FontWeight.w600,
+                            fontSize: mobileView ? 14 : 18,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  // Data Rows
+                  ...operatingHoursList.map((hours) {
+                    return buildDayRow(
+                      hours.day,
+                      _formatMealTime(hours.breakfast),
+                      _formatMealTime(hours.lunch),
+                      _formatMealTime(hours.brunch),
+                      _formatMealTime(hours.dinner),
+                    );
+                  }).toList(),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
+  }
+
+  String _formatMealTime(Map<String, dynamic> mealData) {
+    if (mealData['isClosed'] == true) {
+      return '-';
+    }
+    final startTime = mealData['startTime'] ?? 'N/A';
+    final endTime = mealData['endTime'] ?? 'N/A';
+    return '$startTime - $endTime';
   }
 
   Widget buildDayRow(

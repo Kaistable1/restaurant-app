@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:savrly/firebase_options.dart';
+import 'package:savrly/models/resaturant_model.dart';
 import 'dart:typed_data';
 
 import 'package:savrly/widgets/global_functions.dart';
@@ -18,6 +19,7 @@ class AddRestaurantTabController extends GetxController {
   final areaController = TextEditingController();
   final tiktokLinkController = TextEditingController();
   final instagramController = TextEditingController();
+  RestaurantModel? restaurantModel;
   String currentRestaurantID = '';
   var isPasswordVisible = false.obs;
   RxInt selectedIndex = 0.obs;
@@ -265,8 +267,6 @@ class AddRestaurantTabController extends GetxController {
 
   // Backend code
 
-
-
   addRestaurant() async {
     try {
       // Show loading dialog
@@ -330,6 +330,88 @@ class AddRestaurantTabController extends GetxController {
       Get.snackbar('Error', 'Failed to add restaurant: $e');
       print('Error $e');
     }
+  }
+
+  updateBasicInfo() async {
+    try {
+      // Show loading dialog
+      loadingDialog();
+      // Upload all images to Firebase Storage and get their URLs
+      // List<String> imagesList = imagesUrl(uploadedImages: uploadedImages)
+      // Prepare the restaurant data
+      final restaurantData = {
+        'address': areaController.text.trim(),
+        'city': selectedCity.value.trim(),
+        'country': selectedState.value.trim(),
+        // 'imagesList': imagesList,
+        'latitude':
+            40.72761, // Hardcoded for now; you can add a map picker later
+        // 'logoImage': imagesList.isEmpty
+        //     ? 'https://s3-media2.fl.yelpcdn.com/bphoto/iCP4QYCjWf9i-qDIBQrsnQ/o.jpg'
+        //     : imagesList.first,
+        'longitude':
+            -73.98373, // Hardcoded for now; you can add a map picker later
+        'password': assignPasswordController.text.trim(),
+        'resEmail': emailController.text.trim(),
+        'resName': restaurantNameController.text.trim(),
+        'InstagramLink': instagramController.text.trim(),
+        'TiktokLink': tiktokLinkController.text.trim(),
+        'spokenLanguage': selectedSpokenLanguage.value.trim(),
+      };
+
+      await FirebaseFirestore.instance
+          .collection('restaurants')
+          .doc(restaurantModel?.docID)
+          .update(restaurantData);
+
+      // Dismiss the loading dialog
+      Get.back();
+      // Show success message
+      Get.snackbar('Success', 'Basic info updated successfully');
+      selectedIndex.value++;
+      clearFields();
+      uploadedImages.clear();
+    } catch (e) {
+      Get.back();
+      Get.snackbar('Error', 'Failed to updated restaurant: $e');
+      print('Error $e');
+    }
+  }
+
+  Future<List<String>> imagesUrl({
+    required RxList<dynamic> uploadedImages,
+
+  }) async {
+    List<String> imagesList = [];
+    // Separate existing URLs and new images (Uint8List)
+    List<String> existingImageUrls = [];
+    List<Uint8List> newImagesToUpload = [];
+
+    for (var image in uploadedImages) {
+      if (image is String) {
+        // If the item is a URL (string), add it to existingImageUrls
+        existingImageUrls.add(image);
+      } else if (image is Uint8List) {
+        // If the item is raw image data (Uint8List), add it to newImagesToUpload
+        newImagesToUpload.add(image);
+      }
+    }
+
+    // Upload new images to Firebase Storage if there are any
+    if (newImagesToUpload.isNotEmpty) {
+      final uploadedImageUrls = await uploadImagesToFirebase(newImagesToUpload);
+      imagesList = [
+        ...existingImageUrls, // Keep existing URLs
+        ...uploadedImageUrls, // Add newly uploaded image URLs
+      ];
+    } else {
+      // If no new images to upload, use existing URLs or fallback to restaurantModel's imagesList
+      imagesList = existingImageUrls.isNotEmpty
+          ? existingImageUrls
+          : restaurantModel?.imagesList ?? [];
+    }
+
+    return imagesList;
   }
 
   assignedCredencialsLogin(

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:savrly/constants/text_styles.dart';
+import 'package:savrly/controllers/add_restaurants_controller.dart';
+import 'package:savrly/controllers/edit_restaurant_controller.dart';
 import '../../constants/app_colors.dart';
 import '../../controllers/drawer_controller.dart';
 import '../../controllers/restaurant_management_controller.dart';
@@ -21,6 +23,7 @@ class _RestaurantManagementScreenState
     extends State<RestaurantManagementScreen> {
   final drawerController = Get.put(DrawerControllerX());
   final controller = Get.put(RestaurantManagementController());
+  final addController = Get.put(AddRestaurantTabController());
   late final ScrollController _scrollController;
 
   @override
@@ -202,17 +205,6 @@ class _RestaurantManagementScreenState
                   ],
                 ),
           SizedBox(height: 10),
-          // Obx(
-          //   () => Text(
-          //     'Total Restaurants: ${controller.totalRestaurantsLength.value}',
-          //     style: simpleText.copyWith(
-          //       fontSize: tableTextSize,
-          //       fontWeight: FontWeight.w600,
-          //       color: primaryColor,
-          //     ),
-          //   ),
-          // ),
-          // SizedBox(height: 20),
           Expanded(
             child: Container(
               decoration: BoxDecoration(
@@ -320,8 +312,13 @@ class _RestaurantManagementScreenState
                                 padding: const EdgeInsets.all(16.0),
                                 child: Center(
                                   child: controller.isLoading.value
-                                      ? CircularProgressIndicator(
-                                          color: primaryColor,
+                                      ? SizedBox(
+                                          height: Get.height * 0.4,
+                                          child: Center(
+                                            child: CircularProgressIndicator(
+                                              color: primaryColor,
+                                            ),
+                                          ),
                                         )
                                       : Text(
                                           'Load More',
@@ -493,12 +490,35 @@ class _RestaurantManagementScreenState
                                         color: Colors.white,
                                         size: popUpSize,
                                       ),
-                                      onSelected: (value) {
+                                      onSelected: (value) async {
                                         if (value == 'delete') {
                                           controller.deleteRestaurant(index);
+                                        } else if (value == 'edit') {
+                                          addController.restaurantModel =
+                                              restaurant;
+                                          controller.update();
+                                          final editRestaurantController =
+                                              Get.put(
+                                                  EditRestaurantController());
+                                          await editRestaurantController
+                                              .fillAllVarsInRestManagmentController();
+
+                                          drawerController
+                                              .addRestaurants.value = true;
+                                        } else {
+                                          addController.restaurantModel =
+                                              restaurant;
+                                          controller.update();
+                                          drawerController
+                                              .viewRestaurantsDetails
+                                              .value = true;
                                         }
                                       },
                                       itemBuilder: (context) => [
+                                        PopupMenuItem(
+                                          value: 'view',
+                                          child: Text('View'),
+                                        ),
                                         PopupMenuItem(
                                           value: 'edit',
                                           child: Text('Edit'),

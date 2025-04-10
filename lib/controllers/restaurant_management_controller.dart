@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:savrly/models/operatingHour.dart';
 import 'package:savrly/models/resaturant_model.dart';
 
 class RestaurantManagementController extends GetxController {
@@ -411,6 +412,28 @@ class RestaurantManagementController extends GetxController {
     } finally {
       isLoading.value = false;
       print('Finished fetchRestaurants');
+    }
+  }
+
+  Stream<List<OperatingHours>> getOperatingHours(String restId) {
+    try {
+      // Reference to the operatingHours subcollection for the given restId
+      final Stream<QuerySnapshot> operatingHoursStream = FirebaseFirestore
+          .instance
+          .collection('restaurants')
+          .doc(restId)
+          .collection('operatingHours')
+          .snapshots();
+
+      // Transform the stream of QuerySnapshots into a stream of List<OperatingHours>
+      return operatingHoursStream.map((QuerySnapshot snapshot) {
+        return snapshot.docs.map((DocumentSnapshot doc) {
+          return OperatingHours.fromDocument(doc);
+        }).toList();
+      });
+    } catch (e) {
+      // Return a stream with error if something goes wrong
+      return Stream.error('Error fetching operating hours: $e');
     }
   }
 

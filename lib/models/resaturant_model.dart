@@ -179,8 +179,8 @@ class RestaurantModel {
       ),
       country: data['country'] ?? '',
       // New Fields
-      instaLink: data['instaLink'] ?? '',
-      tiktokLink: data['tiktokLink'] ?? '',
+      instaLink: data['InstagramLink'] ?? '',
+      tiktokLink: data['TiktokLink'] ?? '',
     );
   }
 }

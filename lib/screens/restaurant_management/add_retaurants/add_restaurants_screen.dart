@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:savrly/controllers/operating_hours_sub_screen_controller.dart';
+import 'package:savrly/controllers/restaurant_management_controller.dart';
 import 'package:savrly/screens/restaurant_management/add_retaurants/sub_screens/amenities_sub_screen.dart';
 import 'package:savrly/screens/restaurant_management/add_retaurants/sub_screens/basic_info_sub_screen.dart';
 import 'package:savrly/screens/restaurant_management/add_retaurants/sub_screens/experiences_sub_screen.dart';
@@ -23,6 +24,7 @@ class AddRestaurantsScreen extends StatelessWidget {
 
   final drawerController = Get.put(DrawerControllerX());
   final tabController = Get.put(AddRestaurantTabController());
+  final restaurantController = Get.put(RestaurantManagementController());
   final amenitiesController = Get.put(AmenitiesSubScreenController());
   final experiencesController = Get.put(ExperiencesSubScreenController());
   final menuController = Get.put(MenuSubScreenController());
@@ -157,7 +159,11 @@ class AddRestaurantsScreen extends StatelessWidget {
                                 } else if (formState != null &&
                                     formState.validate() &&
                                     tabController.areBasicInfoFieldsFilled()) {
+                                if (tabController.restaurantModel != null) {
+                                  await tabController.updateBasicInfo();
+                                } else {
                                   await tabController.addRestaurant();
+                                }
                                 }
                               } else if (selectedIndex == 1) {
                                 // Validate Amenities tab
@@ -242,8 +248,8 @@ class AddRestaurantsScreen extends StatelessWidget {
                       shadow: [],
                       containerColor: primaryColor,
                       ontapp: () async {
-                              if (menuController.areMenuFieldsFilled()) {
-                                await menuController.addMeneRestaurants();
+                        if (menuController.areMenuFieldsFilled()) {
+                          await menuController.addMeneRestaurants();
                           tabController
                               .clearFields(); // Clear Basic Info fields
                           amenitiesController.clearFields();

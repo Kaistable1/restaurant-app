@@ -87,7 +87,7 @@ class BasicInfoSubScreen extends StatelessWidget {
                                 entry,
                               ) {
                                 int index = entry.key;
-                                Uint8List imageData = entry.value;
+                                dynamic imageData = entry.value;
 
                                 return Stack(
                                   children: [
@@ -98,7 +98,11 @@ class BasicInfoSubScreen extends StatelessWidget {
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(8),
                                         image: DecorationImage(
-                                          image: MemoryImage(imageData),
+                                          image: imageData is String
+                                              ? NetworkImage(
+                                                  imageData) // Display URL image
+                                              : MemoryImage(imageData
+                                                  as Uint8List), // Display Uint8List image
                                           fit: BoxFit.cover,
                                         ),
                                       ),
@@ -180,6 +184,8 @@ class BasicInfoSubScreen extends StatelessWidget {
                   ),
                 ),
               ),
+             
+             
               const SizedBox(height: 24),
               Row(
                 children: [
