@@ -42,7 +42,7 @@ class MenuSubScreen extends StatelessWidget {
                 children: [
                   TextAndFieldsOrDropDown(
                     labelText: 'Special conditions',
-                    fieldController: TextEditingController(),
+                    fieldController: controller.specialConditionsController,
                     fieldHintText: 'Add special conditions',
                     maxLines: 5,
                   ),

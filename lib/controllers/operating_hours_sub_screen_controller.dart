@@ -5,7 +5,6 @@ import 'package:savrly/controllers/add_restaurants_controller.dart';
 import 'package:savrly/widgets/global_functions.dart';
 
 class OperatingHoursSubScreenController extends GetxController {
-
   Map<String, ValueNotifier<bool>> daySwitchControllers = {};
 
   @override

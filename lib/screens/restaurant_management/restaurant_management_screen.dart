@@ -135,8 +135,12 @@ class _RestaurantManagementScreenState
                       items: controller.cuisineList,
                       onChanged: (value) {
                         controller.selectedCuisine.value = value!;
-                        controller.fetchRestaurants(
-                            isRefresh: true, searchQuery: value);
+                        controller.currentCuisineFilter.value = value;
+
+                        if (value.isEmpty || value == 'All') {
+                          controller.filteredResults.clear();
+                          controller.fetchRestaurants(isRefresh: true);
+                        }
                       },
                     ),
                   ],
@@ -166,12 +170,13 @@ class _RestaurantManagementScreenState
                         hint: 'Filter by Cuisine',
                         items: controller.cuisineList,
                         onChanged: (value) {
-                          controller.hasMoreData.value = false;
-                          controller.restaurants.clear();
-
                           controller.selectedCuisine.value = value!;
-                          // controller.fetchRestaurants(
-                          //     isRefresh: true, searchQuery: '1');
+                          controller.currentCuisineFilter.value = value;
+
+                          if (value.isEmpty || value == 'All') {
+                            controller.filteredResults.clear();
+                            controller.fetchRestaurants(isRefresh: true);
+                          }
                         },
                       ),
                     ),
@@ -197,17 +202,17 @@ class _RestaurantManagementScreenState
                   ],
                 ),
           SizedBox(height: 10),
-          Obx(
-            () => Text(
-              'Total Restaurants: ${controller.totalRestaurantsLength.value}',
-              style: simpleText.copyWith(
-                fontSize: tableTextSize,
-                fontWeight: FontWeight.w600,
-                color: primaryColor,
-              ),
-            ),
-          ),
-          SizedBox(height: 20),
+          // Obx(
+          //   () => Text(
+          //     'Total Restaurants: ${controller.totalRestaurantsLength.value}',
+          //     style: simpleText.copyWith(
+          //       fontSize: tableTextSize,
+          //       fontWeight: FontWeight.w600,
+          //       color: primaryColor,
+          //     ),
+          //   ),
+          // ),
+          // SizedBox(height: 20),
           Expanded(
             child: Container(
               decoration: BoxDecoration(
@@ -402,20 +407,9 @@ class _RestaurantManagementScreenState
                                   flex: 1,
                                   child: Center(
                                     child: Text(
-                                      restaurant
-                                              .menuList.percentageOff.isNotEmpty
-                                          ? restaurant.menuList.percentageOff
-                                                  .first.cuisine ??
-                                              'No Cuisine Yet'
-                                          : restaurant.menuList
-                                                  .happyHourSpecials.isNotEmpty
-                                              ? restaurant
-                                                      .menuList
-                                                      .happyHourSpecials
-                                                      .first
-                                                      .cuisine ??
-                                                  'No Cuisine Yet'
-                                              : 'No Cuisine Yet',
+                                      restaurant.menuList.isEmpty
+                                          ? 'No Cuisine'
+                                          : restaurant.menuList[0].cuisineType,
                                       textAlign: TextAlign.center,
                                       style: simpleText.copyWith(
                                         fontSize: tableTextSize,

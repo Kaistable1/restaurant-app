@@ -252,7 +252,6 @@ class RestaurantManagementController extends GetxController {
   // Paginate the filtered results
   void paginateFilteredResults() {
     if (!hasMoreData.value) {
-      print('No more filtered results to paginate');
       return;
     }
 
@@ -271,8 +270,6 @@ class RestaurantManagementController extends GetxController {
     List<RestaurantModel> newRestaurants =
         filteredResults.sublist(startIndex, endIndex);
     restaurants.addAll(newRestaurants);
-    print('Paginated ${newRestaurants.length} filtered results');
-    print('Total restaurants in list: ${restaurants.length}');
   }
 
   Future<List<RestaurantModel>> getRestaurantsWithPagination({
@@ -292,13 +289,10 @@ class RestaurantManagementController extends GetxController {
 
       // Start after the last document if it exists
       if (lastDocument != null) {
-        print('Starting after document: ${lastDocument.id}');
         query = query.startAfterDocument(lastDocument);
       }
 
-      print('Executing query...');
       QuerySnapshot querySnapshot = await query.get();
-      print('Fetched ${querySnapshot.docs.length} documents');
 
       List<RestaurantModel> restaurants = querySnapshot.docs.map((doc) {
         return RestaurantModel.fromDocumentSnapshot(
@@ -312,7 +306,6 @@ class RestaurantManagementController extends GetxController {
                 .toLowerCase()
                 .contains(searchQuery.toLowerCase()))
             .toList();
-        print('After search filter: ${restaurants.length} restaurants');
       }
 
       if (cityFilter != null && cityFilter.isNotEmpty && cityFilter != 'All') {
@@ -320,18 +313,18 @@ class RestaurantManagementController extends GetxController {
             .where((restaurant) =>
                 restaurant.city.toLowerCase() == cityFilter.toLowerCase())
             .toList();
-        print('After city filter: ${restaurants.length} restaurants');
       }
 
       if (cuisineFilter != null &&
           cuisineFilter.isNotEmpty &&
           cuisineFilter != 'All') {
         restaurants = restaurants
-            .where((restaurant) => restaurant.dietaryList
-                .map((cuisine) => cuisine.toLowerCase())
+            .where((restaurant) => restaurant.menuList
+                .map((cuisine) => cuisine.cuisineType.toLowerCase())
                 .contains(cuisineFilter.toLowerCase()))
             .toList();
-        print('After cuisine filter: ${restaurants.length} restaurants');
+        print(
+            'After cuisine filter ---------- : ${restaurants.length} restaurants');
       }
 
       // Limit to pageSize after filtering
@@ -379,22 +372,19 @@ class RestaurantManagementController extends GetxController {
     }
 
     isLoading.value = true;
-    print('Starting fetchRestaurants (isRefresh: $isRefresh)');
 
     try {
       if (isRefresh ||
           (searchQuery != null && searchQuery != currentSearchQuery.value) ||
           (cityFilter != null && cityFilter != currentCityFilter.value) ||
-          (cuisineFilter != null &&
-              cuisineFilter != currentCuisineFilter.value)) {
-        print('Resetting state for refresh or filter change');
+          (selectedCuisine.value.isNotEmpty &&
+              selectedCuisine.value != currentCuisineFilter.value)) {
         restaurants.clear();
         lastDocument = null;
         hasMoreData.value = true;
         currentSearchQuery.value = searchQuery ?? currentSearchQuery.value;
         currentCityFilter.value = cityFilter ?? currentCityFilter.value;
-        currentCuisineFilter.value =
-            cuisineFilter ?? currentCuisineFilter.value;
+        currentCuisineFilter.value = selectedCuisine.value;
       }
 
       if (!hasMoreData.value) {
@@ -402,7 +392,6 @@ class RestaurantManagementController extends GetxController {
         return;
       }
 
-      print('Fetching restaurants with pageSize: $pageSize');
       List<RestaurantModel> newRestaurants = await getRestaurantsWithPagination(
         pageSize: pageSize,
         lastDocument: lastDocument,
@@ -411,16 +400,11 @@ class RestaurantManagementController extends GetxController {
         cuisineFilter: currentCuisineFilter.value,
       );
 
-      print('Fetched ${newRestaurants.length} new restaurants');
       restaurants.addAll(newRestaurants);
-      print('Total restaurants in list: ${restaurants.length}');
 
       // Only set hasMoreData to false if we fetched no new restaurants
-      if (newRestaurants.isEmpty) {
+      if (newRestaurants.isEmpty || restaurants.length < 10) {
         hasMoreData.value = false;
-        print('Reached end of data (no new restaurants fetched)');
-      } else {
-        print('More data might be available, continuing pagination');
       }
     } catch (e) {
       print('Error in fetchRestaurants: $e');
@@ -432,10 +416,7 @@ class RestaurantManagementController extends GetxController {
 
   void deleteRestaurant(int index) async {
     try {
-      print('index ------- $index');
-      print('restaurants ----- ${restaurants.length}');
       String docID = restaurants[index].docID;
-      print('docID --------- $docID');
       await FirebaseFirestore.instance
           .collection('restaurants')
           .doc(docID)
