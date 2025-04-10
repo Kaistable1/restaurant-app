@@ -77,7 +77,7 @@ class EditRestaurantController extends GetxController {
       // Update atmosphere
       for (var atm in amenitiesController.atmosphere) {
         atm['isChecked'] =
-            restaurantDetailsModel!.atmopshereList.contains(atm['name']);
+            restaurantDetailsModel!.atmosphereList.contains(atm['name']);
       }
 
       // Update price range

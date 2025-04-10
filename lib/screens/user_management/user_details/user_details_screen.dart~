@@ -177,29 +177,29 @@ class UserDetailsScreen extends StatelessWidget {
             QuestionAnswerWidget(
               questionNumber: 7,
               question:
-              "How Far Are You Willing to Travel for a Great Dining Experience?",
-              answers: [user.willingToTravel],
+              "What Kind of Dining Experiences Do You Enjoy the Most?",
+              answers: user.diningExp,
               mobileView: mobileView,
             ),
             QuestionAnswerWidget(
               questionNumber: 8,
               question:
               "What Type of Notifications Would You Like to Receive?",
-              answers: user.notificationType,
+              answers: user.diningExp,
               mobileView: mobileView,
             ),
             QuestionAnswerWidget(
               questionNumber: 9,
               question:
               "How Often Would You Like to Be Notified About Dining Opportunities?",
-              answers: [user.notifiedDiningOpp],
+              answers: user.diningExp,
               mobileView: mobileView,
             ),
             QuestionAnswerWidget(
               questionNumber: 10,
               question:
               "Which Location Do You Prefer?",
-              answers: [user.city],
+              answers: user.diningExp,
               mobileView: mobileView,
             ),
           ],

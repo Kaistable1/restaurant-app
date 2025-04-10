@@ -92,7 +92,7 @@ class ViewRestaurantDetails extends StatelessWidget {
                     screenHeight: screenHeight,
                     mobileView: mobileView,
                     screenWidth: screenWidth,
-                    atmosphere: restaurant.atmopshereList.join(', '),
+                    atmosphere: restaurant.atmosphereList.join(', '),
                     priceRange: restaurant.priceRange,
                     title: 'Atmosphere & Price Range',
                   ),

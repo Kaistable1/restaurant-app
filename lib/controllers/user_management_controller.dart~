@@ -1,0 +1,262 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
+import '../models/user_management_model.dart';
+
+class UserController extends GetxController {
+  final searchController = TextEditingController();
+  RxList<UserManagementModel> userManagement = <UserManagementModel>[].obs;
+  RxList<UserManagementModel> filteredResults = <UserManagementModel>[].obs; // For search results
+  DocumentSnapshot? lastDocument;
+  RxBool hasMoreData = true.obs;
+  RxBool isLoading = false.obs;
+  RxString currentSearchQuery = ''.obs;
+  final int pageSize = 10;
+  RxInt totalUsersLength = 0.obs;
+
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchUsers(isRefresh: true);
+    getAllUsersLength();
+    searchController.addListener(() {
+      currentSearchQuery.value = searchController.text;
+      if (currentSearchQuery.value.isNotEmpty) {
+        fetchAllUsersForSearch(); // Fetch all for search
+      } else {
+        fetchUsers(isRefresh: true); // Reset to normal pagination
+      }
+      getAllUsersLength();
+    });
+  }
+
+  @override
+  void onClose() {
+    searchController.dispose();
+    super.onClose();
+  }
+
+  Future<void> getAllUsersLength({String? searchQuery}) async {
+    try {
+      CollectionReference usersRef = _firestore.collection('users');
+      Query query = usersRef;
+
+      QuerySnapshot querySnapshot = await query.get();
+      List<UserManagementModel> users = querySnapshot.docs.map((doc) {
+        return UserManagementModel.fromDocumentSnapshot(
+            doc as DocumentSnapshot<Map<String, dynamic>>);
+      }).toList();
+
+      if (searchQuery != null && searchQuery.isNotEmpty) {
+        users = users
+            .where((user) => user.username
+            .toLowerCase()
+            .contains(searchQuery.toLowerCase()))
+            .toList();
+      }
+
+      totalUsersLength.value = users.length;
+      print('Total users in database: ${totalUsersLength.value}');
+    } catch (e) {
+      print('Error fetching total users length: $e');
+      totalUsersLength.value = 0;
+    }
+  }
+
+  // Fetch all users for search
+  Future<void> fetchAllUsersForSearch() async {
+    try {
+      isLoading.value = true;
+      CollectionReference usersRef = _firestore.collection('users');
+      Query query = usersRef;
+
+      QuerySnapshot querySnapshot = await query.get();
+      List<UserManagementModel> allUsers = querySnapshot.docs.map((doc) {
+        return UserManagementModel.fromDocumentSnapshot(
+            doc as DocumentSnapshot<Map<String, dynamic>>);
+      }).toList();
+
+      // Apply search filter
+      filteredResults.value = allUsers;
+      if (currentSearchQuery.value.isNotEmpty) {
+        filteredResults.value = filteredResults
+            .where((user) => user.username
+            .toLowerCase()
+            .contains(currentSearchQuery.value.toLowerCase()))
+            .toList();
+      }
+
+      // Reset users list and paginate filtered results
+      userManagement.clear();
+      lastDocument = null;
+      hasMoreData.value = true;
+      paginateFilteredResults();
+    } catch (e) {
+      print('Error fetching all users for search: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // Paginate the filtered results
+  void paginateFilteredResults() {
+    if (!hasMoreData.value) {
+      print('No more filtered results to paginate');
+      return;
+    }
+
+    int startIndex = userManagement.length;
+    int endIndex = startIndex + pageSize;
+    if (endIndex >= filteredResults.length) {
+      endIndex = filteredResults.length;
+      hasMoreData.value = false;
+    }
+
+    if (startIndex >= filteredResults.length) {
+      hasMoreData.value = false;
+      return;
+    }
+
+    List<UserManagementModel> newUsers =
+    filteredResults.sublist(startIndex, endIndex);
+    userManagement.addAll(newUsers);
+    print('Paginated ${newUsers.length} filtered results');
+    print('Total users in list: ${userManagement.length}');
+  }
+
+  Future<List<UserManagementModel>> getUsersWithPagination({
+    required int pageSize,
+    DocumentSnapshot? lastDocument,
+    String? searchQuery,
+  }) async {
+    try {
+      CollectionReference usersRef = _firestore.collection('users');
+      Query query = usersRef.orderBy('username');
+
+      // Apply pagination limit
+      query = query.limit(pageSize * 2);
+
+      // Start after the last document if it exists
+      if (lastDocument != null) {
+        print('Starting after document: ${lastDocument.id}');
+        query = query.startAfterDocument(lastDocument);
+      }
+
+      print('Executing query...');
+      QuerySnapshot querySnapshot = await query.get();
+      print('Fetched ${querySnapshot.docs.length} documents');
+
+      List<UserManagementModel> users = querySnapshot.docs.map((doc) {
+        return UserManagementModel.fromDocumentSnapshot(
+            doc as DocumentSnapshot<Map<String, dynamic>>);
+      }).toList();
+
+      // Apply search filter client-side
+      if (searchQuery != null && searchQuery.isNotEmpty) {
+        users = users
+            .where((user) => user.username
+            .toLowerCase()
+            .contains(searchQuery.toLowerCase()))
+            .toList();
+        print('After search filter: ${users.length} users');
+      }
+
+      // Limit to pageSize after filtering
+      users = users.take(pageSize).toList();
+      print('After limiting to pageSize: ${users.length} users');
+
+      // Update lastDocument for the next fetch
+      this.lastDocument =
+      querySnapshot.docs.isNotEmpty ? querySnapshot.docs.last : null;
+      if (this.lastDocument != null) {
+        print('Updated lastDocument to: ${this.lastDocument!.id}');
+      } else {
+        print('No more documents to set as lastDocument');
+      }
+
+      return users;
+    } catch (e) {
+      print('Error fetching users: $e');
+      return [];
+    }
+  }
+
+  Future<void> fetchUsers({
+    bool isRefresh = false,
+    String? searchQuery,
+  }) async {
+    if (isLoading.value) {
+      print('Already loading, skipping fetch');
+      return;
+    }
+
+    // If search query is active, paginate filtered results instead
+    if (currentSearchQuery.value.isNotEmpty) {
+      isLoading.value = true;
+      try {
+        paginateFilteredResults();
+      } finally {
+        isLoading.value = false;
+      }
+      return;
+    }
+
+    isLoading.value = true;
+    print('Starting fetchUsers (isRefresh: $isRefresh)');
+
+    try {
+      if (isRefresh || (searchQuery != null && searchQuery != currentSearchQuery.value)) {
+        print('Resetting state for refresh or search change');
+        userManagement.clear();
+        lastDocument = null;
+        hasMoreData.value = true;
+        currentSearchQuery.value = searchQuery ?? currentSearchQuery.value;
+      }
+
+      if (!hasMoreData.value) {
+        print('No more data to fetch');
+        return;
+      }
+
+      print('Fetching users with pageSize: $pageSize');
+      List<UserManagementModel> newUsers = await getUsersWithPagination(
+        pageSize: pageSize,
+        lastDocument: lastDocument,
+        searchQuery: currentSearchQuery.value,
+      );
+
+      print('Fetched ${newUsers.length} new users');
+      userManagement.addAll(newUsers);
+      print('Total users in list: ${userManagement.length}');
+
+      if (newUsers.isEmpty) {
+        hasMoreData.value = false;
+        print('Reached end of data (no new users fetched)');
+      } else {
+        print('More data might be available, continuing pagination');
+      }
+    } catch (e) {
+      print('Error in fetchUsers: $e');
+    } finally {
+      isLoading.value = false;
+      print('Finished fetchUsers');
+    }
+  }
+
+  void deleteUser(String userId) async {
+    try {
+      await _firestore.collection('users').doc(userId).delete();
+      userManagement.removeWhere((user) => user.userId == userId);
+      if (currentSearchQuery.value.isNotEmpty) {
+        filteredResults.removeWhere((user) => user.userId == userId);
+      }
+      getAllUsersLength(searchQuery: currentSearchQuery.value);
+      Get.snackbar('Success', 'User deleted successfully');
+    } catch (e) {
+      print('Error deleting user: $e');
+      Get.snackbar('Error', 'Failed to delete user');
+    }
+  }
+}

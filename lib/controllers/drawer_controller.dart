@@ -1,8 +1,10 @@
 import 'package:get/get.dart';
 
+import '../models/user_management_model.dart';
+
 class DrawerControllerX extends GetxController {
   // Active screen state
-  RxInt selectedScreen = 2.obs;
+  RxInt selectedScreen = 1.obs;
   var isUserManagementExpanded = false.obs;
   var hoveredItem = "".obs;
 
@@ -56,5 +58,16 @@ class DrawerControllerX extends GetxController {
     viewBannerDetails.value=false;
     addBanner.value=false;
 
+  }
+
+  // Add this to store the selected user
+  Rx<UserManagementModel?> selectedUser = Rx<UserManagementModel?>(null);
+
+  void setSelectedUser(UserManagementModel user) {
+    selectedUser.value = user;
+  }
+
+  void clearSelectedUser() {
+    selectedUser.value = null;
   }
 }

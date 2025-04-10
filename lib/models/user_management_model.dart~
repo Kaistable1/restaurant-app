@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class UserManagementModel {
    String city;
    String confirmPass;
@@ -86,29 +84,4 @@ class UserManagementModel {
       'willingToTravel': willingToTravel,
     };
   }
-
-   static UserManagementModel fromDocumentSnapshot(DocumentSnapshot<Map<String, dynamic>> doc) {
-     final data = doc.data()!;
-     return UserManagementModel(
-       city: data['city'] ?? '',
-       confirmPass: data['confirmpass'] ?? '',
-       country: data['country'] ?? '',
-       dietaryPrefList: List<String>.from(data['dietaryPrefList'] ?? []),
-       diningExp: List<String>.from(data['diningExp'] ?? []),
-       impDiningOut: List<String>.from(data['impDiningOut'] ?? []),
-       notificationType: List<String>.from(data['notificationType'] ?? []),
-       notifiedDiningOpp: data['notifiedDiningOpp'] ?? '',
-       password: data['password'] ?? '',
-       planner: data['planner'] ?? '',
-       token: data['token'] ?? '',
-       topThreeCuisines: List<String>.from(data['topThreeCuisines'] ?? []),
-       userEmail: data['userEmail'] ?? '',
-       userId: data['userID'] ?? doc.id,
-       // Use doc.id if userID is not explicitly stored
-       userImage: data['userImage'] ?? '',
-       username: data['username'] ?? '',
-       whereToEat: List<String>.from(data['whereToEat'] ?? []),
-       willingToTravel: data['willingToTravel'] ?? '',
-     );
-   }
 }
