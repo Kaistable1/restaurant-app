@@ -23,7 +23,7 @@ class RestaurantModel {
   double longitude;
   DateTime createdAt;
   List<EntertainmentScheduleModel> entertainmentScheduleList;
-  MenuModel menuList;
+  List<MenuModel> menuList;
   String about;
   String country;
   // New Fields
@@ -86,7 +86,7 @@ class RestaurantModel {
       priceRange: '',
       zipCode: '',
       entertainmentScheduleList: [],
-      menuList: MenuModel.initialize(),
+      menuList: [],
       about: '',
       createdAt: DateTime.now(),
       country: '',
@@ -172,7 +172,11 @@ class RestaurantModel {
           (e) => EntertainmentScheduleModel.fromMap(e as Map<String, dynamic>),
         ),
       ),
-      menuList: MenuModel.initialize(),
+      menuList: List<MenuModel>.from(
+        (data['menuList'] as List<dynamic>? ?? []).map(
+          (e) => MenuModel.fromMap(e as Map<String, dynamic>),
+        ),
+      ),
       country: data['country'] ?? '',
       // New Fields
       instaLink: data['instaLink'] ?? '',
@@ -240,30 +244,42 @@ class EntertainmentScheduleModel {
 }
 
 class MenuModel {
-  List<OfferModel> percentageOff; // List of percentage offers
-  List<OfferModel> happyHourSpecials; // List of happy hour specials
+  String cuisineType;
+  List<String> foodImages;
+  String menuType;
 
   // Constructor
   MenuModel({
-    required this.percentageOff,
-    required this.happyHourSpecials,
+    required this.cuisineType,
+    required this.foodImages,
+    required this.menuType,
   });
 
-  // Initialize the model with default values
+  // Initialize with default values
   static MenuModel initialize() {
     return MenuModel(
-      percentageOff: [],
-      happyHourSpecials: [],
+      cuisineType: '',
+      foodImages: [],
+      menuType: '',
     );
   }
 
   // Convert the model instance to a map for Firestore
   Map<String, dynamic> toMap() {
     return {
-      'percentageOff': percentageOff.map((item) => item.toMap()).toList(),
-      'happyHourSpecials':
-          happyHourSpecials.map((item) => item.toMap()).toList(),
+      'cuisineType': cuisineType,
+      'foodImages': foodImages,
+      'menuType': menuType,
     };
+  }
+
+  // Factory method to create an instance from a Firestore document
+  factory MenuModel.fromMap(Map<String, dynamic> map) {
+    return MenuModel(
+      cuisineType: map['cuisineType'] ?? '',
+      foodImages: List<String>.from(map['foodImages'] ?? []),
+      menuType: map['menuType'] ?? '',
+    );
   }
 }
 

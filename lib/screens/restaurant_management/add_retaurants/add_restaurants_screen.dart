@@ -73,8 +73,9 @@ class AddRestaurantsScreen extends StatelessWidget {
                             width: 130,
                             shadow: [],
                             containerColor: primaryColor,
-                            ontapp: () {
+                            ontapp: () async {
                               if (menuController.areMenuFieldsFilled()) {
+                                await menuController.addMeneRestaurants();
                                 tabController
                                     .clearFields(); // Clear Basic Info fields
                                 amenitiesController.clearFields();
@@ -200,8 +201,9 @@ class AddRestaurantsScreen extends StatelessWidget {
                                         OperatingHoursSubScreenController());
                                 await operatingHoursSubScreenController
                                     .saveAllOperatingHours();
-                              } else {
                                 tabController.selectedIndex.value++;
+                              } else if (selectedIndex == 4) {
+                                await menuController.addMeneRestaurants();
                               }
                             }
                           },
@@ -239,8 +241,9 @@ class AddRestaurantsScreen extends StatelessWidget {
                       width: 130,
                       shadow: [],
                       containerColor: primaryColor,
-                      ontapp: () {
-                        if (menuController.areMenuFieldsFilled()) {
+                      ontapp: () async {
+                              if (menuController.areMenuFieldsFilled()) {
+                                await menuController.addMeneRestaurants();
                           tabController
                               .clearFields(); // Clear Basic Info fields
                           amenitiesController.clearFields();
@@ -384,7 +387,7 @@ class AddRestaurantsScreen extends StatelessWidget {
                             );
                           }
                         } else {
-                          tabController.selectedIndex.value++;
+                          await menuController.addMeneRestaurants();
                         }
                       }
                     },

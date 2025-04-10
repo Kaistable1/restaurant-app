@@ -1,8 +1,12 @@
 // import 'dart:html' as html;
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:savrly/controllers/add_restaurants_controller.dart';
 import 'dart:typed_data';
+
+import 'package:savrly/widgets/global_functions.dart';
 
 class MenuSubScreenController extends GetxController {
   final specialConditionsController = TextEditingController();
@@ -96,5 +100,44 @@ class MenuSubScreenController extends GetxController {
   // Get uploaded images
   List<Uint8List> getUploadedImages() {
     return uploadedImages.toList();
+  }
+
+  // backend
+
+  addMeneRestaurants() async {
+    try {
+      loadingDialog();
+
+      final addRestaurantTabController = Get.find<AddRestaurantTabController>();
+      final restaurantID = addRestaurantTabController.currentRestaurantID;
+      List<String> imagesList = await uploadImagesToFirebase(uploadedImages);
+
+      // 👇 Step 2: Prepare the data map
+      final restaurantData = {
+        'specialConditions': specialConditionsController.text.trim(),
+        'menuList': [
+          {
+            'cuisineType': selectedCuisine.value,
+            'menuType': isFoodMenuSelected.value == true ? 'food' : 'drink',
+            'foodImages': imagesList,
+          }
+        ],
+      };
+
+      // 👇 Step 3: Update Firestore
+      await FirebaseFirestore.instance
+          .collection('restaurants')
+          .doc(restaurantID)
+          .update(restaurantData);
+
+      // 👇 Step 4: UI updates
+      Get.back();
+      clearFields();
+      addRestaurantTabController.selectedIndex.value++;
+    } catch (e) {
+      Get.back();
+      Get.snackbar('Error', 'Failed to add amenities: $e');
+      print('❌ Error adding amenities: $e');
+    }
   }
 }

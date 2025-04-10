@@ -265,20 +265,7 @@ class AddRestaurantTabController extends GetxController {
 
   // Backend code
 
-  Future<List<String>> uploadImagesToFirebase(List<Uint8List> images) async {
-    List<String> imageUrls = [];
-    List<Uint8List> imagesCopy = List.from(images); // 🔥 Fix: Create a copy
 
-    for (var image in imagesCopy) {
-      try {
-        String imageUrl = await uploadImageToFirebase("items", image);
-        imageUrls.add(imageUrl); // Convert String to RxString
-      } catch (e) {
-        print("Error uploading image: $e");
-      }
-    }
-    return imageUrls;
-  }
 
   addRestaurant() async {
     try {
