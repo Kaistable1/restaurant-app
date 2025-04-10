@@ -1,12 +1,23 @@
-
 // import 'dart:html' as html;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:typed_data';
 
-class MenuSubScreenController extends GetxController{
+class MenuSubScreenController extends GetxController {
   final specialConditionsController = TextEditingController();
+  RxList<String> cuisineList = <String>[
+    'Chinese',
+    'Italian',
+    'Fast Food',
+    'Mexican',
+    'Thai',
+    'Japanese',
+    'Mediterranean',
+    'American',
+  ].obs;
+  RxString selectedCuisine = ''.obs;
+
   // Store uploaded images
   var uploadedImages = <Uint8List>[].obs;
   // Checkbox states
@@ -32,6 +43,7 @@ class MenuSubScreenController extends GetxController{
       print("No file selected");
     }
   }
+
   void removeImage(int index) {
     if (index >= 0 && index < uploadedImages.length) {
       uploadedImages.removeAt(index);
@@ -59,6 +71,7 @@ class MenuSubScreenController extends GetxController{
     return uploadedImages.isNotEmpty &&
         (isFoodMenuSelected.value || isDrinkMenuSelected.value);
   }
+
   // Clear all fields
   void clearFields() {
     specialConditionsController.clear();
@@ -79,8 +92,6 @@ class MenuSubScreenController extends GetxController{
     if (isDrinkMenuSelected.value) menuTypes.add('Drink Menu');
     return menuTypes;
   }
-
-
 
   // Get uploaded images
   List<Uint8List> getUploadedImages() {

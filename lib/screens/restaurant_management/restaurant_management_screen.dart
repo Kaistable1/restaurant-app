@@ -134,10 +134,9 @@ class _RestaurantManagementScreenState
                       hint: 'Filter by Cuisine',
                       items: controller.cuisineList,
                       onChanged: (value) {
-                        controller.restaurants.clear();
-                        // controller.selectedCuisine.value = value!;
-                        // controller.fetchRestaurants(
-                        //     isRefresh: true, searchQuery: value);
+                        controller.selectedCuisine.value = value!;
+                        controller.fetchRestaurants(
+                            isRefresh: true, searchQuery: value);
                       },
                     ),
                   ],

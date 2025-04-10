@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:savrly/constants/text_styles.dart';
+import 'package:savrly/widgets/CustomDropDownWidget.dart';
 
 import '../../../../constants/app_colors.dart';
 import '../../../../controllers/menu_sub_screen_controller.dart';
@@ -58,6 +59,20 @@ class MenuSubScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 16),
                   Text(
+                    'Cuisine type',
+                    style: headingText.copyWith(fontSize: mobileView ? 16 : 20),
+                  ),
+                  SizedBox(height: 10),
+                  CustomDropDownWidget(
+                    hint: 'Select cuisine',
+                    items: controller.cuisineList,
+                    onChanged: (value) {
+                      controller.selectedCuisine.value = value!;
+                    },
+                  ),
+                  SizedBox(height: 16),
+
+                  Text(
                     'Menu type',
                     style: headingText.copyWith(fontSize: mobileView ? 16 : 20),
                   ),
@@ -93,22 +108,19 @@ class MenuSubScreen extends StatelessWidget {
                       height: imageHeight + 20,
                       child: GestureDetector(
                         onHorizontalDragUpdate: (details) {
-                          final newOffset =
-                              horizontalScrollController.offset -
+                          final newOffset = horizontalScrollController.offset -
                               details.delta.dx;
                           horizontalScrollController.jumpTo(
                             newOffset.clamp(
                               0.0,
                               horizontalScrollController
-                                  .position
-                                  .maxScrollExtent,
+                                  .position.maxScrollExtent,
                             ),
                           );
                         },
                         child: Scrollbar(
                           controller: horizontalScrollController,
-                          thumbVisibility:
-                              controller.uploadedImages.length *
+                          thumbVisibility: controller.uploadedImages.length *
                                   (imageWidth + 12) >
                               screenWidth,
                           child: Listener(
@@ -131,52 +143,49 @@ class MenuSubScreen extends StatelessWidget {
                                       .asMap()
                                       .entries
                                       .map((entry) {
-                                        int index = entry.key;
-                                        Uint8List imageData = entry.value;
+                                    int index = entry.key;
+                                    Uint8List imageData = entry.value;
 
-                                        return Stack(
-                                          children: [
-                                            Container(
-                                              width: imageWidth,
-                                              height: imageHeight,
-                                              margin: const EdgeInsets.only(
-                                                right: 12,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                image: DecorationImage(
-                                                  image: MemoryImage(imageData),
-                                                  fit: BoxFit.cover,
+                                    return Stack(
+                                      children: [
+                                        Container(
+                                          width: imageWidth,
+                                          height: imageHeight,
+                                          margin: const EdgeInsets.only(
+                                            right: 12,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            image: DecorationImage(
+                                              image: MemoryImage(imageData),
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          top: 4,
+                                          right: 4,
+                                          child: GestureDetector(
+                                            onTap: () =>
+                                                controller.removeImage(index),
+                                            child: const MouseRegion(
+                                              cursor: SystemMouseCursors.click,
+                                              child: CircleAvatar(
+                                                radius: 10,
+                                                backgroundColor: Colors.red,
+                                                child: Icon(
+                                                  Icons.close,
+                                                  size: 13,
+                                                  color: Colors.white,
                                                 ),
                                               ),
                                             ),
-                                            Positioned(
-                                              top: 4,
-                                              right: 4,
-                                              child: GestureDetector(
-                                                onTap:
-                                                    () => controller
-                                                        .removeImage(index),
-                                                child: const MouseRegion(
-                                                  cursor:
-                                                      SystemMouseCursors.click,
-                                                  child: CircleAvatar(
-                                                    radius: 10,
-                                                    backgroundColor: Colors.red,
-                                                    child: Icon(
-                                                      Icons.close,
-                                                      size: 13,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        );
-                                      })
-                                      .toList(),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  }).toList(),
                                   MouseRegion(
                                     cursor: SystemMouseCursors.click,
                                     child: InkWell(
@@ -274,10 +283,9 @@ class CustomCheckbox extends StatelessWidget {
                 borderRadius: BorderRadius.circular(4),
                 color: isChecked ? primaryColor : white,
               ),
-              child:
-                  isChecked
-                      ? const Icon(Icons.check, size: 16, color: white)
-                      : null,
+              child: isChecked
+                  ? const Icon(Icons.check, size: 16, color: white)
+                  : null,
             ),
             SizedBox(width: 16),
             Text(

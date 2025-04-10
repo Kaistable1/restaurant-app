@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:savrly/firebase_options.dart';
+import 'package:savrly/screens/restaurant_management/add_retaurants/sub_screens/menu_sub_screen.dart';
 import 'screens/admin/admin_panel.dart';
 
 void main() async {
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
       }),
       title: 'Savrly',
       debugShowCheckedModeBanner: false,
-      home: AdminPanel(),
+      home: Scaffold(body: MenuSubScreen()),
     );
   }
 }
