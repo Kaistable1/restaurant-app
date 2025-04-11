@@ -200,7 +200,6 @@ class AddRestaurantsScreen extends StatelessWidget {
                                   await amenitiesController.addAmenities();
                                 }
                               } else if (selectedIndex == 2) {
-                                
                                 await experiencesController.addExperience();
                               } else if (selectedIndex == 3) {
                                 OperatingHoursSubScreenController
@@ -265,7 +264,8 @@ class AddRestaurantsScreen extends StatelessWidget {
                           Get.dialog(
                             AlertDialog(
                               title: const Text('Success'),
-                              content: const Text('Data added successfully!'),
+                              content:
+                                  const Text('Restaurant added successfully!'),
                               actions: [
                                 TextButton(
                                   onPressed: () {
@@ -337,7 +337,11 @@ class AddRestaurantsScreen extends StatelessWidget {
                           } else if (formState != null &&
                               formState.validate() &&
                               tabController.areBasicInfoFieldsFilled()) {
-                            await tabController.addRestaurant();
+                            if (tabController.restaurantModel != null) {
+                              await tabController.updateBasicInfo();
+                            } else {
+                              await tabController.addRestaurant();
+                            }
                           }
                         } else if (selectedIndex == 1) {
                           // Validate Amenities tab

@@ -82,6 +82,13 @@ class ExperiencesSubScreenController extends GetxController {
       );
     }
   }
+   
+  void removeEvent(int index) {
+    if (index >= 0 && index < events.length) {
+      events.removeAt(index);
+      events.refresh(); // Update UI
+    }
+  }
 
   String getDayFromDate(String dateString, {String format = 'yyyy-MM-dd'}) {
     try {

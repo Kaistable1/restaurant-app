@@ -16,27 +16,44 @@ class AmenitiesSubScreenController extends GetxController {
 
   // Lists for each section
   var facilities = <Map<String, dynamic>>[
-    {'name': 'Wi-Fi', 'isChecked': false},
+    {'name': 'Free wi-fi', 'isChecked': false},
+    {'name': 'Private dinning', 'isChecked': false},
     {'name': 'Parking', 'isChecked': false},
-    {'name': 'Air Conditioning', 'isChecked': false},
+    {'name': 'Takeout', 'isChecked': false},
+    {'name': 'Drive-thru', 'isChecked': false},
+    {'name': 'Outdoor seating', 'isChecked': false},
+    {'name': 'Kid-Friendly', 'isChecked': false},
+    {'name': 'Pet-Friendly', 'isChecked': false},
+    {'name': 'Rest room', 'isChecked': false},
+    {'name': 'Wheelchair accessibility', 'isChecked': false},
+    {'name': 'High chairs', 'isChecked': false},
   ].obs;
 
   var dietaryPreferences = <Map<String, dynamic>>[
+    {'name': 'Vegan & Plant-Based', 'isChecked': false},
     {'name': 'Vegetarian', 'isChecked': false},
-    {'name': 'Vegan', 'isChecked': false},
     {'name': 'Gluten-Free', 'isChecked': false},
+    {'name': 'Pescatarian', 'isChecked': false},
+    {'name': 'Flexitarian', 'isChecked': false},
+    {'name': 'Raw Food', 'isChecked': false},
+    {'name': 'Keto', 'isChecked': false},
+    {'name': 'Paleo', 'isChecked': false},
   ].obs;
 
   var atmosphere = <Map<String, dynamic>>[
-    {'name': 'Casual', 'isChecked': false},
-    {'name': 'Formal', 'isChecked': false},
-    {'name': 'Family-Friendly', 'isChecked': false},
+    {'name': 'Casual Dining', 'isChecked': false},
+    {'name': 'Fine Dining', 'isChecked': false},
+    {'name': 'Fast Food', 'isChecked': false},
+    {'name': 'Date Night', 'isChecked': false},
+    {'name': 'Candlelit', 'isChecked': false},
+    {'name': 'Outdoor', 'isChecked': false},
   ].obs;
 
   var priceRange = <Map<String, dynamic>>[
-    {'name': '\$ (Budget)', 'isChecked': false},
+    {'name': '\$ (Budget-Friendly)', 'isChecked': false},
     {'name': '\$\$ (Moderate)', 'isChecked': false},
-    {'name': '\$\$\$ (Luxury)', 'isChecked': false},
+    {'name': '\$\$\$ (Premium)', 'isChecked': false},
+    {'name': '\$\$\$\$ (Luxury)', 'isChecked': false},
   ].obs;
 
   // Toggle expanded states
@@ -67,7 +84,12 @@ class AmenitiesSubScreenController extends GetxController {
   }
 
   void togglePriceRangeCheckbox(int index) {
-    priceRange[index]['isChecked'] = !priceRange[index]['isChecked'];
+    // Uncheck all price ranges
+    for (var item in priceRange) {
+      item['isChecked'] = false;
+    }
+    // Check the selected price range
+    priceRange[index]['isChecked'] = true;
     priceRange.refresh();
   }
 
@@ -245,14 +267,10 @@ class AmenitiesSubScreenController extends GetxController {
       Get.back();
       clearFields();
       addRestaurantTabController.selectedIndex.value++;
-
-    
     } catch (e) {
       Get.back();
       Get.snackbar('Error', 'Failed to add amenities: $e');
       print('❌ Error adding amenities: $e');
     }
   }
-
- 
 }

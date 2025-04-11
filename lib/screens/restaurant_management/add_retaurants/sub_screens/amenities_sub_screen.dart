@@ -110,7 +110,7 @@ class AmenitiesSubScreen extends StatelessWidget {
                     style: headingText.copyWith(fontSize: mobileView ? 16 : 20),
                   ),
                   Obx(
-                        () => Icon(
+                    () => Icon(
                       isExpanded.value ? Icons.expand_less : Icons.expand_more,
                       size: mobileView ? 20 : 28,
                       color: primaryColor,
@@ -143,7 +143,7 @@ class AmenitiesSubScreen extends StatelessWidget {
                             isChecked: isChecked,
                             onTap: () => toggleCheckbox(index),
                           ),
-                           SizedBox(width: 16),
+                          const SizedBox(width: 16),
                           Text(
                             name,
                             style: simpleText.copyWith(
@@ -165,7 +165,7 @@ class AmenitiesSubScreen extends StatelessWidget {
                   ],
                 );
               }).toList(),
-               SizedBox(height: 16),
+              const SizedBox(height: 16),
               Row(
                 children: [
                   CustomCheckbox(
@@ -196,13 +196,13 @@ class AmenitiesSubScreen extends StatelessWidget {
   }
 }
 
-// Assuming CustomCheckbox is defined elsewhere as in your previous code
 class CustomCheckbox extends StatelessWidget {
   final bool isChecked;
   final bool isPlusIcon;
   final VoidCallback onTap;
 
   const CustomCheckbox({
+    super.key,
     required this.isChecked,
     this.isPlusIcon = false,
     required this.onTap,
@@ -226,17 +226,17 @@ class CustomCheckbox extends StatelessWidget {
           ),
           child: isPlusIcon
               ? Icon(
-            Icons.add,
-            size: mobileView ? 10 : 16,
-            color: secondaryColor,
-          )
+                  Icons.add,
+                  size: mobileView ? 10 : 16,
+                  color: secondaryColor,
+                )
               : (isChecked
-              ? Icon(
-            Icons.check,
-            size: mobileView ? 10 : 16,
-            color: Colors.white,
-          )
-              : null),
+                  ? Icon(
+                      Icons.check,
+                      size: mobileView ? 10 : 16,
+                      color: Colors.white,
+                    )
+                  : null),
         ),
       ),
     );

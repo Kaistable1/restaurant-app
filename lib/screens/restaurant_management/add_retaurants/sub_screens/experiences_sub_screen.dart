@@ -12,10 +12,8 @@ class ExperiencesSubScreen extends StatelessWidget {
   final controller = Get.put(ExperiencesSubScreenController());
   final GlobalKey<FormState> formKey;
 
-
   @override
   Widget build(BuildContext context) {
-
     double screenWidth = MediaQuery.of(context).size.width;
     bool mobileView = screenWidth < 1000;
 
@@ -26,6 +24,94 @@ class ExperiencesSubScreen extends StatelessWidget {
           child: Column(
             children: [
               const SizedBox(height: 16),
+              // Horizontal list of saved events
+              Obx(() {
+                return controller.events.isNotEmpty
+                    ? Container(
+                        height: 100, // Adjust height as needed
+                        margin: const EdgeInsets.symmetric(horizontal: 16),
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: controller.events.length,
+                          itemBuilder: (context, index) {
+                            final event = controller.events[index];
+                            return Container(
+                              width: 200, // Fixed width for each event card
+                              margin: const EdgeInsets.only(right: 10),
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.3),
+                                    spreadRadius: 1,
+                                    blurRadius: 3,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Stack(
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        event['eventName'] ?? 'Unnamed Event',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        event['date'] ?? 'No Date',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                       const SizedBox(height: 4),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'From ${event['startTime']} To ${event['endTime']}',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.grey[600],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  Positioned(
+                                    top: 0,
+                                    right: 0,
+                                    child: IconButton(
+                                      icon: const Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                        size: 20,
+                                      ),
+                                      onPressed: () {
+                                        controller.removeEvent(index);
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      )
+                    : const SizedBox.shrink();
+              }),
+              const SizedBox(height: 16),
+              // Form container
               Center(
                 child: Container(
                   width: mobileView ? Get.width : Get.width * 0.5,
@@ -141,7 +227,7 @@ class ExperiencesSubScreen extends StatelessWidget {
                   shadow: [],
                   containerColor: primaryColor.withOpacity(0.4),
                   textColor: blackColor,
-                  ontapp: controller.saveEvent, // Call saveEvent on tap
+                  ontapp: controller.saveEvent,
                 ),
               ),
             ],
