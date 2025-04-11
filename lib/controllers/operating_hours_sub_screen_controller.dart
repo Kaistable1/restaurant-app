@@ -63,16 +63,21 @@ class OperatingHoursSubScreenController extends GetxController {
   RxMap slotStates = {}.obs;
   RxMap slotTimes = {}.obs;
 
-  void toggleDaySwitch(String day) {
-    daySwitches[day] = !daySwitches[day]!;
-    if (!daySwitches[day]!) {
-      // If day is disabled, set all slots to "Off" and clear times
-      slotStates[day]!.updateAll((key, value) => false);
-      slotTimes[day]!.updateAll((key, value) => '');
-    }
-    daySwitches.refresh(); // Ensure UI updates
+void toggleDaySwitch(String day) {
+  daySwitches[day] = !daySwitches[day]!;
+  daySwitchControllers[day]!.value = daySwitches[day]!; // Sync ValueNotifier
+  
+  if (!daySwitches[day]!) {
+    // If day is disabled, set all slots to "Off" and clear times
+    slotStates[day]!.updateAll((key, value) => false);
+    slotTimes[day]!.updateAll((key, value) => '');
   }
-
+  
+  daySwitches.refresh();
+  slotStates.refresh();
+  slotTimes.refresh();
+  update(); // Notify GetX listeners
+}
 // Toggle the "On/Off" state for a slot
   void toggleSlotState(String day, String slot) {
     slotStates[day]![slot] = !slotStates[day]![slot]!;

@@ -246,12 +246,7 @@ class AmenitiesSubScreenController extends GetxController {
       clearFields();
       addRestaurantTabController.selectedIndex.value++;
 
-      Get.snackbar(
-        'Success',
-        'Amenities added successfully',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
+    
     } catch (e) {
       Get.back();
       Get.snackbar('Error', 'Failed to add amenities: $e');
@@ -259,6 +254,5 @@ class AmenitiesSubScreenController extends GetxController {
     }
   }
 
-
-
+ 
 }

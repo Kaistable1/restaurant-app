@@ -95,6 +95,8 @@ class _RestaurantManagementScreenState
               shadow: [],
               containerColor: primaryColor,
               ontapp: () {
+                addController.restaurantModel = null;
+                addController.clearFields();
                 drawerController.addRestaurants.value = true;
               },
             ),

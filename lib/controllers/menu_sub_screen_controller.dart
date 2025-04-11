@@ -23,11 +23,12 @@ class MenuSubScreenController extends GetxController {
   RxString selectedCuisine = ''.obs;
 
   // Store uploaded images
-  var uploadedImages = <Uint8List>[].obs;
+  var uploadedImages = <UploadedImageModel>[].obs;
   // Checkbox states
   var isFoodMenuSelected = false.obs;
   var isDrinkMenuSelected = false.obs;
 
+  // Store uploaded images
   void pickImageWeb() async {
     print("Upload tapped");
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -40,7 +41,7 @@ class MenuSubScreenController extends GetxController {
       print("Picked ${result.files.length} files");
       for (var file in result.files) {
         if (file.bytes != null) {
-          uploadedImages.add(file.bytes!);
+          uploadedImages.add(UploadedImageModel(bytes: file.bytes!));
         }
       }
     } else {
@@ -97,11 +98,6 @@ class MenuSubScreenController extends GetxController {
     return menuTypes;
   }
 
-  // Get uploaded images
-  List<Uint8List> getUploadedImages() {
-    return uploadedImages.toList();
-  }
-
   // backend
 
   addMeneRestaurants() async {
@@ -110,8 +106,9 @@ class MenuSubScreenController extends GetxController {
 
       final addRestaurantTabController = Get.find<AddRestaurantTabController>();
       final restaurantID = addRestaurantTabController.currentRestaurantID;
-      List<String> imagesList = await uploadImagesToFirebase(uploadedImages);
-
+      // Upload all images to Firebase Storage and get their URLs
+      List<String> imagesList =
+          await imagesUrl(uploadedImageModels: uploadedImages);
       // 👇 Step 2: Prepare the data map
       final restaurantData = {
         'specialConditions': specialConditionsController.text.trim(),
@@ -139,5 +136,39 @@ class MenuSubScreenController extends GetxController {
       Get.snackbar('Error', 'Failed to add amenities: $e');
       print('❌ Error adding amenities: $e');
     }
+  }
+
+  Future<List<String>> imagesUrl({
+    required List<UploadedImageModel> uploadedImageModels,
+  }) async {
+    final controller = Get.find<AddRestaurantTabController>();
+    List<String> imagesList = [];
+    List<String> existingImageUrls = [];
+    List<Uint8List> newImagesToUpload = [];
+
+    for (var image in uploadedImageModels) {
+      if (image.url != null) {
+        existingImageUrls.add(image.url!);
+      } else if (image.bytes != null) {
+        newImagesToUpload.add(image.bytes!);
+      }
+    }
+
+    // Upload new images to Firebase
+    if (newImagesToUpload.isNotEmpty) {
+      final uploadedImageUrls = await uploadImagesToFirebase(newImagesToUpload);
+      imagesList = [
+        ...existingImageUrls,
+        ...uploadedImageUrls,
+      ];
+    } else {
+      imagesList = existingImageUrls.isNotEmpty
+          ? existingImageUrls
+          : controller.restaurantModel!.menuList.isNotEmpty
+              ? controller.restaurantModel!.menuList[0].foodImages
+              : [];
+    }
+
+    return imagesList;
   }
 }

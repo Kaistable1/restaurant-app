@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:savrly/constants/text_styles.dart';
+import 'package:savrly/widgets/map_widget.dart';
 
 import '../../../../constants/app_colors.dart';
 import '../../../../controllers/add_restaurants_controller.dart';
@@ -48,10 +49,8 @@ class BasicInfoSubScreen extends StatelessWidget {
               Obx(
                 () => SizedBox(
                   height: imageHeight + 20,
-                  // Fixed height for scrollable area
                   child: GestureDetector(
                     onHorizontalDragUpdate: (details) {
-                      // Handle mouse drag
                       final newOffset =
                           horizontalScrollController.offset - details.delta.dx;
                       horizontalScrollController.jumpTo(
@@ -64,9 +63,8 @@ class BasicInfoSubScreen extends StatelessWidget {
                     child: Scrollbar(
                       controller: horizontalScrollController,
                       thumbVisibility:
-                          controller.uploadedImages.length * (imageWidth + 12) >
+                          controller.uploadedImage.length * (imageWidth + 12) >
                               screenWidth,
-                      // Show scrollbar only when content exceeds width
                       child: Listener(
                         onPointerSignal: (PointerSignalEvent event) {
                           if (event is PointerScrollEvent) {
@@ -83,11 +81,12 @@ class BasicInfoSubScreen extends StatelessWidget {
                           child: Row(
                             children: [
                               // Uploaded Images with Remove Button
-                              ...controller.uploadedImages.asMap().entries.map((
-                                entry,
-                              ) {
+                              ...controller.uploadedImage
+                                  .asMap()
+                                  .entries
+                                  .map((entry) {
                                 int index = entry.key;
-                                dynamic imageData = entry.value;
+                                UploadedImageModel image = entry.value;
 
                                 return Stack(
                                   children: [
@@ -98,11 +97,10 @@ class BasicInfoSubScreen extends StatelessWidget {
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(8),
                                         image: DecorationImage(
-                                          image: imageData is String
-                                              ? NetworkImage(
-                                                  imageData) // Display URL image
-                                              : MemoryImage(imageData
-                                                  as Uint8List), // Display Uint8List image
+                                          image: image.url != null
+                                              ? NetworkImage(image.url!)
+                                              : MemoryImage(image.bytes!)
+                                                  as ImageProvider,
                                           fit: BoxFit.cover,
                                         ),
                                       ),
@@ -184,8 +182,6 @@ class BasicInfoSubScreen extends StatelessWidget {
                   ),
                 ),
               ),
-             
-             
               const SizedBox(height: 24),
               Row(
                 children: [
@@ -361,12 +357,7 @@ class BasicInfoSubScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Image.asset(
-                  'assets/images/map_img.png',
-                  width: Get.width,
-                  height: Get.height,
-                  fit: BoxFit.fill,
-                ),
+                child: MapWidget(),
               ),
               SizedBox(height: mobileView ? 12 : 16),
             ],

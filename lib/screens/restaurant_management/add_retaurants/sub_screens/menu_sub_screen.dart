@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:savrly/constants/text_styles.dart';
+import 'package:savrly/controllers/add_restaurants_controller.dart';
 import 'package:savrly/widgets/CustomDropDownWidget.dart';
 
 import '../../../../constants/app_colors.dart';
@@ -65,6 +66,7 @@ class MenuSubScreen extends StatelessWidget {
                   SizedBox(height: 10),
                   CustomDropDownWidget(
                     hint: 'Select cuisine',
+                    value: controller.selectedCuisine.value,
                     items: controller.cuisineList,
                     onChanged: (value) {
                       controller.selectedCuisine.value = value!;
@@ -139,26 +141,29 @@ class MenuSubScreen extends StatelessWidget {
                               physics: const AlwaysScrollableScrollPhysics(),
                               child: Row(
                                 children: [
+                                  // Uploaded Images with Remove Button
                                   ...controller.uploadedImages
                                       .asMap()
                                       .entries
                                       .map((entry) {
                                     int index = entry.key;
-                                    Uint8List imageData = entry.value;
+                                    UploadedImageModel image = entry.value;
 
                                     return Stack(
                                       children: [
                                         Container(
                                           width: imageWidth,
                                           height: imageHeight,
-                                          margin: const EdgeInsets.only(
-                                            right: 12,
-                                          ),
+                                          margin:
+                                              const EdgeInsets.only(right: 12),
                                           decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(8),
                                             image: DecorationImage(
-                                              image: MemoryImage(imageData),
+                                              image: image.url != null
+                                                  ? NetworkImage(image.url!)
+                                                  : MemoryImage(image.bytes!)
+                                                      as ImageProvider,
                                               fit: BoxFit.cover,
                                             ),
                                           ),

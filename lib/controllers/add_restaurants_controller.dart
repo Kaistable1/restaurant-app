@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_rx/get_rx.dart';
 import 'package:savrly/firebase_options.dart';
 import 'package:savrly/models/resaturant_model.dart';
 import 'dart:typed_data';
@@ -26,7 +27,8 @@ class AddRestaurantTabController extends GetxController {
   RxString selectedState = ''.obs;
   RxString selectedCity = ''.obs;
   RxString selectedSpokenLanguage = ''.obs;
-
+  RxDouble latitude = 0.0.obs;
+  RxDouble longitude = 0.0.obs;
   void togglePasswordVisibility() {
     isPasswordVisible.value = !isPasswordVisible.value;
   }
@@ -211,8 +213,7 @@ class AddRestaurantTabController extends GetxController {
   ];
 
   // Store uploaded images
-  var uploadedImages = <Uint8List>[].obs;
-
+  var uploadedImage = <UploadedImageModel>[].obs;
   void pickImageWeb() async {
     print("Upload tapped");
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -225,7 +226,7 @@ class AddRestaurantTabController extends GetxController {
       print("Picked ${result.files.length} files");
       for (var file in result.files) {
         if (file.bytes != null) {
-          uploadedImages.add(file.bytes!);
+          uploadedImage.add(UploadedImageModel(bytes: file.bytes!));
         }
       }
     } else {
@@ -234,8 +235,8 @@ class AddRestaurantTabController extends GetxController {
   }
 
   void removeImage(int index) {
-    if (index >= 0 && index < uploadedImages.length) {
-      uploadedImages.removeAt(index);
+    if (index >= 0 && index < uploadedImage.length) {
+      uploadedImage.removeAt(index);
     }
   }
 
@@ -258,11 +259,12 @@ class AddRestaurantTabController extends GetxController {
     areaController.clear();
     instagramController.clear();
     tiktokLinkController.clear();
-    uploadedImages.clear();
+    uploadedImage.clear();
     selectedState.value = '';
     selectedCity.value = '';
     selectedSpokenLanguage.value = '';
     isPasswordVisible.value = false; // Reset visibility
+    update();
   }
 
   // Backend code
@@ -273,7 +275,12 @@ class AddRestaurantTabController extends GetxController {
       loadingDialog();
 
       // Upload all images to Firebase Storage and get their URLs
-      List<String> imagesList = await uploadImagesToFirebase(uploadedImages);
+      List<Uint8List> imageBytesList = uploadedImage
+          .where((img) => img.bytes != null)
+          .map((img) => img.bytes!)
+          .toList();
+
+      List<String> imagesList = await uploadImagesToFirebase(imageBytesList);
 
       // Prepare the restaurant data
       final restaurantData = {
@@ -288,14 +295,14 @@ class AddRestaurantTabController extends GetxController {
         'docID': '', // Will be set after adding the document
         'entertainmentScheduleList': [], // Empty array as per your data
         'facilityList': [], // Empty array as per your data
-        'imagesList': imagesList,
+        'resImages': imagesList,
         'latitude':
-            40.72761, // Hardcoded for now; you can add a map picker later
+            latitude.value, // Hardcoded for now; you can add a map picker later
         'logoImage': imagesList.isEmpty
             ? 'https://s3-media2.fl.yelpcdn.com/bphoto/iCP4QYCjWf9i-qDIBQrsnQ/o.jpg'
             : imagesList.first,
         'longitude':
-            -73.98373, // Hardcoded for now; you can add a map picker later
+            longitude.value, // Hardcoded for now; you can add a map picker later
         'menuList': [], // Empty array as per your data
         'password': assignPasswordController.text.trim(),
         'priceRange': '', // Hardcoded for now; you can add a field for this
@@ -321,10 +328,9 @@ class AddRestaurantTabController extends GetxController {
       // Dismiss the loading dialog
       Get.back();
       // Show success message
-      Get.snackbar('Success', 'Restaurant added successfully');
       selectedIndex.value++;
       clearFields();
-      uploadedImages.clear();
+      uploadedImage.clear();
     } catch (e) {
       Get.back();
       Get.snackbar('Error', 'Failed to add restaurant: $e');
@@ -336,21 +342,22 @@ class AddRestaurantTabController extends GetxController {
     try {
       // Show loading dialog
       loadingDialog();
-      // Upload all images to Firebase Storage and get their URLs
-      // List<String> imagesList = imagesUrl(uploadedImages: uploadedImages)
+
+      List<String> imagesList =
+          await imagesUrl(uploadedImageModels: uploadedImage);
       // Prepare the restaurant data
       final restaurantData = {
         'address': areaController.text.trim(),
         'city': selectedCity.value.trim(),
         'country': selectedState.value.trim(),
-        // 'imagesList': imagesList,
+        'resImages': imagesList,
         'latitude':
-            40.72761, // Hardcoded for now; you can add a map picker later
-        // 'logoImage': imagesList.isEmpty
-        //     ? 'https://s3-media2.fl.yelpcdn.com/bphoto/iCP4QYCjWf9i-qDIBQrsnQ/o.jpg'
-        //     : imagesList.first,
+           latitude.value, // Hardcoded for now; you can add a map picker later
+        'logoImage': imagesList.isEmpty
+            ? 'https://s3-media2.fl.yelpcdn.com/bphoto/iCP4QYCjWf9i-qDIBQrsnQ/o.jpg'
+            : imagesList.first,
         'longitude':
-            -73.98373, // Hardcoded for now; you can add a map picker later
+            longitude.value, // Hardcoded for now; you can add a map picker later
         'password': assignPasswordController.text.trim(),
         'resEmail': emailController.text.trim(),
         'resName': restaurantNameController.text.trim(),
@@ -367,10 +374,9 @@ class AddRestaurantTabController extends GetxController {
       // Dismiss the loading dialog
       Get.back();
       // Show success message
-      Get.snackbar('Success', 'Basic info updated successfully');
       selectedIndex.value++;
       clearFields();
-      uploadedImages.clear();
+      uploadedImage.clear();
     } catch (e) {
       Get.back();
       Get.snackbar('Error', 'Failed to updated restaurant: $e');
@@ -379,33 +385,28 @@ class AddRestaurantTabController extends GetxController {
   }
 
   Future<List<String>> imagesUrl({
-    required RxList<dynamic> uploadedImages,
-
+    required List<UploadedImageModel> uploadedImageModels,
   }) async {
     List<String> imagesList = [];
-    // Separate existing URLs and new images (Uint8List)
     List<String> existingImageUrls = [];
     List<Uint8List> newImagesToUpload = [];
 
-    for (var image in uploadedImages) {
-      if (image is String) {
-        // If the item is a URL (string), add it to existingImageUrls
-        existingImageUrls.add(image);
-      } else if (image is Uint8List) {
-        // If the item is raw image data (Uint8List), add it to newImagesToUpload
-        newImagesToUpload.add(image);
+    for (var image in uploadedImageModels) {
+      if (image.url != null) {
+        existingImageUrls.add(image.url!);
+      } else if (image.bytes != null) {
+        newImagesToUpload.add(image.bytes!);
       }
     }
 
-    // Upload new images to Firebase Storage if there are any
+    // Upload new images to Firebase
     if (newImagesToUpload.isNotEmpty) {
       final uploadedImageUrls = await uploadImagesToFirebase(newImagesToUpload);
       imagesList = [
-        ...existingImageUrls, // Keep existing URLs
-        ...uploadedImageUrls, // Add newly uploaded image URLs
+        ...existingImageUrls,
+        ...uploadedImageUrls,
       ];
     } else {
-      // If no new images to upload, use existing URLs or fallback to restaurantModel's imagesList
       imagesList = existingImageUrls.isNotEmpty
           ? existingImageUrls
           : restaurantModel?.imagesList ?? [];
@@ -459,4 +460,11 @@ class AddRestaurantTabController extends GetxController {
       print('❌ General error: $e');
     }
   }
+}
+
+class UploadedImageModel {
+  final Uint8List? bytes;
+  final String? url;
+
+  UploadedImageModel({this.bytes, this.url});
 }

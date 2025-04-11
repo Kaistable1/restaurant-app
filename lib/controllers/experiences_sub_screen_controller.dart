@@ -136,7 +136,7 @@ class ExperiencesSubScreenController extends GetxController {
   addExperience() async {
     try {
       loadingDialog();
-
+      saveEvent();
       final addRestaurantTabController = Get.find<AddRestaurantTabController>();
       final restaurantID = addRestaurantTabController.currentRestaurantID;
 
@@ -155,13 +155,6 @@ class ExperiencesSubScreenController extends GetxController {
       Get.back();
       clearFields();
       addRestaurantTabController.selectedIndex.value++;
-
-      Get.snackbar(
-        'Success',
-        'Experience added successfully',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
     } catch (e) {
       Get.back();
       Get.snackbar('Error', 'Failed to add amenities: $e');

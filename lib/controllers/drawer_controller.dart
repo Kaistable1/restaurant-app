@@ -4,7 +4,7 @@ import '../models/user_management_model.dart';
 
 class DrawerControllerX extends GetxController {
   // Active screen state
-  RxInt selectedScreen = 1.obs;
+  RxInt selectedScreen = 2.obs;
   var isUserManagementExpanded = false.obs;
   var hoveredItem = "".obs;
 
@@ -31,33 +31,29 @@ class DrawerControllerX extends GetxController {
   RxBool userDetails = false.obs;
   RxBool addSubAdmin = false.obs;
 
+  RxBool viewEvents = false.obs;
+  RxBool viewEventsGallery = false.obs;
+  RxBool addEvent = false.obs;
 
-  RxBool viewEvents=false.obs;
-  RxBool viewEventsGallery=false.obs;
-  RxBool addEvent=false.obs;
+  RxBool viewClaimsDetails = false.obs;
 
-  RxBool viewClaimsDetails=false.obs;
-
-  RxBool viewBannerDetails =false.obs;
-  RxBool addBanner=false.obs;
-
-
+  RxBool viewBannerDetails = false.obs;
+  RxBool addBanner = false.obs;
 
   void resetAllBooleans() {
     showCreateNotifications.value = false;
-     showNotifications.value = false;
+    showNotifications.value = false;
     showProfile.value = false;
     addRestaurants.value = false;
-    viewEvents.value=false;
-    viewEventsGallery.value=false;
-    addEvent.value=false;
+    viewEvents.value = false;
+    viewEventsGallery.value = false;
+    addEvent.value = false;
     viewRestaurantsDetails.value = false;
     userDetails.value = false;
     addSubAdmin.value = false;
-    viewClaimsDetails.value=false;
-    viewBannerDetails.value=false;
-    addBanner.value=false;
-
+    viewClaimsDetails.value = false;
+    viewBannerDetails.value = false;
+    addBanner.value = false;
   }
 
   // Add this to store the selected user

@@ -148,7 +148,7 @@ class AddRestaurantsScreen extends StatelessWidget {
                                 final basicInfoFormKey =
                                     tabController.basicInfoFormKey;
                                 final formState = basicInfoFormKey.currentState;
-                                if (tabController.uploadedImages.isEmpty) {
+                                if (tabController.uploadedImage.isEmpty) {
                                   Get.snackbar(
                                     'Error',
                                     'Please upload at least one restaurant image',
@@ -159,11 +159,11 @@ class AddRestaurantsScreen extends StatelessWidget {
                                 } else if (formState != null &&
                                     formState.validate() &&
                                     tabController.areBasicInfoFieldsFilled()) {
-                                if (tabController.restaurantModel != null) {
-                                  await tabController.updateBasicInfo();
-                                } else {
-                                  await tabController.addRestaurant();
-                                }
+                                  if (tabController.restaurantModel != null) {
+                                    await tabController.updateBasicInfo();
+                                  } else {
+                                    await tabController.addRestaurant();
+                                  }
                                 }
                               } else if (selectedIndex == 1) {
                                 // Validate Amenities tab
@@ -200,6 +200,7 @@ class AddRestaurantsScreen extends StatelessWidget {
                                   await amenitiesController.addAmenities();
                                 }
                               } else if (selectedIndex == 2) {
+                                
                                 await experiencesController.addExperience();
                               } else if (selectedIndex == 3) {
                                 OperatingHoursSubScreenController
@@ -325,7 +326,7 @@ class AddRestaurantsScreen extends StatelessWidget {
                           final basicInfoFormKey =
                               tabController.basicInfoFormKey;
                           final formState = basicInfoFormKey.currentState;
-                          if (tabController.uploadedImages.isEmpty) {
+                          if (tabController.uploadedImage.isEmpty) {
                             Get.snackbar(
                               'Error',
                               'Please upload at least one restaurant image',
