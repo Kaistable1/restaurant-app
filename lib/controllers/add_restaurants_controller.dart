@@ -35,7 +35,7 @@ class AddRestaurantTabController extends GetxController {
     "Spanish",
   ].obs;
 
-  List<String> losAngelusCities = [
+  List<String> losAngelesCities = [
     "Beverly Hills",
     "Santa Monica",
     "West Hollywood",
