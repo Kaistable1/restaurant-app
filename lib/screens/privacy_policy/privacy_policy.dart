@@ -7,63 +7,53 @@ import 'package:savrly/constants/text_styles.dart';
 import 'package:savrly/widgets/button.dart';
 
 import '../../controllers/privacy_policy_controller.dart';
+import '../../widgets/customheader_widget.dart';
 
 class PrivacyPolicy extends StatelessWidget {
-  final controller = Get.put(PrivacyPolicyController());
+  final PrivacyPolicyController controller = Get.put(PrivacyPolicyController());
+
   PrivacyPolicy({super.key});
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    bool isMobile = size.width < 600;
-
+    bool mobileView = size.width < 1000;
     double screenWidth = MediaQuery.of(context).size.width;
     bool isLargeScreen = screenWidth > 1600;
+    double paddingValue = mobileView ? 16 : 24;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+      padding:  EdgeInsets.all(paddingValue),
       child: Column(
         children: [
-          SizedBox(
-            height: isMobile ? 10 : 26,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Privacy policy',
-                  style: headingText.copyWith(fontSize: isMobile ? 22 : 34),
-                ),
-                CustomButton(
-                  ontapp: () {
-                    addPrivacy();
-                  },
-                  laBelText: 'Edit privacy policy',
-                  isPrefixIcon: true,
-                  iconWidget: Icon(
-                    Icons.edit_outlined,
-                    color: Colors.white,
-                    size: isMobile?14:24,
-                  ),
-                  width: isMobile ? 160 : 234,
-                  height: isMobile ? 32 : 48,
-                  fontSize: isMobile ? 12 : 16,
-                )
-              ],
+          CustomHeaderWidget(
+            title: 'Privacy policy',
+            end: true,
+            endWidget:CustomButton(
+              ontapp: () {
+                addPrivacy();
+              },
+              laBelText: 'Edit privacy policy',
+              isPrefixIcon: true,
+              iconWidget: Icon(
+                Icons.edit_outlined,
+                color: Colors.white,
+                size: mobileView ? 14 : 24,
+              ),
+              width: mobileView ? 160 : 234,
+              height: mobileView ? 32 : 48,
+              fontSize: mobileView ? 12 : 16,
             ),
           ),
-          SizedBox(
-            height: isMobile ? 16 : 32,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            child: Obx(
-              () => Text(
-                controller.privacyPolicyText.value,
-                style: simpleText.copyWith(fontSize:isLargeScreen?22: isMobile ? 12 : 16),
-              ),
+          SizedBox(height: mobileView ? 16 : 32),
+          Obx(
+                () => controller.isLoading.value
+                ? const Center(child: CircularProgressIndicator())
+                : Text(
+              controller.privacyPolicy.value.text, // Use model field
+              style: simpleText.copyWith(
+                fontSize: isLargeScreen ? 22 : mobileView ? 12 : 16,
+              ), // Replace with simpleText
             ),
           ),
         ],
@@ -72,19 +62,20 @@ class PrivacyPolicy extends StatelessWidget {
   }
 }
 
+
 Future<bool> addPrivacy() async {
   bool res = false;
+  final PrivacyPolicyController controller = Get.find<PrivacyPolicyController>();
+  final TextEditingController textEditingController =
+  TextEditingController(text: controller.privacyPolicy.value.text);
 
   await showDialog(
     barrierDismissible: true,
     context: Get.context!,
     builder: (BuildContext context) {
-      final PrivacyPolicyController _controller =
-          Get.put(PrivacyPolicyController());
-      final TextEditingController textEditingController =
-          TextEditingController(text: _controller.privacyPolicyText.value);
       double screenWidth = MediaQuery.of(context).size.width;
       bool isLargeScreen = screenWidth > 1600;
+
       return Dialog(
         backgroundColor: Colors.white,
         alignment: AlignmentDirectional.center,
@@ -100,14 +91,13 @@ Future<bool> addPrivacy() async {
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
-                  color: Colors.white
-                      .withOpacity(0.5), // Semi-transparent white shadow
-                  blurRadius: 10, // How blurred the shadow is
-                  spreadRadius: 2, // How much the shadow spreads
-                  offset: Offset(0, 4), // Position of the shadow (x, y)
+                  color: Colors.white.withOpacity(0.5),
+                  blurRadius: 10,
+                  spreadRadius: 2,
+                  offset: const Offset(0, 4),
                 ),
               ],
-              color: white,
+              color: Colors.white,
               border: Border.all(color: primaryColor),
               borderRadius: BorderRadius.circular(10),
             ),
@@ -124,53 +114,56 @@ Future<bool> addPrivacy() async {
                           const Spacer(),
                           Text(
                             "Privacy policy",
-                            style: headingText.copyWith(
+                            style: TextStyle(
                               fontSize: isLargeScreen ? 26 : 20,
-                            ),
+                              fontWeight: FontWeight.bold,
+                            ), // Replace with headingText
                           ),
                           const Spacer(),
                           InkWell(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Icon(
-                                Icons.cancel_outlined,
-                                color: backgroundBlack,
-                              ))
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Icon(
+                              Icons.cancel_outlined,
+                              color: Colors.black, // Replace with backgroundBlack
+                            ),
+                          ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 44),
                     TextField(
-                      style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16,
-                          color: secondaryColor,
-                          fontFamily: 'regular'),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                        color: Colors.grey,
+                        fontFamily: 'regular',
+                      ),
                       controller: textEditingController,
                       maxLines: 10,
                       decoration: InputDecoration(
-                        hintText: "Enter your privacy policy text...".tr,
-                        hintStyle: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 20,
-                            color: secondaryColor),
+                        hintText: "Enter your privacy policy text...",
+                        hintStyle: const TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 20,
+                          color: Colors.grey, // Replace with secondaryColor
+                        ),
                         border: InputBorder.none,
                       ),
                     ),
-                    SizedBox(
-                      height: isLargeScreen ? 150 : 60,
-                    ),
+                    SizedBox(height: isLargeScreen ? 150 : 60),
                     Align(
                       alignment: Alignment.bottomCenter,
                       child: CustomButton(
                         width: 200,
                         height: 40,
-                        laBelText: 'Update'.tr,
-                        ontapp: () {
-                          _controller
-                              .updatePrivacyPolicy(textEditingController.text);
+                        laBelText: 'Update',
+                        ontapp: () async {
+                          await controller.updatePrivacyPolicy(
+                              textEditingController.text);
                           Navigator.of(context).pop();
+                          res = true;
                         },
                       ),
                     ),

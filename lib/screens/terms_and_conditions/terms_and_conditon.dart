@@ -10,14 +10,14 @@ import '../../controllers/terms_controller.dart';
 
 
 class TermsAndConditions extends StatelessWidget {
-  final controller = Get.put(TermsController());
+  final TermsController controller = Get.put(TermsController());
+
   TermsAndConditions({super.key});
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     bool isMobile = size.width < 600;
-
     double screenWidth = MediaQuery.of(context).size.width;
     bool isLargeScreen = screenWidth > 1600;
 
@@ -25,9 +25,7 @@ class TermsAndConditions extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12.0),
       child: Column(
         children: [
-          SizedBox(
-            height: isMobile ? 10 : 26,
-          ),
+          SizedBox(height: isMobile ? 10 : 26),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12.0),
             child: Row(
@@ -39,31 +37,36 @@ class TermsAndConditions extends StatelessWidget {
                 ),
                 CustomButton(
                   ontapp: () {
-                    addPrivacy();
+                    addTermsAndConditions();
                   },
                   laBelText: 'Edit terms and conditions',
                   isPrefixIcon: true,
                   iconWidget: Icon(
                     Icons.edit_outlined,
                     color: Colors.white,
-                    size: isMobile?14:24,
+                    size: isMobile ? 14 : 24,
                   ),
                   width: isMobile ? 160 : 234,
                   height: isMobile ? 32 : 48,
                   fontSize: isMobile ? 10 : 16,
-                )
+                ),
               ],
             ),
           ),
-          SizedBox(
-            height: isMobile ? 16 : 32,
-          ),
+          SizedBox(height: isMobile ? 16 : 32),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12.0),
             child: Obx(
-                  () => Text(
-                controller.termsText.value,
-                style: simpleText.copyWith(fontSize:isLargeScreen?22: isMobile ? 12 : 16),
+                  () => controller.isLoading.value
+                  ? const Center(child: CircularProgressIndicator())
+                  : Text(
+                controller.terms.value.text,
+                style: simpleText.copyWith(
+                    fontSize: isLargeScreen
+                        ? 22
+                        : isMobile
+                        ? 12
+                        : 16),
               ),
             ),
           ),
@@ -73,19 +76,19 @@ class TermsAndConditions extends StatelessWidget {
   }
 }
 
-Future<bool> addPrivacy() async {
+Future<bool> addTermsAndConditions() async {
   bool res = false;
+  final TermsController controller = Get.find<TermsController>();
+  final TextEditingController textEditingController =
+  TextEditingController(text: controller.terms.value.text);
 
   await showDialog(
     barrierDismissible: true,
     context: Get.context!,
     builder: (BuildContext context) {
-      final TermsController _controller =
-      Get.put(TermsController());
-      final TextEditingController textEditingController =
-      TextEditingController(text: _controller.termsText.value);
       double screenWidth = MediaQuery.of(context).size.width;
       bool isLargeScreen = screenWidth > 1600;
+
       return Dialog(
         backgroundColor: Colors.white,
         alignment: AlignmentDirectional.center,
@@ -101,11 +104,10 @@ Future<bool> addPrivacy() async {
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
-                  color: Colors.white
-                      .withOpacity(0.5), // Semi-transparent white shadow
-                  blurRadius: 10, // How blurred the shadow is
-                  spreadRadius: 2, // How much the shadow spreads
-                  offset: Offset(0, 4), // Position of the shadow (x, y)
+                  color: Colors.white.withOpacity(0.5),
+                  blurRadius: 10,
+                  spreadRadius: 2,
+                  offset: const Offset(0, 4),
                 ),
               ],
               color: white,
@@ -125,53 +127,56 @@ Future<bool> addPrivacy() async {
                           const Spacer(),
                           Text(
                             "Terms and conditions",
-                            style: headingText.copyWith(
+                            style: TextStyle(
                               fontSize: isLargeScreen ? 26 : 20,
-                            ),
+                              fontWeight: FontWeight.bold,
+                            ), // Replaced headingText due to import issue
                           ),
                           const Spacer(),
                           InkWell(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Icon(
-                                Icons.cancel_outlined,
-                                color: backgroundBlack,
-                              ))
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Icon(
+                              Icons.cancel_outlined,
+                              color: backgroundBlack,
+                            ),
+                          ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 44),
                     TextField(
-                      style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16,
-                          color: secondaryColor,
-                          fontFamily: 'regular'),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                        color: secondaryColor,
+                        fontFamily: 'regular',
+                      ),
                       controller: textEditingController,
                       maxLines: 10,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: "Enter your terms and conditions text...",
                         hintStyle: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 20,
-                            color: secondaryColor),
+                          fontWeight: FontWeight.w500,
+                          fontSize: 20,
+                          color: secondaryColor,
+                        ),
                         border: InputBorder.none,
                       ),
                     ),
-                    SizedBox(
-                      height: isLargeScreen ? 150 : 60,
-                    ),
+                    SizedBox(height: isLargeScreen ? 150 : 60),
                     Align(
                       alignment: Alignment.bottomCenter,
                       child: CustomButton(
                         width: 200,
                         height: 40,
                         laBelText: 'Update',
-                        ontapp: () {
-                          _controller
-                              .updateTermsText(textEditingController.text);
+                        ontapp: () async {
+                          await controller.updateTermsText(
+                              textEditingController.text);
                           Navigator.of(context).pop();
+                          res = true;
                         },
                       ),
                     ),
