@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:savrly/controllers/add_event_controller.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/text_styles.dart';
 import '../../controllers/drawer_controller.dart';
@@ -19,6 +20,7 @@ class EventsManagements extends StatefulWidget {
 
 class _EventsManagementsState extends State<EventsManagements> {
   final controller = Get.put(EventManagementController());
+  final addController = Get.put(AddEventController());
   final drawerController = Get.put(DrawerControllerX());
 
   @override
@@ -67,6 +69,9 @@ class _EventsManagementsState extends State<EventsManagements> {
               shadow: [],
               containerColor: primaryColor,
               ontapp: () {
+                addController.selectedEventModel = null;
+                addController.isEdit.value = false;
+                addController.update();
                 drawerController.addEvent.value = true;
               },
             ),
@@ -295,7 +300,7 @@ class _EventsManagementsState extends State<EventsManagements> {
                           children: List.generate(
                             controller.events.length,
                             (index) {
-                              final event = controller.events[index];
+                              Event event = controller.events[index];
                               return Container(
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 14,
@@ -432,10 +437,20 @@ class _EventsManagementsState extends State<EventsManagements> {
                                                       event.docId!);
                                                 }
                                                 if (value == 'View') {
+                                                  addController
+                                                          .selectedEventModel =
+                                                      event;
+                                                  addController.update();
                                                   drawerController
                                                       .viewEvents.value = true;
                                                 }
                                                 if (value == 'Edit') {
+                                                  addController
+                                                          .selectedEventModel =
+                                                      event;
+                                                  addController.isEdit.value =
+                                                      true;
+                                                  addController.update();
                                                   drawerController
                                                       .addEvent.value = true;
                                                 }

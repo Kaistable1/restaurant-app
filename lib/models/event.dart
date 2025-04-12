@@ -12,7 +12,9 @@ class Event {
   String phoneNumber;
   String url;
   String description;
-  List<String> imageUrls; // We'll store Firebase Storage URLs
+  List<String> imageUrls; // Firebase Storage URLs
+  double latitude;
+  double longitude;
   DateTime createdAt;
 
   Event({
@@ -28,6 +30,8 @@ class Event {
     required this.url,
     required this.description,
     required this.imageUrls,
+    required this.latitude,
+    required this.longitude,
     required this.createdAt,
   });
 
@@ -45,6 +49,8 @@ class Event {
       'url': url,
       'description': description,
       'imageUrls': imageUrls,
+      'latitude': latitude,
+      'longitude': longitude,
       'createdAt': createdAt,
     };
   }
@@ -64,6 +70,8 @@ class Event {
       url: map['url'] ?? '',
       description: map['description'] ?? '',
       imageUrls: List<String>.from(map['imageUrls'] ?? []),
+      latitude: (map['latitude'] ?? 0).toDouble(),
+      longitude: (map['longitude'] ?? 0).toDouble(),
       createdAt: (map['createdAt'] as Timestamp).toDate(),
     );
   }

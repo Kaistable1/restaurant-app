@@ -1,16 +1,14 @@
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'dart:html' as html;
 import 'package:get/get.dart';
+import 'package:savrly/controllers/add_restaurants_controller.dart';
 import 'package:savrly/models/event.dart';
 import 'package:savrly/widgets/global_functions.dart';
 
 class AddEventController extends GetxController {
-  var uploadedImages = <Uint8List>[].obs;
+  var uploadedImages = <UploadedImageModel>[].obs;
 
   final eventNameController = TextEditingController();
   final locationController = TextEditingController();
@@ -25,8 +23,8 @@ class AddEventController extends GetxController {
   RxList<String> events = <String>['Concert', 'Festival'].obs;
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseStorage _storage = FirebaseStorage.instance;
-
+  Event? selectedEventModel;
+  RxBool isEdit = false.obs;
   // Pick images for web
   void pickImageWeb() async {
     print("Upload tapped");
@@ -40,7 +38,7 @@ class AddEventController extends GetxController {
       print("Picked ${result.files.length} files");
       for (var file in result.files) {
         if (file.bytes != null) {
-          uploadedImages.add(file.bytes!);
+          uploadedImages.add(UploadedImageModel(bytes: file.bytes!));
         }
       }
     } else {
@@ -59,8 +57,14 @@ class AddEventController extends GetxController {
   addEvent() async {
     try {
       loadingDialog();
-      // Step 1: Upload images to Firebase Storage
-      List<String> imageUrls = await uploadImagesToFirebase(uploadedImages);
+      List<Uint8List> imageBytesList = uploadedImages
+          .where((img) => img.bytes != null)
+          .map((img) => img.bytes!)
+          .toList();
+
+      List<String> imageUrls = await uploadImagesToFirebase(imageBytesList);
+
+      final controller = Get.put(AddRestaurantTabController());
 
       // Step 2: Create Event object
       Event event = Event(
@@ -77,6 +81,8 @@ class AddEventController extends GetxController {
         createdAt: DateTime.now(),
         city: cityController.text.trim(),
         country: countryController.text.trim(),
+        latitude: controller.latitude.value,
+        longitude: controller.longitude.value,
       );
 
       // Step 3: Save event to Firestore
@@ -92,6 +98,57 @@ class AddEventController extends GetxController {
       Get.snackbar(
         'Success',
         'Event added successfully!',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to add event: $e',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+      );
+      return null;
+    }
+  }
+
+  updateEvent({docID}) async {
+    try {
+      loadingDialog();
+
+      List<String> imagesList =
+          await imagesUrl(uploadedImageModels: uploadedImages);
+
+      final controller = Get.put(AddRestaurantTabController());
+
+      // Step 2: Create Event object
+      Event event = Event(
+        eventName: eventNameController.text,
+        eventType: selectEvent.value,
+        location: locationController.text,
+        date: dateController.text,
+        time: timeController.text,
+        phoneNumber: phoneNumberController.text,
+        url: urlController.text,
+        description: descriptionController.text,
+        imageUrls: imagesList,
+        createdAt: DateTime.now(),
+        city: cityController.text.trim(),
+        country: countryController.text.trim(),
+        latitude: controller.latitude.value,
+        longitude: controller.longitude.value,
+      );
+
+      await _firestore.collection('events').doc(docID).update(event.toMap());
+
+      // Step 5: Clear form after successful submission
+      clearForm();
+      Get.back();
+      Get.snackbar(
+        'Success',
+        'Event updated successfully!',
         backgroundColor: Colors.green,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
@@ -132,5 +189,36 @@ class AddEventController extends GetxController {
     timeController.dispose();
     descriptionController.dispose();
     super.onClose();
+  }
+
+  Future<List<String>> imagesUrl({
+    required List<UploadedImageModel> uploadedImageModels,
+  }) async {
+    List<String> imagesList = [];
+    List<String> existingImageUrls = [];
+    List<Uint8List> newImagesToUpload = [];
+
+    for (var image in uploadedImageModels) {
+      if (image.url != null) {
+        existingImageUrls.add(image.url!);
+      } else if (image.bytes != null) {
+        newImagesToUpload.add(image.bytes!);
+      }
+    }
+
+    // Upload new images to Firebase
+    if (newImagesToUpload.isNotEmpty) {
+      final uploadedImageUrls = await uploadImagesToFirebase(newImagesToUpload);
+      imagesList = [
+        ...existingImageUrls,
+        ...uploadedImageUrls,
+      ];
+    } else {
+      imagesList = existingImageUrls.isNotEmpty
+          ? existingImageUrls
+          : selectedEventModel?.imageUrls ?? [];
+    }
+
+    return imagesList;
   }
 }

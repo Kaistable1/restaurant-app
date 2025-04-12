@@ -5,6 +5,7 @@ import 'package:get/get_core/src/get_main.dart';
 
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:savrly/controllers/add_restaurants_controller.dart';
 import 'package:savrly/widgets/button.dart';
 import 'package:savrly/widgets/map_widget.dart';
 import '../../../constants/app_colors.dart';
@@ -42,6 +43,30 @@ class AddEvents extends StatelessWidget {
       imageHeight = 130;
     }
     final ScrollController horizontalScrollController = ScrollController();
+
+    if (controller.selectedEventModel != null) {
+      controller.eventNameController.text =
+          controller.selectedEventModel!.eventName;
+      controller.selectEvent.value = controller.selectedEventModel!.eventType;
+
+      controller.locationController.text =
+          controller.selectedEventModel!.location;
+      controller.phoneNumberController.text =
+          controller.selectedEventModel!.phoneNumber;
+      controller.urlController.text = controller.selectedEventModel!.url;
+      controller.dateController.text = controller.selectedEventModel!.date;
+      controller.timeController.text = controller.selectedEventModel!.time;
+      controller.descriptionController.text =
+          controller.selectedEventModel!.description;
+      controller.selectEvent.value = controller.selectedEventModel!.eventType;
+      controller.uploadedImages.clear();
+      for (var url in controller.selectedEventModel!.imageUrls) {
+        controller.uploadedImages.add(
+          UploadedImageModel(url: url),
+        );
+      }
+    }
+
     return Padding(
       padding: EdgeInsets.only(
         right: paddingValue,
@@ -138,15 +163,13 @@ class AddEvents extends StatelessWidget {
                                         const AlwaysScrollableScrollPhysics(),
                                     child: Row(
                                       children: [
-                                        // Uploaded Images with Remove Button
                                         ...controller.uploadedImages
                                             .asMap()
                                             .entries
-                                            .map((
-                                          entry,
-                                        ) {
+                                            .map((entry) {
                                           int index = entry.key;
-                                          Uint8List imageData = entry.value;
+                                          UploadedImageModel image =
+                                              entry.value;
 
                                           return Stack(
                                             children: [
@@ -159,8 +182,12 @@ class AddEvents extends StatelessWidget {
                                                   borderRadius:
                                                       BorderRadius.circular(8),
                                                   image: DecorationImage(
-                                                    image:
-                                                        MemoryImage(imageData),
+                                                    image: image.url != null
+                                                        ? NetworkImage(
+                                                            image.url!)
+                                                        : MemoryImage(
+                                                                image.bytes!)
+                                                            as ImageProvider,
                                                     fit: BoxFit.cover,
                                                   ),
                                                 ),
@@ -190,7 +217,6 @@ class AddEvents extends StatelessWidget {
                                             ],
                                           );
                                         }).toList(),
-
                                         // Upload Image Box
                                         MouseRegion(
                                           cursor: SystemMouseCursors.click,
@@ -266,6 +292,7 @@ class AddEvents extends StatelessWidget {
                           labelText: 'Event type',
                           dropHintText: 'Concert',
                           items: controller.events,
+                          currentValue: controller.selectEvent.value,
                           onChanged: (value) =>
                               controller.selectEvent.value = value!,
                           dropDownValidator: (value) {
@@ -420,12 +447,19 @@ class AddEvents extends StatelessWidget {
                                     );
                                     return;
                                   }
-                                 await controller.addEvent();
-
+                                  if (controller.isEdit.value) {
+                                    await controller.updateEvent(
+                                        docID: controller
+                                            .selectedEventModel!.docId!);
+                                    return;
+                                  } else {
+                                    await controller.addEvent();
+                                  }
                                 }
                               },
                               width: 169,
-                              laBelText: 'Save'),
+                              laBelText:
+                                  controller.isEdit.value ? 'Update' : 'Save'),
                         )
                       ],
                     ),

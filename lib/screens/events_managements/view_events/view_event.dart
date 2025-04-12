@@ -1,19 +1,19 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:savrly/controllers/add_event_controller.dart';
+import 'package:savrly/models/event.dart';
+import 'package:savrly/widgets/map_widget.dart';
 import '../../../constants/app_colors.dart';
 import '../../../constants/text_styles.dart';
 import '../../../controllers/drawer_controller.dart';
 import '../../../controllers/event_management_controller.dart';
-import '../../../widgets/button.dart';
 import '../../../widgets/customheader_widget.dart';
 
 class ViewEvent extends StatelessWidget {
   final controller = Get.put(EventManagementController());
+  final addController = Get.put(AddEventController());
   final drawerController = Get.put(DrawerControllerX());
 
   ViewEvent({super.key});
@@ -29,16 +29,13 @@ class ViewEvent extends StatelessWidget {
     // Define view breakpoints
     bool isMobile = screenWidth < 600;
     bool isTablet = screenWidth >= 600 && screenWidth <= 900;
-    bool isDesktop = screenWidth > 900;
 
     // Adjust padding based on view
     double paddingValue = isMobile ? 16 : (isTablet ? 20 : 24);
 
-    // Define container dimensions as a percentage of screen size
-    double containerWidth =
-        screenWidth * (isMobile ? 0.8 : (isTablet ? 0.8 : 0.5));
     double containerHeight =
         screenHeight * (isMobile ? 0.38 : (isTablet ? 0.38 : 0.4));
+    Event event = addController.selectedEventModel!;
 
     return Padding(
       padding: EdgeInsets.only(
@@ -63,7 +60,7 @@ class ViewEvent extends StatelessWidget {
             Stack(
               children: [
                 // Main container with background image
-                Container (
+                Container(
                   width:
                       isLargeScreen ? 680 : 500, // Fixed width as per your code
                   height: isLargeScreen
@@ -72,14 +69,13 @@ class ViewEvent extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(
                         isMobile ? 10 : (isTablet ? 10 : 10)),
-                    image: const DecorationImage(
-                      image: AssetImage('assets/images/event_img.png'),
+                    image: DecorationImage(
+                      image: NetworkImage(event.imageUrls.first),
                       fit:
                           BoxFit.cover, // Ensure the image covers the container
                     ),
                   ),
                   // Add content inside the container if needed
-
                 ),
                 // Small container positioned at the bottom center with blur effect
                 Positioned(
@@ -93,11 +89,9 @@ class ViewEvent extends StatelessWidget {
                         filter: ImageFilter.blur(
                             sigmaX: 5, sigmaY: 5), // Apply blur effect
                         child: InkWell(
-                          onTap: (){
-
-                            drawerController.viewEventsGallery.value=true;
+                          onTap: () {
+                            drawerController.viewEventsGallery.value = true;
                             drawerController.viewEvents.value = false;
-
                           },
                           child: Container(
                             height: 32,
@@ -114,7 +108,8 @@ class ViewEvent extends StatelessWidget {
                                   fontSize: 14,
                                   color: primaryColor,
                                   fontWeight: FontWeight.w600,
-                                  fontFamily: GoogleFonts.nunitoSans().fontFamily,
+                                  fontFamily:
+                                      GoogleFonts.nunitoSans().fontFamily,
                                 ),
                               ),
                             ),
@@ -182,7 +177,7 @@ class ViewEvent extends StatelessWidget {
                               ),
                             ),
                             TextSpan(
-                              text: 'Music and Arts Festival 2024',
+                              text: event.eventName,
                               style: headingText.copyWith(
                                 fontWeight: FontWeight.w500,
                                 fontSize: isLargeScreen
@@ -217,7 +212,7 @@ class ViewEvent extends StatelessWidget {
                               ),
                             ),
                             TextSpan(
-                              text: 'Concert',
+                              text: event.eventType,
                               style: headingText.copyWith(
                                 fontWeight: FontWeight.w500,
                                 fontSize: isLargeScreen
@@ -252,7 +247,7 @@ class ViewEvent extends StatelessWidget {
                               ),
                             ),
                             TextSpan(
-                              text: '1901 Thornridge Cir. Shiloh, Hawaii 81063',
+                              text: event.location,
                               style: headingText.copyWith(
                                 fontWeight: FontWeight.w500,
                                 fontSize: isLargeScreen
@@ -270,20 +265,12 @@ class ViewEvent extends StatelessWidget {
                     SizedBox(
                       height: 18,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10.0),
-                      child: Container(
-                        height: 209,
-                        width: 358,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            image: DecorationImage(
-                                fit: BoxFit.cover,
-                                image: AssetImage(
-                                  'assets/images/event_map.png',
-                                ))),
-                      ),
-                    )
+                    Container(
+                        height: Get.height * 0.45,
+                        child: MapWidget(
+                          latitude: event.latitude,
+                          longitude: event.longitude,
+                        ))
                   ],
                 ),
               ),
@@ -344,7 +331,7 @@ class ViewEvent extends StatelessWidget {
                               ),
                             ),
                             TextSpan(
-                              text: '12/3/2025',
+                              text: event.date,
                               style: headingText.copyWith(
                                 fontWeight: FontWeight.w500,
                                 fontSize: isLargeScreen
@@ -379,7 +366,7 @@ class ViewEvent extends StatelessWidget {
                               ),
                             ),
                             TextSpan(
-                              text: '3:00 PM',
+                              text: event.time,
                               style: headingText.copyWith(
                                 fontWeight: FontWeight.w500,
                                 fontSize: isLargeScreen
@@ -414,7 +401,7 @@ class ViewEvent extends StatelessWidget {
                               ),
                             ),
                             TextSpan(
-                              text: '+854756565',
+                              text: event.phoneNumber,
                               style: headingText.copyWith(
                                 fontWeight: FontWeight.w500,
                                 fontSize: isLargeScreen
@@ -449,7 +436,7 @@ class ViewEvent extends StatelessWidget {
                               ),
                             ),
                             TextSpan(
-                              text: 'www.url.com',
+                              text: event.url,
                               style: headingText.copyWith(
                                 fontWeight: FontWeight.w500,
                                 fontSize: isLargeScreen
@@ -484,7 +471,7 @@ class ViewEvent extends StatelessWidget {
                               ),
                             ),
                             TextSpan(
-                              text: 'Lorem ipsum dolor',
+                              text: event.description,
                               style: headingText.copyWith(
                                 fontWeight: FontWeight.w500,
                                 fontSize: isLargeScreen

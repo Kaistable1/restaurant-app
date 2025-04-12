@@ -11,7 +11,9 @@ import 'package:savrly/controllers/add_event_controller.dart';
 import 'package:savrly/controllers/add_restaurants_controller.dart';
 
 class MapWidget extends StatefulWidget {
-  const MapWidget({super.key});
+  MapWidget({super.key, this.latitude, this.longitude});
+  double? latitude;
+  double? longitude;
 
   @override
   _MapWidgetState createState() => _MapWidgetState();
@@ -26,12 +28,14 @@ class _MapWidgetState extends State<MapWidget> {
       Completer<GoogleMapController>();
 
   // Replace with your Google Maps API key
-  final String? _googleApiKey = 'AIzaSyAGSu_k6uEQT8siB78VTkI-u3_K05IeCOI'; // Set to 'YOUR_API_KEY' for production
+  final String? _googleApiKey =
+      'AIzaSyAGSu_k6uEQT8siB78VTkI-u3_K05IeCOI'; // Set to 'YOUR_API_KEY' for production
 
   @override
   void initState() {
     super.initState();
-    _getCurrentLocation();
+    if (widget.latitude == null && widget.longitude == null)
+      _getCurrentLocation();
   }
 
   Future<void> _getCurrentLocation() async {
@@ -124,7 +128,6 @@ class _MapWidgetState extends State<MapWidget> {
   }
 
   Future<void> _fetchAddress(double latitude, double longitude) async {
-
     // Try geocoding package first
     try {
       List<Placemark> placemarks = await placemarkFromCoordinates(
@@ -168,8 +171,37 @@ class _MapWidgetState extends State<MapWidget> {
         if (response.statusCode == 200) {
           final data = jsonDecode(response.body);
           if (data['results'] != null && data['results'].isNotEmpty) {
-            String address = data['results'][0]['formatted_address'] ?? 'Unknown address';
+            String address =
+                data['results'][0]['formatted_address'] ?? 'Unknown address';
             addEventController.locationController.text = address;
+            // Extract city
+            // Extract city
+            String city = '';
+            var cityComponent =
+                data['results'][0]['address_components'].firstWhere(
+              (component) =>
+                  component is Map &&
+                  (component['types'] as List<dynamic>?)
+                          ?.contains('locality') ==
+                      true,
+              orElse: () => <String, dynamic>{'long_name': ''},
+            );
+            city = cityComponent['long_name'] as String? ?? '';
+
+// Extract country
+            String country = '';
+            var countryComponent =
+                data['results'][0]['address_components'].firstWhere(
+              (component) =>
+                  component is Map &&
+                  (component['types'] as List<dynamic>?)?.contains('country') ==
+                      true,
+              orElse: () => <String, dynamic>{'long_name': ''},
+            );
+            country = countryComponent['long_name'] as String? ?? '';
+
+            addEventController.cityController.text = city;
+            addEventController.countryController.text = country;
             addEventController.update();
           } else {
             addEventController.locationController.text =
@@ -185,13 +217,16 @@ class _MapWidgetState extends State<MapWidget> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Geocoding error: $e')),
         );
+        print('Error $e');
       }
     } else {
-      addEventController.locationController.text = 'Failed to fetch address (no API key)';
+      addEventController.locationController.text =
+          'Failed to fetch address (no API key)';
       addEventController.update();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('Geocoding failed. Please add a Google Maps API key.')),
+            content:
+                Text('Geocoding failed. Please add a Google Maps API key.')),
       );
     }
   }
@@ -202,6 +237,8 @@ class _MapWidgetState extends State<MapWidget> {
     addController.latitude.value = fallbackLatitude;
     addController.longitude.value = fallbackLongitude;
     addEventController.locationController.text = 'San Francisco, CA, USA';
+    addEventController.cityController.text = 'San Francisco';
+    addEventController.countryController.text = 'USA';
     addEventController.update();
 
     // Fetch address for fallback location
@@ -240,12 +277,16 @@ class _MapWidgetState extends State<MapWidget> {
                 mapType: MapType.normal,
                 initialCameraPosition: CameraPosition(
                   target: LatLng(
-                    addController.latitude.value != 0.0
-                        ? addController.latitude.value
-                        : 37.7749,
-                    addController.longitude.value != 0.0
-                        ? addController.longitude.value
-                        : -122.4194,
+                    widget.latitude == null
+                        ? addController.latitude.value != 0.0
+                            ? addController.latitude.value
+                            : 37.7749
+                        : widget.latitude!,
+                    widget.latitude == null
+                        ? addController.longitude.value != 0.0
+                            ? addController.longitude.value
+                            : -122.4194
+                        : widget.longitude!,
                   ),
                   zoom: 14,
                 ),

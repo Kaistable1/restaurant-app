@@ -38,8 +38,6 @@ loadingDialog() {
   );
 }
 
-
-
   Future<List<String>> uploadImagesToFirebase(List<Uint8List> images) async {
     List<String> imageUrls = [];
     List<Uint8List> imagesCopy = List.from(images); // 🔥 Fix: Create a copy
@@ -54,3 +52,5 @@ loadingDialog() {
     }
     return imageUrls;
   }
+
+  
