@@ -8,12 +8,25 @@ import '../../widgets/CustomDropDownWidget.dart';
 import '../../widgets/button.dart';
 import '../../widgets/custom_textfield.dart';
 import '../../widgets/customheader_widget.dart';
-import '../../models/event.dart'; // Add this import
+import '../../models/event.dart';
 
-class EventsManagements extends StatelessWidget {
+class EventsManagements extends StatefulWidget {
+  EventsManagements({super.key});
+
+  @override
+  _EventsManagementsState createState() => _EventsManagementsState();
+}
+
+class _EventsManagementsState extends State<EventsManagements> {
   final controller = Get.put(EventManagementController());
   final drawerController = Get.put(DrawerControllerX());
-  EventsManagements({super.key});
+
+  @override
+  void initState() {
+    super.initState();
+    // Reset filters and fetch data when the screen is initialized
+    controller.resetFiltersAndFetch();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +41,10 @@ class EventsManagements extends StatelessWidget {
     double imageSize = mobileView ? 30 : 50;
     double popUpContainerSize = mobileView ? 20 : 36;
     double popUpSize = mobileView ? 12 : 18;
+
+    // Create ScrollController
+    final ScrollController scrollController = ScrollController();
+
     return Padding(
       padding: EdgeInsets.only(
         right: paddingValue,
@@ -61,19 +78,22 @@ class EventsManagements extends StatelessWidget {
                     CustomDropDownWidget(
                       hint: 'State',
                       items: controller.stateList,
-                      onChanged: (value) => controller.selectedState.value = value!,
+                      onChanged: (value) =>
+                          controller.selectedState.value = value!,
                     ),
                     SizedBox(height: 8),
                     CustomDropDownWidget(
                       hint: 'City',
                       items: controller.cityList,
-                      onChanged: (value) => controller.selectedCity.value = value!,
+                      onChanged: (value) =>
+                          controller.selectedCity.value = value!,
                     ),
                     SizedBox(height: 8),
                     CustomDropDownWidget(
                       hint: 'Event type',
                       items: controller.eventsList,
-                      onChanged: (value) => controller.selectedEvents.value = value!,
+                      onChanged: (value) =>
+                          controller.selectedEvents.value = value!,
                     ),
                     SizedBox(height: 8),
                     CustomTextField(
@@ -92,7 +112,8 @@ class EventsManagements extends StatelessWidget {
                       child: CustomDropDownWidget(
                         hint: 'State',
                         items: controller.stateList,
-                        onChanged: (value) => controller.selectedState.value = value!,
+                        onChanged: (value) =>
+                            controller.selectedState.value = value!,
                       ),
                     ),
                     SizedBox(width: 16),
@@ -101,7 +122,8 @@ class EventsManagements extends StatelessWidget {
                       child: CustomDropDownWidget(
                         hint: 'City',
                         items: controller.cityList,
-                        onChanged: (value) => controller.selectedCity.value = value!,
+                        onChanged: (value) =>
+                            controller.selectedCity.value = value!,
                       ),
                     ),
                     SizedBox(width: 16),
@@ -110,7 +132,8 @@ class EventsManagements extends StatelessWidget {
                       child: CustomDropDownWidget(
                         hint: 'Event type',
                         items: controller.eventsList,
-                        onChanged: (value) => controller.selectedEvents.value = value!,
+                        onChanged: (value) =>
+                            controller.selectedEvents.value = value!,
                       ),
                     ),
                     SizedBox(width: 16),
@@ -138,7 +161,8 @@ class EventsManagements extends StatelessWidget {
                 children: [
                   // Header
                   Container(
-                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16, horizontal: 12),
                     color: primaryColor,
                     child: Row(
                       children: [
@@ -259,6 +283,14 @@ class EventsManagements extends StatelessWidget {
                   Expanded(
                     child: Obx(
                       () => SingleChildScrollView(
+                        controller: scrollController
+                          ..addListener(() {
+                            if (controller.hasMore.value &&
+                                controller.isLoading.value == false &&
+                                scrollController.position.extentAfter < 300) {
+                              controller.paginateFilteredEvents();
+                            }
+                          }),
                         child: Column(
                           children: List.generate(
                             controller.events.length,
@@ -286,12 +318,13 @@ class EventsManagements extends StatelessWidget {
                                           height: imageSize,
                                           width: imageSize,
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(8),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
                                             image: DecorationImage(
-                                              image: NetworkImage(
-                                                  event.imageUrls.isNotEmpty
-                                                      ? event.imageUrls[0]
-                                                      : 'https://via.placeholder.com/50'),
+                                              image: NetworkImage(event
+                                                      .imageUrls.isNotEmpty
+                                                  ? event.imageUrls[0]
+                                                  : 'https://via.placeholder.com/50'),
                                               fit: BoxFit.cover,
                                             ),
                                           ),
@@ -362,7 +395,7 @@ class EventsManagements extends StatelessWidget {
                                       flex: 1,
                                       child: Center(
                                         child: Text(
-                                          'Published', // Assuming all fetched events are published; adjust if you have a status field
+                                          'Published',
                                           textAlign: TextAlign.center,
                                           style: simpleText.copyWith(
                                             fontSize: tableTextSize,
@@ -377,7 +410,8 @@ class EventsManagements extends StatelessWidget {
                                         child: Container(
                                           height: popUpContainerSize,
                                           width: popUpContainerSize,
-                                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 4),
                                           decoration: BoxDecoration(
                                             color: primaryColor,
                                             borderRadius: BorderRadius.circular(
@@ -394,13 +428,16 @@ class EventsManagements extends StatelessWidget {
                                               ),
                                               onSelected: (value) {
                                                 if (value == 'Delete') {
-                                                  controller.deleteEvent(event.docId!);
+                                                  controller.deleteEvent(
+                                                      event.docId!);
                                                 }
                                                 if (value == 'View') {
-                                                  drawerController.viewEvents.value = true;
+                                                  drawerController
+                                                      .viewEvents.value = true;
                                                 }
                                                 if (value == 'Edit') {
-                                                  drawerController.addEvent.value = true;
+                                                  drawerController
+                                                      .addEvent.value = true;
                                                 }
                                               },
                                               itemBuilder: (context) => [

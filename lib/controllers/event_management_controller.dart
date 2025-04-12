@@ -16,8 +16,8 @@ class EventManagementController extends GetxController {
   RxList<String> stateList = <String>['New York', 'Los Angeles'].obs;
   RxList<String> eventsList = <String>['Festival', 'Concert'].obs;
 
-  RxList<Event> events = <Event>[].obs; // Displayed events (paginated)
-  RxList<Event> filteredEvents = <Event>[].obs; // All filtered events
+  RxList<Event> events = <Event>[].obs;
+  RxList<Event> filteredEvents = <Event>[].obs;
   RxBool isLoading = false.obs;
   RxBool hasMore = true.obs;
   final int pageSize = 10;
@@ -27,7 +27,7 @@ class EventManagementController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Reset filters and fetch events
+    // Initial fetch
     resetFiltersAndFetch();
     // Listen to search changes
     searchController.addListener(() {
@@ -40,7 +40,7 @@ class EventManagementController extends GetxController {
     });
   }
 
-  // Reset filters and fetch all events
+  // Method to reset filters and fetch all events
   void resetFiltersAndFetch() {
     clearFilters();
     fetchAllEventsForFilters();
@@ -55,8 +55,8 @@ class EventManagementController extends GetxController {
       Query<Map<String, dynamic>> query =
           _firestore.collection('events').orderBy('createdAt', descending: true);
 
-      // Fetch a large batch to minimize network calls (adjust as needed)
-      query = query.limit(100); // Large enough to cover most use cases
+      // Fetch a large batch
+      query = query.limit(100);
 
       QuerySnapshot<Map<String, dynamic>> snapshot = await query.get();
       List<Event> allEvents = snapshot.docs.map((doc) {
