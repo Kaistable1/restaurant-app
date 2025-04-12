@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:savrly/constants/text_styles.dart';
@@ -19,8 +18,8 @@ class UserManagementScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Add scroll listener to detect when user reaches the bottom
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent &&
+      if (_scrollController.position.pixels >=
+              _scrollController.position.maxScrollExtent - 50 &&
           controller.hasMoreData.value &&
           !controller.isLoading.value) {
         controller.fetchUsers(); // Fetch more users when scrolled to bottom
@@ -40,7 +39,7 @@ class UserManagementScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CustomHeaderWidget(title: 'User Management'),
-          SizedBox(height: 30),
+          const SizedBox(height: 30),
           CustomTextField(
             controller: controller.searchController,
             hintText: 'Search by username',
@@ -49,12 +48,12 @@ class UserManagementScreen extends StatelessWidget {
             prefixIcon: Icon(Icons.search, color: primaryColor),
             onChanged: (value) {
               controller.currentSearchQuery.value = value ?? '';
-              controller.fetchInitialUsers(); // Trigger search immediately
+              // No need to call fetchInitialUsers here; debounce handles it
             },
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Obx(
-                () => Text(
+            () => Text(
               'Total Users: ${controller.totalUsersLength.value}',
               style: simpleText.copyWith(
                 fontSize: tableTextSize,
@@ -63,7 +62,7 @@ class UserManagementScreen extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Expanded(
             child: Container(
               decoration: BoxDecoration(
@@ -74,7 +73,8 @@ class UserManagementScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Container(
-                    padding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16, horizontal: 12),
                     color: primaryColor,
                     child: Row(
                       children: [
@@ -87,7 +87,7 @@ class UserManagementScreen extends StatelessWidget {
                         Expanded(
                             child: Text("Email",
                                 style: _headerStyle(tableHeaderTextSize))),
-                        SizedBox(width: 40),
+                        const SizedBox(width: 40),
                       ],
                     ),
                   ),
@@ -96,15 +96,16 @@ class UserManagementScreen extends StatelessWidget {
                       if (controller.isLoading.value &&
                           controller.userManagement.isEmpty) {
                         return Center(
-                            child:
-                            CircularProgressIndicator(color: primaryColor));
+                          child: CircularProgressIndicator(color: primaryColor),
+                        );
                       }
                       if (controller.userManagement.isEmpty &&
-                          !controller.hasMoreData.value) {
+                          !controller.hasMoreData.value &&
+                          !controller.isLoading.value) {
                         return Center(
                           child: Text(
                             controller.currentSearchQuery.value.isNotEmpty
-                                ? 'User not found'
+                                ? 'No users found for "${controller.currentSearchQuery.value}"'
                                 : 'No users available',
                             style: simpleText.copyWith(
                               fontSize: tableTextSize,
@@ -119,42 +120,27 @@ class UserManagementScreen extends StatelessWidget {
                             (controller.hasMoreData.value ? 1 : 0),
                         itemBuilder: (context, index) {
                           if (index == controller.userManagement.length) {
-                            if (controller.hasMoreData.value) {
-                              return Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Center(
-                                  child: controller.isLoading.value
-                                      ? CircularProgressIndicator(
-                                    color: primaryColor,
-                                  )
-                                      : Text(
-                                    'Loading more users...', // Updated text to indicate automatic loading
-                                    style: simpleText.copyWith(
-                                      fontSize: tableTextSize,
-                                      color: primaryColor,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            } else {
-                              return Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Center(
-                                  child: Text(
-                                    'No more users to load',
-                                    style: simpleText.copyWith(
-                                      fontSize: tableTextSize,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            }
+                            return Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Center(
+                                child: controller.isLoading.value
+                                    ? CircularProgressIndicator(
+                                        color: primaryColor,
+                                      )
+                                    : Text(
+                                        'Load More',
+                                        style: simpleText.copyWith(
+                                          fontSize: tableTextSize,
+                                          color: primaryColor,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                              ),
+                            );
                           }
                           final user = controller.userManagement[index];
                           return Container(
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 vertical: 14, horizontal: 12),
                             decoration: BoxDecoration(
                               border: Border(
@@ -187,23 +173,22 @@ class UserManagementScreen extends StatelessWidget {
                                     child: Center(
                                       child: PopupMenuButton<String>(
                                         padding: EdgeInsets.zero,
-                                        icon: Icon(Icons.more_vert,
+                                        icon: const Icon(Icons.more_vert,
                                             color: Colors.white, size: 20),
                                         onSelected: (value) {
                                           if (value == 'delete') {
                                             controller.deleteUser(user.userId);
                                           } else if (value == 'view') {
-                                            drawerController
-                                                .selectedUser(user);
+                                            drawerController.selectedUser(user);
                                             drawerController.userDetails.value =
-                                            true;
+                                                true;
                                           }
                                         },
                                         itemBuilder: (context) => [
-                                          PopupMenuItem(
+                                          const PopupMenuItem(
                                               value: 'view',
                                               child: Text('View')),
-                                          PopupMenuItem(
+                                          const PopupMenuItem(
                                               value: 'delete',
                                               child: Text('Delete')),
                                         ],
@@ -228,9 +213,10 @@ class UserManagementScreen extends StatelessWidget {
   }
 
   TextStyle _headerStyle(double fontSize) => simpleText.copyWith(
-    fontSize: fontSize,
-    fontWeight: FontWeight.w700,
-  );
+        fontSize: fontSize,
+        fontWeight: FontWeight.w700,
+        color: Colors.white,
+      );
 
   TextStyle _textStyle(double fontSize) =>
       simpleText.copyWith(fontSize: fontSize);

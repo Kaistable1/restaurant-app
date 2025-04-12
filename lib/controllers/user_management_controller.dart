@@ -10,6 +10,7 @@ class UserController extends GetxController {
   RxBool hasMoreData = true.obs;
   RxBool isLoading = false.obs;
   RxString currentSearchQuery = ''.obs;
+  RxString errorMessage = ''.obs; // To store error messages
   final int pageSize = 10;
   RxInt totalUsersLength = 0.obs;
 
@@ -22,8 +23,8 @@ class UserController extends GetxController {
     // Debounce search input to avoid excessive queries
     debounce(
       currentSearchQuery,
-          (_) => fetchInitialUsers(),
-      time: Duration(milliseconds: 500),
+      (_) => fetchInitialUsers(),
+      time: const Duration(milliseconds: 500),
     );
   }
 
@@ -37,6 +38,8 @@ class UserController extends GetxController {
     userManagement.clear();
     lastDocument = null;
     hasMoreData.value = true;
+    totalUsersLength.value = 0;
+    errorMessage.value = '';
     fetchUsers();
   }
 
@@ -46,14 +49,19 @@ class UserController extends GetxController {
     isLoading.value = true;
 
     try {
-      Query query = _firestore.collection('users').orderBy('username').limit(pageSize);
+      Query query = _firestore
+          .collection('users')
+          .orderBy('username', descending: false) // Ensure consistent ordering
+          .limit(pageSize);
 
+      // Handle pagination
       if (lastDocument != null && currentSearchQuery.value.isEmpty) {
         query = query.startAfterDocument(lastDocument!);
       }
 
+      // Handle search
       if (currentSearchQuery.value.isNotEmpty) {
-        String searchText = currentSearchQuery.value.trim().toLowerCase();
+        String searchText = currentSearchQuery.value.trim();
         query = _firestore
             .collection('users')
             .where('username', isGreaterThanOrEqualTo: searchText)
@@ -66,8 +74,10 @@ class UserController extends GetxController {
 
       if (snapshot.docs.isEmpty) {
         hasMoreData.value = false;
-        if (currentSearchQuery.value.isNotEmpty && userManagement.isEmpty) {
-          Get.snackbar('Info', 'User not found');
+        if (userManagement.isEmpty && currentSearchQuery.value.isNotEmpty) {
+          errorMessage.value = 'No users found for "$currentSearchQuery"';
+        } else if (userManagement.isEmpty) {
+          errorMessage.value = 'No users available in the database';
         }
       } else {
         lastDocument = snapshot.docs.last;
@@ -87,24 +97,35 @@ class UserController extends GetxController {
             token: data['token'] ?? '',
             topThreeCuisines: List<String>.from(data['topThreeCuisines'] ?? []),
             userEmail: data['userEmail'] ?? '',
-            userId: data['userID'] ?? '',
+            userId: data['userID'] ??
+                doc.id, // Fallback to doc ID if userID is missing
             userImage: data['userImage'] ?? '',
-            username: data['username'] ?? '',
+            username:
+                data['username'] ?? 'Unknown', // Fallback for null usernames
             whereToEat: List<String>.from(data['whereToEat'] ?? []),
             willingToTravel: data['willingToTravel'] ?? '',
           );
         }).toList();
 
         if (currentSearchQuery.value.isNotEmpty) {
-          userManagement.value = newUsers; // Replace list when searching
+          userManagement.value = newUsers; // Replace list for search
         } else {
           userManagement.addAll(newUsers); // Append for pagination
         }
         hasMoreData.value = snapshot.docs.length == pageSize;
+        errorMessage.value = ''; // Clear error if users are found
       }
 
-      totalUsersLength.value = (await _firestore.collection('users').count().get()).count ?? 0;
+      // Fetch total count only when not searching
+      if (currentSearchQuery.value.isEmpty) {
+        totalUsersLength.value =
+            (await _firestore.collection('users').count().get()).count ?? 0;
+      } else {
+        totalUsersLength.value =
+            userManagement.length; // Approximate for search
+      }
     } catch (e) {
+      errorMessage.value = 'Failed to fetch users: $e';
       Get.snackbar('Error', 'Failed to fetch users: $e');
       print('Error fetching users: $e');
     } finally {
@@ -116,7 +137,8 @@ class UserController extends GetxController {
     try {
       await _firestore.collection('users').doc(userId).delete();
       userManagement.removeWhere((user) => user.userId == userId);
-      Get.snackbar('Success', 'Restaurant deleted successfully'); // Added success message
+      totalUsersLength.value--;
+      Get.snackbar('Success', 'User deleted successfully');
     } catch (e) {
       Get.snackbar('Error', 'Failed to delete user: $e');
     }

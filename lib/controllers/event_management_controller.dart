@@ -170,12 +170,4 @@ class EventManagementController extends GetxController{
 
 
 
-
-
-
-
-
-
-
-
 }
