@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../../constants/app_colors.dart';
 import '../../constants/text_styles.dart';
 import '../../controllers/drawer_controller.dart';
@@ -9,10 +8,12 @@ import '../../widgets/CustomDropDownWidget.dart';
 import '../../widgets/button.dart';
 import '../../widgets/custom_textfield.dart';
 import '../../widgets/customheader_widget.dart';
+import '../../models/event.dart'; // Add this import
+
 class EventsManagements extends StatelessWidget {
-  final controller =Get.put(EventManagementController());
-  final drawerController =Get.put(DrawerControllerX());
-   EventsManagements({super.key});
+  final controller = Get.put(EventManagementController());
+  final drawerController = Get.put(DrawerControllerX());
+  EventsManagements({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,6 @@ class EventsManagements extends StatelessWidget {
     double imageSize = mobileView ? 30 : 50;
     double popUpContainerSize = mobileView ? 20 : 36;
     double popUpSize = mobileView ? 12 : 18;
-    double statusSize = mobileView ? 60 : 100;
     return Padding(
       padding: EdgeInsets.only(
         right: paddingValue,
@@ -50,92 +50,83 @@ class EventsManagements extends StatelessWidget {
               shadow: [],
               containerColor: primaryColor,
               ontapp: () {
-            drawerController..addEvent.value = true;
+                drawerController.addEvent.value = true;
               },
             ),
           ),
           SizedBox(height: 30),
-          mobileView?
-              Column(
-                children: [
-                  CustomDropDownWidget(
-                    hint: 'State',
-                    items: controller.stateList,
-                    onChanged:
-                        (value) => controller.selectedState.value = value!,
-                  ),
-                  SizedBox(height: 8),
-                  CustomDropDownWidget(
-                    hint: 'City',
-                    items: controller.cityList,
-                    onChanged:
-                        (value) => controller.selectedCity.value = value!,
-                  ),
-                  SizedBox(height: 8),
-
-                  CustomDropDownWidget(
-                    hint: 'Event type',
-                    items: controller.eventsList,
-                    onChanged:
-                        (value) => controller.selectedEvents.value = value!,
-                  ),
-                  SizedBox(height: 8),
-                  CustomTextField(
-                    controller: controller.searchController,
-                    hintText: 'Search',
-                    borderColor: primaryColor,
-                    hintTextColor: primaryColor,
-                    prefixIcon: Icon(Icons.search, color: primaryColor),
-                  ),
-                ],
-              ):
-          Row(
-            children: [
-              Expanded(
-                flex: 2,
-                child: CustomDropDownWidget(
-                  hint: 'State',
-                  items: controller.stateList,
-                  onChanged:
-                      (value) => controller.selectedState.value = value!,
+          mobileView
+              ? Column(
+                  children: [
+                    CustomDropDownWidget(
+                      hint: 'State',
+                      items: controller.stateList,
+                      onChanged: (value) => controller.selectedState.value = value!,
+                    ),
+                    SizedBox(height: 8),
+                    CustomDropDownWidget(
+                      hint: 'City',
+                      items: controller.cityList,
+                      onChanged: (value) => controller.selectedCity.value = value!,
+                    ),
+                    SizedBox(height: 8),
+                    CustomDropDownWidget(
+                      hint: 'Event type',
+                      items: controller.eventsList,
+                      onChanged: (value) => controller.selectedEvents.value = value!,
+                    ),
+                    SizedBox(height: 8),
+                    CustomTextField(
+                      controller: controller.searchController,
+                      hintText: 'Search',
+                      borderColor: primaryColor,
+                      hintTextColor: primaryColor,
+                      prefixIcon: Icon(Icons.search, color: primaryColor),
+                    ),
+                  ],
+                )
+              : Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: CustomDropDownWidget(
+                        hint: 'State',
+                        items: controller.stateList,
+                        onChanged: (value) => controller.selectedState.value = value!,
+                      ),
+                    ),
+                    SizedBox(width: 16),
+                    Expanded(
+                      flex: 2,
+                      child: CustomDropDownWidget(
+                        hint: 'City',
+                        items: controller.cityList,
+                        onChanged: (value) => controller.selectedCity.value = value!,
+                      ),
+                    ),
+                    SizedBox(width: 16),
+                    Expanded(
+                      flex: 2,
+                      child: CustomDropDownWidget(
+                        hint: 'Event type',
+                        items: controller.eventsList,
+                        onChanged: (value) => controller.selectedEvents.value = value!,
+                      ),
+                    ),
+                    SizedBox(width: 16),
+                    Expanded(
+                      flex: 2,
+                      child: CustomTextField(
+                        controller: controller.searchController,
+                        hintText: 'Search',
+                        borderColor: primaryColor,
+                        hintTextColor: primaryColor,
+                        prefixIcon: Icon(Icons.search, color: primaryColor),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              SizedBox(width: 16),
-              Expanded(
-                flex: 2,
-                child: CustomDropDownWidget(
-                  hint: 'City',
-                  items: controller.cityList,
-                  onChanged:
-                      (value) => controller.selectedCity.value = value!,
-                ),
-              ),
-              SizedBox(width: 16),
-
-              Expanded(
-                flex: 2,
-                child: CustomDropDownWidget(
-                  hint: 'Event type',
-                  items: controller.eventsList,
-                  onChanged:
-                      (value) => controller.selectedEvents.value = value!,
-                ),
-              ),
-              SizedBox(width: 16),
-              Expanded(
-                flex: 2,
-                child: CustomTextField(
-                  controller: controller.searchController,
-                  hintText: 'Search',
-                  borderColor: primaryColor,
-                  hintTextColor: primaryColor,
-                  prefixIcon: Icon(Icons.search, color: primaryColor),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 22,),
-
+          SizedBox(height: 22),
           Expanded(
             child: Container(
               decoration: BoxDecoration(
@@ -151,9 +142,8 @@ class EventsManagements extends StatelessWidget {
                     color: primaryColor,
                     child: Row(
                       children: [
-                        // Photo column (fixed width)
                         SizedBox(
-                          width: 60, // Match the width used in the list items
+                          width: 60,
                           child: Center(
                             child: Text(
                               "Photo",
@@ -161,12 +151,10 @@ class EventsManagements extends StatelessWidget {
                                 fontSize: tableHeaderTextSize,
                                 fontWeight: FontWeight.w700,
                                 color: Colors.black,
-                                // Ensure text is visible on primaryColor background
                               ),
                             ),
                           ),
                         ),
-                        // Event name column
                         Expanded(
                           flex: 2,
                           child: Center(
@@ -181,7 +169,6 @@ class EventsManagements extends StatelessWidget {
                             ),
                           ),
                         ),
-                        // Location column
                         Expanded(
                           flex: 1,
                           child: Center(
@@ -196,9 +183,8 @@ class EventsManagements extends StatelessWidget {
                             ),
                           ),
                         ),
-                        // Event type column
                         Expanded(
-                          flex: 2, // Adjusted to match the list item flex
+                          flex: 2,
                           child: Center(
                             child: Text(
                               "Event type",
@@ -211,7 +197,6 @@ class EventsManagements extends StatelessWidget {
                             ),
                           ),
                         ),
-                        // Date column
                         Expanded(
                           flex: 2,
                           child: Center(
@@ -226,7 +211,6 @@ class EventsManagements extends StatelessWidget {
                             ),
                           ),
                         ),
-                        // Time column
                         Expanded(
                           flex: 2,
                           child: Center(
@@ -241,7 +225,6 @@ class EventsManagements extends StatelessWidget {
                             ),
                           ),
                         ),
-                        // Status column
                         Expanded(
                           flex: 1,
                           child: Center(
@@ -256,12 +239,11 @@ class EventsManagements extends StatelessWidget {
                             ),
                           ),
                         ),
-                        // Action column (for the PopupMenuButton)
                         SizedBox(
-                          width: 50, // Match the width used in the list items
+                          width: 50,
                           child: Center(
                             child: Text(
-                              "", // Empty text to reserve space for alignment
+                              "",
                               style: simpleText.copyWith(
                                 fontSize: tableHeaderTextSize,
                                 fontWeight: FontWeight.w700,
@@ -273,16 +255,15 @@ class EventsManagements extends StatelessWidget {
                       ],
                     ),
                   ),
-
                   // Scrollable rows
                   Expanded(
                     child: Obx(
-                          () => SingleChildScrollView(
+                      () => SingleChildScrollView(
                         child: Column(
                           children: List.generate(
-                            controller.restaurants.length,
-                                (index) {
-                              final user = controller.restaurants[index];
+                            controller.events.length,
+                            (index) {
+                              final event = controller.events[index];
                               return Container(
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 14,
@@ -298,9 +279,8 @@ class EventsManagements extends StatelessWidget {
                                 ),
                                 child: Row(
                                   children: [
-                                    // Photo column (fixed width)
                                     SizedBox(
-                                      width: 60, // Match the header width
+                                      width: 60,
                                       child: Center(
                                         child: Container(
                                           height: imageSize,
@@ -308,19 +288,21 @@ class EventsManagements extends StatelessWidget {
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(8),
                                             image: DecorationImage(
-                                              image: AssetImage(user.photoUrl),
+                                              image: NetworkImage(
+                                                  event.imageUrls.isNotEmpty
+                                                      ? event.imageUrls[0]
+                                                      : 'https://via.placeholder.com/50'),
                                               fit: BoxFit.cover,
                                             ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                    // Event name column
                                     Expanded(
                                       flex: 2,
                                       child: Center(
                                         child: Text(
-                                          user.eventsName,
+                                          event.eventName,
                                           textAlign: TextAlign.center,
                                           style: simpleText.copyWith(
                                             fontSize: tableTextSize,
@@ -328,12 +310,11 @@ class EventsManagements extends StatelessWidget {
                                         ),
                                       ),
                                     ),
-                                    // Location column
                                     Expanded(
                                       flex: 1,
                                       child: Center(
                                         child: Text(
-                                          user.location,
+                                          event.location,
                                           textAlign: TextAlign.center,
                                           style: simpleText.copyWith(
                                             fontSize: tableTextSize,
@@ -341,25 +322,11 @@ class EventsManagements extends StatelessWidget {
                                         ),
                                       ),
                                     ),
-                                    // Event type column
-                                    Expanded(
-                                      flex: 2, // Adjusted to match the header flex
-                                      child: Center(
-                                        child: Text(
-                                          user.eventType,
-                                          textAlign: TextAlign.center,
-                                          style: simpleText.copyWith(
-                                            fontSize: tableTextSize,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    // Date column
                                     Expanded(
                                       flex: 2,
                                       child: Center(
                                         child: Text(
-                                          user.date,
+                                          event.eventType,
                                           textAlign: TextAlign.center,
                                           style: simpleText.copyWith(
                                             fontSize: tableTextSize,
@@ -367,12 +334,11 @@ class EventsManagements extends StatelessWidget {
                                         ),
                                       ),
                                     ),
-                                    // Time column
                                     Expanded(
                                       flex: 2,
                                       child: Center(
                                         child: Text(
-                                          user.time,
+                                          event.date,
                                           textAlign: TextAlign.center,
                                           style: simpleText.copyWith(
                                             fontSize: tableTextSize,
@@ -380,23 +346,33 @@ class EventsManagements extends StatelessWidget {
                                         ),
                                       ),
                                     ),
-                                    // Status column
+                                    Expanded(
+                                      flex: 2,
+                                      child: Center(
+                                        child: Text(
+                                          event.time,
+                                          textAlign: TextAlign.center,
+                                          style: simpleText.copyWith(
+                                            fontSize: tableTextSize,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                                     Expanded(
                                       flex: 1,
                                       child: Center(
                                         child: Text(
-                                          user.status,
+                                          'Published', // Assuming all fetched events are published; adjust if you have a status field
                                           textAlign: TextAlign.center,
                                           style: simpleText.copyWith(
                                             fontSize: tableTextSize,
-                                            color: user.status == "Pending" ? Colors.red : primaryColor,
+                                            color: primaryColor,
                                           ),
                                         ),
                                       ),
                                     ),
-                                    // Action column (PopupMenuButton)
                                     SizedBox(
-                                      width: 50, // Match the header width
+                                      width: 50,
                                       child: Center(
                                         child: Container(
                                           height: popUpContainerSize,
@@ -405,7 +381,7 @@ class EventsManagements extends StatelessWidget {
                                           decoration: BoxDecoration(
                                             color: primaryColor,
                                             borderRadius: BorderRadius.circular(
-                                              mobileView ? 5 :  10,
+                                              mobileView ? 5 : 10,
                                             ),
                                           ),
                                           child: Center(
@@ -418,13 +394,13 @@ class EventsManagements extends StatelessWidget {
                                               ),
                                               onSelected: (value) {
                                                 if (value == 'Delete') {
-                                                  controller.deleteRestaurant(index);
+                                                  controller.deleteEvent(event.docId!);
                                                 }
-                                                if(value=='View'){
-                                                  drawerController.viewEvents.value=true;
+                                                if (value == 'View') {
+                                                  drawerController.viewEvents.value = true;
                                                 }
-                                                if(value=='Edit'){
-                                                  drawerController..addEvent.value = true;
+                                                if (value == 'Edit') {
+                                                  drawerController.addEvent.value = true;
                                                 }
                                               },
                                               itemBuilder: (context) => [
@@ -459,8 +435,6 @@ class EventsManagements extends StatelessWidget {
               ),
             ),
           ),
-
-
         ],
       ),
     );

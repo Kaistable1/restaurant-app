@@ -4,7 +4,7 @@ import '../models/user_management_model.dart';
 
 class DrawerControllerX extends GetxController {
   // Active screen state
-  RxInt selectedScreen = 2.obs;
+  RxInt selectedScreen = 3.obs;
   var isUserManagementExpanded = false.obs;
   var hoveredItem = "".obs;
 

@@ -6,6 +6,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:savrly/widgets/button.dart';
+import 'package:savrly/widgets/map_widget.dart';
 import '../../../constants/app_colors.dart';
 import '../../../constants/text_styles.dart';
 import '../../../controllers/add_event_controller.dart';
@@ -280,6 +281,7 @@ class AddEvents extends StatelessWidget {
                           fieldHintText: 'Street abc',
                           fieldController: controller.locationController,
                           isDropDown: false,
+                          readOnly: true,
                           fieldValidator: (value) {
                             if (value!.isEmpty) {
                               return 'Please enter location.';
@@ -287,7 +289,7 @@ class AddEvents extends StatelessWidget {
                             return null;
                           },
                         ),
-                        Image.asset('assets/images/map_event.png'),
+                        MapWidget(),
                         TextAndFieldsOrDropDown(
                           labelText: 'Date',
                           fieldHintText: 'June 15-17, 2024',
@@ -405,7 +407,7 @@ class AddEvents extends StatelessWidget {
                         ),
                         Center(
                           child: CustomButton(
-                              ontapp: () {
+                              ontapp: () async {
                                 if (formKey.currentState!.validate()) {
                                   if (controller.uploadedImages.isEmpty) {
                                     Get.snackbar(
@@ -418,29 +420,8 @@ class AddEvents extends StatelessWidget {
                                     );
                                     return;
                                   }
+                                 await controller.addEvent();
 
-                                  // Success logic
-                                  Get.snackbar(
-                                    'Success!',
-                                    "Data saved successfully",
-                                    maxWidth: 400,
-                                    backgroundColor: primaryColor,
-                                    colorText: Colors.white,
-                                    snackPosition: SnackPosition.BOTTOM,
-                                  );
-                                  drawerController.addEvent.value = false;
-                                  // Clear all controllers
-                                  controller.eventNameController.clear();
-                                  controller.events
-                                      .clear(); // Only clear selected value if needed
-                                  controller.locationController.clear();
-                                  controller.descriptionController.clear();
-                                  controller.urlController.clear();
-                                  controller.phoneNumberController.clear();
-                                  controller.timeController.clear();
-                                  controller.dateController.clear();
-                                  controller.uploadedImages
-                                      .clear(); // Clear images as well
                                 }
                               },
                               width: 169,

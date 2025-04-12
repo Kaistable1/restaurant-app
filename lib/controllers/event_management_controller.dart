@@ -1,173 +1,177 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:savrly/models/event.dart';
+import 'package:savrly/widgets/global_functions.dart';
 
-import '../models/events_model.dart';
-
-class EventManagementController extends GetxController{
+class EventManagementController extends GetxController {
   final searchController = TextEditingController();
   RxString selectedCity = ''.obs;
   RxString selectedState = ''.obs;
   RxString selectedEvents = ''.obs;
+  RxString searchQuery = ''.obs;
+
   RxList<String> cityList =
-      <String>['Tuscany, Italy', 'San Francisco', 'Washington, D.C.', ].obs;
+      <String>['Tuscany, Italy', 'San Francisco', 'Washington, D.C.'].obs;
+  RxList<String> stateList = <String>['New York', 'Los Angeles'].obs;
+  RxList<String> eventsList = <String>['Festival', 'Concert'].obs;
 
-  RxList<String> stateList =
-      <String>['New York', 'Loss Angelos',].obs;
-  RxList<String> eventsList =
-      <String>['Festival', 'Concert',].obs;
+  RxList<Event> events = <Event>[].obs; // Displayed events (paginated)
+  RxList<Event> filteredEvents = <Event>[].obs; // All filtered events
+  RxBool isLoading = false.obs;
+  RxBool hasMore = true.obs;
+  final int pageSize = 10;
 
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-
-  var restaurants =
-      <EventsModel>[
-        EventsModel(
-          id: 1,
-          eventsName: 'Tandoori Flame',
-          eventType: 'Concert',
-          location: 'Tuscany, Italy',
-          date: 'Martch 5,2024',
-          status: 'Pending',
-          time: '10: 00 AM',
-          photoUrl: 'assets/images/res_table_1.png',
-
-        ),
-        EventsModel(
-          id: 1,
-          eventsName: 'Tandoori Flame',
-          eventType: 'Concert',
-          location: 'Tuscany, Italy',
-          date: 'Martch 5,2024',
-          status: 'Pending',
-          time: '10: 00 AM',
-          photoUrl: 'assets/images/res_table_2.png',
-        ),
-        EventsModel(
-          id: 1,
-          eventsName: 'Tandoori Flame',
-          eventType: 'Concert',
-          location: 'Tuscany, Italy',
-          date: 'Martch 5,2024',
-          status: 'Published',
-          time: '10: 00 AM',
-          photoUrl: 'assets/images/res_table_3.png',
-        ),
-        EventsModel(
-          id: 1,
-          eventsName: 'Tandoori Flame',
-          eventType: 'Concert',
-          location: 'Tuscany, Italy',
-          date: 'Martch 5,2024',
-          status: 'Pending',
-          time: '10: 00 AM',
-          photoUrl: 'assets/images/res_table_4.png',
-        ),
-        EventsModel(
-          id: 1,
-          eventsName: 'Tandoori Flame',
-          eventType: 'Concert',
-          location: 'Tuscany, Italy',
-          date: 'Martch 5,2024',
-          status: 'Published',
-          time: '10: 00 AM',
-          photoUrl: 'assets/images/res_table_1.png',
-        ),
-        EventsModel(
-          id: 1,
-          eventsName: 'Tandoori Flame',
-          eventType: 'Concert',
-          location: 'Tuscany, Italy',
-          date: 'Martch 5,2024',
-          status: 'Pending',
-          time: '10: 00 AM',
-          photoUrl: 'assets/images/res_table_3.png',
-        ),
-        EventsModel(
-          id: 1,
-          eventsName: 'Tandoori Flame',
-          eventType: 'Concert',
-          location: 'Tuscany, Italy',
-          date: 'Martch 5,2024',
-          status: 'Published',
-          time: '10: 00 AM',
-          photoUrl: 'assets/images/res_table_1.png',
-        ),
-        EventsModel(
-          id: 1,
-          eventsName: 'Tandoori Flame',
-          eventType: 'Concert',
-          location: 'Tuscany, Italy',
-          date: 'Martch 5,2024',
-          status: 'Pending',
-          time: '10: 00 AM',
-          photoUrl: 'assets/images/res_table_4.png',
-        ),
-        EventsModel(
-          id: 1,
-          eventsName: 'Tandoori Flame',
-          eventType: 'Concert',
-          location: 'Tuscany, Italy',
-          date: 'Martch 5,2024',
-          status: 'Published',
-          time: '10: 00 AM',
-          photoUrl: 'assets/images/res_table_1.png',
-        ),
-        EventsModel(
-          id: 1,
-          eventsName: 'Tandoori Flame',
-          eventType: 'Concert',
-          location: 'Tuscany, Italy',
-          date: 'Martch 5,2024',
-          status: 'Pending',
-          time: '10: 00 AM',
-          photoUrl: 'assets/images/res_table_4.png',
-        ),
-        EventsModel(
-          id: 1,
-          eventsName: 'Tandoori Flame',
-          eventType: 'Concert',
-          location: 'Tuscany, Italy',
-          date: 'Martch 5,2024',
-          status: 'Pending',
-          time: '10: 00 AM',
-          photoUrl: 'assets/images/res_table_3.png',
-        ),
-        EventsModel(
-          id: 1,
-          eventsName: 'Tandoori Flame',
-          eventType: 'Concert',
-          location: 'Tuscany, Italy',
-          date: 'Martch 5,2024',
-          status: 'Pending',
-          time: '10: 00 AM',
-          photoUrl: 'assets/images/res_table_2.png',
-        ),
-        EventsModel(
-          id: 1,
-          eventsName: 'Tandoori Flame',
-          eventType: 'Concert',
-          location: 'Tuscany, Italy',
-          date: 'Martch 5,2024',
-          status: 'Pending',
-          time: '10: 00 AM',
-          photoUrl: 'assets/images/res_table_4.png',
-        ),
-        EventsModel(
-          id: 1,
-          eventsName: 'Tandoori Flame',
-          eventType: 'Concert',
-          location: 'Tuscany, Italy',
-          date: 'Martch 5,2024',
-          status: 'Pending',
-          time: '10: 00 AM',
-          photoUrl: 'assets/images/res_table_3.png',
-        ),
-        // Add more restaurants...
-      ].obs;
-
-  void deleteRestaurant(int index) {
-    restaurants.removeAt(index);
+  @override
+  void onInit() {
+    super.onInit();
+    // Reset filters and fetch events
+    resetFiltersAndFetch();
+    // Listen to search changes
+    searchController.addListener(() {
+      searchQuery.value = searchController.text;
+      fetchAllEventsForFilters();
+    });
+    // Listen to filter changes
+    everAll([selectedCity, selectedState, selectedEvents], (_) {
+      fetchAllEventsForFilters();
+    });
   }
 
+  // Reset filters and fetch all events
+  void resetFiltersAndFetch() {
+    clearFilters();
+    fetchAllEventsForFilters();
+  }
 
+  // Fetch all events and apply filters client-side
+  Future<void> fetchAllEventsForFilters() async {
+    try {
+      isLoading.value = true;
 
+      // Fetch events without where clauses to avoid index issues
+      Query<Map<String, dynamic>> query =
+          _firestore.collection('events').orderBy('createdAt', descending: true);
+
+      // Fetch a large batch to minimize network calls (adjust as needed)
+      query = query.limit(100); // Large enough to cover most use cases
+
+      QuerySnapshot<Map<String, dynamic>> snapshot = await query.get();
+      List<Event> allEvents = snapshot.docs.map((doc) {
+        return Event.fromMap(doc.id, doc.data());
+      }).toList();
+
+      // Apply filters client-side
+      filteredEvents.value = allEvents;
+
+      // Apply country filter
+      if (selectedState.value.isNotEmpty) {
+        filteredEvents.value = filteredEvents
+            .where((event) =>
+                event.country.toLowerCase().contains(selectedState.value.toLowerCase()))
+            .toList();
+      }
+
+      // Apply city filter
+      if (selectedCity.value.isNotEmpty) {
+        filteredEvents.value = filteredEvents
+            .where((event) =>
+                event.city.toLowerCase() == selectedCity.value.toLowerCase())
+            .toList();
+      }
+
+      // Apply event type filter
+      if (selectedEvents.value.isNotEmpty) {
+        filteredEvents.value = filteredEvents
+            .where((event) =>
+                event.eventType.toLowerCase() == selectedEvents.value.toLowerCase())
+            .toList();
+      }
+
+      // Apply search filter
+      if (searchQuery.value.isNotEmpty) {
+        String search = searchQuery.value.trim().toLowerCase();
+        filteredEvents.value = filteredEvents
+            .where((event) => event.eventName.toLowerCase().contains(search))
+            .toList();
+      }
+
+      // Reset events and paginate filtered results
+      events.clear();
+      hasMore.value = true;
+      paginateFilteredEvents();
+    } catch (e) {
+      print('Exception Error $e');
+      Get.snackbar(
+        'Error',
+        'Failed to fetch events: $e',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // Paginate the filtered events
+  void paginateFilteredEvents() {
+    if (!hasMore.value) return;
+
+    int startIndex = events.length;
+    int endIndex = startIndex + pageSize;
+    if (endIndex >= filteredEvents.length) {
+      endIndex = filteredEvents.length;
+      hasMore.value = false;
+    }
+
+    if (startIndex >= filteredEvents.length) {
+      hasMore.value = false;
+      return;
+    }
+
+    List<Event> newEvents = filteredEvents.sublist(startIndex, endIndex);
+    events.addAll(newEvents);
+  }
+
+  // Delete an event
+  Future<void> deleteEvent(String docId) async {
+    try {
+      await _firestore.collection('events').doc(docId).delete();
+      events.removeWhere((event) => event.docId == docId);
+      filteredEvents.removeWhere((event) => event.docId == docId);
+      Get.snackbar(
+        'Success',
+        'Event deleted successfully',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to delete event: $e',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+      );
+    }
+  }
+
+  // Clear filters and search
+  void clearFilters() {
+    selectedCity.value = '';
+    selectedState.value = '';
+    selectedEvents.value = '';
+    searchController.clear();
+    searchQuery.value = '';
+  }
+
+  @override
+  void onClose() {
+    searchController.dispose();
+    super.onClose();
+  }
 }
