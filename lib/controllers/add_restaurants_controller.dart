@@ -39,7 +39,7 @@ class AddRestaurantTabController extends GetxController {
     "Spanish",
   ].obs;
 
-  List<String> losAngelusCities = [
+  List<String> losAngelesCities = [
     "Beverly Hills",
     "Santa Monica",
     "West Hollywood",
@@ -384,7 +384,7 @@ class AddRestaurantTabController extends GetxController {
     }
   }
 
-  Future<List<String>> imagesUrl({
+imagesUrl({
     required List<UploadedImageModel> uploadedImageModels,
   }) async {
     List<String> imagesList = [];
@@ -414,7 +414,7 @@ class AddRestaurantTabController extends GetxController {
 
     return imagesList;
   }
-
+ 
   assignedCredencialsLogin(
       {required String email, required String userPassword}) async {
     try {

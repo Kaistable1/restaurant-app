@@ -103,7 +103,7 @@ class ViewEvent extends StatelessWidget {
                             ),
                             child: Center(
                               child: Text(
-                                'See all 8 photos',
+                                'See all ${event.imageUrls.length} photos',
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: primaryColor,

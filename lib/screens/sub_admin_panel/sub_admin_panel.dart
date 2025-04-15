@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:savrly/screens/events_managements/add_event/add_events.dart';
+import 'package:savrly/screens/events_managements/view_events/view_event.dart';
+import 'package:savrly/screens/events_managements/view_events/widget/event_details_gallary.dart';
+import 'package:savrly/screens/restaurant_management/add_retaurants/add_restaurants_screen.dart';
+import 'package:savrly/screens/restaurant_management/view_restaurant_details/view_restaurant_details.dart';
 import '../../auth/login/login_screen.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/text_styles.dart';
 import '../../widgets/button.dart';
-import '../dashboard/dashboard_screen.dart';
 import '../restaurant_management/restaurant_management_screen.dart';
 import '../events_managements/events_managements.dart';
 import '../../controllers/drawer_controller.dart';
@@ -40,16 +44,28 @@ class SubAdminPanel extends StatelessWidget {
   }
 
   Widget _getSubAdminScreen(DrawerControllerX controller) {
-    switch (controller.selectedScreen.value) {
-      case 0:
-        return SubAdminDashboardScreen();
-      case 1:
-        return RestaurantManagementScreen();
-      case 2:
-        return EventsManagements();
-      default:
-        return DashboardScreen(); // Default to Dashboard
+    Widget screen;
+
+    if (controller.viewRestaurantsDetails.value) {
+      screen = ViewRestaurantDetails();
+    } else if (controller.addRestaurants.value) {
+      screen = AddRestaurantsScreen();
+    } else if (controller.addEvent.value) {
+      screen = AddEvents();
+    } else if (controller.viewEvents.value) {
+      screen = ViewEvent();
+    } else if (controller.viewEventsGallery.value) {
+      screen = EventDetailsGallery();
+    } else {
+      if (controller.selectedScreen.value == 0) {
+        screen = SubAdminDashboardScreen();
+      } else if (controller.selectedScreen.value == 1) {
+        screen = RestaurantManagementScreen();
+      } else {
+        screen = EventsManagements();
+      }
     }
+    return screen;
   }
 }
 

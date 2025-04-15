@@ -1,10 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:savrly/models/sub_admins_model.dart';
 
 import '../models/user_management_model.dart';
 
 class DrawerControllerX extends GetxController {
+  SubAdminsModel? subAdminsModel;
+
   // Active screen state
-  RxInt selectedScreen = 3.obs;
+  RxInt selectedScreen = 0.obs;
   var isUserManagementExpanded = false.obs;
   var hoveredItem = "".obs;
 
@@ -65,5 +71,58 @@ class DrawerControllerX extends GetxController {
 
   void clearSelectedUser() {
     selectedUser.value = null;
+  }
+
+  getCurrentUserData() async {
+    try {
+      // Get current user
+      User? currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) {
+        Get.snackbar('Error', 'User not authenticated',
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.red,
+            colorText: Colors.white);
+        return null;
+      }
+      print('currentUser.uid ${currentUser.uid}');
+      // Fetch user data from Firestore
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('admins')
+          .doc(currentUser.uid)
+          .get();
+
+      if (!userDoc.exists) {
+        Get.snackbar('Error', 'User data not found',
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.red,
+            colorText: Colors.white);
+        return null;
+      }
+
+      // Map Firestore data to SubAdminsModel
+      var data = userDoc.data() as Map<String, dynamic>;
+      subAdminsModel = SubAdminsModel(
+        name: data['name'] ?? '',
+        contact: data['contact'] ?? '',
+        email: data['email'] ?? currentUser.email ?? '',
+        passwords: data['passwords'] ?? '',
+        status: data['status'] ?? 'Active',
+        docID: userDoc.id,
+      );
+      update();
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to fetch user data: $e',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white);
+      print('Error: $e');
+      return null;
+    }
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    getCurrentUserData();
   }
 }

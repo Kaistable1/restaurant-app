@@ -32,6 +32,7 @@ class AmenitiesSubScreenController extends GetxController {
   var dietaryPreferences = <Map<String, dynamic>>[
     {'name': 'Vegan & Plant-Based', 'isChecked': false},
     {'name': 'Vegetarian', 'isChecked': false},
+    {'name': 'Vegan', 'isChecked': false},
     {'name': 'Gluten-Free', 'isChecked': false},
     {'name': 'Pescatarian', 'isChecked': false},
     {'name': 'Flexitarian', 'isChecked': false},
@@ -84,12 +85,9 @@ class AmenitiesSubScreenController extends GetxController {
   }
 
   void togglePriceRangeCheckbox(int index) {
-    // Uncheck all price ranges
-    for (var item in priceRange) {
-      item['isChecked'] = false;
+    for (int i = 0; i < priceRange.length; i++) {
+      priceRange[i]['isChecked'] = i == index;
     }
-    // Check the selected price range
-    priceRange[index]['isChecked'] = true;
     priceRange.refresh();
   }
 
@@ -267,6 +265,58 @@ class AmenitiesSubScreenController extends GetxController {
       Get.back();
       clearFields();
       addRestaurantTabController.selectedIndex.value++;
+
+      Get.snackbar(
+        'Success',
+        'Amenities added successfully',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      Get.back();
+      Get.snackbar('Error', 'Failed to add amenities: $e');
+      print('❌ Error adding amenities: $e');
+    }
+  }
+
+  updateAmenities() async {
+    try {
+      loadingDialog();
+
+      final addRestaurantTabController = Get.find<AddRestaurantTabController>();
+      final restaurantID = addRestaurantTabController.restaurantModel?.docID;
+
+      // 👇 Step 1: Get selected lists separately
+      final atmosphereList = getSelectedAtmosphere();
+      final dietaryList = getSelectedDietaryPreferences();
+      final facilityList = getSelectedFacilities();
+      final priceRange = getSelectedPriceRange();
+
+      // 👇 Step 2: Prepare the data map
+      final restaurantData = {
+        'atmopshereList': atmosphereList,
+        'dietaryList': dietaryList,
+        'facilityList': facilityList,
+        'priceRange': priceRange.first,
+      };
+
+      // 👇 Step 3: Update Firestore
+      await FirebaseFirestore.instance
+          .collection('restaurants')
+          .doc(restaurantID)
+          .update(restaurantData);
+
+      // 👇 Step 4: UI updates
+      Get.back();
+      clearFields();
+      addRestaurantTabController.selectedIndex.value++;
+
+      Get.snackbar(
+        'Success',
+        'Amenities added successfully',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
     } catch (e) {
       Get.back();
       Get.snackbar('Error', 'Failed to add amenities: $e');

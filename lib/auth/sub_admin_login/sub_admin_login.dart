@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import 'package:savrly/auth/login/login_screen.dart';
 import 'package:savrly/constants/app_colors.dart';
 
 import '../../constants/text_styles.dart';
 import '../../controllers/login_controller.dart';
-import '../../screens/admin/admin_panel.dart';
 import '../../screens/sub_admin_panel/sub_admin_panel.dart';
 import '../../utils/validations.dart';
 import '../../widgets/button.dart';
@@ -86,7 +84,7 @@ class SubAdminLogin extends StatelessWidget {
                     ),
                     SizedBox(height: 6),
                     Obx(
-                          () => CustomTextField(
+                      () => CustomTextField(
                         controller: controller.subAdminPasswordController,
                         hintText: 'Password',
                         validator: (value) => isPasswordValid(value!),
@@ -102,7 +100,8 @@ class SubAdminLogin extends StatelessWidget {
                                 : Icons.visibility,
                             color: primaryColor,
                           ),
-                          onPressed: controller.toggleSubAdminPasswordVisibility,
+                          onPressed:
+                              controller.toggleSubAdminPasswordVisibility,
                         ),
                       ),
                     ),
@@ -131,13 +130,8 @@ class SubAdminLogin extends StatelessWidget {
                         width: 250,
                         shadow: [],
                         containerColor: primaryColor,
-                        ontapp: () {
-                          Get.to(() => SubAdminPanel());
-                          // if (formKey.currentState!.validate()) {
-                          //   controller.emailController.clear();
-                          //   controller.passwordController.clear();
-                          //   Get.to(() => AdminPanel());
-                          // }
+                        ontapp: () async {
+                          await controller.loginSubAdmin();
                         },
                       ),
                     ),
@@ -148,7 +142,7 @@ class SubAdminLogin extends StatelessWidget {
                           Get.to(() => LoginScreen());
                         },
                         child: Text(
-                          "Go to Admin Login Screen",
+                          "Sign in as a Admin",
                           style: simpleText.copyWith(
                             fontSize: 16,
                             fontWeight: FontWeight.w500,

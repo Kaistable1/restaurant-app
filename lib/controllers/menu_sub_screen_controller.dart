@@ -138,7 +138,7 @@ class MenuSubScreenController extends GetxController {
     }
   }
 
-  Future<List<String>> imagesUrl({
+  imagesUrl({
     required List<UploadedImageModel> uploadedImageModels,
   }) async {
     final controller = Get.find<AddRestaurantTabController>();

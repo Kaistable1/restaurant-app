@@ -262,7 +262,7 @@ class BasicInfoSubScreen extends StatelessWidget {
                       dropHintText: 'City',
                       currentValue: controller.selectedCity.value,
                       items: controller.selectedState.value == 'Los Angeles'
-                          ? controller.losAngelusCities
+                          ? controller.losAngelesCities
                           : controller.newYorkCitiesList,
                       onChanged: (value) =>
                           controller.selectedCity.value = value!,

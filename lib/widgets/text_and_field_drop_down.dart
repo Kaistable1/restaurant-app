@@ -49,7 +49,7 @@ class TextAndFieldsOrDropDown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    bool mobileView = screenWidth < 900;
+    bool mobileView = screenWidth < 1000;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

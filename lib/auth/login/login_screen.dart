@@ -84,7 +84,7 @@ class LoginScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 6),
                     Obx(
-                          () => CustomTextField(
+                      () => CustomTextField(
                         controller: controller.passwordController,
                         hintText: 'Password',
                         validator: (value) => isPasswordValid(value!),
@@ -129,8 +129,8 @@ class LoginScreen extends StatelessWidget {
                         width: 250,
                         shadow: [],
                         containerColor: primaryColor,
-                        ontapp: () {
-                          Get.to(() => AdminPanel());
+                        ontapp: () async  {
+                         controller.loginAdmin();
                         },
                       ),
                     ),
@@ -141,7 +141,7 @@ class LoginScreen extends StatelessWidget {
                           Get.to(() => SubAdminLogin());
                         },
                         child: Text(
-                          "Go to Sub Admin Login Screen",
+                          "Sign in as a Sub-Admin",
                           style: simpleText.copyWith(
                             fontSize: 16,
                             fontWeight: FontWeight.w500,

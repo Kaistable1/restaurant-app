@@ -74,12 +74,12 @@ class DashboardScreen extends StatelessWidget {
               ],
             ),
             SizedBox(height: 80),
-            Row(
+            Obx(()=> Row(
               children: [
                 DashboardCard(
                   imagePath: 'assets/images/dash_con_1_icons.png',
                   title: "Total Events",
-                  count: '125',
+                  count: controller.totalEvents.value.toString(),
                   onTap: () {
                     drawerController.selectedScreen.value = 3;
                   },
@@ -88,29 +88,33 @@ class DashboardScreen extends StatelessWidget {
                 DashboardCard(
                   imagePath: 'assets/images/dash_con_2_icons.png',
                   title: "Total Restaurants",
-                  count: '129',
+                  count: controller.totalRestaurants.value.toString(),
                   onTap: () {
                     drawerController.selectedScreen.value = 2;
                   },
                 ),
               ],
             ),
+            ),
+           
             SizedBox(height: 60),
-            Row(
+            Obx(()=> Row(
               children: [
                 DashboardCard(
                   imagePath: 'assets/images/dash_con_3_icons.png',
                   title: "Registered Restaurants",
-                  count: ' 25',
+                  count: controller.registeredCount.value.toString(),
                 ),
                 SizedBox(width: 24),
                 DashboardCard(
                   imagePath: 'assets/images/dash_con_4_icons.png',
                   title: "Pending Restaurants",
-                  count: '1250',
+                  count: controller.pendingCount.value.toString(),
                 ),
               ],
             ),
+          ),
+           
           ],
         ),
       ),

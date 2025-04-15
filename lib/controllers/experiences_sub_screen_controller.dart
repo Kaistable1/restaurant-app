@@ -16,7 +16,7 @@ class ExperiencesSubScreenController extends GetxController {
   RxList<Map<String, dynamic>> events = <Map<String, dynamic>>[].obs;
 
   // Select date using DatePicker
-  Future<void> selectDate(BuildContext context) async {
+   selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -30,7 +30,7 @@ class ExperiencesSubScreenController extends GetxController {
   }
 
   // Select time using TimePicker
-  Future<void> selectTime(BuildContext context) async {
+   selectTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
@@ -40,7 +40,7 @@ class ExperiencesSubScreenController extends GetxController {
     }
   }
 
-  Future<void> selectEndTime(BuildContext context) async {
+   selectEndTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),

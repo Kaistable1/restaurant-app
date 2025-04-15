@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:savrly/constants/text_styles.dart';
@@ -232,7 +233,8 @@ class CustomDrawer extends StatelessWidget {
                           ),
                         ),
                         TextButton(
-                          onPressed: () {
+                          onPressed: () async {
+                            await FirebaseAuth.instance.signOut();
                             Navigator.of(context).pop(); // Close the dialog
                             Get.offAll(() => LoginScreen()); // Perform logout
                           },

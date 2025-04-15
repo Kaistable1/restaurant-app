@@ -47,7 +47,7 @@ class EventManagementController extends GetxController {
   }
 
   // Fetch all events and apply filters client-side
-  Future<void> fetchAllEventsForFilters() async {
+   fetchAllEventsForFilters() async {
     try {
       isLoading.value = true;
 
@@ -137,7 +137,7 @@ class EventManagementController extends GetxController {
   }
 
   // Delete an event
-  Future<void> deleteEvent(String docId) async {
+  deleteEvent(String docId) async {
     try {
       await _firestore.collection('events').doc(docId).delete();
       events.removeWhere((event) => event.docId == docId);

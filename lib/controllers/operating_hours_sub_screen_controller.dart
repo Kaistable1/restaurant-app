@@ -90,7 +90,7 @@ void toggleDaySwitch(String day) {
   }
 
 // Set time for a slot using TimePicker
-  Future<void> setTime(BuildContext context, String day, String slot) async {
+  setTime(BuildContext context, String day, String slot) async {
     final TimeOfDay? startTime = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),

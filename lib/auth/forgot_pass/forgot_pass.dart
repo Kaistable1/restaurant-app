@@ -87,13 +87,8 @@ class ForgotPass extends StatelessWidget {
                         shadow: [],
                         containerColor: primaryColor,
 
-                        ontapp: () {
-                          // // Get.to(() => AdminPanel());
-                          // if (formKey.currentState!.validate()) {
-                          //   controller.emailController.clear();
-                          //   controller.passwordController.clear();
-                          //   Get.to(() => AdminPanel());
-                          // }
+                        ontapp: () async {
+                         await controller.forgotPassword();
                         },
                       ),
                     ),

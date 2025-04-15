@@ -4,6 +4,7 @@ class SubAdminsModel {
   final String email;
   final String passwords;
   final String status;
+  final String docID;
 
   SubAdminsModel({
     required this.name,
@@ -11,5 +12,6 @@ class SubAdminsModel {
     required this.email,
     required this.passwords,
     required this.status,
+    required this.docID,
   });
 }

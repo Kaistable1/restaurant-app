@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
@@ -191,7 +192,7 @@ class AddEventController extends GetxController {
     super.onClose();
   }
 
-  Future<List<String>> imagesUrl({
+   imagesUrl({
     required List<UploadedImageModel> uploadedImageModels,
   }) async {
     List<String> imagesList = [];
@@ -221,4 +222,6 @@ class AddEventController extends GetxController {
 
     return imagesList;
   }
+
+
 }

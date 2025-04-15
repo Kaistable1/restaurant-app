@@ -50,6 +50,7 @@ dependencies:
   google_maps_flutter: ^2.10.0
   geocoding:
   geolocator: ^13.0.2
+  shared_preferences: ^2.3.3
 
 dev_dependencies:
   flutter_test:

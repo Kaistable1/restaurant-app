@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../../constants/app_colors.dart';
 import '../../constants/text_styles.dart';
 import '../../controllers/drawer_controller.dart';
 import '../../controllers/sub_admins_controller.dart';
 import '../../widgets/button.dart';
 import '../../widgets/custom_textfield.dart';
-import '../../widgets/customheader_widget.dart';
 
 class SubAdminScreens extends StatelessWidget {
   SubAdminScreens({super.key});
@@ -25,10 +23,8 @@ class SubAdminScreens extends StatelessWidget {
     double tableTextSize = mobileView ? 9 : 14;
     double buttonTextSize = mobileView ? 11 : 16;
     double tableHeaderTextSize = mobileView ? 12 : 20;
-    double imageSize = mobileView ? 30 : 50;
     double popUpContainerSize = mobileView ? 20 : 36;
     double popUpSize = mobileView ? 12 : 18;
-    double statusSize = mobileView ? 60 : 100;
     double titleTextSize = mobileView ? 24 : 32;
 
     return Padding(
@@ -48,18 +44,20 @@ class SubAdminScreens extends StatelessWidget {
                 'Sub Admins',
                 style: headingText.copyWith(fontSize: titleTextSize),
               ),
-
               !mobileView
                   ? SizedBox(
-                    width: screenWidth * 0.3,
-                    child: CustomTextField(
-                      controller: controller.searchController,
-                      hintText: 'Search',
-                      borderColor: primaryColor,
-                      hintTextColor: primaryColor,
-                      prefixIcon: Icon(Icons.search, color: primaryColor),
-                    ),
-                  )
+                      width: screenWidth * 0.3,
+                      child: CustomTextField(
+                        controller: controller.searchController,
+                        hintText: 'Search',
+                        borderColor: primaryColor,
+                        onChanged: (v) {
+                          controller.filteredSubAdmins(search: v);
+                        },
+                        hintTextColor: primaryColor,
+                        prefixIcon: Icon(Icons.search, color: primaryColor),
+                      ),
+                    )
                   : SizedBox(),
               CustomButton(
                 laBelText: 'Add Sub admin',
@@ -70,6 +68,8 @@ class SubAdminScreens extends StatelessWidget {
                 shadow: [],
                 containerColor: primaryColor,
                 ontapp: () {
+                  controller.subAdminsModel = null;
+                  controller.update();
                   drawerController.addSubAdmin.value = true;
                 },
               ),
@@ -78,15 +78,14 @@ class SubAdminScreens extends StatelessWidget {
           SizedBox(height: 20),
           mobileView
               ? CustomTextField(
-                controller: controller.searchController,
-                hintText: 'Search',
-                borderColor: primaryColor,
-                hintTextColor: primaryColor,
-                prefixIcon: Icon(Icons.search, color: primaryColor),
-              )
+                  controller: controller.searchController,
+                  hintText: 'Search',
+                  borderColor: primaryColor,
+                  hintTextColor: primaryColor,
+                  prefixIcon: Icon(Icons.search, color: primaryColor),
+                )
               : SizedBox(),
           SizedBox(height: mobileView ? 20 : 0),
-
           Expanded(
             child: Container(
               decoration: BoxDecoration(
@@ -178,9 +177,14 @@ class SubAdminScreens extends StatelessWidget {
                       () => SingleChildScrollView(
                         child: Column(
                           children: List.generate(
-                            controller.subAdminsList.length,
+                            controller.subAdminsFilteredList.isEmpty
+                                ? controller.subAdminsList.length
+                                : controller.subAdminsFilteredList.length,
                             (index) {
-                              final subAdmins = controller.subAdminsList[index];
+                              final subAdmins =
+                                  controller.subAdminsFilteredList.isEmpty
+                                      ? controller.subAdminsList[index]
+                                      : controller.subAdminsFilteredList[index];
                               return Container(
                                 padding: EdgeInsets.symmetric(
                                   vertical: 14,
@@ -253,9 +257,9 @@ class SubAdminScreens extends StatelessWidget {
                                           style: simpleText.copyWith(
                                             fontSize: tableTextSize,
                                             color:
-                                            subAdmins.status == "Inactive"
-                                                ? Colors.red
-                                                : primaryColor,
+                                                subAdmins.status == "Inactive"
+                                                    ? Colors.red
+                                                    : primaryColor,
                                           ),
                                         ),
                                       ),
@@ -284,24 +288,26 @@ class SubAdminScreens extends StatelessWidget {
                                             if (value == 'delete') {
                                               controller.deleteSubAdmin(
                                                 index,
+                                                docID: subAdmins.docID,
                                               );
-                                            }  else if (value == 'edit') {
+                                            } else if (value == 'edit') {
+                                              controller.subAdminsModel =
+                                                  subAdmins;
+                                              controller.update();
                                               drawerController
-                                                  .addSubAdmin
-                                                  .value = true;
+                                                  .addSubAdmin.value = true;
                                             }
                                           },
-                                          itemBuilder:
-                                              (context) => [
-                                                PopupMenuItem(
-                                                  value: 'edit',
-                                                  child: Text('Edit'),
-                                                ),
-                                                PopupMenuItem(
-                                                  value: 'delete',
-                                                  child: Text('Delete'),
-                                                ),
-                                              ],
+                                          itemBuilder: (context) => [
+                                            PopupMenuItem(
+                                              value: 'edit',
+                                              child: Text('Edit'),
+                                            ),
+                                            PopupMenuItem(
+                                              value: 'delete',
+                                              child: Text('Delete'),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),
