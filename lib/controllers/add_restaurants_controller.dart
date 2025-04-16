@@ -2,11 +2,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_rx/get_rx.dart';
-import 'package:savrly/firebase_options.dart';
+import 'package:savrly/main.dart';
 import 'package:savrly/models/resaturant_model.dart';
 import 'dart:typed_data';
 
@@ -21,6 +19,7 @@ class AddRestaurantTabController extends GetxController {
   final tiktokLinkController = TextEditingController();
   final instagramController = TextEditingController();
   RestaurantModel? restaurantModel;
+  bool? isNewRegistery;
   String currentRestaurantID = '';
   var isPasswordVisible = false.obs;
   RxInt selectedIndex = 0.obs;
@@ -282,6 +281,14 @@ class AddRestaurantTabController extends GetxController {
 
       List<String> imagesList = await uploadImagesToFirebase(imageBytesList);
 
+      String docID = await assignedCredencialsLogin(
+          email: emailController.text.trim(),
+          userPassword: assignPasswordController.text.trim());
+      if (docID == 'error') {
+        Get.snackbar('Savrly', 'Restaurant not registered!');
+        Get.back();
+        return;
+      }
       // Prepare the restaurant data
       final restaurantData = {
         'about': 'Coming Soon!! Stay tuned for something exciting!',
@@ -292,7 +299,7 @@ class AddRestaurantTabController extends GetxController {
         'country': selectedState.value.trim(),
         'createdAt': Timestamp.fromDate(DateTime.now()),
         'dietaryList': [], // Empty array as per your data
-        'docID': '', // Will be set after adding the document
+        'docID': docID, // Will be set after adding the document
         'entertainmentScheduleList': [], // Empty array as per your data
         'facilityList': [], // Empty array as per your data
         'resImages': imagesList,
@@ -301,8 +308,8 @@ class AddRestaurantTabController extends GetxController {
         'logoImage': imagesList.isEmpty
             ? 'https://s3-media2.fl.yelpcdn.com/bphoto/iCP4QYCjWf9i-qDIBQrsnQ/o.jpg'
             : imagesList.first,
-        'longitude':
-            longitude.value, // Hardcoded for now; you can add a map picker later
+        'longitude': longitude
+            .value, // Hardcoded for now; you can add a map picker later
         'menuList': [], // Empty array as per your data
         'password': assignPasswordController.text.trim(),
         'priceRange': '', // Hardcoded for now; you can add a field for this
@@ -313,17 +320,16 @@ class AddRestaurantTabController extends GetxController {
         'specialConditions': 'Coming Soon!! Stay tuned for something exciting!',
         'spokenLanguage': selectedSpokenLanguage.value.trim(),
       };
-      await assignedCredencialsLogin(
-          email: emailController.text.trim(),
-          userPassword: assignPasswordController.text.trim());
-      // Add the restaurant to Firestore
-      final docRef = await FirebaseFirestore.instance
-          .collection('restaurants')
-          .add(restaurantData);
 
-      // Update the docID field with the generated document ID
-      await docRef.update({'docID': docRef.id});
-      currentRestaurantID = docRef.id;
+      // Add the restaurant to Firestore
+      await FirebaseFirestore.instance
+          .collection('restaurants')
+          .doc(docID)
+          .set(restaurantData);
+      if (isNewRegistery == true) {
+        restaurantModel = RestaurantModel.fromMap(restaurantData);
+        update();
+      }
       update();
       // Dismiss the loading dialog
       Get.back();
@@ -343,6 +349,16 @@ class AddRestaurantTabController extends GetxController {
       // Show loading dialog
       loadingDialog();
 
+      if (isNewRegistery == true) {
+        await FirebaseFirestore.instance
+            .collection('restaurants')
+            .doc(restaurantModel!.docID)
+            .delete();
+        await addRestaurant();
+        Get.back();
+        return;
+      }
+
       List<String> imagesList =
           await imagesUrl(uploadedImageModels: uploadedImage);
       // Prepare the restaurant data
@@ -352,12 +368,12 @@ class AddRestaurantTabController extends GetxController {
         'country': selectedState.value.trim(),
         'resImages': imagesList,
         'latitude':
-           latitude.value, // Hardcoded for now; you can add a map picker later
+            latitude.value, // Hardcoded for now; you can add a map picker later
         'logoImage': imagesList.isEmpty
             ? 'https://s3-media2.fl.yelpcdn.com/bphoto/iCP4QYCjWf9i-qDIBQrsnQ/o.jpg'
             : imagesList.first,
-        'longitude':
-            longitude.value, // Hardcoded for now; you can add a map picker later
+        'longitude': longitude
+            .value, // Hardcoded for now; you can add a map picker later
         'password': assignPasswordController.text.trim(),
         'resEmail': emailController.text.trim(),
         'resName': restaurantNameController.text.trim(),
@@ -384,7 +400,7 @@ class AddRestaurantTabController extends GetxController {
     }
   }
 
-imagesUrl({
+  imagesUrl({
     required List<UploadedImageModel> uploadedImageModels,
   }) async {
     List<String> imagesList = [];
@@ -414,50 +430,48 @@ imagesUrl({
 
     return imagesList;
   }
- 
-  assignedCredencialsLogin(
+
+  Future<String> assignedCredencialsLogin(
       {required String email, required String userPassword}) async {
     try {
-      // 🔁 Avoid duplicate secondary app
-      if (Firebase.apps.any((app) => app.name == 'SecondaryApp')) {
-        await Firebase.app('SecondaryApp').delete();
-      }
+      // Get admin credentials from SharedPreferences
+      String? adminEmail = preferences?.getString('adminEmail');
+      String? adminPassword = preferences?.getString('adminPassword');
 
-      // ✅ Initialize Secondary Firebase App
-      FirebaseApp secondaryApp = await Firebase.initializeApp(
-        name: 'SecondaryApp',
-        options: DefaultFirebaseOptions.web,
+      // Sign out temporarily
+      await FirebaseAuth.instance.signOut();
+      print('admin logout successfully');
+      // Create restaurant user
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: assignPasswordController.text.trim(),
       );
+      print(
+          'restaurant user regiester successfully with id ${userCredential.user?.uid}');
+      User? newUser = userCredential.user;
 
-      FirebaseAuth secondaryAuth = FirebaseAuth.instanceFor(app: secondaryApp);
-
-      try {
-        // ✅ Check if user exists before creating
-        List<String> methods =
-            await secondaryAuth.fetchSignInMethodsForEmail(email);
-        if (methods.isEmpty) {
-          // 👤 User doesn't exist, create new one
-          await secondaryAuth.createUserWithEmailAndPassword(
-            email: email,
-            password: userPassword,
-          );
-          print('✅ User created successfully');
-        } else {
-          // 👤 User already exists, try signing in
-          await secondaryAuth.signInWithEmailAndPassword(
-            email: email,
-            password: userPassword,
-          );
-          print('✅ Signed in existing user');
-        }
-      } on FirebaseAuthException catch (e) {
-        print('❌ FirebaseAuthException: ${e.code} — ${e.message}');
+      if (newUser != null) {
+        // Sign out restaurant
+        await FirebaseAuth.instance.signOut();
+        print('logout restaurant');
+        // Sign admin back in
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: adminEmail!,
+          password: adminPassword!,
+        );
+        print('login admin again');
+      } else {
+        Get.snackbar('Error', 'Failed to create restaurant',
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.red,
+            colorText: Colors.white);
+        print('failf to create restaurant');
       }
-
-      await secondaryAuth.signOut();
-      await secondaryApp.delete();
+      return newUser!.uid;
     } catch (e) {
-      print('❌ General error: $e');
+      print('create reaturant issue $e');
+      return 'error';
     }
   }
 }

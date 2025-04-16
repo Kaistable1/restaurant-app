@@ -46,6 +46,8 @@ class EditRestaurantController extends GetxController {
   // Fill variables in AddRestaurantTabController (Basic Info)
   fillAllVarsInRestManagmentController() {
     final addRestaurantController = Get.put(AddRestaurantTabController());
+    restaurantDetailsModel = restaurantController.restaurantModel;
+
     if (restaurantDetailsModel != null) {
       addRestaurantController.restaurantNameController.text =
           restaurantDetailsModel!.resName;
@@ -83,6 +85,8 @@ class EditRestaurantController extends GetxController {
   // Fill variables in AmenitiesSubScreenController (Amenities)
   fillAllVarsforAmmenitiesController() {
     final amenitiesController = Get.put(AmenitiesSubScreenController());
+    restaurantDetailsModel = restaurantController.restaurantModel;
+
     if (restaurantDetailsModel != null) {
       // Update facilities
       for (var facility in amenitiesController.facilities) {
@@ -119,6 +123,8 @@ class EditRestaurantController extends GetxController {
   // Fill variables in ExperiencesSubScreenController (Experiences)
   Future<void> fillAllVarsforExperiencesController() async {
     final experiencesController = Get.put(ExperiencesSubScreenController());
+    restaurantDetailsModel = restaurantController.restaurantModel;
+
     if (restaurantDetailsModel != null &&
         restaurantDetailsModel!.entertainmentScheduleList != null) {
       experiencesController.events.clear();
@@ -140,59 +146,66 @@ class EditRestaurantController extends GetxController {
 
   // Fill variables in OperatingHoursSubScreenController (Operating Hours)
   Future<void> fillAllVarsforOperatingHoursController() async {
-  final operatingHoursController = Get.put(OperatingHoursSubScreenController());
-  if (restaurantDetailsModel != null &&
-      restaurantDetailsModel!.docID != null) {
-    // Fetch operating hours from Firestore subcollection
-    final snapshot = await FirebaseFirestore.instance
-        .collection('restaurants')
-        .doc(restaurantDetailsModel!.docID)
-        .collection('operatingHours')
-        .get();
+    final operatingHoursController =
+        Get.put(OperatingHoursSubScreenController());
+    restaurantDetailsModel = restaurantController.restaurantModel;
 
-    for (var doc in snapshot.docs) {
-      final day = doc.id;
-      final data = doc.data();
-      
-      // Initialize daySwitches and daySwitchControllers if not set
-      operatingHoursController.daySwitches[day] ??= true;
-      operatingHoursController.daySwitchControllers[day] ??= ValueNotifier<bool>(true);
+    if (restaurantDetailsModel != null &&
+        restaurantDetailsModel!.docID != null) {
+      // Fetch operating hours from Firestore subcollection
+      final snapshot = await FirebaseFirestore.instance
+          .collection('restaurants')
+          .doc(restaurantDetailsModel!.docID)
+          .collection('operatingHours')
+          .get();
 
-      // Check if all slots are closed
-      bool allClosed = true;
-      for (var meal in ['Breakfast', 'Brunch', 'Lunch', 'Dinner']) {
-        if (data[meal] != null && data[meal]['isClosed'] == false) {
-          allClosed = false;
-          break;
+      for (var doc in snapshot.docs) {
+        final day = doc.id;
+        final data = doc.data();
+
+        // Initialize daySwitches and daySwitchControllers if not set
+        operatingHoursController.daySwitches[day] ??= true;
+        operatingHoursController.daySwitchControllers[day] ??=
+            ValueNotifier<bool>(true);
+
+        // Check if all slots are closed
+        bool allClosed = true;
+        for (var meal in ['Breakfast', 'Brunch', 'Lunch', 'Dinner']) {
+          if (data[meal] != null && data[meal]['isClosed'] == false) {
+            allClosed = false;
+            break;
+          }
+        }
+
+        // Update daySwitches and daySwitchControllers
+        operatingHoursController.daySwitches[day] = !allClosed;
+        operatingHoursController.daySwitchControllers[day]!.value = !allClosed;
+
+        // Update slot states and times
+        for (var meal in ['Breakfast', 'Brunch', 'Lunch', 'Dinner']) {
+          operatingHoursController.slotStates[day]![meal] =
+              data[meal] != null && data[meal]['isClosed'] == false;
+          if (data[meal] != null && data[meal]['isClosed'] == false) {
+            operatingHoursController.slotTimes[day]![meal] =
+                '${data[meal]['startTime']} - ${data[meal]['endTime']}';
+          } else {
+            operatingHoursController.slotTimes[day]![meal] = '';
+          }
         }
       }
-      
-      // Update daySwitches and daySwitchControllers
-      operatingHoursController.daySwitches[day] = !allClosed;
-      operatingHoursController.daySwitchControllers[day]!.value = !allClosed;
 
-      // Update slot states and times
-      for (var meal in ['Breakfast', 'Brunch', 'Lunch', 'Dinner']) {
-        operatingHoursController.slotStates[day]![meal] =
-            data[meal] != null && data[meal]['isClosed'] == false;
-        if (data[meal] != null && data[meal]['isClosed'] == false) {
-          operatingHoursController.slotTimes[day]![meal] =
-              '${data[meal]['startTime']} - ${data[meal]['endTime']}';
-        } else {
-          operatingHoursController.slotTimes[day]![meal] = '';
-        }
-      }
+      operatingHoursController.daySwitches.refresh();
+      operatingHoursController.slotStates.refresh();
+      operatingHoursController.slotTimes.refresh();
+      operatingHoursController.update();
     }
-
-    operatingHoursController.daySwitches.refresh();
-    operatingHoursController.slotStates.refresh();
-    operatingHoursController.slotTimes.refresh();
-    operatingHoursController.update();
   }
-}
+
   // Fill variables in MenuSubScreenController (Menu)
   fillAllVarsforMenuController() {
     final menuController = Get.put(MenuSubScreenController());
+    restaurantDetailsModel = restaurantController.restaurantModel;
+
     if (restaurantDetailsModel != null) {
       menuController.specialConditionsController.text =
           restaurantDetailsModel!.specialConditions;
@@ -205,7 +218,6 @@ class EditRestaurantController extends GetxController {
         for (var url in menu.foodImages) {
           menuController.uploadedImages.add(UploadedImageModel(url: url));
         }
-
       }
       menuController.update();
     }

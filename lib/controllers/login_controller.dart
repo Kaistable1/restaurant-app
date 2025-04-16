@@ -27,6 +27,7 @@ class LoginController extends GetxController {
 
   @override
   void onInit() {
+    isLoading = true.obs;
     super.onInit();
     // Check if a user is already logged in
     checkCurrentUser();
@@ -55,7 +56,6 @@ class LoginController extends GetxController {
   // Check if a user is already logged in
   Future<void> checkCurrentUser() async {
     User? user = _auth.currentUser;
-    print('user id ${user?.uid}');
     if (user != null) {
       DocumentSnapshot adminDoc =
           await _firestore.collection('admins').doc(user.uid).get();
@@ -69,6 +69,7 @@ class LoginController extends GetxController {
         }
       }
     }
+    isLoading.value = false;
   }
 
   // Login Admin
@@ -83,7 +84,6 @@ class LoginController extends GetxController {
       return;
     }
 
-    isLoading.value = true;
     try {
 // Check if the email exists in admins collection with role: admin
       QuerySnapshot adminQuery = await _firestore

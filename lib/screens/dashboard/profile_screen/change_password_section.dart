@@ -44,8 +44,7 @@ class ChangePasswordSection extends StatelessWidget {
                     ()=> CustomTextField(
                       controller: controller.currentPasswordController,
                       validator: (value) => isPasswordValid(value!),
-                      // maxHeight: isMobile?30:48,
-                      // maxWidth: isMobile?380:458,
+                   
                       borderRadius: isMobile?4:10,
                       hintText:'6575gfgfvf' ,
                       isObscure: !controller.isCurrentPasswordVisible.value,
@@ -79,8 +78,7 @@ class ChangePasswordSection extends StatelessWidget {
                         ()=> CustomTextField(
                       controller: controller.newPasswordController,
                       validator: (value) => isPasswordValid(value!),
-                      // maxHeight: isMobile?30:48,
-                      // maxWidth: isMobile?380:458,
+                 
                       borderRadius: isMobile?4:10,
                       hintText:'6575gfgfvf' ,
                       isObscure: !controller.isNewPasswordVisible.value,
@@ -144,12 +142,10 @@ class ChangePasswordSection extends StatelessWidget {
               SizedBox(height: isMobile?8:22,),
               Center(
                 child: CustomButton(
-                  ontapp: (){
+                  ontapp: () async {
                     if(formKey.currentState!.validate()){
-                      Get.snackbar('Success!', "Password changed successfully",maxWidth: 400,backgroundColor: primaryColor,colorText: Colors.white);
-                      controller.newPasswordController.clear();
-                      controller.currentPasswordController.clear();
-                      controller.confirmPasswordController.clear();
+                     await controller.changePassword();
+                     
                     }
                   },
                   laBelText: 'Save',

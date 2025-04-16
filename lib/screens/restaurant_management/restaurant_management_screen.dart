@@ -498,6 +498,8 @@ class _RestaurantManagementScreenState
                                         } else if (value == 'edit') {
                                           addController.restaurantModel =
                                               restaurant;
+                                          addController.isNewRegistery =
+                                              restaurant.resEmail == '';
                                           controller.update();
                                           final editRestaurantController =
                                               Get.put(

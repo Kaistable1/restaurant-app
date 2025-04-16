@@ -52,17 +52,6 @@ class UserManagementScreen extends StatelessWidget {
             },
           ),
           const SizedBox(height: 10),
-          Obx(
-            () => Text(
-              'Total Users: ${controller.totalUsersLength.value}',
-              style: simpleText.copyWith(
-                fontSize: tableTextSize,
-                fontWeight: FontWeight.w600,
-                color: primaryColor,
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
           Expanded(
             child: Container(
               decoration: BoxDecoration(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:savrly/auth/login/login_screen.dart';
+import 'package:savrly/constants/app_colors.dart';
 import 'package:savrly/controllers/login_controller.dart';
 import 'package:savrly/firebase_options.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    Get.put(LoginController());
+    final controller = Get.put(LoginController());
 
     return GetMaterialApp(
       scrollBehavior: const MaterialScrollBehavior().copyWith(dragDevices: {
@@ -34,7 +35,13 @@ class MyApp extends StatelessWidget {
       }),
       title: 'Savrly',
       debugShowCheckedModeBanner: false,
-      home: LoginScreen(),
+      home: Obx(() => controller.isLoading.value == true
+          ? Center(
+              child: CircularProgressIndicator(
+                color: primaryColor,
+              ),
+            )
+          : LoginScreen()),
     );
   }
 }

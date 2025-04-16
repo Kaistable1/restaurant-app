@@ -12,7 +12,6 @@ import '../../../widgets/profile_tab_widget.dart';
 import 'change_password_section.dart';
 import 'edit_profile_section.dart';
 
-
 class ProfileScreen extends StatelessWidget {
   final drawerController = Get.put(DrawerControllerX());
   final controller = Get.put(ProfileController());
@@ -21,6 +20,8 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    controller.getProfile();
+
     final size = MediaQuery.of(context).size;
     bool isMobile = size.width < 600;
 
@@ -85,19 +86,12 @@ class ProfileScreen extends StatelessWidget {
                               Stack(
                                 children: [
                                   Obx(() {
-                                    if (kIsWeb && controller.webImageBytes.value != null) {
+                                    if (kIsWeb &&
+                                        controller.uploadedImage.value !=
+                                            null) {
                                       return ClipOval(
                                         child: Image.memory(
-                                          controller.webImageBytes.value!,
-                                          height: isMobile ? 62 : 78,
-                                          width: isMobile ? 62 : 78,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      );
-                                    } else if (!kIsWeb && controller.pickedImage.value != null) {
-                                      return ClipOval(
-                                        child: Image.file(
-                                          controller.pickedImage.value!,
+                                          controller.uploadedImage.value!,
                                           height: isMobile ? 62 : 78,
                                           width: isMobile ? 62 : 78,
                                           fit: BoxFit.cover,
@@ -105,12 +99,20 @@ class ProfileScreen extends StatelessWidget {
                                       );
                                     } else {
                                       return ClipOval(
-                                        child: Image.asset(
-                                          'assets/images/profile_img.png',
-                                          height: isMobile ? 62 : 78,
-                                          width: isMobile ? 62 : 78,
-                                          fit: BoxFit.cover,
-                                        ),
+                                        child: controller.profile.value?.img !=
+                                                null
+                                            ? Image.network(
+                                                controller.profile.value!.img!,
+                                                height: isMobile ? 62 : 78,
+                                                width: isMobile ? 62 : 78,
+                                                fit: BoxFit.cover,
+                                              )
+                                            : Image.asset(
+                                                'assets/images/profile_img.png',
+                                                height: isMobile ? 62 : 78,
+                                                width: isMobile ? 62 : 78,
+                                                fit: BoxFit.cover,
+                                              ),
                                       );
                                     }
                                   }),
@@ -118,7 +120,7 @@ class ProfileScreen extends StatelessWidget {
                                     left: isMobile ? 48 : 54,
                                     top: isMobile ? 40 : 50,
                                     child: InkWell(
-                                      onTap: controller.pickImageFromPC,
+                                      onTap: controller.pickImageWeb,
                                       child: Image.asset(
                                         'assets/images/cam_icon.png',
                                         height: isMobile ? 16 : 24,
@@ -129,23 +131,29 @@ class ProfileScreen extends StatelessWidget {
                                 ],
                               ),
                               SizedBox(height: 6),
-                              Text(
-                                'Guy Hawkins',
-                                style: simpleText.copyWith(
-                                  fontSize: 14,
-                                  fontFamily: GoogleFonts.nunitoSans().fontFamily,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black,
+                              Obx(
+                                () => Text(
+                                  controller.profile.value?.name ?? '',
+                                  style: simpleText.copyWith(
+                                    fontSize: 14,
+                                    fontFamily:
+                                        GoogleFonts.nunitoSans().fontFamily,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black,
+                                  ),
                                 ),
                               ),
                               SizedBox(height: 6),
-                              Text(
-                                'Guy@gmail.com',
-                                style: simpleText.copyWith(
-                                  fontSize: 14,
-                                  fontFamily: GoogleFonts.nunitoSans().fontFamily,
-                                  fontWeight: FontWeight.w500,
-                                  color: secondaryColor,
+                              Obx(
+                                () => Text(
+                                  controller.profile.value?.email ?? '',
+                                  style: simpleText.copyWith(
+                                    fontSize: 14,
+                                    fontFamily:
+                                        GoogleFonts.nunitoSans().fontFamily,
+                                    fontWeight: FontWeight.w500,
+                                    color: secondaryColor,
+                                  ),
                                 ),
                               ),
                               SizedBox(height: 10),
@@ -153,20 +161,23 @@ class ProfileScreen extends StatelessWidget {
                                 'Phone number',
                                 style: simpleText.copyWith(
                                   fontSize: 14,
-                                  fontFamily: GoogleFonts.nunitoSans().fontFamily,
+                                  fontFamily:
+                                      GoogleFonts.nunitoSans().fontFamily,
                                   fontWeight: FontWeight.w500,
                                   color: Colors.black,
                                 ),
                               ),
                               SizedBox(height: 6),
-                              Text(
-                                '+71 737373464',
-                                style: simpleText.copyWith(
-                                  fontSize: 14,
-                                  fontFamily: GoogleFonts.nunitoSans().fontFamily,
-                                  fontWeight: FontWeight.w500,
-                                  color: secondaryColor,
-                                ),
+                              Obx(
+                                () => Text(
+                                    controller.profile.value?.contact ?? '',
+                                    style: simpleText.copyWith(
+                                      fontSize: 14,
+                                      fontFamily:
+                                          GoogleFonts.nunitoSans().fontFamily,
+                                      fontWeight: FontWeight.w500,
+                                      color: secondaryColor,
+                                    )),
                               ),
                             ],
                           ),
@@ -174,7 +185,8 @@ class ProfileScreen extends StatelessWidget {
                         SizedBox(width: isMobile ? 8 : 16),
                         Container(
                           height: isMobile ? 400 : 558,
-                          width: isMobile ? size.width * 0.5 : size.width * 0.38,
+                          width:
+                              isMobile ? size.width * 0.5 : size.width * 0.38,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             color: Colors.white,
@@ -186,18 +198,20 @@ class ProfileScreen extends StatelessWidget {
                               ),
                             ],
                           ),
-                          child: Column( // Removed Expanded here
+                          child: Column(
+                            // Removed Expanded here
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const SizedBox(height: 22),
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Obx(
-                                          () => GestureDetector(
+                                      () => GestureDetector(
                                         onTap: () {
                                           controller.editProfileView.value = 0;
                                         },
@@ -205,7 +219,8 @@ class ProfileScreen extends StatelessWidget {
                                           context: context,
                                           text: "Edit profile",
                                           index: 0,
-                                          selectIndex: controller.editProfileView.value,
+                                          selectIndex:
+                                              controller.editProfileView.value,
                                         ),
                                       ),
                                     ),
@@ -214,7 +229,7 @@ class ProfileScreen extends StatelessWidget {
                                       child: SizedBox(),
                                     ),
                                     Obx(
-                                          () => GestureDetector(
+                                      () => GestureDetector(
                                         onTap: () {
                                           controller.editProfileView.value = 1;
                                         },
@@ -222,7 +237,8 @@ class ProfileScreen extends StatelessWidget {
                                           context: context,
                                           text: "Change Password",
                                           index: 1,
-                                          selectIndex: controller.editProfileView.value,
+                                          selectIndex:
+                                              controller.editProfileView.value,
                                         ),
                                       ),
                                     ),
@@ -235,9 +251,10 @@ class ProfileScreen extends StatelessWidget {
                                 thickness: 0.2,
                                 height: 1,
                               ),
-                              Expanded( // Moved Expanded here to take remaining space
+                              Expanded(
+                                // Moved Expanded here to take remaining space
                                 child: Obx(
-                                      () => controller.editProfileView.value == 0
+                                  () => controller.editProfileView.value == 0
                                       ? EditProfileSection()
                                       : ChangePasswordSection(),
                                 ),

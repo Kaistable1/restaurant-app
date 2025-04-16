@@ -21,7 +21,6 @@ import 'package:flutter/gestures.dart';
 
 class AddRestaurantsScreen extends StatelessWidget {
   AddRestaurantsScreen({super.key});
-
   final drawerController = Get.put(DrawerControllerX());
   final tabController = Get.put(AddRestaurantTabController());
   final restaurantController = Get.put(RestaurantManagementController());

@@ -23,13 +23,11 @@ class ContactUsController extends GetxController {
   }
 
   // Fetch contact details from Firestore
- fetchContactUs() async {
+  fetchContactUs() async {
     try {
       loadingDialog();
-      DocumentSnapshot<Map<String, dynamic>> doc = await _firestore
-          .collection('contact_us')
-          .doc('current')
-          .get();
+      DocumentSnapshot<Map<String, dynamic>> doc =
+          await _firestore.collection('contact_us').doc('current').get();
 
       if (doc.exists) {
         contactUs.value = ContactUsModel.fromDocumentSnapshot(doc);
@@ -57,7 +55,7 @@ class ContactUsController extends GetxController {
   }
 
   // Save contact details to Firestore
- saveContactUs(String email, String phone) async {
+  saveContactUs(String email, String phone) async {
     try {
       loadingDialog();
       final newContact = ContactUsModel(
@@ -70,8 +68,6 @@ class ContactUsController extends GetxController {
           .doc('current')
           .set(newContact.toJson());
       contactUs.value = newContact;
-      emailController.clear();
-      phoneController.clear();
       hasData.value = true; // Data now exists
       // Defer snackbar to ensure UI is ready
       WidgetsBinding.instance.addPostFrameCallback((_) {
