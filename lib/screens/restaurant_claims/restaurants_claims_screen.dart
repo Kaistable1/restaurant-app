@@ -12,7 +12,7 @@ import '../../widgets/customheader_widget.dart';
 
 class RestaurantsClaimsScreen extends StatelessWidget {
   final controller = Get.put(RestaurantsClaimsController());
-  final drawerController =Get.put(DrawerControllerX());
+  final drawerController = Get.put(DrawerControllerX());
 
   RestaurantsClaimsScreen({super.key});
 
@@ -31,30 +31,31 @@ class RestaurantsClaimsScreen extends StatelessWidget {
     double popUpSize = mobileView ? 12 : 18;
     double statusSize = mobileView ? 60 : 100;
     return Padding(
-        padding: EdgeInsets.only(
-          right: paddingValue,
-          top: paddingValue,
-          left: paddingValue,
-          bottom: paddingValue,
-        ),
+      padding: EdgeInsets.only(
+        right: paddingValue,
+        top: paddingValue,
+        left: paddingValue,
+        bottom: paddingValue,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-
         children: [
           CustomHeaderWidget(
-            title: 'Restaurant claims',
-            end: true,
-            endWidget: SizedBox(
-              width: mobileView?200:279,
-              height: mobileView?40:48,
-              child: CustomTextField(
-                prefixIcon: Icon(Icons.search, color: primaryColor),
-                hintText: 'Search ',
-                hintTextColor: primaryColor,
-                borderColor: primaryColor,
-              ),
-            )
-          ),
+              title: 'Restaurant claims',
+              end: true,
+              endWidget: SizedBox(
+                width: mobileView ? 200 : 279,
+                height: mobileView ? 40 : 48,
+                child: CustomTextField(
+                  prefixIcon: Icon(Icons.search, color: primaryColor),
+                  hintText: 'Search ',
+                  hintTextColor: primaryColor,
+                  borderColor: primaryColor,
+                  onChanged: (v) {
+                    controller.filteredClaims(search: v);
+                  },
+                ),
+              )),
           SizedBox(height: 30),
           Expanded(
             child: Container(
@@ -67,7 +68,8 @@ class RestaurantsClaimsScreen extends StatelessWidget {
                 children: [
                   // Header
                   Container(
-                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16, horizontal: 12),
                     color: primaryColor,
                     child: Row(
                       children: [
@@ -184,12 +186,17 @@ class RestaurantsClaimsScreen extends StatelessWidget {
                   // Scrollable rows
                   Expanded(
                     child: Obx(
-                          () => SingleChildScrollView(
+                      () => SingleChildScrollView(
                         child: Column(
                           children: List.generate(
-                            controller.restaurantsClaims.length,
-                                (index) {
-                              final user = controller.restaurantsClaims[index];
+                            controller.filteredClaimsRestaurants.isEmpty
+                                ? controller.restaurantsClaims.length
+                                : controller.filteredClaimsRestaurants.length,
+                            (index) {
+                              final user = controller
+                                      .filteredClaimsRestaurants.isEmpty
+                                  ? controller.restaurantsClaims[index]
+                                  : controller.filteredClaimsRestaurants[index];
                               return Container(
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 14,
@@ -213,9 +220,11 @@ class RestaurantsClaimsScreen extends StatelessWidget {
                                           height: imageSize,
                                           width: imageSize,
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(8),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
                                             image: DecorationImage(
-                                              image: AssetImage(user.photoUrl),
+                                              image:
+                                                  NetworkImage(user.photoUrl),
                                               fit: BoxFit.cover,
                                             ),
                                           ),
@@ -250,7 +259,8 @@ class RestaurantsClaimsScreen extends StatelessWidget {
                                     ),
                                     // Event type column
                                     Expanded(
-                                      flex: 2, // Adjusted to match the header flex
+                                      flex:
+                                          2, // Adjusted to match the header flex
                                       child: Center(
                                         child: Text(
                                           user.email,
@@ -285,7 +295,9 @@ class RestaurantsClaimsScreen extends StatelessWidget {
                                           textAlign: TextAlign.center,
                                           style: simpleText.copyWith(
                                             fontSize: tableTextSize,
-                                            color: user.status == "Pending" ? Colors.red : primaryColor,
+                                            color: user.status == "Pending"
+                                                ? Colors.red
+                                                : primaryColor,
                                           ),
                                         ),
                                       ),
@@ -297,11 +309,12 @@ class RestaurantsClaimsScreen extends StatelessWidget {
                                         child: Container(
                                           height: popUpContainerSize,
                                           width: popUpContainerSize,
-                                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 4),
                                           decoration: BoxDecoration(
                                             color: primaryColor,
                                             borderRadius: BorderRadius.circular(
-                                              mobileView ? 5 :  10,
+                                              mobileView ? 5 : 10,
                                             ),
                                           ),
                                           child: Center(
@@ -314,20 +327,24 @@ class RestaurantsClaimsScreen extends StatelessWidget {
                                               ),
                                               onSelected: (value) {
                                                 if (value == 'Delete') {
-                                                 controller.deleteRestaurant(index);
+                                                  controller
+                                                      .deleteBusinessClaim(
+                                                          user.id);
                                                 }
-                                                if(value=='View'){
-                                                  drawerController.viewClaimsDetails.value=true;
-
+                                                if (value == 'View') {
+                                                  controller.viewClaimsDetails =
+                                                      user;
+                                                  controller.update();
+                                                  drawerController
+                                                      .viewClaimsDetails
+                                                      .value = true;
                                                 }
-
                                               },
                                               itemBuilder: (context) => [
                                                 const PopupMenuItem(
                                                   value: 'View',
                                                   child: Text('View'),
                                                 ),
-
                                                 const PopupMenuItem(
                                                   value: 'Delete',
                                                   child: Text('Delete'),
@@ -351,11 +368,8 @@ class RestaurantsClaimsScreen extends StatelessWidget {
               ),
             ),
           ),
-
-
-          ],
+        ],
       ),
     );
   }
 }
-
