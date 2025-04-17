@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:savrly/constants/text_styles.dart';
+import 'package:savrly/utils/globalVars.dart';
 import 'package:savrly/widgets/map_widget.dart';
 
 import '../../../../constants/app_colors.dart';
@@ -15,6 +16,7 @@ class BasicInfoSubScreen extends StatelessWidget {
 
   final controller = Get.find<AddRestaurantTabController>();
   final GlobalKey<FormState> formKey;
+  GlobalVariables globalVariables = GlobalVariables();
 
   @override
   Widget build(BuildContext context) {
@@ -259,22 +261,24 @@ class BasicInfoSubScreen extends StatelessWidget {
                   ),
                   const SizedBox(width: 24),
                   Expanded(
-                    child: TextAndFieldsOrDropDown(
-                      labelText: 'City',
-                      dropHintText: 'City',
-                      currentValue: controller.selectedCity.value,
-                      items: controller.selectedState.value == 'Los Angeles'
-                          ? controller.losAngelesCities
-                          : controller.newYorkCitiesList,
-                      onChanged: (value) =>
-                          controller.selectedCity.value = value!,
-                      dropDownValidator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Please select a city.';
-                        }
-                        return null;
-                      },
-                      isDropDown: true,
+                    child: Obx(
+                      () => TextAndFieldsOrDropDown(
+                        labelText: 'City',
+                        dropHintText: 'City',
+                        currentValue: controller.selectedCity.value,
+                        items: controller.selectedState.value == 'Los Angeles'
+                            ? globalVariables.losAngelesCities
+                            : globalVariables.newYorkCitiesList,
+                        onChanged: (value) =>
+                            controller.selectedCity.value = value!,
+                        dropDownValidator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Please select a city.';
+                          }
+                          return null;
+                        },
+                        isDropDown: true,
+                      ),
                     ),
                   ),
                 ],

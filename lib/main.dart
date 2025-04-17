@@ -7,6 +7,7 @@ import 'package:savrly/auth/login/login_screen.dart';
 import 'package:savrly/constants/app_colors.dart';
 import 'package:savrly/controllers/login_controller.dart';
 import 'package:savrly/firebase_options.dart';
+import 'package:savrly/screens/dashboard/notification_screen/notifications_screen/notification_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 SharedPreferences? preferences;
@@ -35,13 +36,15 @@ class MyApp extends StatelessWidget {
       }),
       title: 'Savrly',
       debugShowCheckedModeBanner: false,
-      home: Obx(() => controller.isLoading.value == true
-          ? Center(
-              child: CircularProgressIndicator(
-                color: primaryColor,
-              ),
-            )
-          : LoginScreen()),
+      home:
+          //  Scaffold(body: NotificationScreen()),
+          Obx(() => controller.isLoading.value == true
+              ? Center(
+                  child: CircularProgressIndicator(
+                    color: primaryColor,
+                  ),
+                )
+              : LoginScreen()),
     );
   }
 }

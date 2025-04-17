@@ -99,6 +99,8 @@ class RestaurantManagementController extends GetxController {
     "Leimert Park",
     "Crenshaw",
   ].obs;
+ 
+ 
   RxList<String> cuisineList = <String>[
     'Chinese',
     'Italian',

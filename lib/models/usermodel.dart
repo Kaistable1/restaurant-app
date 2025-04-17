@@ -11,15 +11,15 @@ class UserModel {
   String? token;
   String userID;
   RxString userImage;
-  List<String> topThreeCuisines = [];
-  List<String> dietaryPrefList = [];
-  List<String> whereToEat = [];
-  List<String> impDiningOut = [];
-  List<String> diningExp = [];
-  List<String> willingToTravel = [];
-  List<String> notificationType = [];
-  String planner = '';
-  String notifiedDiningOpp = '';
+  List<String> topThreeCuisines;
+  List<String> dietaryPrefList;
+  List<String> whereToEat;
+  List<String> impDiningOut;
+  List<String> diningExp;
+  List<String> willingToTravel;
+  List<String> notificationType;
+  String planner;
+  String notifiedDiningOpp;
 
   // Constructor
   UserModel({
@@ -30,6 +30,15 @@ class UserModel {
     this.token,
     required this.userID,
     required this.userImage,
+    this.topThreeCuisines = const [],
+    this.dietaryPrefList = const [],
+    this.whereToEat = const [],
+    this.impDiningOut = const [],
+    this.diningExp = const [],
+    this.willingToTravel = const [],
+    this.notificationType = const [],
+    this.planner = '',
+    this.notifiedDiningOpp = '',
   });
 
   // Factory method to initialize with default values
@@ -76,7 +85,16 @@ class UserModel {
       token: map['token'],
       userID: map['userID'] ?? '',
       userImage: RxString(map['userImage'] ?? ''),
-    )..topThreeCuisines = List<String>.from(map['topThreeCuisines'] ?? []);
+      topThreeCuisines: List<String>.from(map['topThreeCuisines'] ?? []),
+      dietaryPrefList: List<String>.from(map['dietaryPrefList'] ?? []),
+      whereToEat: List<String>.from(map['whereToEat'] ?? []),
+      impDiningOut: List<String>.from(map['impDiningOut'] ?? []),
+      diningExp: List<String>.from(map['diningExp'] ?? []),
+      willingToTravel: List<String>.from(map['willingToTravel'] ?? []),
+      notificationType: List<String>.from(map['notificationType'] ?? []),
+      planner: map['planner'] ?? '',
+      notifiedDiningOpp: map['notifiedDiningOpp'] ?? '',
+    );
   }
 
   // Create a model instance from a Firestore DocumentSnapshot
@@ -89,9 +107,17 @@ class UserModel {
       username: TextEditingController(text: data['username'] ?? ''),
       confirmpass: TextEditingController(text: data['confirmpass'] ?? ''),
       token: data['token'],
-      userID: data['userID'] ??
-          doc.id, // Fallback to document ID if userID is missing
+      userID: data['userID'] ?? doc.id,
       userImage: RxString(data['userImage'] ?? ''),
-    )..topThreeCuisines = List<String>.from(data['topThreeCuisines'] ?? []);
+      topThreeCuisines: List<String>.from(data['topThreeCuisines'] ?? []),
+      dietaryPrefList: List<String>.from(data['dietaryPrefList'] ?? []),
+      whereToEat: List<String>.from(data['whereToEat'] ?? []),
+      impDiningOut: List<String>.from(data['impDiningOut'] ?? []),
+      diningExp: List<String>.from(data['diningExp'] ?? []),
+      willingToTravel: List<String>.from(data['willingToTravel'] ?? []),
+      notificationType: List<String>.from(data['notificationType'] ?? []),
+      planner: data['planner'] ?? '',
+      notifiedDiningOpp: data['notifiedDiningOpp'] ?? '',
+    );
   }
 }

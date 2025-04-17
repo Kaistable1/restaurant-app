@@ -386,13 +386,9 @@ class RestaurantsClaimsDetails extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(left: isLargeScreen ? 140 : 90.0),
                   child: CustomButton(
-                      ontapp: () {
+                      ontapp: () async  {
                         if (formKey.currentState!.validate()) {
-                          Get.snackbar(
-                              'Success!', "Restaurant approved successfully",
-                              maxWidth: 400,
-                              backgroundColor: primaryColor,
-                              colorText: Colors.white);
+                         await controller.approvedResturnatsClaims();
                           controller.passwordController.clear();
                           drawerController.viewClaimsDetails.value = false;
                         }

@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:savrly/widgets/custom_textfield.dart';
 
 import '../../constants/app_colors.dart';
 import '../../constants/text_styles.dart';
 import '../../controllers/drawer_controller.dart';
 import '../../controllers/restaurants_claims_controller.dart';
-import '../../widgets/button.dart';
 import '../../widgets/customheader_widget.dart';
 
 class RestaurantsClaimsScreen extends StatelessWidget {
@@ -20,16 +18,14 @@ class RestaurantsClaimsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     bool mobileView = screenWidth < 900;
-
     // Responsive padding logic
     double paddingValue = mobileView ? 16 : 24;
     double tableTextSize = mobileView ? 9 : 14;
-    double buttonTextSize = mobileView ? 11 : 16;
     double tableHeaderTextSize = mobileView ? 12 : 20;
     double imageSize = mobileView ? 30 : 50;
     double popUpContainerSize = mobileView ? 20 : 36;
     double popUpSize = mobileView ? 12 : 18;
-    double statusSize = mobileView ? 60 : 100;
+    TextEditingController searchController = TextEditingController();
     return Padding(
       padding: EdgeInsets.only(
         right: paddingValue,
@@ -49,6 +45,7 @@ class RestaurantsClaimsScreen extends StatelessWidget {
                 child: CustomTextField(
                   prefixIcon: Icon(Icons.search, color: primaryColor),
                   hintText: 'Search ',
+                  controller: searchController,
                   hintTextColor: primaryColor,
                   borderColor: primaryColor,
                   onChanged: (v) {
@@ -189,7 +186,7 @@ class RestaurantsClaimsScreen extends StatelessWidget {
                       () => SingleChildScrollView(
                         child: Column(
                           children: List.generate(
-                            controller.filteredClaimsRestaurants.isEmpty
+                            searchController.text.isEmpty
                                 ? controller.restaurantsClaims.length
                                 : controller.filteredClaimsRestaurants.length,
                             (index) {

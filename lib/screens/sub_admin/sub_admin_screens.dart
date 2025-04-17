@@ -17,7 +17,7 @@ class SubAdminScreens extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     bool mobileView = screenWidth < 1000;
-
+    TextEditingController searchController = TextEditingController();
     // Responsive padding logic
     double paddingValue = mobileView ? 16 : 24;
     double tableTextSize = mobileView ? 9 : 14;
@@ -48,7 +48,7 @@ class SubAdminScreens extends StatelessWidget {
                   ? SizedBox(
                       width: screenWidth * 0.3,
                       child: CustomTextField(
-                        controller: controller.searchController,
+                        controller: searchController,
                         hintText: 'Search',
                         borderColor: primaryColor,
                         onChanged: (v) {
@@ -177,7 +177,7 @@ class SubAdminScreens extends StatelessWidget {
                       () => SingleChildScrollView(
                         child: Column(
                           children: List.generate(
-                            controller.subAdminsFilteredList.isEmpty
+                            searchController.text.isEmpty
                                 ? controller.subAdminsList.length
                                 : controller.subAdminsFilteredList.length,
                             (index) {

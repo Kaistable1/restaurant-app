@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:savrly/models/event.dart';
-import 'package:savrly/widgets/global_functions.dart';
 
 class EventManagementController extends GetxController {
   final searchController = TextEditingController();
@@ -11,8 +10,6 @@ class EventManagementController extends GetxController {
   RxString selectedEvents = ''.obs;
   RxString searchQuery = ''.obs;
 
-  RxList<String> cityList =
-      <String>['Tuscany, Italy', 'San Francisco', 'Washington, D.C.'].obs;
   RxList<String> stateList = <String>['New York', 'Los Angeles'].obs;
   RxList<String> eventsList = <String>['Festival', 'Concert'].obs;
 

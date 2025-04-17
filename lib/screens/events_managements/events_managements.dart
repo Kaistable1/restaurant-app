@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:savrly/controllers/add_event_controller.dart';
+import 'package:savrly/utils/globalVars.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/text_styles.dart';
 import '../../controllers/drawer_controller.dart';
@@ -30,6 +31,7 @@ class _EventsManagementsState extends State<EventsManagements> {
     controller.resetFiltersAndFetch();
   }
 
+  GlobalVariables globalVariables = GlobalVariables();
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -83,15 +85,22 @@ class _EventsManagementsState extends State<EventsManagements> {
                     CustomDropDownWidget(
                       hint: 'State',
                       items: controller.stateList,
-                      onChanged: (value) =>
-                          controller.selectedState.value = value!,
+                      onChanged: (value) {
+                        controller.selectedCity.value = '';
+                        controller.selectedState.value = value!;
+                      },
                     ),
                     SizedBox(height: 8),
-                    CustomDropDownWidget(
-                      hint: 'City',
-                      items: controller.cityList,
-                      onChanged: (value) =>
-                          controller.selectedCity.value = value!,
+                    Obx(
+                      () => CustomDropDownWidget(
+                        hint: 'City',
+                        value: controller.selectedCity.value,
+                        items: controller.selectedState.value == 'Los Angeles'
+                            ? globalVariables.losAngelesCities
+                            : globalVariables.newYorkCitiesList,
+                        onChanged: (value) =>
+                            controller.selectedCity.value = value!,
+                      ),
                     ),
                     SizedBox(height: 8),
                     CustomDropDownWidget(
@@ -117,18 +126,25 @@ class _EventsManagementsState extends State<EventsManagements> {
                       child: CustomDropDownWidget(
                         hint: 'State',
                         items: controller.stateList,
-                        onChanged: (value) =>
-                            controller.selectedState.value = value!,
+                        onChanged: (value) {
+                          controller.selectedCity.value = '';
+                          controller.selectedState.value = value!;
+                        },
                       ),
                     ),
                     SizedBox(width: 16),
-                    Expanded(
-                      flex: 2,
-                      child: CustomDropDownWidget(
-                        hint: 'City',
-                        items: controller.cityList,
-                        onChanged: (value) =>
-                            controller.selectedCity.value = value!,
+                    Obx(
+                      () => Expanded(
+                        flex: 2,
+                        child: CustomDropDownWidget(
+                          hint: 'City',
+                          value: controller.selectedCity.value,
+                          items: controller.selectedState.value == 'Los Angeles'
+                              ? globalVariables.losAngelesCities
+                              : globalVariables.newYorkCitiesList,
+                          onChanged: (value) =>
+                              controller.selectedCity.value = value!,
+                        ),
                       ),
                     ),
                     SizedBox(width: 16),
