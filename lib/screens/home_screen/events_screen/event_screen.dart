@@ -103,7 +103,7 @@ class EventScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Text(
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniamexercitation ullamco laboris aliquip ex ea commodo consequat.',
+              'Get ready to make the most of your day with exciting events happening around you. From a cozy outdoor movie night under the stars to a sizzling chef’s tasting menu at your favorite restaurant, there’s something for everyone.',
               style: TextStyle(
                   color: AppColors.textColor,
                   fontSize: 12,
@@ -180,10 +180,10 @@ class EventScreen extends StatelessWidget {
                 Expanded(
                   child:
                       Obx(() => controller.upcomingAppointmentsCheck.value == 0
-                          ? TodayEvents()
+                          ? EventsList(eventsOnly: 'Today',)
                           : controller.upcomingAppointmentsCheck.value == 1
-                              ? TodayEvents()
-                              : TodayEvents()),
+                              ? EventsList(eventsOnly: 'This week',)
+                              : EventsList(eventsOnly: 'This month',)),
                 ),
               ],
             ),

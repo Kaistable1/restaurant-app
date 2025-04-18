@@ -127,7 +127,7 @@ class MyAbout extends StatelessWidget {
             final brunch = doc['Brunch'] ?? {'isClosed': true};
             final lunch = doc['Lunch'] ?? {'isClosed': true};
             final dinner = doc['Dinner'] ?? {'isClosed': true};
-            final lateNight = doc['Late Night'] ?? {'isClosed': true};
+            // final lateNight = doc['Late Night'] ?? {'isClosed': true};
 
             // Helper to get the time or "Closed"
             String getTimeRange(Map<String, dynamic> timeData) {
@@ -136,14 +136,10 @@ class MyAbout extends StatelessWidget {
             }
 
             // Use your `_buildRow` method
-            return _buildRow(
-              day,
-              getTimeRange(breakfast),
-              getTimeRange(brunch),
-              getTimeRange(lunch),
-              getTimeRange(dinner),
-              getTimeRange(lateNight),
-            );
+            return _buildRow(day, getTimeRange(breakfast), getTimeRange(brunch),
+                getTimeRange(lunch), getTimeRange(dinner)
+                // getTimeRange(lateNight),
+                );
           }).toList();
 
           return Container(
@@ -232,17 +228,17 @@ class MyAbout extends StatelessWidget {
                         ),
                       ),
                     ),
-                    DataColumn(
-                      label: Text(
-                        'Late Night',
-                        style: TextStyle(
-                          fontSize: 8,
-                          color: AppColors.tableHeadingColor,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: "Nunito-Sans",
-                        ),
-                      ),
-                    ),
+                    // DataColumn(
+                    //   label: Text(
+                    //     'Late Night',
+                    //     style: TextStyle(
+                    //       fontSize: 8,
+                    //       color: AppColors.tableHeadingColor,
+                    //       fontWeight: FontWeight.w500,
+                    //       fontFamily: "Nunito-Sans",
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                   rows: rows,
                 ),
@@ -255,7 +251,7 @@ class MyAbout extends StatelessWidget {
   }
 
   DataRow _buildRow(String day, String breakfast, String brunch, String lunch,
-      String dinner, String lateNight) {
+      String dinner) {
     Color availableColor = AppColors.primaryColor.withOpacity(.9);
     Color closedColor = AppColors.hintText.withOpacity(.8);
 
@@ -289,7 +285,7 @@ class MyAbout extends StatelessWidget {
         DataCell(buildCell(brunch, availableColor, closedColor)),
         DataCell(buildCell(lunch, availableColor, closedColor)),
         DataCell(buildCell(dinner, availableColor, closedColor)),
-        DataCell(buildCell(lateNight, availableColor, closedColor)),
+        // DataCell(buildCell(lateNight, availableColor, closedColor)),
       ],
     );
   }

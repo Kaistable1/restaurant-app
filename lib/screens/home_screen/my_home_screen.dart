@@ -1,12 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/screens/about_app/about_app.dart';
-import 'package:kaistable_website/screens/auth_screens/login/login_screen.dart';
 import 'package:kaistable_website/screens/contact_us/contact_us.dart';
 import 'package:kaistable_website/screens/detail_screens/restaurant_detail_screen.dart';
 import 'package:kaistable_website/screens/favorite_screen/favorite_screen.dart';
@@ -17,12 +14,9 @@ import 'package:kaistable_website/screens/home_screen/home_controller/home_new_c
 import 'package:kaistable_website/screens/home_screen/home_controller/home_recently_viewed_controller.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_theme_controller.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_trending_controller.dart';
-import 'package:kaistable_website/screens/home_screen/location_pages/location_screen.dart';
-import 'package:kaistable_website/screens/home_screen/location_pages/location_view_all/location_view_all.dart';
 import 'package:kaistable_website/screens/onboarding_screen/onboarding_controller/onboarding_controller.dart';
 import 'package:kaistable_website/screens/privacy_policy/privacy_policy.dart';
 import 'package:kaistable_website/screens/terms_and_condition/terms_and_condition.dart';
-import 'package:kaistable_website/widgets/custom_button.dart';
 import 'package:kaistable_website/widgets/global_functions.dart';
 
 import '../../constants/app_colors.dart';
@@ -790,8 +784,6 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
             timetext: '10 AM',
             percentText: '25%',
             endTimeText: '9 PM',
-            // percentageOff: item.menuList.percentageOff,
-            // happyhour: item.menuList.happyHourSpecials,
             isFavorite: false.obs,
           ),
         );

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,6 +8,7 @@ import 'package:kaistable_website/constants/app_colors.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/screens/detail_screens/controller/restaurant_detail_controller.dart';
 import 'package:kaistable_website/screens/nav_bar/widgets/custom_button.dart';
+import 'package:kaistable_website/utils/loading.dart';
 
 class MapWidget extends StatelessWidget {
   MapWidget({
@@ -23,6 +25,7 @@ class MapWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('isCommig ---- $isCommingSoon');
     return ClipRRect(
       borderRadius: BorderRadius.only(
           topRight: Radius.circular(10), topLeft: Radius.circular(10)),
@@ -75,23 +78,11 @@ class MapWidget extends StatelessWidget {
 class MapDetailWidget extends StatelessWidget {
   MapDetailWidget({
     super.key,
-    required this.address,
-    required this.atmospher,
-    required this.dietaryList,
-    required this.entertainmentList,
-    required this.facilitiesList,
-    required this.priceRange,
-    required this.spokenLanguage,
+    required this.restaurantModel,
     this.isCommingSoon,
   });
   bool? isCommingSoon;
-  String address;
-  List<String> atmospher = [];
-  List<String> facilitiesList = [];
-  List<String> dietaryList = [];
-  List<EntertainmentScheduleModel> entertainmentList = [];
-  String priceRange;
-  String spokenLanguage;
+  RestaurantModel restaurantModel;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -122,7 +113,9 @@ class MapDetailWidget extends StatelessWidget {
             height: 40,
             width: 290,
             child: Text(
-              address.isEmpty ? "comming Soon!" : address,
+              restaurantModel.address.isEmpty
+                  ? "comming Soon!"
+                  : restaurantModel.address,
               style: TextStyle(
                 color: AppColors.darkGrey,
                 fontSize: 14,
@@ -145,10 +138,10 @@ class MapDetailWidget extends StatelessWidget {
           ),
           SizedBox(
             width: 325,
-            child: atmospher.isEmpty
+            child: restaurantModel.atmopshereList.isEmpty
                 ? Text("comming Soon!")
                 : _buildStarBox(
-                    titleList: atmospher,
+                    titleList: restaurantModel.atmopshereList,
                     context,
                   ),
           ),
@@ -169,10 +162,10 @@ class MapDetailWidget extends StatelessWidget {
           ),
           SizedBox(
             width: 325,
-            child: facilitiesList.isEmpty
+            child: restaurantModel.facilityList.isEmpty
                 ? Text("comming Soon!")
                 : _buildStarBox(
-                    titleList: facilitiesList,
+                    titleList: restaurantModel.facilityList,
                     context,
                   ),
           ),
@@ -193,10 +186,10 @@ class MapDetailWidget extends StatelessWidget {
           ),
           SizedBox(
             width: 325,
-            child: dietaryList.isEmpty
+            child: restaurantModel.dietaryList.isEmpty
                 ? Text("comming Soon!")
                 : _buildStarBox(
-                    titleList: dietaryList,
+                    titleList: restaurantModel.dietaryList,
                     context,
                   ),
           ),
@@ -217,10 +210,10 @@ class MapDetailWidget extends StatelessWidget {
           ),
           SizedBox(
             width: 325,
-            child: entertainmentList.isEmpty
+            child: restaurantModel.entertainmentScheduleList.isEmpty
                 ? Text("comming Soon!")
                 : _buildStarBox(
-                    titleList: entertainmentList
+                    titleList: restaurantModel.entertainmentScheduleList
                         .map((event) => event.eventName)
                         .toList(),
                     context,
@@ -243,10 +236,10 @@ class MapDetailWidget extends StatelessWidget {
           ),
           SizedBox(
             width: 325,
-            child: priceRange == '\$\$'
+            child: restaurantModel.priceRange == '\$\$'
                 ? Text("comming Soon!")
                 : _buildStarBox(
-                    titleList: ['${priceRange}'],
+                    titleList: ['${restaurantModel.priceRange}'],
                     context,
                   ),
           ),
@@ -262,10 +255,10 @@ class MapDetailWidget extends StatelessWidget {
           SizedBox(
             height: 10,
           ),
-          spokenLanguage.isEmpty
+          restaurantModel.spokenLanguage.isEmpty
               ? Text("comming Soon!")
               : _buildStarBox(
-                  titleList: [spokenLanguage],
+                  titleList: [restaurantModel.spokenLanguage],
                   context,
                 ),
           isCommingSoon == true
@@ -279,7 +272,8 @@ class MapDetailWidget extends StatelessWidget {
                       textColor: AppColors.whiteColor,
                       fontSize: 16,
                       ontapp: () {
-                        showCustomDialog(context);
+                        showCustomDialog(context,
+                            resaturant_model: restaurantModel);
                       },
                       fontWeight: FontWeight.bold,
                     ),
@@ -325,10 +319,13 @@ class MapDetailWidget extends StatelessWidget {
     );
   }
 
-  void showCustomDialog(BuildContext context) {
+  void showCustomDialog(BuildContext context,
+      {required RestaurantModel resaturant_model}) {
     TextEditingController nameController = TextEditingController();
+    TextEditingController resNameController = TextEditingController();
     TextEditingController emailController = TextEditingController();
     TextEditingController messageController = TextEditingController();
+    TextEditingController contactController = TextEditingController();
 
     showDialog(
       context: context,
@@ -358,7 +355,7 @@ class MapDetailWidget extends StatelessWidget {
                 SizedBox(height: 15),
 
                 // Name Field
-                Text("Name", style: _textStyle()), SizedBox(height: 10),
+                Text("Your Name", style: _textStyle()), SizedBox(height: 10),
                 TextField(
                   controller: nameController,
                   decoration: _inputDecoration("Enter your name"),
@@ -369,6 +366,14 @@ class MapDetailWidget extends StatelessWidget {
                 Text("Email", style: _textStyle()), SizedBox(height: 10),
                 TextField(
                   controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: _inputDecoration("Enter your email"),
+                ),
+                SizedBox(height: 10),
+                // Email Field
+                Text("Contact No.", style: _textStyle()), SizedBox(height: 10),
+                TextField(
+                  controller: contactController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: _inputDecoration("Enter your email"),
                 ),
@@ -411,14 +416,78 @@ class MapDetailWidget extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                       width: Get.width * 0.3,
                       height: 40,
-                      ontapp: () {
+                      ontapp: () async {
                         if (nameController.text.isEmpty ||
                             emailController.text.isEmpty ||
-                            messageController.text.isEmpty) {
+                            messageController.text.isEmpty ||
+                            contactController.text.isEmpty) {
                           Get.snackbar('SAVRLY', 'Please fill all fields');
                         } else {
-                          Navigator.pop(context);
-                          Get.snackbar('SAVRLY', 'Message sent successfully!');
+                          try {
+                            Navigator.pop(context);
+
+                            // Get reference and auto-generate doc
+                            final docRef = FirebaseFirestore.instance
+                                .collection('businessClaims')
+                                .doc();
+
+                            // Prepare data
+                            final data = {
+                              'id': docRef.id,
+                              'ownerName': nameController.text.trim(),
+                              'contact': contactController.text.trim(),
+                              'message': messageController.text.trim(),
+                              'createdAt': FieldValue.serverTimestamp(),
+                              'status': 'Pending',
+                              'about': resaturant_model.about,
+                              'address': resaturant_model.address,
+                              'atmopshereList': resaturant_model
+                                  .atmopshereList, // Empty array as per your data
+                              'averageRating': resaturant_model.averageRating,
+                              'city': resaturant_model.city,
+                              'country': resaturant_model.country,
+                              'dietaryList': [], // Empty array as per your data
+                              'resID': resaturant_model
+                                  .docID, // Will be set after adding the document
+                              'entertainmentScheduleList': resaturant_model
+                                  .entertainmentScheduleList, // Empty array as per your data
+                              'facilityList': resaturant_model
+                                  .facilityList, // Empty array as per your data
+                              'resImages': resaturant_model.imagesList,
+                              'latitude': resaturant_model
+                                  .latitude, // Hardcoded for now; you can add a map picker later
+                              'photoUrl': resaturant_model.logoImage,
+                              'longitude': resaturant_model
+                                  .longitude, // Hardcoded for now; you can add a map picker later
+                              'menuList': [], // Empty array as per your data
+                              'password': '',
+                              'priceRange':
+                                  '', // Hardcoded for now; you can add a field for this
+                              'email': emailController.text.trim(),
+                              'restaurantsName': resaturant_model.resName,
+                              'InstagramLink': resaturant_model.instaLink,
+                              'TiktokLink': resaturant_model.tiktokLink,
+                              'specialConditions':
+                                  resaturant_model.specialConditions,
+                              'spokenLanguage': resaturant_model.spokenLanguage,
+                            };
+
+                            // Upload to Firestore
+                            await docRef.set(data);
+
+                            // Show success message
+                            Get.snackbar(
+                              'SAVRLY',
+                              'Your claim submitted successfully!',
+                              backgroundColor: Colors.green,
+                              colorText: Colors.white,
+                              maxWidth: 400,
+                            );
+                          } catch (e) {
+                            print('Error submitting claim: $e');
+                            Get.snackbar('Error',
+                                'Something went wrong. Please try again later.');
+                          }
                         }
                       },
                     ),

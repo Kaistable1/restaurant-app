@@ -1,5 +1,3 @@
-import 'package:get/get.dart';
-
 class EventModel {
   String image;
   String title;

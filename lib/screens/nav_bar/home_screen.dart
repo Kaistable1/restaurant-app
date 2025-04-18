@@ -54,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     requestLocationPermission();
+    eventController.onInit();
     return ShowCaseWidget(
       enableAutoScroll: true,
       builder: (context) {
@@ -249,32 +250,37 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         SizedBox(height: 10),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: ScrollPhysics(),
-          itemCount: 3,
-          itemBuilder: (context, index) {
-            final event = eventController.eventsList[index];
-            return Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 8.0),
-                  child: DaysTile(
-                    onTap: () => Get.to(EventDetailsScreen()),
-                    image: event.image,
-                    title: event.title,
-                    location: event.location,
+        Obx(
+          () => ListView.builder(
+            shrinkWrap: true,
+            physics: ScrollPhysics(),
+            itemCount: eventController.events.length > 3
+                ? 3
+                : eventController.events.length,
+            itemBuilder: (context, index) {
+              final event = eventController.events[index];
+              return Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
+                    child: DaysTile(
+                      onTap: () => Get.to(EventDetailsScreen()),
+                      image: event.imageUrls.first,
+                      title: event.eventName,
+                      location: event.location,
+                      type: event.eventType,
+                    ),
                   ),
-                ),
-                if (index != eventController.eventsList.length - 1)
-                  Divider(
-                    thickness: 1,
-                    color: AppColors.primaryColor.withOpacity(.2),
-                  ),
-              ],
-            );
-          },
+                  if (index != eventController.eventsList.length - 1)
+                    Divider(
+                      thickness: 1,
+                      color: AppColors.primaryColor.withOpacity(.2),
+                    ),
+                ],
+              );
+            },
+          ),
         ),
       ],
     );

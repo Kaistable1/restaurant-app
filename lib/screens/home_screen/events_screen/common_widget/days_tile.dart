@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
-import 'package:get/get.dart';
 
 class BookmarksController extends GetxController {
-  var bookmarkedItems = <String, bool>{}.obs; // Stores bookmarked state for each event
+  var bookmarkedItems =
+      <String, bool>{}.obs; // Stores bookmarked state for each event
 
   void toggleBookmark(String eventTitle) {
     if (bookmarkedItems.containsKey(eventTitle)) {
@@ -18,16 +18,23 @@ class BookmarksController extends GetxController {
     return bookmarkedItems[eventTitle] ?? false;
   }
 }
- // Import the controller
+// Import the controller
 
 class DaysTile extends StatelessWidget {
   final String? image;
   final String? title;
   final String? location;
+  final String? type;
   final VoidCallback onTap;
   final BookmarksController bookmarkController = Get.put(BookmarksController());
 
-  DaysTile({super.key, this.image, this.title, this.location, required this.onTap});
+  DaysTile(
+      {super.key,
+      this.image,
+      this.title,
+      this.location,
+      required this.onTap,
+      this.type});
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +50,15 @@ class DaysTile extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Image.asset(image ?? 'assets/images/tile_img1.png', height: 75, width: 85),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.network(
+                  image ?? 'https://picsum.photos/150',
+                  height: 75,
+                  width: 85,
+                  fit: BoxFit.fill,
+                ),
+              ),
             ),
             const SizedBox(width: 10),
             Column(
@@ -51,7 +66,7 @@ class DaysTile extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  title ?? 'The Cozy Nook',
+                  title ?? '',
                   style: TextStyle(
                     color: AppColors.headingTextColor,
                     fontFamily: 'Nunito-Bold',
@@ -62,15 +77,26 @@ class DaysTile extends StatelessWidget {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Image.asset('assets/images/location_icon2.png', width: 16, height: 16),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(2),
+                      child: Image.network(
+                        image ?? 'https://picsum.photos/150',
+                        width: 16,
+                        height: 16,
+                        fit: BoxFit.fill,
+                      ),
+                    ),
                     const SizedBox(width: 6),
-                    Text(
-                      location ?? 'Abc location',
-                      style: const TextStyle(
-                        color: Color(0xFF4F5A57),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'Nunito-Regular',
+                    SizedBox(
+                      width: Get.width * 0.4,
+                      child: Text(
+                        location ?? 'Abc location',
+                        style: const TextStyle(
+                          color: Color(0xFF4F5A57),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'Nunito-Regular',
+                        ),
                       ),
                     ),
                   ],
@@ -79,7 +105,9 @@ class DaysTile extends StatelessWidget {
                 Wrap(
                   spacing: 8,
                   runSpacing: 4,
-                  children: [_buildCategoryChip("Concert"), _buildCategoryChip("Festival")],
+                  children: [
+                    _buildCategoryChip(type ?? ''),
+                  ],
                 ),
               ],
             ),
@@ -87,13 +115,14 @@ class DaysTile extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Obx(() {
-                bool isBookmarked = bookmarkController.isBookmarked(title ?? '');
+                bool isBookmarked =
+                    bookmarkController.isBookmarked(title ?? '');
                 return GestureDetector(
                   onTap: () => bookmarkController.toggleBookmark(title ?? ''),
                   child: Image.asset(
                     isBookmarked
-                    ? 'assets/images/fill_bookmark.png' // Filled Bookmark
-                    : 'assets/images/empty_bookmark.png', // Unfilled Bookmark
+                        ? 'assets/images/fill_bookmark.png' // Filled Bookmark
+                        : 'assets/images/empty_bookmark.png', // Unfilled Bookmark
                     height: 20,
                     width: 20,
                   ),

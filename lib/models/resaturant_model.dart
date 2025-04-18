@@ -1,8 +1,3 @@
-import 'dart:ffi';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-
-import 'dart:ffi';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RestaurantModel {
