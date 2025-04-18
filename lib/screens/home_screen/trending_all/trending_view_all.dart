@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/screens/detail_screens/restaurant_detail_screen.dart';
+import 'package:kaistable_website/widgets/global_functions.dart';
 import 'package:kaistable_website/widgets/rectangle_widget.dart';
 
 import '../../../constants/app_colors.dart';
@@ -184,10 +185,7 @@ class _TrendingViewAllState extends State<TrendingViewAll> {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return SizedBox(
-                              height: Get.height * 0.5,
-                              child: Center(child: CircularProgressIndicator()),
-                            ); // Show loading indicator
+                            return buildShimmerEffect();
                           }
 
                           if (snapshot.hasError) {
@@ -231,10 +229,7 @@ class _TrendingViewAllState extends State<TrendingViewAll> {
                                     },
                                     child: RectangleWidget(
                                       title: item.resName,
-                                      description:
-                                          item.about.contains('Stay tuned')
-                                              ? item.address
-                                              : item.about,
+                                      description: item.address,
                                       resturant_id: item.docID,
                                       imagePath: item.logoImage,
                                       timetext: '10 AM',

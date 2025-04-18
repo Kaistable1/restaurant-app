@@ -10,10 +10,10 @@ import '../controller/generalPreferences_Controller.dart';
 import '../widget/preferencesSelectionWidget.dart';
 
 class Preference1 extends StatelessWidget {
-  Preference1({super.key});
+  Preference1({super.key, this.isComeFromSetting});
 
   final controller = Get.put(GeneralPreferencesController());
-
+  bool? isComeFromSetting;
   @override
   Widget build(BuildContext context) {
     controller.fetchUserPreferences();
@@ -26,32 +26,34 @@ class Preference1 extends StatelessWidget {
           color: AppColors.primaryColor,
         ),
         centerTitle: true,
-        automaticallyImplyLeading: true,
-        leading: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Container(
-            height: 16,
-            width: 16,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  spreadRadius: 1,
-                  blurRadius: 3,
-                  offset: const Offset(0, 1),
+        automaticallyImplyLeading: false,
+        leading: isComeFromSetting != true
+            ? null
+            : Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Container(
+                  height: 16,
+                  width: 16,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        spreadRadius: 1,
+                        blurRadius: 3,
+                        offset: const Offset(0, 1),
+                      ),
+                    ],
+                  ),
+                  child: GestureDetector(
+                    onTap: () {
+                      Get.back();
+                    },
+                    child: Icon(Icons.arrow_back, size: 18),
+                  ),
                 ),
-              ],
-            ),
-            child: GestureDetector(
-              onTap: () {
-                Get.back();
-              },
-              child: Icon(Icons.arrow_back, size: 18),
-            ),
-          ),
-        ),
+              ),
         title: Text(
           'General Preferences',
           style: TextStyle(
@@ -66,7 +68,7 @@ class Preference1 extends StatelessWidget {
             padding: const EdgeInsets.only(right: 12.0),
             child: Center(
               child: Text(
-                '1/9',
+                '1/10',
                 style: TextStyle(
                   fontSize: 12,
                   fontFamily: 'Nunito-Sans',

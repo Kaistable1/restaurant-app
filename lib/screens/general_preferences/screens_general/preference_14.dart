@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/screens/auth_screens/signup/controller/signup_controller.dart';
+import 'package:kaistable_website/screens/nav_bar/controller/search_controller.dart';
+import 'package:kaistable_website/screens/nav_bar/main_screen.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../widgets/custom_button.dart';
 import '../../../widgets/custom_dropdown.dart';
-import '../../home_screen/my_home_screen.dart';
 import '../controller/generalPreferences_Controller.dart';
 
 class Preference14 extends StatelessWidget {
@@ -64,7 +65,7 @@ class Preference14 extends StatelessWidget {
             padding: const EdgeInsets.only(right: 12.0),
             child: Center(
               child: Text(
-                '11/11',
+                '10/10',
                 style: TextStyle(
                   fontSize: 12,
                   fontFamily: 'Nunito-Sans',
@@ -102,9 +103,9 @@ class Preference14 extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       DropDownButton(
-                        hintText: 'Country',
+                        hintText: 'States',
                         fontfamily: 'Nunito-Sans',
-                        items: const ["USA", "France"],
+                        items: const ["New York", "Los Angeles"],
                         containerColor: const Color(0xFFFFFFFF),
                         textColor: Colors.grey,
                         onChanged: (value) {
@@ -123,14 +124,11 @@ class Preference14 extends StatelessWidget {
                         fontfamily: 'Nunito-Sans',
                         hintfontsize: 14,
                         dropdownItemWidth: 100,
-                        items: controller.selectedCountry.value == 'USA'
-                            ? const [
-                                "New York",
-                                "Los Angeles",
-                              ]
-                            : const [
-                                "Paris",
-                              ],
+                        items: controller.selectedCountry.value == "Los Angeles"
+                            ? FilterController().losAngelusCities
+                            : controller.selectedCountry.value == "New York"
+                                ? FilterController().newYorkCitiesList
+                                : [],
                         selectedValue: controller.selectedCity.value,
                         onChanged: (value) {
                           controller.selectedCity.value = value!;
@@ -175,9 +173,7 @@ class Preference14 extends StatelessWidget {
                       signupController.updateUserData(
                           field: 'city', entry: controller.selectedCity.value);
                       Get.offAll(
-                        () => MyHomeScreen(
-                          countryName: controller.selectedCity.value,
-                        ),
+                        () => MainScreen(),
                       );
                     }
                   },

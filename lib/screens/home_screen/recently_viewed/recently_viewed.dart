@@ -241,10 +241,8 @@ class RecentlyViewed extends StatelessWidget {
                                       child: RectangleWidget(
                                         onNavigate: onNavigate,
                                         title: item.resName,
-                                        description:
-                                            item.about.contains('Stay tuned')
-                                                ? item.address
-                                                : item.about,
+                                        description:item.address
+                                               ,
                                         resturant_id: item.docID,
                                         imagePath: item.logoImage,
                                         timetext: '10 AM',

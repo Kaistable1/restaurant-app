@@ -54,7 +54,9 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
           homeLocationController.selectedPersentage.indexOf(true);
       indexOfMenuHappyHourOff =
           homeLocationController.selectedHappyhour.indexOf(true);
-
+      bool _isCommingSoon = widget.restaurantModel?.resEmail == '' ||
+          (widget.restaurantModel?.resEmail.isEmpty ?? true);
+      print('widget.restaurantModel?.resEmail ${_isCommingSoon}');
       return WillPopScope(
           onWillPop: () async {
             Get.back();
@@ -236,7 +238,7 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                     ),
                     SizedBox(height: 2),
                     Obx(() {
-                      return controller.selectedTop.value == 'Entertainment'
+                      return controller.selectedTop.value == 'Experience'
                           ? Column(
                               children: [
                                 SizedBox(
@@ -803,8 +805,7 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                                   borderRadius: BorderRadius.circular(16)),
                               child: MapWidget(
                                 controller: controller,
-                                isCommingSoon: widget.restaurantModel?.about
-                                    .contains('Soon'),
+                                isCommingSoon: _isCommingSoon,
                                 lat: widget.restaurantModel?.latitude ?? 0.0,
                                 long: widget.restaurantModel?.longitude ?? 0.0,
                               ),
@@ -813,22 +814,9 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                               width: 40,
                             ),
                             MapDetailWidget(
-                              isCommingSoon: widget.restaurantModel?.about
-                                  .contains('Soon'),
-                              address: widget.restaurantModel?.address ?? '',
-                              atmospher:
-                                  widget.restaurantModel?.atmopshereList ?? [],
-                              dietaryList:
-                                  widget.restaurantModel?.dietaryList ?? [],
-                              entertainmentList: widget.restaurantModel
-                                      ?.entertainmentScheduleList ??
-                                  [],
-                              facilitiesList:
-                                  widget.restaurantModel?.facilityList ?? [],
-                              priceRange:
-                                  widget.restaurantModel?.priceRange ?? '',
-                              spokenLanguage:
-                                  widget.restaurantModel?.spokenLanguage ?? '',
+                              restaurantModel: widget.restaurantModel!,
+                              isCommingSoon: _isCommingSoon,
+                              
                             ),
                           ],
                         ),

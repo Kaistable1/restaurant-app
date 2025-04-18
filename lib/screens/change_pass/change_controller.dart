@@ -102,4 +102,7 @@ class ChangePasswordController extends GetxController {
       print('Error ---------------- $e');
     }
   }
+
+
+
 }

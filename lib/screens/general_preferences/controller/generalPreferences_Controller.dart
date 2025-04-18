@@ -45,10 +45,8 @@ class GeneralPreferencesController extends GetxController {
             ? List<String>.from(data["whereToEat"])
             : [data["whereToEat"]];
 
-        selectedPreferences4.value = data["planner"] is List
-            ? List<String>.from(data["planner"])
-            : [data["planner"]];
-
+        selectedPreferences4.value = [data["planner"]];
+        print('selectedPreferences4 ${selectedPreferences4}');
         selectedPreferences5.value = data["impDiningOut"] is List
             ? List<String>.from(data["impDiningOut"])
             : [data["impDiningOut"]];
@@ -64,9 +62,9 @@ class GeneralPreferencesController extends GetxController {
         selectedPreferences8.value =
             List<String>.from(data["notificationType"] ?? []);
 
-        selectedPreferences9.value = data["notifiedDiningOpp"] is List
-            ? List<String>.from(data["notifiedDiningOpp"])
-            : [data["notifiedDiningOpp"]];
+        selectedPreferences9.value = [data["notifiedDiningOpp"]];
+        selectedCity.value = data["city"];
+        selectedCountry.value = data["country"];
       } else {
         print("User document does not exist");
       }
@@ -137,7 +135,7 @@ class GeneralPreferencesController extends GetxController {
   void toggleSelection3(String name) {
     if (selectedPreferences3.contains(name)) {
       selectedPreferences3.remove(name);
-    } else if (selectedPreferences3.length < 3) {
+    } else if (selectedPreferences3.length < 2) {
       selectedPreferences3.add(name);
     }
   }
@@ -220,7 +218,7 @@ class GeneralPreferencesController extends GetxController {
   void toggleSelection6(String name) {
     if (selectedPreferences6.contains(name)) {
       selectedPreferences6.remove(name);
-    } else {
+    } else if (selectedPreferences6.length < 1) {
       selectedPreferences6.add(name);
     }
   }
@@ -243,7 +241,7 @@ class GeneralPreferencesController extends GetxController {
   void toggleSelection7(String name) {
     if (selectedPreferences7.contains(name)) {
       selectedPreferences7.remove(name);
-    } else if (selectedPreferences7.length < 2) {
+    } else if (selectedPreferences7.length < 1) {
       selectedPreferences7.add(name);
     }
   }
@@ -300,7 +298,7 @@ class GeneralPreferencesController extends GetxController {
   void toggleSelection9(String name) {
     if (selectedPreferences9.contains(name)) {
       selectedPreferences9.remove(name);
-    } else if (selectedPreferences9.length < 2) {
+    } else if (selectedPreferences9.length < 1) {
       selectedPreferences9.add(name);
     }
   }

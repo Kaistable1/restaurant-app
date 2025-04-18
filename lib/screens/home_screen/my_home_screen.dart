@@ -1,12 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/screens/about_app/about_app.dart';
-import 'package:kaistable_website/screens/auth_screens/login/login_screen.dart';
 import 'package:kaistable_website/screens/contact_us/contact_us.dart';
 import 'package:kaistable_website/screens/detail_screens/restaurant_detail_screen.dart';
 import 'package:kaistable_website/screens/favorite_screen/favorite_screen.dart';
@@ -17,12 +14,9 @@ import 'package:kaistable_website/screens/home_screen/home_controller/home_new_c
 import 'package:kaistable_website/screens/home_screen/home_controller/home_recently_viewed_controller.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_theme_controller.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_trending_controller.dart';
-import 'package:kaistable_website/screens/home_screen/location_pages/location_screen.dart';
-import 'package:kaistable_website/screens/home_screen/location_pages/location_view_all/location_view_all.dart';
 import 'package:kaistable_website/screens/onboarding_screen/onboarding_controller/onboarding_controller.dart';
 import 'package:kaistable_website/screens/privacy_policy/privacy_policy.dart';
 import 'package:kaistable_website/screens/terms_and_condition/terms_and_condition.dart';
-import 'package:kaistable_website/widgets/custom_button.dart';
 import 'package:kaistable_website/widgets/global_functions.dart';
 
 import '../../constants/app_colors.dart';
@@ -118,7 +112,13 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
   void initState() {
     super.initState();
     getCurrentUserData();
+    // fun();
     selectedCountry = widget.countryName ?? 'USA';
+  }
+
+  fun() async {
+    print('start deleteing -------------------------');
+    await controller.delete300Restaurants();
   }
 
   Future<Map<String, dynamic>?> getOperatingHours(String restaurantId) async {
@@ -219,7 +219,6 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
   @override
   Widget build(BuildContext context) {
     getCurrentUserData();
-    bool isOnboarding = onboradingController.selectedCountry.value != 'Country';
     String previousText = '';
 
     controller.searchController.addListener(() {
@@ -251,72 +250,6 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
               fontFamily: 'Nunito-Bold',
             ),
           ),
-          // actions: [
-          //   const SizedBox(width: 20),
-          //   _selectedIndex == 0 // Only show on the home screen
-          //       ? Row(
-          //           children: [
-          //             // InkWell(
-          //             //   onTap: () {
-          //             //     Get.to(LocationScreen());
-          //             //   },
-          //             //   child: const Image(
-          //             //     image: AssetImage('assets/images/location_icon.png'),
-          //             //     height: 12,
-          //             //     width: 12,
-          //             //   ),
-          //             // ),
-          //             // const SizedBox(width: 1),
-          //             // InkWell(
-          //             //   onTap: () {
-          //             //     Get.to(LocationScreen(
-          //             //       city: currentUserDataModel?.value.city,
-          //             //       country: currentUserDataModel?.value.country,
-          //             //     ));
-          //             //   },
-          //             //   child: StreamBuilder<DocumentSnapshot>(
-          //             //     stream: FirebaseFirestore.instance
-          //             //         .collection('users')
-          //             //         .doc(auth.currentUser
-          //             //             ?.uid) // Replace with your user ID
-          //             //         .snapshots(),
-          //             //     builder: (context, snapshot) {
-          //             //       if (!snapshot.hasData || snapshot.data == null) {
-          //             //         return Text(
-          //             //           "",
-          //             //           style: TextStyle(
-          //             //             color: AppColors.textColor,
-          //             //             fontWeight: FontWeight.w800,
-          //             //             fontFamily: 'Nunito-Regular',
-          //             //             fontSize: 9,
-          //             //           ),
-          //             //         );
-          //             //       }
-
-          //             //       var userData =
-          //             //           snapshot.data!.data() as Map<String, dynamic>;
-          //             //       String country = userData['country'] ?? '';
-          //             //       String city = userData['city'] ?? '';
-
-          //             //       return Text(
-          //             //         isOnboarding
-          //             //             ? '${onboradingController.selectedCountry.value}.${onboradingController.selectedCity.value}'
-          //             //             : '$country.$city',
-          //             //         style: TextStyle(
-          //             //           color: AppColors.textColor,
-          //             //           fontWeight: FontWeight.w800,
-          //             //           fontFamily: 'Nunito-Regular',
-          //             //           fontSize: 9,
-          //             //         ),
-          //             //       );
-          //             //     },
-          //             //   ),
-          //             // ),
-          //             // const SizedBox(width: 20),
-          //           ],
-          //         )
-          //       : const SizedBox.shrink(),
-          // ],
         ),
         body: SingleChildScrollView(
           child: Column(
@@ -413,13 +346,11 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                     height: 16,
                                   ),
                                   StreamBuilder(
-                                    stream: controller.getRestaurants(),
+                                    stream: controller.getAllRestaurants(),
                                     builder: (context, snapshot) {
                                       if (snapshot.connectionState ==
                                           ConnectionState.waiting) {
-                                        return SizedBox(
-                                          height: Get.height * 0.5,
-                                        );
+                                        return buildShimmerEffect();
                                       }
 
                                       if (snapshot.hasError) {
@@ -431,31 +362,33 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                         return Text('No restaurants found');
                                       }
 
-                                      // Apply filtering logic here
+                                      // Apply filtering logic here -----------
+
                                       List<RestaurantModel> restaurants =
                                           snapshot.data!;
                                       print(
-                                          'filterSelectionController.selectedCountry ${filterSelectionController.selectedCountry}');
-                                      print(
-                                          'filterSelectionController.aggregatedFilters ${filterSelectionController.aggregatedFilters}');
-                                      print(
-                                          'total restaurants length ${restaurants.length}');
-                                      // // Filter by Country
-                                      // if (filterSelectionController
-                                      //     .selectedCountry.isNotEmpty) {
-                                      //   print('flag 1');
-                                      //   restaurants =
-                                      //       restaurants.where((restaurant) {
-                                      //     return filterSelectionController
-                                      //         .aggregatedFilters
-                                      //         .contains(restaurant.city);
-                                      //   }).toList();
-                                      // }
+                                          'all resturants length ${restaurants.length}');
+                                      if (filterSelectionController
+                                          .selectedCountry.isNotEmpty) {
+                                        print('flag 1 ');
 
+                                        restaurants =
+                                            restaurants.where((restaurant) {
+                                          bool isCityMatched =
+                                              filterSelectionController
+                                                  .aggregatedFilters
+                                                  .map((e) => e.toLowerCase())
+                                                  .any((filter) => restaurant
+                                                      .city
+                                                      .toLowerCase()
+                                                      .contains(filter));
+                                          return isCityMatched;
+                                        }).toList();
+                                      }
                                       // Filter by City
                                       if (filterSelectionController
                                           .selectedCity.isNotEmpty) {
-                                        print('flag 2');
+                                        print('flag 2 ');
 
                                         restaurants =
                                             restaurants.where((restaurant) {
@@ -642,8 +575,6 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                         controller
                                             .initializeSelectors(restaurants);
                                       });
-                                      print(
-                                          'resutatnsta before future filter ${restaurants.length}');
 
                                       return FutureBuilder<
                                           List<RestaurantModel>>(
@@ -833,7 +764,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        mainAxisExtent: Get.height * 0.27,
+        mainAxisExtent: Get.height * 0.17,
         crossAxisCount: 2,
         crossAxisSpacing: 10,
         mainAxisSpacing: 20,
@@ -847,14 +778,12 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
           },
           child: RectangleWidget(
             title: item.resName,
-            description: item.about,
+            description: item.address,
             resturant_id: item.docID,
             imagePath: item.logoImage,
             timetext: '10 AM',
             percentText: '25%',
             endTimeText: '9 PM',
-            percentageOff: item.menuList.percentageOff,
-            happyhour: item.menuList.happyHourSpecials,
             isFavorite: false.obs,
           ),
         );

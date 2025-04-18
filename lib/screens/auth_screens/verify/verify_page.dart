@@ -32,13 +32,34 @@ class VerifyPage extends StatelessWidget {
               SizedBox(
                 height: 50,
               ),
-              Center(
-                child: Image.asset(
-                  'assets/images/botomsheet_logo.png',
-                  height: 74,
-                  width: 196,
-                  color: AppColors.primaryColor,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Get.back();
+                    },
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 20),
+                        child: Image.asset(
+                          'assets/images/arrow_back.png',
+                          height: 74,
+                          width: 50,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Center(
+                    child: Image.asset(
+                      'assets/images/botomsheet_logo.png',
+                      height: 74,
+                      width: 196,
+                      color: AppColors.primaryColor,
+                    ),
+                  ),
+                  SizedBox(),
+                ],
               ),
               SizedBox(
                 height: 53,
@@ -147,7 +168,7 @@ class VerifyPage extends StatelessWidget {
                           signupController.resetTextFields();
                           controller.onClick.value = false;
                           controller.verifyController.clear();
-                          Get.off(() => Preference1());
+                          Get.offAll(() => Preference1());
                         } else {
                           loadingDialog(
                               message:
@@ -182,7 +203,8 @@ class VerifyPage extends StatelessWidget {
                     await signupController.sendEmail(isFromResendOtp: true);
 
                     dialogueBox(
-                        text: 'The code has been sent to your email address.',
+                        text:
+                            'The code has been sent to your email address.\nCheck your Spam folder if you do not receive it.',
                         color: AppColors.primaryColor,
                         onPressed: () {
                           Get.back();

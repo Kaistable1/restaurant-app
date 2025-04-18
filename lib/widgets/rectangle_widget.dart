@@ -17,6 +17,10 @@ class RectangleWidget extends StatelessWidget {
   final RxBool isFavorite;
   List<OfferModel>? percentageOff;
   List<OfferModel>? happyhour;
+  final double? width;
+  final double? height;
+  final double? imgHeight;
+  final Color? boxColor;
 
   String? resturant_id;
   final Function(int)? onNavigate;
@@ -34,13 +38,19 @@ class RectangleWidget extends StatelessWidget {
     required this.isFavorite,
     this.onNavigate,
     this.endTimeText,
+    this.width,
+    this.height,
+    this.imgHeight,
+    this.boxColor,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: width ?? Get.width,
+      height: height ?? 234,
       decoration: BoxDecoration(
-        color: Colors.transparent,
+        color: boxColor ?? Colors.transparent,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -48,13 +58,12 @@ class RectangleWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(
-            width: 172,
-            height: 124,
+            height: imgHeight ?? 82,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(5),
                 color: Colors.transparent,
                 image: DecorationImage(
-                    fit: BoxFit.fill,
+                    fit: BoxFit.cover,
                     image: imagePath.contains('http')
                         ? NetworkImage(
                             imagePath,
@@ -71,14 +80,14 @@ class RectangleWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     SizedBox(
-                      width: 100,
+                      width: 140,
                       child: Text(
                         title,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
-                          fontSize: 12,
+                          fontSize: 14,
                           fontFamily: 'Nunito-Regular',
                           color: AppColors.textColor,
                         ),
@@ -97,15 +106,18 @@ class RectangleWidget extends StatelessWidget {
                 SizedBox(height: 2),
                 Row(
                   children: [
+                    Image.asset(
+                      'assets/images/location_icon2.png',
+                      height: 16,
+                      width: 16,
+                    ),
                     SizedBox(
-                      width: Get.width * 0.37,
                       child: Text(
                         description,
-                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontWeight: FontWeight.w400,
-                          fontSize: 8,
+                          fontSize: 12,
                           fontFamily: 'Nunito-Regular',
                           color: AppColors.textColor,
                         ),
@@ -153,6 +165,7 @@ class RectangleWidget extends StatelessWidget {
         ],
       ),
     );
+  
   }
 
   Widget _buildStarBox(BuildContext context, {required OfferModel item}) {

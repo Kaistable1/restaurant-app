@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/screens/detail_screens/restaurant_detail_screen.dart';
+import 'package:kaistable_website/widgets/global_functions.dart';
 import 'package:kaistable_website/widgets/rectangle_widget.dart';
 
 import '../../../constants/app_colors.dart';
@@ -72,7 +73,7 @@ class EntertainmentsScreen extends StatelessWidget {
                 ),
               ),
               title: Text(
-                'Entertainments',
+                'Experience',
                 style: const TextStyle(
                   fontSize: 17,
                   color: AppColors.bottomSheetColor,
@@ -159,10 +160,7 @@ class EntertainmentsScreen extends StatelessWidget {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return SizedBox(
-                              height: Get.height * 0.5,
-                              child: Center(child: CircularProgressIndicator()),
-                            ); // Show loading indicator
+                            return buildShimmerEffect();
                           }
 
                           if (snapshot.hasError) {
@@ -187,7 +185,7 @@ class EntertainmentsScreen extends StatelessWidget {
                                 physics: const NeverScrollableScrollPhysics(),
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
-                                  mainAxisExtent: Get.height * 0.27,
+                                  mainAxisExtent: Get.height * 0.18,
                                   crossAxisCount: 2,
                                   crossAxisSpacing: 10,
                                   mainAxisSpacing: 20,
@@ -205,16 +203,16 @@ class EntertainmentsScreen extends StatelessWidget {
                                     },
                                     child: RectangleWidget(
                                       title: item.resName,
-                                      description: item.about,
+                                      description: item.address,
                                       resturant_id: item.docID,
                                       imagePath: item.logoImage,
                                       timetext: '10 AM',
                                       percentText: '25%',
                                       endTimeText: '9 PM',
-                                      percentageOff:
-                                          item.menuList.percentageOff,
-                                      happyhour:
-                                          item.menuList.happyHourSpecials,
+                                      // percentageOff:
+                                      //     item.menuList.percentageOff,
+                                      // happyhour:
+                                      //     item.menuList.happyHourSpecials,
                                       isFavorite: false.obs,
                                     ),
                                   );
