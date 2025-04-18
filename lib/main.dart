@@ -37,7 +37,6 @@ class MyApp extends StatelessWidget {
       title: 'Savrly',
       debugShowCheckedModeBanner: false,
       home:
-          //  Scaffold(body: NotificationScreen()),
           Obx(() => controller.isLoading.value == true
               ? Center(
                   child: CircularProgressIndicator(

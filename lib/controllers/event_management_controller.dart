@@ -11,7 +11,7 @@ class EventManagementController extends GetxController {
   RxString searchQuery = ''.obs;
 
   RxList<String> stateList = <String>['New York', 'Los Angeles'].obs;
-  RxList<String> eventsList = <String>['Festival', 'Concert'].obs;
+  RxList<String> eventsList = <String>['Festival', 'Concert','Sports'].obs;
 
   RxList<Event> events = <Event>[].obs;
   RxList<Event> filteredEvents = <Event>[].obs;

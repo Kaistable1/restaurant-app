@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
@@ -20,8 +19,9 @@ class AddEventController extends GetxController {
   final dateController = TextEditingController();
   final timeController = TextEditingController();
   final descriptionController = TextEditingController();
+  
   RxString selectEvent = 'Concert'.obs;
-  RxList<String> events = <String>['Concert', 'Festival'].obs;
+  RxList<String> events = <String>['Concert', 'Festival', 'Sports'].obs;
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Event? selectedEventModel;
@@ -192,7 +192,7 @@ class AddEventController extends GetxController {
     super.onClose();
   }
 
-   imagesUrl({
+  imagesUrl({
     required List<UploadedImageModel> uploadedImageModels,
   }) async {
     List<String> imagesList = [];
@@ -222,6 +222,4 @@ class AddEventController extends GetxController {
 
     return imagesList;
   }
-
-
 }
