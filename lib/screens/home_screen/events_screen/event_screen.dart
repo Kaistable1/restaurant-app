@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
-
 import '../../../custom_widget/separate_text_field.dart';
 import 'common_widget/tab_widget.dart';
 import 'common_widget/tabs_widget.dart';
@@ -48,7 +46,7 @@ class EventScreen extends StatelessWidget {
             child: SizedBox(
               height: 38,
               child: CustomSeparateTextField(
-                controller: TextEditingController(),
+                controller: controller.searchController,
                 hintText: 'Try searching for restaurant name',
                 hintStyle: TextStyle(
                   color: AppColors.hintText,
@@ -180,10 +178,16 @@ class EventScreen extends StatelessWidget {
                 Expanded(
                   child:
                       Obx(() => controller.upcomingAppointmentsCheck.value == 0
-                          ? EventsList(eventsOnly: 'Today',)
+                          ? EventsList(
+                              eventsOnly: 'Today',
+                            )
                           : controller.upcomingAppointmentsCheck.value == 1
-                              ? EventsList(eventsOnly: 'This week',)
-                              : EventsList(eventsOnly: 'This month',)),
+                              ? EventsList(
+                                  eventsOnly: 'This week',
+                                )
+                              : EventsList(
+                                  eventsOnly: 'This month',
+                                )),
                 ),
               ],
             ),
