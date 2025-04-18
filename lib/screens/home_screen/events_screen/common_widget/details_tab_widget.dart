@@ -38,9 +38,15 @@ class MapController extends GetxController {
 }
 
 class DetailsTabWidget extends StatelessWidget {
-  final controller= Get.put(MapController());
-   DetailsTabWidget({super.key});
-
+  final controller = Get.put(MapController());
+  DetailsTabWidget(
+      {super.key,
+      required this.lat,
+      required this.location,
+      required this.long});
+  String location;
+  double lat;
+  double long;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -49,30 +55,35 @@ class DetailsTabWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Details',
-            style: TextStyle(
-              fontFamily: 'Nunito-Sans',
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
-              color: AppColors.headingTextColor
+            Text(
+              'Details',
+              style: TextStyle(
+                  fontFamily: 'Nunito-Sans',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                  color: AppColors.headingTextColor),
             ),
+            SizedBox(
+              height: 10,
             ),
-            SizedBox(height: 10,),
-            Text('Address',
+            Text(
+              'Address',
               style: TextStyle(
                   fontFamily: 'Nunito-Sans',
                   fontWeight: FontWeight.w500,
                   fontSize: 14,
-                  color: AppColors.textNormalColor
-              ),
+                  color: AppColors.textNormalColor),
             ),
-            SizedBox(height: 10,),
+            SizedBox(
+              height: 10,
+            ),
             Row(
               children: [
-                Image.asset('assets/images/location_icon2.png', width: 16, height: 16),
+                Image.asset('assets/images/location_icon2.png',
+                    width: 16, height: 16),
                 const SizedBox(width: 6),
                 Text(
-                  '1901 Thornridge Cir. Shiloh, Hawaii 81063',
+                  location,
                   style: const TextStyle(
                     color: AppColors.textNormalColor,
                     fontSize: 14,
@@ -82,7 +93,9 @@ class DetailsTabWidget extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 12,),
+            SizedBox(
+              height: 12,
+            ),
             Container(
               height: 209,
               width: Get.width,
@@ -91,15 +104,19 @@ class DetailsTabWidget extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: Obx(
-                      () => GoogleMap(
-                    onMapCreated: controller.onMapCreated,
-                    initialCameraPosition: CameraPosition(
-                      target: controller.eventLocation,
-                      zoom: 14.0,
-                    ),
-                    markers: controller.markers.value,
+                child: GoogleMap(
+                  onMapCreated: controller.onMapCreated,
+                  initialCameraPosition: CameraPosition(
+                    target: LatLng(lat, long),
+                    zoom: 14.0,
                   ),
+                  markers: {
+                    Marker(
+                      markerId: MarkerId('Restaurant location'),
+                      position: LatLng(lat, long),
+                    ),
+                  },
+                  mapType: MapType.terrain,
                 ),
               ),
             ),

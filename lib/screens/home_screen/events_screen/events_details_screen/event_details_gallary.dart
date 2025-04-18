@@ -5,22 +5,10 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
 
 class EventDetailsGallery extends StatelessWidget {
-  const EventDetailsGallery({super.key});
-
+  EventDetailsGallery({super.key, required this.imageList});
+  List<String> imageList = [];
   @override
   Widget build(BuildContext context) {
-    final List<String> imageList = [
-      'assets/images/event_im1.png',
-      'assets/images/event_ing2.png',
-      'assets/images/event_img3.png',
-      'assets/images/event_img4.png',
-      'assets/images/event_img5.png',
-      'assets/images/event_img6.png',
-      'assets/images/event_img7.png',
-      'assets/images/event_img8.png',
-      'assets/images/event_ing2.png',
-    ];
-
     return Scaffold(
       backgroundColor: AppColors.bgColor,
       appBar: AppBar(
@@ -76,7 +64,7 @@ class EventDetailsGallery extends StatelessWidget {
               onTap: () => _showImageDialog(context, imageList[index]),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: Image.asset(
+                child: Image.network(
                   imageList[index],
                   fit: BoxFit.cover,
                 ),
@@ -99,7 +87,8 @@ class EventDetailsGallery extends StatelessWidget {
             // Blurred Background
             Positioned.fill(
               child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2), // Blur intensity
+                filter:
+                    ImageFilter.blur(sigmaX: 2, sigmaY: 2), // Blur intensity
                 child: Container(
                   color: Colors.black.withOpacity(0.1), // Dark overlay effect
                 ),
@@ -116,11 +105,11 @@ class EventDetailsGallery extends StatelessWidget {
                     height: 640, // Fixed height
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: Colors.transparent ,
+                      color: Colors.transparent,
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: Image.asset(
+                      child: Image.network(
                         imagePath,
                         fit: BoxFit.cover,
                       ),
@@ -147,7 +136,8 @@ class EventDetailsGallery extends StatelessWidget {
                             ),
                           ],
                         ),
-                        child: Icon(Icons.close, color: AppColors.primaryColor, size: 22),
+                        child: Icon(Icons.close,
+                            color: AppColors.primaryColor, size: 22),
                       ),
                     ),
                   ),

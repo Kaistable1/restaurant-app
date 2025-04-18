@@ -73,7 +73,7 @@ class EventsList extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 child: DaysTile(
-                  onTap: () => Get.to(() => EventDetailsScreen()),
+                  onTap: () => Get.to(() => EventDetailsScreen(event: event,)),
                   image: event.imageUrls.first,
                   title: event.eventName,
                   location: event.location,

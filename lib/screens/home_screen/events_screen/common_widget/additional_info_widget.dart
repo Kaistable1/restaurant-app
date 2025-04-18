@@ -3,8 +3,16 @@ import 'package:flutter/material.dart';
 import '../../../../constants/app_colors.dart';
 
 class AdditionalInfoWidget extends StatelessWidget {
-  const AdditionalInfoWidget({super.key});
-
+  AdditionalInfoWidget(
+      {super.key,
+      required this.desctiption,
+      required this.date,
+      required this.time,
+      required this.phone});
+  String desctiption;
+  String date;
+  String time;
+  String phone;
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -13,40 +21,47 @@ class AdditionalInfoWidget extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            child: Text('Additional information',
+            child: Text(
+              'Additional information',
               style: TextStyle(
                   fontFamily: 'Nunito-Sans',
                   fontWeight: FontWeight.w600,
                   fontSize: 16,
-                  color: AppColors.headingTextColor
-              ),
+                  color: AppColors.headingTextColor),
             ),
           ),
-          SizedBox(height: 10,),
+          SizedBox(
+            height: 10,
+          ),
           InfoTile(
             title: 'Description',
-            description: 'Come to The Culinary Haven for an exclusive tasting experience crafted by chef Luca Romano! Savor live tunes and connect with other food enthusiasts on Saturday, ',
+            description: desctiption,
             iconPath: 'assets/images/description_icon.png',
           ),
-          SizedBox(height: 20,),
+          SizedBox(
+            height: 20,
+          ),
           InfoTile(
             title: 'Date',
-            description: '12/3/2024',
+            description: date,
             iconPath: 'assets/images/date_icon.png',
           ),
-          SizedBox(height: 20,),
+          SizedBox(
+            height: 20,
+          ),
           InfoTile(
             title: 'Time',
-            description: '9:00 AM to 5:00 PM',
+            description: time,
             iconPath: 'assets/images/time_icon.png',
           ),
-          SizedBox(height: 20,),
+          SizedBox(
+            height: 20,
+          ),
           InfoTile(
             title: 'Phone',
-            description: '(555) 123-4567. ',
+            description: phone,
             iconPath: 'assets/images/phone_icon.png',
           ),
-      
         ],
       ),
     );
@@ -115,4 +130,3 @@ class InfoTile extends StatelessWidget {
     );
   }
 }
-
