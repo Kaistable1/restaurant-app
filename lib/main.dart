@@ -18,6 +18,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
     await Firebase.initializeApp();
+    // FirebaseAuth.instance.signOut();
     await getCurrentUserData();
     await requestLocationPermission();
   } on FirebaseAuthException catch (e) {
