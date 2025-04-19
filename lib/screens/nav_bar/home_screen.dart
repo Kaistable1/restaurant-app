@@ -10,6 +10,7 @@ import 'package:kaistable_website/screens/home_screen/home_controller/home_locat
 import 'package:kaistable_website/screens/home_screen/new_view_all/new_viewall.dart';
 import 'package:kaistable_website/screens/home_screen/trending_all/trending_view_all.dart';
 import 'package:kaistable_website/screens/nav_bar/near_by_all.dart';
+import 'package:kaistable_website/widgets/carousel_slider_banner.dart';
 import 'package:kaistable_website/widgets/global_functions.dart';
 import 'package:kaistable_website/widgets/rectangle_widget.dart';
 import 'package:showcaseview/showcaseview.dart';
@@ -26,7 +27,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final HomeController controller = Get.put(HomeController());
+  HomeController controller = Get.put(HomeController());
 
   final EventsController eventController = Get.put(EventsController());
 
@@ -88,24 +89,53 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Showcase.withWidget(
-                    key: _carouselKey,
-                    height: 190,
-                    width: Get.width - 24,
-                    tooltipPosition: TooltipPosition.bottom,
-                    targetBorderRadius: BorderRadius.circular(20),
-                    container: ShowCaseContainer(
-                      width: Get.width - 32,
-                      text: "Check out the latest deals and promotions here!",
-                      showcaseContext: context,
-                      last: false,
-                    ),
-                    child: Image.asset(
-                      'assets/images/top_banner.png',
-                      height: Get.height * 0.25,
-                      width: Get.width,
-                    ),
-                  ),
+                  hasStartedShowcase && !controller.isSpotlightFinish.value
+                      ? Showcase.withWidget(
+                          key: _carouselKey,
+                          height: 190,
+                          width: Get.width - 24,
+                          tooltipPosition: TooltipPosition.bottom,
+                          targetBorderRadius: BorderRadius.circular(20),
+                          container: ShowCaseContainer(
+                            width: Get.width - 32,
+                            text:
+                                "Check out the latest deals and promotions here!",
+                            showcaseContext: context,
+                            last: false,
+                          ),
+                          child: Image.asset(
+                            'assets/images/top_banner.png',
+                            height: Get.height * 0.25,
+                            width: Get.width,
+                          ),
+                        )
+                      : StreamBuilder(
+                          stream: controller.fetchAllBanners(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return CarouselWidget(imagePaths: [
+                                'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4',
+                              ]);
+                            }
+
+                            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                              return CarouselWidget(imagePaths: [
+                                'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4',
+                              ]);
+                            }
+                            final banners = snapshot.data!;
+                            List<String> bannerImages =
+                                banners.map((e) => e.bannerImage).toList();
+                            print('bannerImages: ${bannerImages.length}');
+                            if (bannerImages.isEmpty) {
+                              return CarouselWidget(imagePaths: [
+                                'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4',
+                              ]);
+                            }
+                            return CarouselWidget(imagePaths: bannerImages);
+                          },
+                        ),
                   SizedBox(height: 10),
                   Showcase.withWidget(
                     height: 200,
@@ -265,7 +295,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16.0, vertical: 8.0),
                     child: DaysTile(
-                      onTap: () => Get.to(EventDetailsScreen(event: event,)),
+                      onTap: () => Get.to(EventDetailsScreen(
+                        event: event,
+                      )),
                       image: event.imageUrls.first,
                       title: event.eventName,
                       location: event.location,

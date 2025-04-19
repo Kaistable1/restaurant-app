@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
+import 'package:kaistable_website/models/banner.dart';
 
 class HomeController extends GetxController {
   var currentIndex = 0.obs;
@@ -70,5 +72,18 @@ class HomeController extends GetxController {
   void selectCategory(String category, Widget page) {
     selectedCategory.value = category;
     Get.to(() => page); // Navigate using Get.to()
+  }
+
+  // banner
+
+   Stream<List<BannerModel>> fetchAllBanners() {
+    return FirebaseFirestore.instance
+        .collection('banner')
+        .snapshots()
+        .map((QuerySnapshot<Map<String, dynamic>> snapshot) {
+      return snapshot.docs.map((doc) {
+        return BannerModel.fromDocumentSnapshot(doc);
+      }).toList();
+    });
   }
 }

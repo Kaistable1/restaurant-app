@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
+import 'package:kaistable_website/screens/home_screen/events_screen/common_widget/tab_widget.dart';
 import 'common_widget/days_tile.dart';
 import 'controller/events_controller.dart';
 import 'events_details_screen/event_details_screen.dart';
 
 class EventsList extends StatelessWidget {
   final EventsController controller = Get.put(EventsController());
+  final categoryController = Get.put(CategoryController());
   final String eventsOnly; // "Today", "This week", "This month"
 
   EventsList({super.key, required this.eventsOnly});
@@ -26,14 +28,11 @@ class EventsList extends StatelessWidget {
           } else if (eventsOnly == 'This week') {
             // Calculate Monday of current week
             final startOfWeek = today.subtract(Duration(days: today.weekday));
-            print('startOfWeek $startOfWeek');
             // Sunday is end of week
             final endOfWeek = startOfWeek.add(Duration(days: 6));
-            print('endOfWeek $endOfWeek');
             // Only compare dates, ignore time
             final justDate =
                 DateTime(eventDate.year, eventDate.month, eventDate.day);
-            print('justDate $justDate');
             return justDate.isAtSameMomentAs(startOfWeek) ||
                 (justDate.isAfter(startOfWeek) &&
                     justDate.isBefore(endOfWeek.add(Duration(days: 1))));
@@ -46,6 +45,14 @@ class EventsList extends StatelessWidget {
           return false;
         }
       }).toList();
+
+      //filter by category
+
+      String selectedCategory = categoryController.selectedCat.value;
+      if (selectedCategory.isNotEmpty) {
+        filteredEvents
+            .retainWhere((event) => event.eventType == selectedCategory);
+      }
 
       if (filteredEvents.isEmpty) {
         return Center(
@@ -73,7 +80,9 @@ class EventsList extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 child: DaysTile(
-                  onTap: () => Get.to(() => EventDetailsScreen(event: event,)),
+                  onTap: () => Get.to(() => EventDetailsScreen(
+                        event: event,
+                      )),
                   image: event.imageUrls.first,
                   title: event.eventName,
                   location: event.location,

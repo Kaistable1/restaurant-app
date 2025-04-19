@@ -112,23 +112,23 @@ class DaysTile extends StatelessWidget {
               ],
             ),
             const Spacer(),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Obx(() {
-                bool isBookmarked =
-                    bookmarkController.isBookmarked(title ?? '');
-                return GestureDetector(
-                  onTap: () => bookmarkController.toggleBookmark(title ?? ''),
-                  child: Image.asset(
-                    isBookmarked
-                        ? 'assets/images/fill_bookmark.png' // Filled Bookmark
-                        : 'assets/images/empty_bookmark.png', // Unfilled Bookmark
-                    height: 20,
-                    width: 20,
-                  ),
-                );
-              }),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(vertical: 8.0),
+            //   child: Obx(() {
+            //     bool isBookmarked =
+            //         bookmarkController.isBookmarked(title ?? '');
+            //     return GestureDetector(
+            //       onTap: () => bookmarkController.toggleBookmark(title ?? ''),
+            //       child: Image.asset(
+            //         isBookmarked
+            //             ? 'assets/images/fill_bookmark.png' // Filled Bookmark
+            //             : 'assets/images/empty_bookmark.png', // Unfilled Bookmark
+            //         height: 20,
+            //         width: 20,
+            //       ),
+            //     );
+            //   }),
+            // ),
           ],
         ),
       ),
