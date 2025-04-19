@@ -24,8 +24,6 @@ class NewViewall extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    bool isLargeScreen = screenWidth > 1400;
 
     return WillPopScope(
       onWillPop: () async {
@@ -66,10 +64,7 @@ class NewViewall extends StatelessWidget {
                 child: CustomSeparateTextField(
                   controller: homeController.searchController,
                   hintText: 'Try searching for restaurant name',
-                  // onChanged: (v) {
-                  //   if (v.trim().isNotEmpty)
-                  //     homeController.filterRestaurants(v);
-                  // },
+                
                   hintStyle: TextStyle(
                     color: AppColors.hintText,
                     fontFamily: "Nunito-Regular",

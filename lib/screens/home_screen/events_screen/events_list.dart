@@ -49,11 +49,26 @@ class EventsList extends StatelessWidget {
       //filter by category
 
       String selectedCategory = categoryController.selectedCat.value;
-      if (selectedCategory.isNotEmpty) {
+      if (selectedCategory.isNotEmpty && selectedCategory != 'Distance') {
         filteredEvents
             .retainWhere((event) => event.eventType == selectedCategory);
       }
-
+// Apply geofencing filter if 'Distance' is selected and a valid mile value is chosen
+      if (selectedCategory == 'Distance' &&
+          categoryController.selectedMiles.isNotEmpty) {
+       
+        double maxDistance = double.parse(categoryController.selectedMiles
+            .split(' ')[0]
+            .replaceAll('Miles', '')
+            .trim()); // Extract number (e.g., "5 Miles" -> 5.0)
+        filteredEvents.retainWhere((event) {
+          double distance = categoryController.calculateDistance(
+            event.latitude,
+            event.longitude,
+          );
+          return distance <= maxDistance;
+        });
+      }
       if (filteredEvents.isEmpty) {
         return Center(
           child: Text(

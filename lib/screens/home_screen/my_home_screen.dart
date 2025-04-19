@@ -176,6 +176,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
   bool isSearching = false;
   List<RestaurantModel> filterRestaurants(
       List<RestaurantModel> restaurants, String query) {
+    print('---------calling filter');
     query = query
         .toLowerCase(); // Convert query to lowercase for case-insensitive search
     final int? queryNumber =
@@ -187,12 +188,16 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
         // If numeric, match with zipCode
         return restaurant.zipCode == query;
       }
-
+      print(
+          'cuisines ------- ${restaurant.menuList.map((item) => item.cuisineType.contains(query)).any((element) => element)}');
       // If not numeric, check all fields for matches
       return restaurant.resName.toLowerCase().contains(query.toLowerCase()) ||
           restaurant.city.toLowerCase().contains(query.toLowerCase()) ||
           restaurant.address.toLowerCase().contains(query.toLowerCase()) ||
           restaurant.zipCode.toLowerCase().contains(query) ||
+          restaurant.menuList
+              .map((item) => item.cuisineType.contains(query))
+              .any((element) => element) ||
           restaurant.country.toLowerCase().contains(query.toLowerCase()) ||
           restaurant.about.toLowerCase().contains(query.toLowerCase()) ||
           restaurant.socialLink.toLowerCase().contains(query) ||
@@ -201,7 +206,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
           restaurant.spokenLanguage
               .toLowerCase()
               .contains(query.toLowerCase()) ||
-          //filter by events
+          // filter by events
           restaurant.entertainmentScheduleList.any((item) =>
               item.eventName.toLowerCase().contains(query) ||
               item.eventBy.toLowerCase().contains(query)) ||
@@ -210,7 +215,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
               .contains(query)) || // Check in facilityList
           restaurant.dietaryList.any((dietary) =>
               dietary.toLowerCase().contains(query)) || // Check in dietaryList
-          restaurant.atmopshereList.any((atmosphere) => atmosphere
+          restaurant.atmosphereList.any((atmosphere) => atmosphere
               .toLowerCase()
               .contains(query)); // Check in atmopshereList
     }).toList();
@@ -233,6 +238,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
         setState(() {});
       }
     });
+
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: AppBar(
@@ -277,7 +283,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                             height: 16,
                           ),
                           StreamBuilder(
-                            stream: controller.getRestaurants(),
+                            stream: controller.getAllRestaurants(),
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
@@ -367,24 +373,44 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                       List<RestaurantModel> restaurants =
                                           snapshot.data!;
                                       print(
-                                          'all resturants length ${restaurants.length}');
-                                      if (filterSelectionController
-                                          .selectedCountry.isNotEmpty) {
-                                        print('flag 1 ');
+                                          'aggretive ------- ${filterSelectionController.aggregatedFilters}');
 
+                                      // filter by cuisines
+                                      if (filterSelectionController
+                                          .aggregatedFilters.isNotEmpty) {
+                                        print('flag 1');
                                         restaurants =
                                             restaurants.where((restaurant) {
-                                          bool isCityMatched =
+                                          // Convert both lists to lowercase
+                                          List<String>
+                                              selectedFiltersLowercase =
                                               filterSelectionController
                                                   .aggregatedFilters
-                                                  .map((e) => e.toLowerCase())
-                                                  .any((filter) => restaurant
-                                                      .city
-                                                      .toLowerCase()
-                                                      .contains(filter));
-                                          return isCityMatched;
+                                                  .map((filter) =>
+                                                      filter.toLowerCase())
+                                                  .toList();
+                                          List<String>
+                                              restaurantCuisinesLowercase =
+                                              restaurant.menuList
+                                                  .map((menu) => menu
+                                                      .cuisineType
+                                                      .toLowerCase())
+                                                  .toList();
+
+                                          // Check if any selected filter is contained in any restaurant cuisines
+                                          bool isMatch =
+                                              selectedFiltersLowercase
+                                                  .any((selectedFilter) {
+                                            return restaurantCuisinesLowercase
+                                                .any((restaurantFacility) {
+                                              return restaurantFacility
+                                                  .contains(selectedFilter);
+                                            });
+                                          });
+                                          return isMatch;
                                         }).toList();
                                       }
+
                                       // Filter by City
                                       if (filterSelectionController
                                           .selectedCity.isNotEmpty) {
@@ -392,6 +418,11 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
 
                                         restaurants =
                                             restaurants.where((restaurant) {
+                                          print(
+                                              'restaurant city ${restaurant.city}');
+
+                                          print(
+                                              'filter restuant ${filterSelectionController.aggregatedFilters}');
                                           bool isCityMatched =
                                               filterSelectionController
                                                   .aggregatedFilters
@@ -400,34 +431,8 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                                       .city
                                                       .toLowerCase()
                                                       .contains(filter));
+                                          print('iscity match $isCityMatched');
                                           return isCityMatched;
-                                        }).toList();
-                                      }
-
-                                      // Filter by Discounts
-                                      if (filterSelectionController
-                                          .selectedDiscounts.isNotEmpty) {
-                                        print('flag 4');
-                                        restaurants =
-                                            restaurants.where((restaurant) {
-                                          final lowercasedFilters =
-                                              filterSelectionController
-                                                  .aggregatedFilters
-                                                  .map((e) => e.toLowerCase())
-                                                  .toList();
-
-                                          return (lowercasedFilters.contains(
-                                                      'percentage off') &&
-                                                  restaurant
-                                                      .menuList
-                                                      .percentageOff
-                                                      .isNotEmpty) ||
-                                              (lowercasedFilters.contains(
-                                                      'happy hour specials') &&
-                                                  restaurant
-                                                      .menuList
-                                                      .happyHourSpecials
-                                                      .isNotEmpty);
                                         }).toList();
                                       }
 
@@ -447,7 +452,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                                   .toList();
                                           List<String>
                                               restaurantAtmosphereLowercase =
-                                              restaurant.atmopshereList
+                                              restaurant.atmosphereList
                                                   .map((atmosphere) =>
                                                       atmosphere.toLowerCase())
                                                   .toList();
@@ -592,8 +597,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                           List<RestaurantModel>
                                               timeOfDayRestaurants =
                                               futureSnapshot.data ?? [];
-                                          print(
-                                              'timeOfDayRestaurants----------------${timeOfDayRestaurants.length}');
+
                                           if (filterSelectionController
                                               .aggregatedFilters
                                               .map((e) => e.toLowerCase())
@@ -607,104 +611,28 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                                 timeOfDayRestaurants;
                                           }
 
-                                          // Handle the second FutureBuilder for cuisines
-                                          return StreamBuilder<
-                                              Map<String, List<String>>>(
-                                            stream: filterSelectionController
-                                                    .aggregatedFilters
-                                                    .any((filter) =>
-                                                        filterSelectionController
-                                                            .selectedFilters
-                                                            .contains(filter))
-                                                ? filterController
-                                                    .getRestaurantsGroupedByCuisine()
-                                                : null, // Provides a default empty map if no filters are selected
-                                            builder: (context,
-                                                streamCuisineSnapshot) {
-                                              if (streamCuisineSnapshot
-                                                      .connectionState ==
-                                                  ConnectionState.waiting) {
-                                                return _buildLoadingIndicator();
-                                              }
+                                          // Listen for search changes and filter restaurants accordingly
+                                          controller.searchController
+                                              .addListener(() {
+                                            controller.filteredRestaurants =
+                                                restaurants
+                                                    .where((item) => item
+                                                        .resName
+                                                        .toLowerCase()
+                                                        .contains(controller
+                                                            .searchController
+                                                            .text
+                                                            .toLowerCase()))
+                                                    .toList();
+                                            controller.update();
+                                          });
 
-                                              if (streamCuisineSnapshot
-                                                  .hasError) {
-                                                return _buildErrorWidget(
-                                                    'Failed to load cuisines!');
-                                              }
-
-                                              final cuisineMap =
-                                                  streamCuisineSnapshot.data ??
-                                                      {};
-
-                                              // Filter cuisines based on selected filters
-                                              final selectedCuisines =
-                                                  filterSelectionController
-                                                      .aggregatedFilters;
-
-                                              if (selectedCuisines.any(
-                                                  (filter) =>
-                                                      filterSelectionController
-                                                          .selectedFilters
-                                                          .contains(filter))) {
-                                                final filteredRestaurantIds =
-                                                    cuisineMap
-                                                        .entries
-                                                        .where((entry) =>
-                                                            selectedCuisines
-                                                                .contains(entry
-                                                                    .key
-                                                                    .toLowerCase()))
-                                                        .expand((entry) =>
-                                                            entry.value)
-                                                        .toSet()
-                                                        .toList();
-
-                                                if (filteredRestaurantIds
-                                                    .isNotEmpty) {
+                                          return GetBuilder<
+                                              HomeLocationController>(
+                                            builder: (controller) {
+                                              return _buildRestaurantGrid(
                                                   controller
-                                                          .filteredRestaurants =
-                                                      controller
-                                                          .filteredRestaurants
-                                                          .where((restaurant) =>
-                                                              filteredRestaurantIds
-                                                                  .contains(
-                                                                      restaurant
-                                                                          .docID))
-                                                          .toList();
-                                                } else {
-                                                  controller
-                                                      .filteredRestaurants = [];
-                                                  return _buildEmptyState(
-                                                      'No restaurants found!');
-                                                }
-                                              }
-
-                                              // Listen for search changes and filter restaurants accordingly
-                                              controller.searchController
-                                                  .addListener(() {
-                                                controller.filteredRestaurants =
-                                                    restaurants
-                                                        .where((item) => item
-                                                            .resName
-                                                            .toLowerCase()
-                                                            .contains(controller
-                                                                .searchController
-                                                                .text
-                                                                .toLowerCase()))
-                                                        .toList();
-                                                controller.update();
-                                              });
-                                              print(
-                                                  'resturants lenghth after all filters ${restaurants.length}');
-                                              return GetBuilder<
-                                                  HomeLocationController>(
-                                                builder: (controller) {
-                                                  return _buildRestaurantGrid(
-                                                      controller
-                                                          .filteredRestaurants);
-                                                },
-                                              );
+                                                      .filteredRestaurants);
                                             },
                                           );
                                         },

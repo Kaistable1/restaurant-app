@@ -165,9 +165,6 @@ class FilterSelectionController extends GetxController {
 
   void aggregateSelectedFilters() {
     aggregatedFilters.clear();
-    if (selectedCountry.value.isNotEmpty) {
-      aggregatedFilters.add(selectedCountry.value);
-    }
     if (selectedCity.value.isNotEmpty) {
       aggregatedFilters.add(selectedCity.value);
     }

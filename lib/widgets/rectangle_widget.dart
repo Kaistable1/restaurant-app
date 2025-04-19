@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/main.dart';
-
-import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_location_controller.dart';
-
 import '../constants/app_colors.dart';
 
 class RectangleWidget extends StatelessWidget {
@@ -15,8 +12,8 @@ class RectangleWidget extends StatelessWidget {
   final String? endTimeText;
   final String percentText;
   final RxBool isFavorite;
-  List<OfferModel>? percentageOff;
-  List<OfferModel>? happyhour;
+  // List<OfferModel>? percentageOff;
+  // List<OfferModel>? happyhour;
   final double? width;
   final double? height;
   final double? imgHeight;
@@ -28,8 +25,8 @@ class RectangleWidget extends StatelessWidget {
   RectangleWidget({
     super.key,
     required this.title,
-    this.percentageOff,
-    this.happyhour,
+    // this.percentageOff,
+    // this.happyhour,
     this.resturant_id,
     required this.imagePath,
     required this.description,
@@ -80,7 +77,7 @@ class RectangleWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     SizedBox(
-                      width: 140,
+                      width: 100,
                       child: Text(
                         title,
                         overflow: TextOverflow.ellipsis,
@@ -131,88 +128,87 @@ class RectangleWidget extends StatelessWidget {
           SizedBox(
             height: 6,
           ),
-          percentageOff?.isNotEmpty ?? false
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Dynamically build StarBoxes based on the percentageOff list
-                    ...percentageOff!.take(2).map((item) => Padding(
-                          padding: const EdgeInsets.only(
-                              right: 2.0), // Add spacing between items
-                          child: _buildStarBox(context,
-                              item:
-                                  item), // Pass item to _buildStarBox if needed
-                        )),
-                  ],
-                )
-              : happyhour?.isNotEmpty ?? false
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Dynamically build StarBoxes based on the percentageOff list
-                        ...happyhour!.take(2).map((item) => Padding(
-                              padding: const EdgeInsets.only(
-                                  right: 2.0), // Add spacing between items
-                              child: _buildStarBox(context,
-                                  item:
-                                      item), // Pass item to _buildStarBox if needed
-                            )),
-                      ],
-                    )
-                  : SizedBox(),
+          // percentageOff?.isNotEmpty ?? false
+          //     ? Row(
+          //         mainAxisAlignment: MainAxisAlignment.start,
+          //         crossAxisAlignment: CrossAxisAlignment.start,
+          //         children: [
+          //           // Dynamically build StarBoxes based on the percentageOff list
+          //           ...percentageOff!.take(2).map((item) => Padding(
+          //                 padding: const EdgeInsets.only(
+          //                     right: 2.0), // Add spacing between items
+          //                 child: _buildStarBox(context,
+          //                     item:
+          //                         item), // Pass item to _buildStarBox if needed
+          //               )),
+          //         ],
+          //       )
+          //     : happyhour?.isNotEmpty ?? false
+          //         ? Row(
+          //             mainAxisAlignment: MainAxisAlignment.start,
+          //             crossAxisAlignment: CrossAxisAlignment.start,
+          //             children: [
+          //               // Dynamically build StarBoxes based on the percentageOff list
+          //               ...happyhour!.take(2).map((item) => Padding(
+          //                     padding: const EdgeInsets.only(
+          //                         right: 2.0), // Add spacing between items
+          //                     child: _buildStarBox(context,
+          //                         item:
+          //                             item), // Pass item to _buildStarBox if needed
+          //                   )),
+          //             ],
+          //           )
+          //         : SizedBox(),
         ],
       ),
     );
-  
   }
 
-  Widget _buildStarBox(BuildContext context, {required OfferModel item}) {
-    return Container(
-      height: Get.height * 0.065,
-      width: Get.height * 0.065,
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/images/star_img.png'),
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.only(top: 4.0, bottom: 4),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              '${item.startTime} to',
-              style: TextStyle(
-                fontFamily: 'Nunito-Regular',
-                fontSize: 7,
-                fontWeight: FontWeight.w700,
-                color: AppColors.whiteColor,
-              ),
-            ),
-            Text(
-              "${item.endTime}",
-              style: TextStyle(
-                fontFamily: 'Nunito-Regular',
-                fontSize: 7,
-                fontWeight: FontWeight.w700,
-                color: AppColors.whiteColor,
-              ),
-            ),
-            Text(
-              '${item.percentage} off',
-              style: TextStyle(
-                fontFamily: 'Nunito-Regular',
-                fontSize: 7,
-                fontWeight: FontWeight.bold,
-                color: AppColors.whiteColor,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  // Widget _buildStarBox(BuildContext context, {required OfferModel item}) {
+  //   return Container(
+  //     height: Get.height * 0.065,
+  //     width: Get.height * 0.065,
+  //     decoration: const BoxDecoration(
+  //       image: DecorationImage(
+  //         image: AssetImage('assets/images/star_img.png'),
+  //       ),
+  //     ),
+  //     child: Padding(
+  //       padding: const EdgeInsets.only(top: 4.0, bottom: 4),
+  //       child: Column(
+  //         mainAxisAlignment: MainAxisAlignment.center,
+  //         crossAxisAlignment: CrossAxisAlignment.center,
+  //         children: [
+  //           Text(
+  //             '${item.startTime} to',
+  //             style: TextStyle(
+  //               fontFamily: 'Nunito-Regular',
+  //               fontSize: 7,
+  //               fontWeight: FontWeight.w700,
+  //               color: AppColors.whiteColor,
+  //             ),
+  //           ),
+  //           Text(
+  //             "${item.endTime}",
+  //             style: TextStyle(
+  //               fontFamily: 'Nunito-Regular',
+  //               fontSize: 7,
+  //               fontWeight: FontWeight.w700,
+  //               color: AppColors.whiteColor,
+  //             ),
+  //           ),
+  //           Text(
+  //             '${item.percentage} off',
+  //             style: TextStyle(
+  //               fontFamily: 'Nunito-Regular',
+  //               fontSize: 7,
+  //               fontWeight: FontWeight.bold,
+  //               color: AppColors.whiteColor,
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 }

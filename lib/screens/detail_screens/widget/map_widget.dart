@@ -138,10 +138,10 @@ class MapDetailWidget extends StatelessWidget {
           ),
           SizedBox(
             width: 325,
-            child: restaurantModel.atmopshereList.isEmpty
+            child: restaurantModel.atmosphereList.isEmpty
                 ? Text("comming Soon!")
                 : _buildStarBox(
-                    titleList: restaurantModel.atmopshereList,
+                    titleList: restaurantModel.atmosphereList,
                     context,
                   ),
           ),
@@ -442,7 +442,7 @@ class MapDetailWidget extends StatelessWidget {
                               'about': resaturant_model.about,
                               'address': resaturant_model.address,
                               'atmopshereList': resaturant_model
-                                  .atmopshereList, // Empty array as per your data
+                                  .atmosphereList, // Empty array as per your data
                               'averageRating': resaturant_model.averageRating,
                               'city': resaturant_model.city,
                               'country': resaturant_model.country,

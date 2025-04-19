@@ -127,7 +127,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             final banners = snapshot.data!;
                             List<String> bannerImages =
                                 banners.map((e) => e.bannerImage).toList();
-                            print('bannerImages: ${bannerImages.length}');
                             if (bannerImages.isEmpty) {
                               return CarouselWidget(imagePaths: [
                                 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4',
