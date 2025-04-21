@@ -112,13 +112,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
   void initState() {
     super.initState();
     getCurrentUserData();
-    // fun();
     selectedCountry = widget.countryName ?? 'USA';
-  }
-
-  fun() async {
-    print('start deleteing -------------------------');
-    await controller.delete300Restaurants();
   }
 
   Future<Map<String, dynamic>?> getOperatingHours(String restaurantId) async {
@@ -377,7 +371,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
 
                                       // filter by cuisines
                                       if (filterSelectionController
-                                          .aggregatedFilters.isNotEmpty) {
+                                          .selectedFilters.isNotEmpty) {
                                         print('flag 1');
                                         restaurants =
                                             restaurants.where((restaurant) {
@@ -415,14 +409,8 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                       if (filterSelectionController
                                           .selectedCity.isNotEmpty) {
                                         print('flag 2 ');
-
                                         restaurants =
                                             restaurants.where((restaurant) {
-                                          print(
-                                              'restaurant city ${restaurant.city}');
-
-                                          print(
-                                              'filter restuant ${filterSelectionController.aggregatedFilters}');
                                           bool isCityMatched =
                                               filterSelectionController
                                                   .aggregatedFilters
@@ -431,7 +419,6 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                                       .city
                                                       .toLowerCase()
                                                       .contains(filter));
-                                          print('iscity match $isCityMatched');
                                           return isCityMatched;
                                         }).toList();
                                       }

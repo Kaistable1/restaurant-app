@@ -2,29 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/screens/detail_screens/restaurant_detail_screen.dart';
+import 'package:kaistable_website/screens/home_screen/new_view_all/controller.dart';
 import 'package:kaistable_website/widgets/global_functions.dart';
 import 'package:kaistable_website/widgets/rectangle_widget.dart';
-import 'package:shimmer/shimmer.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../custom_widget/separate_text_field.dart';
-import '../../../utils/responsive.dart';
-import '../home_controller/home_location_controller.dart';
-import '../home_controller/home_new_controller.dart';
 
 class NewViewall extends StatelessWidget {
-  final Function(int)? onNavigate;
-  final HomeNewController newController = Get.put(HomeNewController());
-  final HomeLocationController homeController =
-      Get.put(HomeLocationController());
+  final NewRestaurantsController controller =
+      Get.put(NewRestaurantsController());
 
-  NewViewall({super.key, this.onNavigate}) {
-    homeController.selectedTop.value = '';
-  }
+  NewViewall({super.key});
 
   @override
   Widget build(BuildContext context) {
-
     return WillPopScope(
       onWillPop: () async {
         Get.back();
@@ -62,9 +54,8 @@ class NewViewall extends StatelessWidget {
               SizedBox(
                 height: 38,
                 child: CustomSeparateTextField(
-                  controller: homeController.searchController,
+                  controller: controller.searchController,
                   hintText: 'Try searching for restaurant name',
-                
                   hintStyle: TextStyle(
                     color: AppColors.hintText,
                     fontFamily: "Nunito-Regular",
@@ -120,45 +111,28 @@ class NewViewall extends StatelessWidget {
               ),
               SizedBox(height: 12),
               Expanded(
-                child: StreamBuilder(
-                  stream: homeController.getRestaurants(),
+                child: StreamBuilder<List<RestaurantModel>>(
+                  stream: controller.fetchRestaurants(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return buildShimmerEffect(); // Show shimmer while loading
                     }
 
                     if (snapshot.hasError) {
-                      print('Error during stream call ${snapshot.error}');
+                      print('Error during stream call: ${snapshot.error}');
                       return Center(child: Text('Error loading restaurants'));
                     }
 
-                    if (snapshot.data == null || snapshot.data!.isEmpty) {
+                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return Center(child: Text('No restaurants found'));
                     }
-                    List<RestaurantModel> filterResturatns = [];
-                    filterResturatns = homeController.restaurants;
 
-                    return GetBuilder<HomeLocationController>(
-                      builder: (controller) {
-                        controller.searchController.addListener(() {
-                          String inputText =
-                              controller.searchController.text.trim();
-                          filterResturatns = controller.restaurants
-                              .where((item) => item.resName
-                                  .toLowerCase()
-                                  .contains(inputText))
-                              .toList();
-                          controller.update();
-                        });
-
-                        return NotificationListener<ScrollNotification>(
+                    return Obx(() => NotificationListener<ScrollNotification>(
                           onNotification: (ScrollNotification scrollInfo) {
                             if (scrollInfo.metrics.pixels >=
                                     scrollInfo.metrics.maxScrollExtent * 0.8 &&
-                                !homeController.isLoading) {
-                              homeController
-                                  .loadMoreRestaurants(); // Load more when scrolling down
-                              filterResturatns = homeController.restaurants;
+                                !controller.isLoading.value) {
+                              controller.loadMoreRestaurants();
                             }
                             return true;
                           },
@@ -167,8 +141,7 @@ class NewViewall extends StatelessWidget {
                               Flexible(
                                 child: GridView.builder(
                                   shrinkWrap: true,
-                                  physics:
-                                      const AlwaysScrollableScrollPhysics(),
+                                  physics: AlwaysScrollableScrollPhysics(),
                                   gridDelegate:
                                       SliverGridDelegateWithFixedCrossAxisCount(
                                     mainAxisExtent: Get.height * 0.2,
@@ -176,9 +149,15 @@ class NewViewall extends StatelessWidget {
                                     crossAxisSpacing: 10,
                                     mainAxisSpacing: 20,
                                   ),
-                                  itemCount: filterResturatns.length,
+                                  itemCount: controller.restaurants.length +
+                                      (controller.hasMoreData.value ? 1 : 0),
                                   itemBuilder: (context, index) {
-                                    final item = filterResturatns[index];
+                                    if (index ==
+                                        controller.restaurants.length) {
+                                      return Center(
+                                          child: CircularProgressIndicator());
+                                    }
+                                    final item = controller.restaurants[index];
                                     return InkWell(
                                       onTap: () {
                                         Get.to(RestaurantDetailScreen(
@@ -198,16 +177,9 @@ class NewViewall extends StatelessWidget {
                                   },
                                 ),
                               ),
-                              if (homeController.isLoading)
-                                Padding(
-                                  padding: EdgeInsets.all(30),
-                                  child: Text('Loading More .....'),
-                                ),
                             ],
                           ),
-                        );
-                      },
-                    );
+                        ));
                   },
                 ),
               ),
