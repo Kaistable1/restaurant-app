@@ -144,7 +144,7 @@ class ExploreRestaurant extends StatelessWidget {
                     ),
                     SizedBox(height: 12),
                     StreamBuilder(
-                      stream: controller.getRestaurants(),
+                      stream: controller.getAllRestaurants(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -209,7 +209,7 @@ class ExploreRestaurant extends StatelessWidget {
                                   child: RectangleWidget(
                                     onNavigate: onNavigate,
                                     title: item.resName,
-                                    description: item.about,
+                                    description: item.address,
                                     resturant_id: item.docID,
                                     imagePath: item.logoImage,
                                     timetext: '10 AM',
