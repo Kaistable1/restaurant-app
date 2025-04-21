@@ -99,8 +99,7 @@ class RestaurantManagementController extends GetxController {
     "Leimert Park",
     "Crenshaw",
   ].obs;
- 
- 
+
   RxList<String> cuisineList = <String>[
     'Chinese',
     'Italian',
@@ -350,6 +349,9 @@ class RestaurantManagementController extends GetxController {
     }
   }
 
+
+
+
   Future<void> fetchRestaurants({
     bool isRefresh = false,
     String? searchQuery,
@@ -439,7 +441,7 @@ class RestaurantManagementController extends GetxController {
     }
   }
 
-  void deleteRestaurant(int index) async {
+  deleteRestaurant(int index) async {
     try {
       String docID = restaurants[index].docID;
       await FirebaseFirestore.instance
@@ -462,6 +464,32 @@ class RestaurantManagementController extends GetxController {
       print('Error deleting restaurant: $e');
       Get.snackbar('Error', 'Failed to delete restaurant');
     }
+  }
+
+  setFreaturedRestaurant({restaurantID}) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('featured')
+          .doc('mainFeatured')
+          .set({
+        'restaurantID': restaurantID,
+      });
+    } catch (e) {
+      print('Added featured exception $e');
+    }
+  }
+
+  Stream<String?> getFeaturedRestaurantID() {
+    return FirebaseFirestore.instance
+        .collection('featured')
+        .doc('mainFeatured')
+        .snapshots()
+        .map((snapshot) {
+      if (snapshot.exists) {
+        return snapshot.data()?['restaurantID'] as String?;
+      }
+      return null;
+    });
   }
 
   @override

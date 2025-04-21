@@ -131,6 +131,7 @@ class AddRestaurantTabController extends GetxController {
         'address': areaController.text.trim(),
         'atmopshereList': [], // Empty array as per your data
         'averageRating': 0,
+        'reviewCount': 0,
         'city': selectedCity.value.trim(),
         'country': selectedState.value.trim(),
         'createdAt': Timestamp.fromDate(DateTime.now()),
@@ -310,8 +311,6 @@ class AddRestaurantTabController extends GetxController {
       return 'error';
     }
   }
-
-
 }
 
 class UploadedImageModel {

@@ -264,7 +264,11 @@ class BannerController extends GetxController {
       bannerList.removeAt(index);
       Get.back();
       Get.snackbar('Success', 'Banner deleted successfully',
-          backgroundColor: primaryColor, colorText: white);
+          backgroundColor: primaryColor,
+          colorText: white,
+          duration: Duration(seconds: 1));
+      fetchBanners();
+      update();
     } catch (e) {
       Get.back();
       Get.snackbar('Error', 'Failed to delete banner: $e',

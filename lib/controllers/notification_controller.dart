@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:savrly/models/usermodel.dart';
+import 'package:savrly/models/usermodel_for_notification.dart';
 
 class NotificationController extends GetxController {
   final titleController = TextEditingController();

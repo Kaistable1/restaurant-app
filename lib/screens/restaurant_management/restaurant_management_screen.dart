@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:savrly/constants/text_styles.dart';
@@ -289,6 +291,19 @@ class _RestaurantManagementScreenState
                           flex: 1,
                           child: Center(
                             child: Text(
+                              "Featured",
+                              textAlign: TextAlign.center,
+                              style: simpleText.copyWith(
+                                fontSize: tableHeaderTextSize,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Center(
+                            child: Text(
                               "Status",
                               textAlign: TextAlign.center,
                               style: simpleText.copyWith(
@@ -444,6 +459,36 @@ class _RestaurantManagementScreenState
                                 ),
                                 Expanded(
                                   flex: 1,
+                                  child: StreamBuilder(
+                                    stream:
+                                        controller.getFeaturedRestaurantID(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return CircleCheckbox(
+                                          onChanged: (v) async {},
+                                          value: false,
+                                        );
+                                      }
+                                      print('snapshot data ${snapshot.data}');
+                                      final isFeatured =
+                                          snapshot.data == restaurant.docID;
+
+                                      return CircleCheckbox(
+                                        onChanged: (v) async {
+                                          print('check');
+                                          await controller
+                                              .setFreaturedRestaurant(
+                                            restaurantID: restaurant.docID,
+                                          );
+                                        },
+                                        value: isFeatured,
+                                      );
+                                    },
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 1,
                                   child: Center(
                                     child: Container(
                                       width: statusSize,
@@ -547,6 +592,45 @@ class _RestaurantManagementScreenState
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class CircleCheckbox extends StatelessWidget {
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  const CircleCheckbox({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => onChanged(!value),
+      child: Container(
+        width: 24,
+        height: 24,
+        decoration: BoxDecoration(
+          color: value ? Colors.green : Colors.transparent,
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: Colors.green,
+            width: 2,
+          ),
+        ),
+        child: value
+            ? const Center(
+                child: Icon(
+                  Icons.check,
+                  size: 16,
+                  color: Colors.white,
+                ),
+              )
+            : null,
       ),
     );
   }

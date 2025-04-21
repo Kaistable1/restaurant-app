@@ -129,27 +129,27 @@ class LoginScreen extends StatelessWidget {
                         width: 250,
                         shadow: [],
                         containerColor: primaryColor,
-                        ontapp: () async  {
-                         controller.loginAdmin();
+                        ontapp: () async {
+                          controller.loginAdmin();
                         },
                       ),
                     ),
-                    SizedBox(height: 20), // Space before the new text
-                    Center(
-                      child: TextButton(
-                        onPressed: () {
-                          Get.to(() => SubAdminLogin());
-                        },
-                        child: Text(
-                          "Sign in as a Sub-Admin",
-                          style: simpleText.copyWith(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: primaryColor,
-                          ),
-                        ),
-                      ),
-                    ),
+                    // SizedBox(height: 20), // Space before the new text
+                    // Center(
+                    //   child: TextButton(
+                    //     onPressed: () {
+                    //       Get.to(() => SubAdminLogin());
+                    //     },
+                    //     child: Text(
+                    //       "Sign in as a Sub-Admin",
+                    //       style: simpleText.copyWith(
+                    //         fontSize: 16,
+                    //         fontWeight: FontWeight.w500,
+                    //         color: primaryColor,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
