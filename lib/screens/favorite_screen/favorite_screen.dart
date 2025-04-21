@@ -213,13 +213,12 @@ class FavoriteScreen extends StatelessWidget {
                                       child: RectangleWidget(
                                         onNavigate: onNavigate,
                                         title: item.resName,
-                                        description: item.about,
+                                        description: item.address,
                                         imagePath: item.logoImage,
                                         timetext: '',
                                         endTimeText: '',
                                         percentText: '',
                                         resturant_id: item.docID,
-                                     
                                         isFavorite: true.obs,
                                       ),
                                     );

@@ -372,7 +372,7 @@ class HomeLocationController extends GetxController {
         querySnapshot.docs.map((doc) async {
           final restaurant = RestaurantModel.fromDocumentSnapshot(
               doc as DocumentSnapshot<Map<String, dynamic>>);
-      
+
           return restaurant;
         }),
       );
@@ -442,7 +442,7 @@ class HomeLocationController extends GetxController {
       List<RestaurantModel> restaurantsList = await Future.wait(
         snapshot.docs.map((doc) async {
           final restaurant = RestaurantModel.fromDocumentSnapshot(doc);
-       
+
           return restaurant;
         }),
       );
@@ -464,7 +464,7 @@ class HomeLocationController extends GetxController {
           final restaurants = await Future.wait(
             snapshot.docs.map((doc) async {
               final restaurant = RestaurantModel.fromDocumentSnapshot(doc);
-        
+
               return restaurant;
             }),
           );
@@ -740,5 +740,34 @@ class HomeLocationController extends GetxController {
         );
       },
     );
+  }
+
+  Stream<String?> getFeaturedRestaurantID() {
+    return FirebaseFirestore.instance
+        .collection('featured')
+        .doc('mainFeatured')
+        .snapshots()
+        .map((snapshot) {
+      if (snapshot.exists) {
+        return snapshot.data()?['restaurantID'] as String?;
+      }
+      return null;
+    });
+  }
+
+  Stream<RestaurantModel?> getFeaturedRestaurants({required String restID}) {
+    return _firestore
+        .collection('restaurants')
+        .where('docID', isEqualTo: restID)
+        .snapshots()
+        .map((snapshot) {
+      if (snapshot.docs.isNotEmpty) {
+        final doc = snapshot.docs.first;
+        lastDocument = snapshot.docs.last; // Optional: for pagination
+        return RestaurantModel.fromDocumentSnapshot(doc);
+      } else {
+        return null;
+      }
+    });
   }
 }

@@ -15,7 +15,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../constants/app_colors.dart';
 import '../home_screen/location_pages/location_controller/location_list_controller.dart';
-import '../home_screen/location_pages/widget/location_star_widget.dart';
 import 'widget/about_section_widget.dart';
 
 class RestaurantDetailScreen extends StatefulWidget {

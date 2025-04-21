@@ -419,68 +419,111 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _featuredCategory() {
-    return Container(
-      height: Get.height * 0.45,
-      width: Get.width,
-      decoration: BoxDecoration(color: Color(0xFF708780)),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 10),
-            Text(
-              'Featured',
-              style: TextStyle(
-                color: AppColors.bottomSheetColor,
-                fontFamily: 'aftika-regular',
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            SizedBox(height: 12),
-            Text(
-              'Discover our featured selections, showcasing top-rated dishes, exclusive events, and must-try dining experiences curated just for you.',
-              textAlign: TextAlign.justify,
-              style: TextStyle(
-                color: AppColors.bottomSheetColor,
-                fontFamily: 'Nunito-Regular',
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            SizedBox(height: 18),
-            Container(
-              height: Get.height * 0.28,
+    return StreamBuilder<String?>(
+      stream: homeController.getFeaturedRestaurantID(),
+      builder: (context, featuredIDSnapshot) {
+        if (!featuredIDSnapshot.hasData ||
+            featuredIDSnapshot.data == null ||
+            featuredIDSnapshot.data!.isEmpty) {
+          return const SizedBox(); // hide entire section if no featured ID
+        }
+
+        return StreamBuilder<RestaurantModel?>(
+          stream: homeController.getFeaturedRestaurants(
+              restID: featuredIDSnapshot.data!),
+          builder: (context, restaurantSnapshot) {
+            if (!restaurantSnapshot.hasData ||
+                restaurantSnapshot.data == null) {
+              return const SizedBox(); // hide entire section if no data
+            }
+
+            final restaurant = restaurantSnapshot.data!;
+
+            return Container(
+              height: Get.height * 0.45,
               width: Get.width,
-              decoration: BoxDecoration(
-                color: AppColors.whiteColor,
-                borderRadius: BorderRadius.circular(10),
-              ),
+              decoration: BoxDecoration(color: const Color(0xFF708780)),
               child: Padding(
-                padding: const EdgeInsets.all(10.0),
+                padding: const EdgeInsets.all(12.0),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Image.asset('assets/images/feature_img.png',
-                        height: 169, width: Get.width),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 10),
                     Text(
-                      'Explore our featured selections with top-rated dishes, exclusive events, and unforgettable dining experiences, carefully curated for a memorable culinary journey.',
+                      'Featured',
+                      style: TextStyle(
+                        color: AppColors.bottomSheetColor,
+                        fontFamily: 'aftika-regular',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Discover our featured selections, showcasing top-rated dishes, exclusive events, and must-try dining experiences curated just for you.',
                       textAlign: TextAlign.justify,
                       style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.headingTextColor,
+                        color: AppColors.bottomSheetColor,
                         fontFamily: 'Nunito-Regular',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    GestureDetector(
+                      onTap: () {
+                        Get.to(RestaurantDetailScreen(
+                          restaurantModel: restaurant,
+                        ));
+                      },
+                      child: Container(
+                        height: Get.height * 0.28,
+                        width: Get.width,
+                        decoration: BoxDecoration(
+                          color: AppColors.whiteColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Column(
+                            children: [
+                              Image.network(
+                                restaurant.logoImage,
+                                height: 169,
+                                width: Get.width,
+                                fit: BoxFit.cover,
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      restaurant.specialConditions,
+                                      textAlign: TextAlign.justify,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.headingTextColor,
+                                        fontFamily: 'Nunito-Regular',
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
+            );
+          },
+        );
+      },
     );
   }
 
