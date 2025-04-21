@@ -168,6 +168,7 @@ class GeneralPreferencesController extends GetxController {
   var selectedPreferences4 = <String>[].obs;
 
   void toggleSelection4(String name) {
+    selectedPreferences4.clear();
     if (selectedPreferences4.contains(name)) {
       selectedPreferences4.remove(name);
     } else if (selectedPreferences4.length < 1) {
@@ -296,6 +297,7 @@ class GeneralPreferencesController extends GetxController {
   var selectedPreferences9 = <String>[].obs;
 
   void toggleSelection9(String name) {
+    selectedPreferences9.clear();
     if (selectedPreferences9.contains(name)) {
       selectedPreferences9.remove(name);
     } else if (selectedPreferences9.length < 1) {

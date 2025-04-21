@@ -1,8 +1,5 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/animation.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -12,7 +9,6 @@ import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/models/recent_view.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/models/review_model.dart';
-import 'package:kaistable_website/screens/home_screen/home_controller/filter_selection_controller.dart';
 import 'package:kaistable_website/utils/loading.dart';
 import 'package:kaistable_website/widgets/global_functions.dart';
 import '../model/home-model.dart';
@@ -27,23 +23,23 @@ class HomeLocationController extends GetxController {
     selectedPersentage.clear();
     selectedHappyhour.clear();
 
-    // Use forEach to add 'false' for each item in restaurant_list
-    resaturantsList.forEach((v) {
-      for (var x in v.menuList.percentageOff) {
-        if (x.discountType.toString().trim() == 'Happy Hour Special') {
-          selectedHappyhour.add(false);
-        } else if (x.discountType.toString().trim() == 'Percentage Off') {
-          selectedPersentage.add(false);
-        }
-      }
-      for (var x in v.menuList.happyHourSpecials) {
-        if (x.discountType.toString().trim() == 'Happy Hour Special') {
-          selectedHappyhour.add(false);
-        } else if (x.discountType.toString().trim() == 'Percentage Off') {
-          selectedPersentage.add(false);
-        }
-      }
-    });
+    // // Use forEach to add 'false' for each item in restaurant_list
+    // resaturantsList.forEach((v) {
+    //   for (var x in v.menuList.percentageOff) {
+    //     if (x.discountType.toString().trim() == 'Happy Hour Special') {
+    //       selectedHappyhour.add(false);
+    //     } else if (x.discountType.toString().trim() == 'Percentage Off') {
+    //       selectedPersentage.add(false);
+    //     }
+    //   }
+    //   for (var x in v.menuList.happyHourSpecials) {
+    //     if (x.discountType.toString().trim() == 'Happy Hour Special') {
+    //       selectedHappyhour.add(false);
+    //     } else if (x.discountType.toString().trim() == 'Percentage Off') {
+    //       selectedPersentage.add(false);
+    //     }
+    //   }
+    // });
     if (selectedHappyhour.isNotEmpty) {
       selectedHappyhour[0] = true;
     }
@@ -236,8 +232,6 @@ class HomeLocationController extends GetxController {
           if (totalReviews > 0) {
             // Fetch menu list from subcollection
             final restaurant = RestaurantModel.fromDocumentSnapshot(doc);
-            restaurant.menuList = await _getMenuFromSubcollection(doc.id);
-
             // Set average rating
             restaurant.averageRating = averageRating;
 
@@ -342,7 +336,7 @@ class HomeLocationController extends GetxController {
       List<RestaurantModel> restaurantsList = await Future.wait(
         snapshot.docs.map((doc) async {
           final restaurant = RestaurantModel.fromDocumentSnapshot(doc);
-          restaurant.menuList = await _getMenuFromSubcollection(doc.id);
+
           return restaurant;
         }),
       );
@@ -378,7 +372,7 @@ class HomeLocationController extends GetxController {
         querySnapshot.docs.map((doc) async {
           final restaurant = RestaurantModel.fromDocumentSnapshot(
               doc as DocumentSnapshot<Map<String, dynamic>>);
-          restaurant.menuList = await _getMenuFromSubcollection(doc.id);
+
           return restaurant;
         }),
       );
@@ -406,7 +400,6 @@ class HomeLocationController extends GetxController {
       List<RestaurantModel> restaurantsList = await Future.wait(
         snapshot.docs.map((doc) async {
           final restaurant = RestaurantModel.fromDocumentSnapshot(doc);
-          restaurant.menuList = await _getMenuFromSubcollection(doc.id);
           return restaurant;
         }),
       );
@@ -418,22 +411,7 @@ class HomeLocationController extends GetxController {
     });
   }
 
-  Future<void> delete300Restaurants() async {
-    final QuerySnapshot snapshot = await _firestore
-        .collection('restaurants')
-        .limit(100) // Get only 300 documents
-        .get();
-
-    final batch = _firestore.batch();
-
-    for (var doc in snapshot.docs) {
-      batch.delete(doc.reference);
-    }
-
-    await batch.commit(); // Execute all deletions in a batch
-    print('300 restaurants deleted successfully!');
-  }
-
+  
   /// Fetches initial restaurants with pagination support
   Stream<List<RestaurantModel>> getFilteredRestaurants() {
     return _firestore
@@ -449,7 +427,7 @@ class HomeLocationController extends GetxController {
       List<RestaurantModel> restaurantsList = await Future.wait(
         snapshot.docs.map((doc) async {
           final restaurant = RestaurantModel.fromDocumentSnapshot(doc);
-          restaurant.menuList = await _getMenuFromSubcollection(doc.id);
+
           return restaurant;
         }),
       );
@@ -471,7 +449,7 @@ class HomeLocationController extends GetxController {
           final restaurants = await Future.wait(
             snapshot.docs.map((doc) async {
               final restaurant = RestaurantModel.fromDocumentSnapshot(doc);
-              restaurant.menuList = await _getMenuFromSubcollection(doc.id);
+
               return restaurant;
             }),
           );
@@ -499,109 +477,105 @@ class HomeLocationController extends GetxController {
     }
   }
 
-  Future<MenuModel> _getMenuFromSubcollection(String restaurantId) async {
-    try {
-      // Fetch the documents from Firestore
-      var snapshot = await FirebaseFirestore.instance
-          .collection('restaurants')
-          .doc(restaurantId)
-          .collection('MealMenu')
-          .get();
+  // Future<MenuModel> _getMenuFromSubcollection(String restaurantId) async {
+  //   try {
+  //     // Fetch the documents from Firestore
+  //     var snapshot = await FirebaseFirestore.instance
+  //         .collection('restaurants')
+  //         .doc(restaurantId)
+  //         .collection('MealMenu')
+  //         .get();
 
-      // Initialize empty lists for storing valid offers
-      List<OfferModel> mergedPercentageOff = [];
-      List<OfferModel> mergedHappyHour = [];
+  //     // Process each document
+  //     for (var doc in snapshot.docs) {
+  //       Map<String, dynamic> dataMap = doc.data();
 
-      // Process each document
-      for (var doc in snapshot.docs) {
-        Map<String, dynamic> dataMap = doc.data();
+  //       // Parse fromDate and toDate
+  //       String fromDate = dataMap['fromDate']!;
+  //       String toDate = dataMap['toDate']!;
 
-        // Parse fromDate and toDate
-        String fromDate = dataMap['fromDate']!;
-        String toDate = dataMap['toDate']!;
+  //       // Use the new function to check date validity
+  //       if (isOfferValidForCurrentDate(fromDate, toDate)) {
+  //         List<OfferModel> percentageOff = [];
+  //         List<OfferModel> happyHour = [];
 
-        // Use the new function to check date validity
-        if (isOfferValidForCurrentDate(fromDate, toDate)) {
-          List<OfferModel> percentageOff = [];
-          List<OfferModel> happyHour = [];
+  //         for (var offer in dataMap['menu']) {
+  //           MealModel food = MealModel(imagesList: [], offerName: '');
+  //           MealModel drink = MealModel(imagesList: [], offerName: '');
+  //           String cuisine = '';
 
-          for (var offer in dataMap['menu']) {
-            MealModel food = MealModel(imagesList: [], offerName: '');
-            MealModel drink = MealModel(imagesList: [], offerName: '');
-            String cuisine = '';
+  //           if (offer['items'] != []) {
+  //             cuisine = offer['items'][0]['cuisineName'];
+  //             // Categorize food and drinks
+  //             if (offer['items'][0]['cuisineMenu'] == 'Drinks Menu') {
+  //               drink = MealModel(
+  //                 imagesList: offer['items'][0]['itemImages'] is List
+  //                     ? List<String>.from(offer['items'][0]['itemImages'])
+  //                     : [],
+  //                 offerName: offer['items'][0]['offer'],
+  //               );
+  //             } else {
+  //               food = MealModel(
+  //                 imagesList: offer['items'][0]['itemImages'] is List
+  //                     ? List<String>.from(offer['items'][0]['itemImages'])
+  //                     : [],
+  //                 offerName: offer['items'][0]['offer'],
+  //               );
+  //             }
+  //           }
 
-            if (offer['items'] != []) {
-              cuisine = offer['items'][0]['cuisineName'];
-              // Categorize food and drinks
-              if (offer['items'][0]['cuisineMenu'] == 'Drinks Menu') {
-                drink = MealModel(
-                  imagesList: offer['items'][0]['itemImages'] is List
-                      ? List<String>.from(offer['items'][0]['itemImages'])
-                      : [],
-                  offerName: offer['items'][0]['offer'],
-                );
-              } else {
-                food = MealModel(
-                  imagesList: offer['items'][0]['itemImages'] is List
-                      ? List<String>.from(offer['items'][0]['itemImages'])
-                      : [],
-                  offerName: offer['items'][0]['offer'],
-                );
-              }
-            }
+  //           // Categorize offers
+  //           if (offer['discountType'].toString().trim() ==
+  //               'Happy Hour Special') {
+  //             happyHour.add(OfferModel(
+  //               startTime: offer['fromTime'],
+  //               endTime: offer['toTime'],
+  //               percentage: offer['percentageValue'],
+  //               food: food,
+  //               drink: drink,
+  //               cuisine: cuisine,
+  //               discountType: offer['discountType'],
+  //             ));
+  //           } else if (offer['discountType'].toString().trim() ==
+  //               'Percentage Off') {
+  //             percentageOff.add(OfferModel(
+  //               startTime: offer['fromTime'],
+  //               endTime: offer['toTime'],
+  //               percentage: offer['percentageValue'],
+  //               food: food,
+  //               drink: drink,
+  //               cuisine: cuisine,
+  //               discountType: offer['discountType'],
+  //             ));
+  //           }
+  //         }
 
-            // Categorize offers
-            if (offer['discountType'].toString().trim() ==
-                'Happy Hour Special') {
-              happyHour.add(OfferModel(
-                startTime: offer['fromTime'],
-                endTime: offer['toTime'],
-                percentage: offer['percentageValue'],
-                food: food,
-                drink: drink,
-                cuisine: cuisine,
-                discountType: offer['discountType'],
-              ));
-            } else if (offer['discountType'].toString().trim() ==
-                'Percentage Off') {
-              percentageOff.add(OfferModel(
-                startTime: offer['fromTime'],
-                endTime: offer['toTime'],
-                percentage: offer['percentageValue'],
-                food: food,
-                drink: drink,
-                cuisine: cuisine,
-                discountType: offer['discountType'],
-              ));
-            }
-          }
+  //         // Merge the valid offers into the main list
+  //         mergedPercentageOff.addAll(percentageOff);
+  //         mergedHappyHour.addAll(happyHour);
+  //       }
+  //     }
 
-          // Merge the valid offers into the main list
-          mergedPercentageOff.addAll(percentageOff);
-          mergedHappyHour.addAll(happyHour);
-        }
-      }
+  //     // Create a single MenuModel with the merged offers
+  //     MenuModel mergedMenu = MenuModel(
+  //       percentageOff: mergedPercentageOff,
+  //       happyHourSpecials: mergedHappyHour,
+  //     );
+  //     // print(
+  //     //     '=======================================================================');
+  //     // print(
+  //     //     '==================================Persentage off=====================================');
 
-      // Create a single MenuModel with the merged offers
-      MenuModel mergedMenu = MenuModel(
-        percentageOff: mergedPercentageOff,
-        happyHourSpecials: mergedHappyHour,
-      );
-      // print(
-      //     '=======================================================================');
-      // print(
-      //     '==================================Persentage off=====================================');
-
-      // print(
-      //     '=======================================================================');
-      // print(
-      //     '=======================================================================');
-      return mergedMenu; // Return the merged MenuModel
-    } catch (e) {
-      print("Error fetching menu data: $e");
-      return MenuModel.initialize(); // Return an empty model in case of error
-    }
-  }
+  //     // print(
+  //     //     '=======================================================================');
+  //     // print(
+  //     //     '=======================================================================');
+  //     return mergedMenu; // Return the merged MenuModel
+  //   } catch (e) {
+  //     print("Error fetching menu data: $e");
+  //     return MenuModel.initialize(); // Return an empty model in case of error
+  //   }
+  // }
 
   // Initialize restaurants list
   void initializeSelectors(List<RestaurantModel> screenRestaurants) {
@@ -751,5 +725,34 @@ class HomeLocationController extends GetxController {
         );
       },
     );
+  }
+
+  Stream<String?> getFeaturedRestaurantID() {
+    return FirebaseFirestore.instance
+        .collection('featured')
+        .doc('mainFeatured')
+        .snapshots()
+        .map((snapshot) {
+      if (snapshot.exists) {
+        return snapshot.data()?['restaurantID'] as String?;
+      }
+      return null;
+    });
+  }
+
+  Stream<RestaurantModel?> getFeaturedRestaurants({required String restID}) {
+    return _firestore
+        .collection('restaurants')
+        .where('docID', isEqualTo: restID)
+        .snapshots()
+        .map((snapshot) {
+      if (snapshot.docs.isNotEmpty) {
+        final doc = snapshot.docs.first;
+        lastDocument = snapshot.docs.last; // Optional: for pagination
+        return RestaurantModel.fromDocumentSnapshot(doc);
+      } else {
+        return null;
+      }
+    });
   }
 }

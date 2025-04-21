@@ -8,7 +8,6 @@ import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/screens/auth_screens/login/login_screen.dart';
 import 'package:kaistable_website/screens/auth_screens/signup/signup_screen.dart';
 import 'package:kaistable_website/screens/detail_screens/restaurant_detail_screen.dart';
-import 'package:kaistable_website/screens/home_screen/my_home_screen.dart';
 import 'package:kaistable_website/screens/nav_bar/widgets/custom_button.dart';
 import 'package:kaistable_website/widgets/rectangle_widget.dart';
 
@@ -214,16 +213,12 @@ class FavoriteScreen extends StatelessWidget {
                                       child: RectangleWidget(
                                         onNavigate: onNavigate,
                                         title: item.resName,
-                                        description: item.about,
+                                        description: item.address,
                                         imagePath: item.logoImage,
                                         timetext: '',
                                         endTimeText: '',
                                         percentText: '',
                                         resturant_id: item.docID,
-                                        percentageOff:
-                                            item.menuList.percentageOff,
-                                        happyhour:
-                                            item.menuList.happyHourSpecials,
                                         isFavorite: true.obs,
                                       ),
                                     );

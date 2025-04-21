@@ -15,7 +15,7 @@ class RestaurantModel {
   List<String> facilityList;
   List<String> imagesList;
   List<String> dietaryList;
-  List<String> atmopshereList;
+  List<String> atmosphereList;
   String spokenLanguage;
   String socialMedia;
   String priceRange;
@@ -23,14 +23,12 @@ class RestaurantModel {
   double longitude;
   DateTime createdAt;
   List<EntertainmentScheduleModel> entertainmentScheduleList;
-  MenuModel menuList;
+  List<MenuModel> menuList;
   String about;
   String country;
   // New Fields
-  String fbLink; //https://facebook.com/
   String instaLink; //https://instagram.com/
   String tiktokLink; //https://tiktok.com
-  String twitterLink; // https://twitter.com
 
   // Constructor
   RestaurantModel({
@@ -52,7 +50,7 @@ class RestaurantModel {
     required this.address,
     required this.socialMedia,
     required this.priceRange,
-    required this.atmopshereList,
+    required this.atmosphereList,
     required this.zipCode,
     required this.logoImage,
     required this.spokenLanguage,
@@ -60,10 +58,8 @@ class RestaurantModel {
     required this.createdAt,
     required this.country,
     // New Fields
-    required this.fbLink,
     required this.instaLink,
     required this.tiktokLink,
-    required this.twitterLink,
   });
 
   // Initialize the model with defaults
@@ -79,7 +75,7 @@ class RestaurantModel {
       logoImage: '',
       facilityList: <String>[],
       dietaryList: <String>[],
-      atmopshereList: <String>[],
+      atmosphereList: <String>[],
       imagesList: <String>[],
       specialConditions: '',
       password: '',
@@ -90,14 +86,12 @@ class RestaurantModel {
       priceRange: '',
       zipCode: '',
       entertainmentScheduleList: [],
-      menuList: MenuModel.initialize(),
+      menuList: [],
       about: '',
       createdAt: DateTime.now(),
       country: '',
-      fbLink: '',
       instaLink: '',
       tiktokLink: '',
-      twitterLink: '',
     );
   }
 
@@ -117,7 +111,7 @@ class RestaurantModel {
       'docID': docID,
       'facilityList': facilityList,
       'dietaryList': dietaryList,
-      'atmopshereList': atmopshereList,
+      'atmopshereList': atmosphereList,
       'resEmail': resEmail,
       'averageRating': averageRating,
       'socialLink': socialLink,
@@ -138,11 +132,43 @@ class RestaurantModel {
       'createdAt': createdAt.toIso8601String(),
       'country': country,
       // New Fields
-      'facebookLink': fbLink,
       'instaLink': instaLink,
       'xLink': tiktokLink,
-      'youtubeLink': twitterLink,
     };
+  }
+
+  // Optional: Factory to create from map
+  factory RestaurantModel.fromMap(Map<String, dynamic> data) {
+    return RestaurantModel(
+      about: data['about'] ?? '',
+      address: data['address'] ?? '',
+      atmosphereList: List<String>.from(data['atmopshereList'] ?? []),
+      averageRating: (data['averageRating'] ?? 0).toDouble(),
+      city: data['city'] ?? '',
+      country: data['country'] ?? '',
+      createdAt: data['createdAt'] ?? Timestamp.now(),
+      dietaryList: List<String>.from(data['dietaryList'] ?? []),
+      docID: data['docID'] ?? '',
+      entertainmentScheduleList: List<EntertainmentScheduleModel>.from(
+          data['entertainmentScheduleList'] ?? []),
+      facilityList: List<String>.from(data['facilityList'] ?? []),
+      imagesList: List<String>.from(data['resImages'] ?? []),
+      latitude: (data['latitude'] ?? 0.0).toDouble(),
+      logoImage: data['logoImage'] ?? '',
+      longitude: (data['longitude'] ?? 0.0).toDouble(),
+      menuList: List<MenuModel>.from(data['menuList'] ?? []),
+      password: data['password'] ?? '',
+      priceRange: data['priceRange'] ?? '',
+      resEmail: data['resEmail'] ?? '',
+      resName: data['resName'] ?? '',
+      instaLink: data['InstagramLink'] ?? '',
+      tiktokLink: data['TiktokLink'] ?? '',
+      specialConditions: data['specialConditions'] ?? '',
+      spokenLanguage: data['spokenLanguage'] ?? '',
+      socialLink: '',
+      socialMedia: '',
+      zipCode: '',
+    );
   }
 
   // From Firestore Document
@@ -163,7 +189,7 @@ class RestaurantModel {
       latitude: (data['latitude'] ?? 0).toDouble(),
       longitude: (data['longitude'] ?? 0).toDouble(),
       facilityList: List<String>.from(data['facilityList'] ?? []),
-      atmopshereList: List<String>.from(data['atmopshereList'] ?? []),
+      atmosphereList: List<String>.from(data['atmopshereList'] ?? []),
       dietaryList: List<String>.from(data['dietaryList'] ?? []),
       specialConditions: data['specialConditions'] ?? '',
       password: data['password'] ?? '',
@@ -180,13 +206,15 @@ class RestaurantModel {
           (e) => EntertainmentScheduleModel.fromMap(e as Map<String, dynamic>),
         ),
       ),
-      menuList: MenuModel.initialize(),
+      menuList: List<MenuModel>.from(
+        (data['menuList'] as List<dynamic>? ?? []).map(
+          (e) => MenuModel.fromMap(e as Map<String, dynamic>),
+        ),
+      ),
       country: data['country'] ?? '',
       // New Fields
-      fbLink: data['fbLink'] ?? '',
-      instaLink: data['instaLink'] ?? '',
-      tiktokLink: data['tiktokLink'] ?? '',
-      twitterLink: data['twitterLink'] ?? '',
+      instaLink: data['InstagramLink'] ?? '',
+      tiktokLink: data['TiktokLink'] ?? '',
     );
   }
 }
@@ -250,96 +278,41 @@ class EntertainmentScheduleModel {
 }
 
 class MenuModel {
-  List<OfferModel> percentageOff; // List of percentage offers
-  List<OfferModel> happyHourSpecials; // List of happy hour specials
+  String cuisineType;
+  List<String> foodImages;
+  String menuType;
 
   // Constructor
   MenuModel({
-    required this.percentageOff,
-    required this.happyHourSpecials,
+    required this.cuisineType,
+    required this.foodImages,
+    required this.menuType,
   });
 
-  // Initialize the model with default values
+  // Initialize with default values
   static MenuModel initialize() {
     return MenuModel(
-      percentageOff: [],
-      happyHourSpecials: [],
+      cuisineType: '',
+      foodImages: [],
+      menuType: '',
     );
   }
 
   // Convert the model instance to a map for Firestore
   Map<String, dynamic> toMap() {
     return {
-      'percentageOff': percentageOff.map((item) => item.toMap()).toList(),
-      'happyHourSpecials':
-          happyHourSpecials.map((item) => item.toMap()).toList(),
-    };
-  }
-}
-
-class OfferModel {
-  String? startTime;
-  String? endTime;
-  String? percentage;
-  MealModel food; // List of food meals
-  MealModel drink; // List of drink meals
-  String? cuisine;
-  String? discountType;
-  String? fromDate;
-  String? toDate;
-
-  // Constructor
-  OfferModel({
-    this.startTime,
-    this.endTime,
-    this.toDate,
-    this.percentage,
-    this.discountType,
-    this.fromDate,
-    required this.food,
-    required this.drink,
-    this.cuisine,
-  });
-
-  // Convert the model instance to a map for Firestore
-  Map<String, dynamic> toMap() {
-    return {
-      'startTime': startTime,
-      'discountType': discountType,
-      'endTime': endTime,
-      'fromDate': fromDate,
-      'toDate': toDate,
-      'percentage': percentage,
-      'food': food,
-      'drink': drink,
-      'cuisine': cuisine,
-    };
-  }
-}
-
-class MealModel {
-  String? offerName;
-  List<String> imagesList;
-
-  // Constructor
-  MealModel({
-    this.offerName,
-    required this.imagesList,
-  });
-
-  // Convert the model instance to a map for Firestore
-  Map<String, dynamic> toMap() {
-    return {
-      'offerName': offerName,
-      'imagesList': imagesList,
+      'cuisineType': cuisineType,
+      'foodImages': foodImages,
+      'menuType': menuType,
     };
   }
 
-  // Create a model instance from Firestore data
-  static MealModel fromMap(Map<String, dynamic> data) {
-    return MealModel(
-      offerName: data['offer'],
-      imagesList: List<String>.from(data['images'] ?? []),
+  // Factory method to create an instance from a Firestore document
+  factory MenuModel.fromMap(Map<String, dynamic> map) {
+    return MenuModel(
+      cuisineType: map['cuisineType'] ?? '',
+      foodImages: List<String>.from(map['foodImages'] ?? []),
+      menuType: map['menuType'] ?? '',
     );
   }
 }

@@ -64,26 +64,26 @@ class EventDetailsScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                actions: [
-                  Obx(() => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: GestureDetector(
-                          onTap: () =>
-                              controller.toggleBookmark(), // Toggle bookmark
-                          child: Image.asset(
-                            controller.isBookmarked.value
-                                ? 'assets/images/fill_bookmark.png' // Filled Bookmark
-                                : 'assets/images/empty_bookmark.png', // Unfilled Bookmark
+                // actions: [
+                //   Obx(() => Padding(
+                //         padding: const EdgeInsets.symmetric(vertical: 8.0),
+                //         child: GestureDetector(
+                //           onTap: () =>
+                //               controller.toggleBookmark(), // Toggle bookmark
+                //           child: Image.asset(
+                //             controller.isBookmarked.value
+                //                 ? 'assets/images/fill_bookmark.png' // Filled Bookmark
+                //                 : 'assets/images/empty_bookmark.png', // Unfilled Bookmark
 
-                            height: 24,
-                            width: 24,
-                          ),
-                        ),
-                      )),
-                  SizedBox(
-                    width: 12,
-                  )
-                ],
+                //             height: 24,
+                //             width: 24,
+                //           ),
+                //         ),
+                //       )),
+                //   SizedBox(
+                //     width: 12,
+                //   )
+                // ],
                 title: const Text(
                   'Event details',
                   style: TextStyle(

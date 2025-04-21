@@ -9,6 +9,7 @@ import 'events_list.dart';
 
 class EventScreen extends StatelessWidget {
   final controller = Get.put(EventsController());
+  final categoryController = Get.put(CategoryController());
   EventScreen({super.key});
 
   @override
@@ -79,6 +80,21 @@ class EventScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: HorizontalCategorySelector(),
+          ),
+          Obx(
+            () => categoryController.selectedCat.value == 'Distance'
+                ? Column(
+                    children: [
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: HorizontalMiles(),
+                      ),
+                    ],
+                  )
+                : SizedBox(),
           ),
 
           SizedBox(

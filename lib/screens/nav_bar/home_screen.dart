@@ -10,6 +10,7 @@ import 'package:kaistable_website/screens/home_screen/home_controller/home_locat
 import 'package:kaistable_website/screens/home_screen/new_view_all/new_viewall.dart';
 import 'package:kaistable_website/screens/home_screen/trending_all/trending_view_all.dart';
 import 'package:kaistable_website/screens/nav_bar/near_by_all.dart';
+import 'package:kaistable_website/widgets/carousel_slider_banner.dart';
 import 'package:kaistable_website/widgets/global_functions.dart';
 import 'package:kaistable_website/widgets/rectangle_widget.dart';
 import 'package:showcaseview/showcaseview.dart';
@@ -26,7 +27,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final HomeController controller = Get.put(HomeController());
+  HomeController controller = Get.put(HomeController());
 
   final EventsController eventController = Get.put(EventsController());
 
@@ -88,24 +89,52 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Showcase.withWidget(
-                    key: _carouselKey,
-                    height: 190,
-                    width: Get.width - 24,
-                    tooltipPosition: TooltipPosition.bottom,
-                    targetBorderRadius: BorderRadius.circular(20),
-                    container: ShowCaseContainer(
-                      width: Get.width - 32,
-                      text: "Check out the latest deals and promotions here!",
-                      showcaseContext: context,
-                      last: false,
-                    ),
-                    child: Image.asset(
-                      'assets/images/top_banner.png',
-                      height: Get.height * 0.25,
-                      width: Get.width,
-                    ),
-                  ),
+                  hasStartedShowcase && !controller.isSpotlightFinish.value
+                      ? Showcase.withWidget(
+                          key: _carouselKey,
+                          height: 190,
+                          width: Get.width - 24,
+                          tooltipPosition: TooltipPosition.bottom,
+                          targetBorderRadius: BorderRadius.circular(20),
+                          container: ShowCaseContainer(
+                            width: Get.width - 32,
+                            text:
+                                "Check out the latest deals and promotions here!",
+                            showcaseContext: context,
+                            last: false,
+                          ),
+                          child: Image.asset(
+                            'assets/images/top_banner.png',
+                            height: Get.height * 0.25,
+                            width: Get.width,
+                          ),
+                        )
+                      : StreamBuilder(
+                          stream: controller.fetchAllBanners(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return CarouselWidget(imagePaths: [
+                                'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4',
+                              ]);
+                            }
+
+                            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                              return CarouselWidget(imagePaths: [
+                                'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4',
+                              ]);
+                            }
+                            final banners = snapshot.data!;
+                            List<String> bannerImages =
+                                banners.map((e) => e.bannerImage).toList();
+                            if (bannerImages.isEmpty) {
+                              return CarouselWidget(imagePaths: [
+                                'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4',
+                              ]);
+                            }
+                            return CarouselWidget(imagePaths: bannerImages);
+                          },
+                        ),
                   SizedBox(height: 10),
                   Showcase.withWidget(
                     height: 200,
@@ -265,7 +294,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16.0, vertical: 8.0),
                     child: DaysTile(
-                      onTap: () => Get.to(EventDetailsScreen(event: event,)),
+                      onTap: () => Get.to(EventDetailsScreen(
+                        event: event,
+                      )),
                       image: event.imageUrls.first,
                       title: event.eventName,
                       location: event.location,
@@ -388,68 +419,111 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _featuredCategory() {
-    return Container(
-      height: Get.height * 0.45,
-      width: Get.width,
-      decoration: BoxDecoration(color: Color(0xFF708780)),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 10),
-            Text(
-              'Featured',
-              style: TextStyle(
-                color: AppColors.bottomSheetColor,
-                fontFamily: 'aftika-regular',
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            SizedBox(height: 12),
-            Text(
-              'Discover our featured selections, showcasing top-rated dishes, exclusive events, and must-try dining experiences curated just for you.',
-              textAlign: TextAlign.justify,
-              style: TextStyle(
-                color: AppColors.bottomSheetColor,
-                fontFamily: 'Nunito-Regular',
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            SizedBox(height: 18),
-            Container(
-              height: Get.height * 0.28,
+    return StreamBuilder<String?>(
+      stream: homeController.getFeaturedRestaurantID(),
+      builder: (context, featuredIDSnapshot) {
+        if (!featuredIDSnapshot.hasData ||
+            featuredIDSnapshot.data == null ||
+            featuredIDSnapshot.data!.isEmpty) {
+          return const SizedBox(); // hide entire section if no featured ID
+        }
+
+        return StreamBuilder<RestaurantModel?>(
+          stream: homeController.getFeaturedRestaurants(
+              restID: featuredIDSnapshot.data!),
+          builder: (context, restaurantSnapshot) {
+            if (!restaurantSnapshot.hasData ||
+                restaurantSnapshot.data == null) {
+              return const SizedBox(); // hide entire section if no data
+            }
+
+            final restaurant = restaurantSnapshot.data!;
+
+            return Container(
+              height: Get.height * 0.45,
               width: Get.width,
-              decoration: BoxDecoration(
-                color: AppColors.whiteColor,
-                borderRadius: BorderRadius.circular(10),
-              ),
+              decoration: BoxDecoration(color: const Color(0xFF708780)),
               child: Padding(
-                padding: const EdgeInsets.all(10.0),
+                padding: const EdgeInsets.all(12.0),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Image.asset('assets/images/feature_img.png',
-                        height: 169, width: Get.width),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 10),
                     Text(
-                      'Explore our featured selections with top-rated dishes, exclusive events, and unforgettable dining experiences, carefully curated for a memorable culinary journey.',
+                      'Featured',
+                      style: TextStyle(
+                        color: AppColors.bottomSheetColor,
+                        fontFamily: 'aftika-regular',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Discover our featured selections, showcasing top-rated dishes, exclusive events, and must-try dining experiences curated just for you.',
                       textAlign: TextAlign.justify,
                       style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.headingTextColor,
+                        color: AppColors.bottomSheetColor,
                         fontFamily: 'Nunito-Regular',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    GestureDetector(
+                      onTap: () {
+                        Get.to(RestaurantDetailScreen(
+                          restaurantModel: restaurant,
+                        ));
+                      },
+                      child: Container(
+                        height: Get.height * 0.28,
+                        width: Get.width,
+                        decoration: BoxDecoration(
+                          color: AppColors.whiteColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Column(
+                            children: [
+                              Image.network(
+                                restaurant.logoImage,
+                                height: 169,
+                                width: Get.width,
+                                fit: BoxFit.cover,
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      restaurant.specialConditions,
+                                      textAlign: TextAlign.justify,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.headingTextColor,
+                                        fontFamily: 'Nunito-Regular',
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
+            );
+          },
+        );
+      },
     );
   }
 

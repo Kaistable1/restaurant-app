@@ -14,12 +14,11 @@ class CuisinesViewAll extends StatelessWidget {
   final Function(int)? onNavigate;
   final HomeCusinessController cusinessController =
       Get.put(HomeCusinessController());
-  final HomeLocationController controller = Get.put(HomeLocationController());
   final HomeFilterController filterController = Get.put(HomeFilterController());
 
   CuisinesViewAll({super.key, this.onNavigate}) {
     // Reset the selectedTop value when this screen is instantiated
-    controller.selectedTop.value = ''; // Clear any previous selections
+    filterController.selectedTop.value = ''; // Clear any previous selections
   }
 
   @override
@@ -85,7 +84,7 @@ class CuisinesViewAll extends StatelessWidget {
                     SizedBox(
                       height: 38,
                       child: CustomSeparateTextField(
-                        controller: controller.searchController,
+                        controller: filterController.searchController,
                         hintText: 'Try searching for restaurant name',
                         hintStyle: TextStyle(
                           color: AppColors.hintText,
@@ -95,6 +94,9 @@ class CuisinesViewAll extends StatelessWidget {
                         ),
                         isPrefixIcon: true,
                         isShadow: true,
+                        onChanged: (v) {
+                          filterController.update();
+                        },
                         prefixIcon: Padding(
                           padding: const EdgeInsets.only(
                               left: 4, top: 8, bottom: 8, right: 0),
@@ -154,82 +156,58 @@ class CuisinesViewAll extends StatelessWidget {
                               child: Text('Error: ${snapshot.error}'));
                         }
 
-                        final cuisineMap = snapshot.data!;
+                        final cuisineMap = snapshot.data ?? {};
 
-                        // Declare filteredCuisineMap outside the listener
-                        Map<String, List<String>> filteredCuisineMap = {};
+                        // Initialize the cuisine selectors only if not already initialized
+                        if (filterController.cusinesMapFilter.isEmpty) {
+                          filterController
+                              .initializeCuisinesSelectors(cuisineMap);
+                        }
 
-                        // Add a listener to the search controller
-                        controller.searchController.addListener(() {
-                          print('Search triggered');
-
-                          // Filter the cuisineMap by the search text
-                          filteredCuisineMap = cuisineMap.entries
-                              .where((entry) => entry.key
-                                  .toLowerCase()
-                                  .contains(controller.searchController.text
-                                      .toLowerCase()
-                                      .trim()))
-                              .fold<Map<String, List<String>>>({},
-                                  (map, entry) {
-                            map[entry.key] = entry.value;
-                            return map;
-                          });
-
-                          // Update the controller with the filtered data
-                          controller.cusinesMapFilter = filteredCuisineMap;
-                          controller.update();
-                        });
-
-                        // Initialize the cuisine selectors
-                        controller.initializeCuisinesSelectors(cuisineMap);
-
-                        return GetBuilder<HomeLocationController>(
-                          builder: (controller) {
-                            return SizedBox(
-                              height: Get.height * 0.8,
-                              width: double.infinity,
-                              child: GridView.builder(
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                  mainAxisExtent: Get.height * 0.22,
-                                  crossAxisCount: 2,
-                                  crossAxisSpacing: 10.0,
-                                  mainAxisSpacing: 20.0,
-                                ),
-                                itemCount:
-                                    controller.cusinesMapFilter.keys.length,
-                                itemBuilder: (context, index) {
-                                  final cuisineName = controller
-                                      .cusinesMapFilter.keys
-                                      .elementAt(index);
-                                  final restaurants = controller
-                                      .cusinesMapFilter[cuisineName]!
-                                      .toSet()
-                                      .toList()
-                                    ..sort();
-
-                                  return CircleContainerWidget(
-                                    ontap: () {
-                                      Get.to(() => ExploreRestaurant(
-                                            restaurantIDs: restaurants,
-                                            cuisneName: cuisineName,
-                                          ));
-                                    },
-                                    isFavourite: false.obs,
-                                    isLocation: false,
-                                    height: 150,
-                                    width: 115,
-                                    imgPath: 'assets/images/aaa.jpg',
-                                    titleText: cuisineName,
-                                    descriptionText:
-                                        '${restaurants.length.toString()} restaurants',
-                                  );
-                                },
+                        return Obx(() {
+                          final filteredCuisineMap =
+                              filterController.cusinesMapFilter;
+                          return SizedBox(
+                            height: Get.height * 0.8,
+                            width: double.infinity,
+                            child: GridView.builder(
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                mainAxisExtent: Get.height * 0.22,
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 10.0,
+                                mainAxisSpacing: 20.0,
                               ),
-                            );
-                          },
-                        );
+                              itemCount: filteredCuisineMap.keys.length,
+                              itemBuilder: (context, index) {
+                                final cuisineName =
+                                    filteredCuisineMap.keys.elementAt(index);
+                                final restaurants =
+                                    filteredCuisineMap[cuisineName]!
+                                        .toSet()
+                                        .toList()
+                                      ..sort();
+
+                                return CircleContainerWidget(
+                                  ontap: () {
+                                    Get.to(() => ExploreRestaurant(
+                                          restaurantIDs: restaurants,
+                                          cuisneName: cuisineName,
+                                        ));
+                                  },
+                                  isFavourite: false.obs,
+                                  isLocation: false,
+                                  height: 150,
+                                  width: 115,
+                                  imgPath: 'assets/images/aaa.jpg',
+                                  titleText: cuisineName,
+                                  descriptionText:
+                                      '${restaurants.length.toString()} restaurants',
+                                );
+                              },
+                            ),
+                          );
+                        });
                       },
                     ),
                     const SizedBox(height: 30),

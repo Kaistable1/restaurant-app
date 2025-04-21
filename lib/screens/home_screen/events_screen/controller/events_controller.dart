@@ -71,7 +71,6 @@ class EventsController extends GetxController {
 
   @override
   void onInit() {
-    print('calling');
     super.onInit();
     // Initial fetch
     resetFiltersAndFetch();
