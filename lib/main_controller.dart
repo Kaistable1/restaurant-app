@@ -19,7 +19,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import 'package:googleapis_auth/auth_io.dart' as auth;
+// import 'package:googleapis_auth/auth_io.dart' as auth;
 
 import 'main.dart';
 
@@ -281,22 +281,21 @@ class MainController extends GetxController {
     }
   }
 
-  Future<String> getAccessToken() async {
+ /* Future<String> getAccessToken() async {
     // Your client ID and client secret obtained from Google Cloud Console
     final serviceAccountJson = {
       "type": "service_account",
-      "project_id": "sport-traning-app",
-      "private_key_id": "a04da5363add8de195440fb54fc7ae9310506586",
-      "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDnhebleMS/d3QL\nrZcHulKR5K3fEIoZxsm8v8ZW8YibADnZI8xgTVtJHRNI2I+RYi7MbrJdtJg345ZF\nZ//ck2JMaW55vciSoygoWdrR7T7QlA2RtuLaIeC7QcG9vDEGOiEgGoCXQ9Wyxgf8\n6F1nrMrqpokwXFvGgDgfggMvLeVPTok4nN2PsHOl7rjferpfjzsMBcbVGtLvCmCL\nLhIeE44G5NZ2fCpCyZ0NS1o7zaABaRwpF1TnaoUUeUjj+pOtXylvlKQZu/vnROsr\nOq2QQjerGG+QODtOSEE1NMJoDdSCmarZsKeH74kTKYvg0zxcQOX7dEQHqEZbFbLq\nGvPMNFT/AgMBAAECggEADfD1NLovTBblqP0HTCgpvVlCKF127hMXUMNSLn1q1r05\nE9yLplI3ffvp47K5VRgkGJv4fPCuqHw5hJe87iD92VC780lnS3/W9N8Rmx8ob3zg\nIvcan+dMVgT2pUswvzQ+4bpW0JpSwuoZJF8wSK7nT8vpaj0VgFV2NlzTfkLK58SF\n5f9IafvzBiQ1CetRn9nJ35SKy3yljAGUMwCZOV14zmJa9rhKxsipc0mZegKdEl4j\nglCyYYSztqkHGiLWHDGnx8zD+0ygMHipVT4+Dt7WTeMBrUPepz1kf2cAmDOK85mu\n377NUSJNFb/0L8zoSldp088LrjDds574pP81p0IQeQKBgQD5gFn0+etpbbu1b2at\n5V771u9Imk3FTumrO9x+SKe3N4yxF5H65XCQFBV0Oulj2IcMtsLlLOSDiwdaUTBt\nfURVPijQyrL+5KQXXE6PY4h1uCsAJ9+C6jAJE3iTtNfwARgjzDGe9duPxxq6f4st\nO6XqJgUHYug89vCRaRPSWD78iwKBgQDtjaxL0cBNyXNaZixXAJg694VEbab+Z0sO\nJP453GHQ+x8PIxDsdO6l615I5CXr9aS4/PzWgzSOmzx+gpN4GHbGAAqDMIzF7dYO\nLRku52hbCgteZNnygfmpJjNI2ehXS6Tfa+za3OBuUeTJOOeGsFsNydS6LIgVCUhs\nu+r/6AIT3QKBgQCcIFcqVuGa/ZHCfU1xb+C6Est1USltWG4cOr9FPs3EdrxRbQBq\nUfzYC9lI/DxjwHDx4cOfiTINpogZWkjFmueRt+3uiYjsu8J648Y9L/mKQI6X8FuL\nHmSkqUyAkV+2zdh/Ph2m7Q5RsDPnlDxRN8wg812eO6Q70gLD208OBy6S9QKBgQCE\nOA+HH9b2NMMktKvHPQh+AZjGbnW9Mcbft41crSIwjCVMaosX4TmXVfrjfUDyJYYq\nhH1B9ENDgHnaPFlSReON7yXqwRIJdIho2YcjyR8XVO7g+icoyFkqYZ231blxJSQ+\nSrbJVpkALkq2CRssp2n2sbjaasDPXJxYEPwKtZq6bQKBgBNEa+RT7LVNty8KIc4s\ncLIUdeKZagK8PZA8pwTnAvqUAuPiz78XuOSYDCDeJaudF5FI89H+OwAi8ub/uvbS\n9PwdXA8SrL0u9RqeEBDlVfKdqpdrAb8+ptSlIW9SLlTnU8efJONdiKutd1W8jbi2\nYqU/77dy/mzZzmegeha7NZyh\n-----END PRIVATE KEY-----\n",
-      "client_email": "firebase-adminsdk-5watd@sport-traning-app.iam.gserviceaccount.com",
-      "client_id": "111093551752678700327",
+      "project_id": "restaurantwebsite-4bdd8",
+      "private_key_id": "989bd1e3e63d28e4c8ae65cc466563750af111c0",
+      "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC8TBp3eNeq3fNT\nE82jzsOENaLbL/dM/ObNiJnXo8z1TXJyRSEc14r/OKvWS6ByudMALnJtKodBTOsV\n2IRSgd8mkHMuRyOdpMimEmDndvUnQugQigJ8tzkxRyp9CxifoGQAatRNxR8y01wm\n2cGpgkm3mIt+IqXYHO5VmtfPWQ6XsVnnNwQiVsgyLq6TXAvzP+CInWi+ozkKL8fa\nyVDdiRiO8O/cHXZdXHjID9R1XS1B8qScmiNINpumH623Djh7jzpknNDedR57nOF9\nbX/zAuVe5J0GQ5ZScxZKoGK9IsmUTvTqWfRTqBeQphdVYMCOHapDE8V3c4/L2oES\nH67wpsjnAgMBAAECggEAMi3xy67ngoB9jME1Rxcd4YjNqq3gsKKg+1sQ7HeZcjG+\ncxdbGK2UPCmlGYmz63777QtzsQXpX4yZBYxazwYPKt7J4yZQJn24fxFcw7Je6KSa\n5XVx7jyBwFEf0Iz5deivXbEafNMwWkIbR7s2Me8nqAa9/dJL8gjbtvJ52qb4DZJf\nxq4dPvzR6Vh4oH+YKiyYFWqT2vAMlSu1+t18i4jZgyLwDD39ClebsnhmVZTi4PSt\nfN/1/kUsbb27M7BgF5zHThnex1rrp4V+CTTmSL/khqQ/pjvqD71IgPLk+F2UuvmU\nOZ1qTrHx94DibKqhf2dFuvFshQRP10YUgDWQMKswsQKBgQDcZg77TGXSJy/epDjl\n28GfluQM1ybaju57hhT/dm/lqlTY7UNNlhQBs34YMk7TgPPkqWbjZx1FQrdb0cKr\nYGNkgbZCHyYbsFc/QtB15ILqq4Cd1h1eJryRHo/alAwyMcApit4R/IyEIRsnEZbp\nX/LxPNVg8x/6LQeh3Lh1T0zqjwKBgQDatpYDg25YnWSJ024+/7i8IQPvMZy2HiTU\nkUdQ3+6pMm+/LHGwOiW9c6OP78+I6R7JEuJLw3GRVDR2DO+tw5teWl/eOBRSEnLU\nmQ4eIODZZ6RXN14MBrnfkFzXjveWqJpxy7kYu+vEUC1R1ZMxi7PFpESlEFOSZtiu\nAzLzAVNIKQKBgQCNKRTZYUIpyo1/ZOFIX2rxAxzHGJo7C6a1GNikEkBy8ZhsY/Ji\nZAgmWscdSkNwdbxALTvH1EhMDwIPXhb32sFuIyIP0ZF/1H7c9rc7ewNauEOlU/j1\nT4wgyllKnt383B5+vQGktYNuMSIJ8NseWCTq25KzCKTngCXORuchw4u5AwKBgQCV\nQU0WkLbZGm/l7repnnG/UPiSX1UGo4OW3J3Cf08rgBPqbrYXAVeH9kaEj68dS5mK\ntqxf77ys5L34YdOezYJV3W7XA4Y6jAR5OQn9XYqUUrpAGrS/mEd4Xdg98n7b/auI\nRPLIAlZe3ihPVGTixuej1PpTetTNcAomlmBKnXjsIQKBgCYeOOhBXQVUHSyrYgVO\nD1X9eT70jYJiCNYjAU6hyohbTdZMN5ueB/WwsJs3JMEyC2VwnfZAbSo4w1X8tb7k\n5OIIhH7jE2yH3KOzbTEnGWYxbTtki8bOr+Zu4lrI60oCB0nD71Osq9OwNjSg5ztf\nu1YsOrSBHPQMFFw985Wieyn0\n-----END PRIVATE KEY-----\n",
+      "client_email": "firebase-adminsdk-q09x4@restaurantwebsite-4bdd8.iam.gserviceaccount.com",
+      "client_id": "109139757324442988323",
       "auth_uri": "https://accounts.google.com/o/oauth2/auth",
       "token_uri": "https://oauth2.googleapis.com/token",
       "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-      "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-5watd%40sport-traning-app.iam.gserviceaccount.com",
+      "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-q09x4%40restaurantwebsite-4bdd8.iam.gserviceaccount.com",
       "universe_domain": "googleapis.com"
-    }
-    ;
+    };
 
     List<String> scopes = [
       "https://www.googleapis.com/auth/userinfo.email",
@@ -321,10 +320,10 @@ class MainController extends GetxController {
 
     // Return the access token
     return credentials.accessToken.data;
-  }
+  }*/
 
 
-  Future<void> sendPushNotification({
+  /*Future<void> sendPushNotification({
     required String route,
     required String token,
     required String body,
@@ -337,7 +336,7 @@ class MainController extends GetxController {
   }) async {
     final String serverKey = await getAccessToken(); // Your FCM server key
     const String fcmEndpoint =
-        'https://fcm.googleapis.com/v1/projects/sport-traning-app/messages:send';
+        'https://fcm.googleapis.com/v1/projects/restaurantwebsite-4bdd8/messages:send';
 
     print("fcmkey : $token");
     final Map<String, dynamic> message = {
@@ -348,13 +347,13 @@ class MainController extends GetxController {
           'title': title,
           // 'sound': true
         },
-        "apns": {
-          "payload": {
-            "aps": {
-              "sound": "sound_file.wav"
-            }
-          }
-        },
+        // "apns": {
+        //   "payload": {
+        //     "aps": {
+        //       "sound": "sound_file.wav"
+        //     }
+        //   }
+        // },
         'data': <String, dynamic>{
           'click_action': "FLUTTER_NOTIFICATION_CLICK",
           'status': 'done',
@@ -387,5 +386,5 @@ class MainController extends GetxController {
       print('Failed to send FCM message: ${response.statusCode}');
       print(response.body);
     }
-  }
+  }*/
 }

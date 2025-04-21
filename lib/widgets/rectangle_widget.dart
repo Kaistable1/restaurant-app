@@ -62,14 +62,14 @@ class RectangleWidget extends StatelessWidget {
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
                 color: Colors.transparent,
-                image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: imagePath.contains('http')
-                        ? NetworkImage(
-                            imagePath,
-                          )
-                        : AssetImage(imagePath))),
-          ),
+                // image: DecorationImage(
+                //     fit: BoxFit.cover,
+                    // image: imagePath.contains('http')
+                        // ? NetworkImage(
+                        //     imagePath,
+                        //   )
+                        // : AssetImage(imagePath))),
+          )),
           SizedBox(height: 8),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 5),
