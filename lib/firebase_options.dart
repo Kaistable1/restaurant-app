@@ -62,7 +62,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '404399548475',
     projectId: 'restaurantwebsite-4bdd8',
     storageBucket: 'restaurantwebsite-4bdd8.firebasestorage.app',
-    iosBundleId: 'com.kaistable.restaurantWebsite',
+    iosBundleId: 'com.alestra.userapp',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
