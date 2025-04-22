@@ -51,6 +51,11 @@ dependencies:
   geocoding:
   geolocator: ^13.0.2
   shared_preferences: ^2.3.3
+  flutter_local_notifications:
+  timezone:
+  googleapis_auth:
+  permission_handler:
+  firebase_messaging: ^15.2.4
 
 dev_dependencies:
   flutter_test:
