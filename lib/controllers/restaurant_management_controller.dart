@@ -349,9 +349,6 @@ class RestaurantManagementController extends GetxController {
     }
   }
 
-
-
-
   Future<void> fetchRestaurants({
     bool isRefresh = false,
     String? searchQuery,

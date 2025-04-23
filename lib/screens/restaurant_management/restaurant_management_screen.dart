@@ -1,10 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:savrly/constants/text_styles.dart';
 import 'package:savrly/controllers/add_restaurants_controller.dart';
 import 'package:savrly/controllers/edit_restaurant_controller.dart';
+import 'package:savrly/models/resaturant_model.dart';
 import '../../constants/app_colors.dart';
 import '../../controllers/drawer_controller.dart';
 import '../../controllers/restaurant_management_controller.dart';
@@ -31,7 +30,9 @@ class _RestaurantManagementScreenState
   @override
   void initState() {
     super.initState();
+
     _scrollController = ScrollController();
+
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
@@ -319,272 +320,294 @@ class _RestaurantManagementScreenState
                   ),
                   Expanded(
                     child: Obx(
-                      () => ListView.builder(
-                        controller: _scrollController,
-                        itemCount: controller.restaurants.length + 1,
-                        itemBuilder: (context, index) {
-                          if (index == controller.restaurants.length) {
-                            if (controller.hasMoreData.value) {
-                              return Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Center(
-                                  child: controller.isLoading.value
-                                      ? SizedBox(
-                                          height: Get.height * 0.4,
-                                          child: Center(
-                                            child: CircularProgressIndicator(
+                      () {
+                        List<RestaurantModel> filteredRestaurants =
+                            controller.restaurants;
+                        print(
+                            'drawerController.selectedType.value ------------ ${drawerController.selectedType.value}');
+                        if (drawerController.selectedType.value == 'pending') {
+                          controller.hasMoreData.value = false;
+                          controller.fetchAllRestaurantsForFilters();
+                          filteredRestaurants = controller.filteredResults
+                              .where((element) => element.resEmail == '')
+                              .toList();
+                        } else if (drawerController.selectedType.value ==
+                            'registered') {
+                          controller.hasMoreData.value = false;
+                          controller.fetchAllRestaurantsForFilters();
+                          filteredRestaurants = controller.filteredResults
+                              .where((element) => element.resEmail != '')
+                              .toList();
+                        }
+                        return ListView.builder(
+                          controller: _scrollController,
+                          itemCount: filteredRestaurants.length + 1,
+                          itemBuilder: (context, index) {
+                            if (index == filteredRestaurants.length) {
+                              if (controller.hasMoreData.value) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Center(
+                                    child: controller.isLoading.value
+                                        ? SizedBox(
+                                            height: Get.height * 0.4,
+                                            child: Center(
+                                              child: CircularProgressIndicator(
+                                                color: primaryColor,
+                                              ),
+                                            ),
+                                          )
+                                        : Text(
+                                            'Load More',
+                                            style: simpleText.copyWith(
+                                              fontSize: tableTextSize,
                                               color: primaryColor,
+                                              fontWeight: FontWeight.w600,
                                             ),
                                           ),
-                                        )
-                                      : Text(
-                                          'Load More',
-                                          style: simpleText.copyWith(
-                                            fontSize: tableTextSize,
-                                            color: primaryColor,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                ),
-                              );
-                            } else {
-                              return Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Center(
-                                  child: Text(
-                                    'No more restaurants to load',
-                                    style: simpleText.copyWith(
-                                      fontSize: tableTextSize,
-                                      color: Colors.grey,
+                                  ),
+                                );
+                              } else {
+                                return Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Center(
+                                    child: Text(
+                                      'No more restaurants to load',
+                                      style: simpleText.copyWith(
+                                        fontSize: tableTextSize,
+                                        color: Colors.grey,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              );
+                                );
+                              }
                             }
-                          }
 
-                          final restaurant = controller.restaurants[index];
-                          return Container(
-                            padding: EdgeInsets.symmetric(
-                              vertical: 14,
-                              horizontal: 12,
-                            ),
-                            decoration: BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(
-                                  color: primaryColor,
-                                  width: 0.3,
+                            final restaurant = filteredRestaurants[index];
+                            return Container(
+                              padding: EdgeInsets.symmetric(
+                                vertical: 14,
+                                horizontal: 12,
+                              ),
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: primaryColor,
+                                    width: 0.3,
+                                  ),
                                 ),
                               ),
-                            ),
-                            child: Row(
-                              children: [
-                                Center(
-                                  child: Container(
-                                    height: imageSize,
-                                    width: imageSize,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                      image: restaurant.logoImage.isNotEmpty
-                                          ? DecorationImage(
-                                              image: NetworkImage(
-                                                  restaurant.logoImage),
-                                              fit: BoxFit.cover,
+                              child: Row(
+                                children: [
+                                  Center(
+                                    child: Container(
+                                      height: imageSize,
+                                      width: imageSize,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        image: restaurant.logoImage.isNotEmpty
+                                            ? DecorationImage(
+                                                image: NetworkImage(
+                                                    restaurant.logoImage),
+                                                fit: BoxFit.cover,
+                                              )
+                                            : null,
+                                        color: restaurant.logoImage.isEmpty
+                                            ? Colors.grey.shade300
+                                            : null,
+                                      ),
+                                      child: restaurant.logoImage.isEmpty
+                                          ? Icon(
+                                              Icons.restaurant,
+                                              color: Colors.grey.shade600,
+                                              size: imageSize * 0.6,
                                             )
                                           : null,
-                                      color: restaurant.logoImage.isEmpty
-                                          ? Colors.grey.shade300
-                                          : null,
-                                    ),
-                                    child: restaurant.logoImage.isEmpty
-                                        ? Icon(
-                                            Icons.restaurant,
-                                            color: Colors.grey.shade600,
-                                            size: imageSize * 0.6,
-                                          )
-                                        : null,
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: Center(
-                                    child: Text(
-                                      restaurant.resName,
-                                      textAlign: TextAlign.center,
-                                      style: simpleText.copyWith(
-                                        fontSize: tableTextSize,
-                                      ),
                                     ),
                                   ),
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Center(
-                                    child: Text(
-                                      restaurant.menuList.isEmpty
-                                          ? 'No Cuisine'
-                                          : restaurant.menuList[0].cuisineType,
-                                      textAlign: TextAlign.center,
-                                      style: simpleText.copyWith(
-                                        fontSize: tableTextSize,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Center(
-                                    child: Text(
-                                      restaurant.city,
-                                      textAlign: TextAlign.center,
-                                      style: simpleText.copyWith(
-                                        fontSize: tableTextSize,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: Center(
-                                    child: Text(
-                                      restaurant.resEmail == ''
-                                          ? '${restaurant.resName.toLowerCase().toString().split(' ')[0]}@gmail.com'
-                                          : restaurant.resEmail,
-                                      textAlign: TextAlign.center,
-                                      style: simpleText.copyWith(
-                                        fontSize: tableTextSize,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: StreamBuilder(
-                                    stream:
-                                        controller.getFeaturedRestaurantID(),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return CircleCheckbox(
-                                          onChanged: (v) async {},
-                                          value: false,
-                                        );
-                                      }
-                                      print('snapshot data ${snapshot.data}');
-                                      final isFeatured =
-                                          snapshot.data == restaurant.docID;
-
-                                      return CircleCheckbox(
-                                        onChanged: (v) async {
-                                          print('check');
-                                          await controller
-                                              .setFreaturedRestaurant(
-                                            restaurantID: restaurant.docID,
-                                          );
-                                        },
-                                        value: isFeatured,
-                                      );
-                                    },
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Center(
-                                    child: Container(
-                                      width: statusSize,
-                                      padding: EdgeInsets.symmetric(
-                                        vertical: 6,
-                                        horizontal: 8,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: restaurant.resEmail == '' &&
-                                                restaurant.dietaryList.isEmpty
-                                            ? Colors.red
-                                            : primaryColor,
-                                        borderRadius: BorderRadius.circular(6),
-                                      ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Center(
                                       child: Text(
-                                        restaurant.resEmail == '' &&
-                                                restaurant.dietaryList.isEmpty
-                                            ? 'Pending'
-                                            : 'Registered',
+                                        restaurant.resName,
                                         textAlign: TextAlign.center,
                                         style: simpleText.copyWith(
                                           fontSize: tableTextSize,
-                                          color: Colors.white,
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                Container(
-                                  height: popUpContainerSize,
-                                  width: popUpContainerSize,
-                                  margin: EdgeInsets.symmetric(
-                                    horizontal: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: primaryColor,
-                                    borderRadius: BorderRadius.circular(
-                                      mobileView ? 5 : 10,
+                                  Expanded(
+                                    flex: 1,
+                                    child: Center(
+                                      child: Text(
+                                        restaurant.menuList.isEmpty
+                                            ? 'No Cuisine'
+                                            : restaurant
+                                                .menuList[0].cuisineType,
+                                        textAlign: TextAlign.center,
+                                        style: simpleText.copyWith(
+                                          fontSize: tableTextSize,
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                  child: Center(
-                                    child: PopupMenuButton<String>(
-                                      padding: EdgeInsets.zero,
-                                      icon: Icon(
-                                        Icons.more_vert,
-                                        color: Colors.white,
-                                        size: popUpSize,
+                                  Expanded(
+                                    flex: 1,
+                                    child: Center(
+                                      child: Text(
+                                        restaurant.city,
+                                        textAlign: TextAlign.center,
+                                        style: simpleText.copyWith(
+                                          fontSize: tableTextSize,
+                                        ),
                                       ),
-                                      onSelected: (value) async {
-                                        if (value == 'delete') {
-                                          controller.deleteRestaurant(index);
-                                        } else if (value == 'edit') {
-                                          addController.restaurantModel =
-                                              restaurant;
-                                          addController.isNewRegistery =
-                                              restaurant.resEmail == '';
-                                          controller.update();
-                                          final editRestaurantController =
-                                              Get.put(
-                                                  EditRestaurantController());
-                                          await editRestaurantController
-                                              .fillAllVarsInRestManagmentController();
-
-                                          drawerController
-                                              .addRestaurants.value = true;
-                                        } else {
-                                          addController.restaurantModel =
-                                              restaurant;
-                                          controller.update();
-                                          drawerController
-                                              .viewRestaurantsDetails
-                                              .value = true;
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Center(
+                                      child: Text(
+                                        restaurant.resEmail == ''
+                                            ? '${restaurant.resName.toLowerCase().toString().split(' ')[0]}@gmail.com'
+                                            : restaurant.resEmail,
+                                        textAlign: TextAlign.center,
+                                        style: simpleText.copyWith(
+                                          fontSize: tableTextSize,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: StreamBuilder(
+                                      stream:
+                                          controller.getFeaturedRestaurantID(),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return CircleCheckbox(
+                                            onChanged: (v) async {},
+                                            value: false,
+                                          );
                                         }
+                                        print('snapshot data ${snapshot.data}');
+                                        final isFeatured =
+                                            snapshot.data == restaurant.docID;
+
+                                        return CircleCheckbox(
+                                          onChanged: (v) async {
+                                            print('check');
+                                            await controller
+                                                .setFreaturedRestaurant(
+                                              restaurantID: restaurant.docID,
+                                            );
+                                          },
+                                          value: isFeatured,
+                                        );
                                       },
-                                      itemBuilder: (context) => [
-                                        PopupMenuItem(
-                                          value: 'view',
-                                          child: Text('View'),
-                                        ),
-                                        PopupMenuItem(
-                                          value: 'edit',
-                                          child: Text('Edit'),
-                                        ),
-                                        PopupMenuItem(
-                                          value: 'delete',
-                                          child: Text('Delete'),
-                                        ),
-                                      ],
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: Center(
+                                      child: Container(
+                                        width: statusSize,
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 6,
+                                          horizontal: 8,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: restaurant.resEmail == '' &&
+                                                  restaurant.dietaryList.isEmpty
+                                              ? Colors.red
+                                              : primaryColor,
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                        ),
+                                        child: Text(
+                                          restaurant.resEmail == '' &&
+                                                  restaurant.dietaryList.isEmpty
+                                              ? 'Pending'
+                                              : 'Registered',
+                                          textAlign: TextAlign.center,
+                                          style: simpleText.copyWith(
+                                            fontSize: tableTextSize,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    height: popUpContainerSize,
+                                    width: popUpContainerSize,
+                                    margin: EdgeInsets.symmetric(
+                                      horizontal: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: primaryColor,
+                                      borderRadius: BorderRadius.circular(
+                                        mobileView ? 5 : 10,
+                                      ),
+                                    ),
+                                    child: Center(
+                                      child: PopupMenuButton<String>(
+                                        padding: EdgeInsets.zero,
+                                        icon: Icon(
+                                          Icons.more_vert,
+                                          color: Colors.white,
+                                          size: popUpSize,
+                                        ),
+                                        onSelected: (value) async {
+                                          if (value == 'delete') {
+                                            controller.deleteRestaurant(index);
+                                          } else if (value == 'edit') {
+                                            addController.restaurantModel =
+                                                restaurant;
+                                            addController.isNewRegistery =
+                                                restaurant.resEmail == '';
+                                            controller.update();
+                                            final editRestaurantController =
+                                                Get.put(
+                                                    EditRestaurantController());
+                                            await editRestaurantController
+                                                .fillAllVarsInRestManagmentController();
+
+                                            drawerController
+                                                .addRestaurants.value = true;
+                                          } else {
+                                            addController.restaurantModel =
+                                                restaurant;
+                                            controller.update();
+                                            drawerController
+                                                .viewRestaurantsDetails
+                                                .value = true;
+                                          }
+                                        },
+                                        itemBuilder: (context) => [
+                                          PopupMenuItem(
+                                            value: 'view',
+                                            child: Text('View'),
+                                          ),
+                                          PopupMenuItem(
+                                            value: 'edit',
+                                            child: Text('Edit'),
+                                          ),
+                                          PopupMenuItem(
+                                            value: 'delete',
+                                            child: Text('Delete'),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      },
                     ),
                   ),
                 ],

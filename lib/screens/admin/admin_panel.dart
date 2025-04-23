@@ -36,19 +36,17 @@ class AdminPanel extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: bgColor,
-      appBar:
-          MediaQuery.of(context).size.width < 800
-              ? AppBar(
-                backgroundColor: bgColor,
-                leading: Builder(
-                  builder:
-                      (context) => IconButton(
-                        icon: Icon(Icons.menu, color: primaryColor),
-                        onPressed: () => Scaffold.of(context).openDrawer(),
-                      ),
+      appBar: MediaQuery.of(context).size.width < 800
+          ? AppBar(
+              backgroundColor: bgColor,
+              leading: Builder(
+                builder: (context) => IconButton(
+                  icon: Icon(Icons.menu, color: primaryColor),
+                  onPressed: () => Scaffold.of(context).openDrawer(),
                 ),
-              )
-              : null,
+              ),
+            )
+          : null,
       drawer: MediaQuery.of(context).size.width < 800 ? CustomDrawer() : null,
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,26 +75,19 @@ class AdminPanel extends StatelessWidget {
       screen = AddSubAdminScreen();
     } else if (controller.addEvent.value) {
       screen = AddEvents();
-    }
-    else if (controller.viewEvents.value) {
+    } else if (controller.viewEvents.value) {
       screen = ViewEvent();
-    }
-    else if (controller.viewEventsGallery.value) {
+    } else if (controller.viewEventsGallery.value) {
       screen = EventDetailsGallery();
     } else if (controller.showNotifications.value) {
-      screen = NotificationScreen( );
-    }
-    else if(controller.viewClaimsDetails.value){
-      screen=RestaurantsClaimsDetails();
-    }
-    else if (controller.viewBannerDetails.value){
-      screen=BannerDetailsScreen();
-    }
-    else if(controller.addBanner.value){
-      screen=AddBanner();
-    }
-
-    else {
+      screen = NotificationScreen();
+    } else if (controller.viewClaimsDetails.value) {
+      screen = RestaurantsClaimsDetails();
+    } else if (controller.viewBannerDetails.value) {
+      screen = BannerDetailsScreen();
+    } else if (controller.addBanner.value) {
+      screen = AddBanner();
+    } else {
       if (controller.selectedScreen.value == 0) {
         screen = DashboardScreen();
       } else if (controller.selectedScreen.value == 1) {
@@ -123,7 +114,4 @@ class AdminPanel extends StatelessWidget {
     }
     return screen;
   }
-
-
-
 }

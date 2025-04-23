@@ -7,8 +7,9 @@ import 'package:savrly/models/sub_admins_model.dart';
 import '../models/user_management_model.dart';
 
 class DrawerControllerX extends GetxController {
-  SubAdminsModel? subAdminsModel;
+  RxString selectedType = ''.obs;
 
+  SubAdminsModel? subAdminsModel;
   // Active screen state
   RxInt selectedScreen = 0.obs;
   var isUserManagementExpanded = false.obs;

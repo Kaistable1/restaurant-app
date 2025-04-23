@@ -100,6 +100,7 @@ class DashboardScreen extends StatelessWidget {
                     title: "Total Events",
                     count: controller.totalEvents.value.toString(),
                     onTap: () {
+                      drawerController.selectedType.value = '';
                       drawerController.selectedScreen.value = 3;
                     },
                   ),
@@ -109,6 +110,7 @@ class DashboardScreen extends StatelessWidget {
                     title: "Total Restaurants",
                     count: controller.totalRestaurants.value.toString(),
                     onTap: () {
+                      drawerController.selectedType.value = '';
                       drawerController.selectedScreen.value = 2;
                     },
                   ),
@@ -123,12 +125,20 @@ class DashboardScreen extends StatelessWidget {
                     imagePath: 'assets/images/dash_con_3_icons.png',
                     title: "Registered Restaurants",
                     count: controller.registeredCount.value.toString(),
+                    onTap: () {
+                      drawerController.selectedType.value = 'registered';
+                      drawerController.selectedScreen.value = 2;
+                    },
                   ),
                   SizedBox(width: 24),
                   DashboardCard(
                     imagePath: 'assets/images/dash_con_4_icons.png',
                     title: "Pending Restaurants",
                     count: controller.pendingCount.value.toString(),
+                    onTap: () {
+                      drawerController.selectedType.value = 'pending';
+                      drawerController.selectedScreen.value = 2;
+                    },
                   ),
                 ],
               ),
