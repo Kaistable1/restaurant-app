@@ -75,41 +75,31 @@ class AddRestaurantsScreen extends StatelessWidget {
                             shadow: [],
                             containerColor: primaryColor,
                             ontapp: () async {
-                              if (menuController.areMenuFieldsFilled()) {
-                                await menuController.addMeneRestaurants();
-                                tabController
-                                    .clearFields(); // Clear Basic Info fields
-                                amenitiesController.clearFields();
-                                experiencesController.clearFields();
-                                menuController.clearFields();
-                                Get.dialog(
-                                  AlertDialog(
-                                    title: const Text('Success'),
-                                    content: const Text(
-                                      'Data added successfully!',
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Get.back(); // Close dialog
-                                          drawerController
-                                              .addRestaurants.value = false;
-                                          tabController.selectedIndex.value = 0;
-                                        },
-                                        child: const Text('OK'),
-                                      ),
-                                    ],
+                              await menuController.addMeneRestaurants();
+                              tabController
+                                  .clearFields(); // Clear Basic Info fields
+                              amenitiesController.clearFields();
+                              experiencesController.clearFields();
+                              menuController.clearFields();
+                              Get.dialog(
+                                AlertDialog(
+                                  title: const Text('Success'),
+                                  content: const Text(
+                                    'Data added successfully!',
                                   ),
-                                );
-                              } else {
-                                Get.snackbar(
-                                  'Error',
-                                  'Please upload at least one image and select a menu type.',
-                                  snackPosition: SnackPosition.TOP,
-                                  backgroundColor: Colors.red,
-                                  colorText: Colors.white,
-                                );
-                              }
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Get.back(); // Close dialog
+                                        drawerController.addRestaurants.value =
+                                            false;
+                                        tabController.selectedIndex.value = 0;
+                                      },
+                                      child: const Text('OK'),
+                                    ),
+                                  ],
+                                ),
+                              );
                             },
                           ),
                         ],
@@ -165,39 +155,7 @@ class AddRestaurantsScreen extends StatelessWidget {
                                   }
                                 }
                               } else if (selectedIndex == 1) {
-                                // Validate Amenities tab
-                                final amenitiesValidation =
-                                    amenitiesController.areAmenitiesValid();
-                                if (!amenitiesValidation.values
-                                    .every((valid) => valid)) {
-                                  List<String> errors = [];
-                                  if (!amenitiesValidation['facilities']!) {
-                                    errors.add(
-                                        'Please select at least one Facility/Service.');
-                                  }
-                                  if (!amenitiesValidation['dietary']!) {
-                                    errors.add(
-                                        'Please select at least one Dietary Preference.');
-                                  }
-                                  if (!amenitiesValidation['atmosphere']!) {
-                                    errors.add(
-                                        'Please select at least one Atmosphere option.');
-                                  }
-                                  if (!amenitiesValidation['priceRange']!) {
-                                    errors.add(
-                                        'Please select at least one Price Range.');
-                                  }
-                                  Get.snackbar(
-                                    'Error',
-                                    errors.join('\n'),
-                                    snackPosition: SnackPosition.TOP,
-                                    backgroundColor: Colors.red,
-                                    colorText: Colors.white,
-                                    duration: const Duration(seconds: 5),
-                                  );
-                                } else {
-                                  await amenitiesController.addAmenities();
-                                }
+                                await amenitiesController.addAmenities();
                               } else if (selectedIndex == 2) {
                                 await experiencesController.addExperience();
                               } else if (selectedIndex == 3) {
@@ -247,46 +205,33 @@ class AddRestaurantsScreen extends StatelessWidget {
                       shadow: [],
                       containerColor: primaryColor,
                       ontapp: () async {
-                        if (menuController.areMenuFieldsFilled()) {
-                          await menuController.addMeneRestaurants();
-                          tabController
-                              .clearFields(); // Clear Basic Info fields
-                          amenitiesController.clearFields();
-                          experiencesController.clearFields();
-                          menuController.clearFields();
-                          tabController
-                              .clearFields(); // Clear Basic Info fields
-                          amenitiesController
-                              .clearFields(); // Clear Amenities fields
-                          experiencesController
-                              .clearFields(); // Already clearing here
-                          Get.dialog(
-                            AlertDialog(
-                              title: const Text('Success'),
-                              content:
-                                  const Text('Restaurant added successfully!'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Get.back(); // Close dialog
-                                    drawerController.addRestaurants.value =
-                                        false;
-                                    tabController.selectedIndex.value = 0;
-                                  },
-                                  child: const Text('OK'),
-                                ),
-                              ],
-                            ),
-                          );
-                        } else {
-                          Get.snackbar(
-                            'Error',
-                            'Please upload at least one image and select a menu type.',
-                            snackPosition: SnackPosition.TOP,
-                            backgroundColor: Colors.red,
-                            colorText: Colors.white,
-                          );
-                        }
+                        await menuController.addMeneRestaurants();
+                        tabController.clearFields(); // Clear Basic Info fields
+                        amenitiesController.clearFields();
+                        experiencesController.clearFields();
+                        menuController.clearFields();
+                        tabController.clearFields(); // Clear Basic Info fields
+                        amenitiesController
+                            .clearFields(); // Clear Amenities fields
+                        experiencesController
+                            .clearFields(); // Already clearing here
+                        Get.dialog(
+                          AlertDialog(
+                            title: const Text('Success'),
+                            content:
+                                const Text('Restaurant added successfully!'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Get.back(); // Close dialog
+                                  drawerController.addRestaurants.value = false;
+                                  tabController.selectedIndex.value = 0;
+                                },
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          ),
+                        );
                       },
                     ),
                   ],
@@ -440,7 +385,10 @@ class AddRestaurantsScreen extends StatelessWidget {
                             tabController.selectedIndex.value == index;
                         return GestureDetector(
                           onTap: () {
-                            // tabController.selectedIndex.value = index; // Disabled
+                            if (tabController.restaurantModel != null) {
+                              tabController.selectedIndex.value =
+                                  index; // Disabled
+                            }
                           },
                           child: MouseRegion(
                             cursor: SystemMouseCursors.click,

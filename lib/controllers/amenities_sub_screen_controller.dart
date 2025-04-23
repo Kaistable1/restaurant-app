@@ -236,30 +236,33 @@ class AmenitiesSubScreenController extends GetxController {
 
       final addRestaurantTabController = Get.find<AddRestaurantTabController>();
       final restaurantID = addRestaurantTabController.currentRestaurantID;
-
+      print('restaurantID ${restaurantID}');
       if (restaurantID == null || restaurantID.isEmpty) {
         throw Exception("Restaurant ID is missing");
       }
-
+      print(' setp 1');
       // 👇 Step 1: Get selected lists separately
       final atmosphereList = getSelectedAtmosphere();
       final dietaryList = getSelectedDietaryPreferences();
       final facilityList = getSelectedFacilities();
       final priceRange = getSelectedPriceRange();
+      print(' setp 2');
 
       // 👇 Step 2: Prepare the data map
       final restaurantData = {
         'atmopshereList': atmosphereList,
         'dietaryList': dietaryList,
         'facilityList': facilityList,
-        'priceRange': priceRange.first,
+        'priceRange': priceRange.isEmpty ? '' : priceRange.first,
       };
+      print(' setp 3');
 
       // 👇 Step 3: Update Firestore
       await FirebaseFirestore.instance
           .collection('restaurants')
           .doc(restaurantID)
           .update(restaurantData);
+      print(' setp 4');
 
       // 👇 Step 4: UI updates
       Get.back();
@@ -274,51 +277,7 @@ class AmenitiesSubScreenController extends GetxController {
       );
     } catch (e) {
       Get.back();
-      Get.snackbar('Error', 'Failed to add amenities: $e');
-      print('❌ Error adding amenities: $e');
-    }
-  }
-
-  updateAmenities() async {
-    try {
-      loadingDialog();
-
-      final addRestaurantTabController = Get.find<AddRestaurantTabController>();
-      final restaurantID = addRestaurantTabController.restaurantModel?.docID;
-
-      // 👇 Step 1: Get selected lists separately
-      final atmosphereList = getSelectedAtmosphere();
-      final dietaryList = getSelectedDietaryPreferences();
-      final facilityList = getSelectedFacilities();
-      final priceRange = getSelectedPriceRange();
-
-      // 👇 Step 2: Prepare the data map
-      final restaurantData = {
-        'atmopshereList': atmosphereList,
-        'dietaryList': dietaryList,
-        'facilityList': facilityList,
-        'priceRange': priceRange.first,
-      };
-
-      // 👇 Step 3: Update Firestore
-      await FirebaseFirestore.instance
-          .collection('restaurants')
-          .doc(restaurantID)
-          .update(restaurantData);
-
-      // 👇 Step 4: UI updates
-      Get.back();
-      clearFields();
-      addRestaurantTabController.selectedIndex.value++;
-
-      Get.snackbar(
-        'Success',
-        'Amenities added successfully',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
-    } catch (e) {
-      Get.back();
+      print('error $e');
       Get.snackbar('Error', 'Failed to add amenities: $e');
       print('❌ Error adding amenities: $e');
     }

@@ -100,7 +100,6 @@ class DashboardScreen extends StatelessWidget {
                     title: "Total Events",
                     count: controller.totalEvents.value.toString(),
                     onTap: () {
-                      drawerController.selectedType.value = '';
                       drawerController.selectedScreen.value = 3;
                     },
                   ),

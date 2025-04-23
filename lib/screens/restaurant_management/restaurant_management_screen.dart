@@ -30,7 +30,10 @@ class _RestaurantManagementScreenState
   @override
   void initState() {
     super.initState();
-
+    if (drawerController.selectedType.value == 'pending' ||
+        drawerController.selectedType.value == 'registered') {
+      controller.fetchAllRestaurantsForFilters();
+    }
     _scrollController = ScrollController();
 
     _scrollController.addListener(() {
@@ -323,18 +326,17 @@ class _RestaurantManagementScreenState
                       () {
                         List<RestaurantModel> filteredRestaurants =
                             controller.restaurants;
-                        print(
-                            'drawerController.selectedType.value ------------ ${drawerController.selectedType.value}');
+
                         if (drawerController.selectedType.value == 'pending') {
                           controller.hasMoreData.value = false;
-                          controller.fetchAllRestaurantsForFilters();
+
                           filteredRestaurants = controller.filteredResults
                               .where((element) => element.resEmail == '')
                               .toList();
                         } else if (drawerController.selectedType.value ==
                             'registered') {
                           controller.hasMoreData.value = false;
-                          controller.fetchAllRestaurantsForFilters();
+
                           filteredRestaurants = controller.filteredResults
                               .where((element) => element.resEmail != '')
                               .toList();
@@ -491,7 +493,6 @@ class _RestaurantManagementScreenState
                                             value: false,
                                           );
                                         }
-                                        print('snapshot data ${snapshot.data}');
                                         final isFeatured =
                                             snapshot.data == restaurant.docID;
 

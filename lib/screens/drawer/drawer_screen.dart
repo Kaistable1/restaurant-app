@@ -13,14 +13,13 @@ class CustomDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     final DrawerControllerX controller = Get.find();
     double drawerHeight = MediaQuery.of(context).size.height;
-    double drawerWidth =
-        MediaQuery.of(context).size.width < 600
-            ? 257
-            : MediaQuery.of(context).size.width < 900
+    double drawerWidth = MediaQuery.of(context).size.width < 600
+        ? 257
+        : MediaQuery.of(context).size.width < 900
             ? 280
             : MediaQuery.of(context).size.width < 1200
-            ? 300
-            : MediaQuery.of(context).size.width * 0.2;
+                ? 300
+                : MediaQuery.of(context).size.width * 0.2;
     double iconSize = MediaQuery.of(context).size.width < 600 ? 20 : 24;
     double textSize = MediaQuery.of(context).size.width < 600 ? 14 : 16;
     Color hoverColor = lightColor.withOpacity(0.3);
@@ -89,7 +88,6 @@ class CustomDrawer extends StatelessWidget {
                     hoverColor,
                     selectedColor,
                   ),
-
                   _buildDrawerItem(
                     controller,
                     'assets/images/event_icon.png',
@@ -183,7 +181,7 @@ class CustomDrawer extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(top: 20.0,bottom: 18),
+            padding: EdgeInsets.only(top: 20.0, bottom: 18),
             // Adjusted 'custom' to 'top' assuming it was a typo
             child: CustomButton(
               laBelText: 'Logout',
@@ -277,16 +275,16 @@ class CustomDrawer extends StatelessWidget {
         onExit: (event) => controller.hoveredItem.value = "",
         child: GestureDetector(
           onTap: () {
+            controller.selectedType.value = '';
             controller.changeScreen(number);
             controller.selectMainScreen(number);
           },
           child: Container(
             height: 60,
             decoration: BoxDecoration(
-              color:
-                  controller.selectedScreen.value == number
-                      ? selectedColor.withOpacity(0.2)
-                      : controller.hoveredItem.value == "$number"
+              color: controller.selectedScreen.value == number
+                  ? selectedColor.withOpacity(0.2)
+                  : controller.hoveredItem.value == "$number"
                       ? hoverColor
                       : Colors.transparent,
               borderRadius: BorderRadius.circular(8),
@@ -301,15 +299,13 @@ class CustomDrawer extends StatelessWidget {
                       bottomRight: Radius.circular(6),
                       topRight: Radius.circular(6),
                     ),
-                    color:
-                        controller.selectedScreen.value == number ||
-                                controller.hoveredItem.value == "$number"
-                            ? Colors.white
-                            : Colors.transparent,
+                    color: controller.selectedScreen.value == number ||
+                            controller.hoveredItem.value == "$number"
+                        ? Colors.white
+                        : Colors.transparent,
                   ),
                 ),
                 SizedBox(width: 10),
-
                 Image.asset(
                   controller.selectedScreen.value == number
                       ? selectedIconImage
@@ -318,14 +314,12 @@ class CustomDrawer extends StatelessWidget {
                   width: iconSize,
                 ),
                 SizedBox(width: 12),
-
                 Text(
                   title,
                   style: simpleText.copyWith(
-                    color:
-                        controller.selectedScreen.value == number
-                            ? selectedColor
-                            : controller.hoveredItem.value == "$number"
+                    color: controller.selectedScreen.value == number
+                        ? selectedColor
+                        : controller.hoveredItem.value == "$number"
                             ? lightColor
                             : Colors.white,
                     fontSize: textSize,
