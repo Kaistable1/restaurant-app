@@ -186,6 +186,9 @@ class SignupController extends GetxController {
       }).then((value) {
         // Navigate to preferences page after successful data insertion
         print('going to prefer 1');
+        // update user fcm token by "Modassir"
+        FirebaseMessaging.instance.getToken().then((fcmToken) =>
+            FirebaseFirestore.instance.collection("users").doc(auth.currentUser!.uid).update({"fcmToken": fcmToken}));
         userModel.userID = auth.currentUser!.uid;
         verifyController.clear();
         resetTextFields();
