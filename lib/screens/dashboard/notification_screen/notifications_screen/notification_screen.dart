@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:savrly/models/usermodel_for_notification.dart';
+import 'package:savrly/utils/globalVars.dart';
 
 import '../../../../constants/app_colors.dart';
 import '../../../../constants/text_styles.dart';
@@ -15,6 +18,7 @@ class NotificationScreen extends StatelessWidget {
   final controller = Get.put(NotificationController());
 
   NotificationScreen({super.key});
+  GlobalVariables globalVariables = GlobalVariables();
 
   @override
   Widget build(BuildContext context) {
@@ -127,8 +131,8 @@ class NotificationScreen extends StatelessWidget {
                                 hint: 'Restaurant Factors',
                                 items: controller.chooseRestaurantFactors,
                                 onChanged: (value) {
-                                  controller.chooseRestaurantFactorsFilter.value =
-                                      value!;
+                                  controller.chooseRestaurantFactorsFilter
+                                      .value = value!;
                                 },
                               ),
                               const SizedBox(height: 10),
@@ -163,8 +167,8 @@ class NotificationScreen extends StatelessWidget {
                                 hint: 'Notification Preferences',
                                 items: controller.notificationPreferences,
                                 onChanged: (value) {
-                                  controller.notificationPreferencesFilter.value =
-                                      value!;
+                                  controller.notificationPreferencesFilter
+                                      .value = value!;
                                 },
                               ),
                               const SizedBox(height: 10),
@@ -175,6 +179,38 @@ class NotificationScreen extends StatelessWidget {
                                   controller.notificationFrequencyFilter.value =
                                       value!;
                                 },
+                              ),
+                              const SizedBox(height: 10),
+                              CustomDropDownWidget(
+                                hint: 'Travel Distance',
+                                items: controller.travelDistance,
+                                onChanged: (value) {
+                                  controller.travelDistanceFilter.value =
+                                      value!;
+                                },
+                              ),
+                              const SizedBox(height: 10),
+                              CustomDropDownWidget(
+                                hint: 'State',
+                                items: controller.stateList,
+                                onChanged: (value) {
+                                  controller.stateFilter.value =
+                                  value!;
+                                },
+                              ),
+                              const SizedBox(height: 10),
+                              Obx(
+                                    () => CustomDropDownWidget(
+                                  hint: 'City',
+                                  items: controller.stateFilter.value ==
+                                      'Los Angeles'
+                                      ? globalVariables.losAngelesCities
+                                      : globalVariables.newYorkCitiesList,
+                                  onChanged: (value) {
+                                    controller.cityFilter
+                                        .value = value!;
+                                  },
+                                ),
                               ),
                             ],
                           ),
@@ -191,8 +227,8 @@ class NotificationScreen extends StatelessWidget {
                                       hint: 'Favorite Cuisines',
                                       items: controller.favoriteCuisines,
                                       onChanged: (value) {
-                                        controller.favoriteCuisinesFilter.value =
-                                            value!;
+                                        controller.favoriteCuisinesFilter
+                                            .value = value!;
                                       },
                                     ),
                                   ),
@@ -213,8 +249,7 @@ class NotificationScreen extends StatelessWidget {
                                       hint: 'Restaurant Factors',
                                       items: controller.chooseRestaurantFactors,
                                       onChanged: (value) {
-                                        controller
-                                            .chooseRestaurantFactorsFilter
+                                        controller.chooseRestaurantFactorsFilter
                                             .value = value!;
                                       },
                                     ),
@@ -266,8 +301,7 @@ class NotificationScreen extends StatelessWidget {
                                       hint: 'Notification Preferences',
                                       items: controller.notificationPreferences,
                                       onChanged: (value) {
-                                        controller
-                                            .notificationPreferencesFilter
+                                        controller.notificationPreferencesFilter
                                             .value = value!;
                                       },
                                     ),
@@ -284,7 +318,49 @@ class NotificationScreen extends StatelessWidget {
                                     ),
                                   ),
                                   const SizedBox(width: 40),
-                                  const Expanded(child: SizedBox()),
+                                  Expanded(
+                                    child: CustomDropDownWidget(
+                                      hint: 'Travel Distance',
+                                      items: controller.travelDistance,
+                                      onChanged: (value) {
+                                        controller.travelDistanceFilter.value =
+                                            value!;
+                                      },
+                                    ),
+                                  ),
+
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: CustomDropDownWidget(
+                                      hint: 'State',
+                                      items: controller.stateList,
+                                      onChanged: (value) {
+                                        controller.stateFilter.value = value!;
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(width: 40),
+                                  Expanded(
+                                    child: Obx(
+                                      () => CustomDropDownWidget(
+                                        hint: 'City',
+                                        items: controller.stateFilter.value ==
+                                                'Los Angeles'
+                                            ? globalVariables.losAngelesCities
+                                            : globalVariables.newYorkCitiesList,
+                                        onChanged: (value) {
+                                          controller.cityFilter
+                                              .value = value!;
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 40),
+                                  Expanded(child: SizedBox()),
                                 ],
                               ),
                             ],
@@ -307,20 +383,48 @@ class NotificationScreen extends StatelessWidget {
                 ),
               ),
             ),
-            Obx(
-              () => Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 300,
-                      child: controller.filteredUsers.isEmpty
-                          ? const Center(child: Text('No users match the filters'))
-                          : ListView.builder(
-                              itemCount: controller.filteredUsers.length,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 2.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 300,
+                    child: StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection('users')
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        } else if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        } else if (snapshot.data!.docs.isEmpty) {
+                          print(
+                              'No users match the filters ${snapshot.data!.docs.length}');
+                          return const Center(
+                              child: Text('No users match the filters'));
+                        } else {
+                          List<UserModel> users = snapshot.data!.docs
+                              .map((doc) => UserModel.fromMap(
+                                  doc.data() as Map<String, dynamic>))
+                              .toList();
+
+                          return Obx(() {
+                            controller.updateFilteredUsers(users);
+                            return ListView.builder(
+                              itemCount: controller
+                                  .filteredUsers.length, // ✅ filtered list here
                               itemBuilder: (context, index) {
-                                final user = controller.filteredUsers[index];
+                                final user = controller.filteredUsers[
+                                    index]; // ✅ filtered userr here
+
                                 return Padding(
                                   padding: EdgeInsets.only(
                                     right: isTablet
@@ -383,108 +487,196 @@ class NotificationScreen extends StatelessWidget {
                                                   width: avatarSize,
                                                   height: avatarSize,
                                                   color: Colors.grey[300],
-                                                  child: const Icon(Icons.person,
+                                                  child: const Icon(
+                                                      Icons.person,
                                                       color: Colors.grey),
                                                 ),
                                         ),
                                         SizedBox(
-                                            width: isMobile
-                                                ? 12
-                                                : (isTablet ? 16 : 20)),
+                                          width: isMobile
+                                              ? 12
+                                              : (isTablet ? 16 : 20),
+                                        ),
                                         // User Name
                                         Expanded(
                                           child: Text(
                                             user.username.text,
                                             style: TextStyle(
                                               fontSize: fontSize,
-                                              fontFamily: GoogleFonts
-                                                  .nunitoSans()
-                                                  .fontFamily,
+                                              fontFamily:
+                                                  GoogleFonts.nunitoSans()
+                                                      .fontFamily,
                                               color: Colors.grey[700],
                                             ),
                                           ),
                                         ),
                                         // Checkbox for multiple selection
-                                        CustomRadioButton(
-                                          isSelected:
-                                              controller.isUserSelected(index),
-                                          onTap: () =>
-                                              controller.toggleUserSelection(
-                                                  index),
+                                        Obx(() => CustomRadioButton(
+                                          isSelected: controller.isUserSelected(index),
+                                          onTap: () => controller.toggleUserSelection(index),
                                           activeColor: primaryColor,
-                                        ),
+                                        ))
+
                                       ],
                                     ),
                                   ),
                                 );
                               },
-                            ),
+                            );
+                          });
+                        }
+                      },
                     ),
-                    const SizedBox(height: 10),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          left: isMobile
-                              ? 150
-                              : isTablet
-                                  ? 200
-                                  : isLargeScreen
-                                      ? 500
-                                      : 250.0),
-                      child: CustomButton(
-                        width: 162,
-                        laBelText: 'Send',
-                        ontapp: () {
-                          // Check if at least one user is selected
-                          bool isUserSelected =
-                              controller.selectedUsers.isNotEmpty;
+                  ),
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: EdgeInsets.only(
+                        left: isMobile
+                            ? 150
+                            : isTablet
+                                ? 200
+                                : isLargeScreen
+                                    ? 500
+                                    : 250.0),
+                    child: CustomButton(
+                      width: 162,
+                      laBelText: 'Send',
+                      ontapp: () async {
+                        // Check if at least one user is selected
+                        bool isUserSelected = controller.selectedUsers.isNotEmpty;
 
-                          // Check if at least one filter is selected
-                          bool isAnyFilterSelected = controller
-                                  .favoriteCuisinesFilter.value.isNotEmpty ||
-                              controller
-                                  .dietaryPreferencesFilter.value.isNotEmpty ||
-                              controller.chooseRestaurantFactorsFilter.value
-                                  .isNotEmpty ||
-                              controller
-                                  .diningPlanningStyleFilter.value.isNotEmpty ||
-                              controller
-                                  .diningPrioritiesFilter.value.isNotEmpty ||
-                              controller
-                                  .diningExperiencesFilter.value.isNotEmpty ||
-                              controller.notificationPreferencesFilter.value
-                                  .isNotEmpty ||
-                              controller
-                                  .notificationFrequencyFilter.value.isNotEmpty;
+                        // Check if at least one filter is selected
+                        bool isAnyFilterSelected =
+                            controller.favoriteCuisinesFilter.value.isNotEmpty ||
+                                controller.dietaryPreferencesFilter.value.isNotEmpty ||
+                                controller.chooseRestaurantFactorsFilter.value.isNotEmpty ||
+                                controller.diningPlanningStyleFilter.value.isNotEmpty ||
+                                controller.diningPrioritiesFilter.value.isNotEmpty ||
+                                controller.diningExperiencesFilter.value.isNotEmpty ||
+                                controller.notificationPreferencesFilter.value.isNotEmpty ||
+                                controller.notificationFrequencyFilter.value.isNotEmpty ||
+                                controller.travelDistanceFilter.value.isNotEmpty ||
+                                controller.stateFilter.value.isNotEmpty ||
+                                controller.cityFilter.value.isNotEmpty;
 
-                          if (!isUserSelected || !isAnyFilterSelected) {
-                            Get.snackbar(
-                                'Error',
-                                !isUserSelected && !isAnyFilterSelected
-                                    ? 'Please select at least one user and one filter.'
-                                    : !isUserSelected
-                                        ? 'Please select at least one user.'
-                                        : 'Please select at least one filter.',
-                                snackPosition: SnackPosition.TOP,
-                                backgroundColor: primaryColor,
-                                colorText: Colors.white,
-                                maxWidth: 400);
-                            return;
+                        if (!isUserSelected || !isAnyFilterSelected) {
+                          Get.snackbar(
+                            'Error',
+                            !isUserSelected && !isAnyFilterSelected
+                                ? 'Please select at least one user and one filter.'
+                                : !isUserSelected
+                                ? 'Please select at least one user.'
+                                : 'Please select at least one filter.',
+                            snackPosition: SnackPosition.TOP,
+                            backgroundColor: primaryColor,
+                            colorText: Colors.white,
+                            maxWidth: 400,
+                          );
+                          return;
+                        }
+
+                        // Get selected users' data
+                        List<UserModel> selectedUserData = controller.selectedUsers
+                            .map((index) => controller.filteredUsers[index])
+                            .toList();
+
+                        // Print selected users' data
+                        print('Selected Users: ${selectedUserData.length}');
+                        for (var user in selectedUserData) {
+                          print('--- User ---');
+                          print('User ID: ${user.userID}');
+                          print('Username: ${user.username.text}');
+                          print('User Image: ${user.userImage.value}');
+                          print('Top Three Cuisines: ${user.topThreeCuisines?.join(", ") ?? "None"}');
+                          print('Dietary Preferences: ${user.dietaryPrefList?.join(", ") ?? "None"}');
+                          print('Choose Restaurant Factors: ${user.whereToEat?.join(", ") ?? "None"}');
+                          print('Dining Planning Style: ${user.planner ?? "None"}');
+                          print('Dining Priorities: ${user.impDiningOut?.join(", ") ?? "None"}');
+                          print('Dining Experiences: ${user.diningExp?.join(", ") ?? "None"}');
+                          print('Travel Distance: ${user.willingToTravel ?? "None"}');
+                          print('Notification Preferences: ${user.notificationType?.join(", ") ?? "None"}');
+                          print('Notification Frequency: ${user.notifiedDiningOpp ?? "None"}');
+                          print('State: ${user.country ?? "None"}');
+                          print('City: ${user.city ?? "None"}');
+                        }
+
+                        // Existing logic for sending notifications
+                        List<String> selectedUserIds = controller.selectedUsers
+                            .map((index) => controller.filteredUsers[index].token.toString())
+                            .toList();
+//                         Send notifications to selected users
+                        for (var user in selectedUserData) {
+                          if (selectedUserIds.isNotEmpty && user.token != null) {
+                            await controller.sendPushNotification(
+                              token: user.token!,
+                              title: controller.titleController.text,
+                              message: controller.descriptionController.text,
+                            );
+                            // drawerController.showNotifications.value = false;
+                          } else {
+                            print('No FCM token for user: ${user.userID}');
                           }
+                        }
+                        // controller.sendPushNotification(token: selectedUserIds, message: controller.descriptionController.text, title: controller.titleController.text);
+                        print('Sending notifications to user IDs: $selectedUserIds');
+                        // Add your notification logic here
 
-                          // Placeholder for sending notifications
-                          List<String> selectedUserIds = controller.selectedUsers
-                              .map((index) =>
-                                  controller.filteredUsers[index].userID)
-                              .toList();
-                          print(
-                              'Sending notifications to user IDs: $selectedUserIds');
-                          // Add your notification logic here
-                          drawerController.showNotifications.value = false;
-                        },
-                      ),
+                      },
                     ),
-                  ],
-                ),
+                    /*CustomButton(
+                      width: 162,
+                      laBelText: 'Send',
+                      ontapp: () {
+                        // Check if at least one user is selected
+                        bool isUserSelected =
+                            controller.selectedUsers.isNotEmpty;
+
+                        // Check if at least one filter is selected
+                        bool isAnyFilterSelected = controller
+                                .favoriteCuisinesFilter.value.isNotEmpty ||
+                            controller
+                                .dietaryPreferencesFilter.value.isNotEmpty ||
+                            controller.chooseRestaurantFactorsFilter.value
+                                .isNotEmpty ||
+                            controller
+                                .diningPlanningStyleFilter.value.isNotEmpty ||
+                            controller
+                                .diningPrioritiesFilter.value.isNotEmpty ||
+                            controller
+                                .diningExperiencesFilter.value.isNotEmpty ||
+                            controller.notificationPreferencesFilter.value
+                                .isNotEmpty ||
+                            controller
+                                .notificationFrequencyFilter.value.isNotEmpty;
+
+                        if (!isUserSelected || !isAnyFilterSelected) {
+                          Get.snackbar(
+                              'Error',
+                              !isUserSelected && !isAnyFilterSelected
+                                  ? 'Please select at least one user and one filter.'
+                                  : !isUserSelected
+                                      ? 'Please select at least one user.'
+                                      : 'Please select at least one filter.',
+                              snackPosition: SnackPosition.TOP,
+                              backgroundColor: primaryColor,
+                              colorText: Colors.white,
+                              maxWidth: 400);
+                          return;
+                        }
+
+                        // Placeholder for sending notifications
+                        List<String> selectedUserIds = controller.selectedUsers
+                            .map((index) =>
+                                controller.filteredUsers[index].userID)
+                            .toList();
+                        print(
+                            'Sending notifications to user IDs: $selectedUserIds');
+                        // Add your notification logic here
+                        drawerController.showNotifications.value = false;
+                      },
+                    ),*/
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 30),
