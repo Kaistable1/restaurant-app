@@ -16,10 +16,12 @@ class UserModel {
   List<String> whereToEat;
   List<String> impDiningOut;
   List<String> diningExp;
-  List<String> willingToTravel;
+  String willingToTravel;
   List<String> notificationType;
   String planner;
   String notifiedDiningOpp;
+  String country;
+  String city;
 
   // Constructor
   UserModel({
@@ -35,13 +37,15 @@ class UserModel {
     this.whereToEat = const [],
     this.impDiningOut = const [],
     this.diningExp = const [],
-    this.willingToTravel = const [],
+    this.willingToTravel = '',
     this.notificationType = const [],
     this.planner = '',
     this.notifiedDiningOpp = '',
+    this.country = '',
+    this.city = '',
   });
 
-  // Factory method to initialize with default values
+  // Factory method for initialization
   static UserModel initialize() {
     return UserModel(
       userEmail: TextEditingController(),
@@ -53,14 +57,14 @@ class UserModel {
     );
   }
 
-  // Convert the model to a map (useful for storing in Firestore)
+  // Convert model to map for Firestore
   Map<String, dynamic> toMap() {
     return {
       'userEmail': userEmail.text,
       'password': password.text,
       'username': username.text,
       'confirmpass': confirmpass.text,
-      'token': token,
+      'fcmToken': token,
       'userID': userID,
       'userImage': userImage.value,
       'topThreeCuisines': topThreeCuisines,
@@ -72,17 +76,19 @@ class UserModel {
       'notificationType': notificationType,
       'planner': planner,
       'notifiedDiningOpp': notifiedDiningOpp,
+      'country': country,
+      'city': city,
     };
   }
 
-  // Create a model instance from a map (useful for fetching from Firestore)
+  // Create model from map (Firestore fetch)
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
       userEmail: TextEditingController(text: map['userEmail'] ?? ''),
       password: TextEditingController(text: map['password'] ?? ''),
       username: TextEditingController(text: map['username'] ?? ''),
       confirmpass: TextEditingController(text: map['confirmpass'] ?? ''),
-      token: map['token'],
+      token: map['fcmToken'],
       userID: map['userID'] ?? '',
       userImage: RxString(map['userImage'] ?? ''),
       topThreeCuisines: List<String>.from(map['topThreeCuisines'] ?? []),
@@ -90,23 +96,24 @@ class UserModel {
       whereToEat: List<String>.from(map['whereToEat'] ?? []),
       impDiningOut: List<String>.from(map['impDiningOut'] ?? []),
       diningExp: List<String>.from(map['diningExp'] ?? []),
-      willingToTravel: List<String>.from(map['willingToTravel'] ?? []),
+      willingToTravel: map['willingToTravel'] ?? '',
       notificationType: List<String>.from(map['notificationType'] ?? []),
       planner: map['planner'] ?? '',
       notifiedDiningOpp: map['notifiedDiningOpp'] ?? '',
+      country: map['country'] ?? '',
+      city: map['city'] ?? '',
     );
   }
 
-  // Create a model instance from a Firestore DocumentSnapshot
-  factory UserModel.fromDocumentSnapshot(
-      DocumentSnapshot<Map<String, dynamic>> doc) {
+  // Create model from DocumentSnapshot (Firestore direct fetch)
+  factory UserModel.fromDocumentSnapshot(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data()!;
     return UserModel(
       userEmail: TextEditingController(text: data['userEmail'] ?? ''),
       password: TextEditingController(text: data['password'] ?? ''),
       username: TextEditingController(text: data['username'] ?? ''),
       confirmpass: TextEditingController(text: data['confirmpass'] ?? ''),
-      token: data['token'],
+      token: data['fcmToken'],
       userID: data['userID'] ?? doc.id,
       userImage: RxString(data['userImage'] ?? ''),
       topThreeCuisines: List<String>.from(data['topThreeCuisines'] ?? []),
@@ -114,10 +121,12 @@ class UserModel {
       whereToEat: List<String>.from(data['whereToEat'] ?? []),
       impDiningOut: List<String>.from(data['impDiningOut'] ?? []),
       diningExp: List<String>.from(data['diningExp'] ?? []),
-      willingToTravel: List<String>.from(data['willingToTravel'] ?? []),
+      willingToTravel: data['willingToTravel'] ?? '',
       notificationType: List<String>.from(data['notificationType'] ?? []),
       planner: data['planner'] ?? '',
       notifiedDiningOpp: data['notifiedDiningOpp'] ?? '',
+      country: data['country'] ?? '',
+      city: data['city'] ?? '',
     );
   }
 }

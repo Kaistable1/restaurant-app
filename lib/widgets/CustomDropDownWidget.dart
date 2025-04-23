@@ -12,7 +12,8 @@ class CustomDropDownWidget extends StatelessWidget {
   const CustomDropDownWidget({
     required this.hint,
     required this.items,
-    required this.onChanged,this.value,
+    required this.onChanged,
+    this.value,
     this.validator,
     super.key,
   });
@@ -20,7 +21,10 @@ class CustomDropDownWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<String>(
-      value: value != null && items.contains(value) ? value : null, // Set the current value
+      value: value != null && items.contains(value)
+          ? value
+          : null, // Set the current value
+      isExpanded: true,
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: simpleText.copyWith(
@@ -42,8 +46,7 @@ class CustomDropDownWidget extends StatelessWidget {
         ),
       ),
       icon: Icon(Icons.arrow_drop_down, color: primaryColor),
-      items:
-      items.map((String value) {
+      items: items.map((String value) {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(

@@ -167,7 +167,7 @@ class RestaurantsClaimsDetails extends StatelessWidget {
                   child: Container(
                     width: isLargeScreen ? 680 : 500,
                     height: isLargeScreen
-                        ? screenHeight * 0.28
+                        ? screenHeight * 0.3
                         : screenHeight * 0.42,
                     decoration: BoxDecoration(
                       color: dimWhite,
