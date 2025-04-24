@@ -1,11 +1,16 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:savrly/constants/app_colors.dart';
 import 'package:savrly/main.dart';
 import 'package:savrly/widgets/global_functions.dart';
 import '../models/claims_model.dart';
+import 'package:http/http.dart';
 
 class RestaurantsClaimsController extends GetxController {
   @override
@@ -15,6 +20,8 @@ class RestaurantsClaimsController extends GetxController {
   }
 
   final passwordController = TextEditingController();
+  final emailSubjectController = TextEditingController();
+  final emailMessageController = TextEditingController();
   var restaurantsClaims = <RestaurantClaimsModel>[].obs;
   var filteredClaimsRestaurants = <RestaurantClaimsModel>[].obs;
   RestaurantClaimsModel? viewClaimsDetails;
@@ -173,6 +180,36 @@ class RestaurantsClaimsController extends GetxController {
     } catch (e) {
       print('create reaturant issue $e');
       return 'error';
+    }
+  }
+
+  // Delete a business claim from Firestore and update restaurantsClaims
+  RxBool isSending = false.obs;
+
+  Future<void> sendEmail({required String to}) async {
+    var headers = {
+      'Content-Type': 'application/json'
+    };
+    var data = json.encode({
+      "to": "muddasir.khan@alestrasol.com",
+      "subject": "Test Email. fdsgdf dfgdfb fdgfb fghbfb fxsdgbcxfv bcxgffdxb ",
+      "message": "Hello from Cloud Functions! gshd ghcnjfgn fhgfgdhsd dgffsdgsdgd"
+    });
+    var dio = Dio();
+    var response = await dio.request(
+      'https://sendemail-6nrfvx3mia-uc.a.run.app/',
+      options: Options(
+        method: 'POST',
+        headers: headers,
+      ),
+      data: data,
+    );
+
+    if (response.statusCode == 200) {
+      print(json.encode(response.data));
+    }
+    else {
+      print(response.statusMessage);
     }
   }
 }
