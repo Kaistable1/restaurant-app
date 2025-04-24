@@ -2,8 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:restaurant_web_app/controllers/filldata_restaurant_controller.dart';
 import 'package:restaurant_web_app/main.dart';
-import 'package:restaurant_web_app/screens/add_restaurant/edit_restaurant/edit_resturant.dart';
+import 'package:restaurant_web_app/screens/edit_restaurant_forms.dart';
 import 'package:restaurant_web_app/screens/main_screen/main_screen.dart';
 import 'package:restaurant_web_app/screens/main_screen/mainscreen_controller/main_controller.dart';
 import 'package:restaurant_web_app/widgets/global_functions.dart';
@@ -79,10 +80,6 @@ class LoginController extends GetxController {
   Future<void> logIn() async {
     loadingDialog(message: 'Please wait !!!!', loading: true);
 
-    ///to remove later
-    // emailController.text = 'res3@gmail.com';
-    // passwordController.text = 'Res3@12345';
-
     try {
       await auth
           .signInWithEmailAndPassword(
@@ -98,14 +95,10 @@ class LoginController extends GetxController {
             .get()
             .then((doc) async {
           if (doc.exists) {
-            getCurrentUserData();
+           final fillcontroller=Get.put(FillDataRestaurantController());
+            fillcontroller.fetchRestaurantData();
             Get.back();
-            Get.offAll(() => MainScreen());
-            await Get.put(MainController()).fetchRestaurantData();
-
-
-            // Get.offAll(() => EditRestaurantScreen());
-
+            Get.offAll(() => AdminPanel());
             passwordController.clear();
             emailController.clear();
             Get.snackbar("Login", "Logged in successfully",

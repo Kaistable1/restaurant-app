@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:restaurant_web_app/constants/colors.dart';
 import 'package:restaurant_web_app/main.dart';
-
+import 'package:restaurant_web_app/screens/edit_restaurant_forms.dart';
 import '../../utils/responsive.dart';
 import '../../widgets/round_button.dart';
-import '../add_restaurant/add_restaurant.dart';
 import '../main_screen/mainscreen_controller/main_controller.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -56,9 +55,7 @@ class HomeScreen extends StatelessWidget {
                               borderRadius: 10,
                               width: Responsive.isMobile(context) ? 200 : 300,
                               onPressed: () {
-                                Get.to(() => AddEditRestaurantScreen(
-                                      isFromButtonClick: true,
-                                    ));
+                                Get.to(() => AdminPanel());
                               },
                             ),
                           ],

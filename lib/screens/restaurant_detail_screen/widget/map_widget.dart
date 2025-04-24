@@ -13,10 +13,10 @@ import '../controller/restaurant_detail_controller.dart';
 class MapWidget extends StatelessWidget {
   MapWidget({
     super.key,
-    required this.controller,
+    this.controller,
   });
 
-  final RestaurantDetailController controller;
+  RestaurantDetailController? controller;
   final addController = Get.put(AddRestaurantController());
   @override
   Widget build(BuildContext context) {
@@ -34,18 +34,16 @@ class MapWidget extends StatelessWidget {
               child: GoogleMap(
                 mapType: MapType.normal,
                 initialCameraPosition: CameraPosition(
-                  target: LatLng( latitude.value,
-                      longitude.value),
+                  target: LatLng(latitude.value, longitude.value),
                   zoom: 14,
                 ),
                 onMapCreated: (mapController) {
-                   mapControllerr.complete(mapController);
+                  mapControllerr.complete(mapController);
                 },
                 markers: {
                   Marker(
                     markerId: const MarkerId('currentLocation'),
-                    position: LatLng( latitude.value,
-                       longitude.value),
+                    position: LatLng(latitude.value, longitude.value),
                   ),
                 },
                 onCameraIdle: () async {
@@ -115,7 +113,7 @@ class MapDetailWidget extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-               restaurantModel.address.text,
+                restaurantModel.address.text,
                 style: TextStyle(
                   color: AppColors.darkGrey,
                   fontSize: Responsive.isMobile(context) ? 6 : 14,
@@ -229,7 +227,6 @@ class MapDetailWidget extends StatelessWidget {
                   spacing: Responsive.isMobile(context) ? 6 : 10,
                   runSpacing: Responsive.isMobile(context) ? 6 : 10,
                   children: [
-
                     _buildPriceRange(context, restaurantModel.priceRange.value),
                   ]),
               // Wrap(
@@ -258,7 +255,7 @@ class MapDetailWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-               restaurantModel.spokenLanguage.value,
+                  restaurantModel.spokenLanguage.value,
                   style: TextStyle(
                     color: AppColors.blackColor,
                     fontSize: Responsive.isMobile(context) ? 6 : 12,
