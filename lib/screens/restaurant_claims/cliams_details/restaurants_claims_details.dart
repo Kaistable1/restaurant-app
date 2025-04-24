@@ -50,354 +50,427 @@ class RestaurantsClaimsDetails extends StatelessWidget {
           padding: const EdgeInsets.only(left: 4.0),
           child: Form(
             key: formKey,
-            child: Column(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 10,
               children: [
-                CustomHeaderWidget(
-                  title: 'Restaurant claim details',
-                  back: true,
-                  onBackTap: () {
-                    drawerController.viewClaimsDetails.value = false;
-                  },
-                ),
-                const SizedBox(height: 30),
-                Container(
-                  width:
-                      isLargeScreen ? 680 : 500, // Fixed width as per your code
-                  height: isLargeScreen
-                      ? 260
-                      : containerHeight, // Height set using MediaQuery
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(
-                        isMobile ? 10 : (isTablet ? 10 : 10)),
-                    image: DecorationImage(
-                      image: NetworkImage(claimsModel.photoUrl),
-                      fit: BoxFit.cover,
-                    ),
+
+
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CustomHeaderWidget(
+                        title: 'Restaurant claim details',
+                        back: true,
+                        onBackTap: () {
+                          drawerController.viewClaimsDetails.value = false;
+                        },
+                      ),
+                      const SizedBox(height: 30),
+                      Container(
+                        width:
+                            isLargeScreen ? 680 : 500, // Fixed width as per your code
+                        height: isLargeScreen
+                            ? 260
+                            : containerHeight, // Height set using MediaQuery
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(
+                              isMobile ? 10 : (isTablet ? 10 : 10)),
+                          image: DecorationImage(
+                            image: NetworkImage(claimsModel.photoUrl),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        // Add content inside the container if needed
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 1.0),
+                        child: Container(
+                          width: isLargeScreen ? 680 : 500,
+                          height: isLargeScreen
+                              ? screenHeight * 0.12
+                              : screenHeight * 0.15,
+                          decoration: BoxDecoration(
+                            color: dimWhite,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                spreadRadius: 1,
+                                blurRadius: 6,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(left: 18.0, top: 20),
+                                child: Text(
+                                  'Restaurant information',
+                                  style: headingText.copyWith(
+                                    fontSize: isLargeScreen
+                                        ? 24
+                                        : (isMobile ? 14 : (isTablet ? 18 : 20)),
+                                    fontFamily: GoogleFonts.nunitoSans().fontFamily,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 18,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 18.0),
+                                child: RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: 'Restaurant name: ',
+                                        style: headingText.copyWith(
+                                          fontSize: isLargeScreen
+                                              ? 16
+                                              : (isMobile
+                                                  ? 10
+                                                  : (isTablet ? 12 : 14)),
+                                          fontFamily:
+                                              GoogleFonts.nunitoSans().fontFamily,
+                                          fontWeight: FontWeight
+                                              .bold, // Example: Make "Event name" bold
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: claimsModel.restaurantsName,
+                                        style: headingText.copyWith(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: isLargeScreen
+                                              ? 16
+                                              : (isMobile
+                                                  ? 10
+                                                  : (isTablet ? 11 : 13)),
+                                          fontFamily:
+                                              GoogleFonts.nunitoSans().fontFamily,
+                                          color:
+                                              secondaryColor, // Example: Make the colon grey
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 1.0),
+                        child: Container(
+                          width: isLargeScreen ? 680 : 500,
+                          height: isLargeScreen
+                              ? screenHeight * 0.3
+                              : screenHeight * 0.42,
+                          decoration: BoxDecoration(
+                            color: dimWhite,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                spreadRadius: 1,
+                                blurRadius: 6,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(left: 18.0, top: 20),
+                                child: Text(
+                                  'Ownership details',
+                                  style: headingText.copyWith(
+                                    fontSize: isLargeScreen
+                                        ? 24
+                                        : (isMobile ? 14 : (isTablet ? 18 : 20)),
+                                    fontFamily: GoogleFonts.nunitoSans().fontFamily,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 18,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 18.0),
+                                child: RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: 'Owner name: ',
+                                        style: headingText.copyWith(
+                                          fontSize: isLargeScreen
+                                              ? 16
+                                              : (isMobile
+                                                  ? 10
+                                                  : (isTablet ? 12 : 14)),
+                                          fontFamily:
+                                              GoogleFonts.nunitoSans().fontFamily,
+                                          fontWeight: FontWeight
+                                              .bold, // Example: Make "Event name" bold
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: claimsModel.ownerName,
+                                        style: headingText.copyWith(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: isLargeScreen
+                                              ? 16
+                                              : (isMobile
+                                                  ? 10
+                                                  : (isTablet ? 11 : 13)),
+                                          fontFamily:
+                                              GoogleFonts.nunitoSans().fontFamily,
+                                          color:
+                                              secondaryColor, // Example: Make the colon grey
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 18,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 18.0),
+                                child: RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: 'Email: ',
+                                        style: headingText.copyWith(
+                                          fontSize: isLargeScreen
+                                              ? 16
+                                              : (isMobile
+                                                  ? 10
+                                                  : (isTablet ? 12 : 14)),
+                                          fontFamily:
+                                              GoogleFonts.nunitoSans().fontFamily,
+                                          fontWeight: FontWeight
+                                              .bold, // Example: Make "Event name" bold
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: claimsModel.email,
+                                        style: headingText.copyWith(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: isLargeScreen
+                                              ? 16
+                                              : (isMobile
+                                                  ? 10
+                                                  : (isTablet ? 11 : 13)),
+                                          fontFamily:
+                                              GoogleFonts.nunitoSans().fontFamily,
+                                          color:
+                                              secondaryColor, // Example: Make the colon grey
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 18,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 18.0),
+                                child: RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: 'Message: ',
+                                        style: headingText.copyWith(
+                                          fontSize: isLargeScreen
+                                              ? 16
+                                              : (isMobile
+                                                  ? 10
+                                                  : (isTablet ? 12 : 14)),
+                                          fontFamily:
+                                              GoogleFonts.nunitoSans().fontFamily,
+                                          fontWeight: FontWeight
+                                              .bold, // Example: Make "Event name" bold
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: claimsModel.message,
+                                        style: headingText.copyWith(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: isLargeScreen
+                                              ? 16
+                                              : (isMobile
+                                                  ? 10
+                                                  : (isTablet ? 11 : 13)),
+                                          fontFamily:
+                                              GoogleFonts.nunitoSans().fontFamily,
+                                          color:
+                                              secondaryColor, // Example: Make the colon grey
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 18,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 18.0),
+                                child: RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: 'Contact: ',
+                                        style: headingText.copyWith(
+                                          fontSize: isLargeScreen
+                                              ? 16
+                                              : (isMobile
+                                                  ? 10
+                                                  : (isTablet ? 12 : 14)),
+                                          fontFamily:
+                                              GoogleFonts.nunitoSans().fontFamily,
+                                          fontWeight: FontWeight
+                                              .bold, // Example: Make "Event name" bold
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: claimsModel.contact,
+                                        style: headingText.copyWith(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: isLargeScreen
+                                              ? 16
+                                              : (isMobile
+                                                  ? 10
+                                                  : (isTablet ? 11 : 13)),
+                                          fontFamily:
+                                              GoogleFonts.nunitoSans().fontFamily,
+                                          color:
+                                              secondaryColor, // Example: Make the colon grey
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 18,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      SizedBox(
+                        width: isLargeScreen ? 680 : 500,
+                        child: TextAndFieldsOrDropDown(
+                          labelText: 'Assign password',
+                          fieldHintText: '1234',
+                          fieldController: controller.passwordController,
+                          isDropDown: false,
+                          fieldValidator: (value) => isPasswordValid(value!),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: isLargeScreen ? 140 : 90.0),
+                        child: CustomButton(
+                            ontapp: () async  {
+                              if (formKey.currentState!.validate()) {
+                               await controller.approvedResturnatsClaims();
+                                controller.passwordController.clear();
+                                drawerController.viewClaimsDetails.value = false;
+                              }
+                            },
+                            width: 339,
+                            laBelText: 'Approve'),
+                      ),
+                      SizedBox(
+                        height: 40,
+                      ),
+                    ],
                   ),
-                  // Add content inside the container if needed
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 1.0),
-                  child: Container(
-                    width: isLargeScreen ? 680 : 500,
-                    height: isLargeScreen
-                        ? screenHeight * 0.12
-                        : screenHeight * 0.15,
-                    decoration: BoxDecoration(
-                      color: dimWhite,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          spreadRadius: 1,
-                          blurRadius: 6,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 18.0, top: 20),
-                          child: Text(
-                            'Restaurant information',
-                            style: headingText.copyWith(
-                              fontSize: isLargeScreen
-                                  ? 24
-                                  : (isMobile ? 14 : (isTablet ? 18 : 20)),
-                              fontFamily: GoogleFonts.nunitoSans().fontFamily,
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 18,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 18.0),
-                          child: RichText(
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: 'Restaurant name: ',
-                                  style: headingText.copyWith(
-                                    fontSize: isLargeScreen
-                                        ? 16
-                                        : (isMobile
-                                            ? 10
-                                            : (isTablet ? 12 : 14)),
-                                    fontFamily:
-                                        GoogleFonts.nunitoSans().fontFamily,
-                                    fontWeight: FontWeight
-                                        .bold, // Example: Make "Event name" bold
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: claimsModel.restaurantsName,
-                                  style: headingText.copyWith(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: isLargeScreen
-                                        ? 16
-                                        : (isMobile
-                                            ? 10
-                                            : (isTablet ? 11 : 13)),
-                                    fontFamily:
-                                        GoogleFonts.nunitoSans().fontFamily,
-                                    color:
-                                        secondaryColor, // Example: Make the colon grey
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 1.0),
-                  child: Container(
-                    width: isLargeScreen ? 680 : 500,
-                    height: isLargeScreen
-                        ? screenHeight * 0.3
-                        : screenHeight * 0.42,
-                    decoration: BoxDecoration(
-                      color: dimWhite,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          spreadRadius: 1,
-                          blurRadius: 6,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 18.0, top: 20),
-                          child: Text(
-                            'Ownership details',
-                            style: headingText.copyWith(
-                              fontSize: isLargeScreen
-                                  ? 24
-                                  : (isMobile ? 14 : (isTablet ? 18 : 20)),
-                              fontFamily: GoogleFonts.nunitoSans().fontFamily,
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 18,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 18.0),
-                          child: RichText(
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: 'Owner name: ',
-                                  style: headingText.copyWith(
-                                    fontSize: isLargeScreen
-                                        ? 16
-                                        : (isMobile
-                                            ? 10
-                                            : (isTablet ? 12 : 14)),
-                                    fontFamily:
-                                        GoogleFonts.nunitoSans().fontFamily,
-                                    fontWeight: FontWeight
-                                        .bold, // Example: Make "Event name" bold
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: claimsModel.ownerName,
-                                  style: headingText.copyWith(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: isLargeScreen
-                                        ? 16
-                                        : (isMobile
-                                            ? 10
-                                            : (isTablet ? 11 : 13)),
-                                    fontFamily:
-                                        GoogleFonts.nunitoSans().fontFamily,
-                                    color:
-                                        secondaryColor, // Example: Make the colon grey
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 18,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 18.0),
-                          child: RichText(
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: 'Email: ',
-                                  style: headingText.copyWith(
-                                    fontSize: isLargeScreen
-                                        ? 16
-                                        : (isMobile
-                                            ? 10
-                                            : (isTablet ? 12 : 14)),
-                                    fontFamily:
-                                        GoogleFonts.nunitoSans().fontFamily,
-                                    fontWeight: FontWeight
-                                        .bold, // Example: Make "Event name" bold
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: claimsModel.email,
-                                  style: headingText.copyWith(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: isLargeScreen
-                                        ? 16
-                                        : (isMobile
-                                            ? 10
-                                            : (isTablet ? 11 : 13)),
-                                    fontFamily:
-                                        GoogleFonts.nunitoSans().fontFamily,
-                                    color:
-                                        secondaryColor, // Example: Make the colon grey
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 18,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 18.0),
-                          child: RichText(
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: 'Message: ',
-                                  style: headingText.copyWith(
-                                    fontSize: isLargeScreen
-                                        ? 16
-                                        : (isMobile
-                                            ? 10
-                                            : (isTablet ? 12 : 14)),
-                                    fontFamily:
-                                        GoogleFonts.nunitoSans().fontFamily,
-                                    fontWeight: FontWeight
-                                        .bold, // Example: Make "Event name" bold
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: claimsModel.message,
-                                  style: headingText.copyWith(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: isLargeScreen
-                                        ? 16
-                                        : (isMobile
-                                            ? 10
-                                            : (isTablet ? 11 : 13)),
-                                    fontFamily:
-                                        GoogleFonts.nunitoSans().fontFamily,
-                                    color:
-                                        secondaryColor, // Example: Make the colon grey
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 18,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 18.0),
-                          child: RichText(
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: 'Contact: ',
-                                  style: headingText.copyWith(
-                                    fontSize: isLargeScreen
-                                        ? 16
-                                        : (isMobile
-                                            ? 10
-                                            : (isTablet ? 12 : 14)),
-                                    fontFamily:
-                                        GoogleFonts.nunitoSans().fontFamily,
-                                    fontWeight: FontWeight
-                                        .bold, // Example: Make "Event name" bold
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: claimsModel.contact,
-                                  style: headingText.copyWith(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: isLargeScreen
-                                        ? 16
-                                        : (isMobile
-                                            ? 10
-                                            : (isTablet ? 11 : 13)),
-                                    fontFamily:
-                                        GoogleFonts.nunitoSans().fontFamily,
-                                    color:
-                                        secondaryColor, // Example: Make the colon grey
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 18,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
                 ),
                 SizedBox(
                   width: isLargeScreen ? 680 : 500,
-                  child: TextAndFieldsOrDropDown(
-                    labelText: 'Assign password',
-                    fieldHintText: '1234',
-                    fieldController: controller.passwordController,
-                    isDropDown: false,
-                    fieldValidator: (value) => isPasswordValid(value!),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Send Email",
+                        style: headingText.copyWith(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: GoogleFonts.nunitoSans().fontFamily,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      TextAndFieldsOrDropDown(
+                        labelText: 'Recipient Email',
+                        fieldHintText: 'Recipient Email',
+                        // controller: ,
+                        //
+                        fieldController: TextEditingController(
+                          text: claimsModel.email),
+                        isDropDown: false,
+                        fieldValidator: (value) => value!.isEmpty ? 'Subject required' : null,
+                      ),
+                      TextAndFieldsOrDropDown(
+                        labelText: 'Email Subject',
+                        fieldHintText: 'Your claim has been approved',
+                        fieldController:controller.emailSubjectController,
+                        // fieldController: controller.emailSubjectController,
+                        isDropDown: false,
+                        fieldValidator: (value) => value!.isEmpty ? 'Subject required' : null,
+                      ),
+                      SizedBox(height: 12),
+                      TextAndFieldsOrDropDown(
+                        labelText: 'Message',
+                        fieldHintText: 'Your claim was successfully verified...',
+                        fieldController: controller.emailMessageController,
+                        isDropDown: false,
+                        fieldValidator: (value) => value!.isEmpty ? 'Message required' : null,
+                        maxLines: 5,
+                      ),
+                      SizedBox(height: 20),
+                      Align(
+                        alignment: Alignment.center,
+                        child: /*controller.isSending.value?Center(child: CircularProgressIndicator()): */CustomButton(
+                          ontapp: () async {
+                            if (controller.emailSubjectController.text.isNotEmpty && controller.emailMessageController.text.isNotEmpty) {
+                              await controller.sendEmail(
+                                to: claimsModel.email.toString(),
+                              );
+                              // controller.emailSubjectController.clear();
+                              // controller.emailMessageController.clear();
+                            }
+                          },
+                          width: 339,
+                          laBelText: 'Send Email',
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: isLargeScreen ? 140 : 90.0),
-                  child: CustomButton(
-                      ontapp: () async  {
-                        if (formKey.currentState!.validate()) {
-                         await controller.approvedResturnatsClaims();
-                          controller.passwordController.clear();
-                          drawerController.viewClaimsDetails.value = false;
-                        }
-                      },
-                      width: 339,
-                      laBelText: 'Approve'),
-                ),
-                SizedBox(
-                  height: 40,
                 ),
               ],
             ),
