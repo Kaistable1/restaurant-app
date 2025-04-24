@@ -152,8 +152,8 @@ class AddRestaurantTabController extends GetxController {
         'priceRange': '', // Hardcoded for now; you can add a field for this
         'resEmail': emailController.text.trim(),
         'resName': restaurantNameController.text.trim(),
-        'InstagramLink': instagramController.text.trim(),
-        'TiktokLink': tiktokLinkController.text.trim(),
+        'socialLink': instagramController.text.trim(),
+        'socialMedia': tiktokLinkController.text.trim(),
         'specialConditions': 'Coming Soon!! Stay tuned for something exciting!',
         'spokenLanguage': selectedSpokenLanguage.value.trim(),
       };
@@ -214,8 +214,8 @@ class AddRestaurantTabController extends GetxController {
         'password': assignPasswordController.text.trim(),
         'resEmail': emailController.text.trim(),
         'resName': restaurantNameController.text.trim(),
-        'InstagramLink': instagramController.text.trim(),
-        'TiktokLink': tiktokLinkController.text.trim(),
+        'socialLink': instagramController.text.trim(),
+        'socialMedia': tiktokLinkController.text.trim(),
         'spokenLanguage': selectedSpokenLanguage.value.trim(),
       };
 

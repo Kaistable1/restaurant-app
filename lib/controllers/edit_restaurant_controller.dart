@@ -58,9 +58,9 @@ class EditRestaurantController extends GetxController {
       addRestaurantController.areaController.text =
           restaurantDetailsModel!.address;
       addRestaurantController.instagramController.text =
-          restaurantDetailsModel!.instaLink;
+          restaurantDetailsModel!.socialLink;
       addRestaurantController.tiktokLinkController.text =
-          restaurantDetailsModel!.tiktokLink;
+          restaurantDetailsModel!.socialMedia;
       addRestaurantController.selectedState.value =
           restaurantDetailsModel!.country;
       addRestaurantController.selectedCity.value = restaurantDetailsModel!.city;

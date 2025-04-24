@@ -69,7 +69,8 @@ class ViewRestaurantDetails extends StatelessWidget {
                     title: 'Basic Information',
                     restaurantName: restaurant.resName,
                     location: restaurant.address,
-                    social: '${restaurant.instaLink}, ${restaurant.tiktokLink}',
+                    social:
+                        '${restaurant.socialLink}, ${restaurant.socialMedia}',
                   ),
                   SizedBox(height: 16),
                   FacilitiesContainer(
@@ -812,8 +813,8 @@ class OperatingHoursContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<OperatingHours>>(
-      stream:
-          controller.getOperatingHours(addController.restaurantModel?.docID ?? ''),
+      stream: controller
+          .getOperatingHours(addController.restaurantModel?.docID ?? ''),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Container(

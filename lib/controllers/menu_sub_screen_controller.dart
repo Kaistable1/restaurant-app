@@ -107,8 +107,9 @@ class MenuSubScreenController extends GetxController {
       final addRestaurantTabController = Get.find<AddRestaurantTabController>();
       final restaurantID = addRestaurantTabController.currentRestaurantID;
       // Upload all images to Firebase Storage and get their URLs
-      List<String> imagesList =
-          await imagesUrl(uploadedImageModels: uploadedImages);
+      List<String> imagesList = uploadedImages.isNotEmpty
+          ? await imagesUrl(uploadedImageModels: uploadedImages)
+          : [];
       // 👇 Step 2: Prepare the data map
       final restaurantData = {
         'specialConditions': specialConditionsController.text.trim(),

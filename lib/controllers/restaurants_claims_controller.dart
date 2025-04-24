@@ -104,8 +104,8 @@ class RestaurantsClaimsController extends GetxController {
         'priceRange': '', // Hardcoded for now; you can add a field for this
         'resEmail': restaurantModel.email,
         'resName': restaurantModel.restaurantsName,
-        'InstagramLink': '',
-        'TiktokLink': '',
+        'socialLink': '',
+        'socialMedia': '',
         'specialConditions': 'Coming Soon!! Stay tuned for something exciting!',
         'spokenLanguage': '',
       };
