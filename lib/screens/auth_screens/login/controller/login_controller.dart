@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/main.dart';
@@ -55,6 +56,10 @@ class LoginController extends GetxController {
         await updateUserCityCountry();
         // Fetch current user data
         await getCurrentUserData();
+
+        // update user fcm token by "Modassir"
+        FirebaseMessaging.instance.getToken().then((fcmToken) =>
+        FirebaseFirestore.instance.collection("users").doc(auth.currentUser!.uid).update({"fcmToken": fcmToken}));
 
         // Close the loading dialog
         Get.back();
