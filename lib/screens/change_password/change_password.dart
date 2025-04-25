@@ -20,13 +20,6 @@ class ChangePasswordScreen extends StatelessWidget {
         : Responsive.isTablet(context)
             ? MediaQuery.of(context).size.width * 0.6
             : MediaQuery.of(context).size.width * 0.9;
-
-    // final double containerHeight = Responsive.isDesktop(context)
-    //     ? MediaQuery.of(context).size.height * 0.6
-    //     : Responsive.isTablet(context)
-    //     ? MediaQuery.of(context).size.height * 0.9
-    //     : MediaQuery.of(context).size.height * 1;
-
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       body: Center(

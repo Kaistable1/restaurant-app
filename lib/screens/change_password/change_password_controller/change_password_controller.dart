@@ -75,9 +75,6 @@ class ChangePasswordController extends GetxController {
         Get.back();
 
         Get.snackbar('Saved', 'Your data is successfully updated');
-        confirmPassword.value = '';
-        newPassword.value = '';
-        currentPassword.value = '';
 
         await FirebaseFirestore.instance
             .collection('restaurants')
@@ -85,6 +82,9 @@ class ChangePasswordController extends GetxController {
             .update({'password': confirmPassword.value}).then((value) {
           print('password updated');
         });
+        confirmPassword.value = '';
+        newPassword.value = '';
+        currentPassword.value = '';
       });
     }).onError((error, stackTrace) {
       Get.back();
