@@ -477,7 +477,7 @@ void filterSelectionDialogueBox() {
                             height: 16,
                           ),
                           Text(
-                            'Entertainment',
+                            'Experience',
                             style: TextStyle(
                               color: AppColors.bottomSheetColor,
                               fontFamily: "Nunito-Bold",

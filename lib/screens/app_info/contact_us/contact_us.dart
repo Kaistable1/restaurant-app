@@ -1,15 +1,12 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_toastr/flutter_toastr.dart';
 import 'package:get/get.dart';
-import 'package:kaistable_website/screens/home_screen/my_home_screen.dart';
 import 'package:kaistable_website/screens/app_info/contact_us/controller/contact_us_controller.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../utils/responsive.dart';
 import '../../../widgets/custom_button.dart';
 import '../../../widgets/custom_text_field.dart';
-import '../../../widgets/dropdown.dart';
 
 class ContactUs extends StatelessWidget {
   final Function(int)? onNavigate;
@@ -24,8 +21,6 @@ class ContactUs extends StatelessWidget {
     "Drew Cano"
   ];
 
-  final ContactUsController controller = Get.put(ContactUsController());
-
   ContactUs({
     super.key,
     this.onNavigate,
@@ -35,6 +30,8 @@ class ContactUs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ContactUsController controller = Get.put(ContactUsController());
+    controller.onInit();
     controller.resetErrors();
     return WillPopScope(
       onWillPop: () async {
@@ -149,7 +146,7 @@ class ContactUs extends StatelessWidget {
                               color: AppColors.bottomSheetColor),
                         ),
                         Text(
-                          "Support@example.com",
+                          controller.adminEmailController.text,
                           style: TextStyle(
                               fontWeight: FontWeight.w400,
                               fontFamily: "Nunito-Regular",
@@ -196,7 +193,7 @@ class ContactUs extends StatelessWidget {
                               color: AppColors.bottomSheetColor),
                         ),
                         Text(
-                          "(704) 555-0127",
+                          controller.adminPhone.text,
                           style: TextStyle(
                               fontWeight: FontWeight.w400,
                               fontFamily: "Nunito-Regular",

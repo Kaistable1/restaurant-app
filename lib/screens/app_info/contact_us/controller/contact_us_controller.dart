@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
@@ -11,11 +12,16 @@ class ContactUsController extends GetxController {
   // Controllers for email and message text fields
   var emailController = TextEditingController();
   var messagreController = TextEditingController();
+
+  var adminEmailController = TextEditingController();
+  var adminPhone = TextEditingController();
+
   void resetErrors() {
     emailError.value = '';
     messageError.value = '';
     dropdownError.value = '';
   }
+
   // Reactive variables for error handling
   var dropdownError = "".obs;
   var emailError = "".obs;
@@ -28,10 +34,10 @@ class ContactUsController extends GetxController {
   final hasError = false.obs;
   void validateFields() {
     // Dropdown validation
-    if (contactingUs.value == null ||contactingUs.value!.isEmpty) {
-     dropdownError.value = "Please select a reason for contacting us";
+    if (contactingUs.value == null || contactingUs.value!.isEmpty) {
+      dropdownError.value = "Please select a reason for contacting us";
     } else {
-     dropdownError.value = '';
+      dropdownError.value = '';
     }
 
     // Email validation
@@ -40,14 +46,14 @@ class ContactUsController extends GetxController {
     } else if (!GetUtils.isEmail(emailController.text)) {
       emailError.value = "Please enter a valid email";
     } else {
-     emailError.value = '';
+      emailError.value = '';
     }
 
     // Message validation
     if (messagreController.text.isEmpty) {
       messageError.value = "Please enter a message";
     } else {
-    messageError.value = '';
+      messageError.value = '';
     }
   }
 
@@ -77,6 +83,34 @@ class ContactUsController extends GetxController {
     }
 
     // Check if any validation errors are present
-    hasError.value = dropdownError.value.isNotEmpty || emailError.value.isNotEmpty || messageError.value.isNotEmpty;
+    hasError.value = dropdownError.value.isNotEmpty ||
+        emailError.value.isNotEmpty ||
+        messageError.value.isNotEmpty;
+  }
+
+  // Firestore se email aur phone number fetch karna
+  Future<void> loadContactInfo() async {
+    try {
+      DocumentSnapshot doc = await FirebaseFirestore.instance
+          .collection('contact_us')
+          .doc('current') // <-- replace with your doc ID if different
+          .get();
+
+      if (doc.exists) {
+        final data = doc.data() as Map<String, dynamic>;
+        adminEmailController.text = data['email'] ?? '';
+        adminPhone.text = data['phone'] ?? ''; // ya kisi aur field mein message
+      }
+      print('adminEmail : ${adminEmailController.text}');
+      print('adminPhone : ${adminPhone.text}');
+    } catch (e) {
+      print("Failed to load contact info: $e");
+    }
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    loadContactInfo(); // Load contact info when the controller is initialized
   }
 }

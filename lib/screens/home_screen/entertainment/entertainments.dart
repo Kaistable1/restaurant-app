@@ -209,10 +209,6 @@ class EntertainmentsScreen extends StatelessWidget {
                                       timetext: '10 AM',
                                       percentText: '25%',
                                       endTimeText: '9 PM',
-                                      // percentageOff:
-                                      //     item.menuList.percentageOff,
-                                      // happyhour:
-                                      //     item.menuList.happyHourSpecials,
                                       isFavorite: false.obs,
                                     ),
                                   );

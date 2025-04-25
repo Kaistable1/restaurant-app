@@ -156,7 +156,7 @@ class RecentlyViewed extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               StreamBuilder(
-                stream: homeController.getRestaurants(),
+                stream: homeController.getAllRestaurants(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
@@ -241,15 +241,12 @@ class RecentlyViewed extends StatelessWidget {
                                       child: RectangleWidget(
                                         onNavigate: onNavigate,
                                         title: item.resName,
-                                        description:item.address
-                                               ,
+                                        description: item.address,
                                         resturant_id: item.docID,
                                         imagePath: item.logoImage,
                                         timetext: '10 AM',
                                         percentText: '25%',
                                         endTimeText: '9 PM',
-                                        // percentageOff:
-                                        //     item.menuList.percentageOff,
                                         isFavorite: false.obs,
                                       ),
                                     );

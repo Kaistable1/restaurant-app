@@ -59,7 +59,9 @@ class AllCategories extends StatelessWidget {
                       (restaurant) =>
                           restaurant.resName.toLowerCase() ==
                           resName.toLowerCase(),
+                      orElse: () => RestaurantModel.initialize(),
                     ))
+                .where((restaurant) => restaurant.resName.isNotEmpty)
                 .cast<
                     RestaurantModel>() // Cast back to proper type if necessary
                 .toList();
