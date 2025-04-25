@@ -465,8 +465,8 @@ class MapDetailWidget extends StatelessWidget {
                                   '', // Hardcoded for now; you can add a field for this
                               'email': emailController.text.trim(),
                               'restaurantsName': resaturant_model.resName,
-                              'InstagramLink': resaturant_model.instaLink,
-                              'TiktokLink': resaturant_model.tiktokLink,
+                              'socialLink': resaturant_model.instaLink,
+                              'socialMedia': resaturant_model.tiktokLink,
                               'specialConditions':
                                   resaturant_model.specialConditions,
                               'spokenLanguage': resaturant_model.spokenLanguage,

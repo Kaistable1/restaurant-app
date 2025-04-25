@@ -3,17 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
 import 'package:kaistable_website/main.dart';
-import 'package:kaistable_website/screens/about_app/about_app.dart';
+import 'package:kaistable_website/screens/app_info/about_app/about_app.dart';
+import 'package:kaistable_website/screens/app_info/privacy_policy/privacy_policy.dart';
+import 'package:kaistable_website/screens/app_info/terms_and_condition/terms_and_condition.dart';
 import 'package:kaistable_website/screens/auth_screens/login/login_screen.dart';
 import 'package:kaistable_website/screens/auth_screens/signup/signup_screen.dart';
 import 'package:kaistable_website/screens/change_pass/changePassword_dialoge.dart';
-import 'package:kaistable_website/screens/contact_us/contact_us.dart';
+import 'package:kaistable_website/screens/app_info/contact_us/contact_us.dart';
 import 'package:kaistable_website/screens/edit_profile/edit_profile_page.dart';
 import 'package:kaistable_website/screens/favorite_screen/favorite_screen.dart';
 import 'package:kaistable_website/screens/general_preferences/screens_general/preference_1.dart';
 import 'package:kaistable_website/screens/nav_bar/widgets/custom_button.dart';
-import 'package:kaistable_website/screens/privacy_policy/privacy_policy.dart';
-import 'package:kaistable_website/screens/terms_and_condition/terms_and_condition.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});

@@ -43,6 +43,7 @@ class RectangleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(' logo image $imagePath');
     return Container(
       width: width ?? Get.width,
       height: height ?? 234,
@@ -55,18 +56,18 @@ class RectangleWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(
-            height: imgHeight ?? 82,
-            decoration: BoxDecoration(
+              height: imgHeight ?? 82,
+              decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
                 color: Colors.transparent,
                 // image: DecorationImage(
                 //     fit: BoxFit.cover,
-                    // image: imagePath.contains('http')
-                        // ? NetworkImage(
-                        //     imagePath,
-                        //   )
-                        // : AssetImage(imagePath))),
-          )),
+                // image: imagePath.contains('http')
+                // ? NetworkImage(
+                //     imagePath,
+                //   )
+                // : AssetImage(imagePath))),
+              )),
           SizedBox(height: 8),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 5),

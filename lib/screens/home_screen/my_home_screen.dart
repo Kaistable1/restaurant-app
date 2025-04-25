@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
-import 'package:kaistable_website/screens/about_app/about_app.dart';
-import 'package:kaistable_website/screens/contact_us/contact_us.dart';
+import 'package:kaistable_website/screens/app_info/about_app/about_app.dart';
+import 'package:kaistable_website/screens/app_info/contact_us/contact_us.dart';
+import 'package:kaistable_website/screens/app_info/privacy_policy/privacy_policy.dart';
+import 'package:kaistable_website/screens/app_info/terms_and_condition/terms_and_condition.dart';
 import 'package:kaistable_website/screens/detail_screens/restaurant_detail_screen.dart';
 import 'package:kaistable_website/screens/favorite_screen/favorite_screen.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_cusiness_controller.dart';
@@ -15,8 +17,7 @@ import 'package:kaistable_website/screens/home_screen/home_controller/home_recen
 import 'package:kaistable_website/screens/home_screen/home_controller/home_theme_controller.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_trending_controller.dart';
 import 'package:kaistable_website/screens/onboarding_screen/onboarding_controller/onboarding_controller.dart';
-import 'package:kaistable_website/screens/privacy_policy/privacy_policy.dart';
-import 'package:kaistable_website/screens/terms_and_condition/terms_and_condition.dart';
+
 import 'package:kaistable_website/widgets/global_functions.dart';
 
 import '../../constants/app_colors.dart';
@@ -613,7 +614,11 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                                     .toList();
                                             controller.update();
                                           });
-
+                                          if (controller
+                                              .filteredRestaurants.isEmpty) {
+                                            return _buildEmptyState(
+                                                'No restaurants found');
+                                          }
                                           return GetBuilder<
                                               HomeLocationController>(
                                             builder: (controller) {

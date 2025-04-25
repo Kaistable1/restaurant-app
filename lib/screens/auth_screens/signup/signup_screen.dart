@@ -2,12 +2,12 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
+import 'package:kaistable_website/screens/app_info/terms_and_condition/terms_and_condition.dart';
 import 'package:kaistable_website/screens/auth_screens/signup/controller/signup_controller.dart';
 
 import '../../../custom_widget/TextAndWidget.dart';
 import '../../../utils/validations.dart';
 import '../../../widgets/custom_button.dart';
-import '../../terms_and_condition/terms_and_condition.dart';
 import '../login/login_screen.dart';
 
 class SignupScreen extends StatelessWidget {

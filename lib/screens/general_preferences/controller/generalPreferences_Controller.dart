@@ -26,7 +26,6 @@ class GeneralPreferencesController extends GetxController {
   /// **Fetch User Preferences from Firestore**
   fetchUserPreferences() async {
     String? uid = auth.currentUser?.uid;
-    if (uid == null) return;
 
     try {
       DocumentSnapshot userDoc =
@@ -35,32 +34,39 @@ class GeneralPreferencesController extends GetxController {
       if (userDoc.exists) {
         Map<String, dynamic> data = userDoc.data() as Map<String, dynamic>;
 
-        selectedPreferences.value =
-            List<String>.from(data["topThreeCuisines"] ?? []);
+        selectedPreferences.value = List<String>.from(
+          data["topThreeCuisines"] ?? [],
+        );
 
-        selectedPreferences2.value = data["dietaryPrefList"] is List
-            ? List<String>.from(data["dietaryPrefList"])
-            : [data["dietaryPrefList"]];
-        selectedPreferences3.value = data["whereToEat"] is List
-            ? List<String>.from(data["whereToEat"])
-            : [data["whereToEat"]];
+        selectedPreferences2.value =
+            data["dietaryPrefList"] is List
+                ? List<String>.from(data["dietaryPrefList"])
+                : [data["dietaryPrefList"]];
+        selectedPreferences3.value =
+            data["whereToEat"] is List
+                ? List<String>.from(data["whereToEat"])
+                : [data["whereToEat"]];
 
         selectedPreferences4.value = [data["planner"]];
         print('selectedPreferences4 ${selectedPreferences4}');
-        selectedPreferences5.value = data["impDiningOut"] is List
-            ? List<String>.from(data["impDiningOut"])
-            : [data["impDiningOut"]];
+        selectedPreferences5.value =
+            data["impDiningOut"] is List
+                ? List<String>.from(data["impDiningOut"])
+                : [data["impDiningOut"]];
 
-        selectedPreferences6.value = data["diningExp"] is List
-            ? List<String>.from(data["diningExp"])
-            : [data["diningExp"]];
+        selectedPreferences6.value =
+            data["diningExp"] is List
+                ? List<String>.from(data["diningExp"])
+                : [data["diningExp"]];
 
-        selectedPreferences7.value = data["willingToTravel"] is List
-            ? List<String>.from(data["willingToTravel"])
-            : [data["willingToTravel"]];
+        selectedPreferences7.value =
+            data["willingToTravel"] is List
+                ? List<String>.from(data["willingToTravel"])
+                : [data["willingToTravel"]];
 
-        selectedPreferences8.value =
-            List<String>.from(data["notificationType"] ?? []);
+        selectedPreferences8.value = List<String>.from(
+          data["notificationType"] ?? [],
+        );
 
         selectedPreferences9.value = [data["notifiedDiningOpp"]];
         selectedCity.value = data["city"];
@@ -117,7 +123,7 @@ class GeneralPreferencesController extends GetxController {
   final preferences2 = [
     {
       "name": "Vegan & Plant-Based",
-      "image": "assets/images/dinning_image..png"
+      "image": "assets/images/dinning_image..png",
     },
     {"name": "Vegetarian", "image": "assets/images/dinning_image..png"},
     {"name": "Gluten-Free", "image": "assets/images/dinning_image..png"},
@@ -143,23 +149,23 @@ class GeneralPreferencesController extends GetxController {
   final preferences3 = [
     {
       "name": "Recommendations from friends/family",
-      "image": "assets/images/dinning_image..png"
+      "image": "assets/images/dinning_image..png",
     },
     {
       "name": "Online reviews & ratings",
-      "image": "assets/images/dinning_image..png"
+      "image": "assets/images/dinning_image..png",
     },
     {
       "name": "Social media posts & food influencers",
-      "image": "assets/images/dinning_image..png"
+      "image": "assets/images/dinning_image..png",
     },
     {
       "name": "Special promotions & discounts",
-      "image": "assets/images/dinning_image..png"
+      "image": "assets/images/dinning_image..png",
     },
     {
       "name": "Restaurant ambiance & atmosphere",
-      "image": "assets/images/dinning_image..png"
+      "image": "assets/images/dinning_image..png",
     },
   ];
 
@@ -179,11 +185,11 @@ class GeneralPreferencesController extends GetxController {
   final preferences4 = [
     {
       "name": "I plan my meals in advance",
-      "image": "assets/images/dinning_image..png"
+      "image": "assets/images/dinning_image..png",
     },
     {
       "name": "I like to go with the flow and decide last minute",
-      "image": "assets/images/dinning_image..png"
+      "image": "assets/images/dinning_image..png",
     },
     {"name": "A mix of both", "image": "assets/images/dinning_image..png"},
   ];
@@ -206,7 +212,7 @@ class GeneralPreferencesController extends GetxController {
     {"name": "Atmosphere & decor", "image": "assets/images/dinning_image..png"},
     {
       "name": "Entertainment (live music, DJs, etc.)",
-      "image": "assets/images/dinning_image..png"
+      "image": "assets/images/dinning_image..png",
     },
     {"name": "Pricing & discount", "image": "assets/images/dinning_image..png"},
     {"name": "Location/Proximity", "image": "assets/images/dinning_image..png"},
@@ -229,7 +235,7 @@ class GeneralPreferencesController extends GetxController {
     {"name": "Trendy & social", "image": "assets/images/dinning_image..png"},
     {
       "name": "Lively with entertainment",
-      "image": "assets/images/dinning_image..png"
+      "image": "assets/images/dinning_image..png",
     },
     {"name": "Outdoor & scenic", "image": "assets/images/dinning_image..png"},
     {"name": "Family-friendly", "image": "assets/images/dinning_image..png"},
@@ -253,7 +259,7 @@ class GeneralPreferencesController extends GetxController {
     {"name": "15-30 miles", "image": "assets/images/dinning_image..png"},
     {
       "name": "I’d travel anywhere for an amazing meal",
-      "image": "assets/images/dinning_image..png"
+      "image": "assets/images/dinning_image..png",
     },
   ];
 
@@ -272,23 +278,23 @@ class GeneralPreferencesController extends GetxController {
   final preferences8 = [
     {
       "name": "New restaurant openings",
-      "image": "assets/images/dinning_image..png"
+      "image": "assets/images/dinning_image..png",
     },
     {
       "name": "Happy Hour & special discounts",
-      "image": "assets/images/dinning_image..png"
+      "image": "assets/images/dinning_image..png",
     },
     {
       "name": "Live entertainment events",
-      "image": "assets/images/dinning_image..png"
+      "image": "assets/images/dinning_image..png",
     },
     {
       "name": "Personalized dining recommendations",
-      "image": "assets/images/dinning_image..png"
+      "image": "assets/images/dinning_image..png",
     },
     {
       "name": "No notifications, I prefer browsing on my own",
-      "image": "assets/images/dinning_image..png"
+      "image": "assets/images/dinning_image..png",
     },
   ];
 
@@ -328,7 +334,7 @@ class GeneralPreferencesController extends GetxController {
     {"name": "Occasionally", "image": "assets/images/dinning_image..png"},
     {
       "name": "No, I Prefer Low-Key Dinning",
-      "image": "assets/images/dinning_image..png"
+      "image": "assets/images/dinning_image..png",
     },
   ];
 
@@ -348,11 +354,11 @@ class GeneralPreferencesController extends GetxController {
     {"name": "Yes, Definitely", "image": "assets/images/dinning_image..png"},
     {
       "name": "Maybe, If It Fits My Schedule",
-      "image": "assets/images/dinning_image..png"
+      "image": "assets/images/dinning_image..png",
     },
     {
       "name": "No, I Prefer Happy Hours Without Entertainment",
-      "image": "assets/images/dinning_image..png"
+      "image": "assets/images/dinning_image..png",
     },
   ];
 

@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_toastr/flutter_toastr.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/screens/home_screen/my_home_screen.dart';
-import 'package:kaistable_website/screens/contact_us/controller/contact_us_controller.dart';
+import 'package:kaistable_website/screens/app_info/contact_us/controller/contact_us_controller.dart';
 
-import '../../constants/app_colors.dart';
-import '../../utils/responsive.dart';
-import '../../widgets/custom_button.dart';
-import '../../widgets/custom_text_field.dart';
-import '../../widgets/dropdown.dart';
+import '../../../constants/app_colors.dart';
+import '../../../utils/responsive.dart';
+import '../../../widgets/custom_button.dart';
+import '../../../widgets/custom_text_field.dart';
+import '../../../widgets/dropdown.dart';
 
 class ContactUs extends StatelessWidget {
   final Function(int)? onNavigate;
