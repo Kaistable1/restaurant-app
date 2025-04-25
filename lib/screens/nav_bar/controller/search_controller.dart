@@ -116,7 +116,7 @@ class FilterController extends GetxController {
       "Keto",
       "Paleo",
     ],
-    "Entertainment": [
+    "Experience": [
       "Live Music",
       "Dj Night",
       "Silent Party",

@@ -268,7 +268,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: Text(
-            'Exciting events with music & dining.',
+            'Events worth your time — always in the loop.',
             textAlign: TextAlign.justify,
             style: TextStyle(
               color: AppColors.bottomSheetColor,
@@ -460,7 +460,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      'Discover our featured selections, showcasing top-rated dishes, exclusive events, and must-try dining experiences curated just for you.',
+                      'Elevated picks for tastemakers and trendsetters. From chef-driven menus to unforgettable atmospheres, these restaurants define what it means to Savr. Curated with intention, crafted for your next great night out',
                       textAlign: TextAlign.justify,
                       style: TextStyle(
                         color: AppColors.bottomSheetColor,
@@ -540,6 +540,19 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontFamily: 'aftika-regular',
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            SizedBox(height: 5),
+            Padding(
+              padding: const EdgeInsets.only(left: 14),
+              child: Text(
+                'Find whats New and Hot',
+                style: TextStyle(
+                  color: AppColors.bottomSheetColor,
+                  fontFamily: 'aftika-regular',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
@@ -640,7 +653,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         Text(
-                          'Places that are popular',
+                          'Whats Hot Right Now',
                           textAlign: TextAlign.justify,
                           style: TextStyle(
                             color: AppColors.bottomSheetColor,
