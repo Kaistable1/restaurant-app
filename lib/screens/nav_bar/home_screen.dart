@@ -483,18 +483,25 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: AppColors.whiteColor,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Column(
-                            children: [
-                              Image.network(
+                        child: Column(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                topRight: Radius.circular(10),
+                              ),
+                              child: Image.network(
                                 restaurant.logoImage,
                                 height: 169,
                                 width: Get.width,
                                 fit: BoxFit.cover,
                               ),
-                              const SizedBox(height: 8),
-                              Row(
+                            ),
+                            const SizedBox(height: 8),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 10, top: 5, right: 10),
+                              child: Row(
                                 children: [
                                   Expanded(
                                     child: Text(
@@ -512,8 +519,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -766,7 +773,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Padding(
       padding: const EdgeInsets.only(left: 14, right: 14),
       child: StreamBuilder(
-        stream: controller.getRestaurants(),
+        stream: controller.getAllRestaurants(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting)
             return SizedBox();

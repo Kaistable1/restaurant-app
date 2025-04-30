@@ -113,7 +113,7 @@ class NearByAll extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "You May Like",
+                            "You Might Like",
                             style: TextStyle(
                               color: AppColors.bottomSheetColor,
                               fontFamily: 'aftika-regular',
@@ -146,7 +146,7 @@ class NearByAll extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "You May Like",
+                                "You Might Like",
                                 style: TextStyle(
                                   color: AppColors.bottomSheetColor,
                                   fontFamily: 'aftika-regular',

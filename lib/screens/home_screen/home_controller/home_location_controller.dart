@@ -411,7 +411,6 @@ class HomeLocationController extends GetxController {
     });
   }
 
-  
   /// Fetches initial restaurants with pagination support
   Stream<List<RestaurantModel>> getFilteredRestaurants() {
     return _firestore
@@ -633,15 +632,17 @@ class HomeLocationController extends GetxController {
 
   Future<List<RestaurantModel>> getNearbyRestaurants(
       List<RestaurantModel> allRestaurants, double radiusKm) async {
-    Position userLocation = await getCurrentLocation();
+    // Position userLocation = await getCurrentLocation();
 
     return allRestaurants.where((restaurant) {
-      return isWithinRadius(
-        userLocation,
-        restaurant.latitude,
-        restaurant.longitude,
-        radiusKm,
-      );
+      return true;
+
+      // isWithinRadius(
+      //   userLocation,
+      //   restaurant.latitude,
+      //   restaurant.longitude,
+      //   radiusKm,
+      // );
     }).toList();
   }
 

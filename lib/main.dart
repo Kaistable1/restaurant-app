@@ -82,9 +82,13 @@ void main() async {
   remember_me_pref = await SharedPreferences.getInstance();
 
   // Log FCM token
-  FirebaseMessaging.instance.getToken().then((value) {
-    print("FCM token: $value");
-  });
+  try {
+    FirebaseMessaging.instance.getToken().then((value) {
+      print("FCM token: $value");
+    });
+  } catch (e) {
+    print('token error $e');
+  }
 
   // Request notification permission
   await Permission.notification.isDenied.then((value) {
