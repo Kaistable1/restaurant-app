@@ -128,7 +128,7 @@ class MyApp extends StatelessWidget {
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(
           textScaler: TextScaler.linear(
-              min(MediaQuery.of(context).textScaleFactor, 0.8))),
+              min(MediaQuery.of(context).textScaleFactor, 0.7))),
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Kaistable',
