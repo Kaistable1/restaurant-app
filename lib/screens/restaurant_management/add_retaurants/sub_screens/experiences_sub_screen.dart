@@ -28,7 +28,7 @@ class ExperiencesSubScreen extends StatelessWidget {
               Obx(() {
                 return controller.events.isNotEmpty
                     ? Container(
-                        height: 100, // Adjust height as needed
+                        height: 100,
                         margin: const EdgeInsets.symmetric(horizontal: 16),
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
@@ -36,7 +36,7 @@ class ExperiencesSubScreen extends StatelessWidget {
                           itemBuilder: (context, index) {
                             final event = controller.events[index];
                             return Container(
-                              width: 200, // Fixed width for each event card
+                              width: 200,
                               margin: const EdgeInsets.only(right: 10),
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
@@ -74,32 +74,42 @@ class ExperiencesSubScreen extends StatelessWidget {
                                           color: Colors.grey[600],
                                         ),
                                       ),
-                                       const SizedBox(height: 4),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            'From ${event['startTime']} To ${event['endTime']}',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.grey[600],
-                                            ),
-                                          ),
-                                        ],
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'From ${event['startTime']} To ${event['endTime']}',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey[600],
+                                        ),
                                       ),
                                     ],
                                   ),
                                   Positioned(
                                     top: 0,
                                     right: 0,
-                                    child: IconButton(
-                                      icon: const Icon(
-                                        Icons.delete,
-                                        color: Colors.red,
-                                        size: 20,
-                                      ),
-                                      onPressed: () {
-                                        controller.removeEvent(index);
-                                      },
+                                    child: Row(
+                                      children: [
+                                        IconButton(
+                                          icon: const Icon(
+                                            Icons.edit,
+                                            color: Colors.blue,
+                                            size: 20,
+                                          ),
+                                          onPressed: () {
+                                            controller.editEvent(index);
+                                          },
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                            size: 20,
+                                          ),
+                                          onPressed: () {
+                                            controller.removeEvent(index);
+                                          },
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
@@ -211,24 +221,50 @@ class ExperiencesSubScreen extends StatelessWidget {
               ),
               const SizedBox(height: 18),
               Center(
-                child: CustomButton(
-                  laBelText: 'Add another event',
-                  fontSize: 16,
-                  height: mobileView ? 44 : 48,
-                  width: mobileView ? Get.width : Get.width * 0.5,
-                  isPrefixIcon: true,
-                  isBorder: true,
-                  borderColor: green,
-                  iconWidget: Icon(
-                    Icons.add_box_outlined,
-                    color: green,
-                    size: 28,
-                  ),
-                  shadow: [],
-                  containerColor: primaryColor.withOpacity(0.4),
-                  textColor: blackColor,
-                  ontapp: controller.saveEvent,
-                ),
+                child: Obx(() {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CustomButton(
+                        laBelText: controller.isEditing.value
+                            ? 'Update Event'
+                            : 'Save',
+                        fontSize: 16,
+                        height: mobileView ? 44 : 48,
+                        width: mobileView ? Get.width * 0.45 : Get.width * 0.25,
+                        isPrefixIcon: true,
+                        isBorder: true,
+                        borderColor: green,
+                        iconWidget: Icon(
+                          controller.isEditing.value
+                              ? Icons.edit
+                              : Icons.add_box_outlined,
+                          color: green,
+                          size: 28,
+                        ),
+                        shadow: [],
+                        containerColor: primaryColor.withOpacity(0.4),
+                        textColor: blackColor,
+                        ontapp: controller.saveEvent,
+                      ),
+                      if (controller.isEditing.value) ...[
+                        const SizedBox(width: 10),
+                        CustomButton(
+                          laBelText: 'Cancel',
+                          fontSize: 16,
+                          height: mobileView ? 44 : 48,
+                          width:
+                              mobileView ? Get.width * 0.45 : Get.width * 0.25,
+                          isBorder: true,
+                          borderColor: Colors.red,
+                          containerColor: Colors.red.withOpacity(0.4),
+                          textColor: blackColor,
+                          ontapp: controller.cancelEdit,
+                        ),
+                      ],
+                    ],
+                  );
+                }),
               ),
             ],
           ),

@@ -27,20 +27,34 @@ class _MapWidgetState extends State<MapWidget> {
   final Completer<GoogleMapController> _mapController =
       Completer<GoogleMapController>();
 
-  // Replace with your Google Maps API key
-  final String? _googleApiKey =
-      'AIzaSyAGSu_k6uEQT8siB78VTkI-u3_K05IeCOI'; // Set to 'YOUR_API_KEY' for production
+  // Your valid Google Maps API key
+  final String _googleApiKey = 'AIzaSyAGSu_k6uEQT8siB78VTkI-u3_K05IeCOI';
+
+  Timer? _debounceTimer;
 
   @override
   void initState() {
     super.initState();
-    if (widget.latitude == null && widget.longitude == null)
+    if (widget.latitude == null && widget.longitude == null) {
       _getCurrentLocation();
+    }
+
+    // Add listener to locationController with debounce
+    addEventController.locationController.addListener(() {
+      if (addEventController.locationController.text.isNotEmpty) {
+        if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
+        _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+          final address = addEventController.locationController.text;
+          if (address.isNotEmpty && address.length >= 5) {
+            _updateMapFromAddress(address);
+          }
+        });
+      }
+    });
   }
 
   Future<void> _getCurrentLocation() async {
     try {
-      // Check if location services are enabled
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -50,7 +64,6 @@ class _MapWidgetState extends State<MapWidget> {
         return;
       }
 
-      // Check and request location permissions
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
@@ -71,7 +84,6 @@ class _MapWidgetState extends State<MapWidget> {
         return;
       }
 
-      // Get coordinates
       double latitude;
       double longitude;
       if (addController.restaurantModel != null) {
@@ -85,7 +97,6 @@ class _MapWidgetState extends State<MapWidget> {
         longitude = position.longitude;
       }
 
-      // Validate coordinates
       if (latitude == 0.0 ||
           longitude == 0.0 ||
           latitude.isNaN ||
@@ -101,14 +112,11 @@ class _MapWidgetState extends State<MapWidget> {
         return;
       }
 
-      // Update controller values
       addController.latitude.value = latitude;
       addController.longitude.value = longitude;
 
-      // Fetch address
       await _fetchAddress(latitude, longitude);
 
-      // Update map camera
       final GoogleMapController controller = await _mapController.future;
       controller.animateCamera(
         CameraUpdate.newCameraPosition(
@@ -133,7 +141,6 @@ class _MapWidgetState extends State<MapWidget> {
       List<Placemark> placemarks = await placemarkFromCoordinates(
         latitude,
         longitude,
-        // apiKey: _googleApiKey, // Uncomment if you have an API key
       );
 
       if (placemarks.isNotEmpty && placemarks.first != null) {
@@ -149,84 +156,122 @@ class _MapWidgetState extends State<MapWidget> {
             address.isNotEmpty ? address : 'Unknown address';
         addEventController.cityController.text = placemark.locality ?? '';
         addEventController.countryController.text = placemark.country ?? '';
-        addEventController.update(); // Force GetX update
+        addEventController.update();
+        return;
       } else {
         addEventController.locationController.text =
             'No address found for ($latitude, $longitude)';
         addEventController.update();
       }
-      return; // Success, no need to try HTTP
     } catch (e) {
       print('Geocoding package error: $e');
-      // Don’t show snackbar yet; try HTTP fallback
     }
 
-    // Fallback to HTTP-based geocoding
-    if (_googleApiKey != null) {
-      try {
-        final url =
-            'https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&key=$_googleApiKey';
-        final response = await http.get(Uri.parse(url));
+    // HTTP fallback
+    try {
+      final url =
+          'https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&key=$_googleApiKey';
+      final response = await http.get(Uri.parse(url));
 
-        if (response.statusCode == 200) {
-          final data = jsonDecode(response.body);
-          if (data['results'] != null && data['results'].isNotEmpty) {
-            String address =
-                data['results'][0]['formatted_address'] ?? 'Unknown address';
-            addEventController.locationController.text = address;
-            // Extract city
-            // Extract city
-            String city = '';
-            var cityComponent =
-                data['results'][0]['address_components'].firstWhere(
-              (component) =>
-                  component is Map &&
-                  (component['types'] as List<dynamic>?)
-                          ?.contains('locality') ==
-                      true,
-              orElse: () => <String, dynamic>{'long_name': ''},
-            );
-            city = cityComponent['long_name'] as String? ?? '';
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['results'] != null && data['results'].isNotEmpty) {
+          String address =
+              data['results'][0]['formatted_address'] ?? 'Unknown address';
+          addEventController.locationController.text = address;
 
-// Extract country
-            String country = '';
-            var countryComponent =
-                data['results'][0]['address_components'].firstWhere(
-              (component) =>
-                  component is Map &&
-                  (component['types'] as List<dynamic>?)?.contains('country') ==
-                      true,
-              orElse: () => <String, dynamic>{'long_name': ''},
-            );
-            country = countryComponent['long_name'] as String? ?? '';
+          String city = '';
+          var cityComponent =
+              data['results'][0]['address_components'].firstWhere(
+            (component) =>
+                component is Map &&
+                (component['types'] as List<dynamic>?)?.contains('locality') ==
+                    true,
+            orElse: () => <String, dynamic>{'long_name': ''},
+          );
+          city = cityComponent['long_name'] as String? ?? '';
 
-            addEventController.cityController.text = city;
-            addEventController.countryController.text = country;
-            addEventController.update();
-          } else {
-            addEventController.locationController.text =
-                'No address found for ($latitude, $longitude)';
-            addEventController.update();
-          }
+          String country = '';
+          var countryComponent =
+              data['results'][0]['address_components'].firstWhere(
+            (component) =>
+                component is Map &&
+                (component['types'] as List<dynamic>?)?.contains('country') ==
+                    true,
+            orElse: () => <String, dynamic>{'long_name': ''},
+          );
+          country = countryComponent['long_name'] as String? ?? '';
+
+          addEventController.cityController.text = city;
+          addEventController.countryController.text = country;
+          addEventController.update();
         } else {
-          throw 'HTTP error: ${response.statusCode}';
+          addEventController.locationController.text =
+              'No address found for ($latitude, $longitude)';
+          addEventController.update();
         }
-      } catch (e) {
-        addEventController.locationController.text = 'Failed to fetch address';
-        addEventController.update();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Geocoding error: $e')),
-        );
-        print('Error $e');
+      } else {
+        throw 'HTTP error: ${response.statusCode}';
       }
-    } else {
-      addEventController.locationController.text =
-          'Failed to fetch address (no API key)';
+    } catch (e) {
+      addEventController.locationController.text = 'Failed to fetch address';
       addEventController.update();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content:
-                Text('Geocoding failed. Please add a Google Maps API key.')),
+        SnackBar(content: Text('Geocoding error: $e')),
+      );
+      print('HTTP geocoding error: $e');
+    }
+  }
+
+  Future<void> _updateMapFromAddress(String address) async {
+    if (address.trim().isEmpty || address.length < 5) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a valid address')),
+      );
+      return;
+    }
+
+    try {
+      print('Geocoding address: $address');
+      // Use HTTP-based geocoding instead of locationFromAddress
+      final url =
+          'https://maps.googleapis.com/maps/api/geocode/json?address=${Uri.encodeComponent(address)}&key=$_googleApiKey';
+      final response = await http.get(Uri.parse(url));
+      if (!mounted) return;
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['results'] != null && data['results'].isNotEmpty) {
+          double latitude = data['results'][0]['geometry']['location']['lat'];
+          double longitude = data['results'][0]['geometry']['location']['lng'];
+
+          addController.latitude.value = latitude;
+          addController.longitude.value = longitude;
+
+          final GoogleMapController controller = await _mapController.future;
+          controller.animateCamera(
+            CameraUpdate.newCameraPosition(
+              CameraPosition(
+                target: LatLng(latitude, longitude),
+                zoom: 14,
+              ),
+            ),
+          );
+
+          setState(() {});
+        } else {
+          print('No locations found for address: $address');
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('No location found for this address')),
+          );
+        }
+      } else {
+        throw 'HTTP error: ${response.statusCode}';
+      }
+    } catch (e) {
+      print('Error geocoding address: _updateMapFromAddress function $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error finding location: $e')),
       );
     }
   }
@@ -241,10 +286,8 @@ class _MapWidgetState extends State<MapWidget> {
     addEventController.countryController.text = 'USA';
     addEventController.update();
 
-    // Fetch address for fallback location
     _fetchAddress(fallbackLatitude, fallbackLongitude);
 
-    // Update map camera
     _mapController.future.then((controller) {
       controller.animateCamera(
         CameraUpdate.newCameraPosition(
@@ -258,12 +301,17 @@ class _MapWidgetState extends State<MapWidget> {
   }
 
   @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          // Responsive map height
           double mapHeight = kIsWeb
               ? MediaQuery.of(context).size.height * 0.5
               : constraints.maxWidth > 600
@@ -282,7 +330,7 @@ class _MapWidgetState extends State<MapWidget> {
                             ? addController.latitude.value
                             : 37.7749
                         : widget.latitude!,
-                    widget.latitude == null
+                    widget.longitude == null
                         ? addController.longitude.value != 0.0
                             ? addController.longitude.value
                             : -122.4194

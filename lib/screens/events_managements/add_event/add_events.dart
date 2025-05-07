@@ -1,13 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:savrly/controllers/add_restaurants_controller.dart';
 import 'package:savrly/widgets/button.dart';
 import 'package:savrly/widgets/map_widget.dart';
+
 import '../../../constants/app_colors.dart';
 import '../../../constants/text_styles.dart';
 import '../../../controllers/add_event_controller.dart';
@@ -308,7 +306,6 @@ class AddEvents extends StatelessWidget {
                           fieldHintText: 'Street abc',
                           fieldController: controller.locationController,
                           isDropDown: false,
-                          readOnly: true,
                           fieldValidator: (value) {
                             if (value!.isEmpty) {
                               return 'Please enter location.';

@@ -471,7 +471,7 @@ class _RestaurantManagementScreenState
                                     child: Center(
                                       child: Text(
                                         restaurant.resEmail == ''
-                                            ? '${restaurant.resName.toLowerCase().toString().split(' ')[0]}@gmail.com'
+                                            ? 'no email available yet'
                                             : restaurant.resEmail,
                                         textAlign: TextAlign.center,
                                         style: simpleText.copyWith(

@@ -14,9 +14,21 @@ class ExperiencesSubScreenController extends GetxController {
   final endTimeController = TextEditingController();
   final experienceSubScreenFormKey = GlobalKey<FormState>();
   RxList<Map<String, dynamic>> events = <Map<String, dynamic>>[].obs;
+  RxBool isEditing = false.obs;
+  RxInt editingIndex = (-1).obs;
+
+  @override
+  void onClose() {
+    eventNameController.dispose();
+    hostedByController.dispose();
+    dateController.dispose();
+    timeController.dispose();
+    endTimeController.dispose();
+    super.onClose();
+  }
 
   // Select date using DatePicker
-   selectDate(BuildContext context) async {
+  selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -30,31 +42,30 @@ class ExperiencesSubScreenController extends GetxController {
   }
 
   // Select time using TimePicker
-   selectTime(BuildContext context) async {
+  selectTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
     );
     if (picked != null) {
-      timeController.text = picked.format(context); // e.g., "9:00 AM"
+      timeController.text = picked.format(context);
     }
   }
 
-   selectEndTime(BuildContext context) async {
+  selectEndTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
     );
     if (picked != null) {
-      endTimeController.text = picked.format(context); // e.g., "9:00 AM"
+      endTimeController.text = picked.format(context);
     }
   }
 
-  // Save event and clear fields
+  // Save event (add or update)
   void saveEvent() {
     if (experienceSubScreenFormKey.currentState!.validate()) {
-      // Save the event data
-      events.add({
+      final event = {
         'eventName': eventNameController.text.trim(),
         'eventBy': hostedByController.text.trim(),
         'date': dateController.text.trim(),
@@ -62,110 +73,154 @@ class ExperiencesSubScreenController extends GetxController {
         'endTime': endTimeController.text.trim(),
         'startTime': timeController.text.trim(),
         'isSelected': false,
-      });
+      };
 
-      // Show success dialog
-      Get.dialog(
-        AlertDialog(
-          title: const Text('Success'),
-          content: const Text('Event added successfully!'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Get.back(); // Close dialog
-                clearFields(); // Clear fields after dialog closes
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
+      if (isEditing.value) {
+        // Update existing event
+        events[editingIndex.value] = event;
+        Get.dialog(
+          AlertDialog(
+            title: const Text('Success'),
+            content: const Text('Event updated successfully!'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Get.back();
+                  clearFields();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      } else {
+        // Add new event
+        events.add(event);
+        Get.dialog(
+          AlertDialog(
+            title: const Text('Success'),
+            content: const Text('Event added successfully!'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Get.back();
+                  clearFields();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
     }
   }
-   
+
+  // Edit an existing event
+  void editEvent(int index) {
+    if (index >= 0 && index < events.length) {
+      final event = events[index];
+      eventNameController.text = event['eventName'] ?? '';
+      hostedByController.text = event['eventBy'] ?? '';
+      dateController.text = event['date'] ?? '';
+      timeController.text = event['startTime'] ?? '';
+      endTimeController.text = event['endTime'] ?? '';
+      isEditing.value = true;
+      editingIndex.value = index;
+    }
+  }
+
+  // Cancel editing
+  void cancelEdit() {
+    clearFields();
+  }
+
+  // Remove an event
   void removeEvent(int index) {
     if (index >= 0 && index < events.length) {
       events.removeAt(index);
-      events.refresh(); // Update UI
+      events.refresh();
+      if (isEditing.value && editingIndex.value == index) {
+        clearFields();
+      }
+      Get.snackbar('Success', 'Event deleted successfully',
+          snackPosition: SnackPosition.BOTTOM);
     }
   }
 
-  String getDayFromDate(String dateString, {String format = 'yyyy-MM-dd'}) {
+  // Get day of the week from date
+  String getDayFromDate(String dateString, {String format = 'dd MMMM yyyy'}) {
     try {
-      // Parse the date string using the specified format
       DateFormat dateFormat = DateFormat(format);
       DateTime date = dateFormat.parse(dateString);
-
-      // Get the day of the week (1 = Monday, 2 = Tuesday, ..., 7 = Sunday)
       int dayOfWeek = date.weekday;
-
-      // Map the weekday number to the day name
       List<String> daysOfWeek = [
-        'Monday', // 1
-        'Tuesday', // 2
-        'Wednesday', // 3
-        'Thursday', // 4
-        'Friday', // 5
-        'Saturday', // 6
-        'Sunday' // 7
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday',
+        'Sunday'
       ];
-
-      // Return the corresponding day name
       return daysOfWeek[dayOfWeek - 1];
     } catch (e) {
-      // Handle invalid date format
       return "Invalid date format. Please use the specified format (e.g., $format).";
     }
   }
 
-// Validate if all fields are filled
+  // Validate if all fields are filled
   bool areExperienceFieldsFilled() {
     return eventNameController.text.trim().isNotEmpty &&
         hostedByController.text.trim().isNotEmpty &&
         dateController.text.trim().isNotEmpty &&
-        timeController.text.trim().isNotEmpty;
+        timeController.text.trim().isNotEmpty &&
+        endTimeController.text.trim().isNotEmpty;
   }
 
-  // Clear all fields for the next event
+  // Clear all fields and reset editing state
   void clearFields() {
     eventNameController.clear();
     hostedByController.clear();
     dateController.clear();
     timeController.clear();
+    endTimeController.clear();
+    isEditing.value = false;
+    editingIndex.value = -1;
   }
 
   bool hasEvents() {
     return events.isNotEmpty;
   }
 
-  //backend
-
+  // Save events to Firestore
   addExperience() async {
     try {
       loadingDialog();
-      saveEvent();
       final addRestaurantTabController = Get.find<AddRestaurantTabController>();
       final restaurantID = addRestaurantTabController.currentRestaurantID;
 
-      // 👇 Step 2: Prepare the data map
+      // Prepare the data map
       final restaurantData = {
-        'entertainmentScheduleList': events,
+        'entertainmentScheduleList': events.toList(),
       };
 
-      // 👇 Step 3: Update Firestore
+      // Update Firestore
       await FirebaseFirestore.instance
           .collection('restaurants')
           .doc(restaurantID)
           .update(restaurantData);
 
-      // 👇 Step 4: UI updates
+      // UI updates
       Get.back();
       clearFields();
       addRestaurantTabController.selectedIndex.value++;
+      Get.snackbar('Success', 'Events saved successfully',
+          snackPosition: SnackPosition.BOTTOM);
     } catch (e) {
       Get.back();
-      Get.snackbar('Error', 'Failed to add amenities: $e');
-      print('❌ Error adding amenities: $e');
+      Get.snackbar('Error', 'Failed to save events: $e',
+          snackPosition: SnackPosition.BOTTOM);
+      print('❌ Error saving events: $e');
     }
   }
 }

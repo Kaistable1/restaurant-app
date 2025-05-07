@@ -123,6 +123,7 @@ class RestaurantModel {
       'about': about,
       'createdAt': createdAt.toIso8601String(),
       'country': country,
+      'zipcode': zipCode,
     };
   }
 
@@ -154,7 +155,7 @@ class RestaurantModel {
       spokenLanguage: data['spokenLanguage'] ?? '',
       socialLink: '',
       socialMedia: '',
-      zipCode: '',
+      zipCode: data['zipcode'] ?? '',
     );
   }
 
@@ -167,7 +168,7 @@ class RestaurantModel {
       resName: data['resName'] ?? '',
       averageRating: (data['averageRating'] ?? 0).toDouble(),
       docID: data['docID'] ?? '',
-      zipCode: data['zipCode'] ?? '',
+      zipCode: data['zipcode'] ?? '',
       imagesList: List<String>.from(data['resImages'] ?? []),
       city: data['city'] ?? '',
       resEmail: data['resEmail'] ?? '',

@@ -61,23 +61,33 @@ class EditRestaurantController extends GetxController {
           restaurantDetailsModel!.socialLink;
       addRestaurantController.tiktokLinkController.text =
           restaurantDetailsModel!.socialMedia;
+
       addRestaurantController.selectedState.value =
-          restaurantDetailsModel!.country;
-      addRestaurantController.selectedCity.value = restaurantDetailsModel!.city;
+          restaurantDetailsModel!.city;
+      print('restuant city ------${restaurantDetailsModel?.city}');
       addRestaurantController.selectedSpokenLanguage.value =
           restaurantDetailsModel!.spokenLanguage;
       addRestaurantController.currentRestaurantID =
           restaurantDetailsModel!.docID;
       addRestaurantController.uploadedImage.clear();
-      for (var url in restaurantDetailsModel!.imagesList) {
+      if (restaurantDetailsModel!.imagesList.isNotEmpty) {
+        for (var url in restaurantDetailsModel!.imagesList) {
+          addRestaurantController.uploadedImage.add(
+            UploadedImageModel(url: url),
+          );
+        }
+      } else {
         addRestaurantController.uploadedImage.add(
-          UploadedImageModel(url: url),
+          UploadedImageModel(url: restaurantDetailsModel?.logoImage),
         );
       }
+
       addRestaurantController.latitude.value =
           restaurantController.latitude.value;
       addRestaurantController.longitude.value =
           restaurantController.longitude.value;
+      addRestaurantController.zipCodeController.text =
+          restaurantDetailsModel?.zipCode ?? '';
       addRestaurantController.update();
     }
   }

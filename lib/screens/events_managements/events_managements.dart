@@ -72,6 +72,7 @@ class _EventsManagementsState extends State<EventsManagements> {
               containerColor: primaryColor,
               ontapp: () {
                 addController.selectedEventModel = null;
+                addController.clearForm();
                 addController.isEdit.value = false;
                 addController.update();
                 drawerController.addEvent.value = true;

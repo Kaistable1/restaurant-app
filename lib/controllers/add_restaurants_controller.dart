@@ -16,6 +16,7 @@ class AddRestaurantTabController extends GetxController {
   final emailController = TextEditingController();
   final assignPasswordController = TextEditingController();
   final areaController = TextEditingController();
+  final zipCodeController = TextEditingController();
   final tiktokLinkController = TextEditingController();
   final instagramController = TextEditingController();
   RestaurantModel? restaurantModel;
@@ -80,11 +81,8 @@ class AddRestaurantTabController extends GetxController {
         emailController.text.trim().isNotEmpty &&
         assignPasswordController.text.trim().isNotEmpty &&
         areaController.text.trim().isNotEmpty &&
-        instagramController.text.trim().isNotEmpty &&
-        tiktokLinkController.text.trim().isNotEmpty &&
         selectedState.value.isNotEmpty &&
-        selectedCity.value.isNotEmpty &&
-        selectedSpokenLanguage.value.isNotEmpty;
+        selectedCity.value.isNotEmpty;
   }
 
   void clearFields() {
@@ -156,6 +154,7 @@ class AddRestaurantTabController extends GetxController {
         'socialMedia': tiktokLinkController.text.trim(),
         'specialConditions': 'Coming Soon!! Stay tuned for something exciting!',
         'spokenLanguage': selectedSpokenLanguage.value.trim(),
+        'zipcode': zipCodeController.text.trim(),
       };
 
       // Add the restaurant to Firestore

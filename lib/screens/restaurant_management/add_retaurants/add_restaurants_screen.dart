@@ -122,7 +122,7 @@ class AddRestaurantsScreen extends StatelessWidget {
                           ),
                         const SizedBox(width: 8),
                         CustomButton(
-                          laBelText: 'Save and Next',
+                          laBelText: 'Next',
                           fontSize: buttonTextSize,
                           height: 45,
                           width: 130,
@@ -255,7 +255,7 @@ class AddRestaurantsScreen extends StatelessWidget {
                     ),
                   if (selectedIndex > 0) const SizedBox(width: 8),
                   CustomButton(
-                    laBelText: 'Save and Next',
+                    laBelText: 'Next',
                     fontSize: buttonTextSize,
                     height: 45,
                     width: 130,

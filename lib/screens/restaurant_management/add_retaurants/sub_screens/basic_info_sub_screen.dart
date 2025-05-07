@@ -302,19 +302,13 @@ class BasicInfoSubScreen extends StatelessWidget {
                   const SizedBox(width: 24),
                   Expanded(
                     child: TextAndFieldsOrDropDown(
-                      labelText: 'Spoken Language',
-                      currentValue: controller.selectedSpokenLanguage.value,
-                      dropHintText: 'Language',
-                      items: controller.spokenLanguageList,
-                      onChanged: (value) =>
-                          controller.selectedSpokenLanguage.value = value!,
-                      dropDownValidator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Please select a spoken language.';
-                        }
+                      labelText: 'Zip Code',
+                      fieldHintText: '25235',
+                      fieldController: controller.zipCodeController,
+                      fieldValidator: (value) {
                         return null;
                       },
-                      isDropDown: true,
+                      isDropDown: false,
                     ),
                   ),
                 ],
@@ -327,9 +321,6 @@ class BasicInfoSubScreen extends StatelessWidget {
                       fieldHintText: 'instagram.com',
                       fieldController: controller.instagramController,
                       fieldValidator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter instagram link.';
-                        }
                         return null;
                       },
                       isDropDown: false,
@@ -342,9 +333,6 @@ class BasicInfoSubScreen extends StatelessWidget {
                       fieldHintText: 'tiktok.com',
                       fieldController: controller.tiktokLinkController,
                       fieldValidator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter tiktok link.';
-                        }
                         return null;
                       },
                       isDropDown: false,
