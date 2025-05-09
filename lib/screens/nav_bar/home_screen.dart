@@ -268,7 +268,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: Text(
-            'Events worth your time — always in the loop.',
+            'Food fests and pop-ups',
             textAlign: TextAlign.justify,
             style: TextStyle(
               color: AppColors.bottomSheetColor,
@@ -442,7 +442,8 @@ class _HomeScreenState extends State<HomeScreen> {
             return Container(
               height: Get.height * 0.45,
               width: Get.width,
-              decoration: BoxDecoration(color: const Color(0xFF708780)),
+              decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 143, 164, 157)),
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Column(
@@ -460,7 +461,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      'Elevated picks for tastemakers and trendsetters. From chef-driven menus to unforgettable atmospheres, these restaurants define what it means to Savr. Curated with intention, crafted for your next great night out',
+                      'Handpicked for the flavor-forward and experience seekers. These standout spots bring bold menus, signature moments, and the kind of ambiance that stays with you. Crafted with vision—designed for your next story-worthy meal.',
                       textAlign: TextAlign.justify,
                       style: TextStyle(
                         color: AppColors.bottomSheetColor,
@@ -557,7 +558,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Padding(
               padding: const EdgeInsets.only(left: 14),
               child: Text(
-                'Find whats New and Hot',
+                'Find food that fits you',
                 style: TextStyle(
                   color: AppColors.bottomSheetColor,
                   fontFamily: 'aftika-regular',
@@ -663,7 +664,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         Text(
-                          'Whats Hot Right Now',
+                          'Buzzing dishes right now',
                           textAlign: TextAlign.justify,
                           style: TextStyle(
                             color: AppColors.bottomSheetColor,
@@ -817,7 +818,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           Text(
-                            "For your best delicious food",
+                            "Curated picks just for you",
                             textAlign: TextAlign.justify,
                             style: TextStyle(
                               color: AppColors.bottomSheetColor,

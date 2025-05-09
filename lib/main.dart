@@ -1,6 +1,4 @@
 import 'dart:math';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -13,7 +11,6 @@ import 'package:kaistable_website/widgets/global_functions.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
-
 import 'main_controller.dart';
 
 // Android channel for notifications
@@ -128,7 +125,7 @@ class MyApp extends StatelessWidget {
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(
           textScaler: TextScaler.linear(
-              min(MediaQuery.of(context).textScaleFactor, 0.7))),
+              min(MediaQuery.of(context).textScaleFactor, 0.85))),
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Kaistable',
