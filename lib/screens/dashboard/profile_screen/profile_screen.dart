@@ -102,7 +102,7 @@ class ProfileScreen extends StatelessWidget {
                                         child: controller.profile.value?.img !=
                                                 null
                                             ? Image.network(
-                                                controller.profile.value!.img!,
+                                                controller.profile.value!.img,
                                                 height: isMobile ? 62 : 78,
                                                 width: isMobile ? 62 : 78,
                                                 fit: BoxFit.cover,

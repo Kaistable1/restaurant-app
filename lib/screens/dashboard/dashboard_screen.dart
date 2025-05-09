@@ -69,7 +69,7 @@ class DashboardScreen extends StatelessWidget {
                                   child: profileController.profile.value?.img !=
                                           null
                                       ? Image.network(
-                                          profileController.profile.value!.img!,
+                                          profileController.profile.value!.img,
                                           height: iconSize,
                                           width: iconSize,
                                           fit: BoxFit.cover,

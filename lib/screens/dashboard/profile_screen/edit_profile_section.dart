@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:savrly/widgets/button.dart';
 import 'package:savrly/widgets/custom_textfield.dart';
 
-import '../../../constants/app_colors.dart';
 import '../../../constants/text_styles.dart';
 import '../../../controllers/profile_controller.dart';
 import '../../../utils/validations.dart';
@@ -106,7 +105,6 @@ class EditProfileSection extends StatelessWidget {
                   child: CustomTextField(
                     controller: controller.phoneController,
                     validator: (value) => isPhoneNumberValid(value!),
-             
                     borderRadius: isMobile ? 4 : 10,
                     hintText: '+769 55654564444',
                   )),
@@ -117,8 +115,7 @@ class EditProfileSection extends StatelessWidget {
                 child: CustomButton(
                   ontapp: () async {
                     if (formKey.currentState!.validate()) {
-                     await controller.updateProfile();
-                     
+                      await controller.updateProfile();
                     }
                   },
                   laBelText: 'Save',

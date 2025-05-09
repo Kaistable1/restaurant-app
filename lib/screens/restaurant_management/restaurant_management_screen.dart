@@ -125,6 +125,7 @@ class _RestaurantManagementScreenState
                           controller.filteredResults.clear();
                           controller.fetchRestaurants(isRefresh: true);
                         }
+                        return null;
                       },
                     ),
                     SizedBox(height: 16),
@@ -207,6 +208,7 @@ class _RestaurantManagementScreenState
                             controller.filteredResults.clear();
                             controller.fetchRestaurants(isRefresh: true);
                           }
+                          return null;
                         },
                       ),
                     ),

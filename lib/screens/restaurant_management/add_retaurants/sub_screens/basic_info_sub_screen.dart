@@ -1,6 +1,5 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:savrly/constants/text_styles.dart';
 import 'package:savrly/utils/globalVars.dart';

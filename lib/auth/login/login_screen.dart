@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import 'package:savrly/constants/app_colors.dart';
 
 import '../../constants/text_styles.dart';
 import '../../controllers/login_controller.dart';
-import '../../screens/admin/admin_panel.dart';
 import '../../utils/validations.dart';
 import '../../widgets/button.dart';
 import '../../widgets/custom_textfield.dart';
 import '../forgot_pass/forgot_pass.dart';
-import '../sub_admin_login/sub_admin_login.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});

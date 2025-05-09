@@ -5,7 +5,6 @@ import 'package:savrly/constants/app_colors.dart';
 
 import '../../constants/text_styles.dart';
 import '../../controllers/login_controller.dart';
-import '../../screens/sub_admin_panel/sub_admin_panel.dart';
 import '../../utils/validations.dart';
 import '../../widgets/button.dart';
 import '../../widgets/custom_textfield.dart';

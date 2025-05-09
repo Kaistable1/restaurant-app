@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../constants/app_colors.dart';
-import '../../constants/text_styles.dart';
 import '../../controllers/drawer_controller.dart';
 import '../../controllers/sub_admins_controller.dart';
-import '../../widgets/button.dart';
-import '../../widgets/custom_textfield.dart';
 
 class SubAdminScreens extends StatelessWidget {
   SubAdminScreens({super.key});

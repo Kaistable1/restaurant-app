@@ -50,6 +50,7 @@ class RestaurantsClaimsScreen extends StatelessWidget {
                   borderColor: primaryColor,
                   onChanged: (v) {
                     controller.filteredClaims(search: v);
+                    return null;
                   },
                 ),
               )),

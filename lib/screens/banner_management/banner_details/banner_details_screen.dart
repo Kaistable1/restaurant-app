@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:savrly/models/banner_model.dart';
 import 'package:savrly/widgets/customheader_widget.dart';
 
 import '../../../constants/app_colors.dart';
@@ -134,7 +133,9 @@ class BannerDetailsScreen extends StatelessWidget {
                           firstText: 'Start Date',
                           secondText: banner.startDate,
                         ),
-                        SizedBox(height: 16,),
+                        SizedBox(
+                          height: 16,
+                        ),
                         DoubleTextWidget(
                           isLargeScreen: isLargeScreen,
                           isMobile: isMobile,
@@ -211,12 +212,12 @@ class DoubleTextWidget extends StatelessWidget {
           ),
         ),
         Padding(
-          padding:  EdgeInsets.only(top: 12),
+          padding: EdgeInsets.only(top: 12),
           child: Text(
             secondText,
             style: simpleText.copyWith(
                 fontSize:
-                    isLargeScreen ? 22: (isMobile ? 12 : (isTablet ? 14 : 16)),
+                    isLargeScreen ? 22 : (isMobile ? 12 : (isTablet ? 14 : 16)),
                 fontFamily: GoogleFonts.nunitoSans().fontFamily,
                 color: secondaryColor),
           ),

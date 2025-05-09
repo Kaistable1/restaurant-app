@@ -1,11 +1,5 @@
-import 'dart:io';
-
-import 'package:dotted_border/dotted_border.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:savrly/constants/app_colors.dart';
 
 import '../../../constants/text_styles.dart';
 import '../../../controllers/drawer_controller.dart';
@@ -17,7 +11,7 @@ import '../../../widgets/customheader_widget.dart';
 
 class CreateNotificationScreen extends StatelessWidget {
   final drawerController = Get.put(DrawerControllerX());
-  final controller=Get.put(NotificationController());
+  final controller = Get.put(NotificationController());
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   CreateNotificationScreen({super.key});
@@ -32,7 +26,7 @@ class CreateNotificationScreen extends StatelessWidget {
     double paddingValue = mobileView ? 16 : 24;
     bool isLargeScreen = screenWidth > 1600;
     return Padding(
-      padding:  EdgeInsets.all(paddingValue),
+      padding: EdgeInsets.all(paddingValue),
       child: SingleChildScrollView(
         child: Form(
           key: formKey,
@@ -43,63 +37,87 @@ class CreateNotificationScreen extends StatelessWidget {
                 title: 'Create New Notifications',
                 back: true,
                 onBackTap: () {
-                  drawerController.showCreateNotifications.value=false;
+                  drawerController.showCreateNotifications.value = false;
                 },
-
               ),
               SizedBox(
                 height: isMobile ? 16 : 32,
               ),
 
-              SizedBox(height: isMobile?8:12,),
+              SizedBox(
+                height: isMobile ? 8 : 12,
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: Text('Title',
+                child: Text(
+                  'Title',
                   style: headingText.copyWith(
-                      fontSize: isLargeScreen?24:isMobile?14:20
-                  ),
+                      fontSize: isLargeScreen
+                          ? 24
+                          : isMobile
+                              ? 14
+                              : 20),
                 ),
               ),
-              SizedBox(height: isMobile?8:12,),
+              SizedBox(
+                height: isMobile ? 8 : 12,
+              ),
               Padding(
-                  padding:  EdgeInsets.only(left: 12.0,right: isLargeScreen?400:isMobile?12:280),
+                  padding: EdgeInsets.only(
+                      left: 12.0,
+                      right: isLargeScreen
+                          ? 400
+                          : isMobile
+                              ? 12
+                              : 280),
                   child: CustomTextField(
                     controller: controller.titleController,
                     validator: (value) => isTitle(value!),
                     // maxHeight: isMobile?30:48,
                     // maxWidth: isMobile?380:458,
-                    borderRadius: isMobile?4:10,
-                    hintText:'Title' ,
+                    borderRadius: isMobile ? 4 : 10,
+                    hintText: 'Title',
+                  )),
 
-                  )
+              SizedBox(
+                height: isMobile ? 8 : 12,
               ),
-
-
-              SizedBox(height: isMobile?8:12,),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: Text('Description',
+                child: Text(
+                  'Description',
                   style: headingText.copyWith(
-                      fontSize: isLargeScreen?24:isMobile?14:20
-                  ),
+                      fontSize: isLargeScreen
+                          ? 24
+                          : isMobile
+                              ? 14
+                              : 20),
                 ),
               ),
-              SizedBox(height: isMobile?8:12,),
+              SizedBox(
+                height: isMobile ? 8 : 12,
+              ),
               Padding(
-                  padding:  EdgeInsets.only(left: 12.0,right: isLargeScreen?400:isMobile?12:280),
+                  padding: EdgeInsets.only(
+                      left: 12.0,
+                      right: isLargeScreen
+                          ? 400
+                          : isMobile
+                              ? 12
+                              : 280),
                   child: CustomTextField(
                     maxLines: 5,
                     controller: controller.descriptionController,
                     validator: (value) => isDescription(value!),
                     // maxHeight: isMobile?30:48,
                     // maxWidth: isMobile?380:458,
-                    borderRadius: isMobile?4:10,
-                    hintText:'Description' ,
+                    borderRadius: isMobile ? 4 : 10,
+                    hintText: 'Description',
+                  )),
 
-                  )
+              SizedBox(
+                height: isMobile ? 8 : 12,
               ),
-
-              SizedBox(height: isMobile?8:12,),
               // Padding(
               //   padding: const EdgeInsets.symmetric(horizontal: 12.0),
               //   child: Text('Upload Image',
@@ -225,8 +243,9 @@ class CreateNotificationScreen extends StatelessWidget {
               //   ),
               // ),
 
-
-              SizedBox(height: isMobile?8:24,),
+              SizedBox(
+                height: isMobile ? 8 : 24,
+              ),
               Row(
                 children: [
                   Padding(
@@ -234,13 +253,13 @@ class CreateNotificationScreen extends StatelessWidget {
                     child: CustomButton(
                       ontapp: () {
                         if (formKey.currentState!.validate()) {
-                            drawerController.showCreateNotifications.value=false;
-                            drawerController.showNotifications.value=true;
-                            // controller.titleController.clear();
-                            // controller.descriptionController.clear();
-                            controller.selectedImage.value = null;
-                            controller.selectedWebImage.value = null;
-
+                          drawerController.showCreateNotifications.value =
+                              false;
+                          drawerController.showNotifications.value = true;
+                          // controller.titleController.clear();
+                          // controller.descriptionController.clear();
+                          controller.selectedImage.value = null;
+                          controller.selectedWebImage.value = null;
                         }
                       },
                       height: 48,
@@ -253,9 +272,9 @@ class CreateNotificationScreen extends StatelessWidget {
                     child: CustomButton(
                       ontapp: () {
                         if (formKey.currentState!.validate()) {
-                            controller.sendPushAllUsersNotification(title: controller.titleController.text, message: controller.descriptionController.text);
-
-
+                          controller.sendPushAllUsersNotification(
+                              title: controller.titleController.text,
+                              message: controller.descriptionController.text);
                         }
                       },
                       height: 48,
@@ -266,9 +285,9 @@ class CreateNotificationScreen extends StatelessWidget {
                 ],
               ),
 
-
-              SizedBox(height: isMobile?8:50,),
-
+              SizedBox(
+                height: isMobile ? 8 : 50,
+              ),
             ],
           ),
         ),

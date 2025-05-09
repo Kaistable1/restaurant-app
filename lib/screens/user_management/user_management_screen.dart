@@ -48,6 +48,7 @@ class UserManagementScreen extends StatelessWidget {
             prefixIcon: Icon(Icons.search, color: primaryColor),
             onChanged: (value) {
               controller.currentSearchQuery.value = value ?? '';
+              return null;
               // No need to call fetchInitialUsers here; debounce handles it
             },
           ),

@@ -410,8 +410,7 @@ class NotificationScreen extends StatelessWidget {
                               child: Text('No users match the filters'));
                         } else {
                           List<UserModel> users = snapshot.data!.docs
-                              .map((doc) => UserModel.fromMap(
-                                  doc.data() as Map<String, dynamic>))
+                              .map((doc) => UserModel.fromMap(doc.data()))
                               .toList();
 
                           return Obx(() {
@@ -596,21 +595,21 @@ class NotificationScreen extends StatelessWidget {
                           print('Username: ${user.username.text}');
                           print('User Image: ${user.userImage.value}');
                           print(
-                              'Top Three Cuisines: ${user.topThreeCuisines?.join(", ") ?? "None"}');
+                              'Top Three Cuisines: ${user.topThreeCuisines.join(", ") ?? "None"}');
                           print(
-                              'Dietary Preferences: ${user.dietaryPrefList?.join(", ") ?? "None"}');
+                              'Dietary Preferences: ${user.dietaryPrefList.join(", ") ?? "None"}');
                           print(
-                              'Choose Restaurant Factors: ${user.whereToEat?.join(", ") ?? "None"}');
+                              'Choose Restaurant Factors: ${user.whereToEat.join(", ") ?? "None"}');
                           print(
                               'Dining Planning Style: ${user.planner ?? "None"}');
                           print(
-                              'Dining Priorities: ${user.impDiningOut?.join(", ") ?? "None"}');
+                              'Dining Priorities: ${user.impDiningOut.join(", ") ?? "None"}');
                           print(
-                              'Dining Experiences: ${user.diningExp?.join(", ") ?? "None"}');
+                              'Dining Experiences: ${user.diningExp.join(", ") ?? "None"}');
                           print(
                               'Travel Distance: ${user.willingToTravel ?? "None"}');
                           print(
-                              'Notification Preferences: ${user.notificationType?.join(", ") ?? "None"}');
+                              'Notification Preferences: ${user.notificationType.join(", ") ?? "None"}');
                           print(
                               'Notification Frequency: ${user.notifiedDiningOpp ?? "None"}');
                           print('State: ${user.country ?? "None"}');

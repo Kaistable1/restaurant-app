@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import 'package:savrly/constants/app_colors.dart';
 
@@ -86,9 +85,8 @@ class ForgotPass extends StatelessWidget {
                         width: 250,
                         shadow: [],
                         containerColor: primaryColor,
-
                         ontapp: () async {
-                         await controller.forgotPassword();
+                          await controller.forgotPassword();
                         },
                       ),
                     ),

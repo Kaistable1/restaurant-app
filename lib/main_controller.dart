@@ -1,10 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:get/get.dart';
 import 'package:googleapis_auth/auth_io.dart' as auth;
 import 'package:http/http.dart' as http;
 
@@ -13,7 +9,7 @@ class SendNotifiation {
 
 // ====-============- setting local notification for receive notification
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-  FlutterLocalNotificationsPlugin();
+      FlutterLocalNotificationsPlugin();
 
   void initNotifications() async {
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
@@ -37,16 +33,14 @@ class SendNotifiation {
         FirebaseMessaging.onMessage.listen((RemoteMessage message) {
           //android
           var initializationSettingsAndroid =
-          const AndroidInitializationSettings('@mipmap/ic_launcher');
+              const AndroidInitializationSettings('@mipmap/ic_launcher');
           //ios
           var initializationSettings =
-          InitializationSettings(android: initializationSettingsAndroid);
+              InitializationSettings(android: initializationSettingsAndroid);
 
           /// notification clicking function
           FlutterLocalNotificationsPlugin().initialize(initializationSettings,
-              onDidReceiveNotificationResponse: (payload) {
-
-              });
+              onDidReceiveNotificationResponse: (payload) {});
           RemoteNotification? notification = message.notification;
 
           flutterLocalNotificationsPlugin.show(
@@ -66,7 +60,7 @@ class SendNotifiation {
         });
         await flutterLocalNotificationsPlugin
             .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+                AndroidFlutterLocalNotificationsPlugin>()
             ?.createNotificationChannel(channel);
       }
     });
@@ -128,13 +122,17 @@ class SendNotifiation {
       "type": "service_account",
       "project_id": "restaurantwebsite-4bdd8",
       "private_key_id": "e7970552575d032564082fdef12fdef7e6b74b62",
-      "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCZ79AztB/Z556s\nblRqUzFyhqEIw3cLPZyjY9s05xtuCDXOlxV7qcx1RoN1cBRI9iRljdx1uMlaDCYJ\nzdM8xXzq3Y/R8Oezmqn57rlFDS5d1Jnae637FtH7Ttq5BcrwYsTY8J9csEUgMEwP\nXyCCvv0VDROqTc1f3uYoinamfRwNQVdsevJHVplsvdhJFHqijIA/6FTdrFw0Kkku\nA9w+or20lPST3KIE8LgpDKlkP+5DlogHS5xwB9BQXWXw1XCr2K/skrNOv5Jv2X8U\nBpEAuav6soKuDqopLYtOYMNI/7ndtrnY3d+uma84cBfIDtK26oe0DYUZhIb1YD64\nXbGG5hidAgMBAAECggEAFvIC4g4VmFS412F7tjyP2I8eRlDid/u3UziBdn2DXm+d\nW520H1KETi/UTQdHkseTzcprQ+XnJ4O7kMcMF1kloVmkxCmpU+F4OC/AEH2iPWzB\nASrh2FVCt/e9TQqCwTmrt12Il5eTujRQxhLLJQoEbeSc24wM0p9GReE7xd3MtmHd\ndV8TmnJfmAe9M8GgeaIor4+4MlGseF+mhUg180lHcwQ92zQq+w5fz3n17YgG+if9\ntuQ6O3OFmZ4Ooz/QKGSDzKQJh96+pGMV5R/2gc100tvAK3heD9X2YoUU5IplsVv5\nHXisYEguHl79rYdtvDOjXlKcxsqu0vx/rU8Tk3bVQQKBgQDSyXxXONPelt0y2k8t\nlZpMvpwXlamu6KkDM68r/UTRU6IGs1CEVSxqHYy6/u/XC4srfPyaTV+5Y+yIQ2mF\n5Xo6KSsL52boEd9++850lRTGzxDiXlv8A76QJbCDuSbfBTU8wFhOVGlv6SLobo/j\neD2om2UcfD544qMGaxfv03/lXQKBgQC69KAYKDMgxCqotWTS8y6cXNdXN7oQypgs\ncss2U0yEMgxb4oZ2tzTiAgucnr6YPUr/57OrQE8AOA+OanW9f6QXRgAToxAJA2IJ\nk18b0T0/QiqkxGEX8ps3tVmiFjX4yTJ4vZDzpUseHKl84SsKzApXBco+m86jPxqg\ngjBbHBaMQQKBgHRLkfyVb995IOVzqQefaJg6+efRPOMxnj4T/+unOpa7K8PCnwPD\n8lNBpmltSmo9BjWiKcQAOHYSeWfcuZWUPFFmcUeKDi6v3b0ztH6B2gquJ8SdBucO\nMc9Z2/9w4c9eEjdIb/AXhmymFgpjJaP8rRgfVDPZIKaVdBiQcY5yBDhJAoGACrTB\nikCbFPBG5RxmJrJoY+npJwR48kc3yavVOUox4owfKw/g1WGOdLbbRV/N2FgCOH9j\nSZZIL+IF+gjcrzplAjQvAvDelTWNYrD+zFACKuI2IPNiAAYTn3ASLvcIpjOXYVSx\nvVIk6BeKGS2n0ll26h7ZwxYXEkAl3TU3YbBNFkECgYEAiSXHj8zuOYpgraDONlxh\nArLsRPXX2whpbN5zQQ7fwHqJ+mrsZpCNs/tyRo4DVlcv8aRIFUDsR6BXZPjabyM6\nexRXQRctMs+Ps5g6IPxVaSaDyrwkFw+hh96tBAO7KeHi+5aw2Ut8kPWqA9DUF++v\ndIPiaHHbzNs6lBMvWo7/rvU=\n-----END PRIVATE KEY-----\n",
-      "client_email": "firebase-adminsdk-q09x4@restaurantwebsite-4bdd8.iam.gserviceaccount.com",
+      "private_key":
+          "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCZ79AztB/Z556s\nblRqUzFyhqEIw3cLPZyjY9s05xtuCDXOlxV7qcx1RoN1cBRI9iRljdx1uMlaDCYJ\nzdM8xXzq3Y/R8Oezmqn57rlFDS5d1Jnae637FtH7Ttq5BcrwYsTY8J9csEUgMEwP\nXyCCvv0VDROqTc1f3uYoinamfRwNQVdsevJHVplsvdhJFHqijIA/6FTdrFw0Kkku\nA9w+or20lPST3KIE8LgpDKlkP+5DlogHS5xwB9BQXWXw1XCr2K/skrNOv5Jv2X8U\nBpEAuav6soKuDqopLYtOYMNI/7ndtrnY3d+uma84cBfIDtK26oe0DYUZhIb1YD64\nXbGG5hidAgMBAAECggEAFvIC4g4VmFS412F7tjyP2I8eRlDid/u3UziBdn2DXm+d\nW520H1KETi/UTQdHkseTzcprQ+XnJ4O7kMcMF1kloVmkxCmpU+F4OC/AEH2iPWzB\nASrh2FVCt/e9TQqCwTmrt12Il5eTujRQxhLLJQoEbeSc24wM0p9GReE7xd3MtmHd\ndV8TmnJfmAe9M8GgeaIor4+4MlGseF+mhUg180lHcwQ92zQq+w5fz3n17YgG+if9\ntuQ6O3OFmZ4Ooz/QKGSDzKQJh96+pGMV5R/2gc100tvAK3heD9X2YoUU5IplsVv5\nHXisYEguHl79rYdtvDOjXlKcxsqu0vx/rU8Tk3bVQQKBgQDSyXxXONPelt0y2k8t\nlZpMvpwXlamu6KkDM68r/UTRU6IGs1CEVSxqHYy6/u/XC4srfPyaTV+5Y+yIQ2mF\n5Xo6KSsL52boEd9++850lRTGzxDiXlv8A76QJbCDuSbfBTU8wFhOVGlv6SLobo/j\neD2om2UcfD544qMGaxfv03/lXQKBgQC69KAYKDMgxCqotWTS8y6cXNdXN7oQypgs\ncss2U0yEMgxb4oZ2tzTiAgucnr6YPUr/57OrQE8AOA+OanW9f6QXRgAToxAJA2IJ\nk18b0T0/QiqkxGEX8ps3tVmiFjX4yTJ4vZDzpUseHKl84SsKzApXBco+m86jPxqg\ngjBbHBaMQQKBgHRLkfyVb995IOVzqQefaJg6+efRPOMxnj4T/+unOpa7K8PCnwPD\n8lNBpmltSmo9BjWiKcQAOHYSeWfcuZWUPFFmcUeKDi6v3b0ztH6B2gquJ8SdBucO\nMc9Z2/9w4c9eEjdIb/AXhmymFgpjJaP8rRgfVDPZIKaVdBiQcY5yBDhJAoGACrTB\nikCbFPBG5RxmJrJoY+npJwR48kc3yavVOUox4owfKw/g1WGOdLbbRV/N2FgCOH9j\nSZZIL+IF+gjcrzplAjQvAvDelTWNYrD+zFACKuI2IPNiAAYTn3ASLvcIpjOXYVSx\nvVIk6BeKGS2n0ll26h7ZwxYXEkAl3TU3YbBNFkECgYEAiSXHj8zuOYpgraDONlxh\nArLsRPXX2whpbN5zQQ7fwHqJ+mrsZpCNs/tyRo4DVlcv8aRIFUDsR6BXZPjabyM6\nexRXQRctMs+Ps5g6IPxVaSaDyrwkFw+hh96tBAO7KeHi+5aw2Ut8kPWqA9DUF++v\ndIPiaHHbzNs6lBMvWo7/rvU=\n-----END PRIVATE KEY-----\n",
+      "client_email":
+          "firebase-adminsdk-q09x4@restaurantwebsite-4bdd8.iam.gserviceaccount.com",
       "client_id": "109139757324442988323",
       "auth_uri": "https://accounts.google.com/o/oauth2/auth",
       "token_uri": "https://oauth2.googleapis.com/token",
-      "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-      "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-q09x4%40restaurantwebsite-4bdd8.iam.gserviceaccount.com",
+      "auth_provider_x509_cert_url":
+          "https://www.googleapis.com/oauth2/v1/certs",
+      "client_x509_cert_url":
+          "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-q09x4%40restaurantwebsite-4bdd8.iam.gserviceaccount.com",
       "universe_domain": "googleapis.com"
     };
 
@@ -151,10 +149,10 @@ class SendNotifiation {
 
     // Obtain the access token
     auth.AccessCredentials credentials =
-    await auth.obtainAccessCredentialsViaServiceAccount(
-        auth.ServiceAccountCredentials.fromJson(serviceAccountJson),
-        scopes,
-        client);
+        await auth.obtainAccessCredentialsViaServiceAccount(
+            auth.ServiceAccountCredentials.fromJson(serviceAccountJson),
+            scopes,
+            client);
 
     // Close the HTTP client
     client.close();

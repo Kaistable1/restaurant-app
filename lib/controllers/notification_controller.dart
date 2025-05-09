@@ -1,8 +1,6 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,6 +9,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import 'drawer_controller.dart';
+
 class NotificationController extends GetxController {
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
@@ -143,7 +142,6 @@ class NotificationController extends GetxController {
     return selectedUsers.contains(index);
   }
 
-
   // Stream function to fetch all users
   Stream<List<UserModel>> fetchAllUsers() {
     return FirebaseFirestore.instance
@@ -161,15 +159,18 @@ class NotificationController extends GetxController {
       bool matchesFilters = true;
 
       if (favoriteCuisinesFilter.value.isNotEmpty &&
-          !(user.topThreeCuisines ?? []).contains(favoriteCuisinesFilter.value)) {
+          !(user.topThreeCuisines ?? [])
+              .contains(favoriteCuisinesFilter.value)) {
         matchesFilters = false;
       }
       if (dietaryPreferencesFilter.value.isNotEmpty &&
-          !(user.dietaryPrefList ?? []).contains(dietaryPreferencesFilter.value)) {
+          !(user.dietaryPrefList ?? [])
+              .contains(dietaryPreferencesFilter.value)) {
         matchesFilters = false;
       }
       if (chooseRestaurantFactorsFilter.value.isNotEmpty &&
-          !(user.whereToEat ?? []).contains(chooseRestaurantFactorsFilter.value)) {
+          !(user.whereToEat ?? [])
+              .contains(chooseRestaurantFactorsFilter.value)) {
         matchesFilters = false;
       }
       if (diningPlanningStyleFilter.value.isNotEmpty &&
@@ -185,7 +186,8 @@ class NotificationController extends GetxController {
         matchesFilters = false;
       }
       if (notificationPreferencesFilter.value.isNotEmpty &&
-          !(user.notificationType ?? []).contains(notificationPreferencesFilter.value)) {
+          !(user.notificationType ?? [])
+              .contains(notificationPreferencesFilter.value)) {
         matchesFilters = false;
       }
       if (notificationFrequencyFilter.value.isNotEmpty &&
@@ -195,21 +197,30 @@ class NotificationController extends GetxController {
 
       if (travelDistanceFilter.value.isNotEmpty) {
         String filter = travelDistanceFilter.value.trim().replaceAll('–', '-');
-        String userValue = (user.willingToTravel ?? '').trim().replaceAll('–', '-');
+        String userValue =
+            (user.willingToTravel ?? '').trim().replaceAll('–', '-');
 
         if (filter.contains('-')) {
           // Agar filter mein hyphen hai (range)
           List<String> filterParts = filter.split('-');
           if (filterParts.length == 2) {
-            int filterStart = int.tryParse(filterParts[0].replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
-            int filterEnd = int.tryParse(filterParts[1].replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
+            int filterStart = int.tryParse(
+                    filterParts[0].replaceAll(RegExp(r'[^0-9]'), '')) ??
+                0;
+            int filterEnd = int.tryParse(
+                    filterParts[1].replaceAll(RegExp(r'[^0-9]'), '')) ??
+                0;
 
             int userStart = 0;
             int userEnd = 0;
             if (userValue.contains('-')) {
               List<String> userParts = userValue.split('-');
-              userStart = int.tryParse(userParts[0].replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
-              userEnd = int.tryParse(userParts[1].replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
+              userStart = int.tryParse(
+                      userParts[0].replaceAll(RegExp(r'[^0-9]'), '')) ??
+                  0;
+              userEnd = int.tryParse(
+                      userParts[1].replaceAll(RegExp(r'[^0-9]'), '')) ??
+                  0;
             }
 
             if (!(filterStart == userStart && filterEnd == userEnd)) {
@@ -247,6 +258,7 @@ class NotificationController extends GetxController {
     filteredUsers.assignAll(applyFilters(users));
     print('filteredUsers: ${filteredUsers.length}');
   }
+
   @override
   void onInit() {
     super.onInit();
@@ -309,7 +321,8 @@ class NotificationController extends GetxController {
     required String title,
   }) async {
     const String endpoint = 'https://sendpushtouser-6nrfvx3mia-uc.a.run.app';
-    debugPrint('Sending notification to token: $token, Title: $title, Body: $message');
+    debugPrint(
+        'Sending notification to token: $token, Title: $title, Body: $message');
 
     try {
       // Validate inputs
@@ -347,18 +360,21 @@ class NotificationController extends GetxController {
           descriptionController.clear();
           Get.put(DrawerControllerX()).showNotifications.value = false;
         } on FormatException catch (e) {
-          debugPrint('Failed to parse response as JSON: $responseBody, Error: $e');
+          debugPrint(
+              'Failed to parse response as JSON: $responseBody, Error: $e');
           throw Exception('Invalid response format from server');
         }
       } else {
-        debugPrint('Failed to send notification: Status=${response.statusCode}, Response=$responseBody');
+        debugPrint(
+            'Failed to send notification: Status=${response.statusCode}, Response=$responseBody');
         throw Exception(
           'Failed to send notification: ${response.statusCode} ${response.reasonPhrase ?? responseBody}',
         );
       }
     } on http.ClientException catch (e) {
       debugPrint('Network error sending notification: $e');
-      _showErrorSnackbar('Network error: Please check your internet connection');
+      _showErrorSnackbar(
+          'Network error: Please check your internet connection');
     } on Exception catch (e) {
       debugPrint('Error sending notification: $e');
       _showErrorSnackbar('Failed to send notification: $e');
@@ -367,8 +383,10 @@ class NotificationController extends GetxController {
       _showErrorSnackbar('An unexpected error occurred');
     }
   }
+
   // firebase notification sending function by "modassir" for all users
-  Future<void> sendPushAllUsersNotification({ required String message, required String title}) async {
+  Future<void> sendPushAllUsersNotification(
+      {required String message, required String title}) async {
     try {
       var headers = {'Content-Type': 'application/json'};
 
@@ -377,10 +395,7 @@ class NotificationController extends GetxController {
         Uri.parse('https://sendpushtoall-6nrfvx3mia-uc.a.run.app'),
       );
 
-      request.body = json.encode({
-        "title": title,
-        "body": message
-      });
+      request.body = json.encode({"title": title, "body": message});
 
       request.headers.addAll(headers);
 
@@ -401,7 +416,6 @@ class NotificationController extends GetxController {
         );
         titleController.clear();
         descriptionController.clear();
-
       } else {
         var errorData = await response.stream.bytesToString();
         debugPrint("Failed to send notification: ${response.reasonPhrase}");
@@ -430,6 +444,7 @@ class NotificationController extends GetxController {
       );
     }
   }
+
   /// Helper method to show error snackbar
   void _showErrorSnackbar(String message) {
     Get.snackbar(

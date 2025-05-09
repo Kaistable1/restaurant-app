@@ -135,8 +135,7 @@ class EditRestaurantController extends GetxController {
     final experiencesController = Get.put(ExperiencesSubScreenController());
     restaurantDetailsModel = restaurantController.restaurantModel;
 
-    if (restaurantDetailsModel != null &&
-        restaurantDetailsModel!.entertainmentScheduleList != null) {
+    if (restaurantDetailsModel != null) {
       experiencesController.events.clear();
 
       // Map each item to a Future<Map<String, dynamic>> and resolve all futures
@@ -160,8 +159,7 @@ class EditRestaurantController extends GetxController {
         Get.put(OperatingHoursSubScreenController());
     restaurantDetailsModel = restaurantController.restaurantModel;
 
-    if (restaurantDetailsModel != null &&
-        restaurantDetailsModel!.docID != null) {
+    if (restaurantDetailsModel != null) {
       // Fetch operating hours from Firestore subcollection
       final snapshot = await FirebaseFirestore.instance
           .collection('restaurants')

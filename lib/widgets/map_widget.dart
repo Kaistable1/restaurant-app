@@ -143,7 +143,7 @@ class _MapWidgetState extends State<MapWidget> {
         longitude,
       );
 
-      if (placemarks.isNotEmpty && placemarks.first != null) {
+      if (placemarks.isNotEmpty) {
         Placemark placemark = placemarks.first;
         String address = [
           placemark.street ?? '',
