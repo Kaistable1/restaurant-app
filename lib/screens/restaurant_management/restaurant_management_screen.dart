@@ -33,7 +33,12 @@ class _RestaurantManagementScreenState
   @override
   void initState() {
     super.initState();
+    if (drawerController.selectedType.value == 'pending' ||
+        drawerController.selectedType.value == 'registered') {
+      controller.fetchAllRestaurantsForFilters();
+    }
     _scrollController = ScrollController();
+
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
@@ -322,12 +327,29 @@ class _RestaurantManagementScreenState
                     ),
                   ),
                   Expanded(
-                    child: Obx(
-                      () => ListView.builder(
+                    child: Obx(() {
+                      List<RestaurantModel> filteredRestaurants =
+                          controller.restaurants;
+
+                      if (drawerController.selectedType.value == 'pending') {
+                        controller.hasMoreData.value = false;
+
+                        filteredRestaurants = controller.filteredResults
+                            .where((element) => element.resEmail == '')
+                            .toList();
+                      } else if (drawerController.selectedType.value ==
+                          'registered') {
+                        controller.hasMoreData.value = false;
+
+                        filteredRestaurants = controller.filteredResults
+                            .where((element) => element.resEmail != '')
+                            .toList();
+                      }
+                      return ListView.builder(
                         controller: _scrollController,
-                        itemCount: controller.restaurants.length + 1,
+                        itemCount: filteredRestaurants.length + 1,
                         itemBuilder: (context, index) {
-                          if (index == controller.restaurants.length) {
+                          if (index == filteredRestaurants.length) {
                             if (controller.hasMoreData.value) {
                               return Padding(
                                 padding: const EdgeInsets.all(16.0),
@@ -367,7 +389,7 @@ class _RestaurantManagementScreenState
                             }
                           }
 
-                          final restaurant = controller.restaurants[index];
+                          final restaurant = filteredRestaurants[index];
                           return Container(
                             padding: EdgeInsets.symmetric(
                               vertical: 14,
@@ -452,7 +474,7 @@ class _RestaurantManagementScreenState
                                   child: Center(
                                     child: Text(
                                       restaurant.resEmail == ''
-                                          ? '${restaurant.resName.toLowerCase().toString().split(' ')[0]}@gmail.com'
+                                          ? 'no email available'
                                           : restaurant.resEmail,
                                       textAlign: TextAlign.center,
                                       style: simpleText.copyWith(
@@ -655,8 +677,8 @@ class _RestaurantManagementScreenState
                             ),
                           );
                         },
-                      ),
-                    ),
+                      );
+                    }),
                   ),
                 ],
               ),

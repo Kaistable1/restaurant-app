@@ -234,6 +234,7 @@ class _MapWidgetState extends State<MapWidget> {
   }
 
   Future<void> _updateMapFromAddress(String address) async {
+    print('address ----------------- $address');
     // Validate the input address
     if (address.trim().isEmpty || address.length < 5) {
       print('Please enter a valid address');
