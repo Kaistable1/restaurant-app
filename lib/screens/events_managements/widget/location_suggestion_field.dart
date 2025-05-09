@@ -35,7 +35,7 @@ class _LocationTextFieldState extends State<LocationTextField> {
   @override
   void initState() {
     super.initState();
-    // No forced cursor management here; let TextFormField handle it
+    // No forced cursor management; let TextFormField handle it
   }
 
   Future<void> _fetchSuggestions(String input) async {
@@ -121,16 +121,15 @@ class _LocationTextFieldState extends State<LocationTextField> {
                 return ListTile(
                   title: Text(suggestion['description'] ?? ''),
                   onTap: () {
-                    // Update text only on manual selection
+                    // Update text only when a suggestion is manually selected
                     final newText = suggestion['description'] ?? '';
                     widget.controller.text = newText;
-                    // Move cursor to the end only after selection
                     widget.controller.selection = TextSelection.fromPosition(
                       TextPosition(offset: newText.length),
                     );
                     if (kDebugMode) {
                       print(
-                          'Selected text: $newText, Cursor at: ${newText.length}');
+                          'Manually selected text: $newText, Cursor at: ${newText.length}');
                     }
                     _hideSuggestions();
                     _fetchPlaceDetails(suggestion['place_id']);
@@ -231,16 +230,15 @@ class _LocationTextFieldState extends State<LocationTextField> {
           ),
           validator: widget.validator,
           onChanged: (value) {
-            // if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
-            // _debounceTimer = Timer(const Duration(milliseconds: 1500), () {
-            _fetchSuggestions(value);
-            // });
-            // if (kDebugMode) {
-            //   print(
-            //       'Text changed to: $value, Selection: ${widget.controller.selection}');
-            // }
+            if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
+            _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+              _fetchSuggestions(value);
+            });
+            if (kDebugMode) {
+              print(
+                  'Text changed to: $value, Selection: ${widget.controller.selection}');
+            }
           },
-          // Ensure default selection behavior
           enableInteractiveSelection: true, // Explicitly enable selection
         ),
       ],
