@@ -462,6 +462,7 @@ class RestaurantManagementController extends GetxController {
       Get.snackbar('Error', 'Failed to delete restaurant');
     }
   }
+
   final TextEditingController descriptionController = TextEditingController();
   Future<void> setFeaturedRestaurant({
     required String restaurantID,
@@ -478,17 +479,17 @@ class RestaurantManagementController extends GetxController {
       });
     } catch (e) {
       print('Added featured exception $e');
-      throw e; // Optionally rethrow for error handling in UI
     }
   }
-  Stream<String?> getFeaturedRestaurantID() {
+
+  Stream<Map<String, dynamic>?> getFeaturedRestaurantID() {
     return FirebaseFirestore.instance
         .collection('featured')
         .doc('mainFeatured')
         .snapshots()
         .map((snapshot) {
       if (snapshot.exists) {
-        return snapshot.data()?['restaurantID'] as String?;
+        return snapshot.data();
       }
       return null;
     });

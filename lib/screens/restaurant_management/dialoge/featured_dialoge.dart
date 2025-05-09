@@ -5,16 +5,40 @@ import '../../../constants/app_colors.dart';
 import '../../../constants/text_styles.dart';
 import '../../../controllers/restaurant_management_controller.dart';
 
-class FeatureDescriptionDialog extends StatelessWidget {
-  final controller = Get.put(RestaurantManagementController());
+class FeatureDescriptionDialog extends StatefulWidget {
   final VoidCallback? onCancel;
+  final String initialDescription;
   final Function(String) onSubmit;
 
-  FeatureDescriptionDialog({
+  const FeatureDescriptionDialog({
     super.key,
     this.onCancel,
+    required this.initialDescription,
     required this.onSubmit,
   });
+
+  @override
+  State<FeatureDescriptionDialog> createState() =>
+      _FeatureDescriptionDialogState();
+}
+
+class _FeatureDescriptionDialogState extends State<FeatureDescriptionDialog> {
+  late final TextEditingController _descriptionController;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize a local TextEditingController with the initialDescription
+    _descriptionController =
+        TextEditingController(text: widget.initialDescription);
+  }
+
+  @override
+  void dispose() {
+    // Dispose of the local TextEditingController to prevent memory leaks
+    _descriptionController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +64,7 @@ class FeatureDescriptionDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
-              controller: controller.descriptionController,
+              controller: _descriptionController, // Use local controller
               decoration: InputDecoration(
                 hintText: 'Enter description',
                 border: OutlineInputBorder(
@@ -63,7 +87,7 @@ class FeatureDescriptionDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () {
-            onCancel?.call();
+            widget.onCancel?.call();
             Navigator.of(context).pop();
           },
           child: Text(
@@ -76,9 +100,8 @@ class FeatureDescriptionDialog extends StatelessWidget {
         ),
         TextButton(
           onPressed: () {
-            if (controller.descriptionController.text.trim().isNotEmpty) {
-              onSubmit(controller.descriptionController.text.trim());
-              controller.descriptionController.clear();
+            if (_descriptionController.text.trim().isNotEmpty) {
+              widget.onSubmit(_descriptionController.text.trim());
               Navigator.of(context).pop();
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
