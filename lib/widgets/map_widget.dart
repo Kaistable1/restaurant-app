@@ -35,10 +35,10 @@ class _MapWidgetState extends State<MapWidget> {
   @override
   void initState() {
     super.initState();
-    // Initialize map with current location if no coordinates are provided
-    if (widget.latitude == null && widget.longitude == null) {
-      _getCurrentLocation();
-    }
+    // // Initialize map with current location if no coordinates are provided
+    // if (widget.latitude == null && widget.longitude == null) {
+    //   _getCurrentLocation();
+    // }
 
     // Add listener to locationController to update map when address changes
     // Use debounce to prevent excessive API calls

@@ -32,6 +32,22 @@ class _LocationTextFieldState extends State<LocationTextField> {
   Timer? _debounceTimer;
   OverlayEntry? _overlayEntry;
 
+  @override
+  void initState() {
+    super.initState();
+    // Add listener to manage cursor position when text changes
+    widget.controller.addListener(_updateCursorPosition);
+  }
+
+  // Update cursor to the end of text when text changes to allow normal editing
+  void _updateCursorPosition() {
+    if (widget.controller.text.isNotEmpty) {
+      widget.controller.selection = TextSelection.fromPosition(
+        TextPosition(offset: widget.controller.text.length),
+      );
+    }
+  }
+
   Future<void> _fetchSuggestions(String input) async {
     if (input.isEmpty || input.length < 3) {
       setState(() {
@@ -67,7 +83,6 @@ class _LocationTextFieldState extends State<LocationTextField> {
           if (kDebugMode) {
             print('API error: ${data['status']} - ${data['error_message']}');
           }
-
           setState(() {
             _suggestions = [];
             _hideSuggestions();
@@ -118,6 +133,7 @@ class _LocationTextFieldState extends State<LocationTextField> {
                   title: Text(suggestion['description'] ?? ''),
                   onTap: () {
                     widget.controller.text = suggestion['description'] ?? '';
+                    _updateCursorPosition(); // Move cursor to end after setting text
                     _hideSuggestions();
                     _fetchPlaceDetails(suggestion['place_id']);
                   },
@@ -186,6 +202,8 @@ class _LocationTextFieldState extends State<LocationTextField> {
   void dispose() {
     _debounceTimer?.cancel();
     _hideSuggestions();
+    widget.controller
+        .removeListener(_updateCursorPosition); // Clean up listener
     super.dispose();
   }
 
@@ -218,10 +236,18 @@ class _LocationTextFieldState extends State<LocationTextField> {
           ),
           validator: widget.validator,
           onChanged: (value) {
-            // if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
-            // _debounceTimer = Timer(const Duration(milliseconds: 500), () {
-            _fetchSuggestions(value);
-            // });
+            if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
+            _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+              _fetchSuggestions(value);
+            });
+          },
+          // Prevent auto-selection by setting initial selection to cursor at end
+          onTap: () {
+            if (widget.controller.text.isNotEmpty) {
+              widget.controller.selection = TextSelection.fromPosition(
+                TextPosition(offset: widget.controller.text.length),
+              );
+            }
           },
         ),
       ],
