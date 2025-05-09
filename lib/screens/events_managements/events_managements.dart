@@ -96,7 +96,7 @@ class _EventsManagementsState extends State<EventsManagements> {
                       () => CustomDropDownWidget(
                         hint: 'City',
                         value: controller.selectedCity.value,
-                        items: controller.selectedState.value == 'Los Angeles'
+                        items: controller.selectedState.value == 'California'
                             ? globalVariables.losAngelesCities
                             : globalVariables.newYorkCitiesList,
                         onChanged: (value) =>
@@ -140,7 +140,7 @@ class _EventsManagementsState extends State<EventsManagements> {
                         child: CustomDropDownWidget(
                           hint: 'City',
                           value: controller.selectedCity.value,
-                          items: controller.selectedState.value == 'Los Angeles'
+                          items: controller.selectedState.value == 'California'
                               ? globalVariables.losAngelesCities
                               : globalVariables.newYorkCitiesList,
                           onChanged: (value) =>

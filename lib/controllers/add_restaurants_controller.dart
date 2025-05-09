@@ -39,7 +39,7 @@ class AddRestaurantTabController extends GetxController {
     "Spanish",
   ].obs;
 
-  RxList<String> stateList = <String>["New York", "Los Angeles"].obs;
+  RxList<String> stateList = <String>["New York", "California"].obs;
   final List<String> tabs = [
     'Basic Info',
     'Amenities',

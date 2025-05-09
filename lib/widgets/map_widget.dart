@@ -53,6 +53,30 @@ class _MapWidgetState extends State<MapWidget> {
         });
       }
     });
+
+    addController.areaController.addListener(() {
+      if (addController.areaController.text.isNotEmpty) {
+        if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
+        _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+          final address = addController.areaController.text;
+          if (address.isNotEmpty && address.length >= 5) {
+            _updateMapFromAddress(address);
+          }
+        });
+      }
+    });
+
+    addController.zipCodeController.addListener(() {
+      if (addController.zipCodeController.text.isNotEmpty) {
+        if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
+        _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+          final address = addController.zipCodeController.text;
+          if (address.isNotEmpty && address.length >= 5) {
+            _updateMapFromAddress(address);
+          }
+        });
+      }
+    });
   }
 
   Future<void> _getCurrentLocation() async {

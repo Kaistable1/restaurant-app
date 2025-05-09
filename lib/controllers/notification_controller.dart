@@ -120,7 +120,7 @@ class NotificationController extends GetxController {
     'Occasionally',
   ].obs;
 
-  RxList<String> stateList = <String>["New York", "Los Angeles"].obs;
+  RxList<String> stateList = <String>["New York", "California"].obs;
 
 // Dynamic filtered users from Firestore
   RxList<UserModel> filteredUsers = <UserModel>[].obs;

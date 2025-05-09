@@ -265,7 +265,7 @@ class BasicInfoSubScreen extends StatelessWidget {
                         labelText: 'City',
                         dropHintText: 'City',
                         currentValue: controller.selectedCity.value,
-                        items: controller.selectedState.value == 'Los Angeles'
+                        items: controller.selectedState.value == 'California'
                             ? globalVariables.losAngelesCities
                             : globalVariables.newYorkCitiesList,
                         onChanged: (value) =>
@@ -286,7 +286,7 @@ class BasicInfoSubScreen extends StatelessWidget {
                 children: [
                   Expanded(
                     child: TextAndFieldsOrDropDown(
-                      labelText: 'Area',
+                      labelText: 'Street',
                       fieldHintText: 'Gujarat,Street 1,house 1',
                       fieldController: controller.areaController,
                       fieldValidator: (value) {

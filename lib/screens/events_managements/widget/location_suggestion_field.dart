@@ -218,10 +218,10 @@ class _LocationTextFieldState extends State<LocationTextField> {
           ),
           validator: widget.validator,
           onChanged: (value) {
-            if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
-            _debounceTimer = Timer(const Duration(milliseconds: 500), () {
-              _fetchSuggestions(value);
-            });
+            // if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
+            // _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+            _fetchSuggestions(value);
+            // });
           },
         ),
       ],

@@ -27,7 +27,7 @@ class BannerController extends GetxController {
   RxString selectedCity = ''.obs;
   Rx<Uint8List?> selectedImageBytes = Rx<Uint8List?>(null);
   RxString existingImageUrl = ''.obs;
-  RxList<String> stateList = <String>["New York", "Los Angeles"].obs;
+  RxList<String> stateList = <String>["New York", "California"].obs;
   RxString editingBannerId = ''.obs;
   RxInt viewingBannerIndex =
       (-1).obs; // Track the index of the banner being viewed

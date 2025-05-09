@@ -63,7 +63,9 @@ class EditRestaurantController extends GetxController {
           restaurantDetailsModel!.socialMedia;
 
       addRestaurantController.selectedState.value =
-          restaurantDetailsModel!.city;
+          restaurantDetailsModel!.country;
+
+      addRestaurantController.selectedCity.value = restaurantDetailsModel!.city;
       print('restuant city ------${restaurantDetailsModel?.city}');
       addRestaurantController.selectedSpokenLanguage.value =
           restaurantDetailsModel!.spokenLanguage;

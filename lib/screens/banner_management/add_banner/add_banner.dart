@@ -359,7 +359,7 @@ class AddBanner extends StatelessWidget {
                             dropHintText: 'Select City',
                             currentValue: controller.selectedCity.value,
                             items:
-                                controller.selectedState.value == 'Los Angeles'
+                                controller.selectedState.value == 'California'
                                     ? controller.losAngelusCities
                                     : controller.newYorkCitiesList,
                             onChanged: (value) =>
@@ -401,7 +401,7 @@ class AddBanner extends StatelessWidget {
                             dropHintText: 'Select City',
                             currentValue: controller.selectedCity.value,
                             items:
-                                controller.selectedState.value == 'Los Angeles'
+                                controller.selectedState.value == 'California'
                                     ? controller.losAngelusCities
                                     : controller.newYorkCitiesList,
                             onChanged: (value) =>

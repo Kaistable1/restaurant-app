@@ -202,7 +202,7 @@ class NotificationScreen extends StatelessWidget {
                                 () => CustomDropDownWidget(
                                   hint: 'City',
                                   items: controller.stateFilter.value ==
-                                          'Los Angeles'
+                                          'California'
                                       ? globalVariables.losAngelesCities
                                       : globalVariables.newYorkCitiesList,
                                   onChanged: (value) {
@@ -348,7 +348,7 @@ class NotificationScreen extends StatelessWidget {
                                         hint: 'City',
                                         value: controller.cityFilter.value,
                                         items: controller.stateFilter.value ==
-                                                'Los Angeles'
+                                                'California'
                                             ? globalVariables.losAngelesCities
                                             : globalVariables.newYorkCitiesList,
                                         onChanged: (value) {

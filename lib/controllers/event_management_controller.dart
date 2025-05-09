@@ -10,8 +10,8 @@ class EventManagementController extends GetxController {
   RxString selectedEvents = ''.obs;
   RxString searchQuery = ''.obs;
 
-  RxList<String> stateList = <String>['New York', 'Los Angeles'].obs;
-  RxList<String> eventsList = <String>['Festival', 'Concert','Sports'].obs;
+  RxList<String> stateList = <String>['New York', 'California'].obs;
+  RxList<String> eventsList = <String>['Festival', 'Concert', 'Sports'].obs;
 
   RxList<Event> events = <Event>[].obs;
   RxList<Event> filteredEvents = <Event>[].obs;
@@ -44,13 +44,14 @@ class EventManagementController extends GetxController {
   }
 
   // Fetch all events and apply filters client-side
-   fetchAllEventsForFilters() async {
+  fetchAllEventsForFilters() async {
     try {
       isLoading.value = true;
 
       // Fetch events without where clauses to avoid index issues
-      Query<Map<String, dynamic>> query =
-          _firestore.collection('events').orderBy('createdAt', descending: true);
+      Query<Map<String, dynamic>> query = _firestore
+          .collection('events')
+          .orderBy('createdAt', descending: true);
 
       // Fetch a large batch
       query = query.limit(100);
@@ -66,8 +67,9 @@ class EventManagementController extends GetxController {
       // Apply country filter
       if (selectedState.value.isNotEmpty) {
         filteredEvents.value = filteredEvents
-            .where((event) =>
-                event.country.toLowerCase().contains(selectedState.value.toLowerCase()))
+            .where((event) => event.country
+                .toLowerCase()
+                .contains(selectedState.value.toLowerCase()))
             .toList();
       }
 
@@ -83,7 +85,8 @@ class EventManagementController extends GetxController {
       if (selectedEvents.value.isNotEmpty) {
         filteredEvents.value = filteredEvents
             .where((event) =>
-                event.eventType.toLowerCase() == selectedEvents.value.toLowerCase())
+                event.eventType.toLowerCase() ==
+                selectedEvents.value.toLowerCase())
             .toList();
       }
 
