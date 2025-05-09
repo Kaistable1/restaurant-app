@@ -1,0 +1,103 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '../../../constants/app_colors.dart';
+import '../../../constants/text_styles.dart';
+import '../../../controllers/restaurant_management_controller.dart';
+
+class FeatureDescriptionDialog extends StatelessWidget {
+  final controller = Get.put(RestaurantManagementController());
+  final VoidCallback? onCancel;
+  final Function(String) onSubmit;
+
+  FeatureDescriptionDialog({
+    super.key,
+    this.onCancel,
+    required this.onSubmit,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool mobileView = screenWidth < 1000;
+    double dialogTextSize = mobileView ? 14 : 20;
+    double buttonTextSize = mobileView ? 12 : 16;
+    // Define dialog dimensions
+    double dialogWidth = mobileView ? screenWidth * 0.8 : screenWidth * 0.4;
+
+    return AlertDialog(
+      backgroundColor: Colors.white,
+      title: Text(
+        'Add Featured Description',
+        style: simpleText.copyWith(
+          fontSize: dialogTextSize,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+      content: SizedBox(
+        width: dialogWidth,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: controller.descriptionController,
+              decoration: InputDecoration(
+                hintText: 'Enter description',
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(color: primaryColor),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: primaryColor, width: 1),
+                ),
+                hintStyle: simpleText.copyWith(
+                  color: Colors.grey,
+                  fontSize: dialogTextSize - 3,
+                ),
+              ),
+              maxLines: 5,
+              style: simpleText.copyWith(fontSize: dialogTextSize - 3),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            onCancel?.call();
+            Navigator.of(context).pop();
+          },
+          child: Text(
+            'Cancel',
+            style: simpleText.copyWith(
+              fontSize: buttonTextSize,
+              color: Colors.grey,
+            ),
+          ),
+        ),
+        TextButton(
+          onPressed: () {
+            if (controller.descriptionController.text.trim().isNotEmpty) {
+              onSubmit(controller.descriptionController.text.trim());
+              controller.descriptionController.clear();
+              Navigator.of(context).pop();
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Please enter a description'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+          },
+          child: Text(
+            'Submit',
+            style: simpleText.copyWith(
+              fontSize: buttonTextSize,
+              color: primaryColor,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
