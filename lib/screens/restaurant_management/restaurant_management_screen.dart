@@ -502,7 +502,7 @@ class _RestaurantManagementScreenState
                                           onChanged: (v) async {
                                             print('check');
                                             await controller
-                                                .setFreaturedRestaurant(
+                                                .setFeaturedRestaurant(
                                               restaurantID: restaurant.docID,
                                             );
                                           },
