@@ -35,11 +35,13 @@ class _MapWidgetState extends State<MapWidget> {
   @override
   void initState() {
     super.initState();
+    // Initialize map with current location if no coordinates are provided
     if (widget.latitude == null && widget.longitude == null) {
       _getCurrentLocation();
     }
 
-    // Add listener to locationController with debounce
+    // Add listener to locationController to update map when address changes
+    // Use debounce to prevent excessive API calls
     addEventController.locationController.addListener(() {
       if (addEventController.locationController.text.isNotEmpty) {
         if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
@@ -55,37 +57,33 @@ class _MapWidgetState extends State<MapWidget> {
 
   Future<void> _getCurrentLocation() async {
     try {
+      // Check if location services are enabled
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Location services are disabled')),
-        );
+        print('Location services are disabled');
         _setFallbackLocation();
         return;
       }
 
+      // Request location permission if not granted
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Location permission denied')),
-          );
+          print('Location permission denied');
           _setFallbackLocation();
           return;
         }
       }
       if (permission == LocationPermission.deniedForever) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Location permissions are permanently denied')),
-        );
+        print('Location permissions are permanently denied');
         _setFallbackLocation();
         return;
       }
 
       double latitude;
       double longitude;
+      // Use restaurant model coordinates if available, otherwise get current position
       if (addController.restaurantModel != null) {
         latitude = addController.restaurantModel!.latitude;
         longitude = addController.restaurantModel!.longitude;
@@ -97,6 +95,7 @@ class _MapWidgetState extends State<MapWidget> {
         longitude = position.longitude;
       }
 
+      // Validate coordinates
       if (latitude == 0.0 ||
           longitude == 0.0 ||
           latitude.isNaN ||
@@ -105,9 +104,7 @@ class _MapWidgetState extends State<MapWidget> {
           latitude > 90 ||
           longitude < -180 ||
           longitude > 180) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Invalid location coordinates')),
-        );
+        print('Invalid location coordinates');
         _setFallbackLocation();
         return;
       }
@@ -128,15 +125,12 @@ class _MapWidgetState extends State<MapWidget> {
       );
     } catch (e) {
       print('Error fetching location: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error fetching location: $e')),
-      );
       _setFallbackLocation();
     }
   }
 
   Future<void> _fetchAddress(double latitude, double longitude) async {
-    // Try geocoding package first
+    // Try using the geocoding package first to get address from coordinates
     try {
       List<Placemark> placemarks = await placemarkFromCoordinates(
         latitude,
@@ -167,7 +161,7 @@ class _MapWidgetState extends State<MapWidget> {
       print('Geocoding package error: $e');
     }
 
-    // HTTP fallback
+    // Fallback to HTTP request if geocoding package fails
     try {
       final url =
           'https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&key=$_googleApiKey';
@@ -205,35 +199,26 @@ class _MapWidgetState extends State<MapWidget> {
           addEventController.cityController.text = city;
           addEventController.countryController.text = country;
           addEventController.update();
-        } else {
-          addEventController.locationController.text =
-              'No address found for ($latitude, $longitude)';
-          addEventController.update();
         }
       } else {
-        throw 'HTTP error: ${response.statusCode}';
+        print('HTTP error: ${response.statusCode}');
       }
     } catch (e) {
-      addEventController.locationController.text = 'Failed to fetch address';
       addEventController.update();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Geocoding error: $e')),
-      );
       print('HTTP geocoding error: $e');
     }
   }
 
   Future<void> _updateMapFromAddress(String address) async {
+    // Validate the input address
     if (address.trim().isEmpty || address.length < 5) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid address')),
-      );
+      print('Please enter a valid address');
       return;
     }
 
     try {
       print('Geocoding address: $address');
-      // Use HTTP-based geocoding instead of locationFromAddress
+      // Use HTTP-based geocoding to convert address to coordinates
       final url =
           'https://maps.googleapis.com/maps/api/geocode/json?address=${Uri.encodeComponent(address)}&key=$_googleApiKey';
       final response = await http.get(Uri.parse(url));
@@ -261,22 +246,17 @@ class _MapWidgetState extends State<MapWidget> {
           setState(() {});
         } else {
           print('No locations found for address: $address');
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('No location found for this address')),
-          );
         }
       } else {
         throw 'HTTP error: ${response.statusCode}';
       }
     } catch (e) {
       print('Error geocoding address: _updateMapFromAddress function $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error finding location: $e')),
-      );
     }
   }
 
   void _setFallbackLocation() {
+    // Set default location if current location fails
     const double fallbackLatitude = 37.7749;
     const double fallbackLongitude = -122.4194;
     addController.latitude.value = fallbackLatitude;
@@ -302,6 +282,7 @@ class _MapWidgetState extends State<MapWidget> {
 
   @override
   void dispose() {
+    // Cancel any active debounce timer to prevent memory leaks
     _debounceTimer?.cancel();
     super.dispose();
   }
@@ -312,6 +293,7 @@ class _MapWidgetState extends State<MapWidget> {
       borderRadius: BorderRadius.circular(10),
       child: LayoutBuilder(
         builder: (context, constraints) {
+          // Determine map height based on screen size and platform
           double mapHeight = kIsWeb
               ? MediaQuery.of(context).size.height * 0.5
               : constraints.maxWidth > 600
@@ -319,6 +301,7 @@ class _MapWidgetState extends State<MapWidget> {
                   : MediaQuery.of(context).size.height * 0.4;
 
           return Obx(() {
+            // Render the Google Map with dynamic coordinates
             return SizedBox(
               height: mapHeight,
               child: GoogleMap(
@@ -354,6 +337,7 @@ class _MapWidgetState extends State<MapWidget> {
                 },
                 myLocationButtonEnabled: true,
                 onCameraMove: (CameraPosition position) {
+                  // Update coordinates and fetch address when map moves
                   addController.latitude.value = position.target.latitude;
                   addController.longitude.value = position.target.longitude;
                   _fetchAddress(

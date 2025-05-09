@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:savrly/controllers/add_restaurants_controller.dart';
+import 'package:savrly/screens/events_managements/widget/location_suggestion_field.dart';
 import 'package:savrly/widgets/button.dart';
 import 'package:savrly/widgets/map_widget.dart';
 
@@ -301,17 +302,10 @@ class AddEvents extends StatelessWidget {
                           },
                           isDropDown: true,
                         ),
-                        TextAndFieldsOrDropDown(
+                        LocationTextField(
                           labelText: 'Location',
-                          fieldHintText: 'Street abc',
-                          fieldController: controller.locationController,
-                          isDropDown: false,
-                          fieldValidator: (value) {
-                            if (value!.isEmpty) {
-                              return 'Please enter location.';
-                            }
-                            return null;
-                          },
+                          hintText: 'location',
+                          controller: controller.locationController,
                         ),
                         MapWidget(),
                         TextAndFieldsOrDropDown(
