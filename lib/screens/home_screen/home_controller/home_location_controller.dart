@@ -728,14 +728,14 @@ class HomeLocationController extends GetxController {
     );
   }
 
-  Stream<String?> getFeaturedRestaurantID() {
+  Stream<Map<String, dynamic>?> getFeaturedRestaurantID() {
     return FirebaseFirestore.instance
         .collection('featured')
         .doc('mainFeatured')
         .snapshots()
         .map((snapshot) {
       if (snapshot.exists) {
-        return snapshot.data()?['restaurantID'] as String?;
+        return snapshot.data();
       }
       return null;
     });

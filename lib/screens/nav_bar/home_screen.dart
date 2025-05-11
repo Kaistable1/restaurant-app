@@ -419,7 +419,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _featuredCategory() {
-    return StreamBuilder<String?>(
+    return StreamBuilder<Map<String, dynamic>?>(
       stream: homeController.getFeaturedRestaurantID(),
       builder: (context, featuredIDSnapshot) {
         if (!featuredIDSnapshot.hasData ||
@@ -427,10 +427,12 @@ class _HomeScreenState extends State<HomeScreen> {
             featuredIDSnapshot.data!.isEmpty) {
           return const SizedBox(); // hide entire section if no featured ID
         }
+        Map<String, dynamic> data =
+            featuredIDSnapshot.data as Map<String, dynamic>;
 
         return StreamBuilder<RestaurantModel?>(
           stream: homeController.getFeaturedRestaurants(
-              restID: featuredIDSnapshot.data!),
+              restID: data['restaurantID']),
           builder: (context, restaurantSnapshot) {
             if (!restaurantSnapshot.hasData ||
                 restaurantSnapshot.data == null) {
@@ -461,7 +463,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      'Handpicked for the flavor-forward and experience seekers. These standout spots bring bold menus, signature moments, and the kind of ambiance that stays with you. Crafted with vision—designed for your next story-worthy meal.',
+                      data['description'] ?? '',
                       textAlign: TextAlign.justify,
                       style: TextStyle(
                         color: AppColors.bottomSheetColor,
