@@ -307,6 +307,9 @@ class AddEvents extends StatelessWidget {
                           hintText: 'location',
                           controller: controller.locationController,
                         ),
+                        SizedBox(
+                          height: 10,
+                        ),
                         MapWidget(),
                         TextAndFieldsOrDropDown(
                           labelText: 'Date',
