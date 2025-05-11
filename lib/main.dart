@@ -93,8 +93,6 @@ void main() async {
       Permission.notification.request();
     }
   });
-  // preferences?.clear();
-  // Initialize notifications
   await SendNotificationService()
       .initialize(); // Initialize FCM + local notifications().initFirebaseNotification();
   debugPrint("SendNotifiation initialized");
