@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -27,6 +28,7 @@ class ProfileScreen extends StatelessWidget {
       'assets/images/privacy_img.png',
       'assets/images/about_img.png',
       'assets/images/contact_us_img.png',
+      'assets/images/privacy_img.png',
     ];
     List<String> tilesNames = [
       'Change Password',
@@ -35,6 +37,7 @@ class ProfileScreen extends StatelessWidget {
       'Privacy policy',
       'About app',
       'Contact us',
+      'Delete Account'
     ];
 
     return Scaffold(
@@ -199,7 +202,7 @@ class ProfileScreen extends StatelessWidget {
                 ),
 
           //tiles section
-          Expanded(
+          Flexible(
             child: ListView.builder(
               itemCount: auth.currentUser == null
                   ? tilesNames.length - 2
@@ -231,6 +234,9 @@ class ProfileScreen extends StatelessWidget {
                         break;
                       case 5:
                         Get.to(ContactUs());
+                        break;
+                      case 6:
+                        deleteAccountDialog(context);
                         break;
                     }
                   },
@@ -290,10 +296,59 @@ class ProfileScreen extends StatelessWidget {
                 ),
 
           SizedBox(
-            height: Get.height * 0.1,
+            height: Get.height * 0.05,
           ),
         ],
       ),
     );
   }
+}
+
+deleteAccountDialog(context) async {
+  return showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Text('Confirm Deletion'),
+        content: Text('Are you sure you want to delete your account?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              final user = auth.currentUser; // Save the user object
+              final userId = user?.uid; // Save the UID before deletion
+
+              if (user != null) {
+                // Delete the account from Firebase Auth
+                await user.delete();
+                print('User deleted from Auth: $userId');
+
+                if (userId != null) {
+                  // Delete the user document from Firestore
+                  await FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(userId)
+                      .delete();
+                  print('User document deleted from Firestore: $userId');
+                }
+
+                // Sign out the user
+                await FirebaseAuth.instance.signOut();
+
+                // Navigate to the Login screen
+                Get.offAll(() => LoginScreen());
+              }
+              Navigator.of(context).pop(true);
+            },
+            child: Text('Delete'),
+          ),
+        ],
+      );
+    },
+  );
 }

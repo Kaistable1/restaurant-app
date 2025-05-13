@@ -39,8 +39,6 @@ Rx<UserModel>? currentUserDataModel;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  debugPrint("Firebase initialized");
-
   // Initialize local notification plugin
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -123,7 +121,7 @@ class MyApp extends StatelessWidget {
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(
           textScaler: TextScaler.linear(
-              min(MediaQuery.of(context).textScaleFactor, 0.85))),
+              min(MediaQuery.of(context).textScaleFactor, 1.0))),
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Kaistable',

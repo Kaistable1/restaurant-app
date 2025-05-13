@@ -41,7 +41,7 @@ class DaysTile extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 91,
+        height: Get.height * 0.13,
         width: Get.width,
         color: Colors.transparent,
         child: Row(

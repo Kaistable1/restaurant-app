@@ -7,10 +7,12 @@ import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/models/review_model.dart';
 import 'package:kaistable_website/screens/detail_screens/controller/restaurant_detail_controller.dart';
+import 'package:kaistable_website/screens/detail_screens/widget/images_gallery.dart';
 import 'package:kaistable_website/screens/detail_screens/widget/map_widget.dart';
 import 'package:kaistable_website/screens/detail_screens/widget/review_widget.dart';
 import 'package:kaistable_website/screens/detail_screens/widget/tabs_widget.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_location_controller.dart';
+import 'package:kaistable_website/utils/responsive.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../constants/app_colors.dart';
@@ -121,7 +123,7 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Container(
-                      height: 202,
+                      height: 200,
                       width: Get.width,
                       decoration: BoxDecoration(
                           image: DecorationImage(
@@ -129,7 +131,9 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                               image: NetworkImage(
                                   widget.restaurantModel?.logoImage ?? ''))),
                     ),
-                    SizedBox(height: 130),
+                    widget.restaurantModel!.imagesList.isEmpty
+                        ? SizedBox(height: 30)
+                        : SizedBox(height: 130),
                     Center(
                       child: Container(
                         width: 100,
@@ -165,7 +169,6 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                               onTap: () async {
                                 String link =
                                     widget.restaurantModel?.tiktokLink ?? '';
-                                ;
                                 if (link == '') {
                                   Get.snackbar('Oops!', 'URl not available');
                                 } else {
@@ -186,604 +189,761 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                       ),
                     ),
                     SizedBox(height: 18),
+                    // Column(
+                    //   children: [
+                    //     Padding(
+                    //       padding: const EdgeInsets.symmetric(horizontal: 16),
+                    //       child: Tabs(controller: controller),
+                    //     ),
+                    //   ],
+                    // ),
+                    // SizedBox(height: 2),
+                    // Obx(() {
+                    // return controller.selectedTop.value == 'Experience'
+                    //     ? Column(
+                    //         children: [
+                    //           SizedBox(
+                    //             height: 10,
+                    //           ),
+                    //           Padding(
+                    //             padding: const EdgeInsets.symmetric(
+                    //                 horizontal: 16.0),
+                    //             child: Table(
+                    //               border: TableBorder.all(
+                    //                   color: AppColors.tableBorderColor,
+                    //                   width: 2,
+                    //                   borderRadius:
+                    //                       BorderRadius.circular(10)),
+                    //               columnWidths: const {
+                    //                 0: FlexColumnWidth(1.3),
+                    //                 1: FlexColumnWidth(1.3),
+                    //                 2: FlexColumnWidth(1.3),
+                    //                 3: FlexColumnWidth(1.5),
+                    //                 4: FlexColumnWidth(1.8),
+                    //               },
+                    //               children: [
+                    //                 TableRow(
+                    //                   decoration: BoxDecoration(
+                    //                       color: AppColors.primaryColor
+                    //                           .withOpacity(0.2),
+                    //                       borderRadius:
+                    //                           BorderRadius.circular(10)),
+                    //                   children: [
+                    //                     buildHeaderCell(
+                    //                       "Name",
+                    //                     ),
+                    //                     buildHeaderCell("By"),
+                    //                     buildHeaderCell("Day"),
+                    //                     buildHeaderCell("Date"),
+                    //                     buildHeaderCell("Time"),
+                    //                   ],
+                    //                 ),
+                    //                 // Table data rows
+                    //                 ...widget.restaurantModel!
+                    //                     .entertainmentScheduleList
+                    //                     .map((data) {
+                    //                   return TableRow(
+                    //                     decoration: const BoxDecoration(
+                    //                       color: Colors
+                    //                           .white, // Row background color
+                    //                     ),
+                    //                     children: [
+                    //                       buildDataCell(data.eventName ?? ""),
+                    //                       buildDataCell(data.eventBy ?? ""),
+                    //                       buildDataCell(data.day ?? ""),
+                    //                       buildDataCell(data.date ?? ""),
+                    //                       buildDataCell(data.startTime +
+                    //                               ' - ' +
+                    //                               data.endTime ??
+                    //                           ""),
+                    //                     ],
+                    //                   );
+                    //                 }).toList(),
+                    //               ],
+                    //             ),
+                    //           ),
+                    //         ],
+                    //       )
+                    //     : controller.selectedTop.value == 'About'
+                    //         ?
+
                     Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Tabs(controller: controller),
+                        AboutSectionWidget(
+                          aboutText: widget.restaurantModel?.about ?? '',
+                          resturantID: widget.restaurantModel?.docID ?? '',
                         ),
-                      ],
-                    ),
-                    SizedBox(height: 2),
-                    Obx(() {
-                      return controller.selectedTop.value == 'Experience'
-                          ? Column(
-                              children: [
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16.0),
-                                  child: Table(
-                                    border: TableBorder.all(
-                                        color: AppColors.tableBorderColor,
-                                        width: 2,
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                    columnWidths: const {
-                                      0: FlexColumnWidth(1.3),
-                                      1: FlexColumnWidth(1.3),
-                                      2: FlexColumnWidth(1.3),
-                                      3: FlexColumnWidth(1.5),
-                                      4: FlexColumnWidth(1.8),
-                                    },
-                                    children: [
-                                      TableRow(
-                                        decoration: BoxDecoration(
-                                            color: AppColors.primaryColor
-                                                .withOpacity(0.2),
-                                            borderRadius:
-                                                BorderRadius.circular(10)),
-                                        children: [
-                                          buildHeaderCell(
-                                            "Name",
-                                          ),
-                                          buildHeaderCell("By"),
-                                          buildHeaderCell("Day"),
-                                          buildHeaderCell("Date"),
-                                          buildHeaderCell("Time"),
-                                        ],
+                        widget.restaurantModel!.entertainmentScheduleList
+                                .isEmpty
+                            ? SizedBox()
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 16.0, right: 16),
+                                    child: Text(
+                                      'Experience',
+                                      style: TextStyle(
+                                        color: AppColors.headingTextColor,
+                                        fontSize: Responsive.isMobile(context)
+                                            ? 20
+                                            : 28,
+                                        fontFamily: 'aftika-regular',
+                                        fontWeight: FontWeight.w400,
                                       ),
-                                      // Table data rows
-                                      ...widget.restaurantModel!
-                                          .entertainmentScheduleList
-                                          .map((data) {
-                                        return TableRow(
-                                          decoration: const BoxDecoration(
-                                            color: Colors
-                                                .white, // Row background color
-                                          ),
-                                          children: [
-                                            buildDataCell(data.eventName ?? ""),
-                                            buildDataCell(data.eventBy ?? ""),
-                                            buildDataCell(data.day ?? ""),
-                                            buildDataCell(data.date ?? ""),
-                                            buildDataCell(data.startTime +
-                                                    ' - ' +
-                                                    data.endTime ??
-                                                ""),
-                                          ],
-                                        );
-                                      }).toList(),
-                                    ],
+                                    ),
                                   ),
-                                ),
-                              ],
-                            )
-                          : controller.selectedTop.value == 'About'
-                              ? AboutSectionWidget(
-                                  aboutText:
-                                      widget.restaurantModel?.about ?? '',
-                                  resturantID:
-                                      widget.restaurantModel?.docID ?? '',
-                                )
-                              : controller.selectedTop.value == 'Reviews'
-                                  ? ReviewWidget(
-                                      restaurantModel: widget.restaurantModel,
-                                    )
-                                  : Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16.0),
+                                    child: Table(
+                                      border: TableBorder.all(
+                                          color: AppColors.tableBorderColor,
+                                          width: 2,
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      columnWidths: const {
+                                        0: FlexColumnWidth(1.3),
+                                        1: FlexColumnWidth(1.3),
+                                        2: FlexColumnWidth(1.3),
+                                        3: FlexColumnWidth(1.5),
+                                        4: FlexColumnWidth(1.8),
+                                      },
                                       children: [
-                                        // (widget
-                                        //             .restaurantModel!
-                                        //             .menuList
-                                        //             .happyHourSpecials
-                                        //             .isEmpty &&
-                                        //         widget.restaurantModel!.menuList
-                                        //             .percentageOff.isEmpty)
-                                        //     ? SizedBox()
-                                        //     : Column(
-                                        //         children: [
-                                        //           SizedBox(
-                                        //             height: 12,
-                                        //           ),
-                                        //           OfferSelectionWidget(
-                                        //               controller: controller),
-                                        //           Padding(
-                                        //             padding:
-                                        //                 const EdgeInsets.only(
-                                        //                     left: 16.0,
-                                        //                     right: 16,
-                                        //                     top: 16),
-                                        //             child: Row(
-                                        //               mainAxisAlignment:
-                                        //                   MainAxisAlignment
-                                        //                       .start,
-                                        //               crossAxisAlignment:
-                                        //                   CrossAxisAlignment
-                                        //                       .center,
-                                        //               children: [
-                                        //                 Icon(
-                                        //                   Icons
-                                        //                       .access_time_filled,
-                                        //                   color: AppColors
-                                        //                       .primaryColor,
-                                        //                   size: 20,
-                                        //                 ),
-                                        //                 SizedBox(
-                                        //                   width: 8,
-                                        //                 ),
-                                        //                 Text(
-                                        //                   'choose time & discount',
-                                        //                   textAlign:
-                                        //                       TextAlign.center,
-                                        //                   style: TextStyle(
-                                        //                     color: AppColors
-                                        //                         .textColor,
-                                        //                     fontSize: 14,
-                                        //                     fontFamily:
-                                        //                         'Nunito-Regular',
-                                        //                     fontWeight:
-                                        //                         FontWeight.w400,
-                                        //                     height: 0.16,
-                                        //                   ),
-                                        //                 ),
-                                        //               ],
-                                        //             ),
-                                        //           ),
-                                        //           SizedBox(
-                                        //             height: 16,
-                                        //           ),
-                                        //           // controller.selectedMenu
-                                        //           //             .value ==
-                                        //           //         'Happy Hours Specials'
-                                        //           //     ? Padding(
-                                        //           //         padding:
-                                        //           //             EdgeInsets.only(
-                                        //           //           left: 16,
-                                        //           //         ),
-                                        //           //         child: SizedBox(
-                                        //           //           height: 100,
-                                        //           //           child: ListView
-                                        //           //               .builder(
-                                        //           //             controller:
-                                        //           //                 locationController
-                                        //           //                     .scrollController,
-                                        //           //             scrollDirection:
-                                        //           //                 Axis.horizontal,
-                                        //           //             itemCount: widget
-                                        //           //                 .restaurantModel!
-                                        //           //                 .menuList
-                                        //           //                 .happyHourSpecials
-                                        //           //                 .length,
-                                        //           //             itemBuilder:
-                                        //           //                 (context,
-                                        //           //                     index) {
-                                        //           //               final item = widget
-                                        //           //                   .restaurantModel!
-                                        //           //                   .menuList
-                                        //           //                   .happyHourSpecials[index];
-                                        //           //               return Padding(
-                                        //           //                 padding: EdgeInsets
-                                        //           //                     .symmetric(
-                                        //           //                         horizontal:
-                                        //           //                             4,
-                                        //           //                         vertical:
-                                        //           //                             6),
-                                        //           //                 child:
-                                        //           //                     LocationStarWidget(
-                                        //           //                   index:
-                                        //           //                       index,
-                                        //           //                   menuType:
-                                        //           //                       'HappyHour',
-                                        //           //                   timeText1:
-                                        //           //                       item.startTime ??
-                                        //           //                           '',
-                                        //           //                   timeText2:
-                                        //           //                       item.endTime ??
-                                        //           //                           '',
-                                        //           //                   percentageText:
-                                        //           //                       item.percentage ??
-                                        //           //                           '',
-                                        //           //                 ),
-                                        //           //               );
-                                        //           //             },
-                                        //           //           ),
-                                        //           //         ),
-                                        //           //       )
-                                        //           //     : Padding(
-                                        //           //         padding:
-                                        //           //             EdgeInsets.only(
-                                        //           //           left: 16,
-                                        //           //         ),
-                                        //           //         child: SizedBox(
-                                        //           //           height: 100,
-                                        //           //           child: ListView
-                                        //           //               .builder(
-                                        //           //             controller:
-                                        //           //                 locationController
-                                        //           //                     .scrollController,
-                                        //           //             scrollDirection:
-                                        //           //                 Axis.horizontal,
-                                        //           //             itemCount: widget
-                                        //           //                 .restaurantModel
-                                        //           //                 ?.menuList
-                                        //           //                 .percentageOff
-                                        //           //                 .length,
-                                        //           //             itemBuilder:
-                                        //           //                 (context,
-                                        //           //                     index) {
-                                        //           //               final item = widget
-                                        //           //                   .restaurantModel
-                                        //           //                   ?.menuList
-                                        //           //                   .percentageOff[index];
-                                        //           //               return Padding(
-                                        //           //                 padding: EdgeInsets
-                                        //           //                     .symmetric(
-                                        //           //                         horizontal:
-                                        //           //                             4,
-                                        //           //                         vertical:
-                                        //           //                             6),
-                                        //           //                 child:
-                                        //           //                     LocationStarWidget(
-                                        //           //                   timeText1:
-                                        //           //                       item?.startTime ??
-                                        //           //                           '',
-                                        //           //                   index:
-                                        //           //                       index,
-                                        //           //                   menuType:
-                                        //           //                       'PercentageOff',
-                                        //           //                   timeText2:
-                                        //           //                       item?.endTime ??
-                                        //           //                           '',
-                                        //           //                   percentageText:
-                                        //           //                       item?.percentage ??
-                                        //           //                           '',
-                                        //           //                 ),
-                                        //           //               );
-                                        //           //             },
-                                        //           //           ),
-                                        //           //         ),
-                                        //           //       ),
-
-                                        //           SizedBox(
-                                        //             height: 16,
-                                        //           ),
-                                        //           Padding(
-                                        //             padding: const EdgeInsets
-                                        //                 .symmetric(
-                                        //                 horizontal: 16),
-                                        //             child: Row(
-                                        //               mainAxisAlignment:
-                                        //                   MainAxisAlignment
-                                        //                       .spaceBetween,
-                                        //               children: [
-                                        //                 Text(
-                                        //                   'Meals',
-                                        //                   textAlign:
-                                        //                       TextAlign.center,
-                                        //                   style: TextStyle(
-                                        //                     color: AppColors
-                                        //                         .textColor,
-                                        //                     fontSize: 15,
-                                        //                     fontFamily:
-                                        //                         'Nunito-Regular',
-                                        //                     fontWeight:
-                                        //                         FontWeight.w600,
-                                        //                   ),
-                                        //                 ),
-                                        //                 Row(
-                                        //                   children: [
-                                        //                     // Obx(
-                                        //                     //   () => Text(
-                                        //                     //     controller.selectedMenu
-                                        //                     //                 .value ==
-                                        //                     //             'Happy Hours Specials'
-                                        //                     //         ? widget
-                                        //                     //                 .restaurantModel!
-                                        //                     //                 .menuList
-                                        //                     //                 .happyHourSpecials
-                                        //                     //                 .isEmpty
-                                        //                     //             ? ''
-                                        //                     //             : indexOfMenuHappyHourOff <
-                                        //                     //                     0
-                                        //                     //                 ? ''
-                                        //                     //                 : widget.restaurantModel?.menuList.happyHourSpecials[indexOfMenuHappyHourOff].cuisine ??
-                                        //                     //                     ''
-                                        //                     //         : widget
-                                        //                     //                 .restaurantModel!
-                                        //                     //                 .menuList
-                                        //                     //                 .percentageOff
-                                        //                     //                 .isEmpty
-                                        //                     //             ? ''
-                                        //                     //             : (indexOfMenuPersentageOff < 0 ||
-                                        //                     //                     widget.restaurantModel!.menuList.percentageOff.isEmpty)
-                                        //                     //                 ? ''
-                                        //                     //                 : widget.restaurantModel?.menuList.percentageOff[indexOfMenuPersentageOff].cuisine ?? '',
-                                        //                     //     textAlign:
-                                        //                     //         TextAlign
-                                        //                     //             .center,
-                                        //                     //     style:
-                                        //                     //         TextStyle(
-                                        //                     //       color: AppColors
-                                        //                     //           .textColor,
-                                        //                     //       fontSize: 14,
-                                        //                     //       fontFamily:
-                                        //                     //           'Nunito-Regular',
-                                        //                     //       fontWeight:
-                                        //                     //           FontWeight
-                                        //                     //               .w400,
-                                        //                     //     ),
-                                        //                     //   ),
-                                        //                     // ),
-                                        //                     SizedBox(
-                                        //                       width: 5,
-                                        //                     ),
-                                        //                     Image.asset(
-                                        //                       'assets/images/meal_Icon..png',
-                                        //                       height: 10.73,
-                                        //                       width: 17,
-                                        //                       fit: BoxFit.fill,
-                                        //                     ),
-                                        //                   ],
-                                        //                 ),
-                                        //               ],
-                                        //             ),
-                                        //           ),
-                                        //           SizedBox(
-                                        //             height: 16,
-                                        //           ),
-                                        //           Padding(
-                                        //             padding:
-                                        //                 const EdgeInsets.only(
-                                        //                     left: 16.0,
-                                        //                     right: 16.0),
-                                        //             child: Center(
-                                        //               child: Container(
-                                        //                 width: Get.width,
-                                        //                 child: Row(
-                                        //                   mainAxisAlignment:
-                                        //                       MainAxisAlignment
-                                        //                           .center,
-                                        //                   crossAxisAlignment:
-                                        //                       CrossAxisAlignment
-                                        //                           .center,
-                                        //                   children: [
-                                        //                     // First part: Menu items and before discount columns
-                                        //                     Obx(() {
-                                        //                       return Expanded(
-                                        //                         flex: 2,
-                                        //                         child:
-                                        //                             Container(
-                                        //                           // height: 420,
-                                        //                           decoration: const BoxDecoration(
-                                        //                               color: Colors
-                                        //                                   .white,
-                                        //                               borderRadius: BorderRadius.only(
-                                        //                                   topLeft: Radius.circular(
-                                        //                                       4),
-                                        //                                   bottomLeft:
-                                        //                                       Radius.circular(4))),
-
-                                        //                           child: Table(
-                                        //                             border: TableBorder.symmetric(
-                                        //                                 inside: BorderSide(
-                                        //                                     width:
-                                        //                                         1,
-                                        //                                     color:
-                                        //                                         Colors.grey.withOpacity(0.5))),
-                                        //                             children: [
-                                        //                               _buildTableHeader(
-                                        //                                   context),
-                                        //                               // _buildTableRow(
-                                        //                               //   context,
-                                        //                               //   imageList: controller.selectedMenu.value ==
-                                        //                               //           'Happy Hours Specials'
-                                        //                               //       ? widget.restaurantModel!.menuList.happyHourSpecials.isEmpty
-                                        //                               //           ? []
-                                        //                               //           : indexOfMenuHappyHourOff < 0
-                                        //                               //               ? []
-                                        //                               //               : widget.restaurantModel!.menuList.happyHourSpecials[indexOfMenuHappyHourOff].food.imagesList
-                                        //                               //       : widget.restaurantModel!.menuList.percentageOff.isEmpty
-                                        //                               //           ? []
-                                        //                               //           : indexOfMenuPersentageOff < 0
-                                        //                               //               ? []
-                                        //                               //               : widget.restaurantModel!.menuList.percentageOff[indexOfMenuPersentageOff].food.imagesList,
-                                        //                               //   menuItem:
-                                        //                               //       'Food Menu',
-                                        //                               //   menuItemNumbers: controller.selectedMenu.value ==
-                                        //                               //           'Happy Hours Specials'
-                                        //                               //       ? '(${widget.restaurantModel!.menuList.happyHourSpecials.isEmpty ? 0 : indexOfMenuHappyHourOff < 0 ? [] : widget.restaurantModel!.menuList.happyHourSpecials[indexOfMenuHappyHourOff].food.imagesList.length.toString()})'
-                                        //                               //       : '(${widget.restaurantModel!.menuList.percentageOff.isEmpty ? 0 : indexOfMenuPersentageOff < 0 ? [] : widget.restaurantModel!.menuList.percentageOff[indexOfMenuPersentageOff].food.imagesList.length.toString()})',
-                                        //                               // ),
-                                        //                               // _buildTableRow(
-                                        //                               //   context,
-                                        //                               //   imageList: controller.selectedMenu.value ==
-                                        //                               //           'Happy Hours Specials'
-                                        //                               //       ? widget.restaurantModel!.menuList.happyHourSpecials.isEmpty
-                                        //                               //           ? []
-                                        //                               //           : indexOfMenuHappyHourOff < 0
-                                        //                               //               ? []
-                                        //                               //               : widget.restaurantModel!.menuList.happyHourSpecials[indexOfMenuHappyHourOff].drink.imagesList
-                                        //                               //       : widget.restaurantModel!.menuList.percentageOff.isEmpty
-                                        //                               //           ? []
-                                        //                               //           : indexOfMenuPersentageOff < 0
-                                        //                               //               ? []
-                                        //                               //               : widget.restaurantModel!.menuList.percentageOff[indexOfMenuPersentageOff].drink.imagesList,
-                                        //                               //   menuItem:
-                                        //                               //       'Drink Menu',
-                                        //                               //   menuItemNumbers: controller.selectedMenu.value ==
-                                        //                               //           'Happy Hours Specials'
-                                        //                               //       ? '(${widget.restaurantModel!.menuList.happyHourSpecials.isEmpty ? 0 : indexOfMenuHappyHourOff < 0 ? [] : widget.restaurantModel!.menuList.happyHourSpecials[indexOfMenuHappyHourOff].drink.imagesList.length.toString()})'
-                                        //                               //       : '(${widget.restaurantModel!.menuList.percentageOff.isEmpty ? 0 : indexOfMenuPersentageOff < 0 ? [] : widget.restaurantModel!.menuList.percentageOff[indexOfMenuPersentageOff].drink.imagesList.length.toString()})',
-                                        //                               // ),
-
-                                        //                             ],
-                                        //                           ),
-                                        //                         ),
-                                        //                       );
-                                        //                     }),
-                                        //                     // Second part: After discount (green column)
-                                        //                     Obx(
-                                        //                       () => Expanded(
-                                        //                         child:
-                                        //                             Container(
-                                        //                           height: 290,
-                                        //                           decoration:
-                                        //                               BoxDecoration(
-                                        //                             color: AppColors
-                                        //                                 .primaryColor,
-                                        //                             borderRadius:
-                                        //                                 BorderRadius
-                                        //                                     .circular(4),
-                                        //                           ),
-                                        //                           child:
-                                        //                               Padding(
-                                        //                             padding: const EdgeInsets
-                                        //                                 .symmetric(
-                                        //                                 vertical:
-                                        //                                     9),
-                                        //                             child:
-                                        //                                 Table(
-                                        //                               border: TableBorder.symmetric(
-                                        //                                   inside: BorderSide(
-                                        //                                       width: 1,
-                                        //                                       color: Colors.grey.withOpacity(0.5))),
-                                        //                               children: [
-                                        //                                 _buildGreenHeader(
-                                        //                                     context),
-                                        //                                 _buildGreenRow(
-                                        //                                   context,
-                                        //                                   afterPrice: controller.selectedMenu.value == 'Happy Hours Specials'
-                                        //                                       ? widget.restaurantModel!.menuList.happyHourSpecials.isEmpty
-                                        //                                           ? ''
-                                        //                                           : indexOfMenuHappyHourOff < 0
-                                        //                                               ? ''
-                                        //                                               : widget.restaurantModel!.menuList.happyHourSpecials[indexOfMenuHappyHourOff].food.offerName ?? ''
-                                        //                                       : widget.restaurantModel!.menuList.percentageOff.isEmpty
-                                        //                                           ? ''
-                                        //                                           : indexOfMenuPersentageOff < 0
-                                        //                                               ? ''
-                                        //                                               : widget.restaurantModel!.menuList.percentageOff[indexOfMenuPersentageOff].food.offerName ?? '',
-                                        //                                 ),
-                                        //                                 _buildGreenRow(
-                                        //                                   context,
-                                        //                                   afterPrice: controller.selectedMenu.value == 'Happy Hours Specials'
-                                        //                                       ? widget.restaurantModel!.menuList.happyHourSpecials.isEmpty
-                                        //                                           ? ''
-                                        //                                           : indexOfMenuHappyHourOff < 0
-                                        //                                               ? ''
-                                        //                                               : widget.restaurantModel!.menuList.happyHourSpecials[indexOfMenuHappyHourOff].drink.offerName ?? ''
-                                        //                                       : widget.restaurantModel!.menuList.percentageOff.isEmpty
-                                        //                                           ? ''
-                                        //                                           : indexOfMenuPersentageOff < 0
-                                        //                                               ? ''
-                                        //                                               : widget.restaurantModel!.menuList.percentageOff[indexOfMenuPersentageOff].drink.offerName ?? '',
-                                        //                                 ),
-                                        //                               ],
-                                        //                             ),
-                                        //                           ),
-                                        //                         ),
-                                        //                       ),
-                                        //                     ),
-                                        //                   ],
-                                        //                 ),
-                                        //               ),
-                                        //             ),
-                                        //           ),
-                                        //         ],
-                                        //       ),
-                                        // SizedBox(
-                                        //   height: 16,
-                                        // ),
-                                        Row(
+                                        TableRow(
+                                          decoration: BoxDecoration(
+                                              color: const Color(0xff4ECCA3),
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
                                           children: [
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 16.0, right: 16),
-                                              child: Text(
-                                                'Special Conditions ',
-                                                style: TextStyle(
-                                                  color: AppColors
-                                                      .headingTextColor,
-                                                  fontSize: 17,
-                                                  fontFamily: 'aftika-regular',
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                              ),
+                                            buildHeaderCell(
+                                              "Name",
                                             ),
+                                            buildHeaderCell("By"),
+                                            buildHeaderCell("Day"),
+                                            buildHeaderCell("Date"),
+                                            buildHeaderCell("Time"),
                                           ],
                                         ),
-                                        const SizedBox(height: 20),
-                                        Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 16.0, right: 16),
-                                            child: Column(
-                                              children: [
-                                                Text(widget.restaurantModel
-                                                        ?.specialConditions ??
-                                                    '')
-                                              ],
-                                            )),
+                                        // Table data rows
+                                        ...widget.restaurantModel!
+                                            .entertainmentScheduleList
+                                            .map((data) {
+                                          return TableRow(
+                                            decoration: const BoxDecoration(
+                                              color: Colors
+                                                  .white, // Row background color
+                                            ),
+                                            children: [
+                                              buildDataCell(
+                                                  data.eventName ?? ""),
+                                              buildDataCell(data.eventBy ?? ""),
+                                              buildDataCell(data.day ?? ""),
+                                              buildDataCell(data.date ?? ""),
+                                              buildDataCell(data.startTime +
+                                                      ' - ' +
+                                                      data.endTime ??
+                                                  ""),
+                                            ],
+                                          );
+                                        }).toList(),
                                       ],
-                                    );
-                    }),
-                    SizedBox(height: 12),
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 16.0, right: 16),
-                        child: Text(
-                          'Map',
-                          style: TextStyle(
-                            color: AppColors.headingTextColor,
-                            fontSize: 17,
-                            fontFamily: 'aftika-regular',
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16.0, right: 16),
-                      child: Container(
-                        width: Get.width,
-                        decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10))),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                        widget.restaurantModel!.menuList.isEmpty ||
+                                widget.restaurantModel!.menuList[0].foodImages
+                                    .isEmpty
+                            ? SizedBox()
+                            : SizedBox(
+                                height: Get.height * 0.36,
+                                width: double.infinity,
+                                child: MenuWidget(
+                                  screenHeight: Get.height,
+                                  mobileView: true,
+                                  screenWidth: Get.width,
+                                  selectedMenuTypes: widget
+                                          .restaurantModel!.menuList.isEmpty
+                                      ? MenuModel(
+                                          cuisineType: '',
+                                          foodImages: [],
+                                          menuType: '')
+                                      : widget.restaurantModel!.menuList.first,
+                                  specialConditions:
+                                      widget.restaurantModel!.specialConditions,
+                                  uploadedImages: widget
+                                          .restaurantModel!.menuList.isNotEmpty
+                                      ? widget.restaurantModel!.menuList[0]
+                                          .foodImages
+                                      : [],
+                                ),
+                              ),
+                        Column(
                           children: [
-                            Container(
-                              width: Get.width,
-                              height: 500,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(16)),
-                              child: MapWidget(
-                                controller: controller,
-                                isCommingSoon: _isCommingSoon,
-                                lat: widget.restaurantModel?.latitude ?? 0.0,
-                                long: widget.restaurantModel?.longitude ?? 0.0,
+                            SizedBox(height: 12),
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 16.0, right: 16),
+                                child: Text(
+                                  'Map',
+                                  style: TextStyle(
+                                    color: AppColors.headingTextColor,
+                                    fontSize: 17,
+                                    fontFamily: 'aftika-regular',
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
                               ),
                             ),
-                            const SizedBox(
-                              width: 40,
+                            SizedBox(height: 16),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 16.0, right: 16),
+                              child: Container(
+                                width: Get.width,
+                                decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10))),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: Get.width,
+                                      height: 500,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(16)),
+                                      child: MapWidget(
+                                        controller: controller,
+                                        isCommingSoon: _isCommingSoon,
+                                        lat: widget.restaurantModel?.latitude ??
+                                            0.0,
+                                        long:
+                                            widget.restaurantModel?.longitude ??
+                                                0.0,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 40,
+                                    ),
+                                    MapDetailWidget(
+                                      restaurantModel: widget.restaurantModel!,
+                                      isCommingSoon: _isCommingSoon,
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
-                            MapDetailWidget(
-                              restaurantModel: widget.restaurantModel!,
-                              isCommingSoon: _isCommingSoon,
+                            SizedBox(
+                              height: 50,
                             ),
                           ],
                         ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 50,
+                      ],
                     )
+                    // : controller.selectedTop.value == 'Reviews'
+                    //     ?
+                    //     ReviewWidget(
+                    //         restaurantModel: widget.restaurantModel,
+                    //       )
+
+                    // : Column(
+                    //     crossAxisAlignment:
+                    //         CrossAxisAlignment.start,
+                    //     children: [
+                    //       // (widget
+                    //       //             .restaurantModel!
+                    //       //             .menuList
+                    //       //             .happyHourSpecials
+                    //       //             .isEmpty &&
+                    //       //         widget.restaurantModel!.menuList
+                    //       //             .percentageOff.isEmpty)
+                    //       //     ? SizedBox()
+                    //       //     : Column(
+                    //       //         children: [
+                    //       //           SizedBox(
+                    //       //             height: 12,
+                    //       //           ),
+                    //       //           OfferSelectionWidget(
+                    //       //               controller: controller),
+                    //       //           Padding(
+                    //       //             padding:
+                    //       //                 const EdgeInsets.only(
+                    //       //                     left: 16.0,
+                    //       //                     right: 16,
+                    //       //                     top: 16),
+                    //       //             child: Row(
+                    //       //               mainAxisAlignment:
+                    //       //                   MainAxisAlignment
+                    //       //                       .start,
+                    //       //               crossAxisAlignment:
+                    //       //                   CrossAxisAlignment
+                    //       //                       .center,
+                    //       //               children: [
+                    //       //                 Icon(
+                    //       //                   Icons
+                    //       //                       .access_time_filled,
+                    //       //                   color: AppColors
+                    //       //                       .primaryColor,
+                    //       //                   size: 20,
+                    //       //                 ),
+                    //       //                 SizedBox(
+                    //       //                   width: 8,
+                    //       //                 ),
+                    //       //                 Text(
+                    //       //                   'choose time & discount',
+                    //       //                   textAlign:
+                    //       //                       TextAlign.center,
+                    //       //                   style: TextStyle(
+                    //       //                     color: AppColors
+                    //       //                         .textColor,
+                    //       //                     fontSize: 14,
+                    //       //                     fontFamily:
+                    //       //                         'Nunito-Regular',
+                    //       //                     fontWeight:
+                    //       //                         FontWeight.w400,
+                    //       //                     height: 0.16,
+                    //       //                   ),
+                    //       //                 ),
+                    //       //               ],
+                    //       //             ),
+                    //       //           ),
+                    //       //           SizedBox(
+                    //       //             height: 16,
+                    //       //           ),
+                    //       //           // controller.selectedMenu
+                    //       //           //             .value ==
+                    //       //           //         'Happy Hours Specials'
+                    //       //           //     ? Padding(
+                    //       //           //         padding:
+                    //       //           //             EdgeInsets.only(
+                    //       //           //           left: 16,
+                    //       //           //         ),
+                    //       //           //         child: SizedBox(
+                    //       //           //           height: 100,
+                    //       //           //           child: ListView
+                    //       //           //               .builder(
+                    //       //           //             controller:
+                    //       //           //                 locationController
+                    //       //           //                     .scrollController,
+                    //       //           //             scrollDirection:
+                    //       //           //                 Axis.horizontal,
+                    //       //           //             itemCount: widget
+                    //       //           //                 .restaurantModel!
+                    //       //           //                 .menuList
+                    //       //           //                 .happyHourSpecials
+                    //       //           //                 .length,
+                    //       //           //             itemBuilder:
+                    //       //           //                 (context,
+                    //       //           //                     index) {
+                    //       //           //               final item = widget
+                    //       //           //                   .restaurantModel!
+                    //       //           //                   .menuList
+                    //       //           //                   .happyHourSpecials[index];
+                    //       //           //               return Padding(
+                    //       //           //                 padding: EdgeInsets
+                    //       //           //                     .symmetric(
+                    //       //           //                         horizontal:
+                    //       //           //                             4,
+                    //       //           //                         vertical:
+                    //       //           //                             6),
+                    //       //           //                 child:
+                    //       //           //                     LocationStarWidget(
+                    //       //           //                   index:
+                    //       //           //                       index,
+                    //       //           //                   menuType:
+                    //       //           //                       'HappyHour',
+                    //       //           //                   timeText1:
+                    //       //           //                       item.startTime ??
+                    //       //           //                           '',
+                    //       //           //                   timeText2:
+                    //       //           //                       item.endTime ??
+                    //       //           //                           '',
+                    //       //           //                   percentageText:
+                    //       //           //                       item.percentage ??
+                    //       //           //                           '',
+                    //       //           //                 ),
+                    //       //           //               );
+                    //       //           //             },
+                    //       //           //           ),
+                    //       //           //         ),
+                    //       //           //       )
+                    //       //           //     : Padding(
+                    //       //           //         padding:
+                    //       //           //             EdgeInsets.only(
+                    //       //           //           left: 16,
+                    //       //           //         ),
+                    //       //           //         child: SizedBox(
+                    //       //           //           height: 100,
+                    //       //           //           child: ListView
+                    //       //           //               .builder(
+                    //       //           //             controller:
+                    //       //           //                 locationController
+                    //       //           //                     .scrollController,
+                    //       //           //             scrollDirection:
+                    //       //           //                 Axis.horizontal,
+                    //       //           //             itemCount: widget
+                    //       //           //                 .restaurantModel
+                    //       //           //                 ?.menuList
+                    //       //           //                 .percentageOff
+                    //       //           //                 .length,
+                    //       //           //             itemBuilder:
+                    //       //           //                 (context,
+                    //       //           //                     index) {
+                    //       //           //               final item = widget
+                    //       //           //                   .restaurantModel
+                    //       //           //                   ?.menuList
+                    //       //           //                   .percentageOff[index];
+                    //       //           //               return Padding(
+                    //       //           //                 padding: EdgeInsets
+                    //       //           //                     .symmetric(
+                    //       //           //                         horizontal:
+                    //       //           //                             4,
+                    //       //           //                         vertical:
+                    //       //           //                             6),
+                    //       //           //                 child:
+                    //       //           //                     LocationStarWidget(
+                    //       //           //                   timeText1:
+                    //       //           //                       item?.startTime ??
+                    //       //           //                           '',
+                    //       //           //                   index:
+                    //       //           //                       index,
+                    //       //           //                   menuType:
+                    //       //           //                       'PercentageOff',
+                    //       //           //                   timeText2:
+                    //       //           //                       item?.endTime ??
+                    //       //           //                           '',
+                    //       //           //                   percentageText:
+                    //       //           //                       item?.percentage ??
+                    //       //           //                           '',
+                    //       //           //                 ),
+                    //       //           //               );
+                    //       //           //             },
+                    //       //           //           ),
+                    //       //           //         ),
+                    //       //           //       ),
+
+                    //       //           SizedBox(
+                    //       //             height: 16,
+                    //       //           ),
+                    //       //           Padding(
+                    //       //             padding: const EdgeInsets
+                    //       //                 .symmetric(
+                    //       //                 horizontal: 16),
+                    //       //             child: Row(
+                    //       //               mainAxisAlignment:
+                    //       //                   MainAxisAlignment
+                    //       //                       .spaceBetween,
+                    //       //               children: [
+                    //       //                 Text(
+                    //       //                   'Meals',
+                    //       //                   textAlign:
+                    //       //                       TextAlign.center,
+                    //       //                   style: TextStyle(
+                    //       //                     color: AppColors
+                    //       //                         .textColor,
+                    //       //                     fontSize: 15,
+                    //       //                     fontFamily:
+                    //       //                         'Nunito-Regular',
+                    //       //                     fontWeight:
+                    //       //                         FontWeight.w600,
+                    //       //                   ),
+                    //       //                 ),
+                    //       //                 Row(
+                    //       //                   children: [
+                    //       //                     // Obx(
+                    //       //                     //   () => Text(
+                    //       //                     //     controller.selectedMenu
+                    //       //                     //                 .value ==
+                    //       //                     //             'Happy Hours Specials'
+                    //       //                     //         ? widget
+                    //       //                     //                 .restaurantModel!
+                    //       //                     //                 .menuList
+                    //       //                     //                 .happyHourSpecials
+                    //       //                     //                 .isEmpty
+                    //       //                     //             ? ''
+                    //       //                     //             : indexOfMenuHappyHourOff <
+                    //       //                     //                     0
+                    //       //                     //                 ? ''
+                    //       //                     //                 : widget.restaurantModel?.menuList.happyHourSpecials[indexOfMenuHappyHourOff].cuisine ??
+                    //       //                     //                     ''
+                    //       //                     //         : widget
+                    //       //                     //                 .restaurantModel!
+                    //       //                     //                 .menuList
+                    //       //                     //                 .percentageOff
+                    //       //                     //                 .isEmpty
+                    //       //                     //             ? ''
+                    //       //                     //             : (indexOfMenuPersentageOff < 0 ||
+                    //       //                     //                     widget.restaurantModel!.menuList.percentageOff.isEmpty)
+                    //       //                     //                 ? ''
+                    //       //                     //                 : widget.restaurantModel?.menuList.percentageOff[indexOfMenuPersentageOff].cuisine ?? '',
+                    //       //                     //     textAlign:
+                    //       //                     //         TextAlign
+                    //       //                     //             .center,
+                    //       //                     //     style:
+                    //       //                     //         TextStyle(
+                    //       //                     //       color: AppColors
+                    //       //                     //           .textColor,
+                    //       //                     //       fontSize: 14,
+                    //       //                     //       fontFamily:
+                    //       //                     //           'Nunito-Regular',
+                    //       //                     //       fontWeight:
+                    //       //                     //           FontWeight
+                    //       //                     //               .w400,
+                    //       //                     //     ),
+                    //       //                     //   ),
+                    //       //                     // ),
+                    //       //                     SizedBox(
+                    //       //                       width: 5,
+                    //       //                     ),
+                    //       //                     Image.asset(
+                    //       //                       'assets/images/meal_Icon..png',
+                    //       //                       height: 10.73,
+                    //       //                       width: 17,
+                    //       //                       fit: BoxFit.fill,
+                    //       //                     ),
+                    //       //                   ],
+                    //       //                 ),
+                    //       //               ],
+                    //       //             ),
+                    //       //           ),
+                    //       //           SizedBox(
+                    //       //             height: 16,
+                    //       //           ),
+                    //       //           Padding(
+                    //       //             padding:
+                    //       //                 const EdgeInsets.only(
+                    //       //                     left: 16.0,
+                    //       //                     right: 16.0),
+                    //       //             child: Center(
+                    //       //               child: Container(
+                    //       //                 width: Get.width,
+                    //       //                 child: Row(
+                    //       //                   mainAxisAlignment:
+                    //       //                       MainAxisAlignment
+                    //       //                           .center,
+                    //       //                   crossAxisAlignment:
+                    //       //                       CrossAxisAlignment
+                    //       //                           .center,
+                    //       //                   children: [
+                    //       //                     // First part: Menu items and before discount columns
+                    //       //                     Obx(() {
+                    //       //                       return Expanded(
+                    //       //                         flex: 2,
+                    //       //                         child:
+                    //       //                             Container(
+                    //       //                           // height: 420,
+                    //       //                           decoration: const BoxDecoration(
+                    //       //                               color: Colors
+                    //       //                                   .white,
+                    //       //                               borderRadius: BorderRadius.only(
+                    //       //                                   topLeft: Radius.circular(
+                    //       //                                       4),
+                    //       //                                   bottomLeft:
+                    //       //                                       Radius.circular(4))),
+
+                    //       //                           child: Table(
+                    //       //                             border: TableBorder.symmetric(
+                    //       //                                 inside: BorderSide(
+                    //       //                                     width:
+                    //       //                                         1,
+                    //       //                                     color:
+                    //       //                                         Colors.grey.withOpacity(0.5))),
+                    //       //                             children: [
+                    //       //                               _buildTableHeader(
+                    //       //                                   context),
+                    //       //                               // _buildTableRow(
+                    //       //                               //   context,
+                    //       //                               //   imageList: controller.selectedMenu.value ==
+                    //       //                               //           'Happy Hours Specials'
+                    //       //                               //       ? widget.restaurantModel!.menuList.happyHourSpecials.isEmpty
+                    //       //                               //           ? []
+                    //       //                               //           : indexOfMenuHappyHourOff < 0
+                    //       //                               //               ? []
+                    //       //                               //               : widget.restaurantModel!.menuList.happyHourSpecials[indexOfMenuHappyHourOff].food.imagesList
+                    //       //                               //       : widget.restaurantModel!.menuList.percentageOff.isEmpty
+                    //       //                               //           ? []
+                    //       //                               //           : indexOfMenuPersentageOff < 0
+                    //       //                               //               ? []
+                    //       //                               //               : widget.restaurantModel!.menuList.percentageOff[indexOfMenuPersentageOff].food.imagesList,
+                    //       //                               //   menuItem:
+                    //       //                               //       'Food Menu',
+                    //       //                               //   menuItemNumbers: controller.selectedMenu.value ==
+                    //       //                               //           'Happy Hours Specials'
+                    //       //                               //       ? '(${widget.restaurantModel!.menuList.happyHourSpecials.isEmpty ? 0 : indexOfMenuHappyHourOff < 0 ? [] : widget.restaurantModel!.menuList.happyHourSpecials[indexOfMenuHappyHourOff].food.imagesList.length.toString()})'
+                    //       //                               //       : '(${widget.restaurantModel!.menuList.percentageOff.isEmpty ? 0 : indexOfMenuPersentageOff < 0 ? [] : widget.restaurantModel!.menuList.percentageOff[indexOfMenuPersentageOff].food.imagesList.length.toString()})',
+                    //       //                               // ),
+                    //       //                               // _buildTableRow(
+                    //       //                               //   context,
+                    //       //                               //   imageList: controller.selectedMenu.value ==
+                    //       //                               //           'Happy Hours Specials'
+                    //       //                               //       ? widget.restaurantModel!.menuList.happyHourSpecials.isEmpty
+                    //       //                               //           ? []
+                    //       //                               //           : indexOfMenuHappyHourOff < 0
+                    //       //                               //               ? []
+                    //       //                               //               : widget.restaurantModel!.menuList.happyHourSpecials[indexOfMenuHappyHourOff].drink.imagesList
+                    //       //                               //       : widget.restaurantModel!.menuList.percentageOff.isEmpty
+                    //       //                               //           ? []
+                    //       //                               //           : indexOfMenuPersentageOff < 0
+                    //       //                               //               ? []
+                    //       //                               //               : widget.restaurantModel!.menuList.percentageOff[indexOfMenuPersentageOff].drink.imagesList,
+                    //       //                               //   menuItem:
+                    //       //                               //       'Drink Menu',
+                    //       //                               //   menuItemNumbers: controller.selectedMenu.value ==
+                    //       //                               //           'Happy Hours Specials'
+                    //       //                               //       ? '(${widget.restaurantModel!.menuList.happyHourSpecials.isEmpty ? 0 : indexOfMenuHappyHourOff < 0 ? [] : widget.restaurantModel!.menuList.happyHourSpecials[indexOfMenuHappyHourOff].drink.imagesList.length.toString()})'
+                    //       //                               //       : '(${widget.restaurantModel!.menuList.percentageOff.isEmpty ? 0 : indexOfMenuPersentageOff < 0 ? [] : widget.restaurantModel!.menuList.percentageOff[indexOfMenuPersentageOff].drink.imagesList.length.toString()})',
+                    //       //                               // ),
+
+                    //       //                             ],
+                    //       //                           ),
+                    //       //                         ),
+                    //       //                       );
+                    //       //                     }),
+                    //       //                     // Second part: After discount (green column)
+                    //       //                     Obx(
+                    //       //                       () => Expanded(
+                    //       //                         child:
+                    //       //                             Container(
+                    //       //                           height: 290,
+                    //       //                           decoration:
+                    //       //                               BoxDecoration(
+                    //       //                             color: AppColors
+                    //       //                                 .primaryColor,
+                    //       //                             borderRadius:
+                    //       //                                 BorderRadius
+                    //       //                                     .circular(4),
+                    //       //                           ),
+                    //       //                           child:
+                    //       //                               Padding(
+                    //       //                             padding: const EdgeInsets
+                    //       //                                 .symmetric(
+                    //       //                                 vertical:
+                    //       //                                     9),
+                    //       //                             child:
+                    //       //                                 Table(
+                    //       //                               border: TableBorder.symmetric(
+                    //       //                                   inside: BorderSide(
+                    //       //                                       width: 1,
+                    //       //                                       color: Colors.grey.withOpacity(0.5))),
+                    //       //                               children: [
+                    //       //                                 _buildGreenHeader(
+                    //       //                                     context),
+                    //       //                                 _buildGreenRow(
+                    //       //                                   context,
+                    //       //                                   afterPrice: controller.selectedMenu.value == 'Happy Hours Specials'
+                    //       //                                       ? widget.restaurantModel!.menuList.happyHourSpecials.isEmpty
+                    //       //                                           ? ''
+                    //       //                                           : indexOfMenuHappyHourOff < 0
+                    //       //                                               ? ''
+                    //       //                                               : widget.restaurantModel!.menuList.happyHourSpecials[indexOfMenuHappyHourOff].food.offerName ?? ''
+                    //       //                                       : widget.restaurantModel!.menuList.percentageOff.isEmpty
+                    //       //                                           ? ''
+                    //       //                                           : indexOfMenuPersentageOff < 0
+                    //       //                                               ? ''
+                    //       //                                               : widget.restaurantModel!.menuList.percentageOff[indexOfMenuPersentageOff].food.offerName ?? '',
+                    //       //                                 ),
+                    //       //                                 _buildGreenRow(
+                    //       //                                   context,
+                    //       //                                   afterPrice: controller.selectedMenu.value == 'Happy Hours Specials'
+                    //       //                                       ? widget.restaurantModel!.menuList.happyHourSpecials.isEmpty
+                    //       //                                           ? ''
+                    //       //                                           : indexOfMenuHappyHourOff < 0
+                    //       //                                               ? ''
+                    //       //                                               : widget.restaurantModel!.menuList.happyHourSpecials[indexOfMenuHappyHourOff].drink.offerName ?? ''
+                    //       //                                       : widget.restaurantModel!.menuList.percentageOff.isEmpty
+                    //       //                                           ? ''
+                    //       //                                           : indexOfMenuPersentageOff < 0
+                    //       //                                               ? ''
+                    //       //                                               : widget.restaurantModel!.menuList.percentageOff[indexOfMenuPersentageOff].drink.offerName ?? '',
+                    //       //                                 ),
+                    //       //                               ],
+                    //       //                             ),
+                    //       //                           ),
+                    //       //                         ),
+                    //       //                       ),
+                    //       //                     ),
+                    //       //                   ],
+                    //       //                 ),
+                    //       //               ),
+                    //       //             ),
+                    //       //           ),
+                    //       //         ],
+                    //       //       ),
+                    //       // SizedBox(
+                    //       //   height: 16,
+                    //       // ),
+                    //       // Row(
+                    //       //   children: [
+                    //       //     Padding(
+                    //       //       padding: const EdgeInsets.only(
+                    //       //           left: 16.0, right: 16),
+                    //       //       child: Text(
+                    //       //         'Special Conditions ',
+                    //       //         style: TextStyle(
+                    //       //           color: AppColors
+                    //       //               .headingTextColor,
+                    //       //           fontSize: 17,
+                    //       //           fontFamily: 'aftika-regular',
+                    //       //           fontWeight: FontWeight.w400,
+                    //       //         ),
+                    //       //       ),
+                    //       //     ),
+                    //       //   ],
+                    //       // ),
+                    //       // const SizedBox(height: 20),
+                    //       // Padding(
+                    //       //     padding: const EdgeInsets.only(
+                    //       //         left: 16.0, right: 16),
+                    //       //     child: Column(
+                    //       //       children: [
+                    //       //         Text(widget.restaurantModel
+                    //       //                 ?.specialConditions ??
+                    //       //             '')
+                    //       //       ],
+                    //       //     )),
+                    //       SizedBox(
+                    //         height: Get.height * 0.5,
+                    //         width: double.infinity,
+                    //         child: MenuWidget(
+                    //           screenHeight: Get.height,
+                    //           mobileView: true,
+                    //           screenWidth: Get.width,
+                    //           selectedMenuTypes: widget
+                    //                   .restaurantModel!
+                    //                   .menuList
+                    //                   .isEmpty
+                    //               ? MenuModel(
+                    //                   cuisineType: '',
+                    //                   foodImages: [],
+                    //                   menuType: '')
+                    //               : widget.restaurantModel!
+                    //                   .menuList.first,
+                    //           specialConditions: widget
+                    //               .restaurantModel!
+                    //               .specialConditions,
+                    //           uploadedImages: widget
+                    //                   .restaurantModel!
+                    //                   .menuList
+                    //                   .isNotEmpty
+                    //               ? widget.restaurantModel!
+                    //                   .menuList[0].foodImages
+                    //               : [],
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   );
+
+                    // }),
                   ],
                 ),
                 Padding(
@@ -796,7 +956,9 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                       filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
                       // Adjust the blur intensity
                       child: Container(
-                        height: 173,
+                        height: widget.restaurantModel!.imagesList.isEmpty
+                            ? 70
+                            : 173,
                         width: 358,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
@@ -827,7 +989,7 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                                   // ),
                                   // SizedBox(width: 6),
                                   Text(
-                                    widget.restaurantModel?.address ?? '',
+                                    widget.restaurantModel?.resName ?? '',
                                     style: TextStyle(
                                       color: AppColors.blackColor,
                                       fontFamily: 'Nunito-Bold',
@@ -936,87 +1098,127 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                               SizedBox(
                                 height: 4,
                               ),
-                              Container(
-                                height: 49,
-                                width: 278,
-                                decoration: BoxDecoration(
-                                    color: AppColors.whiteColor,
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: widget
-                                        .restaurantModel!.imagesList.isEmpty
-                                    ? SizedBox()
-                                    : Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: widget
-                                            .restaurantModel!.imagesList
-                                            .asMap()
-                                            .entries
-                                            .map((entry) {
-                                          int index = entry.key;
-                                          String imagePath = entry.value;
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: widget.restaurantModel!.imagesList
+                                              .isEmpty
+                                          ? Colors.transparent
+                                          : AppColors.whiteColor,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: widget
+                                            .restaurantModel!.imagesList.isEmpty
+                                        ? const SizedBox()
+                                        : Wrap(
+                                            spacing: 5, // Space between images
+                                            alignment: WrapAlignment
+                                                .start, // Align images to the start
+                                            children: widget
+                                                .restaurantModel!.imagesList
+                                                .asMap()
+                                                .entries
+                                                .map((entry) {
+                                              int index = entry.key;
+                                              String imagePath = entry.value;
 
-                                          if (index < 4) {
-                                            // Display the first 4 images normally
-                                            return ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                              child: Image.network(
-                                                imagePath,
-                                                fit: BoxFit.cover,
-                                                height: 41,
-                                                width: 46,
-                                              ),
-                                            );
-                                          } else if (index == 4 &&
-                                              widget.restaurantModel!.imagesList
-                                                      .length >
-                                                  5) {
-                                            // Display "5+" overlay on the 5th image if more than 5 images exist
-                                            return Stack(
-                                              children: [
-                                                Image.network(
-                                                  imagePath,
-                                                  height: 41,
-                                                  width: 46,
-                                                ),
-                                                Container(
-                                                  height: 41,
-                                                  width: 46,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.black
-                                                        .withOpacity(0.5),
+                                              if (index < 4) {
+                                                // Display the first 4 images normally
+                                                return GestureDetector(
+                                                  onTap: () => showImageDialog(
+                                                      context, imagePath),
+                                                  child: ClipRRect(
                                                     borderRadius:
                                                         BorderRadius.circular(
-                                                            8),
-                                                  ),
-                                                  child: const Center(
-                                                    child: Text(
-                                                      '5+',
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 14,
-                                                      ),
+                                                            5),
+                                                    child: Image.network(
+                                                      imagePath,
+                                                      fit: BoxFit.cover,
+                                                      height: 55,
+                                                      width: 58,
                                                     ),
                                                   ),
-                                                ),
-                                              ],
-                                            );
-                                          } else if (index == 4) {
-                                            // Display the 5th image normally if there are exactly 5 images
-                                            return Image.network(
-                                              imagePath,
-                                              height: 41,
-                                              width: 46,
-                                            );
-                                          } else {
-                                            // Skip additional images
-                                            return const SizedBox.shrink();
-                                          }
-                                        }).toList(),
-                                      ),
+                                                );
+                                              } else if (index == 4 &&
+                                                  widget.restaurantModel!
+                                                          .imagesList.length >
+                                                      5) {
+                                                // Display "5+" overlay on the 5th image if more than 5 images exist
+                                                return GestureDetector(
+                                                  onTap: () => Get.to(
+                                                    RestaurantImages(
+                                                        imageList: widget
+                                                            .restaurantModel!
+                                                            .imagesList),
+                                                  ),
+                                                  child: Stack(
+                                                    children: [
+                                                      ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(5),
+                                                        child: Image.network(
+                                                          imagePath,
+                                                          height: 55,
+                                                          width: 58,
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      ),
+                                                      Container(
+                                                        height: 55,
+                                                        width: 58,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors.black
+                                                              .withOpacity(0.5),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(5),
+                                                        ),
+                                                        child: const Center(
+                                                          child: Text(
+                                                            '5+',
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 14,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              } else if (index == 4) {
+                                                // Display the 5th image normally if there are exactly 5 images
+                                                return GestureDetector(
+                                                  onTap: () => showImageDialog(
+                                                      context, imagePath),
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5),
+                                                    child: Image.network(
+                                                      imagePath,
+                                                      height: 55,
+                                                      width: 58,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  ),
+                                                );
+                                              } else {
+                                                // Skip additional images
+                                                return const SizedBox.shrink();
+                                              }
+                                            }).toList(),
+                                          ),
+                                  ),
+                                ],
                               )
                             ],
                           ),
@@ -1450,6 +1652,177 @@ class RatingRowWidget extends StatelessWidget {
           ),
         )
       ],
+    );
+  }
+}
+
+class MenuWidget extends StatelessWidget {
+  const MenuWidget({
+    super.key,
+    required this.screenHeight,
+    required this.mobileView,
+    required this.screenWidth,
+    required this.specialConditions,
+    required this.uploadedImages,
+    required this.selectedMenuTypes,
+  });
+
+  final double screenHeight;
+  final bool mobileView;
+  final double screenWidth;
+  final String specialConditions; // Added type
+  final MenuModel selectedMenuTypes;
+  final List<String> uploadedImages; // Added type
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: screenWidth,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: AppColors.bgColor,
+      ),
+      child: specialConditions.isEmpty || specialConditions.contains('Soon')
+          ? SizedBox()
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Special Conditions
+                Text(
+                  'Special Conditions',
+                  style: TextStyle(
+                    color: AppColors.bottomSheetColor,
+                    fontFamily: 'aftika-regular',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+
+                SizedBox(
+                  child: SingleChildScrollView(
+                    child: Text(
+                      specialConditions.isEmpty
+                          ? 'None provided'
+                          : specialConditions,
+                      style: TextStyle(
+                        color: AppColors.textColor,
+                        fontFamily: 'aftika-regular',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                // Menu Type
+                Row(
+                  children: [
+                    Text(
+                      'Menu Type: ',
+                      style: TextStyle(
+                        color: AppColors.bottomSheetColor,
+                        fontFamily: 'aftika-regular',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    Text(
+                      selectedMenuTypes.menuType.isEmpty
+                          ? 'None selected'
+                          : selectedMenuTypes.menuType,
+                      style: TextStyle(
+                        color: AppColors.textColor,
+                        fontFamily: 'aftika-regular',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+
+                // Food Images Section
+                Text(
+                  'Menu Images',
+                  style: TextStyle(
+                    color: AppColors.bottomSheetColor,
+                    fontFamily: 'aftika-regular',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                uploadedImages.isEmpty
+                    ? Text(
+                        'No images uploaded',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                          color: AppColors.primaryColor,
+                        ),
+                      )
+                    : SizedBox(
+                        height: mobileView ? 100 : 130,
+                        width: double.infinity,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: uploadedImages.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: Container(
+                                width: mobileView ? 140 : 180,
+                                height: mobileView ? 100 : 130,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.network(
+                                    uploadedImages[index],
+                                    fit: BoxFit.cover,
+                                    loadingBuilder:
+                                        (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Center(
+                                        child: CircularProgressIndicator(
+                                          value: loadingProgress
+                                                      .expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  (loadingProgress
+                                                          .expectedTotalBytes ??
+                                                      1)
+                                              : null,
+                                        ),
+                                      );
+                                    },
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Container(
+                                        color: Colors.grey[300],
+                                        child: Icon(
+                                          Icons.broken_image,
+                                          color: Colors.grey[600],
+                                          size: 50,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+              ],
+            ),
     );
   }
 }

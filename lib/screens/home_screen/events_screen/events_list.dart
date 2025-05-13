@@ -56,19 +56,29 @@ class EventsList extends StatelessWidget {
 // Apply geofencing filter if 'Distance' is selected and a valid mile value is chosen
       if (selectedCategory == 'Distance' &&
           categoryController.selectedMiles.isNotEmpty) {
-       
-        double maxDistance = double.parse(categoryController.selectedMiles
-            .split(' ')[0]
-            .replaceAll('Miles', '')
-            .trim()); // Extract number (e.g., "5 Miles" -> 5.0)
+        // Parse the max distance value from the selectedMiles string
+        // Example: "5 Miles" -> extract "5", trim it, and convert to double => 5.0
+        double maxDistance = double.parse(
+          categoryController.selectedMiles
+              .split(' ')[0] // Take the first part before the space (e.g., "5")
+              .replaceAll('Miles',
+                  '') // Just in case there's a word "Miles" lingering (defensive coding)
+              .trim(), // Remove any spaces
+        );
+        print('maxDistance $maxDistance');
+        // Filter the events list to retain only those within the max distance
         filteredEvents.retainWhere((event) {
+          // Calculate the distance from the current location to the event's location
           double distance = categoryController.calculateDistance(
             event.latitude,
             event.longitude,
           );
+
+          // Keep only events that are within the maxDistance
           return distance <= maxDistance;
         });
       }
+
       if (filteredEvents.isEmpty) {
         return Center(
           child: Text(

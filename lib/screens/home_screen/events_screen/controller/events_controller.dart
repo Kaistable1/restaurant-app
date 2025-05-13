@@ -1,8 +1,11 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/models/events.dart';
-import '../../../../models/event_model.dart';
+import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 
 class EventsController extends GetxController {
   RxInt upcomingAppointmentsCheck = 0.obs;
@@ -11,51 +14,6 @@ class EventsController extends GetxController {
   void toggleBookmark() {
     isBookmarked.value = !isBookmarked.value;
   }
-
-  var eventsList = <EventModel>[
-    EventModel(
-      image: 'assets/images/tile_img1.png',
-      title: 'The Cozy Nook',
-      location: 'Abc Location',
-      categories: ['Concert', 'Festival'],
-    ),
-    EventModel(
-      image: 'assets/images/tile_img2.png',
-      title: 'The Gourmet Bistro',
-      location: 'XYZ Arena',
-      categories: ['Music', 'Live'],
-    ),
-    EventModel(
-      image: 'assets/images/tile_img3.png',
-      title: 'The Art Haven',
-      location: 'Central Park',
-      categories: ['Festival', 'Food'],
-    ),
-    EventModel(
-      image: 'assets/images/tile_img2.png',
-      title: 'The Sports Arena',
-      location: 'XYZ Arena',
-      categories: ['Music', 'Live'],
-    ),
-    EventModel(
-      image: 'assets/images/tile_img3.png',
-      title: 'Food Fest',
-      location: 'Central Park',
-      categories: ['Festival', 'Food'],
-    ),
-    EventModel(
-      image: 'assets/images/tile_img2.png',
-      title: 'Music Night',
-      location: 'XYZ Arena',
-      categories: ['Music', 'Live'],
-    ),
-    EventModel(
-      image: 'assets/images/tile_img3.png',
-      title: 'Flavor Harmony',
-      location: 'Central Park',
-      categories: ['Festival', 'Food'],
-    ),
-  ].obs;
 
   //backend
 
@@ -86,26 +44,81 @@ class EventsController extends GetxController {
     fetchAllEventsForFilters();
   }
 
-  // Fetch all events and apply filters client-side
-  fetchAllEventsForFilters() async {
+  Future<Position> _getCurrentLocation() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      throw Exception('Location services are disabled.');
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        throw Exception('Location permissions are denied.');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      throw Exception('Location permissions are permanently denied.');
+    }
+
+    return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+  }
+
+  double _calculateDistance(GeoPoint p1, GeoPoint p2) {
+    const double earthRadius = 6371; // Radius of the earth in km
+    double lat1 = p1.latitude;
+    double lon1 = p1.longitude;
+    double lat2 = p2.latitude;
+    double lon2 = p2.longitude;
+
+    double dLat = _degreesToRadians(lat2 - lat1);
+    double dLon = _degreesToRadians(lon2 - lon1);
+
+    double a = sin(dLat / 2) * sin(dLat / 2) +
+        cos(_degreesToRadians(lat1)) *
+            cos(_degreesToRadians(lat2)) *
+            sin(dLon / 2) *
+            sin(dLon / 2);
+    double c = 2 * asin(sqrt(a));
+    return earthRadius * c; // Distance in km
+  }
+
+  double _degreesToRadians(double degrees) {
+    return degrees * (pi / 180);
+  }
+
+  Future<void> fetchAllEventsForFilters() async {
     try {
       isLoading.value = true;
 
-      // Fetch events without where clauses to avoid index issues
-      Query<Map<String, dynamic>> query = _firestore
+      // Get user's current location
+      Position position = await _getCurrentLocation();
+      print('lat lng current user ${position.latitude} ${position.longitude}');
+      GeoPoint userLocation = GeoPoint(
+          position.latitude, position.longitude); // Hardcoded for testing
+
+      // Fetch all events
+      QuerySnapshot<Map<String, dynamic>> snapshot = await _firestore
           .collection('events')
-          .orderBy('createdAt', descending: true);
+          .orderBy('createdAt', descending: true)
+          .limit(pageSize)
+          .get();
 
-      // Fetch a large batch
-      query = query.limit(pageSize);
-
-      QuerySnapshot<Map<String, dynamic>> snapshot = await query.get();
+      // Convert to Event objects
       List<Event> allEvents = snapshot.docs.map((doc) {
-        return Event.fromMap(doc.id, doc.data());
+        final data = doc.data();
+        return Event.fromMap(doc.id, data);
       }).toList();
 
-      // Apply filters client-side
-      filteredEvents.value = allEvents;
+      // Filter events within 20 miles (32.1868 km)
+      const double radiusInKm = 20 * 1.60934;
+      filteredEvents.value = allEvents.where((event) {
+        GeoPoint eventPoint = GeoPoint(event.latitude, event.longitude);
+        double distanceKm = _calculateDistance(userLocation, eventPoint);
+        return distanceKm <= radiusInKm;
+      }).toList();
 
       // Apply search filter
       if (searchQuery.value.isNotEmpty) {
@@ -117,10 +130,10 @@ class EventsController extends GetxController {
 
       // Reset events and paginate filtered results
       events.clear();
-      hasMore.value = true;
+      hasMore.value = filteredEvents.isNotEmpty;
       paginateFilteredEvents();
     } catch (e) {
-      print('Exception Error $e');
+      print('Exception Error: $e');
       Get.snackbar(
         'Error',
         'Failed to fetch events: $e',
@@ -150,7 +163,6 @@ class EventsController extends GetxController {
     }
 
     List<Event> newEvents = filteredEvents.sublist(startIndex, endIndex);
-    print('events length ${newEvents.length}');
     events.addAll(newEvents);
   }
 }

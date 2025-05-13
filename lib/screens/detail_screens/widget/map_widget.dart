@@ -93,173 +93,225 @@ class MapDetailWidget extends StatelessWidget {
           SizedBox(
             height: 20,
           ),
-          Row(
-            children: [
-              Text(
-                'Area',
-                style: TextStyle(
-                  color: AppColors.headingTextColor,
-                  fontSize: 14,
-                  fontFamily: 'Nunito-Regular',
-                  fontWeight: FontWeight.w700,
+          restaurantModel.address.isEmpty
+              ? SizedBox()
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          'Address',
+                          style: TextStyle(
+                            color: AppColors.headingTextColor,
+                            fontSize: 14,
+                            fontFamily: 'Nunito-Regular',
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 4,
+                    ),
+                    SizedBox(
+                      height: 40,
+                      width: 290,
+                      child: Text(
+                        restaurantModel.address.isEmpty
+                            ? "comming Soon!"
+                            : restaurantModel.address +
+                                ',${restaurantModel.city} ${restaurantModel.zipCode},${restaurantModel.country}',
+                        style: TextStyle(
+                          color: AppColors.darkGrey,
+                          fontSize: 14,
+                          fontFamily: 'Nunito-Regular',
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 4,
-          ),
-          SizedBox(
-            height: 40,
-            width: 290,
-            child: Text(
-              restaurantModel.address.isEmpty
-                  ? "comming Soon!"
-                  : restaurantModel.address,
-              style: TextStyle(
-                color: AppColors.darkGrey,
-                fontSize: 14,
-                fontFamily: 'Nunito-Regular',
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ),
-          Text(
-            'Atmospheres',
-            style: TextStyle(
-              color: AppColors.headingTextColor,
-              fontSize: 14,
-              fontFamily: 'Nunito-Regular',
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          SizedBox(
-            width: 325,
-            child: restaurantModel.atmosphereList.isEmpty
-                ? Text("comming Soon!")
-                : _buildStarBox(
-                    titleList: restaurantModel.atmosphereList,
-                    context,
-                  ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Text(
-            'Facilities/services',
-            style: TextStyle(
-              color: AppColors.headingTextColor,
-              fontSize: 14,
-              fontFamily: 'Nunito-Regular',
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          SizedBox(
-            width: 325,
-            child: restaurantModel.facilityList.isEmpty
-                ? Text("comming Soon!")
-                : _buildStarBox(
-                    titleList: restaurantModel.facilityList,
-                    context,
-                  ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Text(
-            'Dietary Preferences',
-            style: TextStyle(
-              color: AppColors.headingTextColor,
-              fontSize: 14,
-              fontFamily: 'Nunito-Regular',
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          SizedBox(
-            height: 16,
-          ),
-          SizedBox(
-            width: 325,
-            child: restaurantModel.dietaryList.isEmpty
-                ? Text("comming Soon!")
-                : _buildStarBox(
-                    titleList: restaurantModel.dietaryList,
-                    context,
-                  ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Text(
-            'Entertainment',
-            style: TextStyle(
-              color: AppColors.headingTextColor,
-              fontSize: 14,
-              fontFamily: 'Nunito-Regular',
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          SizedBox(
-            width: 325,
-            child: restaurantModel.entertainmentScheduleList.isEmpty
-                ? Text("comming Soon!")
-                : _buildStarBox(
-                    titleList: restaurantModel.entertainmentScheduleList
-                        .map((event) => event.eventName)
-                        .toList(),
-                    context,
-                  ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Text(
-            'Price Range',
-            style: TextStyle(
-              color: AppColors.headingTextColor,
-              fontSize: 14,
-              fontFamily: 'Nunito-Regular',
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          SizedBox(
-            width: 325,
-            child: restaurantModel.priceRange == '\$\$'
-                ? Text("comming Soon!")
-                : _buildStarBox(
-                    titleList: ['${restaurantModel.priceRange}'],
-                    context,
-                  ),
-          ),
-          Text(
-            'Spoken language',
-            style: TextStyle(
-              color: AppColors.headingTextColor,
-              fontSize: 14,
-              fontFamily: 'Nunito-Regular',
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
+          restaurantModel.atmosphereList.isEmpty
+              ? SizedBox()
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Atmospheres',
+                      style: TextStyle(
+                        color: AppColors.headingTextColor,
+                        fontSize: 14,
+                        fontFamily: 'Nunito-Regular',
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    SizedBox(
+                      width: 325,
+                      child: restaurantModel.atmosphereList.isEmpty
+                          ? Text("comming Soon!")
+                          : _buildStarBox(
+                              titleList: restaurantModel.atmosphereList,
+                              context,
+                            ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                  ],
+                ),
+          restaurantModel.facilityList.isEmpty
+              ? SizedBox()
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Facilities/services',
+                      style: TextStyle(
+                        color: AppColors.headingTextColor,
+                        fontSize: 14,
+                        fontFamily: 'Nunito-Regular',
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    SizedBox(
+                      width: 325,
+                      child: restaurantModel.facilityList.isEmpty
+                          ? Text("comming Soon!")
+                          : _buildStarBox(
+                              titleList: restaurantModel.facilityList,
+                              context,
+                            ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                  ],
+                ),
+          restaurantModel.dietaryList.isEmpty
+              ? SizedBox()
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Dietary Preferences',
+                      style: TextStyle(
+                        color: AppColors.headingTextColor,
+                        fontSize: 14,
+                        fontFamily: 'Nunito-Regular',
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    SizedBox(
+                      width: 325,
+                      child: restaurantModel.dietaryList.isEmpty
+                          ? Text("comming Soon!")
+                          : _buildStarBox(
+                              titleList: restaurantModel.dietaryList,
+                              context,
+                            ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                  ],
+                ),
+          restaurantModel.entertainmentScheduleList.isEmpty
+              ? SizedBox()
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Entertainment',
+                      style: TextStyle(
+                        color: AppColors.headingTextColor,
+                        fontSize: 14,
+                        fontFamily: 'Nunito-Regular',
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    SizedBox(
+                      width: 325,
+                      child: restaurantModel.entertainmentScheduleList.isEmpty
+                          ? Text("comming Soon!")
+                          : _buildStarBox(
+                              titleList: restaurantModel
+                                  .entertainmentScheduleList
+                                  .map((event) => event.eventName)
+                                  .toList(),
+                              context,
+                            ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                  ],
+                ),
+          restaurantModel.priceRange.isEmpty ||
+                  restaurantModel.priceRange == '\$\$'
+              ? SizedBox()
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Price Range',
+                      style: TextStyle(
+                        color: AppColors.headingTextColor,
+                        fontSize: 14,
+                        fontFamily: 'Nunito-Regular',
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    SizedBox(
+                      width: 325,
+                      child: restaurantModel.priceRange == '\$\$'
+                          ? Text("comming Soon!")
+                          : _buildStarBox(
+                              titleList: ['${restaurantModel.priceRange}'],
+                              context,
+                            ),
+                    ),
+                  ],
+                ),
           restaurantModel.spokenLanguage.isEmpty
-              ? Text("comming Soon!")
-              : _buildStarBox(
-                  titleList: [restaurantModel.spokenLanguage],
-                  context,
+              ? SizedBox()
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Spoken language',
+                      style: TextStyle(
+                        color: AppColors.headingTextColor,
+                        fontSize: 14,
+                        fontFamily: 'Nunito-Regular',
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    restaurantModel.spokenLanguage.isEmpty
+                        ? Text("comming Soon!")
+                        : _buildStarBox(
+                            titleList: [restaurantModel.spokenLanguage],
+                            context,
+                          ),
+                  ],
                 ),
           isCommingSoon == true
               ? Column(

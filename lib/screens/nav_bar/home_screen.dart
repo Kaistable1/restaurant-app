@@ -243,7 +243,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: TextStyle(
                   color: AppColors.bottomSheetColor,
                   fontFamily: 'aftika-regular',
-                  fontSize: 14,
+                  fontSize: 16,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -264,7 +264,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
-        SizedBox(height: 10),
+        SizedBox(height: 5),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: Text(
@@ -272,46 +272,55 @@ class _HomeScreenState extends State<HomeScreen> {
             textAlign: TextAlign.justify,
             style: TextStyle(
               color: AppColors.bottomSheetColor,
-              fontFamily: 'Nunito-Regular',
-              fontSize: 14,
+              fontFamily: 'aftika-regular',
+              fontSize: 12,
               fontWeight: FontWeight.w500,
             ),
           ),
         ),
         SizedBox(height: 10),
         Obx(
-          () => ListView.builder(
-            shrinkWrap: true,
-            physics: ScrollPhysics(),
-            itemCount: eventController.events.length > 3
-                ? 3
-                : eventController.events.length,
-            itemBuilder: (context, index) {
-              final event = eventController.events[index];
-              return Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 8.0),
-                    child: DaysTile(
-                      onTap: () => Get.to(EventDetailsScreen(
-                        event: event,
-                      )),
-                      image: event.imageUrls.first,
-                      title: event.eventName,
-                      location: event.location,
-                      type: event.eventType,
+          () => eventController.events.isEmpty
+              ? SizedBox(
+                  width: double.infinity,
+                  height: 100,
+                  child: Center(
+                      child: Text(
+                    'No events found in your region.',
+                    style: TextStyle(
+                      color: AppColors.bottomSheetColor,
+                      fontFamily: 'aftika-regular',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
                     ),
-                  ),
-                  if (index != eventController.eventsList.length - 1)
-                    Divider(
-                      thickness: 1,
-                      color: AppColors.primaryColor.withOpacity(.2),
-                    ),
-                ],
-              );
-            },
-          ),
+                  )))
+              : ListView.builder(
+                  shrinkWrap: true,
+                  physics: ScrollPhysics(),
+                  itemCount: eventController.events.length > 3
+                      ? 3
+                      : eventController.events.length,
+                  itemBuilder: (context, index) {
+                    final event = eventController.events[index];
+                    return Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 8.0),
+                          child: DaysTile(
+                            onTap: () => Get.to(EventDetailsScreen(
+                              event: event,
+                            )),
+                            image: event.imageUrls.first,
+                            title: event.eventName,
+                            location: event.location,
+                            type: event.eventType,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
         ),
       ],
     );
@@ -445,7 +454,8 @@ class _HomeScreenState extends State<HomeScreen> {
               height: Get.height * 0.45,
               width: Get.width,
               decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 143, 164, 157)),
+                color: const Color.fromARGB(255, 143, 164, 157),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Column(
@@ -457,7 +467,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: TextStyle(
                         color: AppColors.bottomSheetColor,
                         fontFamily: 'aftika-regular',
-                        fontSize: 14,
+                        fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -480,7 +490,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ));
                       },
                       child: Container(
-                        height: Get.height * 0.28,
+                        height: Get.height * 0.29,
                         width: Get.width,
                         decoration: BoxDecoration(
                           color: AppColors.whiteColor,
@@ -503,7 +513,26 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 5),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    restaurant.resName,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w800,
+                                      color: AppColors.headingTextColor,
+                                      fontFamily: 'Nunito-Regular',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                             Padding(
                               padding: const EdgeInsets.only(
                                   left: 10, top: 5, right: 10),
@@ -530,6 +559,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
+                    const SizedBox(height: 18),
                   ],
                 ),
               ),
@@ -551,7 +581,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: TextStyle(
                   color: AppColors.bottomSheetColor,
                   fontFamily: 'aftika-regular',
-                  fontSize: 14,
+                  fontSize: 16,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -564,7 +594,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: TextStyle(
                   color: AppColors.bottomSheetColor,
                   fontFamily: 'aftika-regular',
-                  fontSize: 14,
+                  fontSize: 12,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -613,7 +643,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             fontSize: 12,
                             color: AppColors.bottomSheetColor,
                             fontWeight: FontWeight.w500,
-                            fontFamily: 'Nunito-Sans',
+                            fontFamily: 'aftika-regular',
                           ),
                         ),
                       ],
@@ -661,17 +691,18 @@ class _HomeScreenState extends State<HomeScreen> {
                           style: TextStyle(
                             color: AppColors.bottomSheetColor,
                             fontFamily: 'aftika-regular',
-                            fontSize: 14,
+                            fontSize: 16,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
+                        SizedBox(height: 5),
                         Text(
                           'Buzzing dishes right now',
                           textAlign: TextAlign.justify,
                           style: TextStyle(
                             color: AppColors.bottomSheetColor,
-                            fontFamily: 'Nunito-Regular',
-                            fontSize: 14,
+                            fontFamily: 'aftika-regular',
+                            fontSize: 12,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -815,17 +846,18 @@ class _HomeScreenState extends State<HomeScreen> {
                             style: TextStyle(
                               color: AppColors.bottomSheetColor,
                               fontFamily: 'aftika-regular',
-                              fontSize: 14,
+                              fontSize: 16,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
+                          SizedBox(height: 5),
                           Text(
                             "Curated picks just for you",
                             textAlign: TextAlign.justify,
                             style: TextStyle(
                               color: AppColors.bottomSheetColor,
-                              fontFamily: 'Nunito-Regular',
-                              fontSize: 14,
+                              fontFamily: 'aftika-regular',
+                              fontSize: 12,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -906,17 +938,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: TextStyle(
                       color: AppColors.bottomSheetColor,
                       fontFamily: 'aftika-regular',
-                      fontSize: 14,
+                      fontSize: 16,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
+                  SizedBox(height: 5),
                   Text(
                     "For your best delicious food",
                     textAlign: TextAlign.justify,
                     style: TextStyle(
                       color: AppColors.bottomSheetColor,
-                      fontFamily: 'Nunito-Regular',
-                      fontSize: 14,
+                      fontFamily: 'aftika-regular',
+                      fontSize: 12,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -1064,13 +1097,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
+                    SizedBox(height: 5),
                     Text(
                       'Places that are popular',
                       textAlign: TextAlign.justify,
                       style: TextStyle(
                         color: AppColors.bottomSheetColor,
-                        fontFamily: 'Nunito-Regular',
-                        fontSize: 14,
+                        fontFamily: 'aftika-regular',
+                        fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
                     ),

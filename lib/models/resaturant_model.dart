@@ -131,7 +131,6 @@ class RestaurantModel {
       'about': about,
       'createdAt': createdAt.toIso8601String(),
       'country': country,
-      // New Fields
       'instaLink': instaLink,
       'xLink': tiktokLink,
     };
@@ -161,8 +160,8 @@ class RestaurantModel {
       priceRange: data['priceRange'] ?? '',
       resEmail: data['resEmail'] ?? '',
       resName: data['resName'] ?? '',
-      instaLink: data['InstagramLink'] ?? '',
-      tiktokLink: data['TiktokLink'] ?? '',
+      instaLink: data['socialLink'] ?? '',
+      tiktokLink: data['socialMedia'] ?? '',
       specialConditions: data['specialConditions'] ?? '',
       spokenLanguage: data['spokenLanguage'] ?? '',
       socialLink: '',
@@ -213,8 +212,8 @@ class RestaurantModel {
       ),
       country: data['country'] ?? '',
       // New Fields
-      instaLink: data['InstagramLink'] ?? '',
-      tiktokLink: data['TiktokLink'] ?? '',
+      instaLink: data['socialLink'] ?? '',
+      tiktokLink: data['socialMedia'] ?? '',
     );
   }
 }

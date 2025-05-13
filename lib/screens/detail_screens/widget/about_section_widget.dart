@@ -43,31 +43,37 @@ class AboutSectionWidget extends StatelessWidget {
         SizedBox(
           height: 10,
         ),
-        Padding(
-          padding: const EdgeInsets.only(left: 16.0, right: 16),
-          child: Text(
-            'About',
-            style: TextStyle(
-              color: AppColors.headingTextColor,
-              fontSize: Responsive.isMobile(context) ? 20 : 28,
-              fontFamily: 'aftika-regular',
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-        ),
-        const SizedBox(height: 10),
-        Padding(
-          padding: const EdgeInsets.only(left: 16.0, right: 16),
-          child: Text(
-            aboutText,
-            style: TextStyle(
-              color: AppColors.tableHeadingColor,
-              fontSize: 14,
-              fontFamily: 'Nunito-Regular',
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-        ),
+        aboutText.contains('Soon')
+            ? SizedBox()
+            : Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16.0, right: 16),
+                    child: Text(
+                      'About',
+                      style: TextStyle(
+                        color: AppColors.headingTextColor,
+                        fontSize: Responsive.isMobile(context) ? 20 : 28,
+                        fontFamily: 'aftika-regular',
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16.0, right: 16),
+                    child: Text(
+                      aboutText,
+                      style: TextStyle(
+                        color: AppColors.tableHeadingColor,
+                        fontSize: 14,
+                        fontFamily: 'Nunito-Regular',
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
         const SizedBox(height: 20),
       ],
     );
