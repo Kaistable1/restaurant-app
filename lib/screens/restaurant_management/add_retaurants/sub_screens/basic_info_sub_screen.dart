@@ -209,7 +209,9 @@ class BasicInfoSubScreen extends StatelessWidget {
                       labelText: 'Email',
                       fieldHintText: 'abc@dff.com',
                       fieldController: controller.emailController,
-                      readOnly: controller.restaurantModel != null,
+                      readOnly:
+                          controller.restaurantModel?.resEmail.isNotEmpty ??
+                              false,
                       fieldValidator: (value) => isEmailValid(value!),
                       isDropDown: false,
                     ),
@@ -220,7 +222,9 @@ class BasicInfoSubScreen extends StatelessWidget {
                       () => TextAndFieldsOrDropDown(
                         labelText: 'Assign Password',
                         fieldHintText: '123@abc',
-                        readOnly: controller.restaurantModel != null,
+                        readOnly:
+                            controller.restaurantModel?.password.isNotEmpty ??
+                                false,
                         fieldController: controller.assignPasswordController,
                         fieldValidator: (value) => isPasswordValid(value!),
                         isObscure: !controller.isPasswordVisible.value,
