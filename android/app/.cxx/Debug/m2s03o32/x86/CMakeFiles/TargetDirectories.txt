@@ -1,0 +1,2 @@
+/Users/macos/Downloads/restaurant-app/android/app/.cxx/Debug/m2s03o32/x86/CMakeFiles/edit_cache.dir
+/Users/macos/Downloads/restaurant-app/android/app/.cxx/Debug/m2s03o32/x86/CMakeFiles/rebuild_cache.dir
