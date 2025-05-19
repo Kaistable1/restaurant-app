@@ -74,9 +74,14 @@ class FilterController extends GetxController {
       "Russian",
       "German",
     ],
-    "Discount Type": [
-      'Percentage off',
-      'Happy hour specials',
+    "Vibes": [
+      "Brunch Party",
+      "Bottomless Brunch",
+      "Day Party",
+      "Pool Party",
+      "Happy Hours",
+      "Open Bar",
+      "Rooftop Vibes"
     ],
     "Time of Day": [
       'Breakfast',
@@ -125,6 +130,7 @@ class FilterController extends GetxController {
       "Sports screenings",
       "Hookah",
       "Sip & Paint",
+      "Ladies Night"," RnB Night"
     ],
     "Price Range": [
       '\$(Budget-Friendly)',
