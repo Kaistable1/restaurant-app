@@ -213,31 +213,32 @@ class HomeLocationController extends GetxController {
   Stream<List<RestaurantModel>> getTrendingRestaurants() {
     return FirebaseFirestore.instance
         .collection('restaurants')
+        .limit(5)
         .snapshots()
         .asyncMap((snapshot) async {
       // Fetch all restaurants and their menus
       final restaurants = await Future.wait(
         snapshot.docs.map((doc) async {
-          final reviewsSnapshot =
-              await doc.reference.collection('reviews').get();
+          // final reviewsSnapshot =
+          //     await doc.reference.collection('reviews').get();
 
-          int totalReviews = reviewsSnapshot.size;
-          double totalRating = reviewsSnapshot.docs
-              .map((e) => double.parse(e['starRating'].toString()))
-              .fold(0.0, (prev, rating) => prev + rating);
-          double averageRating =
-              totalReviews > 0 ? totalRating / totalReviews : 0.0;
+          // int totalReviews = reviewsSnapshot.size;
+          // double totalRating = reviewsSnapshot.docs
+          //     .map((e) => double.parse(e['starRating'].toString()))
+          //     .fold(0.0, (prev, rating) => prev + rating);
+          // double averageRating =
+          //     totalReviews > 0 ? totalRating / totalReviews : 0.0;
 
-          // Filter out restaurants without reviews
-          if (totalReviews > 0) {
-            // Fetch menu list from subcollection
-            final restaurant = RestaurantModel.fromDocumentSnapshot(doc);
-            // Set average rating
-            restaurant.averageRating = averageRating;
+          // // Filter out restaurants without reviews
+          // if (totalReviews > 0) {
+          //   // Fetch menu list from subcollection
+          final restaurant = RestaurantModel.fromDocumentSnapshot(doc);
+          //   // Set average rating
+          //   restaurant.averageRating = averageRating;
 
-            return restaurant;
-          }
-          return null;
+          return restaurant;
+          // }
+          // return null;
         }).toList(),
       );
 

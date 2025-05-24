@@ -454,7 +454,7 @@ class _HomeScreenState extends State<HomeScreen> {
               height: Get.height * 0.45,
               width: Get.width,
               decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 143, 164, 157),
+                color: const Color.fromARGB(255, 223, 230, 227),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(12.0),

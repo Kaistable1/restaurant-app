@@ -183,8 +183,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
         // If numeric, match with zipCode
         return restaurant.zipCode == query;
       }
-      print(
-          'cuisines ------- ${restaurant.menuList.map((item) => item.cuisineType.contains(query)).any((element) => element)}');
+
       // If not numeric, check all fields for matches
       return restaurant.resName.toLowerCase().contains(query.toLowerCase()) ||
           restaurant.city.toLowerCase().contains(query.toLowerCase()) ||
