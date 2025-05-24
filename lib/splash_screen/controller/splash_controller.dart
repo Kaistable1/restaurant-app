@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:kaistable_website/screens/onboarding_screen/onboarding_screen.dart';
 
 class SplashController extends GetxController {
   @override
