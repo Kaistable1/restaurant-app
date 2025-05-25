@@ -9,9 +9,11 @@ import 'package:savrly/widgets/global_functions.dart';
 
 class LoginController extends GetxController {
   // Text controllers
-  final TextEditingController emailController = TextEditingController();
+  final TextEditingController emailController =
+      TextEditingController(text: 'norman@gmail.com');
   final TextEditingController subAdminEmailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController passwordController =
+      TextEditingController(text: 'Admin@1234');
   final TextEditingController subAdminPasswordController =
       TextEditingController();
   final TextEditingController forgotEmailController = TextEditingController();
@@ -55,21 +57,25 @@ class LoginController extends GetxController {
 
   // Check if a user is already logged in
   Future<void> checkCurrentUser() async {
-    User? user = _auth.currentUser;
-    if (user != null) {
-      DocumentSnapshot adminDoc =
-          await _firestore.collection('admins').doc(user.uid).get();
-      print('uaser name ${adminDoc['name']}');
-      if (adminDoc.exists) {
-        String role = adminDoc['role'];
-        if (role == 'admin') {
-          Get.offAll(() => AdminPanel());
-        } else if (role == 'sub-admin') {
-          Get.offAll(() => SubAdminPanel());
+    try {
+      User? user = _auth.currentUser;
+      if (user != null) {
+        DocumentSnapshot adminDoc =
+            await _firestore.collection('admins').doc(user.uid).get();
+        print('uaser name ${adminDoc['name']}');
+        if (adminDoc.exists) {
+          String role = adminDoc['role'];
+          if (role == 'admin') {
+            Get.offAll(() => AdminPanel());
+          } else if (role == 'sub-admin') {
+            Get.offAll(() => SubAdminPanel());
+          }
         }
       }
+      isLoading.value = false;
+    } catch (e) {
+      print('Error $e');
     }
-    isLoading.value = false;
   }
 
   // Login Admin
@@ -163,6 +169,7 @@ class LoginController extends GetxController {
       } else {
         errorMessage = e.toString();
       }
+      print('Error in login function $e');
       Get.snackbar('Error', errorMessage,
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.red,

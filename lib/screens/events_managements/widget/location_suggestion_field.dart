@@ -8,7 +8,7 @@ import 'package:savrly/constants/app_colors.dart';
 class LocationTextField extends StatefulWidget {
   final String labelText;
   final String hintText;
-  final TextEditingController controller;
+  final TextEditingController? controller;
   final String? Function(String?)? validator;
   final Function(double latitude, double longitude)? onLocationSelected;
 
@@ -16,7 +16,7 @@ class LocationTextField extends StatefulWidget {
     super.key,
     required this.labelText,
     required this.hintText,
-    required this.controller,
+    this.controller,
     this.validator,
     this.onLocationSelected,
   });
@@ -31,11 +31,31 @@ class _LocationTextFieldState extends State<LocationTextField> {
   List<dynamic> _suggestions = [];
   Timer? _debounceTimer;
   OverlayEntry? _overlayEntry;
+  late TextEditingController _internalController;
+  String _lastUserInput = '';
 
   @override
   void initState() {
     super.initState();
-    // No forced cursor management; let TextFormField handle it
+    _internalController = widget.controller ?? TextEditingController();
+    _lastUserInput = _internalController.text;
+    _internalController.addListener(_onControllerChanged);
+    if (kDebugMode) {
+      print('Initial text: $_lastUserInput');
+    }
+  }
+
+  void _onControllerChanged() {
+    if (_internalController.text != _lastUserInput) {
+      if (kDebugMode) {
+        print(
+            'Controller text changed unexpectedly to: ${_internalController.text}');
+        print('Last user input was: $_lastUserInput');
+      }
+      // Optionally restore the last user input to prevent unexpected changes
+      // Uncomment the following line to test if this fixes the issue
+      // _internalController.text = _lastUserInput;
+    }
   }
 
   Future<void> _fetchSuggestions(String input) async {
@@ -121,12 +141,17 @@ class _LocationTextFieldState extends State<LocationTextField> {
                 return ListTile(
                   title: Text(suggestion['description'] ?? ''),
                   onTap: () {
-                    // Update text only when a suggestion is manually selected
                     final newText = suggestion['description'] ?? '';
-                    widget.controller.text = newText;
-                    widget.controller.selection = TextSelection.fromPosition(
-                      TextPosition(offset: newText.length),
-                    );
+                    setState(() {
+                      _lastUserInput = newText;
+                      _internalController.removeListener(_onControllerChanged);
+                      _internalController.text = newText;
+                      _internalController.selection =
+                          TextSelection.fromPosition(
+                        TextPosition(offset: newText.length),
+                      );
+                      _internalController.addListener(_onControllerChanged);
+                    });
                     if (kDebugMode) {
                       print(
                           'Manually selected text: $newText, Cursor at: ${newText.length}');
@@ -198,6 +223,10 @@ class _LocationTextFieldState extends State<LocationTextField> {
   void dispose() {
     _debounceTimer?.cancel();
     _hideSuggestions();
+    _internalController.removeListener(_onControllerChanged);
+    if (widget.controller == null) {
+      _internalController.dispose();
+    }
     super.dispose();
   }
 
@@ -212,7 +241,7 @@ class _LocationTextFieldState extends State<LocationTextField> {
         ),
         const SizedBox(height: 8),
         TextFormField(
-          controller: widget.controller,
+          controller: _internalController,
           decoration: InputDecoration(
             hintText: widget.hintText,
             border: OutlineInputBorder(
@@ -230,16 +259,17 @@ class _LocationTextFieldState extends State<LocationTextField> {
           ),
           validator: widget.validator,
           onChanged: (value) {
+            _lastUserInput = value; // Update last user input on every change
             if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
             _debounceTimer = Timer(const Duration(milliseconds: 500), () {
               _fetchSuggestions(value);
             });
             if (kDebugMode) {
               print(
-                  'Text changed to: $value, Selection: ${widget.controller.selection}');
+                  'Text changed to: $value, Selection: ${_internalController.selection}');
             }
           },
-          enableInteractiveSelection: true, // Explicitly enable selection
+          enableInteractiveSelection: true,
         ),
       ],
     );

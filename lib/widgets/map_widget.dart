@@ -163,23 +163,11 @@ class _MapWidgetState extends State<MapWidget> {
 
       if (placemarks.isNotEmpty) {
         Placemark placemark = placemarks.first;
-        String address = [
-          placemark.street ?? '',
-          placemark.locality ?? '',
-          placemark.administrativeArea ?? '',
-          placemark.country ?? '',
-        ].where((element) => element.isNotEmpty).join(', ');
 
-        addEventController.locationController.text =
-            address.isNotEmpty ? address : 'Unknown address';
         addEventController.cityController.text = placemark.locality ?? '';
         addEventController.countryController.text = placemark.country ?? '';
         addEventController.update();
         return;
-      } else {
-        addEventController.locationController.text =
-            'No address found for ($latitude, $longitude)';
-        addEventController.update();
       }
     } catch (e) {
       print('Geocoding package error: $e');
@@ -194,9 +182,9 @@ class _MapWidgetState extends State<MapWidget> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data['results'] != null && data['results'].isNotEmpty) {
-          String address =
-              data['results'][0]['formatted_address'] ?? 'Unknown address';
-          addEventController.locationController.text = address;
+          // String address =
+          //     data['results'][0]['formatted_address'] ?? 'Unknown address';
+          // addEventController.locationController.text = address;
 
           String city = '';
           var cityComponent =
@@ -286,7 +274,6 @@ class _MapWidgetState extends State<MapWidget> {
     const double fallbackLongitude = -122.4194;
     addController.latitude.value = fallbackLatitude;
     addController.longitude.value = fallbackLongitude;
-    addEventController.locationController.text = 'San Francisco, CA, USA';
     addEventController.cityController.text = 'San Francisco';
     addEventController.countryController.text = 'USA';
     addEventController.update();
