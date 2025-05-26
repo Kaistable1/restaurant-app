@@ -131,9 +131,10 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                               image: NetworkImage(
                                   widget.restaurantModel?.logoImage ?? ''))),
                     ),
-                    widget.restaurantModel!.imagesList.isEmpty
-                        ? SizedBox(height: 30)
-                        : SizedBox(height: 130),
+                    // widget.restaurantModel!.imagesList.isEmpty
+                    //     ?
+                    SizedBox(height: 30),
+                    //     : SizedBox(height: 130),
                     Center(
                       child: Container(
                         width: 100,
@@ -449,12 +450,12 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                           ],
                         ),
                       ],
-                    )
+                    ),
                     // : controller.selectedTop.value == 'Reviews'
                     //     ?
-                    //     ReviewWidget(
-                    //         restaurantModel: widget.restaurantModel,
-                    //       )
+                    // ReviewWidget(
+                    //   restaurantModel: widget.restaurantModel,
+                    // )
 
                     // : Column(
                     //     crossAxisAlignment:
@@ -946,287 +947,287 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                     // }),
                   ],
                 ),
-                Padding(
-                  padding:
-                      const EdgeInsets.only(left: 35.0, right: 16, top: 130),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    // Clip the blur to the rounded corners
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-                      // Adjust the blur intensity
-                      child: Container(
-                        height: widget.restaurantModel!.imagesList.isEmpty
-                            ? 70
-                            : 173,
-                        width: 358,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          gradient: LinearGradient(
-                            colors: [
-                              AppColors.whiteColor.withOpacity(0.4),
-                              AppColors.primaryColor.withOpacity(0.3),
-                            ],
-                            begin: Alignment.topCenter,
-                            // Starting point of the gradient
-                            end: Alignment
-                                .bottomCenter, // Ending point of the gradient
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 12.0, right: 12, top: 12),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  // Image.asset(
-                                  //   'assets/images/ihop-restaurant-logo 1.png',
-                                  //   height: 33,
-                                  //   width: 49,
-                                  // ),
-                                  // SizedBox(width: 6),
-                                  Text(
-                                    widget.restaurantModel?.resName ?? '',
-                                    style: TextStyle(
-                                      color: AppColors.blackColor,
-                                      fontFamily: 'Nunito-Bold',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 4,
-                              ),
-                              StreamBuilder<List<ReviewModel>>(
-                                  stream: widget.restaurantModel?.docID == ''
-                                      ? null
-                                      : homeLocationController.getReviews(
-                                          widget.restaurantModel?.docID ?? ''),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return Center(
-                                          child: CircularProgressIndicator());
-                                    }
-                                    if (!snapshot.hasData ||
-                                        snapshot.data!.isEmpty) {
-                                      return SizedBox();
-                                    }
+                // Padding(
+                //   padding:
+                //       const EdgeInsets.only(left: 35.0, right: 16, top: 130),
+                //   child: ClipRRect(
+                //     borderRadius: BorderRadius.circular(10),
+                //     // Clip the blur to the rounded corners
+                //     child: BackdropFilter(
+                //       filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                //       // Adjust the blur intensity
+                //       child: Container(
+                //         height: widget.restaurantModel!.imagesList.isEmpty
+                //             ? 70
+                //             : 173,
+                //         width: 358,
+                //         decoration: BoxDecoration(
+                //           borderRadius: BorderRadius.circular(10),
+                //           gradient: LinearGradient(
+                //             colors: [
+                //               AppColors.whiteColor.withOpacity(0.4),
+                //               AppColors.primaryColor.withOpacity(0.3),
+                //             ],
+                //             begin: Alignment.topCenter,
+                //             // Starting point of the gradient
+                //             end: Alignment
+                //                 .bottomCenter, // Ending point of the gradient
+                //           ),
+                //         ),
+                //         child: Padding(
+                //           padding: const EdgeInsets.only(
+                //               left: 12.0, right: 12, top: 12),
+                //           child: Column(
+                //             mainAxisAlignment: MainAxisAlignment.start,
+                //             crossAxisAlignment: CrossAxisAlignment.start,
+                //             children: [
+                //               Row(
+                //                 children: [
+                //                   // Image.asset(
+                //                   //   'assets/images/ihop-restaurant-logo 1.png',
+                //                   //   height: 33,
+                //                   //   width: 49,
+                //                   // ),
+                //                   // SizedBox(width: 6),
+                //                   Text(
+                //                     widget.restaurantModel?.resName ?? '',
+                //                     style: TextStyle(
+                //                       color: AppColors.blackColor,
+                //                       fontFamily: 'Nunito-Bold',
+                //                       fontSize: 14,
+                //                       fontWeight: FontWeight.w500,
+                //                     ),
+                //                   ),
+                //                 ],
+                //               ),
+                //               SizedBox(
+                //                 height: 4,
+                //               ),
+                //               StreamBuilder<List<ReviewModel>>(
+                //                   stream: widget.restaurantModel?.docID == ''
+                //                       ? null
+                //                       : homeLocationController.getReviews(
+                //                           widget.restaurantModel?.docID ?? ''),
+                //                   builder: (context, snapshot) {
+                //                     if (snapshot.connectionState ==
+                //                         ConnectionState.waiting) {
+                //                       return Center(
+                //                           child: CircularProgressIndicator());
+                //                     }
+                //                     if (!snapshot.hasData ||
+                //                         snapshot.data!.isEmpty) {
+                //                       return SizedBox();
+                //                     }
 
-                                    final reviews = snapshot.data!;
-                                    return Row(
-                                      children: [
-                                        Text(
-                                          '(${(reviews.map((e) => e.starRating).reduce((a, b) => a! + b!)! / reviews.length).toStringAsFixed(1)})',
-                                          style: TextStyle(
-                                            color: Color(0xFF4F5761),
-                                            fontSize: 16,
-                                            fontFamily: 'Nunito-Regular',
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 14,
-                                          child: RatingBar(
-                                            itemSize: 14,
-                                            ignoreGestures: true,
-                                            initialRating: reviews
-                                                    .map((e) =>
-                                                        e.starRating ?? 0)
-                                                    .reduce((a, b) => a + b) /
-                                                reviews.length,
-                                            minRating: 1,
-                                            direction: Axis.horizontal,
-                                            allowHalfRating: true,
-                                            itemCount: 5,
-                                            ratingWidget: RatingWidget(
-                                              full: Image.asset(
-                                                'assets/images/star yellow.png',
-                                                height: 19,
-                                              ),
-                                              half: Image.asset(
-                                                'assets/images/star yellow.png',
-                                                height: 19,
-                                              ),
-                                              empty: Image.asset(
-                                                'assets/images/star_empty.png',
-                                                height: 19,
-                                              ),
-                                            ),
-                                            itemPadding: const EdgeInsets.only(
-                                                left: 2.0, bottom: 20),
-                                            onRatingUpdate: (rating) {
-                                              print(rating);
-                                            },
-                                          ),
-                                        ),
-                                        const SizedBox(width: 10),
-                                        Text(
-                                          '${reviews.length} reviews',
-                                          style: TextStyle(
-                                            color: AppColors.darkGrey,
-                                            fontSize: 16,
-                                            fontFamily: 'Nunito-Regular',
-                                            fontWeight: FontWeight.w400,
-                                            decoration:
-                                                TextDecoration.underline,
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          width: 10,
-                                        )
-                                      ],
-                                    );
-                                  }),
-                              SizedBox(
-                                height: 4,
-                              ),
-                              Text(
-                                widget.restaurantModel?.spokenLanguage ?? '',
-                                style: TextStyle(
-                                  color: AppColors.darkGrey,
-                                  fontSize: 16,
-                                  fontFamily: 'Nunito-Regular',
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                              SizedBox(
-                                height: 4,
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: widget.restaurantModel!.imagesList
-                                              .isEmpty
-                                          ? Colors.transparent
-                                          : AppColors.whiteColor,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: widget
-                                            .restaurantModel!.imagesList.isEmpty
-                                        ? const SizedBox()
-                                        : Wrap(
-                                            spacing: 5, // Space between images
-                                            alignment: WrapAlignment
-                                                .start, // Align images to the start
-                                            children: widget
-                                                .restaurantModel!.imagesList
-                                                .asMap()
-                                                .entries
-                                                .map((entry) {
-                                              int index = entry.key;
-                                              String imagePath = entry.value;
+                //                     final reviews = snapshot.data!;
+                //                     return Row(
+                //                       children: [
+                //                         Text(
+                //                           '(${(reviews.map((e) => e.starRating).reduce((a, b) => a! + b!)! / reviews.length).toStringAsFixed(1)})',
+                //                           style: TextStyle(
+                //                             color: Color(0xFF4F5761),
+                //                             fontSize: 16,
+                //                             fontFamily: 'Nunito-Regular',
+                //                             fontWeight: FontWeight.w400,
+                //                           ),
+                //                         ),
+                //                         SizedBox(
+                //                           height: 14,
+                //                           child: RatingBar(
+                //                             itemSize: 14,
+                //                             ignoreGestures: true,
+                //                             initialRating: reviews
+                //                                     .map((e) =>
+                //                                         e.starRating ?? 0)
+                //                                     .reduce((a, b) => a + b) /
+                //                                 reviews.length,
+                //                             minRating: 1,
+                //                             direction: Axis.horizontal,
+                //                             allowHalfRating: true,
+                //                             itemCount: 5,
+                //                             ratingWidget: RatingWidget(
+                //                               full: Image.asset(
+                //                                 'assets/images/star yellow.png',
+                //                                 height: 19,
+                //                               ),
+                //                               half: Image.asset(
+                //                                 'assets/images/star yellow.png',
+                //                                 height: 19,
+                //                               ),
+                //                               empty: Image.asset(
+                //                                 'assets/images/star_empty.png',
+                //                                 height: 19,
+                //                               ),
+                //                             ),
+                //                             itemPadding: const EdgeInsets.only(
+                //                                 left: 2.0, bottom: 20),
+                //                             onRatingUpdate: (rating) {
+                //                               print(rating);
+                //                             },
+                //                           ),
+                //                         ),
+                //                         const SizedBox(width: 10),
+                //                         Text(
+                //                           '${reviews.length} reviews',
+                //                           style: TextStyle(
+                //                             color: AppColors.darkGrey,
+                //                             fontSize: 16,
+                //                             fontFamily: 'Nunito-Regular',
+                //                             fontWeight: FontWeight.w400,
+                //                             decoration:
+                //                                 TextDecoration.underline,
+                //                           ),
+                //                         ),
+                //                         const SizedBox(
+                //                           width: 10,
+                //                         )
+                //                       ],
+                //                     );
+                //                   }),
+                //               SizedBox(
+                //                 height: 4,
+                //               ),
+                //               Text(
+                //                 widget.restaurantModel?.spokenLanguage ?? '',
+                //                 style: TextStyle(
+                //                   color: AppColors.darkGrey,
+                //                   fontSize: 16,
+                //                   fontFamily: 'Nunito-Regular',
+                //                   fontWeight: FontWeight.w400,
+                //                 ),
+                //               ),
+                //               SizedBox(
+                //                 height: 4,
+                //               ),
+                //               Row(
+                //                 mainAxisAlignment: MainAxisAlignment.center,
+                //                 children: [
+                //                   Container(
+                //                     decoration: BoxDecoration(
+                //                       color: widget.restaurantModel!.imagesList
+                //                               .isEmpty
+                //                           ? Colors.transparent
+                //                           : AppColors.whiteColor,
+                //                       borderRadius: BorderRadius.circular(10),
+                //                     ),
+                //                     child: widget
+                //                             .restaurantModel!.imagesList.isEmpty
+                //                         ? const SizedBox()
+                //                         : Wrap(
+                //                             spacing: 5, // Space between images
+                //                             alignment: WrapAlignment
+                //                                 .start, // Align images to the start
+                //                             children: widget
+                //                                 .restaurantModel!.imagesList
+                //                                 .asMap()
+                //                                 .entries
+                //                                 .map((entry) {
+                //                               int index = entry.key;
+                //                               String imagePath = entry.value;
 
-                                              if (index < 4) {
-                                                // Display the first 4 images normally
-                                                return GestureDetector(
-                                                  onTap: () => showImageDialog(
-                                                      context, imagePath),
-                                                  child: ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5),
-                                                    child: Image.network(
-                                                      imagePath,
-                                                      fit: BoxFit.cover,
-                                                      height: 55,
-                                                      width: 58,
-                                                    ),
-                                                  ),
-                                                );
-                                              } else if (index == 4 &&
-                                                  widget.restaurantModel!
-                                                          .imagesList.length >
-                                                      5) {
-                                                // Display "5+" overlay on the 5th image if more than 5 images exist
-                                                return GestureDetector(
-                                                  onTap: () => Get.to(
-                                                    RestaurantImages(
-                                                        imageList: widget
-                                                            .restaurantModel!
-                                                            .imagesList),
-                                                  ),
-                                                  child: Stack(
-                                                    children: [
-                                                      ClipRRect(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(5),
-                                                        child: Image.network(
-                                                          imagePath,
-                                                          height: 55,
-                                                          width: 58,
-                                                          fit: BoxFit.cover,
-                                                        ),
-                                                      ),
-                                                      Container(
-                                                        height: 55,
-                                                        width: 58,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: Colors.black
-                                                              .withOpacity(0.5),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(5),
-                                                        ),
-                                                        child: const Center(
-                                                          child: Text(
-                                                            '5+',
-                                                            style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              fontSize: 14,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                              } else if (index == 4) {
-                                                // Display the 5th image normally if there are exactly 5 images
-                                                return GestureDetector(
-                                                  onTap: () => showImageDialog(
-                                                      context, imagePath),
-                                                  child: ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5),
-                                                    child: Image.network(
-                                                      imagePath,
-                                                      height: 55,
-                                                      width: 58,
-                                                      fit: BoxFit.cover,
-                                                    ),
-                                                  ),
-                                                );
-                                              } else {
-                                                // Skip additional images
-                                                return const SizedBox.shrink();
-                                              }
-                                            }).toList(),
-                                          ),
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                //                               if (index < 4) {
+                //                                 // Display the first 4 images normally
+                //                                 return GestureDetector(
+                //                                   onTap: () => showImageDialog(
+                //                                       context, imagePath),
+                //                                   child: ClipRRect(
+                //                                     borderRadius:
+                //                                         BorderRadius.circular(
+                //                                             5),
+                //                                     child: Image.network(
+                //                                       imagePath,
+                //                                       fit: BoxFit.cover,
+                //                                       height: 55,
+                //                                       width: 58,
+                //                                     ),
+                //                                   ),
+                //                                 );
+                //                               } else if (index == 4 &&
+                //                                   widget.restaurantModel!
+                //                                           .imagesList.length >
+                //                                       5) {
+                //                                 // Display "5+" overlay on the 5th image if more than 5 images exist
+                //                                 return GestureDetector(
+                //                                   onTap: () => Get.to(
+                //                                     RestaurantImages(
+                //                                         imageList: widget
+                //                                             .restaurantModel!
+                //                                             .imagesList),
+                //                                   ),
+                //                                   child: Stack(
+                //                                     children: [
+                //                                       ClipRRect(
+                //                                         borderRadius:
+                //                                             BorderRadius
+                //                                                 .circular(5),
+                //                                         child: Image.network(
+                //                                           imagePath,
+                //                                           height: 55,
+                //                                           width: 58,
+                //                                           fit: BoxFit.cover,
+                //                                         ),
+                //                                       ),
+                //                                       Container(
+                //                                         height: 55,
+                //                                         width: 58,
+                //                                         decoration:
+                //                                             BoxDecoration(
+                //                                           color: Colors.black
+                //                                               .withOpacity(0.5),
+                //                                           borderRadius:
+                //                                               BorderRadius
+                //                                                   .circular(5),
+                //                                         ),
+                //                                         child: const Center(
+                //                                           child: Text(
+                //                                             '5+',
+                //                                             style: TextStyle(
+                //                                               color:
+                //                                                   Colors.white,
+                //                                               fontWeight:
+                //                                                   FontWeight
+                //                                                       .bold,
+                //                                               fontSize: 14,
+                //                                             ),
+                //                                           ),
+                //                                         ),
+                //                                       ),
+                //                                     ],
+                //                                   ),
+                //                                 );
+                //                               } else if (index == 4) {
+                //                                 // Display the 5th image normally if there are exactly 5 images
+                //                                 return GestureDetector(
+                //                                   onTap: () => showImageDialog(
+                //                                       context, imagePath),
+                //                                   child: ClipRRect(
+                //                                     borderRadius:
+                //                                         BorderRadius.circular(
+                //                                             5),
+                //                                     child: Image.network(
+                //                                       imagePath,
+                //                                       height: 55,
+                //                                       width: 58,
+                //                                       fit: BoxFit.cover,
+                //                                     ),
+                //                                   ),
+                //                                 );
+                //                               } else {
+                //                                 // Skip additional images
+                //                                 return const SizedBox.shrink();
+                //                               }
+                //                             }).toList(),
+                //                           ),
+                //                   ),
+                //                 ],
+                //               )
+                //             ],
+                //           ),
+                //         ),
+                //       ),
+                //     ),
+                //   ),
+                // ),
               ]),
             ),
           ));

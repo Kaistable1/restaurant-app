@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -210,47 +211,59 @@ class HomeLocationController extends GetxController {
 
   //get trensing resturants base on totoal reviews and rating
 
+  // Stream<List<RestaurantModel>> getTrendingRestaurants() {
+  //   return FirebaseFirestore.instance
+  //       .collection('restaurants')
+  //       .snapshots()
+  //       .asyncMap((snapshot) async {
+  //     // Fetch all restaurants and their menus
+  //     final restaurants = await Future.wait(
+  //       snapshot.docs.map((doc) async {
+  //         final reviewsSnapshot =
+  //             await doc.reference.collection('reviews').get();
+
+  //         int totalReviews = reviewsSnapshot.size;
+  //         double totalRating = reviewsSnapshot.docs
+  //             .map((e) => double.parse(e['starRating'].toString()))
+  //             .fold(0.0, (prev, rating) => prev + rating);
+  //         double averageRating =
+  //             totalReviews > 0 ? totalRating / totalReviews : 0.0;
+
+  //         // Filter out restaurants without reviews
+  //         if (totalReviews > 0) {
+  //           // Fetch menu list from subcollection
+  //           final restaurant = RestaurantModel.fromDocumentSnapshot(doc);
+  //           // Set average rating
+  //           restaurant.averageRating = averageRating;
+
+  //           return restaurant;
+  //         }
+  //         return null;
+  //       }).toList(),
+  //     );
+
+  //     // Filter out null restaurants (those without reviews)
+  //     final trendingRestaurants =
+  //         restaurants.whereType<RestaurantModel>().toList();
+
+  //     // Sort by average rating in descending order
+  //     trendingRestaurants
+  //         .sort((a, b) => b.averageRating.compareTo(a.averageRating));
+
+  //     return trendingRestaurants; // Return List<RestaurantModel>
+  //   });
+  // }
+
   Stream<List<RestaurantModel>> getTrendingRestaurants() {
     return FirebaseFirestore.instance
         .collection('restaurants')
-        .limit(5)
+        .where('averageRating', isGreaterThan: 0)
+        .orderBy('averageRating', descending: true)
         .snapshots()
-        .asyncMap((snapshot) async {
-      // Fetch all restaurants and their menus
-      final restaurants = await Future.wait(
-        snapshot.docs.map((doc) async {
-          // final reviewsSnapshot =
-          //     await doc.reference.collection('reviews').get();
-
-          // int totalReviews = reviewsSnapshot.size;
-          // double totalRating = reviewsSnapshot.docs
-          //     .map((e) => double.parse(e['starRating'].toString()))
-          //     .fold(0.0, (prev, rating) => prev + rating);
-          // double averageRating =
-          //     totalReviews > 0 ? totalRating / totalReviews : 0.0;
-
-          // // Filter out restaurants without reviews
-          // if (totalReviews > 0) {
-          //   // Fetch menu list from subcollection
-          final restaurant = RestaurantModel.fromDocumentSnapshot(doc);
-          //   // Set average rating
-          //   restaurant.averageRating = averageRating;
-
-          return restaurant;
-          // }
-          // return null;
-        }).toList(),
-      );
-
-      // Filter out null restaurants (those without reviews)
-      final trendingRestaurants =
-          restaurants.whereType<RestaurantModel>().toList();
-
-      // Sort by average rating in descending order
-      trendingRestaurants
-          .sort((a, b) => b.averageRating.compareTo(a.averageRating));
-
-      return trendingRestaurants; // Return List<RestaurantModel>
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return RestaurantModel.fromDocumentSnapshot(doc);
+      }).toList();
     });
   }
 
@@ -606,12 +619,49 @@ class HomeLocationController extends GetxController {
 
   //Geofencing
 
-  Future<Position> getCurrentLocation() async {
+  Future<Position> getCurrentLocation(BuildContext context) async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
+
+    // Loop until location services are enabled
+    while (!serviceEnabled) {
+      // Show dialog to prompt user to enable location services
+      bool? enableLocation = await showDialog<bool>(
+        context: context,
+        barrierDismissible: false, // Prevent dismissing the dialog
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Location Services Disabled'),
+            content: const Text('Please enable location services to continue.'),
+            actions: [
+              TextButton(
+                child: const Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop(false); // Return false if canceled
+                },
+              ),
+              TextButton(
+                child: const Text('Open Settings'),
+                onPressed: () async {
+                  // Open location settings
+                  await Geolocator.openLocationSettings();
+                  Navigator.of(context).pop(true); // Return true to check again
+                },
+              ),
+            ],
+          );
+        },
+      );
+
+      // If user cancels the dialog, throw an error or handle as needed
+      if (enableLocation == false) {
+        return Future.error('Location services are disabled.');
+      }
+
+      // Check location service status again
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
     }
 
+    // Check and request location permissions
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
@@ -620,6 +670,7 @@ class HomeLocationController extends GetxController {
       }
     }
 
+    // Get and return the current position
     return await Geolocator.getCurrentPosition();
   }
 
@@ -632,18 +683,16 @@ class HomeLocationController extends GetxController {
   }
 
   Future<List<RestaurantModel>> getNearbyRestaurants(
-      List<RestaurantModel> allRestaurants, double radiusKm) async {
-    // Position userLocation = await getCurrentLocation();
+      List<RestaurantModel> allRestaurants, double radiusKm, context) async {
+    Position userLocation = await getCurrentLocation(context);
 
     return allRestaurants.where((restaurant) {
-      return true;
-
-      // isWithinRadius(
-      //   userLocation,
-      //   restaurant.latitude,
-      //   restaurant.longitude,
-      //   radiusKm,
-      // );
+      return isWithinRadius(
+        userLocation,
+        restaurant.latitude,
+        restaurant.longitude,
+        radiusKm,
+      );
     }).toList();
   }
 
@@ -677,7 +726,7 @@ class HomeLocationController extends GetxController {
         bool isFavorite = snapshot.data?.docs.isNotEmpty ?? false;
 
         return InkWell(
-          onTap: () {
+          onTap: () async {
             // Toggle favorite status
             if (isFavorite) {
               // Remove the restaurant from favorites
@@ -692,6 +741,8 @@ class HomeLocationController extends GetxController {
                   doc.reference.delete(); // Remove from favorites
                 }
               });
+              await updateAverageRating(
+                  isRate: true, resturant_id: resturant_id);
             } else {
               // Add the restaurant to favorites
               String favId = FirebaseFirestore.instance
@@ -710,6 +761,8 @@ class HomeLocationController extends GetxController {
                 'resturantID': resturant_id,
                 'favID': favId,
               });
+              await updateAverageRating(
+                  isRate: false, resturant_id: resturant_id);
             }
           },
           child: isFavorite
@@ -727,6 +780,20 @@ class HomeLocationController extends GetxController {
         );
       },
     );
+  }
+
+  Future<void> updateAverageRating({required bool isRate, resturant_id}) async {
+    final DocumentReference docRef =
+        FirebaseFirestore.instance.collection('restaurants').doc(resturant_id);
+
+    try {
+      await docRef.update({
+        'averageRating': FieldValue.increment(!isRate ? 1 : -1),
+      });
+      print('Rating updated successfully');
+    } catch (e) {
+      print('Failed to update rating: $e');
+    }
   }
 
   Stream<Map<String, dynamic>?> getFeaturedRestaurantID() {

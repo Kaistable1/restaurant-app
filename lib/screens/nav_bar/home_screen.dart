@@ -824,7 +824,8 @@ class _HomeScreenState extends State<HomeScreen> {
             controller.initailizedSelectors(resaturantsList: all_restaurants);
           });
           return FutureBuilder(
-            future: controller.getNearbyRestaurants(all_restaurants, 50000),
+            future:
+                controller.getNearbyRestaurants(all_restaurants, 50, context),
             builder: (context, futureSnapshot) {
               if (futureSnapshot.connectionState == ConnectionState.waiting)
                 return SizedBox();

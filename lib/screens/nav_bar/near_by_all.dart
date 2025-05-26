@@ -96,7 +96,8 @@ class NearByAll extends StatelessWidget {
           });
 
           return FutureBuilder(
-              future: controller.getNearbyRestaurants(all_restaurants, 50000),
+              future:
+                  controller.getNearbyRestaurants(all_restaurants, 50, context),
               builder: (context, futureSnapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return buildShimmerEffect(); // Show shimmer while loading

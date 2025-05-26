@@ -8,13 +8,6 @@ import 'package:kaistable_website/screens/home_screen/home_controller/home_locat
 import '../../../../constants/app_colors.dart';
 
 class CategoryController extends GetxController {
-  @override
-  void onInit() {
-    // TODO: implement onInit
-    super.onInit();
-    getCurrentLatLong();
-  }
-
   var selectedIndex = (-1).obs; // Stores only one selected index
   var selectedMileIndex = (-1).obs; // Stores only one selected index
   RxString selectedCat = ''.obs;
@@ -53,8 +46,9 @@ class CategoryController extends GetxController {
   }
 
   final locationController = Get.find<HomeLocationController>();
-  getCurrentLatLong() async {
-    Position userLocation = await locationController.getCurrentLocation();
+  getCurrentLatLong(context) async {
+    Position userLocation =
+        await locationController.getCurrentLocation(context);
     userLatitude.value = userLocation.latitude;
     userLongitude.value = userLocation.longitude;
   }
