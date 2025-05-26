@@ -235,7 +235,7 @@ class AmenitiesSubScreenController extends GetxController {
       loadingDialog();
 
       final addRestaurantTabController = Get.find<AddRestaurantTabController>();
-      final restaurantID = addRestaurantTabController.currentRestaurantID;
+      final restaurantID = addRestaurantTabController.restaurantModel!.docID;
       print('restaurantID ${restaurantID}');
       if (restaurantID.isEmpty) {
         throw Exception("Restaurant ID is missing");

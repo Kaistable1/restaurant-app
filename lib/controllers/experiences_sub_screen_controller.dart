@@ -197,7 +197,7 @@ class ExperiencesSubScreenController extends GetxController {
     try {
       loadingDialog();
       final addRestaurantTabController = Get.find<AddRestaurantTabController>();
-      final restaurantID = addRestaurantTabController.currentRestaurantID;
+      final restaurantID = addRestaurantTabController.restaurantModel!.docID;
 
       // Prepare the data map
       final restaurantData = {
@@ -214,8 +214,6 @@ class ExperiencesSubScreenController extends GetxController {
       Get.back();
       clearFields();
       addRestaurantTabController.selectedIndex.value++;
-      Get.snackbar('Success', 'Events saved successfully',
-          snackPosition: SnackPosition.BOTTOM);
     } catch (e) {
       Get.back();
       Get.snackbar('Error', 'Failed to save events: $e',

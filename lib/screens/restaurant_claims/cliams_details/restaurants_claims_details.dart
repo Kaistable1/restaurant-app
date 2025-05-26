@@ -428,7 +428,7 @@ class RestaurantsClaimsDetails extends StatelessWidget {
                           ),
                         ],
                       ),
-                      emailSenderWidget(isLargeScreen, claimsModel),
+                      // emailSenderWidget(isLargeScreen, claimsModel),
                     ],
                   )
                 : Row(
@@ -818,7 +818,7 @@ class RestaurantsClaimsDetails extends StatelessWidget {
                           ],
                         ),
                       ),
-                      emailSenderWidget(isLargeScreen, claimsModel),
+                      // emailSenderWidget(isLargeScreen, claimsModel),
                     ],
                   ),
           ),

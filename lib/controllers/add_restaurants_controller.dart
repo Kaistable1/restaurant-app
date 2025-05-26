@@ -1,5 +1,8 @@
 // import 'dart:html' as html;
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:savrly/main.dart';
 import 'package:savrly/models/resaturant_model.dart';
 import 'dart:typed_data';
+import 'package:http/http.dart' as http;
 
 import 'package:savrly/widgets/global_functions.dart';
 
@@ -132,7 +136,7 @@ class AddRestaurantTabController extends GetxController {
         'reviewCount': 0,
         'city': selectedCity.value.trim(),
         'country': selectedState.value.trim(),
-        'createdAt': Timestamp.fromDate(DateTime.now()),
+        'createdAt': DateTime.now(),
         'dietaryList': [], // Empty array as per your data
         'docID': docID, // Will be set after adding the document
         'entertainmentScheduleList': [], // Empty array as per your data
@@ -163,6 +167,7 @@ class AddRestaurantTabController extends GetxController {
           .doc(docID)
           .set(restaurantData);
       if (isNewRegistery == true) {
+        print('is new registry true------------------');
         restaurantModel = RestaurantModel.fromMap(restaurantData);
         update();
       }
@@ -182,9 +187,6 @@ class AddRestaurantTabController extends GetxController {
 
   updateBasicInfo() async {
     try {
-      // Show loading dialog
-      loadingDialog();
-
       if (isNewRegistery == true) {
         await FirebaseFirestore.instance
             .collection('restaurants')
@@ -193,6 +195,29 @@ class AddRestaurantTabController extends GetxController {
         await addRestaurant();
         Get.back();
         return;
+      }
+      // Show loading dialog
+      loadingDialog();
+
+      if (restaurantModel!.resEmail != emailController.text.trim()) {
+        // Get new email and password from controllers
+        String newEmail = emailController.text.trim();
+        String newPassword = assignPasswordController.text.trim();
+        String uid = await updateCredentials(
+            currentEmail: restaurantModel!.resEmail,
+            currentPassword: restaurantModel!.password,
+            newEmail: newEmail,
+            newPassword: newPassword);
+        if (uid != 'error') {
+          await FirebaseFirestore.instance
+              .collection('restaurants')
+              .doc(restaurantModel?.docID)
+              .update({
+            'password': assignPasswordController.text.trim(),
+            'resEmail': emailController.text.trim(),
+          });
+        }
+        Get.back();
       }
 
       List<String> imagesList =
@@ -210,8 +235,6 @@ class AddRestaurantTabController extends GetxController {
             : imagesList.first,
         'longitude': longitude
             .value, // Hardcoded for now; you can add a map picker later
-        'password': assignPasswordController.text.trim(),
-        'resEmail': emailController.text.trim(),
         'resName': restaurantNameController.text.trim(),
         'socialLink': instagramController.text.trim(),
         'socialMedia': tiktokLinkController.text.trim(),
@@ -227,8 +250,8 @@ class AddRestaurantTabController extends GetxController {
       Get.back();
       // Show success message
       selectedIndex.value++;
-      clearFields();
-      uploadedImage.clear();
+      // clearFields();
+      // uploadedImage.clear();
     } catch (e) {
       Get.back();
       Get.snackbar('Error', 'Failed to updated restaurant: $e');
@@ -310,6 +333,227 @@ class AddRestaurantTabController extends GetxController {
       return 'error';
     }
   }
+
+  Future<String> updateCredentials({
+    required String currentEmail,
+    required String currentPassword,
+    required String newEmail,
+    required String newPassword,
+  }) async {
+    try {
+      print('Current email: $currentEmail');
+      print('Current password: $currentPassword');
+      print('New email: $newEmail');
+      print('New password: $newPassword');
+
+      String? adminEmail = preferences?.getString('adminEmail');
+      String? adminPassword = preferences?.getString('adminPassword');
+
+      if (adminEmail == null || adminPassword == null) {
+        Get.snackbar('Error', 'Admin credentials not found',
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.red,
+            colorText: Colors.white);
+        print('Admin credentials not found');
+        return 'error';
+      }
+
+      bool isValidEmail(String email) {
+        return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
+      }
+
+      if (newEmail.isNotEmpty && !isValidEmail(newEmail)) {
+        Get.snackbar('Error', 'Invalid email format',
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.red,
+            colorText: Colors.white);
+        print('Invalid email format: $newEmail');
+        return 'error';
+      }
+
+      if (newPassword.isNotEmpty && newPassword.length < 6) {
+        Get.snackbar('Error', 'Password must be at least 6 characters',
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.red,
+            colorText: Colors.white);
+        print('Invalid password: too short');
+        return 'error';
+      }
+
+      // Logout admin to sign in restaurant user
+      await FirebaseAuth.instance.signOut();
+      print('Admin logged out successfully');
+
+      // Sign in restaurant user
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: currentEmail,
+        password: currentPassword,
+      );
+      print('Restaurant user logged in with ID ${userCredential.user?.uid}');
+      User? restaurantUser = userCredential.user;
+
+      if (restaurantUser == null) {
+        Get.snackbar('Error', 'Failed to authenticate restaurant user',
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.red,
+            colorText: Colors.white);
+        print('Failed to authenticate restaurant user');
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: adminEmail,
+          password: adminPassword,
+        );
+        print('Admin logged back in');
+        return 'error';
+      }
+
+      // Update Email if needed
+      if (newEmail.isNotEmpty && newEmail != currentEmail) {
+        try {
+          if (restaurantUser.uid.isEmpty) {
+            throw Exception('User UID is empty');
+          }
+          if (newEmail.isEmpty) {
+            throw Exception('New email is empty');
+          }
+          final payload = {
+            'uid': restaurantUser.uid,
+            'newEmail': newEmail.trim().toLowerCase(),
+          };
+          print('Sending payload to Cloud Function: $payload');
+
+          final callable = FirebaseFunctions.instanceFor(region: 'us-central1')
+              .httpsCallable('updateUserEmail');
+          final response = await callable.call(payload);
+          print('Cloud Function response: ${response.data}');
+
+          if (response.data['success'] == true) {
+            print(
+                'Restaurant user email updated to $newEmail via Cloud Function');
+
+            // *** FIX: Re-sign in with new email to refresh token ***
+            UserCredential newCredential =
+                await FirebaseAuth.instance.signInWithEmailAndPassword(
+              email: newEmail,
+              password: currentPassword,
+            );
+            restaurantUser = newCredential.user;
+            print(
+                'Restaurant user re-logged in with updated email: ${restaurantUser?.uid}');
+          } else {
+            String errorMessage = response.data['error'] ?? 'Unknown error';
+            String userFriendlyMessage;
+            switch (errorMessage) {
+              case 'Email already in use':
+                userFriendlyMessage = 'Email is already in use';
+                break;
+              case 'Invalid email format':
+                userFriendlyMessage = 'Invalid email format';
+                break;
+              case 'User not found':
+                userFriendlyMessage = 'User not found';
+                break;
+              default:
+                userFriendlyMessage = 'Failed to update email: $errorMessage';
+            }
+            Get.snackbar('Error', userFriendlyMessage,
+                snackPosition: SnackPosition.TOP,
+                backgroundColor: Colors.red,
+                colorText: Colors.white);
+            print('Email update failed: $errorMessage');
+            await FirebaseAuth.instance.signInWithEmailAndPassword(
+              email: adminEmail,
+              password: adminPassword,
+            );
+            print('Admin logged back in');
+            return 'error';
+          }
+        } catch (e) {
+          Get.snackbar('Error', 'Failed to update email: $e',
+              snackPosition: SnackPosition.TOP,
+              backgroundColor: Colors.red,
+              colorText: Colors.white);
+          print('Email update failed: $e');
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+            email: adminEmail,
+            password: adminPassword,
+          );
+          print('Admin logged back in');
+          return 'error';
+        }
+      }
+
+      // Update Password if needed
+      if (newPassword.isNotEmpty && restaurantModel!.password != newPassword) {
+        try {
+          await restaurantUser?.updatePassword(newPassword);
+          print('Restaurant user password updated');
+        } catch (e) {
+          if (e is FirebaseAuthException && e.code == 'requires-recent-login') {
+            try {
+              AuthCredential credential = EmailAuthProvider.credential(
+                email: currentEmail,
+                password: currentPassword,
+              );
+              await restaurantUser?.reauthenticateWithCredential(credential);
+              print('Re-authentication successful');
+              await restaurantUser?.updatePassword(newPassword);
+              print('Restaurant user password updated after re-auth');
+            } catch (reAuthError) {
+              Get.snackbar('Error', 'Failed to update password: $reAuthError',
+                  snackPosition: SnackPosition.TOP,
+                  backgroundColor: Colors.red,
+                  colorText: Colors.white);
+              print(
+                  'Re-authentication or password update failed: $reAuthError');
+              await FirebaseAuth.instance.signInWithEmailAndPassword(
+                email: adminEmail,
+                password: adminPassword,
+              );
+              print('Admin logged back in');
+              return 'error';
+            }
+          } else {
+            throw e;
+          }
+        }
+      }
+
+      await FirebaseAuth.instance.signOut();
+      print('Restaurant user logged out');
+
+      // Sign admin back in
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: adminEmail,
+        password: adminPassword,
+      );
+      print('Admin logged back in');
+
+      return restaurantUser!.uid;
+    } catch (e) {
+      print('Error updating credentials: $e');
+      try {
+        String? adminEmail = preferences?.getString('adminEmail');
+        String? adminPassword = preferences?.getString('adminPassword');
+        if (adminEmail != null && adminPassword != null) {
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+            email: adminEmail,
+            password: adminPassword,
+          );
+          print('Admin logged back in after error');
+        }
+      } catch (signInError) {
+        print('Error signing admin back in: $signInError');
+      }
+      Get.snackbar('Error', 'Failed to update credentials: $e',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white);
+      return 'error';
+    }
+  }
+
+//
 }
 
 class UploadedImageModel {

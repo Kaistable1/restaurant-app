@@ -63,21 +63,22 @@ class OperatingHoursSubScreenController extends GetxController {
   RxMap slotStates = {}.obs;
   RxMap slotTimes = {}.obs;
 
-void toggleDaySwitch(String day) {
-  daySwitches[day] = !daySwitches[day]!;
-  daySwitchControllers[day]!.value = daySwitches[day]!; // Sync ValueNotifier
-  
-  if (!daySwitches[day]!) {
-    // If day is disabled, set all slots to "Off" and clear times
-    slotStates[day]!.updateAll((key, value) => false);
-    slotTimes[day]!.updateAll((key, value) => '');
+  void toggleDaySwitch(String day) {
+    daySwitches[day] = !daySwitches[day]!;
+    daySwitchControllers[day]!.value = daySwitches[day]!; // Sync ValueNotifier
+
+    if (!daySwitches[day]!) {
+      // If day is disabled, set all slots to "Off" and clear times
+      slotStates[day]!.updateAll((key, value) => false);
+      slotTimes[day]!.updateAll((key, value) => '');
+    }
+
+    daySwitches.refresh();
+    slotStates.refresh();
+    slotTimes.refresh();
+    update(); // Notify GetX listeners
   }
-  
-  daySwitches.refresh();
-  slotStates.refresh();
-  slotTimes.refresh();
-  update(); // Notify GetX listeners
-}
+
 // Toggle the "On/Off" state for a slot
   void toggleSlotState(String day, String slot) {
     slotStates[day]![slot] = !slotStates[day]![slot]!;
@@ -118,7 +119,8 @@ void toggleDaySwitch(String day) {
     print("Saving Operating Hours...");
 
     final addRestaurantTabController = Get.find<AddRestaurantTabController>();
-    final restaurantID = addRestaurantTabController.currentRestaurantID;
+    final restaurantID = addRestaurantTabController.restaurantModel!.docID;
+    ;
     for (var day in daySwitches.keys) {
       // Create a map to hold meal periods for the current day
       Map<String, dynamic> mealsMap = {};

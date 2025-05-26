@@ -105,7 +105,8 @@ class MenuSubScreenController extends GetxController {
       loadingDialog();
 
       final addRestaurantTabController = Get.find<AddRestaurantTabController>();
-      final restaurantID = addRestaurantTabController.currentRestaurantID;
+      final restaurantID = addRestaurantTabController.restaurantModel!.docID;
+      ;
       // Upload all images to Firebase Storage and get their URLs
       List<String> imagesList = uploadedImages.isNotEmpty
           ? await imagesUrl(uploadedImageModels: uploadedImages)

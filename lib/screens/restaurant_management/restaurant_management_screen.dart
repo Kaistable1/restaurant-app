@@ -638,6 +638,7 @@ class _RestaurantManagementScreenState
                                               restaurant;
                                           addController.isNewRegistery =
                                               restaurant.resEmail == '';
+                                          addController.update();
                                           controller.update();
                                           final editRestaurantController =
                                               Get.put(
