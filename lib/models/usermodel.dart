@@ -88,7 +88,7 @@ class UserModel {
       password: TextEditingController(text: data['password'] ?? ''),
       username: TextEditingController(text: data['username'] ?? ''),
       confirmpass: TextEditingController(text: data['confirmpass'] ?? ''),
-      token: data['token'],
+      token: data['fcmToken'],
       userID: data['userID'] ??
           doc.id, // Fallback to document ID if userID is missing
       userImage: RxString(data['userImage'] ?? ''),
