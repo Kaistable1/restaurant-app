@@ -70,6 +70,7 @@ dependencies:
   googleapis_auth: ^1.0.0
   permission_handler:
   geoflutterfire_plus: ^0.0.32
+  flutter_polyline_points: ^2.1.0
 
 
 
