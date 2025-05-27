@@ -5,12 +5,10 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
-import 'package:kaistable_website/models/review_model.dart';
 import 'package:kaistable_website/screens/detail_screens/controller/restaurant_detail_controller.dart';
-import 'package:kaistable_website/screens/detail_screens/widget/images_gallery.dart';
 import 'package:kaistable_website/screens/detail_screens/widget/map_widget.dart';
-import 'package:kaistable_website/screens/detail_screens/widget/review_widget.dart';
-import 'package:kaistable_website/screens/detail_screens/widget/tabs_widget.dart';
+import 'package:kaistable_website/screens/detail_screens/widget/restaurant_details_widget.dart';
+import 'package:kaistable_website/screens/home_screen/events_screen/events_details_screen/event_details_gallary.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_location_controller.dart';
 import 'package:kaistable_website/utils/responsive.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -122,19 +120,73 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Container(
-                      height: 200,
-                      width: Get.width,
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                              fit: BoxFit.fitWidth,
-                              image: NetworkImage(
-                                  widget.restaurantModel?.logoImage ?? ''))),
+                    // Container(
+                    //   height: 200,
+                    //   width: Get.width,
+                    //   decoration: BoxDecoration(
+                    //       image: DecorationImage(
+                    //           fit: BoxFit.fitWidth,
+                    //           image: NetworkImage(
+                    //               widget.restaurantModel?.logoImage ?? ''))),
+                    // ),
+                    Stack(
+                      children: [
+                        Container(
+                          height: Get.height * 0.27,
+                          width: Get.width,
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: NetworkImage(
+                                      widget.restaurantModel!.logoImage),
+                                  fit: BoxFit.cover)),
+                        ),
+                        widget.restaurantModel?.imagesList.length == 0
+                            ? SizedBox()
+                            : Positioned(
+                                bottom: 16,
+                                left: 120,
+                                child: ClipRRect(
+                                  // Prevents blur from overflowing
+                                  borderRadius: BorderRadius.circular(
+                                      4), // Same as container
+                                  child: BackdropFilter(
+                                    filter: ImageFilter.blur(
+                                        sigmaX: 8, sigmaY: 8), // Blur effect
+                                    child: GestureDetector(
+                                      onTap: () => Get.to(EventDetailsGallery(
+                                        imageList: widget
+                                                .restaurantModel?.imagesList ??
+                                            [],
+                                      )),
+                                      child: Container(
+                                        height: 32,
+                                        width: 151,
+                                        decoration: BoxDecoration(
+                                          color: AppColors.whiteColor
+                                              .withOpacity(
+                                                  0.2), // Adjust opacity
+                                          borderRadius:
+                                              BorderRadius.circular(4),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            "Sell all ${widget.restaurantModel?.imagesList.length} photos", // Add text if needed
+                                            style: TextStyle(
+                                              color: AppColors.primaryColor,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                      ],
                     ),
-                    // widget.restaurantModel!.imagesList.isEmpty
-                    //     ?
+
                     SizedBox(height: 30),
-                    //     : SizedBox(height: 130),
                     Center(
                       child: Container(
                         width: 100,
@@ -424,8 +476,6 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                                           borderRadius:
                                               BorderRadius.circular(16)),
                                       child: MapWidget(
-                                        controller: controller,
-                                        isCommingSoon: _isCommingSoon,
                                         lat: widget.restaurantModel?.latitude ??
                                             0.0,
                                         long:

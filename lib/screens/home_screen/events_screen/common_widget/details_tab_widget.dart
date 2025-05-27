@@ -3,10 +3,6 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
 
-import '../../../detail_screens/widget/map_widget.dart';
-import 'package:get/get.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-
 class MapController extends GetxController {
   late GoogleMapController mapController;
 

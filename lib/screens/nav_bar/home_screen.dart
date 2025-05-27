@@ -334,14 +334,30 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Experience',
-                style: TextStyle(
-                  color: AppColors.bottomSheetColor,
-                  fontFamily: 'aftika-regular',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Experience',
+                    style: TextStyle(
+                      color: AppColors.bottomSheetColor,
+                      fontFamily: 'aftika-regular',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    "Your Vibe Awaits You",
+                    textAlign: TextAlign.justify,
+                    style: TextStyle(
+                      color: AppColors.bottomSheetColor,
+                      fontFamily: 'aftika-regular',
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
               InkWell(
                 onTap: () => Get.to(EntertainmentsScreen()),
@@ -490,7 +506,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ));
                       },
                       child: Container(
-                        height: Get.height * 0.29,
+                        height: Get.height * 0.3,
                         width: Get.width,
                         decoration: BoxDecoration(
                           color: AppColors.whiteColor,
@@ -507,13 +523,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 child: Image.network(
                                   restaurant.logoImage,
-                                  height: 169,
+                                  height: Get.height * 0.175,
                                   width: Get.width,
                                   fit: BoxFit.cover,
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 5),
+                            const SizedBox(height: 1),
                             Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 10),
@@ -812,76 +828,95 @@ class _HomeScreenState extends State<HomeScreen> {
       child: StreamBuilder(
         stream: controller.getAllRestaurants(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting)
-            return SizedBox();
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const SizedBox();
+          }
           if (snapshot.hasError) {
             print('Error during stream call ${snapshot.error}');
-            return Text('');
+            return const Text('');
           }
-          if (snapshot.data == null || snapshot.data!.isEmpty) return Text('');
+          if (snapshot.data == null || snapshot.data!.isEmpty) {
+            return const Text('');
+          }
           List<RestaurantModel> all_restaurants = snapshot.data!;
           WidgetsBinding.instance.addPostFrameCallback((_) {
             controller.initailizedSelectors(resaturantsList: all_restaurants);
           });
-          return FutureBuilder(
-            future:
-                controller.getNearbyRestaurants(all_restaurants, 50, context),
-            builder: (context, futureSnapshot) {
-              if (futureSnapshot.connectionState == ConnectionState.waiting)
-                return SizedBox();
-              if (futureSnapshot.hasError) return Text('');
-              if (!futureSnapshot.hasData || futureSnapshot.data!.isEmpty)
-                return Text('');
-              List<RestaurantModel> restaurants = futureSnapshot.data ?? [];
-              if (restaurants.isEmpty) return SizedBox();
-              return Column(
+          return Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "You might like",
-                            style: TextStyle(
-                              color: AppColors.bottomSheetColor,
-                              fontFamily: 'aftika-regular',
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          SizedBox(height: 5),
-                          Text(
-                            "Curated picks just for you",
-                            textAlign: TextAlign.justify,
-                            style: TextStyle(
-                              color: AppColors.bottomSheetColor,
-                              fontFamily: 'aftika-regular',
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
+                      Text(
+                        "You might like",
+                        style: TextStyle(
+                          color: AppColors.bottomSheetColor,
+                          fontFamily: 'aftika-regular',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                      InkWell(
-                        onTap: () => Get.to(NearByAll()),
-                        child: Text(
-                          "view all",
-                          style: TextStyle(
-                            decoration: TextDecoration.underline,
-                            decorationColor: AppColors.primaryColor,
-                            fontFamily: 'Nunito-Regular',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.primaryColor,
-                          ),
+                      const SizedBox(height: 5),
+                      Text(
+                        "Curated picks just for you",
+                        textAlign: TextAlign.justify,
+                        style: TextStyle(
+                          color: AppColors.bottomSheetColor,
+                          fontFamily: 'aftika-regular',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 10),
-                  ListView.builder(
+                  InkWell(
+                    onTap: () => Get.to(NearByAll()),
+                    child: Text(
+                      "view all",
+                      style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        decorationColor: AppColors.primaryColor,
+                        fontFamily: 'Nunito-Regular',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.primaryColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              FutureBuilder(
+                future: controller.getNearbyRestaurants(
+                    all_restaurants, 50, context),
+                builder: (context, futureSnapshot) {
+                  if (futureSnapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (futureSnapshot.hasError) {
+                    return const Text('');
+                  }
+                  if (!futureSnapshot.hasData || futureSnapshot.data!.isEmpty) {
+                    return const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 20),
+                      child: Text(
+                        'Restaurants not available in your region',
+                        style: TextStyle(
+                          fontFamily: 'aftika-regular',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    );
+                  }
+                  List<RestaurantModel> restaurants = futureSnapshot.data ?? [];
+                  return ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: restaurants.length > 2 ? 2 : restaurants.length,
@@ -906,10 +941,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       );
                     },
-                  ),
-                ],
-              );
-            },
+                  );
+                },
+              ),
+            ],
           );
         },
       ),
