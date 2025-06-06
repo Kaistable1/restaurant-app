@@ -159,11 +159,12 @@ class UploadImageSectionState extends State<UploadImageSection> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: DottedBorder(
-                    dashPattern: const [7, 5],
+                    
+                    options:RectDottedBorderOptions( dashPattern: const [7, 5],
                     color: AppColors.primaryColor,
                     strokeWidth: 1,
-                    borderType: BorderType.RRect,
-                    radius: const Radius.circular(6),
+                  
+                    ),
                     child: ClipRRect(
                       borderRadius: const BorderRadius.all(Radius.circular(4)),
                       child: InkWell(

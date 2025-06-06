@@ -1,0 +1,5 @@
+
+module IosAwnCore.Swift {
+  header "IosAwnCore-Swift.h"
+  requires objc
+}

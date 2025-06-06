@@ -25,15 +25,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -47,18 +41,18 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyB-PAK0T8vPSW-obhxPFug-wl8Vk8FzbQ4',
-    appId: '1:626709433373:web:6ef05fbf0a375e6ee08af4',
-    messagingSenderId: '626709433373',
-    projectId: 'restaurant-app-125ea',
-    authDomain: 'restaurant-app-125ea.firebaseapp.com',
-    storageBucket: 'restaurant-app-125ea.appspot.com',
-    measurementId: 'G-E6JS783WLX',
+    apiKey: 'AIzaSyD-aHLAypbdgpbqlSNDl_5ofc257kKQPTI',
+    appId: '1:404399548475:web:782d48d2dfe1e4604dd41e',
+    messagingSenderId: '404399548475',
+    projectId: 'restaurantwebsite-4bdd8',
+    authDomain: 'restaurantwebsite-4bdd8.firebaseapp.com',
+    storageBucket: 'restaurantwebsite-4bdd8.firebasestorage.app',
+    measurementId: 'G-4ETNQB0PV4',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBMGN5MlDf2YqA3HG6uDGdXpDGSQQVny60',
-    appId: '1:404399548475:ios:6d891f6994bb50284dd41e',
+    appId: '1:404399548475:ios:68720a8c2ae8f4c44dd41e',
     messagingSenderId: '404399548475',
     projectId: 'restaurantwebsite-4bdd8',
     storageBucket: 'restaurantwebsite-4bdd8.firebasestorage.app',
@@ -71,6 +65,25 @@ class DefaultFirebaseOptions {
     messagingSenderId: '404399548475',
     projectId: 'restaurantwebsite-4bdd8',
     storageBucket: 'restaurantwebsite-4bdd8.firebasestorage.app',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyBMGN5MlDf2YqA3HG6uDGdXpDGSQQVny60',
+    appId: '1:404399548475:ios:3e4f91d568851a524dd41e',
+    messagingSenderId: '404399548475',
+    projectId: 'restaurantwebsite-4bdd8',
+    storageBucket: 'restaurantwebsite-4bdd8.firebasestorage.app',
+    iosBundleId: 'com.example.kaistableWebsite',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyD-aHLAypbdgpbqlSNDl_5ofc257kKQPTI',
+    appId: '1:404399548475:web:ef4bbc8864f00d854dd41e',
+    messagingSenderId: '404399548475',
+    projectId: 'restaurantwebsite-4bdd8',
+    authDomain: 'restaurantwebsite-4bdd8.firebaseapp.com',
+    storageBucket: 'restaurantwebsite-4bdd8.firebasestorage.app',
+    measurementId: 'G-GF799D5T7X',
   );
 
 }

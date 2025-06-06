@@ -75,245 +75,136 @@ class MapWidget extends StatelessWidget {
   }
 }
 
-class MapDetailWidget extends StatelessWidget {
-  MapDetailWidget({
+class MapDetailWidget extends StatefulWidget {
+  final RestaurantModel restaurantModel;
+  final bool? isCommingSoon;
+
+  const MapDetailWidget({
     super.key,
     required this.restaurantModel,
     this.isCommingSoon,
   });
-  bool? isCommingSoon;
-  RestaurantModel restaurantModel;
+
+  @override
+  State<MapDetailWidget> createState() => _MapDetailWidgetState();
+}
+
+class _MapDetailWidgetState extends State<MapDetailWidget> {
+  bool _showFilters = false;
+
+  List<String> _getAllFilters() {
+    final model = widget.restaurantModel;
+
+    return [
+      ...(model.atmosphereList.isEmpty
+          ? ['Outdoor Seating', 'Karaoke', 'Good for Kids']
+          : model.atmosphereList),
+      ...(model.facilityList.isEmpty
+          ? ['Free Wifi', 'Free Parking', 'Delivery']
+          : model.facilityList),
+      ...(model.dietaryList.isEmpty
+          ? ['Vegan Options', 'Gluten Free']
+          : model.dietaryList),
+      ...(model.entertainmentScheduleList.isEmpty
+          ? ['Live Music', 'DJs', 'Games']
+          : model.entertainmentScheduleList.map((e) => e.eventName)),
+      ...(model.spokenLanguage.isEmpty ? ['English'] : [model.spokenLanguage]),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
+    final allFilters = _getAllFilters();
+
     return Padding(
-      padding: const EdgeInsets.only(left: 10.0),
+      padding: const EdgeInsets.only(left: 15.0, right: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            height: 20,
+        
+          /// Filters Dropdown
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                _showFilters = !_showFilters;
+              });
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Filters',
+                  style: TextStyle(
+                    color: AppColors.headingTextColor,
+                    fontSize: 18,
+                    fontFamily: 'Nunito-Regular',
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                Icon(
+                  _showFilters
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down,
+                  color: AppColors.primaryColor,
+                ),
+              ],
+            ),
           ),
-          restaurantModel.address.isEmpty
-              ? SizedBox()
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          'Address',
-                          style: TextStyle(
-                            color: AppColors.headingTextColor,
-                            fontSize: 14,
-                            fontFamily: 'Nunito-Regular',
-                            fontWeight: FontWeight.w700,
+
+        //  if (_showFilters) const SizedBox(height: 10),
+
+        //   Chips Dropdown List
+
+          if (_showFilters)
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: allFilters
+                  .map((filter) => Chip(
+                        label: Text(
+                          filter,
+                        ),
+                        backgroundColor: Colors.grey.shade200,
+                        shape: StadiumBorder(
+                          side: BorderSide(
+                            color: AppColors.primaryColor,
+                            width: 1.2,
                           ),
                         ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 4,
-                    ),
-                    SizedBox(
-                      height: 40,
-                      width: 290,
-                      child: Text(
-                        restaurantModel.address.isEmpty
-                            ? "comming Soon!"
-                            : restaurantModel.address +
-                                ',${restaurantModel.city} ${restaurantModel.zipCode},${restaurantModel.country}',
-                        style: TextStyle(
-                          color: AppColors.darkGrey,
-                          fontSize: 14,
-                          fontFamily: 'Nunito-Regular',
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-          restaurantModel.atmosphereList.isEmpty
-              ? SizedBox()
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Atmospheres',
-                      style: TextStyle(
-                        color: AppColors.headingTextColor,
-                        fontSize: 14,
-                        fontFamily: 'Nunito-Regular',
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    SizedBox(
-                      width: 325,
-                      child: restaurantModel.atmosphereList.isEmpty
-                          ? Text("comming Soon!")
-                          : _buildStarBox(
-                              titleList: restaurantModel.atmosphereList,
-                              context,
-                            ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                  ],
-                ),
-          restaurantModel.facilityList.isEmpty
-              ? SizedBox()
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Facilities/services',
-                      style: TextStyle(
-                        color: AppColors.headingTextColor,
-                        fontSize: 14,
-                        fontFamily: 'Nunito-Regular',
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    SizedBox(
-                      width: 325,
-                      child: restaurantModel.facilityList.isEmpty
-                          ? Text("comming Soon!")
-                          : _buildStarBox(
-                              titleList: restaurantModel.facilityList,
-                              context,
-                            ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                  ],
-                ),
-          restaurantModel.dietaryList.isEmpty
-              ? SizedBox()
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Dietary Preferences',
-                      style: TextStyle(
-                        color: AppColors.headingTextColor,
-                        fontSize: 14,
-                        fontFamily: 'Nunito-Regular',
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 16,
-                    ),
-                    SizedBox(
-                      width: 325,
-                      child: restaurantModel.dietaryList.isEmpty
-                          ? Text("comming Soon!")
-                          : _buildStarBox(
-                              titleList: restaurantModel.dietaryList,
-                              context,
-                            ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                  ],
-                ),
-          restaurantModel.entertainmentScheduleList.isEmpty
-              ? SizedBox()
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Entertainment',
-                      style: TextStyle(
-                        color: AppColors.headingTextColor,
-                        fontSize: 14,
-                        fontFamily: 'Nunito-Regular',
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    SizedBox(
-                      width: 325,
-                      child: restaurantModel.entertainmentScheduleList.isEmpty
-                          ? Text("comming Soon!")
-                          : _buildStarBox(
-                              titleList: restaurantModel
-                                  .entertainmentScheduleList
-                                  .map((event) => event.eventName)
-                                  .toList(),
-                              context,
-                            ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                  ],
-                ),
-          restaurantModel.priceRange.isEmpty ||
-                  restaurantModel.priceRange == '\$\$'
-              ? SizedBox()
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Price Range',
-                      style: TextStyle(
-                        color: AppColors.headingTextColor,
-                        fontSize: 14,
-                        fontFamily: 'Nunito-Regular',
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    SizedBox(
-                      width: 325,
-                      child: restaurantModel.priceRange == '\$\$'
-                          ? Text("comming Soon!")
-                          : _buildStarBox(
-                              titleList: ['${restaurantModel.priceRange}'],
-                              context,
-                            ),
-                    ),
-                  ],
-                ),
-          restaurantModel.spokenLanguage.isEmpty
-              ? SizedBox()
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Spoken language',
-                      style: TextStyle(
-                        color: AppColors.headingTextColor,
-                        fontSize: 14,
-                        fontFamily: 'Nunito-Regular',
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    restaurantModel.spokenLanguage.isEmpty
-                        ? Text("comming Soon!")
-                        : _buildStarBox(
-                            titleList: [restaurantModel.spokenLanguage],
-                            context,
-                          ),
-                  ],
-                ),
-          isCommingSoon == true
+                      ))
+                  .toList(),
+            ),
+
+          // if (_showFilters) const SizedBox(height: 10),
+
+          /// Simple Filter List (No decoration, just plain text)
+          // if (_showFilters)
+          //   SizedBox(
+          //     height: 200, // Set max height
+          //     child: ListView.builder(
+          //       itemCount: allFilters.length,
+          //       itemBuilder: (context, index) {
+          //         final filter = allFilters[index];
+          //         return Padding(
+          //           padding: const EdgeInsets.symmetric(
+          //               vertical: 6.0, horizontal: 8.0),
+          //           child: Text(
+          //             filter,
+          //             style: TextStyle(
+          //                     fontSize: 14,
+          //                     //fontWeight: FontWeight.w600,
+          //                     fontFamily: 'Nunito-Regular',
+          //                     color:AppColors.tableHeadingColor // Glass text looks better in white
+          //                   ),
+          //           ),
+          //         );
+          //       },
+          //     ),
+          //   ),
+
+          const SizedBox(height: 20),
+
+          widget.isCommingSoon == true
               ? Column(
                   children: [
                     SizedBox(
@@ -325,7 +216,7 @@ class MapDetailWidget extends StatelessWidget {
                       fontSize: 16,
                       ontapp: () {
                         showCustomDialog(context,
-                            resaturant_model: restaurantModel);
+                            resaturant_model: widget.restaurantModel);
                       },
                       fontWeight: FontWeight.bold,
                     ),
@@ -569,6 +460,116 @@ class MapDetailWidget extends StatelessWidget {
       hintText: hint,
       hintStyle: _textStyle(),
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+    );
+  }
+}
+
+class ExpandableAddressTile extends StatefulWidget {
+  final String address;
+  final String city;
+  final String zipCode;
+  final String country;
+  final String email;
+  final String? phone;
+  final String? website;
+
+  const ExpandableAddressTile({
+    Key? key,
+    required this.address,
+    required this.city,
+    required this.zipCode,
+    required this.country,
+    required this.email,
+    this.phone,
+    this.website,
+  }) : super(key: key);
+
+  @override
+  State<ExpandableAddressTile> createState() => _ExpandableAddressTileState();
+}
+
+class _ExpandableAddressTileState extends State<ExpandableAddressTile> {
+  bool isExpanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final fullAddress = widget.address.isEmpty
+        ? 'Coming Soon!'
+        : '${widget.address}, ${widget.city}, ${widget.zipCode}, ${widget.country}';
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Top row (icon + Address + arrow)
+        InkWell(
+          onTap: () => setState(() => isExpanded = !isExpanded),
+          child: Padding(
+            padding: const EdgeInsets.only(right: 15),
+            child: Row(
+              children: [
+                const Icon(Icons.location_on, color: Colors.teal),
+                const SizedBox(width: 8),
+                const Text(
+                  'Address',
+                  style: TextStyle(
+                    color: AppColors.headingTextColor,
+                    fontSize: 14,
+                    fontFamily: 'Nunito-Regular',
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const Spacer(),
+                Icon(
+                  isExpanded
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down,
+                  color: Colors.teal,
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 4),
+
+        // Address line (aligned)
+        Padding(
+          padding: const EdgeInsets.only(left: 32),
+          child: Text(
+            fullAddress,
+            style: const TextStyle(color: Colors.grey),
+          ),
+        ),
+
+        // Extra content when expanded
+        if (isExpanded) ...[
+          const SizedBox(height: 12),
+          // Email Row
+          Padding(
+            padding: const EdgeInsets.only(left: 5),
+            child: Row(
+              children: [
+                const Icon(Icons.email, color: Colors.teal, size: 20),
+                const SizedBox(width: 10),
+                const Text('Email',
+                    style: TextStyle(
+                      color: AppColors.headingTextColor,
+                      fontSize: 14,
+                      fontFamily: 'Nunito-Regular',
+                      fontWeight: FontWeight.w700,
+                    )),
+              ],
+            ),
+          ),
+          const SizedBox(height: 4),
+          Padding(
+            padding: const EdgeInsets.only(left: 32),
+            child:
+                Text(widget.email, style: const TextStyle(color: Colors.grey)),
+          ),
+
+          // Phone Row
+        ]
+      ],
     );
   }
 }

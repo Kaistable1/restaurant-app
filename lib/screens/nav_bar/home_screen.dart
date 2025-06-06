@@ -451,7 +451,7 @@ class _HomeScreenState extends State<HomeScreen> {
             final restaurant = restaurantSnapshot.data!;
 
             return Container(
-              height: Get.height * 0.45,
+              // height: Get.height * 0.45,
               width: Get.width,
               decoration: BoxDecoration(
                 color: const Color.fromARGB(255, 143, 164, 157),
@@ -490,7 +490,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ));
                       },
                       child: Container(
-                        height: Get.height * 0.29,
+                        // height: Get.height * 0.29,
                         width: Get.width,
                         decoration: BoxDecoration(
                           color: AppColors.whiteColor,
@@ -536,23 +536,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             Padding(
                               padding: const EdgeInsets.only(
                                   left: 10, top: 5, right: 10),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      restaurant.specialConditions,
-                                      textAlign: TextAlign.justify,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w500,
-                                        color: AppColors.headingTextColor,
-                                        fontFamily: 'Nunito-Regular',
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                              child: ExpandableText(
+                                text: restaurant.specialConditions,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColors.headingTextColor,
+                                  fontFamily: 'Nunito-Regular',
+                                ),
                               ),
                             ),
                           ],
@@ -708,23 +699,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ],
                     ),
-                    // InkWell(
-                    //   onTap: () {
-                    //     print('presss view all');
-                    //     Get.to(TrendingViewAll());
-                    //   },
-                    //   child: Text(
-                    //     "view all",
-                    //     style: TextStyle(
-                    //       decoration: TextDecoration.underline,
-                    //       decorationColor: AppColors.primaryColor,
-                    //       fontFamily: 'Nunito-Regular',
-                    //       fontSize: 12,
-                    //       fontWeight: FontWeight.w500,
-                    //       color: AppColors.primaryColor,
-                    //     ),
-                    //   ),
-                    // ),
                   ],
                 ),
               ),
@@ -732,6 +706,7 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(
                 height: Get.height * 0.3,
                 child: ListView.builder(
+                  shrinkWrap: true,
                   scrollDirection: Axis.horizontal,
                   itemCount: restaurants.length,
                   itemBuilder: (context, index) {
@@ -769,7 +744,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           SizedBox(height: 6),
                           SizedBox(
-                            width: Get.width * 0.3,
+                            // width: Get.width * 0.3,
                             child: Row(
                               children: [
                                 Image.asset(
@@ -1067,6 +1042,128 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+//   Widget _buildNearBySection() {
+//   final HomeLocationController controller = Get.put(HomeLocationController());
+//   return Padding(
+//     padding: const EdgeInsets.only(left: 14, right: 14),
+//     child: Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         // Header section with proper spacing
+//         Padding(
+//           padding: const EdgeInsets.only(bottom: 10),
+//           child: Row(
+//             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//             children: [
+//               Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   Text(
+//                     "You might like",
+//                     style: TextStyle(
+//                       color: AppColors.bottomSheetColor,
+//                       fontFamily: 'aftika-regular',
+//                       fontSize: 16,
+//                       fontWeight: FontWeight.w700,
+//                     ),
+//                   ),
+//                   SizedBox(height: 5),
+//                   Text(
+//                     "Curated picks just for you",
+//                     style: TextStyle(
+//                       color: AppColors.bottomSheetColor,
+//                       fontFamily: 'aftika-regular',
+//                       fontSize: 12,
+//                       fontWeight: FontWeight.w500,
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//               InkWell(
+//                 onTap: () => Get.to(NearByAll()),
+//                 child: Text(
+//                   "view all",
+//                   style: TextStyle(
+//                     decoration: TextDecoration.underline,
+//                     decorationColor: AppColors.primaryColor,
+//                     fontFamily: 'Nunito-Regular',
+//                     fontSize: 14,
+//                     fontWeight: FontWeight.w500,
+//                     color: AppColors.primaryColor,
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+
+//         // Restaurants list
+//         StreamBuilder(
+//           stream: controller.getAllRestaurants(),
+//           builder: (context, snapshot) {
+//             if (snapshot.connectionState == ConnectionState.waiting) {
+//               return SizedBox(height: 200, child: Center(child: CircularProgressIndicator()));
+//             }
+//             if (snapshot.hasError) {
+//               return Text('Error loading restaurants');
+//             }
+//             if (snapshot.data == null || snapshot.data!.isEmpty) {
+//               return Text('No nearby restaurants found');
+//             }
+
+//             List<RestaurantModel> all_restaurants = snapshot.data!;
+//             WidgetsBinding.instance.addPostFrameCallback((_) {
+//               controller.initailizedSelectors(resaturantsList: all_restaurants);
+//             });
+
+//             return FutureBuilder(
+//               future: controller.getNearbyRestaurants(all_restaurants, 50000),
+//               builder: (context, futureSnapshot) {
+//                 if (futureSnapshot.connectionState == ConnectionState.waiting) {
+//                   return SizedBox(height: 200, child: Center(child: CircularProgressIndicator()));
+//                 }
+//                 if (futureSnapshot.hasError) {
+//                   return Text('Error loading nearby restaurants');
+//                 }
+//                 if (!futureSnapshot.hasData || futureSnapshot.data!.isEmpty) {
+//                   return Text('No restaurants in your area');
+//                 }
+
+//                 List<RestaurantModel> restaurants = futureSnapshot.data ?? [];
+//                 return ListView.builder(
+//                   shrinkWrap: true,
+//                   physics: NeverScrollableScrollPhysics(),
+//                   itemCount: restaurants.length > 2 ? 2 : restaurants.length,
+//                   itemBuilder: (context, index) {
+//                     final item = restaurants[index];
+//                     return Padding(
+//                       padding: const EdgeInsets.only(bottom: 16),
+//                       child: InkWell(
+//                         onTap: () => Get.to(RestaurantDetailScreen(restaurantModel: item)),
+//                         child: RectangleWidget(
+//                           imgHeight: 169,
+//                           title: item.resName,
+//                           description: item.address,
+//                           resturant_id: item.docID,
+//                           imagePath: item.logoImage,
+//                           timetext: '10 AM',
+//                           percentText: '25%',
+//                           endTimeText: '9 PM',
+//                           isFavorite: false.obs,
+//                         ),
+//                       ),
+//                     );
+//                   },
+//                 );
+//               },
+//             );
+//           },
+//         ),
+//       ],
+//     ),
+//   );
+// }
+
   Widget trendingSection() {
     List<String> img = [
       'assets/images/aaa.jpg',
@@ -1180,6 +1277,74 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(height: 20),
         ],
       ),
+    );
+  }
+}
+
+
+class ExpandableText extends StatefulWidget {
+  final String text;
+  final TextStyle style;
+
+  const ExpandableText({
+    Key? key,
+    required this.text,
+    required this.style,
+  }) : super(key: key);
+
+  @override
+  _ExpandableTextState createState() => _ExpandableTextState();
+}
+
+class _ExpandableTextState extends State<ExpandableText> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final span = TextSpan(text: widget.text, style: widget.style);
+        final tp = TextPainter(
+          text: span,
+          maxLines: 2,
+          textDirection: TextDirection.ltr,
+        )..layout(maxWidth: constraints.maxWidth);
+
+        final isOverflow = tp.didExceedMaxLines;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              widget.text,
+              style: widget.style,
+              textAlign: TextAlign.justify,
+              maxLines: _expanded ? null : 2,
+              overflow: TextOverflow.fade,
+            ),
+            if (isOverflow)
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _expanded = !_expanded;
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    _expanded ? 'See less' : 'See more',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color:AppColors.primaryColor,
+                      fontFamily: 'Nunito-Regular',
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 }

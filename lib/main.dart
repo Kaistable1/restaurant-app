@@ -5,6 +5,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:kaistable_website/firebase_options.dart'
+    show DefaultFirebaseOptions;
 import 'package:kaistable_website/models/usermodel.dart';
 import 'package:kaistable_website/splash_screen/splashscreen.dart';
 import 'package:kaistable_website/widgets/global_functions.dart';
@@ -12,6 +14,13 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 import 'main_controller.dart';
+import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:video_player/video_player.dart';
 
 // Android channel for notifications
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
@@ -38,7 +47,10 @@ Rx<UserModel>? currentUserDataModel;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   // Initialize local notification plugin
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -113,6 +125,8 @@ Future<void> subscribeToTopic(String topic) async {
 
 RxBool showcaseInProgress = false.obs;
 
+
+
 class MyApp extends StatelessWidget {
   MyApp({super.key});
 
@@ -130,3 +144,5 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+
