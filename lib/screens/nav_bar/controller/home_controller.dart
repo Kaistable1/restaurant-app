@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:kaistable_website/models/banner.dart';
+import 'package:kaistable_website/models/resaturant_model.dart';
 
 class HomeController extends GetxController {
   var currentIndex = 0.obs;
@@ -86,4 +87,25 @@ class HomeController extends GetxController {
       }).toList();
     });
   }
+
+
+  List<String> getAllFilters(RestaurantModel model) {
+  return [
+    ...(model.atmosphereList.isEmpty
+        ? ['Outdoor Seating', 'Karaoke', 'Good for Kids']
+        : model.atmosphereList),
+    ...(model.facilityList.isEmpty
+        ? ['Free Wifi', 'Free Parking', 'Delivery']
+        : model.facilityList),
+    ...(model.dietaryList.isEmpty
+        ? ['Vegan Options', 'Gluten Free']
+        : model.dietaryList),
+    ...(model.entertainmentScheduleList.isEmpty
+        ? ['Live Music', 'DJs', 'Games']
+        : model.entertainmentScheduleList.map((e) => e.eventName)),
+    ...(model.spokenLanguage.isEmpty ? ['English'] : [model.spokenLanguage]),
+  ];
+}
+
+
 }

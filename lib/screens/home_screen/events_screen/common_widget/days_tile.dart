@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
+import 'package:kaistable_website/screens/home_screen/home_controller/home_location_controller.dart';
 
 class BookmarksController extends GetxController {
   var bookmarkedItems =
@@ -26,6 +27,11 @@ class DaysTile extends StatelessWidget {
   final String? location;
   final String? type;
   final VoidCallback onTap;
+
+  final double? userLat;
+  final double? userLng;
+  final double? eventLat;
+  final double? eventLng;
   final BookmarksController bookmarkController = Get.put(BookmarksController());
 
   DaysTile(
@@ -34,10 +40,26 @@ class DaysTile extends StatelessWidget {
       this.title,
       this.location,
       required this.onTap,
-      this.type});
+      this.type,
+      this.userLat,
+      this.userLng,
+      this.eventLat,
+      this.eventLng});
 
   @override
   Widget build(BuildContext context) {
+    final HomeLocationController homeController =
+        Get.find<HomeLocationController>();
+
+    double? distanceMiles;
+    if (userLat != null &&
+        userLng != null &&
+        eventLat != null &&
+        eventLng != null) {
+      distanceMiles = homeController.calculateDistanceInMiles(
+          userLat!, userLng!, eventLat!, eventLng!);
+      print('Distance: $distanceMiles');
+    }
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -61,6 +83,7 @@ class DaysTile extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 10),
+
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -102,12 +125,24 @@ class DaysTile extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 4,
-                  children: [
-                    _buildCategoryChip(type ?? ''),
-                  ],
+                SizedBox(
+                  width: Get.width * 0.60, // adjust as needed (60% of screen)
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildCategoryChip(type ?? ''), // left
+                      distanceMiles != null
+                          ? Text(
+                              '${distanceMiles.toStringAsFixed(1)} mi',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.headingTextColor,
+                              ),
+                            )
+                          : SizedBox.shrink(),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -142,6 +177,13 @@ class DaysTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.whiteColor,
         borderRadius: BorderRadius.circular(4),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 4,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
       child: Center(
         child: Text(

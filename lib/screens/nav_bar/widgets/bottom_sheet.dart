@@ -8,7 +8,8 @@ import 'filter_widget.dart';
 
 void showFilterBottomSheet() {
   final FilterController controller = Get.put(FilterController());
-
+  // final filterSelectionController =
+  //                     Get.find<FilterSelectionController>();
   Get.bottomSheet(
     Container(
       height: Get.height * 0.8,
@@ -33,7 +34,7 @@ void showFilterBottomSheet() {
                       style: TextStyle(color: Colors.red, fontSize: 16)),
                 ),
                 GestureDetector(
-                  onTap: controller.clearAll,
+                  onTap:controller .clearAll,
                   child: const Text("Clear all",
                       style: TextStyle(color: Colors.red, fontSize: 16)),
                 ),
@@ -60,6 +61,7 @@ void showFilterBottomSheet() {
             ),
 
             // Expandable Filter Sections with Checkboxes
+            
             ...controller.filterOptions.keys
                 .map((category) => buildCheckboxFilter(category, controller))
                 .toList(),

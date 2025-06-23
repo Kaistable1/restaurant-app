@@ -139,16 +139,16 @@ class NewViewall extends StatelessWidget {
                           child: Column(
                             children: [
                               Flexible(
-                                child: GridView.builder(
+                                child: ListView.builder(
                                   shrinkWrap: true,
                                   physics: AlwaysScrollableScrollPhysics(),
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    mainAxisExtent: Get.height * 0.2,
-                                    crossAxisCount: 2,
-                                    crossAxisSpacing: 10,
-                                    mainAxisSpacing: 20,
-                                  ),
+                                  // gridDelegate:
+                                  //     SliverGridDelegateWithFixedCrossAxisCount(
+                                  //   mainAxisExtent: Get.height * 0.2,
+                                  //   crossAxisCount: 2,
+                                  //   crossAxisSpacing: 10,
+                                  //   mainAxisSpacing: 20,
+                                  // ),
                                   itemCount: controller.restaurants.length +
                                       (controller.hasMoreData.value ? 1 : 0),
                                   itemBuilder: (context, index) {
@@ -158,20 +158,26 @@ class NewViewall extends StatelessWidget {
                                           child: CircularProgressIndicator());
                                     }
                                     final item = controller.restaurants[index];
-                                    return InkWell(
-                                      onTap: () {
-                                        Get.to(RestaurantDetailScreen(
-                                            restaurantModel: item));
-                                      },
-                                      child: RectangleWidget(
-                                        title: item.resName,
-                                        description: item.address,
-                                        resturant_id: item.docID,
-                                        imagePath: item.logoImage,
-                                        timetext: '10 AM',
-                                        percentText: '25%',
-                                        endTimeText: '9 PM',
-                                        isFavorite: false.obs,
+                                    return Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 20),
+                                      child: InkWell(
+                                        onTap: () {
+                                          Get.to(RestaurantDetailScreen(
+                                              restaurantModel: item));
+                                        },
+                                        child: RectangleWidget(
+                                          title: item.resName,
+                                          description: item.address,
+                                          resturant_id: item.docID,
+                                          imagePath: item.logoImage,
+                                          timetext: '10 AM',
+                                          percentText: '25%',
+                                          endTimeText: '9 PM',
+                                          isFavorite: false.obs,
+                                          width: double.infinity,
+                                          height: 200,
+                                        ),
                                       ),
                                     );
                                   },

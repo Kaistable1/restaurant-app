@@ -206,40 +206,45 @@ class _TrendingViewAllState extends State<TrendingViewAll> {
 
                           return GetBuilder<HomeLocationController>(
                             builder: (controller) {
-                              return GridView.builder(
+                              return ListView.builder(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                  mainAxisExtent: Get.height * 0.2,
-                                  crossAxisCount: 2,
-                                  crossAxisSpacing: 10,
-                                  mainAxisSpacing: 20,
-                                ),
+                                // gridDelegate:
+                                //     SliverGridDelegateWithFixedCrossAxisCount(
+                                //   mainAxisExtent: Get.height * 0.2,
+                                //   crossAxisCount: 2,
+                                //   crossAxisSpacing: 10,
+                                //   mainAxisSpacing: 20,
+                                // ),
                                 itemCount:
                                     controller.filteredRestaurants.length,
                                 itemBuilder: (context, index) {
                                   final item =
                                       controller.filteredRestaurants[index];
-                                  return InkWell(
-                                    onTap: () {
-                                      Get.to(RestaurantDetailScreen(
-                                        restaurantModel: item,
-                                      ));
-                                    },
-                                    child: RectangleWidget(
-                                      title: item.resName,
-                                      description: item.address,
-                                      resturant_id: item.docID,
-                                      imagePath: item.logoImage,
-                                      timetext: '10 AM',
-                                      percentText: '25%',
-                                      endTimeText: '9 PM',
-                                      // percentageOff:
-                                      //     item.menuList.percentageOff,
-                                      // happyhour:
-                                      //     item.menuList.happyHourSpecials,
-                                      isFavorite: false.obs,
+                                  return Padding(
+                                    padding: const EdgeInsets.only(bottom: 20),
+                                    child: InkWell(
+                                      onTap: () {
+                                        Get.to(RestaurantDetailScreen(
+                                          restaurantModel: item,
+                                        ));
+                                      },
+                                      child: RectangleWidget(
+                                        title: item.resName,
+                                        description: item.address,
+                                        resturant_id: item.docID,
+                                        imagePath: item.logoImage,
+                                        timetext: '10 AM',
+                                        percentText: '25%',
+                                        endTimeText: '9 PM',
+                                        width: double.infinity,
+                                        height: 250,
+                                        // percentageOff:
+                                        //     item.menuList.percentageOff,
+                                        // happyhour:
+                                        //     item.menuList.happyHourSpecials,
+                                        isFavorite: false.obs,
+                                      ),
                                     ),
                                   );
                                 },

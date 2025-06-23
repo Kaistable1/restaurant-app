@@ -64,7 +64,7 @@ Widget buildShimmerEffect() {
     physics: NeverScrollableScrollPhysics(),
     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
       mainAxisExtent: Get.height * 0.2,
-      crossAxisCount: 2,
+      crossAxisCount: 1,
       crossAxisSpacing: 10,
       mainAxisSpacing: 20,
     ),
@@ -75,6 +75,7 @@ Widget buildShimmerEffect() {
         highlightColor: Colors.grey[100]!,
         child: Container(
           height: Get.height * 0.2,
+           width: double.infinity,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),

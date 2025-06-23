@@ -8,19 +8,16 @@ import 'package:get/get.dart';
 import 'package:kaistable_website/firebase_options.dart'
     show DefaultFirebaseOptions;
 import 'package:kaistable_website/models/usermodel.dart';
+import 'package:kaistable_website/screens/nav_bar/controller/search_controller.dart';
 import 'package:kaistable_website/splash_screen/splashscreen.dart';
 import 'package:kaistable_website/widgets/global_functions.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 import 'main_controller.dart';
-import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:video_player/video_player.dart';
+
+
+import 'screens/nav_bar/widgets/homeScreenWidget/home_screen_controller.dart';
 
 // Android channel for notifications
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
@@ -47,6 +44,8 @@ Rx<UserModel>? currentUserDataModel;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Get.put(HomeFilterSearchController());
+   Get.put(FilterController());
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -125,24 +124,55 @@ Future<void> subscribeToTopic(String topic) async {
 
 RxBool showcaseInProgress = false.obs;
 
+// class MyApp extends StatelessWidget {
+//   MyApp({super.key});
 
-
+//   @override
+//   Widget build(BuildContext context) {
+//     return MediaQuery(
+//       data: MediaQuery.of(context).copyWith(
+//           textScaler: TextScaler.linear(
+//               min(MediaQuery.of(context).textScaleFactor, 1.0))),
+//       child: GetMaterialApp(
+//         debugShowCheckedModeBanner: false,
+//         title: 'Kaistable',
+//         home: SplashScreen(),
+//       ),
+//     );
+//   }
+// }
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MediaQuery(
-      data: MediaQuery.of(context).copyWith(
-          textScaler: TextScaler.linear(
-              min(MediaQuery.of(context).textScaleFactor, 1.0))),
-      child: GetMaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Kaistable',
-        home: SplashScreen(),
+    return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Kaistable',
+
+      theme: ThemeData(
+        textTheme: TextTheme(
+          headlineLarge: TextStyle(
+            fontFamily: 'NunitoSans-Regular', // heading font
+            fontWeight: FontWeight.normal, // ❌ iOS Bold blocked
+          ),
+          bodyLarge: TextStyle(
+            fontFamily: 'NunitoSans-Regular', // body font
+            fontWeight: FontWeight.normal, // ❌ iOS Bold blocked
+          ),
+        ),
       ),
+
+      home: SplashScreen(),
+
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            textScaler: TextScaler.linear(1.0), // ❌ Text scaling blocked
+          ),
+          child: child!,
+        );
+      },
     );
   }
 }
-
-

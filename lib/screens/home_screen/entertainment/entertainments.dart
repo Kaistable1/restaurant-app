@@ -10,6 +10,7 @@ import '../../../custom_widget/separate_text_field.dart';
 import '../home_controller/home_location_controller.dart';
 import '../home_controller/home_new_controller.dart';
 
+// ignore: must_be_immutable
 class EntertainmentsScreen extends StatelessWidget {
   final Function(int)? onNavigate;
   final HomeNewController newController = Get.put(HomeNewController());
@@ -180,36 +181,41 @@ class EntertainmentsScreen extends StatelessWidget {
                           });
                           return GetBuilder<HomeLocationController>(
                             builder: (controller) {
-                              return GridView.builder(
+                              return ListView.builder(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                  mainAxisExtent: Get.height * 0.18,
-                                  crossAxisCount: 2,
-                                  crossAxisSpacing: 10,
-                                  mainAxisSpacing: 20,
-                                ),
+                                // gridDelegate:
+                                //     SliverGridDelegateWithFixedCrossAxisCount(
+                                //   mainAxisExtent: Get.height * 0.18,
+                                //   crossAxisCount: 2,
+                                //   crossAxisSpacing: 10,
+                                //   mainAxisSpacing: 20,
+                                // ),
                                 itemCount:
                                     controller.filteredRestaurants.length,
                                 itemBuilder: (context, index) {
                                   final item =
                                       controller.filteredRestaurants[index];
-                                  return InkWell(
-                                    onTap: () {
-                                      Get.to(RestaurantDetailScreen(
-                                        restaurantModel: item,
-                                      ));
-                                    },
-                                    child: RectangleWidget(
-                                      title: item.resName,
-                                      description: item.address,
-                                      resturant_id: item.docID,
-                                      imagePath: item.logoImage,
-                                      timetext: '10 AM',
-                                      percentText: '25%',
-                                      endTimeText: '9 PM',
-                                      isFavorite: false.obs,
+                                  return Padding(
+                                    padding: const EdgeInsets.only(bottom: 20),
+                                    child: InkWell(
+                                      onTap: () {
+                                        Get.to(RestaurantDetailScreen(
+                                          restaurantModel: item,
+                                        ));
+                                      },
+                                      child: RectangleWidget(
+                                        title: item.resName,
+                                        description: item.address,
+                                        resturant_id: item.docID,
+                                        imagePath: item.logoImage,
+                                        timetext: '10 AM',
+                                        percentText: '25%',
+                                        endTimeText: '9 PM',
+                                        isFavorite: false.obs,
+                                        width: double.infinity,
+                                        height: 250,
+                                      ),
                                     ),
                                   );
                                 },

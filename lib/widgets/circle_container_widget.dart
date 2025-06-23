@@ -31,7 +31,7 @@ class CircleContainerWidget extends StatelessWidget {
     return InkWell(
       onTap: ontap,
       child: Container(
-        width: Get.width * 0.45,
+        width: Get.width,
         decoration: BoxDecoration(
             color: Colors.transparent, borderRadius: BorderRadius.circular(10)),
         child: Column(
@@ -39,8 +39,8 @@ class CircleContainerWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: 172,
-              height: 124,
+              width: double.infinity,
+              height: 200,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 image: DecorationImage(

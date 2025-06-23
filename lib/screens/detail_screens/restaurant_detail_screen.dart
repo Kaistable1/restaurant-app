@@ -9,8 +9,8 @@ import 'package:kaistable_website/models/review_model.dart';
 import 'package:kaistable_website/screens/detail_screens/controller/restaurant_detail_controller.dart';
 import 'package:kaistable_website/screens/detail_screens/widget/images_gallery.dart';
 import 'package:kaistable_website/screens/detail_screens/widget/map_widget.dart';
+import 'package:kaistable_website/screens/detail_screens/widget/map_with_direction_widget.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_location_controller.dart';
-import 'package:kaistable_website/utils/responsive.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../constants/app_colors.dart';
@@ -29,14 +29,15 @@ class RestaurantDetailScreen extends StatefulWidget {
 }
 
 class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
-  final controller = Get.put(RestaurantDetailController());
+  late final RestaurantDetailController controller;
+  late final HomeLocationController homeLocationController;
 
   final LocationListController locationController = LocationListController();
 
-  final HomeLocationController homeLocationController =
-      Get.put(HomeLocationController());
   @override
   void initState() {
+    controller = Get.put(RestaurantDetailController());
+    homeLocationController = Get.put(HomeLocationController());
     homeLocationController.addRecentView(
         restaurantID: widget.restaurantModel?.docID ?? '',
         resName: widget.restaurantModel?.resName ?? '');
@@ -47,544 +48,522 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
   bool showExperienceTable = true;
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      int indexOfMenuPersentageOff = 0;
-      int indexOfMenuHappyHourOff = 0;
+    bool _isCommingSoon = widget.restaurantModel?.resEmail == '' ||
+        (widget.restaurantModel?.resEmail.isEmpty ?? true);
+    print('widget.restaurantModel?.resEmail ${_isCommingSoon}');
+    return WillPopScope(
+        onWillPop: () async {
+          // Navigator.pop(context);
 
-      indexOfMenuPersentageOff =
-          homeLocationController.selectedPersentage.indexOf(true);
-      indexOfMenuHappyHourOff =
-          homeLocationController.selectedHappyhour.indexOf(true);
-      bool _isCommingSoon = widget.restaurantModel?.resEmail == '' ||
-          (widget.restaurantModel?.resEmail.isEmpty ?? true);
-      print('widget.restaurantModel?.resEmail ${_isCommingSoon}');
-      return WillPopScope(
-          onWillPop: () async {
-            Get.back();
-            return false;
-          },
-          child: Scaffold(
+          Get.back();
+          return false;
+        },
+        child: Scaffold(
+          backgroundColor: AppColors.bgColor,
+          appBar: AppBar(
             backgroundColor: AppColors.bgColor,
-            appBar: AppBar(
-              backgroundColor: AppColors.bgColor,
-              iconTheme: const IconThemeData(
-                color: AppColors.primaryColor,
-              ),
-              centerTitle: true,
-              automaticallyImplyLeading: true,
-              leading: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Container(
-                  height: 16,
-                  width: 16,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        spreadRadius: 1,
-                        blurRadius: 3,
-                        offset: const Offset(0, 1),
-                      ),
-                    ],
-                  ),
-                  child: GestureDetector(
-                    onTap: () {
-                      Get.back();
-                    },
-                    child: Icon(Icons.arrow_back, size: 18),
-                  ),
+            iconTheme: const IconThemeData(
+              color: AppColors.primaryColor,
+            ),
+            centerTitle: true,
+            automaticallyImplyLeading: true,
+            leading: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Container(
+                height: 16,
+                width: 16,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      spreadRadius: 1,
+                      blurRadius: 3,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
                 ),
-              ),
-              actions: [
-                auth.currentUser == null || widget.restaurantModel?.docID == ''
-                    ? SizedBox()
-                    : HomeLocationController().favoriteHeart(
-                        resturant_id: widget.restaurantModel?.docID),
-                SizedBox(
-                  width: 12,
-                )
-              ],
-              title: const Text(
-                'Restaurant details',
-                style: const TextStyle(
-                  fontSize: 17,
-                  color: AppColors.bottomSheetColor,
-                  fontWeight: FontWeight.w700,
-                  fontFamily: 'Nunito-Bold',
+                child: GestureDetector(
+                  onTap: () {
+                    Get.back();
+                  },
+                  child: Icon(Icons.arrow_back, size: 18),
                 ),
               ),
             ),
-            body: SingleChildScrollView(
-              child: Stack(children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        height: 200,
-                        width: Get.width,
-                        decoration: BoxDecoration(
-                            image: DecorationImage(
-                                fit: BoxFit.fitWidth,
-                                image: NetworkImage(
-                                    widget.restaurantModel?.logoImage ?? ''))),
-                      ),
-                      SizedBox(
-                        height: 80,
-                      ),
+            actions: [
+              auth.currentUser == null || widget.restaurantModel?.docID == ''
+                  ? SizedBox()
+                  : HomeLocationController().favoriteHeart(
+                      resturant_id: widget.restaurantModel?.docID),
+              SizedBox(
+                width: 12,
+              )
+            ],
+            title: const Text(
+              'Restaurant details',
+              style: const TextStyle(
+                fontSize: 17,
+                color: AppColors.bottomSheetColor,
+                fontWeight: FontWeight.w700,
+                fontFamily: 'Nunito-Bold',
+              ),
+            ),
+          ),
+          body: SingleChildScrollView(
+            child: Stack(children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 200,
+                      width: Get.width,
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                              fit: BoxFit.fitWidth,
+                              image: NetworkImage(
+                                  widget.restaurantModel?.logoImage ?? ''))),
+                    ),
+                    SizedBox(
+                      height: 80,
+                    ),
 
-                      AboutSectionWidget(
-                        aboutText: widget.restaurantModel?.about ?? '',
-                        resturantID: widget.restaurantModel?.docID ?? '',
-                      ),
-                      //  SizedBox(
-                      //   height: 10,
-                      // ),
-                      ExpandableAddressTile(
-                        address: widget.restaurantModel!.address,
-                        city: widget.restaurantModel!.city,
-                        zipCode: widget.restaurantModel!.zipCode,
-                        country: widget.restaurantModel!.country,
-                        email: widget.restaurantModel!.resEmail,
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
+                    AboutSectionWidget(
+                      aboutText: widget.restaurantModel?.about ?? '',
+                      resturantID: widget.restaurantModel?.docID ?? '',
+                    ),
+                    //  SizedBox(
+                    //   height: 10,
+                    // ),
+                    ExpandableAddressTile(
+                      address: widget.restaurantModel!.address,
+                      city: widget.restaurantModel!.city,
+                      zipCode: widget.restaurantModel!.zipCode,
+                      country: widget.restaurantModel!.country,
+                      email: widget.restaurantModel!.resEmail,
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
 
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          widget.restaurantModel!.entertainmentScheduleList
-                                  .isEmpty
-                              ? SizedBox()
-                              : Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        widget.restaurantModel!.entertainmentScheduleList
+                                .isEmpty
+                            ? SizedBox()
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 16.0, right: 16),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          showExperienceTable =
+                                              !showExperienceTable;
+                                        });
+                                      },
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'Experience',
+                                            style: TextStyle(
+                                              color: AppColors.headingTextColor,
+                                              fontSize: 17,
+                                              fontFamily: 'aftika-regular',
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
+                                          Icon(
+                                            showExperienceTable
+                                                ? Icons.keyboard_arrow_up
+                                                : Icons.keyboard_arrow_down,
+                                            color: AppColors.primaryColor,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  if (showExperienceTable)
                                     Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 16.0, right: 16),
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            showExperienceTable =
-                                                !showExperienceTable;
-                                          });
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16.0),
+                                      child: Table(
+                                        border: TableBorder.all(
+                                            color: AppColors.tableBorderColor,
+                                            width: 2,
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        columnWidths: const {
+                                          0: FlexColumnWidth(1.3),
+                                          1: FlexColumnWidth(1.3),
+                                          2: FlexColumnWidth(1.3),
+                                          3: FlexColumnWidth(1.5),
+                                          4: FlexColumnWidth(1.8),
                                         },
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              'Experience',
-                                              style: TextStyle(
-                                                color:
-                                                    AppColors.headingTextColor,
-                                                fontSize: 17,
-                                                fontFamily: 'aftika-regular',
-                                                fontWeight: FontWeight.w400,
+                                        children: [
+                                          TableRow(
+                                            decoration: BoxDecoration(
+                                                color: const Color(0xff4ECCA3),
+                                                borderRadius:
+                                                    BorderRadius.circular(10)),
+                                            children: [
+                                              buildHeaderCell(
+                                                "Name",
                                               ),
-                                            ),
-                                            Icon(
-                                              showExperienceTable
-                                                  ? Icons.keyboard_arrow_up
-                                                  : Icons.keyboard_arrow_down,
-                                              color: AppColors.primaryColor,
-                                            ),
-                                          ],
-                                        ),
+                                              buildHeaderCell("By"),
+                                              buildHeaderCell("Day"),
+                                              buildHeaderCell("Date"),
+                                              buildHeaderCell("Time"),
+                                            ],
+                                          ),
+                                          // Table data rows
+                                          ...widget.restaurantModel!
+                                              .entertainmentScheduleList
+                                              .map((data) {
+                                            return TableRow(
+                                              decoration: const BoxDecoration(
+                                                color: Colors
+                                                    .white, // Row background color
+                                              ),
+                                              children: [
+                                                buildDataCell(
+                                                    data.eventName ?? ""),
+                                                buildDataCell(
+                                                    data.eventBy ?? ""),
+                                                buildDataCell(data.day ?? ""),
+                                                buildDataCell(data.date ?? ""),
+                                                buildDataCell(data.startTime +
+                                                        ' - ' +
+                                                        data.endTime ??
+                                                    ""),
+                                              ],
+                                            );
+                                          }).toList(),
+                                        ],
+                                      ),
+                                    ),
+                                ],
+                              ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        MapDetailWidget(
+                          restaurantModel: widget.restaurantModel!,
+                          isCommingSoon: _isCommingSoon,
+                        ),
+
+                        Column(
+                          children: [
+                            SizedBox(height: 12),
+
+                            MapWithDirectionWidget(
+                              destLat: widget.restaurantModel?.latitude ?? 0.0,
+                              destLng: widget.restaurantModel?.longitude ?? 0.0,
+                            ),
+
+                            // Align(
+                            //   alignment: Alignment.topLeft,
+                            //   child: Padding(
+                            //     padding: const EdgeInsets.only(
+                            //         left: 16.0, right: 16),
+                            //     child: Text(
+                            //       'Map',
+                            //       style: TextStyle(
+                            //         color: AppColors.headingTextColor,
+                            //         fontSize: 17,
+                            //         fontFamily: 'aftika-regular',
+                            //         fontWeight: FontWeight.w400,
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
+                            // SizedBox(height: 16),
+
+                            // Padding(
+                            //   padding:
+                            //       const EdgeInsets.only(left: 16.0, right: 16),
+                            //   child: Container(
+                            //     width: Get.width,
+                            //     decoration: const BoxDecoration(
+                            //         color: Colors.white,
+                            //         borderRadius:
+                            //             BorderRadius.all(Radius.circular(10))),
+                            //     child: Column(
+                            //       crossAxisAlignment: CrossAxisAlignment.center,
+                            //       children: [
+                            //         Container(
+                            //           width: Get.width,
+                            //           height: 200,
+                            //           decoration: BoxDecoration(
+                            //               borderRadius:
+                            //                   BorderRadius.circular(16)),
+                            //           child: MapWidget(
+                            //             controller: controller,
+                            //             isCommingSoon: _isCommingSoon,
+                            //             lat: widget.restaurantModel?.latitude ??
+                            //                 0.0,
+                            //             long:
+                            //                 widget.restaurantModel?.longitude ??
+                            //                     0.0,
+                            //           ),
+                            //         ),
+                            //         const SizedBox(
+                            //           width: 40,
+                            //         ),
+                            //         // MapDetailWidget(
+                            //         //   restaurantModel: widget.restaurantModel!,
+                            //         //   isCommingSoon: _isCommingSoon,
+                            //         // ),
+                            //       ],
+                            //     ),
+                            //   ),
+                            // ),
+
+//..............
+
+
+
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Center(
+                              child: Container(
+                                width: 100,
+                                height: 36,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    // Instagram Icon
+                                    GestureDetector(
+                                      onTap: () async {
+                                        String link =
+                                            widget.restaurantModel?.instaLink ??
+                                                '';
+                                        if (link == '') {
+                                          Get.snackbar(
+                                              'Oops!', 'URl not available');
+                                        } else {
+                                          await launchUrl(
+                                            Uri.parse(link),
+                                          );
+                                        }
+                                      },
+                                      child: Image.asset(
+                                        "assets/images/instagram.png",
+                                        height: 20,
+                                        width: 20,
+                                      ),
+                                    ),
+
+                                    GestureDetector(
+                                      onTap: () async {
+                                        String link = widget
+                                                .restaurantModel?.tiktokLink ??
+                                            '';
+                                        if (link == '') {
+                                          Get.snackbar(
+                                              'Oops!', 'URl not available');
+                                        } else {
+                                          await launchUrl(
+                                            Uri.parse(link),
+                                          );
+                                        }
+                                      },
+                                      child: Image.asset(
+                                        "assets/images/tik-tok.png",
+                                        height: 22,
+                                        color: AppColors.primaryColor,
+                                        width: 22,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 50,
+                            ),
+                          ],
+                        ),
+
+                        //.......
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 35.0, right: 16, top: 130),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  // Clip the blur to the rounded corners
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                    // Adjust the blur intensity
+                    child: Container(
+                      width: 358,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        gradient: LinearGradient(
+                          colors: [
+                            AppColors.whiteColor.withOpacity(0.4),
+                            AppColors.primaryColor.withOpacity(0.3),
+                          ],
+                          begin: Alignment.topCenter,
+                          // Starting point of the gradient
+                          end: Alignment
+                              .bottomCenter, // Ending point of the gradient
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 12.0, right: 12, top: 12, bottom: 12),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  widget.restaurantModel?.resName ?? '',
+                                  style: TextStyle(
+                                    color: AppColors.blackColor,
+                                    fontFamily: 'Nunito-Bold',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 4,
+                            ),
+                            StreamBuilder<List<ReviewModel>>(
+                              stream: widget.restaurantModel?.docID == ''
+                                  ? null
+                                  : homeLocationController.getReviews(
+                                      widget.restaurantModel?.docID ?? ''),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Center(
+                                      child: CircularProgressIndicator());
+                                }
+
+                                final reviews = snapshot.data ?? [];
+
+                                // Calculate average rating safely
+                                final averageRating = reviews.isNotEmpty
+                                    ? (reviews
+                                            .map((e) => e.starRating ?? 0)
+                                            .reduce((a, b) => a + b) /
+                                        reviews.length)
+                                    : 0.0;
+
+                                return Row(
+                                  children: [
+                                    Text(
+                                      reviews.isNotEmpty
+                                          ? '(${averageRating.toStringAsFixed(1)})'
+                                          : '(0.0)',
+                                      style: TextStyle(
+                                        //color: Color(0xFF4F5761),
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontFamily: 'Nunito-Regular',
+                                        fontWeight: FontWeight.w400,
                                       ),
                                     ),
                                     SizedBox(
-                                      height: 10,
-                                    ),
-                                    if (showExperienceTable)
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16.0),
-                                        child: Table(
-                                          border: TableBorder.all(
-                                              color: AppColors.tableBorderColor,
-                                              width: 2,
-                                              borderRadius:
-                                                  BorderRadius.circular(10)),
-                                          columnWidths: const {
-                                            0: FlexColumnWidth(1.3),
-                                            1: FlexColumnWidth(1.3),
-                                            2: FlexColumnWidth(1.3),
-                                            3: FlexColumnWidth(1.5),
-                                            4: FlexColumnWidth(1.8),
-                                          },
-                                          children: [
-                                            TableRow(
-                                              decoration: BoxDecoration(
-                                                  color:
-                                                      const Color(0xff4ECCA3),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10)),
-                                              children: [
-                                                buildHeaderCell(
-                                                  "Name",
-                                                ),
-                                                buildHeaderCell("By"),
-                                                buildHeaderCell("Day"),
-                                                buildHeaderCell("Date"),
-                                                buildHeaderCell("Time"),
-                                              ],
-                                            ),
-                                            // Table data rows
-                                            ...widget.restaurantModel!
-                                                .entertainmentScheduleList
-                                                .map((data) {
-                                              return TableRow(
-                                                decoration: const BoxDecoration(
-                                                  color: Colors
-                                                      .white, // Row background color
-                                                ),
-                                                children: [
-                                                  buildDataCell(
-                                                      data.eventName ?? ""),
-                                                  buildDataCell(
-                                                      data.eventBy ?? ""),
-                                                  buildDataCell(data.day ?? ""),
-                                                  buildDataCell(
-                                                      data.date ?? ""),
-                                                  buildDataCell(data.startTime +
-                                                          ' - ' +
-                                                          data.endTime ??
-                                                      ""),
-                                                ],
-                                              );
-                                            }).toList(),
-                                          ],
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          MapDetailWidget(
-                            restaurantModel: widget.restaurantModel!,
-                            isCommingSoon: _isCommingSoon,
-                          ),
-                          // widget.restaurantModel!.menuList.isEmpty ||
-                          //         widget.restaurantModel!.menuList[0].foodImages
-                          //             .isEmpty
-                          //     ? SizedBox()
-                          //     : SizedBox(
-                          //         height: Get.height * 0.36,
-                          //         width: double.infinity,
-                          //         child: MenuWidget(
-                          //           screenHeight: Get.height,
-                          //           mobileView: true,
-                          //           screenWidth: Get.width,
-                          //           selectedMenuTypes: widget
-                          //                   .restaurantModel!.menuList.isEmpty
-                          //               ? MenuModel(
-                          //                   cuisineType: '',
-                          //                   foodImages: [],
-                          //                   menuType: '')
-                          //               : widget.restaurantModel!.menuList.first,
-                          //           specialConditions:
-                          //               widget.restaurantModel!.specialConditions,
-                          //           uploadedImages: widget
-                          //                   .restaurantModel!.menuList.isNotEmpty
-                          //               ? widget.restaurantModel!.menuList[0]
-                          //                   .foodImages
-                          //               : [],
-                          //         ),
-                          //       ),
-
-                          Column(
-                            children: [
-                              SizedBox(height: 12),
-                              Align(
-                                alignment: Alignment.topLeft,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 16.0, right: 16),
-                                  child: Text(
-                                    'Map',
-                                    style: TextStyle(
-                                      color: AppColors.headingTextColor,
-                                      fontSize: 17,
-                                      fontFamily: 'aftika-regular',
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 16),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 16.0, right: 16),
-                                child: Container(
-                                  width: Get.width,
-                                  decoration: const BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(10))),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        width: Get.width,
-                                        height: 200,
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(16)),
-                                        child: MapWidget(
-                                          controller: controller,
-                                          isCommingSoon: _isCommingSoon,
-                                          lat: widget
-                                                  .restaurantModel?.latitude ??
-                                              0.0,
-                                          long: widget
-                                                  .restaurantModel?.longitude ??
-                                              0.0,
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 40,
-                                      ),
-                                      // MapDetailWidget(
-                                      //   restaurantModel: widget.restaurantModel!,
-                                      //   isCommingSoon: _isCommingSoon,
-                                      // ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Center(
-                                child: Container(
-                                  width: 100,
-                                  height: 36,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      // Instagram Icon
-                                      GestureDetector(
-                                        onTap: () async {
-                                          String link = widget
-                                                  .restaurantModel?.instaLink ??
-                                              '';
-                                          if (link == '') {
-                                            Get.snackbar(
-                                                'Oops!', 'URl not available');
-                                          } else {
-                                            await launchUrl(
-                                              Uri.parse(link),
-                                            );
-                                          }
-                                        },
-                                        child: Image.asset(
-                                          "assets/images/instagram.png",
-                                          height: 20,
-                                          width: 20,
-                                        ),
-                                      ),
-
-                                      GestureDetector(
-                                        onTap: () async {
-                                          String link = widget.restaurantModel
-                                                  ?.tiktokLink ??
-                                              '';
-                                          if (link == '') {
-                                            Get.snackbar(
-                                                'Oops!', 'URl not available');
-                                          } else {
-                                            await launchUrl(
-                                              Uri.parse(link),
-                                            );
-                                          }
-                                        },
-                                        child: Image.asset(
-                                          "assets/images/tik-tok.png",
-                                          height: 22,
-                                          color: AppColors.primaryColor,
-                                          width: 22,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                height: 50,
-                              ),
-                            ],
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.only(left: 35.0, right: 16, top: 130),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    // Clip the blur to the rounded corners
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-                      // Adjust the blur intensity
-                      child: Container(
-                        width: 358,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          gradient: LinearGradient(
-                            colors: [
-                              AppColors.whiteColor.withOpacity(0.4),
-                              AppColors.primaryColor.withOpacity(0.3),
-                            ],
-                            begin: Alignment.topCenter,
-                            // Starting point of the gradient
-                            end: Alignment
-                                .bottomCenter, // Ending point of the gradient
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 12.0, right: 12, top: 12, bottom: 12),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Text(
-                                    widget.restaurantModel?.resName ?? '',
-                                    style: TextStyle(
-                                      color: AppColors.blackColor,
-                                      fontFamily: 'Nunito-Bold',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 4,
-                              ),
-                              StreamBuilder<List<ReviewModel>>(
-                                stream: widget.restaurantModel?.docID == ''
-                                    ? null
-                                    : homeLocationController.getReviews(
-                                        widget.restaurantModel?.docID ?? ''),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return Center(
-                                        child: CircularProgressIndicator());
-                                  }
-
-                                  final reviews = snapshot.data ?? [];
-
-                                  // Calculate average rating safely
-                                  final averageRating = reviews.isNotEmpty
-                                      ? (reviews
-                                              .map((e) => e.starRating ?? 0)
-                                              .reduce((a, b) => a + b) /
-                                          reviews.length)
-                                      : 0.0;
-
-                                  return Row(
-                                    children: [
-                                      Text(
-                                        reviews.isNotEmpty
-                                            ? '(${averageRating.toStringAsFixed(1)})'
-                                            : '(0.0)',
-                                        style: TextStyle(
-                                          //color: Color(0xFF4F5761),
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontFamily: 'Nunito-Regular',
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 14,
-                                        child: RatingBar(
-                                          itemSize: 14,
-                                          ignoreGestures: true,
-                                          initialRating: averageRating,
-                                          minRating: 0,
-                                          direction: Axis.horizontal,
-                                          allowHalfRating: true,
-                                          itemCount: 5,
-                                          ratingWidget: RatingWidget(
-                                            full: Image.asset(
-                                              'assets/images/star yellow.png',
-                                              height: 19,
-                                            ),
-                                            half: Image.asset(
-                                              'assets/images/star yellow.png',
-                                              height: 19,
-                                            ),
-                                            empty: Image.asset(
-                                              'assets/images/star_empty.png',
-                                              color: Colors.white,
-                                              height: 19,
-                                            ),
+                                      height: 14,
+                                      child: RatingBar(
+                                        itemSize: 14,
+                                        ignoreGestures: true,
+                                        initialRating: averageRating,
+                                        minRating: 0,
+                                        direction: Axis.horizontal,
+                                        allowHalfRating: true,
+                                        itemCount: 5,
+                                        ratingWidget: RatingWidget(
+                                          full: Image.asset(
+                                            'assets/images/star yellow.png',
+                                            height: 19,
                                           ),
-                                          itemPadding: const EdgeInsets.only(
-                                              left: 2.0, bottom: 20),
-                                          onRatingUpdate: (rating) {
-                                            print(rating);
-                                          },
+                                          half: Image.asset(
+                                            'assets/images/star yellow.png',
+                                            height: 19,
+                                          ),
+                                          empty: Image.asset(
+                                            'assets/images/star_empty.png',
+                                            color: Colors.white,
+                                            height: 19,
+                                          ),
                                         ),
+                                        itemPadding: const EdgeInsets.only(
+                                            left: 2.0, bottom: 20),
+                                        onRatingUpdate: (rating) {
+                                          print(rating);
+                                        },
                                       ),
-                                      const SizedBox(width: 10),
-                                      Text(
-                                        '${reviews.length} reviews',
-                                        style: TextStyle(
-                                          //color: const Color.fromARGB(255, 2, 2, 2),
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontFamily: 'Nunito-Regular',
-                                          fontWeight: FontWeight.w400,
-                                        ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      '${reviews.length} reviews',
+                                      style: TextStyle(
+                                        //color: const Color.fromARGB(255, 2, 2, 2),
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontFamily: 'Nunito-Regular',
+                                        fontWeight: FontWeight.w400,
                                       ),
-                                      const SizedBox(width: 10),
-                                    ],
-                                  );
-                                },
+                                    ),
+                                    const SizedBox(width: 10),
+                                  ],
+                                );
+                              },
+                            ),
+                            SizedBox(
+                              height: 4,
+                            ),
+                            Text(
+                              (widget.restaurantModel?.spokenLanguage
+                                          .trim()
+                                          .isEmpty ??
+                                      true)
+                                  ? 'English'
+                                  : widget.restaurantModel!.spokenLanguage,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontFamily: 'Nunito-Regular',
+                                fontWeight: FontWeight.w400,
                               ),
-                              SizedBox(
-                                height: 4,
-                              ),
-                              Text(
-                                (widget.restaurantModel?.spokenLanguage
-                                            .trim()
-                                            .isEmpty ??
-                                        true)
-                                    ? 'English'
-                                    : widget.restaurantModel!.spokenLanguage,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontFamily: 'Nunito-Regular',
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                              SizedBox(
-                                height: 4,
-                              ),
-                              Row(
+                            ),
+                            SizedBox(
+                              height: 4,
+                            ),
+
+
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Container(
@@ -605,14 +584,13 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                                       spacing: 5, // Space between images
                                       alignment: WrapAlignment
                                           .start, // Align images to the start
-                                      children: widget
-                                          .restaurantModel!.imagesList
+                                      children: widget.restaurantModel!.imagesList
                                           .asMap()
                                           .entries
                                           .map((entry) {
                                         int index = entry.key;
                                         String imagePath = entry.value;
-
+                              
                                         if (index < 4) {
                                           // Display the first 4 images normally
                                           return GestureDetector(
@@ -660,8 +638,7 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                                                     color: Colors.black
                                                         .withOpacity(0.5),
                                                     borderRadius:
-                                                        BorderRadius.circular(
-                                                            5),
+                                                        BorderRadius.circular(5),
                                                   ),
                                                   child: const Center(
                                                     child: Text(
@@ -702,201 +679,207 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                                     ),
                                   ),
                                 ],
-                              )
-                            ],
-                          ),
+                              ),
+                            )
+
+
+
+
+
+
+                          ],
                         ),
                       ),
                     ),
                   ),
                 ),
-              ]),
-            ),
-          ));
-    });
+              ),
+            ]),
+          ),
+        ));
   }
+}
 
-  // Header cell builder
-  Widget buildHeaderCell(String text) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w500,
-          fontFamily: 'Nunito-Sans',
-          color: Colors.black,
-        ),
-        textAlign: TextAlign.center,
+// Header cell builder
+Widget buildHeaderCell(String text) {
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: Text(
+      text,
+      style: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w500,
+        fontFamily: 'Nunito-Sans',
+        color: Colors.black,
       ),
-    );
-  }
+      textAlign: TextAlign.center,
+    ),
+  );
+}
 
 // Data cell builder
-  Widget buildDataCell(String text) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Text(
-        text,
-        style: TextStyle(
-            fontFamily: 'Nunito-Sans',
-            color: AppColors.textColor,
-            fontWeight: FontWeight.w500,
-            fontSize: 8),
-        textAlign: TextAlign.center,
-      ),
-    );
-  }
+Widget buildDataCell(String text) {
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: Text(
+      text,
+      style: TextStyle(
+          fontFamily: 'Nunito-Sans',
+          color: AppColors.textColor,
+          fontWeight: FontWeight.w500,
+          fontSize: 8),
+      textAlign: TextAlign.center,
+    ),
+  );
+}
 
-  // Normal table rows for "Menu Items" and "Before Discount" columns
-  TableRow _buildTableRow(
-    BuildContext context, {
-    required String menuItem,
-    required String menuItemNumbers,
-    required List<String> imageList, // Accept a list of images
-  }) {
-    return TableRow(
-      children: [
-        Container(
-          height: 106,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: 60,
-                  width: 68,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: imageList.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Image.network(
-                            imageList[index],
-                            fit: BoxFit.cover,
-                            width: 60,
-                            height: 50,
-                          ),
+// Normal table rows for "Menu Items" and "Before Discount" columns
+TableRow _buildTableRow(
+  BuildContext context, {
+  required String menuItem,
+  required String menuItemNumbers,
+  required List<String> imageList, // Accept a list of images
+}) {
+  return TableRow(
+    children: [
+      Container(
+        height: 106,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 60,
+                width: 68,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: imageList.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.network(
+                          imageList[index],
+                          fit: BoxFit.cover,
+                          width: 60,
+                          height: 50,
                         ),
-                      );
-                    },
-                  ),
-                ),
-                // SizedBox(height: 6),
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      menuItemNumbers,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: Colors.black, // Update this color if needed
-                        fontSize: 10,
-                        fontFamily: 'Nunito-Regular',
-                        fontWeight: FontWeight.w700,
                       ),
+                    );
+                  },
+                ),
+              ),
+              // SizedBox(height: 6),
+              Expanded(
+                child: Center(
+                  child: Text(
+                    menuItemNumbers,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Colors.black, // Update this color if needed
+                      fontSize: 10,
+                      fontFamily: 'Nunito-Regular',
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      menuItem,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: Colors.black, // Update this color if needed
-                        fontSize: 10,
-                        fontFamily: 'Nunito-Regular',
-                        fontWeight: FontWeight.w500,
-                      ),
+              ),
+              Expanded(
+                child: Center(
+                  child: Text(
+                    menuItem,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Colors.black, // Update this color if needed
+                      fontSize: 10,
+                      fontFamily: 'Nunito-Regular',
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
-              ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
+TableRow _buildGreenHeader(context) {
+  return TableRow(
+    children: [
+      SizedBox(
+        height: 60,
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.only(bottom: 16.0),
+            child: Text(
+              'Offer',
+              style: TextStyle(
+                fontSize: 12,
+                fontFamily: 'Nunito-Bold',
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
             ),
           ),
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
 
-  TableRow _buildGreenHeader(context) {
-    return TableRow(
-      children: [
-        SizedBox(
-          height: 60,
+TableRow _buildTableHeader(context) {
+  return TableRow(
+    children: [
+      Container(
+        height: 60,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
           child: Center(
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 16.0),
-              child: Text(
-                'Offer',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontFamily: 'Nunito-Bold',
-                  fontWeight: FontWeight.w500,
-                ),
-                textAlign: TextAlign.center,
+            child: Text(
+              'Menus',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 12,
+                fontFamily: 'Nunito-Bold',
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
 
-  TableRow _buildTableHeader(context) {
-    return TableRow(
-      children: [
-        Container(
-          height: 60,
+// Rows for the green column
+TableRow _buildGreenRow(context, {required String afterPrice}) {
+  return TableRow(
+    children: [
+      Container(
+        height: 106,
+        child: Center(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Center(
-              child: Text(
-                'Menus',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontFamily: 'Nunito-Bold',
-                  fontWeight: FontWeight.w500,
-                ),
+            child: Text(
+              afterPrice,
+              style: TextStyle(
+                color: AppColors.bottomSheetColor,
+                fontSize: 10,
+                fontFamily: 'Nunito-Bold',
+                fontWeight: FontWeight.w700,
               ),
+              textAlign: TextAlign.center,
             ),
           ),
         ),
-      ],
-    );
-  }
-
-  // Rows for the green column
-  TableRow _buildGreenRow(context, {required String afterPrice}) {
-    return TableRow(
-      children: [
-        Container(
-          height: 106,
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                afterPrice,
-                style: TextStyle(
-                  color: AppColors.bottomSheetColor,
-                  fontSize: 10,
-                  fontFamily: 'Nunito-Bold',
-                  fontWeight: FontWeight.w700,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
 }
 
 class OfferSelectionWidget extends StatelessWidget {

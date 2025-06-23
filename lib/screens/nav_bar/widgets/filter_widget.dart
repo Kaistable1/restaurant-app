@@ -4,98 +4,100 @@ import 'package:kaistable_website/constants/app_colors.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/filter_selection_controller.dart';
 import '../controller/search_controller.dart';
 
-// Build a selectable filter row (Country, City, Language)
-Widget buildFilterSection(String title, List<String> options,
-    RxString selectedValue, Function(String) onSelect) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        title,
-        style: TextStyle(
-          fontSize: 16,
-          color: AppColors.headingTextColor,
-          fontWeight: FontWeight.w700,
-          fontFamily: 'Nunito-Sans',
-        ),
-      ),
-      const SizedBox(height: 8),
+// // Build a selectable filter row (Country, City, Language)
+// Widget buildFilterSection(String title, List<String> options,
+//     RxString selectedValue, Function(String) onSelect) {
+//   return Column(
+//     crossAxisAlignment: CrossAxisAlignment.start,
+//     children: [
+//       Text(
+//         title,
+//         style: TextStyle(
+//           fontSize: 16,
+//           color: AppColors.headingTextColor,
+//           fontWeight: FontWeight.w700,
+//           fontFamily: 'Nunito-Sans',
+//         ),
+//       ),
+//       const SizedBox(height: 8),
 
-      // Main container with rounded corners
-      Container(
-        width: Get.width,
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1), // Soft shadow
-              blurRadius: 4,
-              spreadRadius: 1,
-              offset: const Offset(0, 2), // Shadow appears at bottom
-            ),
-          ],
-          // border: Border.all(color: Colors.grey.shade300),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: options.asMap().entries.map((entry) {
-            int index = entry.key;
-            String option = entry.value;
-            bool isSelected = selectedValue.value == option;
+//       // Main container with rounded corners
+//       Container(
+//         width: Get.width,
+//         padding: const EdgeInsets.all(8),
+//         decoration: BoxDecoration(
+//           color: Colors.white,
+//           boxShadow: [
+//             BoxShadow(
+//               color: Colors.black.withOpacity(0.1), // Soft shadow
+//               blurRadius: 4,
+//               spreadRadius: 1,
+//               offset: const Offset(0, 2), // Shadow appears at bottom
+//             ),
+//           ],
+//           // border: Border.all(color: Colors.grey.shade300),
+//           borderRadius: BorderRadius.circular(16),
+//         ),
+//         child: Wrap(
+//           spacing: 8,
+//           runSpacing: 8,
+//           children: options.asMap().entries.map((entry) {
+//             int index = entry.key;
+//             String option = entry.value;
+//             bool isSelected = selectedValue.value == option;
 
-            return GestureDetector(
-              onTap: () => onSelect(option),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? AppColors.primaryColor.withOpacity(.3)
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(4),
-                      border: Border.all(
-                        color: isSelected
-                            ? AppColors.primaryColor
-                            : Colors.transparent,
-                      ),
-                    ),
-                    child: Text(
-                      option,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: AppColors.textColor,
-                        fontWeight: FontWeight.w400,
-                        fontFamily: 'Nunito-Sans',
-                      ),
-                    ),
-                  ),
+//             return GestureDetector(
+//               onTap: () => onSelect(option),
+//               child: Row(
+//                 mainAxisSize: MainAxisSize.min,
+//                 children: [
+//                   Container(
+//                     padding:
+//                         const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+//                     decoration: BoxDecoration(
+//                       color: isSelected
+//                           ? AppColors.primaryColor.withOpacity(.3)
+//                           : Colors.transparent,
+//                       borderRadius: BorderRadius.circular(4),
+//                       border: Border.all(
+//                         color: isSelected
+//                             ? AppColors.primaryColor
+//                             : Colors.transparent,
+//                       ),
+//                     ),
+//                     child: Text(
+//                       option,
+//                       style: TextStyle(
+//                         fontSize: 14,
+//                         color: AppColors.textColor,
+//                         fontWeight: FontWeight.w400,
+//                         fontFamily: 'Nunito-Sans',
+//                       ),
+//                     ),
+//                   ),
 
-                  // Add vertical divider `|` except for the last item
-                  if (index != options.length - 1)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: Text("|",
-                          style: TextStyle(color: AppColors.primaryColor)),
-                    ),
-                ],
-              ),
-            );
-          }).toList(),
-        ),
-      ),
+//                   // Add vertical divider `|` except for the last item
+//                   if (index != options.length - 1)
+//                     Padding(
+//                       padding: const EdgeInsets.symmetric(horizontal: 4),
+//                       child: Text("|",
+//                           style: TextStyle(color: AppColors.primaryColor)),
+//                     ),
+//                 ],
+//               ),
+//             );
+//           }).toList(),
+//         ),
+//       ),
 
-      const SizedBox(height: 10),
-    ],
-  );
-}
+//       const SizedBox(height: 10),
+//     ],
+//   );
+// }
 
 // Build expandable filters with checkboxes
+
+
 Widget buildCheckboxFilter(String title, FilterController controller) {
   FilterSelectionController filterController =
       Get.put(FilterSelectionController());

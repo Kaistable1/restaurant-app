@@ -7,28 +7,27 @@ import 'package:kaistable_website/widgets/global_functions.dart';
 import 'package:kaistable_website/widgets/rectangle_widget.dart';
 
 import '../../../constants/app_colors.dart';
+import 'widgets/homeScreenWidget/horizontal_card_widget.dart';
 
 class NearByAll extends StatelessWidget {
+   final List<RestaurantModel> filteredRestaurants;
   NearByAll({
-    super.key,
+    super.key,required this.filteredRestaurants
   });
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: AppColors.whiteColor,
+    appBar: AppBar(
       backgroundColor: AppColors.whiteColor,
-      appBar: AppBar(
-        backgroundColor: AppColors.whiteColor,
-        iconTheme: IconThemeData(
-          color: AppColors
-              .primaryColor, // Set your desired color for the drawer icon
-        ),
-        centerTitle: true,
-        automaticallyImplyLeading: true,
-        leading: Padding(
-          padding: const EdgeInsets.all(12.0),
+      iconTheme: IconThemeData(color: AppColors.primaryColor),
+      centerTitle: true,
+      automaticallyImplyLeading: true,
+      leading: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: GestureDetector(
+          onTap: () => Get.back(),
           child: Container(
-            height: 16,
-            width: 16,
             decoration: BoxDecoration(
               color: Colors.white,
               shape: BoxShape.circle,
@@ -41,161 +40,66 @@ class NearByAll extends StatelessWidget {
                 ),
               ],
             ),
-            child: GestureDetector(
-              onTap: () {
-                Get.back(); // Navigate back to the home screen
-              },
-              child: Icon(
-                Icons.arrow_back,
-                size: 18,
-                color: AppColors.primaryColor,
-              ),
-            ),
+            child: Icon(Icons.arrow_back, size: 18, color: AppColors.primaryColor),
           ),
         ),
-        title: Text(
-          'Near By Restaurants',
-          style: const TextStyle(
-            fontSize: 17,
+      ),
+      title: const Text(
+        'Near By Restaurants',
+        style: TextStyle(
+          fontSize: 17,
+          color: AppColors.bottomSheetColor,
+          fontWeight: FontWeight.w700,
+          fontFamily: 'Nunito-Bold',
+        ),
+      ),
+    ),
+    body:  filteredRestaurants.isEmpty
+    ? Center(
+        child: Text(
+          "No nearby restaurants found.",
+          style: TextStyle(
             color: AppColors.bottomSheetColor,
-            fontWeight: FontWeight.w700,
-            fontFamily: 'Nunito-Bold',
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
           ),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: _buildTopSection(),
+      )
+    : Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: GridView.builder(
+          // 👇 These 2 lines are the fix
+          shrinkWrap: false, // don't force it to take only content height
+          physics: AlwaysScrollableScrollPhysics(), // allow scrolling
+          
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            mainAxisExtent: Get.height * 0.2,
+            crossAxisCount: 2,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 20,
+          ),
+          itemCount: filteredRestaurants.length,
+          itemBuilder: (context, index) {
+            final item = filteredRestaurants[index];
+            return InkWell(
+              onTap: () => Get.to(
+                RestaurantDetailScreen(restaurantModel: item),
+              ),
+              child: HorizontalCardWidget(
+                title: item.resName,
+                imagePath: item.logoImage,
+                description: item.address,
+                isFavorite: false.obs,
+                onTap: () => Get.to(
+                  RestaurantDetailScreen(restaurantModel: item),
+                ),
+              ),
+            );
+          },
         ),
       ),
-    );
-  }
 
-  Widget _buildTopSection() {
-    final HomeLocationController controller = Get.put(HomeLocationController());
-    return StreamBuilder(
-        stream: controller.getAllRestaurants(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return buildShimmerEffect(); // Show shimmer while loading
-          }
+  );
+}
 
-          if (snapshot.hasError) {
-            print('Error during stream call ${snapshot.error}');
-            return Text(''); // Show error message if any
-          }
-
-          if (snapshot.data == null || snapshot.data!.isEmpty) {
-            return Text(''); // Handle the case where data is null or empty
-          }
-          List<RestaurantModel> all_restaurants = snapshot.data!;
-          // Initialize state after the widget build phase
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            controller.initailizedSelectors(resaturantsList: all_restaurants);
-          });
-
-          return FutureBuilder(
-              future: controller.getNearbyRestaurants(all_restaurants, 50000),
-              builder: (context, futureSnapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return buildShimmerEffect(); // Show shimmer while loading
-                }
-                if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                }
-
-                List<RestaurantModel> restaurants = futureSnapshot.data ?? [];
-                if (restaurants.isEmpty) {
-                  return Column(
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "You Might Like",
-                            style: TextStyle(
-                              color: AppColors.bottomSheetColor,
-                              fontFamily: 'aftika-regular',
-                              fontSize: 15,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                          height: Get.height * 0.5,
-                          child: Center(
-                              child: Text('No nearby restaurants found.'))),
-                    ],
-                  );
-                }
-
-                return Column(
-                  children: [
-                    SizedBox(height: 10),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        left: 0,
-                        right: 18,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "You Might Like",
-                                style: TextStyle(
-                                  color: AppColors.bottomSheetColor,
-                                  fontFamily: 'aftika-regular',
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        mainAxisExtent: Get.height * 0.2,
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 20,
-                      ),
-                      itemCount: restaurants.length,
-                      itemBuilder: (context, index) {
-                        final item = restaurants[index];
-                        return InkWell(
-                          onTap: () {
-                            Get.to(RestaurantDetailScreen(
-                              restaurantModel: item,
-                            ));
-                          },
-                          child: RectangleWidget(
-                            title: item.resName,
-                            description: item.address,
-                            resturant_id: item.docID,
-                            imagePath: item.logoImage,
-                            timetext: '10 AM',
-                            percentText: '25%',
-                            endTimeText: '9 PM',
-                            // percentageOff: item.menuList.percentageOff,
-                            // happyhour: item.menuList.happyHourSpecials,
-                            isFavorite: false.obs,
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                );
-              });
-        });
-  }
 }

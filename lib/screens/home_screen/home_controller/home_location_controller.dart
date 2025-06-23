@@ -1,4 +1,6 @@
+import 'dart:developer';
 import 'dart:io';
+import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -9,6 +11,8 @@ import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/models/recent_view.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/models/review_model.dart';
+import 'package:kaistable_website/screens/home_screen/home_controller/filter_selection_controller.dart';
+import 'package:kaistable_website/screens/nav_bar/widgets/homeScreenWidget/home_screen_controller.dart';
 import 'package:kaistable_website/utils/loading.dart';
 import 'package:kaistable_website/widgets/global_functions.dart';
 import '../model/home-model.dart';
@@ -208,50 +212,139 @@ class HomeLocationController extends GetxController {
     });
   }
 
+
+  double calculateDistanceInMiles(double startLat, double startLng, double endLat, double endLng) {
+  const double earthRadius = 6371; // in kilometers
+  double dLat = _degreesToRadians(endLat - startLat);
+  double dLon = _degreesToRadians(endLng - startLng);
+
+  double a = sin(dLat / 2) * sin(dLat / 2) +
+      cos(_degreesToRadians(startLat)) *
+          cos(_degreesToRadians(endLat)) *
+          sin(dLon / 2) *
+          sin(dLon / 2);
+  double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+  double distanceKm = earthRadius * c;
+
+  return distanceKm * 0.621371; // Convert to miles
+}
+
+double _degreesToRadians(double degree) {
+  return degree * (pi / 180);
+}
+
+
   //get trensing resturants base on totoal reviews and rating
 
-  Stream<List<RestaurantModel>> getTrendingRestaurants() {
-    return FirebaseFirestore.instance
-        .collection('restaurants')
-        .snapshots()
-        .asyncMap((snapshot) async {
-      // Fetch all restaurants and their menus
-      final restaurants = await Future.wait(
-        snapshot.docs.map((doc) async {
-          final reviewsSnapshot =
-              await doc.reference.collection('reviews').get();
+  // Stream<List<RestaurantModel>> getTrendingRestaurants() {
+  //   return FirebaseFirestore.instance
+  //       .collection('restaurants')
+  //       .snapshots()
+  //       .asyncMap((snapshot) async {
+  //     // Fetch all restaurants and their menus
+  //     final restaurants = await Future.wait(
+  //       snapshot.docs.map((doc) async {
+  //         final reviewsSnapshot =
+  //             await doc.reference.collection('reviews').get();
 
-          int totalReviews = reviewsSnapshot.size;
-          double totalRating = reviewsSnapshot.docs
-              .map((e) => double.parse(e['starRating'].toString()))
-              .fold(0.0, (prev, rating) => prev + rating);
-          double averageRating =
-              totalReviews > 0 ? totalRating / totalReviews : 0.0;
+  //         int totalReviews = reviewsSnapshot.size;
+  //         double totalRating = reviewsSnapshot.docs
+  //             .map((e) => double.parse(e['starRating'].toString()))
+  //             .fold(0.0, (prev, rating) => prev + rating);
+  //         double averageRating =
+  //             totalReviews > 0 ? totalRating / totalReviews : 0.0;
 
-          // Filter out restaurants without reviews
-          if (totalReviews > 0) {
-            // Fetch menu list from subcollection
-            final restaurant = RestaurantModel.fromDocumentSnapshot(doc);
-            // Set average rating
-            restaurant.averageRating = averageRating;
+  //         // Filter out restaurants without reviews
+  //         if (totalReviews > 0) {
+  //           // Fetch menu list from subcollection
+  //           final restaurant = RestaurantModel.fromDocumentSnapshot(doc);
+  //           // Set average rating
+  //           restaurant.averageRating = averageRating;
 
-            return restaurant;
-          }
-          return null;
-        }).toList(),
-      );
+  //           return restaurant;
+  //         }
+  //         return null;
+  //       }).toList(),
+  //     );
 
-      // Filter out null restaurants (those without reviews)
-      final trendingRestaurants =
-          restaurants.whereType<RestaurantModel>().toList();
+  //     // Filter out null restaurants (those without reviews)
+  //     final trendingRestaurants =
+  //         restaurants.whereType<RestaurantModel>().toList();
 
-      // Sort by average rating in descending order
-      trendingRestaurants
-          .sort((a, b) => b.averageRating.compareTo(a.averageRating));
+  //     // Sort by average rating in descending order
+  //     trendingRestaurants
+  //         .sort((a, b) => b.averageRating.compareTo(a.averageRating));
 
-      return trendingRestaurants; // Return List<RestaurantModel>
-    });
-  }
+  //     return trendingRestaurants; // Return List<RestaurantModel>
+  //   });
+  // }
+
+
+
+
+final RxList<String> selectedVibes = <String>[].obs;
+final RxList<String> selectedExperiences = <String>[].obs;
+final RxList<String> selectedCuisines = <String>[].obs;
+
+final filterController = Get.find<HomeFilterSearchController>();
+
+Stream<List<RestaurantModel>> getTrendingRestaurants({
+  List<String> vibes = const [],
+  List<String> experiences = const [],
+  List<String> cuisines = const [],
+})  {
+  return FirebaseFirestore.instance.collection('restaurants').snapshots().asyncMap((snapshot) async {
+    // ✅ Convert RxList to plain list inside the stream function
+    final vibes = filterController.selectedVibes.toList();
+    final experiences = filterController.selectedExperiences.toList();
+    final cuisines = filterController.selectedCuisines.toList();
+
+    final restaurants = await Future.wait(snapshot.docs.map((doc) async {
+      final reviewsSnapshot = await doc.reference.collection('reviews').get();
+
+      int totalReviews = reviewsSnapshot.size;
+      double totalRating = reviewsSnapshot.docs
+          .map((e) => double.tryParse(e['starRating'].toString()) ?? 0.0)
+          .fold(0.0, (prev, rating) => prev + rating);
+      double averageRating = totalReviews > 0 ? totalRating / totalReviews : 0.0;
+
+      final restaurant = RestaurantModel.fromDocumentSnapshot(doc);
+      restaurant.averageRating = averageRating;
+
+      final atmosphereLower = restaurant.atmosphereList.map((e) => e.toLowerCase()).toList();
+      final facilityLower = restaurant.facilityList.map((e) => e.toLowerCase()).toList();
+      final cuisineLower = restaurant.menuList.map((e) => e.cuisineType.toLowerCase()).toList();
+
+      bool matchesVibes = vibes.isEmpty ||
+          vibes.any((v) =>
+              atmosphereLower.contains(v.toLowerCase()) ||
+              facilityLower.contains(v.toLowerCase()));
+
+      bool matchesExperiences = experiences.isEmpty ||
+          experiences.any((e) =>
+              facilityLower.contains(e.toLowerCase()) ||
+              atmosphereLower.contains(e.toLowerCase()));
+
+      bool matchesCuisines = cuisines.isEmpty ||
+          cuisines.any((cuisine) =>
+              cuisineLower.contains(cuisine.toLowerCase()));
+
+      if (totalReviews > 0 && matchesVibes && matchesExperiences && matchesCuisines) {
+        return restaurant;
+      }
+      return null;
+    }).toList());
+
+    final trendingRestaurants = restaurants.whereType<RestaurantModel>().toList();
+    trendingRestaurants.sort((a, b) => b.averageRating.compareTo(a.averageRating));
+    return trendingRestaurants;
+  });
+}
+
+
+
+
+
 
   addRecentView({required String restaurantID, resName}) async {
     List<String> localStoreResturatnstID =
@@ -410,6 +503,8 @@ class HomeLocationController extends GetxController {
       return restaurantsList;
     });
   }
+
+
 
   /// Fetches initial restaurants with pagination support
   Stream<List<RestaurantModel>> getFilteredRestaurants() {
@@ -630,21 +725,92 @@ class HomeLocationController extends GetxController {
     return distance <= radiusKm * 1000; // Convert km to meters
   }
 
-  Future<List<RestaurantModel>> getNearbyRestaurants(
-      List<RestaurantModel> allRestaurants, double radiusKm) async {
-    // Position userLocation = await getCurrentLocation();
+  // Future<List<RestaurantModel>> getNearbyRestaurants(
+  //     List<RestaurantModel> allRestaurants, double radiusKm) async {
+  //   // Position userLocation = await getCurrentLocation();
+
+  //   return allRestaurants.where((restaurant) {
+  //     return true;
+
+  //     // isWithinRadius(
+  //     //   userLocation,
+  //     //   restaurant.latitude,
+  //     //   restaurant.longitude,
+  //     //   radiusKm,
+  //     // );
+  //   }).toList();
+  // }
+
+
+// filter code
+
+Future<List<RestaurantModel>> getNearbyRestaurants(
+  List<RestaurantModel> allRestaurants,
+  double radiusInMeters, {
+  List<String> vibes = const [],
+  List<String> experiences = const [],
+  List<String> cuisines = const [],
+}) async {
+  try {
+    final userLocation = await getCurrentLocation();
 
     return allRestaurants.where((restaurant) {
-      return true;
+      // Skip restaurants without valid coordinates
+      if (restaurant.latitude == null || restaurant.longitude == null) {
+        return false;
+      }
 
-      // isWithinRadius(
-      //   userLocation,
-      //   restaurant.latitude,
-      //   restaurant.longitude,
-      //   radiusKm,
-      // );
+      // Calculate distance
+      final double distance = Geolocator.distanceBetween(
+        userLocation.latitude,
+        userLocation.longitude,
+        restaurant.latitude!,
+        restaurant.longitude!,
+      );
+
+      // Convert all to lowercase for case-insensitive comparison
+      final restaurantVibes = restaurant.atmosphereList.map((e) => e.toLowerCase()).toList();
+      final restaurantExperiences = restaurant.facilityList.map((e) => e.toLowerCase()).toList();
+      final restaurantCuisines = restaurant.menuList.map((e) => e.cuisineType?.toLowerCase() ?? '').toList();
+
+      // Check filters (empty filter lists means no filtering)
+      final bool matchesVibes = vibes.isEmpty ||
+          vibes.any((v) => restaurantVibes.contains(v.toLowerCase()));
+
+      final bool matchesExperiences = experiences.isEmpty ||
+          experiences.any((e) => restaurantExperiences.contains(e.toLowerCase()));
+
+      final bool matchesCuisines = cuisines.isEmpty ||
+          cuisines.any((c) => restaurantCuisines.contains(c.toLowerCase()));
+
+
+     return distance <= radiusInMeters &&
+    (vibes.isEmpty || matchesVibes) &&
+    (experiences.isEmpty || matchesExperiences) &&
+    (cuisines.isEmpty || matchesCuisines);
+
+    }).toList();
+  } catch (e) {
+    // If location fails, return all restaurants that match other filters
+    return allRestaurants.where((restaurant) {
+      final restaurantVibes = restaurant.atmosphereList.map((e) => e.toLowerCase()).toList();
+      final restaurantExperiences = restaurant.facilityList.map((e) => e.toLowerCase()).toList();
+      final restaurantCuisines = restaurant.menuList.map((e) => e.cuisineType?.toLowerCase() ?? '').toList();
+
+      final bool matchesVibes = vibes.isEmpty ||
+          vibes.any((v) => restaurantVibes.contains(v.toLowerCase()));
+
+      final bool matchesExperiences = experiences.isEmpty ||
+          experiences.any((e) => restaurantExperiences.contains(e.toLowerCase()));
+
+      final bool matchesCuisines = cuisines.isEmpty ||
+          cuisines.any((c) => restaurantCuisines.contains(c.toLowerCase()));
+
+      return matchesVibes && matchesExperiences && matchesCuisines;
     }).toList();
   }
+}
+
 
   Widget favoriteHeart({resturant_id}) {
     return StreamBuilder<QuerySnapshot>(
@@ -757,3 +923,11 @@ class HomeLocationController extends GetxController {
     });
   }
 }
+
+
+
+
+
+
+//--------------------
+

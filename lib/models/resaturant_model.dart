@@ -145,17 +145,23 @@ class RestaurantModel {
       averageRating: (data['averageRating'] ?? 0).toDouble(),
       city: data['city'] ?? '',
       country: data['country'] ?? '',
-      createdAt: data['createdAt'] ?? Timestamp.now(),
+      createdAt: (data['createdAt'] as Timestamp).toDate(),
       dietaryList: List<String>.from(data['dietaryList'] ?? []),
       docID: data['docID'] ?? '',
-      entertainmentScheduleList: List<EntertainmentScheduleModel>.from(
-          data['entertainmentScheduleList'] ?? []),
+      entertainmentScheduleList:
+          (data['entertainmentScheduleList'] as List<dynamic>? ?? [])
+              .map((e) =>
+                  EntertainmentScheduleModel.fromMap(e as Map<String, dynamic>))
+              .toList(),
       facilityList: List<String>.from(data['facilityList'] ?? []),
       imagesList: List<String>.from(data['resImages'] ?? []),
       latitude: (data['latitude'] ?? 0.0).toDouble(),
       logoImage: data['logoImage'] ?? '',
       longitude: (data['longitude'] ?? 0.0).toDouble(),
-      menuList: List<MenuModel>.from(data['menuList'] ?? []),
+     menuList: (data['menuList'] as List<dynamic>? ?? [])
+    .map((e) => MenuModel.fromMap(e as Map<String, dynamic>))
+    .toList(),
+
       password: data['password'] ?? '',
       priceRange: data['priceRange'] ?? '',
       resEmail: data['resEmail'] ?? '',

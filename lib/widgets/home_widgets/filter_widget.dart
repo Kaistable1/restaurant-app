@@ -100,145 +100,73 @@ class FilterWidget extends StatelessWidget {
             ],
           ),
         ),
-        // Obx(
-        //   () => filterController.aggregatedFilters.isNotEmpty
-        //       ? Column(
-        //           children: [
-        //             SizedBox(height: 10),
-        //             Padding(
-        //               padding: const EdgeInsets.symmetric(horizontal: 16),
-        //               child: Row(
-        //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //                 crossAxisAlignment: CrossAxisAlignment.start,
-        //                 children: [
-        //                   Expanded(
-        //                     child: SizedBox(
-        //                       width: 280,
-        //                       child: LayoutBuilder(
-        //                         builder: (context, constraints) {
-        //                           double availableWidth = constraints.maxWidth;
-        //                           return Obx(
-        //                             () => Wrap(
-        //                               direction: Axis.horizontal,
-        //                               spacing: 7,
-        //                               runSpacing: 10,
-        //                               children: [
-        //                                 ...filterController.aggregatedFilters
-        //                                     .map((filterName) {
-        //                                   return ConstrainedBox(
-        //                                     constraints: BoxConstraints(
-        //                                       maxWidth: availableWidth / 1,
-        //                                     ),
-        //                                     child: SelectedFilterWidgets(
-        //                                       filterName: filterName,
-        //                                       onTap: () {
-        //                                         filterController
-        //                                             .aggregatedFilters
-        //                                             .remove(filterName);
-        //                                         // Hide the filter list if it's empty after removal
-        //                                         if (filterController
-        //                                             .aggregatedFilters
-        //                                             .isEmpty) {
-        //                                           filterController
-        //                                               .isFilterListVisible
-        //                                               .value = false;
-        //                                         }
-        //                                         controller.update();
-        //                                       },
-        //                                     ),
-        //                                   );
-        //                                 }).toList(),
-        //                               ],
-        //                             ),
-        //                           );
-        //                         },
-        //                       ),
-        //                     ),
-        //                   ),
-        //                   GestureDetector(
-        //                     onTap: () {
-        //                       filterController.aggregatedFilters.clear();
-        //                       filterController.clearAll();
-        //                       final secondFilterController =
-        //                           Get.find<FilterController>();
-        //                       secondFilterController.clearAll();
-        //                     },
-        //                     child: Text(
-        //                       'clear all',
-        //                       style: TextStyle(
-        //                         color: AppColors.primaryColor,
-        //                         fontFamily: "Nunito-Sans",
-        //                         fontSize: 14,
-        //                         fontWeight: FontWeight.w400,
-        //                         decoration: TextDecoration.underline,
-        //                         decorationColor: AppColors.primaryColor,
-        //                       ),
-        //                     ),
-        //                   ),
-        //                 ],
-        //               ),
-        //             ),
-        //             SizedBox(height: 8),
-        //           ],
-        //         )
-        //       : SizedBox.shrink(),
-        // ),
+    
+        
       ],
     );
   }
 }
 
-class SelectedFilterWidgets extends StatelessWidget {
-  final String filterName;
-  final void Function()? onTap;
 
-  const SelectedFilterWidgets({
-    super.key,
-    required this.filterName,
-    this.onTap,
-  });
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: AppColors.primaryColor.withOpacity(0.7),
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: AppColors.primaryColor, width: 1),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Center(
-            child: Text(
-              filterName,
-              style: TextStyle(
-                color: AppColors.textColor,
-                fontFamily: "Nunito-Sans",
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ),
-          SizedBox(
-            width: 6,
-          ),
-          GestureDetector(
-            onTap: onTap,
-            child: Icon(
-              Icons.close,
-              color: AppColors.textColor,
-              size: 14,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+
+
+
+
+
+// class SelectedFilterWidgets extends StatelessWidget {
+//   final String filterName;
+//   final void Function()? onTap;
+
+//   const SelectedFilterWidgets({
+//     super.key,
+//     required this.filterName,
+//     this.onTap,
+//   });
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+//       decoration: BoxDecoration(
+//         color: AppColors.primaryColor.withOpacity(0.7),
+//         borderRadius: BorderRadius.circular(15),
+//         border: Border.all(color: AppColors.primaryColor, width: 1),
+//       ),
+//       child: Row(
+//         mainAxisSize: MainAxisSize.min,
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         crossAxisAlignment: CrossAxisAlignment.center,
+//         children: [
+//           Center(
+//             child: Text(
+//               filterName,
+//               style: TextStyle(
+//                 color: AppColors.textColor,
+//                 fontFamily: "Nunito-Sans",
+//                 fontSize: 12,
+//                 fontWeight: FontWeight.w400,
+//               ),
+//             ),
+//           ),
+//           SizedBox(
+//             width: 6,
+//           ),
+//           GestureDetector(
+//             onTap: onTap,
+//             child: Icon(
+//               Icons.close,
+//               color: AppColors.textColor,
+//               size: 14,
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+
+
 
 class FilterBox extends StatelessWidget {
   final HomeLocationController controller = Get.put(HomeLocationController());
@@ -644,3 +572,91 @@ class FilterBox extends StatelessWidget {
     );
   }
 }
+
+
+
+
+
+    // Obx(
+        //   () => filterController.aggregatedFilters.isNotEmpty
+        //       ? Column(
+        //           children: [
+        //             SizedBox(height: 10),
+        //             Padding(
+        //               padding: const EdgeInsets.symmetric(horizontal: 16),
+        //               child: Row(
+        //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //                 crossAxisAlignment: CrossAxisAlignment.start,
+        //                 children: [
+        //                   Expanded(
+        //                     child: SizedBox(
+        //                       width: 280,
+        //                       child: LayoutBuilder(
+        //                         builder: (context, constraints) {
+        //                           double availableWidth = constraints.maxWidth;
+        //                           return Obx(
+        //                             () => Wrap(
+        //                               direction: Axis.horizontal,
+        //                               spacing: 7,
+        //                               runSpacing: 10,
+        //                               children: [
+        //                                 ...filterController.aggregatedFilters
+        //                                     .map((filterName) {
+        //                                   return ConstrainedBox(
+        //                                     constraints: BoxConstraints(
+        //                                       maxWidth: availableWidth / 1,
+        //                                     ),
+        //                                     child: SelectedFilterWidgets(
+        //                                       filterName: filterName,
+        //                                       onTap: () {
+        //                                         filterController
+        //                                             .aggregatedFilters
+        //                                             .remove(filterName);
+        //                                         // Hide the filter list if it's empty after removal
+        //                                         if (filterController
+        //                                             .aggregatedFilters
+        //                                             .isEmpty) {
+        //                                           filterController
+        //                                               .isFilterListVisible
+        //                                               .value = false;
+        //                                         }
+        //                                         controller.update();
+        //                                       },
+        //                                     ),
+        //                                   );
+        //                                 }).toList(),
+        //                               ],
+        //                             ),
+        //                           );
+        //                         },
+        //                       ),
+        //                     ),
+        //                   ),
+        //                   GestureDetector(
+        //                     onTap: () {
+        //                       filterController.aggregatedFilters.clear();
+        //                       filterController.clearAll();
+        //                       final secondFilterController =
+        //                           Get.find<FilterController>();
+        //                       secondFilterController.clearAll();
+        //                     },
+        //                     child: Text(
+        //                       'clear all',
+        //                       style: TextStyle(
+        //                         color: AppColors.primaryColor,
+        //                         fontFamily: "Nunito-Sans",
+        //                         fontSize: 14,
+        //                         fontWeight: FontWeight.w400,
+        //                         decoration: TextDecoration.underline,
+        //                         decorationColor: AppColors.primaryColor,
+        //                       ),
+        //                     ),
+        //                   ),
+        //                 ],
+        //               ),
+        //             ),
+        //             SizedBox(height: 8),
+        //           ],
+        //         )
+        //       : SizedBox.shrink(),
+        // ),

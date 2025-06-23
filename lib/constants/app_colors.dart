@@ -14,4 +14,6 @@ class AppColors {
   static const tableBorderColor = Color(0xFFD2D8E1);
   static const tableHeadingColor = Color(0xFF555555);
   static const textNormalColor = Color(0xFF4F5A57);
+static const vibesCard = Color(0xFFCC5500);
+
 }

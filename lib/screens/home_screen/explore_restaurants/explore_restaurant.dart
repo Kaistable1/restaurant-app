@@ -186,36 +186,33 @@ class ExploreRestaurant extends StatelessWidget {
 
                         return GetBuilder<HomeLocationController>(
                           builder: (controller) {
-                            return GridView.builder(
+                            return ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                mainAxisExtent: Get.height * 0.27,
-                                crossAxisCount: 2,
-                                crossAxisSpacing: 10,
-                                mainAxisSpacing: 20,
-                              ),
                               itemCount: controller.filteredRestaurants.length,
                               itemBuilder: (context, index) {
                                 final item =
                                     controller.filteredRestaurants[index];
-                                return InkWell(
-                                  onTap: () {
-                                    Get.to(RestaurantDetailScreen(
-                                      restaurantModel: item,
-                                    ));
-                                  },
-                                  child: RectangleWidget(
-                                    onNavigate: onNavigate,
-                                    title: item.resName,
-                                    description: item.address,
-                                    resturant_id: item.docID,
-                                    imagePath: item.logoImage,
-                                    timetext: '10 AM',
-                                    percentText: '25%',
-                                    endTimeText: '9 PM',
-                                    isFavorite: false.obs,
+                                return Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 10),
+                                  child: InkWell(
+                                    onTap: () {
+                                      Get.to(RestaurantDetailScreen(
+                                        restaurantModel: item,
+                                      ));
+                                    },
+                                    child: RectangleWidget(
+                                      onNavigate: onNavigate,
+                                      title: item.resName,
+                                      description: item.address,
+                                      resturant_id: item.docID,
+                                      imagePath: item.logoImage,
+                                      timetext: '10 AM',
+                                      percentText: '25%',
+                                      endTimeText: '9 PM',
+                                      isFavorite: false.obs,
+                                    ),
                                   ),
                                 );
                               },

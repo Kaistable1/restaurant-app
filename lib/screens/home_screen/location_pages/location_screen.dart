@@ -11,6 +11,7 @@ import '../../detail_screens/restaurant_detail_screen.dart';
 import '../home_controller/home_location_controller.dart';
 import 'location_controller/location_controller.dart';
 
+// ignore: must_be_immutable
 class LocationScreen extends StatelessWidget {
   // final ScrollController scrollcontroller;
   final Function(int)? onNavigate;
@@ -32,7 +33,6 @@ class LocationScreen extends StatelessWidget {
   final onboradingController = Get.put(OnboardingController());
   @override
   Widget build(BuildContext context) {
-    bool isOnboarding = onboradingController.selectedCountry.value != 'Country';
     return WillPopScope(
       onWillPop: () async {
         Get.back();

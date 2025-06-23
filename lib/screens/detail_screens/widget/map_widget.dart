@@ -112,6 +112,9 @@ class _MapDetailWidgetState extends State<MapDetailWidget> {
     ];
   }
 
+
+  
+
   @override
   Widget build(BuildContext context) {
     final allFilters = _getAllFilters();
@@ -175,33 +178,7 @@ class _MapDetailWidgetState extends State<MapDetailWidget> {
                   .toList(),
             ),
 
-          // if (_showFilters) const SizedBox(height: 10),
-
-          /// Simple Filter List (No decoration, just plain text)
-          // if (_showFilters)
-          //   SizedBox(
-          //     height: 200, // Set max height
-          //     child: ListView.builder(
-          //       itemCount: allFilters.length,
-          //       itemBuilder: (context, index) {
-          //         final filter = allFilters[index];
-          //         return Padding(
-          //           padding: const EdgeInsets.symmetric(
-          //               vertical: 6.0, horizontal: 8.0),
-          //           child: Text(
-          //             filter,
-          //             style: TextStyle(
-          //                     fontSize: 14,
-          //                     //fontWeight: FontWeight.w600,
-          //                     fontFamily: 'Nunito-Regular',
-          //                     color:AppColors.tableHeadingColor // Glass text looks better in white
-          //                   ),
-          //           ),
-          //         );
-          //       },
-          //     ),
-          //   ),
-
+       
           const SizedBox(height: 20),
 
           widget.isCommingSoon == true

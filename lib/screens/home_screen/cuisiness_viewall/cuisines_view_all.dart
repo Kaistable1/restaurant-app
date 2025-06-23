@@ -144,73 +144,117 @@ class CuisinesViewAll extends StatelessWidget {
                     ),
                     SizedBox(height: 12),
                     StreamBuilder<Map<String, List<String>>>(
-                      stream: filterController.getRestaurantsGroupedByCuisine(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return buildShimmerEffect();
-                        }
+                        stream:
+                            filterController.getRestaurantsGroupedByCuisine(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return buildShimmerEffect();
+                          }
 
-                        if (snapshot.hasError) {
-                          return Center(
-                              child: Text('Error: ${snapshot.error}'));
-                        }
+                          if (snapshot.hasError) {
+                            return Center(
+                                child: Text('Error: ${snapshot.error}'));
+                          }
 
-                        final cuisineMap = snapshot.data ?? {};
+                          final cuisineMap = snapshot.data ?? {};
 
-                        // Initialize the cuisine selectors only if not already initialized
-                        if (filterController.cusinesMapFilter.isEmpty) {
-                          filterController
-                              .initializeCuisinesSelectors(cuisineMap);
-                        }
+                          // Initialize the cuisine selectors only if not already initialized
+                          if (filterController.cusinesMapFilter.isEmpty) {
+                            filterController
+                                .initializeCuisinesSelectors(cuisineMap);
+                          }
 
-                        return Obx(() {
-                          final filteredCuisineMap =
-                              filterController.cusinesMapFilter;
-                          return SizedBox(
-                            height: Get.height * 0.8,
-                            width: double.infinity,
-                            child: GridView.builder(
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                mainAxisExtent: Get.height * 0.22,
-                                crossAxisCount: 2,
-                                crossAxisSpacing: 10.0,
-                                mainAxisSpacing: 20.0,
+                          //     return Obx(() {
+                          //       final filteredCuisineMap =
+                          //           filterController.cusinesMapFilter;
+                          //       return SizedBox(
+                          //         height: Get.height * 0.8,
+                          //         width: double.infinity,
+                          //         child: GridView.builder(
+                          //           gridDelegate:
+                          //               SliverGridDelegateWithFixedCrossAxisCount(
+                          //             mainAxisExtent: Get.height * 0.22,
+                          //             crossAxisCount: 1,
+                          //             crossAxisSpacing: 10.0,
+                          //             mainAxisSpacing: 20.0,
+                          //           ),
+                          //           itemCount: filteredCuisineMap.keys.length,
+                          //           itemBuilder: (context, index) {
+                          //             final cuisineName =
+                          //                 filteredCuisineMap.keys.elementAt(index);
+                          //             final restaurants =
+                          //                 filteredCuisineMap[cuisineName]!
+                          //                     .toSet()
+                          //                     .toList()
+                          //                   ..sort();
+
+                          //             return CircleContainerWidget(
+                          //               ontap: () {
+                          //                 Get.to(() => ExploreRestaurant(
+                          //                       restaurantIDs: restaurants,
+                          //                       cuisneName: cuisineName,
+                          //                     ));
+                          //               },
+                          //               isFavourite: false.obs,
+                          //               isLocation: false,
+                          //               height: 279,
+                          //               width: 334,
+                          //               imgPath: 'assets/images/aaa.jpg',
+                          //               titleText: cuisineName,
+                          //               descriptionText:
+                          //                   '${restaurants.length.toString()} restaurants',
+                          //             );
+                          //           },
+                          //         ),
+                          //       );
+                          //     });
+                          //   },
+                          // ),
+                          // const SizedBox(height: 30),
+
+                          return Obx(() {
+                            final filteredCuisineMap =
+                                filterController.cusinesMapFilter;
+
+                            return SizedBox(
+                              height: Get.height * 0.8,
+                              width: double.infinity, // ✅ Important
+                              child: ListView.builder(
+                                itemCount: filteredCuisineMap.keys.length,
+                                itemBuilder: (context, index) {
+                                  final cuisineName =
+                                      filteredCuisineMap.keys.elementAt(index);
+                                  final restaurants =
+                                      filteredCuisineMap[cuisineName]!
+                                          .toSet()
+                                          .toList()
+                                        ..sort();
+
+                                  return Padding(
+                                    padding: const EdgeInsets.only(bottom: 16),
+                                    child: CircleContainerWidget(
+                                      ontap: () {
+                                        Get.to(() => ExploreRestaurant(
+                                              restaurantIDs: restaurants,
+                                              cuisneName: cuisineName,
+                                            ));
+                                      },
+                                      isFavourite: false.obs,
+                                      isLocation: false,
+                                      height: 220, // ✅ Adjust as needed
+                                      width: MediaQuery.of(context).size.width,
+                                      imgPath: 'assets/images/aaa.jpg',
+                                      titleText: cuisineName,
+                                      descriptionText:
+                                          '${restaurants.length} restaurants',
+                                    ),
+                                  );
+                                },
                               ),
-                              itemCount: filteredCuisineMap.keys.length,
-                              itemBuilder: (context, index) {
-                                final cuisineName =
-                                    filteredCuisineMap.keys.elementAt(index);
-                                final restaurants =
-                                    filteredCuisineMap[cuisineName]!
-                                        .toSet()
-                                        .toList()
-                                      ..sort();
-
-                                return CircleContainerWidget(
-                                  ontap: () {
-                                    Get.to(() => ExploreRestaurant(
-                                          restaurantIDs: restaurants,
-                                          cuisneName: cuisineName,
-                                        ));
-                                  },
-                                  isFavourite: false.obs,
-                                  isLocation: false,
-                                  height: 150,
-                                  width: 115,
-                                  imgPath: 'assets/images/aaa.jpg',
-                                  titleText: cuisineName,
-                                  descriptionText:
-                                      '${restaurants.length.toString()} restaurants',
-                                );
-                              },
-                            ),
-                          );
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 30),
+                            );
+                          });
+                        })
                   ],
                 ),
               ),
