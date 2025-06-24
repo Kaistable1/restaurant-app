@@ -1,0 +1,18 @@
+"/Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseStorage/FirebaseStorage/Sources/Internal/StorageUtils.swift":
+  const-values: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseStorage.build/Objects-normal/arm64/StorageUtils.swiftconstvalues"
+  dependencies: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseStorage.build/Objects-normal/arm64/StorageUtils.d"
+  swift-dependencies: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseStorage.build/Objects-normal/arm64/StorageUtils.swiftdeps"
+  diagnostics: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseStorage.build/Objects-normal/arm64/StorageUtils.dia"
+  object: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseStorage.build/Objects-normal/arm64/StorageUtils.o"
+"/Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseStorage/FirebaseStorage/Sources/Internal/StorageUpdateMetadataTask.swift":
+  object: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseStorage.build/Objects-normal/arm64/StorageUpdateMetadataTask.o"
+  const-values: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseStorage.build/Objects-normal/arm64/StorageUpdateMetadataTask.swiftconstvalues"
+  dependencies: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseStorage.build/Objects-normal/arm64/StorageUpdateMetadataTask.d"
+  swift-dependencies: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseStorage.build/Objects-normal/arm64/StorageUpdateMetadataTask.swiftdeps"
+  diagnostics: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseStorage.build/Objects-normal/arm64/StorageUpdateMetadataTask.dia"
+"/Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseStorage/FirebaseStorage/Sources/StorageUploadTask.swift":
+  object: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseStorage.build/Objects-normal/arm64/StorageUploadTask.o"
+  dependencies: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseStorage.build/Objects-normal/arm64/StorageUploadTask.d"
+  swift-dependencies: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseStorage.build/Objects-normal/arm64/StorageUploadTask.swiftdeps"
+  const-values: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseStorage.build/Objects-normal/arm64/StorageUploadTask.swiftconstvalues"
+  diagnostics: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseStorage.build/Objects-normal/arm64/StorageUploadTask.dia"

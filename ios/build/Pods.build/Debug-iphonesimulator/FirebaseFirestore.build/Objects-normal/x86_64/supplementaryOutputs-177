@@ -1,0 +1,18 @@
+"/Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/Firestore/Swift/Source/Codable/GeoPoint+Codable.swift":
+  const-values: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseFirestore.build/Objects-normal/x86_64/GeoPoint+Codable.swiftconstvalues"
+  swift-dependencies: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseFirestore.build/Objects-normal/x86_64/GeoPoint+Codable.swiftdeps"
+  object: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseFirestore.build/Objects-normal/x86_64/GeoPoint+Codable.o"
+  diagnostics: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseFirestore.build/Objects-normal/x86_64/GeoPoint+Codable.dia"
+  dependencies: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseFirestore.build/Objects-normal/x86_64/GeoPoint+Codable.d"
+"/Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/Firestore/Swift/Source/PropertyWrapper/FirestoreQueryObservable.swift":
+  diagnostics: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseFirestore.build/Objects-normal/x86_64/FirestoreQueryObservable.dia"
+  dependencies: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseFirestore.build/Objects-normal/x86_64/FirestoreQueryObservable.d"
+  const-values: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseFirestore.build/Objects-normal/x86_64/FirestoreQueryObservable.swiftconstvalues"
+  object: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseFirestore.build/Objects-normal/x86_64/FirestoreQueryObservable.o"
+  swift-dependencies: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseFirestore.build/Objects-normal/x86_64/FirestoreQueryObservable.swiftdeps"
+"/Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/Firestore/Swift/Source/PropertyWrapper/QueryPredicate.swift":
+  diagnostics: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseFirestore.build/Objects-normal/x86_64/QueryPredicate.dia"
+  object: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseFirestore.build/Objects-normal/x86_64/QueryPredicate.o"
+  dependencies: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseFirestore.build/Objects-normal/x86_64/QueryPredicate.d"
+  swift-dependencies: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseFirestore.build/Objects-normal/x86_64/QueryPredicate.swiftdeps"
+  const-values: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseFirestore.build/Objects-normal/x86_64/QueryPredicate.swiftconstvalues"

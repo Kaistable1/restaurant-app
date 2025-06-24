@@ -1,0 +1,23 @@
+{
+  "version": 0,
+  "use-external-names": false,
+  "case-sensitive": false,
+  "roots": [{
+    "type": "directory",
+    "name": "/Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseAuth/FirebaseAuth.framework/Modules",
+    "contents": [{
+      "type": "file",
+      "name": "module.modulemap",
+      "external-contents": "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseAuth.build/unextended-module.modulemap",
+    }]
+    },
+    {
+    "type": "directory",
+    "name": "/Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseAuth/FirebaseAuth.framework/Headers",
+    "contents": [{
+      "type": "file",
+      "name": "FirebaseAuth-Swift.h",
+      "external-contents": "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseAuth.build/unextended-interface-header.h",
+    }]
+  }]
+}

@@ -1,0 +1,18 @@
+"/Users/macos/Downloads/restaurant-app/ios/Pods/DKPhotoGallery/DKPhotoGallery/DKPhotoPreviewFactory.swift":
+  dependencies: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/DKPhotoGallery.build/Objects-normal/arm64/DKPhotoPreviewFactory.d"
+  diagnostics: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/DKPhotoGallery.build/Objects-normal/arm64/DKPhotoPreviewFactory.dia"
+  swift-dependencies: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/DKPhotoGallery.build/Objects-normal/arm64/DKPhotoPreviewFactory.swiftdeps"
+  object: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/DKPhotoGallery.build/Objects-normal/arm64/DKPhotoPreviewFactory.o"
+  const-values: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/DKPhotoGallery.build/Objects-normal/arm64/DKPhotoPreviewFactory.swiftconstvalues"
+"/Users/macos/Downloads/restaurant-app/ios/Pods/DKPhotoGallery/DKPhotoGallery/Preview/DKPhotoProgressIndicatorProtocol.swift":
+  object: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/DKPhotoGallery.build/Objects-normal/arm64/DKPhotoProgressIndicatorProtocol.o"
+  swift-dependencies: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/DKPhotoGallery.build/Objects-normal/arm64/DKPhotoProgressIndicatorProtocol.swiftdeps"
+  dependencies: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/DKPhotoGallery.build/Objects-normal/arm64/DKPhotoProgressIndicatorProtocol.d"
+  diagnostics: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/DKPhotoGallery.build/Objects-normal/arm64/DKPhotoProgressIndicatorProtocol.dia"
+  const-values: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/DKPhotoGallery.build/Objects-normal/arm64/DKPhotoProgressIndicatorProtocol.swiftconstvalues"
+"/Users/macos/Downloads/restaurant-app/ios/Pods/DKPhotoGallery/DKPhotoGallery/Preview/DKPhotoProgressIndicator.swift":
+  swift-dependencies: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/DKPhotoGallery.build/Objects-normal/arm64/DKPhotoProgressIndicator.swiftdeps"
+  dependencies: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/DKPhotoGallery.build/Objects-normal/arm64/DKPhotoProgressIndicator.d"
+  const-values: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/DKPhotoGallery.build/Objects-normal/arm64/DKPhotoProgressIndicator.swiftconstvalues"
+  object: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/DKPhotoGallery.build/Objects-normal/arm64/DKPhotoProgressIndicator.o"
+  diagnostics: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/DKPhotoGallery.build/Objects-normal/arm64/DKPhotoProgressIndicator.dia"

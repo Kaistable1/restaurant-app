@@ -1,0 +1,18 @@
+"/Users/macos/Downloads/restaurant-app/ios/Pods/DKPhotoGallery/DKPhotoGallery/Transition/DKPhotoGalleryTransitionDismiss.swift":
+  dependencies: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/DKPhotoGallery.build/Objects-normal/x86_64/DKPhotoGalleryTransitionDismiss.d"
+  const-values: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/DKPhotoGallery.build/Objects-normal/x86_64/DKPhotoGalleryTransitionDismiss.swiftconstvalues"
+  diagnostics: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/DKPhotoGallery.build/Objects-normal/x86_64/DKPhotoGalleryTransitionDismiss.dia"
+  object: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/DKPhotoGallery.build/Objects-normal/x86_64/DKPhotoGalleryTransitionDismiss.o"
+  swift-dependencies: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/DKPhotoGallery.build/Objects-normal/x86_64/DKPhotoGalleryTransitionDismiss.swiftdeps"
+"/Users/macos/Downloads/restaurant-app/ios/Pods/DKPhotoGallery/DKPhotoGallery/Transition/DKPhotoGalleryTransitionPresent.swift":
+  dependencies: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/DKPhotoGallery.build/Objects-normal/x86_64/DKPhotoGalleryTransitionPresent.d"
+  diagnostics: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/DKPhotoGallery.build/Objects-normal/x86_64/DKPhotoGalleryTransitionPresent.dia"
+  const-values: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/DKPhotoGallery.build/Objects-normal/x86_64/DKPhotoGalleryTransitionPresent.swiftconstvalues"
+  swift-dependencies: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/DKPhotoGallery.build/Objects-normal/x86_64/DKPhotoGalleryTransitionPresent.swiftdeps"
+  object: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/DKPhotoGallery.build/Objects-normal/x86_64/DKPhotoGalleryTransitionPresent.o"
+"/Users/macos/Downloads/restaurant-app/ios/Pods/DKPhotoGallery/DKPhotoGallery/Preview/ImagePreview/DKPhotoImageDownloader.swift":
+  const-values: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/DKPhotoGallery.build/Objects-normal/x86_64/DKPhotoImageDownloader.swiftconstvalues"
+  object: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/DKPhotoGallery.build/Objects-normal/x86_64/DKPhotoImageDownloader.o"
+  swift-dependencies: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/DKPhotoGallery.build/Objects-normal/x86_64/DKPhotoImageDownloader.swiftdeps"
+  dependencies: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/DKPhotoGallery.build/Objects-normal/x86_64/DKPhotoImageDownloader.d"
+  diagnostics: "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/DKPhotoGallery.build/Objects-normal/x86_64/DKPhotoImageDownloader.dia"

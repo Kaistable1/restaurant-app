@@ -1,0 +1,43 @@
+dependencies: \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/src/core/lib/security/credentials/alts/check_gcp_environment.cc \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/Target\ Support\ Files/gRPC-Core/gRPC-Core-prefix.pch \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/src/core/lib/security/credentials/alts/check_gcp_environment.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/support/alloc.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/support/port_platform.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/log/log.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/log/internal/log_impl.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/log/absl_vlog_is_on.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/base/attributes.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/base/config.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/base/options.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/base/policy_checks.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/log/internal/vlog_config.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/base/optimization.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/base/thread_annotations.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/strings/string_view.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/base/nullability.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/base/internal/nullability_impl.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/meta/type_traits.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/base/internal/throw_delegate.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/base/macros.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/base/port.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/log/internal/conditions.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/log/internal/voidify.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/log/internal/log_message.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/base/internal/errno_saver.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/base/log_severity.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/log/internal/nullguard.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/log/log_entry.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/log/internal/config.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/time/time.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/time/civil_time.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/time/internal/cctz/include/cctz/civil_time.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/time/internal/cctz/include/cctz/civil_time_detail.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/time/internal/cctz/include/cctz/time_zone.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/types/span.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/types/internal/span.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/algorithm/algorithm.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/log/log_sink.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/strings/has_absl_stringify.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/log/internal/strip.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/log/internal/nullstream.h

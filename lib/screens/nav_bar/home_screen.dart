@@ -789,6 +789,13 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+
+
+
+
+
+
+//.................................
   Widget _buildCategories() {
     return Obx(() => Column(
           crossAxisAlignment: CrossAxisAlignment.start,

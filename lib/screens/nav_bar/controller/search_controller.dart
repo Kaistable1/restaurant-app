@@ -49,37 +49,6 @@ class FilterController extends GetxController {
   // Multi-Selection Lists with Checkboxes
   var selectedFilters = <String, RxList<String>>{}.obs;
   var filterOptions = <String, List<String>>{
-    "Experience": [
-      "Live Music",
-      "Dj Night",
-      "Silent Party",
-      "Karaoke",
-      "Trivia Nights",
-      "Sports screenings",
-      "Hookah",
-      "Sip & Paint",
-      "Ladies Night",
-      " RnB Night"
-    ],
-    "Vibes": [
-      "Brunch Party",
-      "Bottomless Brunch",
-      "Day Party",
-      "Pool Party",
-      "Happy Hours",
-      "Open Bar",
-      "Rooftop Vibes"
-    ],
-    "Atmospheres": [
-      "Casual Dining",
-      "Fine Dining",
-      "Fast Food",
-      "Date Night",
-      "Candlelit",
-      "Outdoor",
-      "Rooftop",
-      "Ocean View"
-    ],
     "Cuisines": [
       "American",
       "Mexican",
@@ -111,6 +80,37 @@ class FilterController extends GetxController {
       "Raw Food",
       "Keto",
       "Paleo",
+    ],
+    "Experience": [
+      "Live Music",
+      "Dj Night",
+      "Silent Party",
+      "Karaoke",
+      "Trivia Nights",
+      "Sports screenings",
+      "Hookah",
+      "Sip & Paint",
+      "Ladies Night",
+      " RnB Night"
+    ],
+    "Vibes": [
+      "Brunch Party",
+      "Bottomless Brunch",
+      "Day Party",
+      "Pool Party",
+      "Happy Hours",
+      "Open Bar",
+      "Rooftop Vibes"
+    ],
+    "Atmospheres": [
+      "Casual Dining",
+      "Fine Dining",
+      "Fast Food",
+      "Date Night",
+      "Candlelit",
+      "Outdoor",
+      "Rooftop",
+      "Ocean View"
     ],
     "Facilities": [
       'Free wi-fi',

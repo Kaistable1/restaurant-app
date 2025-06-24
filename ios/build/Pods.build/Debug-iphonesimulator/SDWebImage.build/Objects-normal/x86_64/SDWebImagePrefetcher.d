@@ -1,0 +1,29 @@
+dependencies: \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/usr/include/Darwin.modulemap \
+  /Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/SDWebImage.build/module.modulemap \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/SDWebImage/SDWebImage/Core/SDWebImagePrefetcher.m \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/Target\ Support\ Files/SDWebImage/SDWebImage-prefix.pch \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/System/Library/Frameworks/UIKit.framework/Modules/module.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/System/Library/Frameworks/Foundation.framework/Modules/module.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/usr/include/TargetConditionals.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include/module.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/usr/include/os.modulemap \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/SDWebImage/SDWebImage/Core/SDWebImagePrefetcher.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/SDWebImage/SDWebImage/Core/SDWebImageManager.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/SDWebImage/SDWebImage/Core/SDWebImageCompat.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/SDWebImage/SDWebImage/Core/SDWebImageOperation.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/SDWebImage/SDWebImage/Core/SDImageCacheDefine.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/SDWebImage/SDWebImage/Core/SDWebImageDefine.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/SDWebImage/SDWebImage/Core/SDImageCoder.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/SDWebImage/SDWebImage/Core/NSData+ImageContentType.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/SDWebImage/SDWebImage/Core/SDImageFrame.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/SDWebImage/SDWebImage/Core/SDImageLoader.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/SDWebImage/SDWebImage/Core/SDImageTransformer.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/SDWebImage/SDWebImage/Core/UIImage+Transform.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/SDWebImage/SDWebImage/Core/SDWebImageCacheKeyFilter.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/SDWebImage/SDWebImage/Core/SDWebImageCacheSerializer.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/SDWebImage/SDWebImage/Core/SDWebImageOptionsProcessor.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/SDWebImage/SDWebImage/Private/SDAsyncBlockOperation.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/SDWebImage/SDWebImage/Core/SDCallbackQueue.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/SDWebImage/SDWebImage/Private/SDInternalMacros.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/SDWebImage/SDWebImage/Private/SDmetamacros.h
