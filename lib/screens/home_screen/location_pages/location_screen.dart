@@ -218,16 +218,16 @@ class LocationScreen extends StatelessWidget {
                               }).toList();
                             }
 
-                            return GridView.builder(
+                            return ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                mainAxisExtent: Get.height * 0.27,
-                                crossAxisCount: 2,
-                                crossAxisSpacing: 10,
-                                mainAxisSpacing: 20,
-                              ),
+                              // gridDelegate:
+                              //     SliverGridDelegateWithFixedCrossAxisCount(
+                              //   mainAxisExtent: Get.height * 0.27,
+                              //   crossAxisCount: 2,
+                              //   crossAxisSpacing: 10,
+                              //   mainAxisSpacing: 20,
+                              // ),
                               itemCount: controller.filteredRestaurants.length,
                               itemBuilder: (context, index) {
                                 final item =
@@ -246,7 +246,7 @@ class LocationScreen extends StatelessWidget {
                                     imagePath: item.logoImage,
                                     timetext: '10 AM',
                                     percentText: '25%',
-                        
+                                    height: 250,
                                     isFavorite: false.obs,
                                   ),
                                 );

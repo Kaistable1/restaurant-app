@@ -219,16 +219,16 @@ class RecentlyViewed extends StatelessWidget {
                             children: [
                               GetBuilder<HomeLocationController>(
                                   builder: (homeLocationController) {
-                                return GridView.builder(
+                                return ListView.builder(
                                   shrinkWrap: true,
                                   physics: const NeverScrollableScrollPhysics(),
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    mainAxisExtent: Get.height * 0.2,
-                                    crossAxisCount: 2,
-                                    crossAxisSpacing: 10,
-                                    mainAxisSpacing: 30,
-                                  ),
+                                  // gridDelegate:
+                                  //     SliverGridDelegateWithFixedCrossAxisCount(
+                                  //   mainAxisExtent: Get.height * 0.2,
+                                  //   crossAxisCount: 2,
+                                  //   crossAxisSpacing: 10,
+                                  //   mainAxisSpacing: 30,
+                                  // ),
                                   itemCount: filteredRestaurants.length,
                                   itemBuilder: (context, index) {
                                     final item = filteredRestaurants[index];
@@ -248,6 +248,7 @@ class RecentlyViewed extends StatelessWidget {
                                         percentText: '25%',
                                         endTimeText: '9 PM',
                                         isFavorite: false.obs,
+                                         height: 250,
                                       ),
                                     );
                                   },

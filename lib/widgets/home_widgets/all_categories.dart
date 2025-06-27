@@ -85,38 +85,42 @@ class AllCategories extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 12),
-                GridView.builder(
+                ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    mainAxisExtent: Get.height * 0.2,
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 30,
-                  ),
+                  // gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  //   mainAxisExtent: Get.height * 0.2,
+                  //   crossAxisCount: 2,
+                  //   crossAxisSpacing: 10,
+                  //   mainAxisSpacing: 30,
+                  // ),
                   itemCount:
                       filteredRestaurants.length, // Use filtered list length
                   itemBuilder: (context, index) {
                     final item = filteredRestaurants[index];
-                    return InkWell(
-                      onTap: () {
-                        Get.to(RestaurantDetailScreen(
-                          restaurantModel: item,
-                        ));
-                      },
-                      child: SizedBox(
-                        width: Get.width * 0.45,
-                        child: RectangleWidget(
-                          title: item.resName,
-                          description: item.address,
-                          resturant_id: item.docID,
-                          imagePath: item.logoImage,
-                          timetext: '10 AM',
-                          percentText: '25%',
-                          endTimeText: '9 PM',
-                          // percentageOff: item.menuList.percentageOff,
-                          // happyhour: item.menuList.happyHourSpecials,
-                          isFavorite: false.obs,
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: InkWell(
+                        onTap: () {
+                          Get.to(RestaurantDetailScreen(
+                            restaurantModel: item,
+                          ));
+                        },
+                        child: SizedBox(
+                          width: Get.width * 0.45,
+                          child: RectangleWidget(
+                            title: item.resName,
+                            description: item.address,
+                            resturant_id: item.docID,
+                            imagePath: item.logoImage,
+                            timetext: '10 AM',
+                            percentText: '25%',
+                            endTimeText: '9 PM',
+                            // percentageOff: item.menuList.percentageOff,
+                            // happyhour: item.menuList.happyHourSpecials,
+                            isFavorite: false.obs,
+                            height: 250,
+                          ),
                         ),
                       ),
                     );

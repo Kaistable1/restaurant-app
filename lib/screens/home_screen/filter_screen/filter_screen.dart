@@ -243,39 +243,43 @@ class FilterScreen extends StatelessWidget {
                         left: 14,
                         right: 14,
                       ),
-                      child: GridView.builder(
+                      child: ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          mainAxisExtent: 220,
-                          crossAxisCount: Responsive.isMobile(context)
-                              ? 2
-                              : (Responsive.isTablet(context) ? 3 : 4),
-                          crossAxisSpacing: Responsive.isMobile(context)
-                              ? 10
-                              : (Responsive.isTablet(context) ? 8 : 10),
-                          mainAxisSpacing: Responsive.isMobile(context)
-                              ? 0
-                              : (Responsive.isTablet(context) ? 2 : 20),
-                          childAspectRatio: itemWidth / itemHeight,
-                        ),
+                        // gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        //   mainAxisExtent: 220,
+                        //   crossAxisCount: Responsive.isMobile(context)
+                        //       ? 2
+                        //       : (Responsive.isTablet(context) ? 3 : 4),
+                        //   crossAxisSpacing: Responsive.isMobile(context)
+                        //       ? 10
+                        //       : (Responsive.isTablet(context) ? 8 : 10),
+                        //   mainAxisSpacing: Responsive.isMobile(context)
+                        //       ? 0
+                        //       : (Responsive.isTablet(context) ? 2 : 20),
+                        //   childAspectRatio: itemWidth / itemHeight,
+                        // ),
                         itemCount: locationController.locationItem.length,
                         itemBuilder: (context, index) {
                           final item = locationController.locationItem[index];
-                          return InkWell(
-                            onTap: () {
-                              Get.to(RestaurantDetailScreen());
-                            },
-                            child: RectangleWidget(
-                              onNavigate: onNavigate,
-                              title: item.title,
-                              description: item.description,
-                              imagePath: item.imagePath,
-                              timetext: item.timetext,
-                              percentText: item.percentText,
-                              endTimeText: item.endTimeText,
-                              isFavorite: false.obs,
-                              //scrollcontroller: scrollcontroller,
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 20),
+                            child: InkWell(
+                              onTap: () {
+                                Get.to(RestaurantDetailScreen());
+                              },
+                              child: RectangleWidget(
+                                onNavigate: onNavigate,
+                                title: item.title,
+                                description: item.description,
+                                imagePath: item.imagePath,
+                                timetext: item.timetext,
+                                percentText: item.percentText,
+                                endTimeText: item.endTimeText,
+                                isFavorite: false.obs,
+                                height: 250,
+                                //scrollcontroller: scrollcontroller,
+                              ),
                             ),
                           );
                         },

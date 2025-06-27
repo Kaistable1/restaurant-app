@@ -190,36 +190,40 @@ class FavoriteScreen extends StatelessWidget {
                                     ),
                                   );
                                 }
-                                return GridView.builder(
+                                return ListView.builder(
                                   shrinkWrap: true,
                                   physics: const NeverScrollableScrollPhysics(),
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    mainAxisExtent: Get.height * 0.27,
-                                    crossAxisCount: 2,
-                                    crossAxisSpacing: 10,
-                                    mainAxisSpacing: 20,
-                                  ),
+                                  // gridDelegate:
+                                  //     SliverGridDelegateWithFixedCrossAxisCount(
+                                  //   mainAxisExtent: Get.height * 0.27,
+                                  //   crossAxisCount: 2,
+                                  //   crossAxisSpacing: 10,
+                                  //   mainAxisSpacing: 20,
+                                  // ),
                                   itemCount: favoriteRestaurants
                                       .length, // Set the item count to the length of favorite restaurants
                                   itemBuilder: (context, index) {
                                     final item = favoriteRestaurants[index];
-                                    return InkWell(
-                                      onTap: () {
-                                        Get.to(RestaurantDetailScreen(
-                                          restaurantModel: item,
-                                        ));
-                                      },
-                                      child: RectangleWidget(
-                                        onNavigate: onNavigate,
-                                        title: item.resName,
-                                        description: item.address,
-                                        imagePath: item.logoImage,
-                                        timetext: '',
-                                        endTimeText: '',
-                                        percentText: '',
-                                        resturant_id: item.docID,
-                                        isFavorite: true.obs,
+                                    return Padding(
+                                      padding: const EdgeInsets.only(bottom: 20),
+                                      child: InkWell(
+                                        onTap: () {
+                                          Get.to(RestaurantDetailScreen(
+                                            restaurantModel: item,
+                                          ));
+                                        },
+                                        child: RectangleWidget(
+                                          onNavigate: onNavigate,
+                                          title: item.resName,
+                                          description: item.address,
+                                          imagePath: item.logoImage,
+                                          timetext: '',
+                                          endTimeText: '',
+                                          percentText: '',
+                                          resturant_id: item.docID,
+                                          isFavorite: true.obs,
+                                          height: 250,
+                                        ),
                                       ),
                                     );
                                   },

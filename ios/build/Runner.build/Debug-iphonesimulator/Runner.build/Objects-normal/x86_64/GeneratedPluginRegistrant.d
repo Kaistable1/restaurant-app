@@ -1,0 +1,35 @@
+dependencies: \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/shared_preferences_foundation/shared_preferences_foundation.framework/Modules/module.modulemap \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/url_launcher_ios/url_launcher_ios.framework/Modules/module.modulemap \
+  /Users/macos/Downloads/restaurant-app/ios/Runner/GeneratedPluginRegistrant.m \
+  /Users/macos/Downloads/restaurant-app/ios/Runner/GeneratedPluginRegistrant.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/Flutter.framework/Modules/module.modulemap \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/awesome_notifications/awesome_notifications.framework/Headers/AwesomeNotificationsPlugin.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/cloud_firestore/cloud_firestore.framework/Modules/module.modulemap \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/cloud_firestore/cloud_firestore.framework/Headers/FLTFirebaseFirestorePlugin.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/firebase_core/firebase_core.framework/Modules/module.modulemap \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/file_picker/file_picker.framework/Modules/module.modulemap \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/file_picker/file_picker.framework/Headers/FilePickerPlugin.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/firebase_auth/firebase_auth.framework/Modules/module.modulemap \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/firebase_auth/firebase_auth.framework/Headers/FLTFirebaseAuthPlugin.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/firebase_core/firebase_core.framework/Headers/FLTFirebaseCorePlugin.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/firebase_messaging/firebase_messaging.framework/Modules/module.modulemap \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/firebase_messaging/firebase_messaging.framework/Headers/FLTFirebaseMessagingPlugin.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/firebase_storage/firebase_storage.framework/Modules/module.modulemap \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/firebase_storage/firebase_storage.framework/Headers/FLTFirebaseStoragePlugin.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/flutter_local_notifications/flutter_local_notifications.framework/Modules/module.modulemap \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/flutter_local_notifications/flutter_local_notifications.framework/Headers/FlutterLocalNotificationsPlugin.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/fluttertoast/fluttertoast.framework/Modules/module.modulemap \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/fluttertoast/fluttertoast.framework/Headers/FluttertoastPlugin.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/geocoding_ios/geocoding_ios.framework/Modules/module.modulemap \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/geocoding_ios/geocoding_ios.framework/Headers/GeocodingPlugin.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/geolocator_apple/geolocator_apple.framework/Modules/module.modulemap \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/geolocator_apple/geolocator_apple.framework/Headers/GeolocatorPlugin.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Modules/module.modulemap \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/google_maps_flutter_ios/google_maps_flutter_ios.framework/Headers/FLTGoogleMapsPlugin.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/image_picker_ios/image_picker_ios.framework/Modules/module.modulemap \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/image_picker_ios/image_picker_ios.framework/Headers/FLTImagePickerPlugin.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/permission_handler_apple/permission_handler_apple.framework/Modules/module.modulemap \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/permission_handler_apple/permission_handler_apple.framework/Headers/PermissionHandlerPlugin.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/video_player_avfoundation/video_player_avfoundation.framework/Modules/module.modulemap \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/video_player_avfoundation/video_player_avfoundation.framework/Headers/FVPVideoPlayerPlugin.h

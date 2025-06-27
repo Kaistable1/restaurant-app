@@ -1,0 +1,83 @@
+Flutter crash report.
+Please report a bug at https://github.com/flutter/flutter/issues.
+
+## command
+
+flutter debug_adapter
+
+## exception
+
+RPCError: getIsolate: (-32603) Unexpected DWDS error for getIsolate: Bad state: No running isolate (inspector is not set).
+
+```
+#0      new _OutstandingRequest (package:vm_service/src/vm_service.dart:265:34)
+#1      VmService._call.<anonymous closure> (package:vm_service/src/vm_service.dart:1921:25)
+#2      VmService._call (package:vm_service/src/vm_service.dart:1933:8)
+#3      VmService.getIsolate (package:vm_service/src/vm_service.dart:1009:7)
+#4      IsolateManager._sendLibraryDebuggables (package:dds/src/dap/isolate_manager.dart:1034:35)
+#5      IsolateManager._configureIsolate (package:dds/src/dap/isolate_manager.dart:555:9)
+#6      IsolateManager.registerIsolate (package:dds/src/dap/isolate_manager.dart:246:13)
+#7      IsolateManager.handleEvent (package:dds/src/dap/isolate_manager.dart:189:13)
+#8      DartDebugAdapter.handleIsolateEvent (package:dds/src/dap/adapters/dart.dart:2488:26)
+<asynchronous suspension>
+#9      DartDebugAdapter._withErrorHandling (package:dds/src/dap/adapters/dart.dart:2819:14)
+<asynchronous suspension>
+```
+
+## flutter doctor
+
+```
+[!] Flutter (Channel stable, 3.32.0, on macOS 15.3.2 24D81 darwin-x64, locale en-US) [1,305ms]
+    • Flutter version 3.32.0 on channel stable at /Users/macos/flutter
+    ! Warning: `flutter` on your path resolves to /Users/macos/Downloads/flutter/bin/flutter, which is not inside your current Flutter SDK checkout at /Users/macos/flutter. Consider adding /Users/macos/flutter/bin to the front of your path.
+    ! Warning: `dart` on your path resolves to /Users/macos/Downloads/flutter/bin/dart, which is not inside your current Flutter SDK checkout at /Users/macos/flutter. Consider adding /Users/macos/flutter/bin to the front of your path.
+    • Upstream repository https://github.com/flutter/flutter.git
+    • Framework revision be698c48a6 (5 weeks ago), 2025-05-19 12:59:14 -0700
+    • Engine revision 1881800949
+    • Dart version 3.8.0
+    • DevTools version 2.45.1
+    • If those were intentional, you can disregard the above warnings; however it is recommended to use "git" directly to perform update checks and upgrades.
+
+[✓] Android toolchain - develop for Android devices (Android SDK version 35.0.1) [5.3s]
+    • Android SDK at /Users/macos/Library/Android/sdk
+    • Platform android-35, build-tools 35.0.1
+    • ANDROID_HOME = /Users/macos/Library/Android/sdk
+    • Java binary at: /usr/local/opt/openjdk@17/bin/java
+      This JDK is specified in your Flutter configuration.
+      To change the current JDK, run: `flutter config --jdk-dir="path/to/jdk"`.
+    • Java version OpenJDK Runtime Environment Homebrew (build 17.0.15+0)
+    • All Android licenses accepted.
+
+[✓] Xcode - develop for iOS and macOS (Xcode 16.4) [2.9s]
+    • Xcode at /Applications/Xcode.app/Contents/Developer
+    • Build 16F6
+    • CocoaPods version 1.16.2
+
+[✓] Chrome - develop for the web [23ms]
+    • Chrome at /Applications/Google Chrome.app/Contents/MacOS/Google Chrome
+
+[✓] Android Studio (version 2024.3) [22ms]
+    • Android Studio at /Applications/Android Studio.app/Contents
+    • Flutter plugin can be installed from:
+      🔨 https://plugins.jetbrains.com/plugin/9212-flutter
+    • Dart plugin can be installed from:
+      🔨 https://plugins.jetbrains.com/plugin/6351-dart
+    • Java version OpenJDK Runtime Environment (build 21.0.5+-12932927-b750.29)
+
+[✓] VS Code (version 1.101.0) [18ms]
+    • VS Code at /Applications/Visual Studio Code.app/Contents
+    • Flutter extension version 3.112.0
+
+[✓] Connected device (4 available) [8.2s]
+    • sdk gphone64 x86 64 (mobile)       • emulator-5554             • android-x64    • Android 16 (API 36) (emulator)
+    • Aijaz’s iPhone (wireless) (mobile) • 00008110-000964921A9A201E • ios            • iOS 18.5 22F76
+    • macOS (desktop)                    • macos                     • darwin-x64     • macOS 15.3.2 24D81 darwin-x64
+    • Chrome (web)                       • chrome                    • web-javascript • Google Chrome 137.0.7151.120
+    ! Error: Browsing on the local area network for Mango’s iPhone. Ensure the device is unlocked and attached with a cable or associated with the same local area network as this Mac.
+      The device must be opted into Developer Mode to connect wirelessly. (code -27)
+
+[✓] Network resources [2.7s]
+    • All expected network resources are available.
+
+! Doctor found issues in 1 category.
+```

@@ -1,0 +1,34 @@
+moduledependenciestarget: \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Modules/module.modulemap \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Headers/FirebaseFirestoreInternal-umbrella.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk/System/Library/Frameworks/UIKit.framework/Modules/module.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk/System/Library/Frameworks/Foundation.framework/Modules/module.modulemap \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Headers/FIRAggregateField.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Headers/FIRAggregateQuery.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Headers/FIRAggregateSource.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Headers/FIRAggregateQuerySnapshot.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Headers/FIRCollectionReference.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Headers/FIRQuery.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Headers/FIRFirestoreSource.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Headers/FIRListenerRegistration.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Headers/FIRSnapshotListenOptions.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Headers/FIRDocumentChange.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Headers/FIRDocumentReference.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Headers/FIRDocumentSnapshot.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Headers/FirebaseFirestore.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Headers/FIRFieldPath.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Headers/FIRFieldValue.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Headers/FIRFilter.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Headers/FIRFirestore.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Headers/FIRFirestoreErrors.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Headers/FIRFirestoreSettings.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Headers/FIRGeoPoint.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Headers/FIRLoadBundleTask.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Headers/FIRLocalCacheSettings.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Headers/FIRQuerySnapshot.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Headers/FIRSnapshotMetadata.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Headers/FIRTransaction.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Headers/FIRTransactionOptions.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Headers/FIRWriteBatch.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Headers/FIRPersistentCacheIndexManager.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/FirebaseFirestoreInternal/FirebaseFirestoreInternal.framework/Headers/FIRVectorValue.h

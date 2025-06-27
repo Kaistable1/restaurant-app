@@ -131,6 +131,8 @@ class HorizontalCardWidget extends StatelessWidget {
   final String description;
   final RxBool isFavorite;
   final VoidCallback onTap;
+  final double imageHeight;
+  final double containerHeight;
 
   const HorizontalCardWidget({
     required this.title,
@@ -138,6 +140,8 @@ class HorizontalCardWidget extends StatelessWidget {
     required this.description,
     required this.isFavorite,
     required this.onTap,
+    required this.imageHeight,
+    required this.containerHeight,
     Key? key,
   }) : super(key: key);
 
@@ -147,7 +151,7 @@ class HorizontalCardWidget extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: 140,
-        height: 170,
+        height: containerHeight,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10.0),
@@ -169,7 +173,7 @@ class HorizontalCardWidget extends StatelessWidget {
                   const BorderRadius.vertical(top: Radius.circular(10)),
               child: Image.network(
                 imagePath,
-                height: 100,
+                height: imageHeight,
                 width: double.infinity,
                 fit: BoxFit.cover,
               ),

@@ -2813,6 +2813,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 : 0, // Optionally also right space for last
                           ),
                           child: HorizontalCardWidget(
+                            imageHeight: 106,
+                            containerHeight: 190,
                             title: item.resName,
                             imagePath: item.logoImage,
                             description: item.address,

@@ -67,31 +67,36 @@ Widget build(BuildContext context) {
       )
     : Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: GridView.builder(
+        child: ListView.builder(
           // 👇 These 2 lines are the fix
           shrinkWrap: false, // don't force it to take only content height
           physics: AlwaysScrollableScrollPhysics(), // allow scrolling
           
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            mainAxisExtent: Get.height * 0.2,
-            crossAxisCount: 2,
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 20,
-          ),
+          // gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          //   mainAxisExtent: Get.height * 0.2,
+          //   crossAxisCount: 2,
+          //   crossAxisSpacing: 10,
+          //   mainAxisSpacing: 20,
+          // ),
           itemCount: filteredRestaurants.length,
           itemBuilder: (context, index) {
             final item = filteredRestaurants[index];
-            return InkWell(
-              onTap: () => Get.to(
-                RestaurantDetailScreen(restaurantModel: item),
-              ),
-              child: HorizontalCardWidget(
-                title: item.resName,
-                imagePath: item.logoImage,
-                description: item.address,
-                isFavorite: false.obs,
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: InkWell(
                 onTap: () => Get.to(
                   RestaurantDetailScreen(restaurantModel: item),
+                ),
+                child: HorizontalCardWidget(
+                  title: item.resName,
+                  imagePath: item.logoImage,
+                  description: item.address,
+                  isFavorite: false.obs,
+                  imageHeight: 190,
+                  containerHeight: 250,
+                  onTap: () => Get.to(
+                    RestaurantDetailScreen(restaurantModel: item),
+                  ),
                 ),
               ),
             );
