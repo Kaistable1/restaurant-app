@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:savrly/screens/Videos/video_screen.dart';
 import 'package:savrly/screens/dashboard/notification_screen/notifications_screen/notification_screen.dart';
 import 'package:savrly/screens/events_managements/view_events/view_event.dart';
 
@@ -101,12 +102,14 @@ class AdminPanel extends StatelessWidget {
       } else if (controller.selectedScreen.value == 5) {
         screen = BannerManagement();
       } else if (controller.selectedScreen.value == 6) {
-        screen = SubAdminScreens();
+        screen = AdminVideoPanel();
       } else if (controller.selectedScreen.value == 7) {
-        screen = PrivacyPolicy();
+        screen = SubAdminScreens();
       } else if (controller.selectedScreen.value == 8) {
-        screen = AboutApp();
+        screen = PrivacyPolicy();
       } else if (controller.selectedScreen.value == 9) {
+        screen = AboutApp();
+      } else if (controller.selectedScreen.value == 10) {
         screen = TermsAndConditions();
       } else {
         screen = ContactUsScreen();

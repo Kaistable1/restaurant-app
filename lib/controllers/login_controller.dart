@@ -9,9 +9,9 @@ import 'package:savrly/widgets/global_functions.dart';
 
 class LoginController extends GetxController {
   // Text controllers
-  final TextEditingController emailController = TextEditingController();
+  final TextEditingController emailController = TextEditingController(text: "norman@gmail.com");
   final TextEditingController subAdminEmailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController(text: "Admin@1234");
   final TextEditingController subAdminPasswordController =
       TextEditingController();
   final TextEditingController forgotEmailController = TextEditingController();

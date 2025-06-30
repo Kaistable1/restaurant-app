@@ -1,0 +1,4 @@
+
+module IosAwnCore.__Swift {
+  exclude header "IosAwnCore-Swift.h"
+}

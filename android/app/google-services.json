@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "404399548475",
+    "project_id": "restaurantwebsite-4bdd8",
+    "storage_bucket": "restaurantwebsite-4bdd8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:404399548475:android:3aba391fb0b1f7514dd41e",
+        "android_client_info": {
+          "package_name": "com.example.savrly"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDSzo86iMcwW-mjuAXgh1lQ7t9NJLZV0ro"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:404399548475:android:c7ef5610488496554dd41e",
+        "android_client_info": {
+          "package_name": "com.kaistable.restaurant_website"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDSzo86iMcwW-mjuAXgh1lQ7t9NJLZV0ro"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:404399548475:android:8c386efeda6c96514dd41e",
+        "android_client_info": {
+          "package_name": "com.stable.data_entry"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDSzo86iMcwW-mjuAXgh1lQ7t9NJLZV0ro"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
