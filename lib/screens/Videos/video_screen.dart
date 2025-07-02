@@ -1919,8 +1919,8 @@ class AdminVideoPanel extends StatelessWidget {
                           hintTextColor: primaryColor,
                           prefixIcon: Icon(Icons.search, color: primaryColor),
                           suffixIcon: PopupMenuButton<String>(
-                            icon:   //Image(image: AssetImage("assets/images/filter.png"))
-                             Icon(Icons.filter_list, color: primaryColor),
+                            icon: //Image(image: AssetImage("assets/images/filter.png"))
+                                Icon(Icons.filter_list, color: primaryColor),
                             offset: Offset(0, 40),
                             itemBuilder: (context) => [
                               PopupMenuItem(
@@ -2240,6 +2240,7 @@ class AdminVideoPanel extends StatelessWidget {
         Obx(() {
           if (!videoController.isUploading.value) return const SizedBox();
           return Container(
+            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.7),
             child: Center(
               child: Column(
