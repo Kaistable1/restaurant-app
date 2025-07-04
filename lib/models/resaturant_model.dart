@@ -29,6 +29,7 @@ class RestaurantModel {
   // New Fields
   String instaLink; //https://instagram.com/
   String tiktokLink; //https://tiktok.com
+   double? distanceInMiles;
 
   // Constructor
   RestaurantModel({
@@ -60,6 +61,7 @@ class RestaurantModel {
     // New Fields
     required this.instaLink,
     required this.tiktokLink,
+    this.distanceInMiles
   });
 
   // Initialize the model with defaults
@@ -92,6 +94,7 @@ class RestaurantModel {
       country: '',
       instaLink: '',
       tiktokLink: '',
+      distanceInMiles: 0.0,
     );
   }
 
@@ -133,6 +136,7 @@ class RestaurantModel {
       'country': country,
       'instaLink': instaLink,
       'xLink': tiktokLink,
+      'distanceInMiles':distanceInMiles
     };
   }
 
@@ -173,6 +177,7 @@ class RestaurantModel {
       socialLink: '',
       socialMedia: '',
       zipCode: '',
+      distanceInMiles: data['distanceInMiles']
     );
   }
 
@@ -220,6 +225,7 @@ class RestaurantModel {
       // New Fields
       instaLink: data['socialLink'] ?? '',
       tiktokLink: data['socialMedia'] ?? '',
+      distanceInMiles: (data['distanceInMiles'] ?? 0).toDouble(),
     );
   }
 }

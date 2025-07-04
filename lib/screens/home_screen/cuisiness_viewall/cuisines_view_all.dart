@@ -233,7 +233,9 @@ class CuisinesViewAll extends StatelessWidget {
 
                                   return Padding(
                                     padding: const EdgeInsets.only(bottom: 16),
-                                    child: CircleContainerWidget(
+                                    child: 
+                                    
+                                    CircleContainerWidget(
                                       ontap: () {
                                         Get.to(() => ExploreRestaurant(
                                               restaurantIDs: restaurants,

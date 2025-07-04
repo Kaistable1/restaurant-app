@@ -166,7 +166,8 @@ class NewViewall extends StatelessWidget {
                                           Get.to(RestaurantDetailScreen(
                                               restaurantModel: item));
                                         },
-                                        child: RectangleWidget(
+                                        child: 
+                                        RectangleWidget(
                                           title: item.resName,
                                           description: item.address,
                                           resturant_id: item.docID,

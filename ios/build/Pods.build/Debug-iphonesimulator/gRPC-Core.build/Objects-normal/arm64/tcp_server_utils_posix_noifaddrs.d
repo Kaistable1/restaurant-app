@@ -1,5 +1,0 @@
-dependencies: \
-  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/src/core/lib/iomgr/tcp_server_utils_posix_noifaddrs.cc \
-  /Users/macos/Downloads/restaurant-app/ios/Pods/Target\ Support\ Files/gRPC-Core/gRPC-Core-prefix.pch \
-  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/support/port_platform.h \
-  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/src/core/lib/iomgr/port.h
