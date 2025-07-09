@@ -1865,6 +1865,12 @@ class AdminVideoPanel extends StatelessWidget {
                   videoData: videoController.selectedVideoData,
                   videoController: videoController.selectedPlayer!,
                 );
+              } else if (videoController.isEditMode.value) {
+                return UploadVideoForm(
+                  isEdit: true,
+                  docId: videoController.editDocId,
+                  initialData: videoController.editInitialData,
+                );
               } else {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -2181,6 +2187,10 @@ class AdminVideoPanel extends StatelessWidget {
                                               videoController.showViewMode(
                                                   data, controller);
                                             } else if (value == 'edit') {
+                                              videoController.clearSelection();
+                                           
+                                              videoController.showEditMode(
+                                                  data, data['id']);
                                               // Handle edit action
                                             } else if (value == 'delete') {
                                               final confirm =

@@ -1224,12 +1224,26 @@
 //   }
 // }
 
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 import 'package:savrly/controllers/video_controller.dart';
 
 class UploadVideoForm extends StatefulWidget {
+  final bool isEdit;
+  final Map<String, dynamic>? initialData; // For editing
+  final String? docId; // Firebase doc ID
+
+  const UploadVideoForm({
+    super.key,
+    this.isEdit = false,
+    this.initialData,
+    this.docId,
+  });
+
   @override
   _UploadVideoFormState createState() => _UploadVideoFormState();
 }
@@ -1237,6 +1251,7 @@ class UploadVideoForm extends StatefulWidget {
 class _UploadVideoFormState extends State<UploadVideoForm> {
   final nameController = TextEditingController();
   final locationController = TextEditingController();
+  final videoController = Get.find<VideoController>();
   String? selectedRestaurant;
   String? selectCusine;
   String? selectAtmosphere;
@@ -1305,6 +1320,53 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
     "Ladies Night",
     "RnB Night"
   ];
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.isEdit && widget.initialData != null) {
+      nameController.text = widget.initialData!['restaurantName'] ?? '';
+      locationController.text = widget.initialData!['location'] ?? '';
+      selectedRestaurant =
+          restaurants.contains(widget.initialData!['restaurantType'])
+              ? widget.initialData!['restaurantType']
+              : null;
+
+      selectCusine = causine.contains(widget.initialData!['causines'])
+          ? widget.initialData!['causines']
+          : null;
+
+      selectVibes = vibes.contains(widget.initialData!['vibes'])
+          ? widget.initialData!['vibes']
+          : null;
+
+      selectAtmosphere = atmosphere.contains(widget.initialData!['atmosphere'])
+          ? widget.initialData!['atmosphere']
+          : null;
+
+      selectExperience = experinece.contains(widget.initialData!['experience'])
+          ? widget.initialData!['experience']
+          : null;
+
+      // If you stored video URL in Firebase, load video from URL:
+      final url = widget.initialData!['url'];
+      final controller = VideoPlayerController.network(url);
+      controller.initialize().then((_) {
+        videoController.videoPlayerController.value = controller;
+        videoController.videoPlayerController.refresh();
+        setState(() {});
+      });
+    }
+
+    // Auto-update every second
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      if (mounted &&
+          videoController.videoPlayerController.value?.value.isInitialized ==
+              true) {
+        setState(() {}); // rebuild for timer & progress bar
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -1328,303 +1390,357 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
 
   @override
   Widget build(BuildContext context) {
-    final videoController = Get.find<VideoController>();
-
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            videoController.clearSelection();
-            videoController.toggleUploadMode();
-          },
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () {
+              if (widget.isEdit) {
+                // Edit mode ke liye flag off karein
+                videoController.isEditMode.value = false;
+              } else {
+                // Add mode ke liye flag toggle karein
+                videoController.toggleUploadMode();
+              }
+              // Dono case mein controller clear karein
+              videoController.clearSelection();
+            },
+          ),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 40),
-              Obx(() {
-                final hasVideo =
-                    videoController.videoPlayerController.value != null &&
-                        videoController
-                            .videoPlayerController.value!.value.isInitialized;
+        body: SingleChildScrollView(
+            child: Center(
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            const SizedBox(height: 40),
+            Obx(() {
+              final hasVideo =
+                  videoController.videoPlayerController.value != null &&
+                      videoController
+                          .videoPlayerController.value!.value.isInitialized;
 
-                return Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () => videoController.pickVideo(context),
-                      child: Container(
-                        height: 289,
-                        width: 604,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: hasVideo
-                            ? ClipRRect(
-                                borderRadius: BorderRadius.circular(16),
-                                child: Stack(
-                                  children: [
-                                    Container(
-                                      color: Colors.black,
-                                      width: double.infinity,
+              return Column(
+                children: [
+                  GestureDetector(
+                    onTap: hasVideo
+                        ? null
+                        : () => videoController.pickVideo(context),
+                    child: Container(
+                      height: 289,
+                      width: 604,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: hasVideo
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(16),
+                              child: Stack(
+                                children: [
+                                  Container(
+                                    color: Colors.black,
+                                    width: double.infinity,
+                                    child: Center(
+                                      child: AspectRatio(
+                                        aspectRatio: videoController
+                                            .videoPlayerController
+                                            .value!
+                                            .value
+                                            .aspectRatio,
+                                        child: VideoPlayer(videoController
+                                            .videoPlayerController.value!),
+                                      ),
+                                    ),
+                                  ),
+                                  // Play/Pause overlay
+                                  Positioned.fill(
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        final controller = videoController
+                                            .videoPlayerController.value!;
+                                        controller.value.isPlaying
+                                            ? controller.pause()
+                                            : controller.play();
+                                        setState(() {});
+                                      },
                                       child: Center(
-                                        child: AspectRatio(
-                                          aspectRatio: videoController
-                                              .videoPlayerController
-                                              .value!
-                                              .value
-                                              .aspectRatio,
-                                          child: VideoPlayer(videoController
-                                              .videoPlayerController.value!),
+                                        child: Icon(
+                                          videoController.videoPlayerController
+                                                  .value!.value.isPlaying
+                                              ? Icons.pause
+                                              : Icons.play_arrow,
+                                          size: 50,
+                                          color: Colors.white.withOpacity(0.7),
                                         ),
                                       ),
                                     ),
-                                    // Play/Pause overlay
-                                    Positioned.fill(
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          final controller = videoController
-                                              .videoPlayerController.value!;
-                                          controller.value.isPlaying
-                                              ? controller.pause()
-                                              : controller.play();
-                                          setState(() {});
-                                        },
-                                        child: Center(
-                                          child: Icon(
-                                            videoController
-                                                    .videoPlayerController
-                                                    .value!
-                                                    .value
-                                                    .isPlaying
-                                                ? Icons.pause
-                                                : Icons.play_arrow,
-                                            size: 50,
-                                            color:
-                                                Colors.white.withOpacity(0.7),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    // Close (X) Button
-                                    Positioned(
-                                      top: 8,
-                                      right: 8,
-                                      child: InkWell(
-                                        onTap: () {
-                                          videoController.clearSelection();
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors.black54,
-                                            shape: BoxShape.circle,
-                                          ),
-                                          padding: const EdgeInsets.all(4),
-                                          child: const Icon(Icons.close,
-                                              color: Colors.white, size: 20),
-                                        ),
-                                      ),
-                                    ),
-                                    // File name tag
-                                    Positioned(
-                                      bottom: 8,
-                                      right: 8,
+                                  ),
+                                  // Close (X) Button
+                                  Positioned(
+                                    top: 8,
+                                    right: 8,
+                                    child: InkWell(
+                                      onTap: () {
+                                        videoController.clearSelection();
+                                      },
                                       child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 6, vertical: 2),
                                         decoration: BoxDecoration(
                                           color: Colors.black54,
-                                          borderRadius:
-                                              BorderRadius.circular(4),
+                                          shape: BoxShape.circle,
                                         ),
-                                        child: Text(
-                                          videoController.videoName.value,
-                                          style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 12),
-                                        ),
+                                        padding: const EdgeInsets.all(4),
+                                        child: const Icon(Icons.close,
+                                            color: Colors.white, size: 20),
                                       ),
                                     ),
-                                  ],
-                                ),
-                              )
-                            : Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
-                                  SizedBox(height: 12),
-                                  Text("Upload video",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18)),
-                                  SizedBox(height: 24),
-                                  Icon(Icons.upload_rounded, size: 40),
-                                  SizedBox(height: 20),
-                                  Text("upload  video here",
-                                      style: TextStyle(fontSize: 16)),
+                                  ),
+
+                                  Positioned(
+                                    bottom: 0,
+                                    left: 0,
+                                    right: 0,
+                                    child: VideoProgressIndicator(
+                                      videoController
+                                          .videoPlayerController.value!,
+                                      allowScrubbing: true,
+                                      colors: const VideoProgressColors(
+                                        playedColor: Colors.red,
+                                        bufferedColor: Colors.grey,
+                                        backgroundColor: Colors.black26,
+                                      ),
+                                    ),
+                                  ),
+
+                                  Positioned(
+                                    bottom: 8,
+                                    right: 12,
+                                    child: Obx(() {
+                                      final controller = videoController
+                                          .videoPlayerController.value!;
+                                      final position =
+                                          controller.value.position;
+                                      final duration =
+                                          controller.value.duration;
+                                      String format(Duration d) =>
+                                          '${d.inMinutes}:${(d.inSeconds % 60).toString().padLeft(2, '0')}';
+
+                                      return Text(
+                                        '${format(position)} / ${format(duration)}',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      );
+                                    }),
+                                  ),
                                 ],
                               ),
+                            )
+                          : Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                SizedBox(height: 12),
+                                Text("Upload video",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18)),
+                                SizedBox(height: 24),
+                                Icon(Icons.upload_rounded, size: 40),
+                                SizedBox(height: 20),
+                                Text("upload  video here",
+                                    style: TextStyle(fontSize: 16)),
+                              ],
+                            ),
+                    ),
+                  ),
+                  if (showVideoError)
+                    const Padding(
+                      padding: EdgeInsets.only(top: 8),
+                      child: Text(
+                        'Please select a video',
+                        style: TextStyle(color: Colors.red, fontSize: 12),
                       ),
                     ),
-                    if (showVideoError)
-                      const Padding(
-                        padding: EdgeInsets.only(top: 8),
-                        child: Text(
-                          'Please select a video',
-                          style: TextStyle(color: Colors.red, fontSize: 12),
+                ],
+              );
+            }),
+            const SizedBox(height: 30),
+            _buildTextField(
+                nameController, "Kaistable", "Restaurant name", showNameError),
+            const SizedBox(height: 16),
+            _buildTextField(locationController, "United States, uncategorized.",
+                "Location", showLocationError),
+            const SizedBox(height: 16),
+            _buildDropdown("Restaurant", selectedRestaurant, restaurants,
+                (value) {
+              setState(() => selectedRestaurant = value);
+            }),
+            const SizedBox(height: 16),
+            _buildDropdown("Cuisine", selectCusine, causine, (value) {
+              setState(() => selectCusine = value);
+            }),
+            const SizedBox(height: 16),
+            _buildDropdown("Vibes", selectVibes, vibes, (value) {
+              setState(() => selectVibes = value);
+            }),
+            const SizedBox(height: 16),
+            _buildDropdown("Atmosphere", selectAtmosphere, atmosphere, (value) {
+              setState(() => selectAtmosphere = value);
+            }),
+            const SizedBox(height: 16),
+            _buildDropdown("Experience", selectExperience, experinece, (value) {
+              setState(() => selectExperience = value);
+            }),
+            const SizedBox(height: 30),
+            SizedBox(
+              width: 604,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                    width: 136,
+                    height: 47,
+                    child: TextButton(
+                      onPressed: () {
+                        videoController.clearSelection();
+                        videoController.toggleUploadMode();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
                         ),
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        alignment: Alignment.centerLeft,
                       ),
-                  ],
-                );
-              }),
-              const SizedBox(height: 30),
-              _buildTextField(nameController, "Kaistable", "Restaurant name",
-                  showNameError),
-              const SizedBox(height: 16),
-              _buildTextField(
-                  locationController,
-                  "United States, uncategorized.",
-                  "Location",
-                  showLocationError),
-              const SizedBox(height: 16),
-              _buildDropdown("Restaurant", selectedRestaurant, restaurants,
-                  (value) {
-                setState(() => selectedRestaurant = value);
-              }),
-              const SizedBox(height: 16),
-              _buildDropdown("Cuisine", selectCusine, causine, (value) {
-                setState(() => selectCusine = value);
-              }),
-              const SizedBox(height: 16),
-              _buildDropdown("Vibes", selectVibes, vibes, (value) {
-                setState(() => selectVibes = value);
-              }),
-              const SizedBox(height: 16),
-              _buildDropdown("Atmosphere", selectAtmosphere, atmosphere,
-                  (value) {
-                setState(() => selectAtmosphere = value);
-              }),
-              const SizedBox(height: 16),
-              _buildDropdown("Experience", selectExperience, experinece,
-                  (value) {
-                setState(() => selectExperience = value);
-              }),
-              const SizedBox(height: 30),
-              SizedBox(
-                width: 604,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(
+                      child: const Text(
+                        "Cancel",
+                        style: TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 18),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Obx(
+                    () => SizedBox(
                       width: 136,
-                      height: 47,
-                      child: TextButton(
-                        onPressed: () {
-                          videoController.clearSelection();
-                          videoController.toggleUploadMode();
-                        },
+                      height: 40,
+                      child: ElevatedButton(
+                        onPressed: videoController.isUploading.value
+                            ? null
+                            : () async {
+                                setState(() {
+                                  showNameError = nameController.text.isEmpty;
+                                  showLocationError =
+                                      locationController.text.isEmpty;
+                                  showVideoError = !widget.isEdit &&
+                                      videoController.pickedVideo.value == null;
+                                });
+
+                                if (showNameError ||
+                                    showLocationError ||
+                                    showVideoError) return;
+
+                                if (widget.isEdit) {
+                                  String? newVideoUrl;
+                                  String? newFileName;
+
+                                  // ✅ Instantly exit the edit form BEFORE doing any backend work
+                                  videoController.isEditMode.value = false;
+                                  videoController.isUploadMode.value = false;
+                                  // 👇 Check if user selected new video
+                                  if (videoController.pickedVideo.value !=
+                                      null) {
+                                    final result =
+                                        await videoController.uploadVideoOnly(
+                                      pickedFile:
+                                          videoController.pickedVideo.value!,
+                                    );
+                                    newVideoUrl = result['url'];
+                                    newFileName = result['fileName'];
+                                  }
+
+                                  // ✅ Update Firestore
+                                  await FirebaseFirestore.instance
+                                      .collection('videos')
+                                      .doc(widget.docId)
+                                      .update({
+                                    'restaurantName': nameController.text,
+                                    'location': locationController.text,
+                                    'restaurantType': selectedRestaurant,
+                                    'causines': selectCusine,
+                                    'vibes': selectVibes,
+                                    'atmosphere': selectAtmosphere,
+                                    'experience': selectExperience,
+                                    'timestamp': Timestamp.now(),
+                                    if (newVideoUrl != null) 'url': newVideoUrl,
+                                    if (newFileName != null)
+                                      'fileName': newFileName,
+                                  });
+
+                                  await videoController.fetchVideos();
+
+                                  videoController.clearSelection();
+
+                                  setState(() {
+                                    clearFormFields();
+                                  });
+
+                                  Get.snackbar(
+                                    "Updated",
+                                    "Video info updated successfully",
+                                    backgroundColor: Colors.green,
+                                    colorText: Colors.white,
+                                  );
+                                } else {
+                                  // ✅ UPLOAD LOGIC
+                                  await videoController.uploadVideo(
+                                    context: context,
+                                    restaurantName: nameController.text,
+                                    location: locationController.text,
+                                    restaurantType: selectedRestaurant,
+                                    atmosphere: selectAtmosphere,
+                                    causine: selectCusine,
+                                    experience: selectExperience,
+                                    vibes: selectVibes,
+                                  );
+
+                                  setState(() {
+                                    clearFormFields();
+                                    videoController.clearSelection();
+                                  });
+                                }
+                              },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
+                          backgroundColor: const Color(0xFF2FD2AF),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          alignment: Alignment.centerLeft,
                         ),
-                        child: const Text(
-                          "Cancel",
-                          style: TextStyle(
-                              color: Colors.red,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 18),
-                        ),
+                        child: videoController.isUploading.value
+                            ? Text("Uploading...",
+                                style: TextStyle(color: Colors.white))
+                            : Text(
+                                widget.isEdit ? "Update" : "Upload",
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    Obx(() => SizedBox(
-                          width: 136,
-                          height: 40,
-                          child: ElevatedButton(
-                            onPressed: videoController.isUploading.value
-                                ? null
-                                : () async {
-                                    setState(() {
-                                      showNameError =
-                                          nameController.text.isEmpty;
-                                      showLocationError =
-                                          locationController.text.isEmpty;
-                                      showVideoError =
-                                          videoController.pickedVideo.value ==
-                                              null;
-                                    });
-
-                                    if (showNameError ||
-                                        showLocationError ||
-                                        showVideoError) {
-                                      return;
-                                    }
-
-                                    await videoController.uploadVideo(
-                                      context: context,
-                                      restaurantName: nameController.text,
-                                      location: locationController.text,
-                                      restaurantType: selectedRestaurant,
-                                      atmosphere: selectAtmosphere,
-                                      causine: selectCusine,
-                                      experience: selectExperience,
-                                      vibes: selectExperience,
-                                    );
-
-                                    setState(() {
-                                      clearFormFields();
-                                      videoController.clearSelection();
-                                    });
-                                  },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF2FD2AF),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                            ),
-                            child: videoController.isUploading.value
-                                ? const Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            color: Colors.white),
-                                      ),
-                                      SizedBox(width: 8),
-                                      Text("Uploading...",
-                                          style:
-                                              TextStyle(color: Colors.white)),
-                                    ],
-                                  )
-                                : const Text("Upload",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
-                                    )),
-                          ),
-                        )),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 40),
+                ],
               ),
-              const SizedBox(height: 40),
-            ],
-          ),
-        ),
-      ),
-    );
+            ),
+          ]),
+        )));
   }
 
   Widget _buildTextField(TextEditingController controller, String hint,
@@ -1686,3 +1802,109 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
     );
   }
 }
+
+
+
+///old code 
+///
+///
+  //        SizedBox(
+                        //             width: 136,
+                        //             height: 40,
+                        //             child: ElevatedButton(
+                        //               onPressed: videoController.isUploading.value
+                        //                   ? null
+                        //                   : () async {
+                        //                       setState(() {
+                        //                         showNameError =
+                        //                             nameController.text.isEmpty;
+                        //                         showLocationError =
+                        //                             locationController.text.isEmpty;
+                        //                         showVideoError =
+                        //                             videoController.pickedVideo.value ==
+                        //                                 null;
+                        //                       });
+
+                        //                       if (showNameError ||
+                        //                           showLocationError ||
+                        //                           showVideoError) {
+                        //                         return;
+                        //                       }
+
+                        //                       await videoController.uploadVideo(
+                        //                         context: context,
+                        //                         restaurantName: nameController.text,
+                        //                         location: locationController.text,
+                        //                         restaurantType: selectedRestaurant,
+                        //                         atmosphere: selectAtmosphere,
+                        //                         causine: selectCusine,
+                        //                         experience: selectExperience,
+                        //                         vibes: selectExperience,
+                        //                       );
+
+                        //                       setState(() {
+                        //                         clearFormFields();
+                        //                         videoController.clearSelection();
+                        //                       });
+                        //                     },
+                        //               style: ElevatedButton.styleFrom(
+                        //                 backgroundColor: const Color(0xFF2FD2AF),
+                        //                 shape: RoundedRectangleBorder(
+                        //                   borderRadius: BorderRadius.circular(30),
+                        //                 ),
+                        //               ),
+                        //               child: videoController.isUploading.value
+                        //                   ? const Row(
+                        //                       mainAxisAlignment: MainAxisAlignment.center,
+                        //                       children: [
+                        //                         SizedBox(
+                        //                           width: 20,
+                        //                           height: 20,
+                        //                           child: CircularProgressIndicator(
+                        //                               strokeWidth: 2,
+                        //                               color: Colors.white),
+                        //                         ),
+                        //                         SizedBox(width: 8),
+                        //                         Text("Uploading...",
+                        //                             style:
+                        //                                 TextStyle(color: Colors.white)),
+                        //                       ],
+                        //                     )
+                        //                   : const Text("Upload",
+                        //                       style: TextStyle(
+                        //                         color: Colors.white,
+                        //                         fontWeight: FontWeight.w500,
+                        //                       )),
+                        //             ),
+                        //           )),
+                        //     ],
+                        //   ),
+                        // ),
+
+
+
+//-------------------------
+
+
+ // File name tag
+                                  // Positioned(
+                                  //   bottom: 8,
+                                  //   right: 8,
+                                  //   child: Container(
+                                  //     padding: const EdgeInsets.symmetric(
+                                  //         horizontal: 6, vertical: 2),
+                                  //     decoration: BoxDecoration(
+                                  //       color: Colors.black54,
+                                  //       borderRadius:
+                                  //           BorderRadius.circular(4),
+                                  //     ),
+                                  //     child: Text(
+                                  //       videoController.videoName.value,
+                                  //       style: const TextStyle(
+                                  //           color: Colors.white,
+                                  //           fontSize: 12),
+                                  //     ),
+                                  //   ),
+                                  // ),
+
+                                  // Add this below the Close (X) and Filename tag

@@ -21,6 +21,7 @@ class VideoController extends GetxController {
   final Rx<XFile?> pickedVideo = Rx<XFile?>(null);
   final RxString videoName = ''.obs;
   void toggleUploadMode() => isUploadMode.value = !isUploadMode.value;
+
   final Rx<VideoPlayerController?> videoPlayerController =
       Rx<VideoPlayerController?>(null);
 
@@ -28,8 +29,25 @@ class VideoController extends GetxController {
 
   var isViewMode = false.obs;
   var selectedVideoData = <String, dynamic>{}.obs;
-
   VideoPlayerController? selectedPlayer;
+
+
+  // edit data
+  var isEditMode = false.obs;
+Map<String, dynamic>? editInitialData;
+String? editDocId;
+
+void showEditMode(Map<String, dynamic> data, String docId) {
+  editInitialData = data;
+  editDocId = docId;
+  isEditMode.value = true;
+}
+
+
+
+
+
+
   @override
   void onInit() {
     super.onInit();
@@ -192,6 +210,8 @@ class VideoController extends GetxController {
     await fetchVideos();
   }
 
+
+
   Future<void> pickVideo(BuildContext context) async {
     try {
       final picker = ImagePicker();
@@ -249,6 +269,48 @@ class VideoController extends GetxController {
       clearSelection();
     }
   }
+
+
+
+
+
+Future<Map<String, String>> uploadVideoOnly({required XFile pickedFile}) async {
+  try {
+    isUploading.value = true;
+    uploadProgress.value = 0.0;
+
+    final fileName =
+        'videos/${DateTime.now().millisecondsSinceEpoch}_${pickedFile.name}';
+    final ref = FirebaseStorage.instance.ref().child(fileName);
+
+    final uploadTask = ref.putData(await pickedFile.readAsBytes());
+
+    uploadTask.snapshotEvents.listen((event) {
+      uploadProgress.value =
+          (event.bytesTransferred / event.totalBytes).clamp(0.0, 1.0);
+    });
+
+    final snapshot = await uploadTask;
+
+    if (snapshot.state == TaskState.success) {
+      final downloadUrl = await ref.getDownloadURL();
+      return {
+        'url': downloadUrl,
+        'fileName': pickedFile.name,
+      };
+    } else {
+      throw Exception('Upload failed');
+    }
+  } catch (e) {
+    throw Exception("Video upload failed: $e");
+  } finally {
+    isUploading.value = false;
+    uploadProgress.value = 0.0;
+  }
+}
+
+
+
 
   Future<void> uploadVideo({
     required BuildContext context,
