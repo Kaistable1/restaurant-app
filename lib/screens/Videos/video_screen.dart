@@ -1988,6 +1988,66 @@ class AdminVideoPanel extends StatelessWidget {
                                         }).toList(),
                                       );
                                     }),
+////////////
+                                      Divider(),
+                                    Text('Cuisine',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold)),
+                                    Obx(() {
+                                      final CuisineList = [
+                                        'Outdoor',
+                                        'Indoor',
+                                        'Rooftop'
+                                      ];
+                                      return Column(
+                                        children: CuisineList.map((atm) {
+                                          return CheckboxListTile(
+                                            title: Text(atm,
+                                                style: TextStyle(fontSize: 12)),
+                                            value: filterController
+                                                .selectedAtmosphere
+                                                .contains(atm),
+                                            onChanged: (_) => filterController
+                                                .toggleAtmosphere(atm),
+                                            dense: true,
+                                            controlAffinity:
+                                                ListTileControlAffinity.leading,
+                                          );
+                                        }).toList(),
+                                      );
+                                    }),
+
+                                      Divider(),
+                                    Text('Experience',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold)),
+                                    Obx(() {
+                                      final experienceList = [
+                                        'Outdoor',
+                                        'Indoor',
+                                        'Rooftop'
+                                      ];
+                                      return Column(
+                                        children: experienceList.map((atm) {
+                                          return CheckboxListTile(
+                                            title: Text(atm,
+                                                style: TextStyle(fontSize: 12)),
+                                            value: filterController
+                                                .selectedAtmosphere
+                                                .contains(atm),
+                                            onChanged: (_) => filterController
+                                                .toggleAtmosphere(atm),
+                                            dense: true,
+                                            controlAffinity:
+                                                ListTileControlAffinity.leading,
+                                          );
+                                        }).toList(),
+                                      );
+                                    }),
+
+
+
+
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
