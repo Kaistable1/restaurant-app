@@ -1,0 +1,38 @@
+moduledependenciestarget: \
+  /Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphoneos/FirebaseFirestore.build/module.modulemap \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/Target\ Support\ Files/FirebaseFirestore/FirebaseFirestore-umbrella.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk/System/Library/Frameworks/UIKit.framework/Modules/module.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk/System/Library/Frameworks/Foundation.framework/Modules/module.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include/module.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk/usr/include/c_standard_library.modulemap \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/FirebaseFirestoreInternal/FirebaseFirestore/FIRAggregateField.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphoneos/FirebaseFirestoreInternal.build/module.modulemap \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/FirebaseFirestoreInternal/FirebaseFirestore/FIRAggregateQuery.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/FirebaseFirestoreInternal/FirebaseFirestore/FIRAggregateQuerySnapshot.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/FirebaseFirestoreInternal/FirebaseFirestore/FIRAggregateSource.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/FirebaseFirestoreInternal/FirebaseFirestore/FIRCollectionReference.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/FirebaseFirestoreInternal/FirebaseFirestore/FIRDocumentChange.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/FirebaseFirestoreInternal/FirebaseFirestore/FIRDocumentReference.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/FirebaseFirestoreInternal/FirebaseFirestore/FIRDocumentSnapshot.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/FirebaseFirestoreInternal/FirebaseFirestore/FirebaseFirestore.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/FirebaseFirestoreInternal/FirebaseFirestore/FIRFieldPath.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/FirebaseFirestoreInternal/FirebaseFirestore/FIRFieldValue.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/FirebaseFirestoreInternal/FirebaseFirestore/FIRFilter.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/FirebaseFirestoreInternal/FirebaseFirestore/FIRFirestore.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/FirebaseFirestoreInternal/FirebaseFirestore/FIRFirestoreErrors.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/FirebaseFirestoreInternal/FirebaseFirestore/FIRFirestoreSettings.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/FirebaseFirestoreInternal/FirebaseFirestore/FIRFirestoreSource.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/FirebaseFirestoreInternal/FirebaseFirestore/FIRGeoPoint.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/FirebaseFirestoreInternal/FirebaseFirestore/FIRListenerRegistration.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/FirebaseFirestoreInternal/FirebaseFirestore/FIRLoadBundleTask.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/FirebaseFirestoreInternal/FirebaseFirestore/FIRLocalCacheSettings.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/FirebaseFirestoreInternal/FirebaseFirestore/FIRPersistentCacheIndexManager.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/FirebaseFirestoreInternal/FirebaseFirestore/FIRQuery.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/FirebaseFirestoreInternal/FirebaseFirestore/FIRQuerySnapshot.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/FirebaseFirestoreInternal/FirebaseFirestore/FIRSnapshotListenOptions.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/FirebaseFirestoreInternal/FirebaseFirestore/FIRSnapshotMetadata.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/FirebaseFirestoreInternal/FirebaseFirestore/FIRTransaction.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/FirebaseFirestoreInternal/FirebaseFirestore/FIRTransactionOptions.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/FirebaseFirestoreInternal/FirebaseFirestore/FIRVectorValue.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseFirestore/FirebaseFirestoreInternal/FirebaseFirestore/FIRWriteBatch.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphoneos/FirebaseFirestore/FirebaseFirestore.framework/Headers/FirebaseFirestore-Swift.h

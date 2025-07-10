@@ -1,0 +1,10 @@
+framework module IosAwnCore {
+  umbrella header "IosAwnCore-umbrella.h"
+
+  export *
+  module * { export * }
+}
+
+module IosAwnCore.__Swift {
+  exclude header "IosAwnCore-Swift.h"
+}

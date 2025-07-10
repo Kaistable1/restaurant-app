@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -66,8 +65,27 @@ class _HomeScreenState extends State<HomeScreen> {
   final filterController = Get.put(HomeFilterSearchController());
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
     requestLocationPermission();
+
+    final vibes = filterController.selectedVibes;
+    final experiences = filterController.selectedExperiences;
+    final cuisines = filterController.selectedCuisines;
+
+    // Load once
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      homeController.loadTrendingRestaurants(
+        vibes: vibes,
+        experiences: experiences,
+        cuisines: cuisines,
+      );
+    });
+  
+  }
+
+  @override
+  Widget build(BuildContext context) {
     eventController.onInit();
     return ShowCaseWidget(
       enableAutoScroll: true,
@@ -174,8 +192,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ],
                                 selectedOptions:
                                     filterController.selectedCuisines,
-                                onApply: (selected) =>
-                                    filterController.selectedCuisines(selected),
+                                onApply: (selected) => filterController
+                                    .setSelectedCuisines(selected),
                               ),
                             ],
                           ),
@@ -183,6 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
+
                   // SizedBox(
                   //   height: 10,
                   // ),
@@ -194,7 +213,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   _buildTrendingSection(),
 
-                 SizedBox(height:10 ,),
+                  SizedBox(
+                    height: 10,
+                  ),
                   Showcase.withWidget(
                     height: 200,
                     width: Get.width - 24,
@@ -341,785 +362,417 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-// correct code .................
 
-  // Widget _featuredCategory() {
-  //   return FutureBuilder<Position>(
-  //     future: Geolocator.getCurrentPosition(),
-  //     builder: (context, locationSnapshot) {
-  //       if (!locationSnapshot.hasData) {
-  //         return const SizedBox();
-  //       }
-
-  //       final userPosition = locationSnapshot.data!;
-
-  //       return StreamBuilder<Map<String, dynamic>?>(
-  //         stream: homeController.getFeaturedRestaurantID(),
-  //         builder: (context, featuredIDSnapshot) {
-  //           if (!featuredIDSnapshot.hasData ||
-  //               featuredIDSnapshot.data == null ||
-  //               featuredIDSnapshot.data!.isEmpty) {
-  //             return const SizedBox();
-  //           }
-
-  //           return StreamBuilder<List<RestaurantModel>>(
-  //             stream: homeController.getAllRestaurants(),
-  //             builder: (context, allRestaurantsSnapshot) {
-  //               if (!allRestaurantsSnapshot.hasData ||
-  //                   allRestaurantsSnapshot.data == null ||
-  //                   allRestaurantsSnapshot.data!.isEmpty) {
-  //                 return const SizedBox();
-  //               }
-
-  //               final allRestaurants = allRestaurantsSnapshot.data!;
-  //               final data = featuredIDSnapshot.data as Map<String, dynamic>;
-
-  //               final random = Random();
-  //               RestaurantModel randomRestaurant;
-
-  //               // Exclude featured restaurant from random selection
-  //               do {
-  //                 randomRestaurant =
-  //                     allRestaurants[random.nextInt(allRestaurants.length)];
-  //               } while (randomRestaurant.docID == data['restaurantID']);
-
-  //               // Calculate distance
-  //               String distanceText = "Location unavailable";
-  //               if (randomRestaurant.latitude != null &&
-  //                   randomRestaurant.longitude != null) {
-  //                 final distanceInMeters = Geolocator.distanceBetween(
-  //                   userPosition.latitude,
-  //                   userPosition.longitude,
-  //                   randomRestaurant.latitude!,
-  //                   randomRestaurant.longitude!,
-  //                 );
-
-  //                 // Convert meters to miles
-  //                 final distanceInMiles = distanceInMeters / 1609.34;
-
-  //                 distanceText =
-  //                     "${distanceInMiles.toStringAsFixed(1)} mi"; // 1 decimal place
-  //               }
-
-  //               return Padding(
-  //                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
-  //                 child: Column(
-  //                   crossAxisAlignment: CrossAxisAlignment.start,
-  //                   children: [
-  //                     const SizedBox(height: 20),
-  //                     Row(
-  //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                       children: [
-  //                         Text(
-  //                           'Top Rated',
-  //                           style: TextStyle(
-  //                             color: AppColors.bottomSheetColor,
-  //                             fontFamily: 'NunitoSans-Bold',
-  //                             fontSize: 16,
-  //                             fontWeight: FontWeight.w700,
-  //                             decoration: TextDecoration.underline,
-  //                           ),
-  //                         ),
-  //                         GestureDetector(
-  //                           onTap: () {
-  //                             Get.to(() => AllRestaurantsPage(
-  //                                 restaurants: allRestaurants));
-  //                           },
-  //                           child: Text(
-  //                             'See more',
-  //                             style: TextStyle(
-  //                               color: AppColors.primaryColor,
-  //                               fontFamily: 'NunitoSans-Regular',
-  //                               fontSize: 14,
-  //                               fontWeight: FontWeight.w500,
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       ],
-  //                     ),
-  //                     const SizedBox(height: 10),
-  //                     Text(
-  //                       data['description'] ??
-  //                           'Experience the art of Cuisine at our top rated restaurants',
-  //                       textAlign: TextAlign.justify,
-  //                       style: TextStyle(
-  //                         color: AppColors.bottomSheetColor,
-  //                         fontFamily: 'NunitoSans-Regular',
-  //                         fontSize: 12,
-  //                         fontWeight: FontWeight.w400,
-  //                       ),
-  //                     ),
-  //                     const SizedBox(height: 20),
-  //                     GestureDetector(
-  //                       onTap: () {
-  //                         Get.to(RestaurantDetailScreen(
-  //                             restaurantModel: randomRestaurant));
-  //                       },
-  //                       child: Stack(
-  //                         children: [
-  //                           ClipRRect(
-  //                             borderRadius: BorderRadius.circular(12),
-  //                             child: Image.network(
-  //                               randomRestaurant.logoImage,
-  //                               height: 290,
-  //                               width: double.infinity,
-  //                               fit: BoxFit.cover,
-  //                             ),
-  //                           ),
-
-  //                           // Bottom Blur Info
-  //                           Positioned(
-  //                             bottom: 0,
-  //                             left: 0,
-  //                             right: 0,
-  //                             child: ClipRRect(
-  //                               borderRadius: const BorderRadius.only(
-  //                                 bottomLeft: Radius.circular(12),
-  //                                 bottomRight: Radius.circular(12),
-  //                               ),
-  //                               child: BackdropFilter(
-  //                                 filter:
-  //                                     ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-  //                                 child: Container(
-  //                                   padding: const EdgeInsets.all(16),
-  //                                   decoration: BoxDecoration(
-  //                                     borderRadius: const BorderRadius.only(
-  //                                       bottomLeft: Radius.circular(12),
-  //                                       bottomRight: Radius.circular(12),
-  //                                     ),
-  //                                     gradient: LinearGradient(
-  //                                       begin: Alignment.bottomCenter,
-  //                                       end: Alignment.topCenter,
-  //                                       colors: [
-  //                                         AppColors.primaryColor
-  //                                             .withOpacity(0.5),
-  //                                         AppColors.primaryColor
-  //                                             .withOpacity(0.5),
-  //                                       ],
-  //                                     ),
-  //                                   ),
-  //                                   child: Column(
-  //                                     crossAxisAlignment:
-  //                                         CrossAxisAlignment.start,
-  //                                     children: [
-  //                                       Text(
-  //                                         randomRestaurant.resName,
-  //                                         style: const TextStyle(
-  //                                           fontSize: 14,
-  //                                           fontWeight: FontWeight.w600,
-  //                                           color: Colors.white,
-  //                                           fontFamily: 'NunitoSans-Bold',
-  //                                         ),
-  //                                       ),
-  //                                       Text(
-  //                                         randomRestaurant.address,
-  //                                         style: const TextStyle(
-  //                                           fontSize: 12,
-  //                                           fontWeight: FontWeight.w600,
-  //                                           color: Colors.white,
-  //                                           fontFamily: 'NunitoSans-Regular',
-  //                                         ),
-  //                                       ),
-  //                                       Row(
-  //                                         children: [
-  //                                           Icon(
-  //                                             Icons.location_on_outlined,
-  //                                             size: 20,
-  //                                             color:
-  //                                                 Colors.white.withOpacity(0.9),
-  //                                           ),
-  //                                           const SizedBox(width: 6),
-  //                                           Text(
-  //                                             distanceText,
-  //                                             style: const TextStyle(
-  //                                               fontSize: 14,
-  //                                               fontWeight: FontWeight.w500,
-  //                                               color: Colors.white,
-  //                                               fontFamily: 'NunitoSans-Bold',
-  //                                             ),
-  //                                           ),
-  //                                         ],
-  //                                       ),
-  //                                     ],
-  //                                   ),
-  //                                 ),
-  //                               ),
-  //                             ),
-  //                           ),
-
-  //                           // ⭐ New: Bottom-Right Buttons (Filter & Direction)
-  //                           Positioned(
-  //                             bottom: 16,
-  //                             right: 16,
-  //                             child: Column(
-  //                               children: [
-  //                                 // Filter Button
-  //                                 GestureDetector(
-  //                                     onTap: () {
-  //                                       final allFilters = controller
-  //                                           .getAllFilters(randomRestaurant);
-
-  //                                       showModalBottomSheet(
-  //                                         context: context,
-  //                                         isScrollControlled: true,
-  //                                         shape: const RoundedRectangleBorder(
-  //                                           borderRadius: BorderRadius.vertical(
-  //                                             top: Radius.circular(20),
-  //                                           ),
-  //                                         ),
-  //                                         builder: (context) {
-  //                                           return Container(
-  //                                             padding:
-  //                                                 const EdgeInsets.fromLTRB(
-  //                                                     16, 16, 16, 0),
-  //                                             height: MediaQuery.of(context)
-  //                                                     .size
-  //                                                     .height *
-  //                                                 0.8,
-  //                                             child: Column(
-  //                                               children: [
-  //                                                 // Header with title and buttons
-  //                                                 Row(
-  //                                                   mainAxisAlignment:
-  //                                                       MainAxisAlignment
-  //                                                           .spaceBetween,
-  //                                                   children: [
-  //                                                     const Text(
-  //                                                       'Filters',
-  //                                                       style: TextStyle(
-  //                                                         color: AppColors
-  //                                                             .primaryColor,
-  //                                                         fontFamily:
-  //                                                             'NunitoSans-Bold',
-  //                                                         fontSize: 16,
-  //                                                         fontWeight:
-  //                                                             FontWeight.w700,
-  //                                                       ),
-  //                                                     ),
-  //                                                     TextButton(
-  //                                                       onPressed: () =>
-  //                                                           Navigator.pop(
-  //                                                               context),
-  //                                                       child: const Text(
-  //                                                         'Cancel',
-  //                                                         style: TextStyle(
-  //                                                           color: Colors.red,
-  //                                                           fontFamily:
-  //                                                               'NunitoSans-Bold',
-  //                                                           fontSize: 16,
-  //                                                           fontWeight:
-  //                                                               FontWeight.w700,
-  //                                                         ),
-  //                                                       ),
-  //                                                     ),
-  //                                                   ],
-  //                                                 ),
-  //                                                 const SizedBox(height: 16),
-
-  //                                                 // Main dynamic filters list
-  //                                                 Expanded(
-  //                                                   child: ListView.builder(
-  //                                                     itemCount:
-  //                                                         allFilters.length,
-  //                                                     itemBuilder:
-  //                                                         (context, index) {
-  //                                                       return Column(
-  //                                                         children: [
-  //                                                           ListTile(
-  //                                                             title: Text(
-  //                                                               allFilters[
-  //                                                                   index],
-  //                                                               style: const TextStyle(
-  //                                                                   fontSize:
-  //                                                                       12,
-  //                                                                   fontFamily:
-  //                                                                       'NunitoSans-regular',
-  //                                                                   color: AppColors
-  //                                                                       .bottomSheetColor),
-  //                                                             ),
-  //                                                           ),
-  //                                                           const Divider(
-  //                                                               height: 1,
-  //                                                               color: AppColors
-  //                                                                   .primaryColor),
-  //                                                         ],
-  //                                                       );
-  //                                                     },
-  //                                                   ),
-  //                                                 ),
-  //                                               ],
-  //                                             ),
-  //                                           );
-  //                                         },
-  //                                       );
-  //                                     },
-  //                                     child: Image(
-  //                                       image: AssetImage(
-  //                                           "assets/images/filter.png"),
-  //                                       width: 20,
-  //                                       height: 20,
-  //                                     )),
-  //                                 const SizedBox(height: 8),
-
-  //                                 // Direction Button
-  //                                 GestureDetector(
-  //                                     onTap: () async {
-  //                                       final lat = randomRestaurant
-  //                                           .latitude; // Your restaurant's latitude
-  //                                       final lng = randomRestaurant
-  //                                           .longitude; // Your restaurant's longitude
-  //                                       final restaurantName =
-  //                                           Uri.encodeComponent(
-  //                                               randomRestaurant.resName);
-
-  //                                       // Create Google Maps URL with directions
-  //                                       final googleMapsUrl =
-  //                                           'https://www.google.com/maps/dir/?api=1'
-  //                                           '&destination=$lat,$lng'
-  //                                           '&destination_place_name=$restaurantName';
-
-  //                                       try {
-  //                                         if (await canLaunch(googleMapsUrl)) {
-  //                                           await launch(googleMapsUrl);
-  //                                         } else {
-  //                                           // Fallback to web version if app isn't installed
-  //                                           final webUrl =
-  //                                               'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
-  //                                           await launch(webUrl);
-  //                                         }
-  //                                       } catch (e) {
-  //                                         ScaffoldMessenger.of(context)
-  //                                             .showSnackBar(
-  //                                           SnackBar(
-  //                                               content: Text(
-  //                                                   'Could not launch maps: ${e.toString()}')),
-  //                                         );
-  //                                       }
-  //                                     },
-  //                                     child: Image(
-  //                                       image: AssetImage(
-  //                                           "assets/images/direction.png"),
-  //                                       width: 20,
-  //                                       height: 20,
-  //                                     )),
-  //                               ],
-  //                             ),
-  //                           ),
-  //                         ],
-  //                       ),
-  //                     ),
-  //                     const SizedBox(height: 24),
-  //                   ],
-  //                 ),
-  //               );
-  //             },
-  //           );
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
-
-
-Widget _featuredCategory() {
-  // Show heading immediately
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Top Rated',
-              style: TextStyle(
-                color: AppColors.bottomSheetColor,
-                fontFamily: 'NunitoSans-Bold',
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                decoration: TextDecoration.underline,
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                Get.to(() => AllRestaurantsPage(
-                    restaurants: homeController.restaurants));
-              },
-              child: Text(
-                'See more',
+  Widget _featuredCategory() {
+    // Show heading immediately
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Top Rated',
                 style: TextStyle(
-                  color: AppColors.primaryColor,
-                  fontFamily: 'NunitoSans-Regular',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
+                  color: AppColors.bottomSheetColor,
+                  fontFamily: 'NunitoSans-Bold',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  decoration: TextDecoration.underline,
                 ),
               ),
-            ),
-          ],
+              GestureDetector(
+                onTap: () {
+                  Get.to(() => AllRestaurantsPage(
+                      restaurants: homeController.restaurants));
+                },
+                child: Text(
+                  'See more',
+                  style: TextStyle(
+                    color: AppColors.primaryColor,
+                    fontFamily: 'NunitoSans-Regular',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-      const SizedBox(height: 10),
-      
-      // Original content with loading state
-      FutureBuilder<Position>(
-        future: Geolocator.getCurrentPosition(),
-        builder: (context, locationSnapshot) {
-          if (!locationSnapshot.hasData) {
-            return _buildLoadingState();
-          }
+        const SizedBox(height: 10),
 
-          final userPosition = locationSnapshot.data!;
+        // Original content with loading state
+        FutureBuilder<Position>(
+          future: Geolocator.getCurrentPosition(),
+          builder: (context, locationSnapshot) {
+            if (!locationSnapshot.hasData) {
+              return _buildLoadingState();
+            }
 
-          return StreamBuilder<Map<String, dynamic>?>(
-            stream: homeController.getFeaturedRestaurantID(),
-            builder: (context, featuredIDSnapshot) {
-              if (!featuredIDSnapshot.hasData ||
-                  featuredIDSnapshot.data == null ||
-                  featuredIDSnapshot.data!.isEmpty) {
-                return _buildLoadingState();
-              }
+            final userPosition = locationSnapshot.data!;
 
-              return StreamBuilder<List<RestaurantModel>>(
-                stream: homeController.getAllRestaurants(),
-                builder: (context, allRestaurantsSnapshot) {
-                  if (!allRestaurantsSnapshot.hasData ||
-                      allRestaurantsSnapshot.data == null ||
-                      allRestaurantsSnapshot.data!.isEmpty) {
-                    return _buildLoadingState();
-                  }
+            return StreamBuilder<Map<String, dynamic>?>(
+              stream: homeController.getFeaturedRestaurantID(),
+              builder: (context, featuredIDSnapshot) {
+                if (!featuredIDSnapshot.hasData ||
+                    featuredIDSnapshot.data == null ||
+                    featuredIDSnapshot.data!.isEmpty) {
+                  return _buildLoadingState();
+                }
 
-                  // Your original content implementation here
-                  final allRestaurants = allRestaurantsSnapshot.data!;
-                  final data = featuredIDSnapshot.data as Map<String, dynamic>;
+                return StreamBuilder<List<RestaurantModel>>(
+                  stream: homeController.getAllRestaurants(),
+                  builder: (context, allRestaurantsSnapshot) {
+                    if (!allRestaurantsSnapshot.hasData ||
+                        allRestaurantsSnapshot.data == null ||
+                        allRestaurantsSnapshot.data!.isEmpty) {
+                      return _buildLoadingState();
+                    }
 
-                  final random = Random();
-                  RestaurantModel randomRestaurant;
+                    // Your original content implementation here
+                    final allRestaurants = allRestaurantsSnapshot.data!;
+                    final data =
+                        featuredIDSnapshot.data as Map<String, dynamic>;
 
-                  do {
-                    randomRestaurant =
-                        allRestaurants[random.nextInt(allRestaurants.length)];
-                  } while (randomRestaurant.docID == data['restaurantID']);
+                    final random = Random();
+                    RestaurantModel randomRestaurant;
 
-                  String distanceText = "Location unavailable";
-                  if (randomRestaurant.latitude != null &&
-                      randomRestaurant.longitude != null) {
-                    final distanceInMeters = Geolocator.distanceBetween(
-                      userPosition.latitude,
-                      userPosition.longitude,
-                      randomRestaurant.latitude!,
-                      randomRestaurant.longitude!,
-                    );
-                    final distanceInMiles = distanceInMeters / 1609.34;
-                    distanceText = "${distanceInMiles.toStringAsFixed(1)} mi";
-                  }
+                    do {
+                      randomRestaurant =
+                          allRestaurants[random.nextInt(allRestaurants.length)];
+                    } while (randomRestaurant.docID == data['restaurantID']);
 
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          data['description'] ??
-                              'Experience the art of Cuisine at our top rated restaurants',
-                          textAlign: TextAlign.justify,
-                          style: TextStyle(
-                            color: AppColors.bottomSheetColor,
-                            fontFamily: 'NunitoSans-Regular',
-                            fontSize: 12,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        GestureDetector(
-                          onTap: () {
-                            Get.to(RestaurantDetailScreen(
-                                restaurantModel: randomRestaurant));
-                          },
-                          child: Stack(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: Image.network(
-                                randomRestaurant.logoImage,
-                                height: 290,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                              ),
+                    String distanceText = "Location unavailable";
+                    if (randomRestaurant.latitude != null &&
+                        randomRestaurant.longitude != null) {
+                      final distanceInMeters = Geolocator.distanceBetween(
+                        userPosition.latitude,
+                        userPosition.longitude,
+                        randomRestaurant.latitude!,
+                        randomRestaurant.longitude!,
+                      );
+                      final distanceInMiles = distanceInMeters / 1609.34;
+                      distanceText = "${distanceInMiles.toStringAsFixed(1)} mi";
+                    }
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            data['description'] ??
+                                'Experience the art of Cuisine at our top rated restaurants',
+                            textAlign: TextAlign.justify,
+                            style: TextStyle(
+                              color: AppColors.bottomSheetColor,
+                              fontFamily: 'NunitoSans-Regular',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
                             ),
-
-                            // Bottom Blur Info
-                            Positioned(
-                              bottom: 0,
-                              left: 0,
-                              right: 0,
-                              child: ClipRRect(
-                                borderRadius: const BorderRadius.only(
-                                  bottomLeft: Radius.circular(12),
-                                  bottomRight: Radius.circular(12),
+                          ),
+                          const SizedBox(height: 20),
+                          GestureDetector(
+                            onTap: () {
+                              Get.to(RestaurantDetailScreen(
+                                  restaurantModel: randomRestaurant));
+                            },
+                            child: Stack(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Image.network(
+                                    randomRestaurant.logoImage,
+                                    height: 290,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
-                                child: BackdropFilter(
-                                  filter:
-                                      ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                                  child: Container(
-                                    padding: const EdgeInsets.all(16),
-                                    decoration: BoxDecoration(
-                                      borderRadius: const BorderRadius.only(
-                                        bottomLeft: Radius.circular(12),
-                                        bottomRight: Radius.circular(12),
-                                      ),
-                                      gradient: LinearGradient(
-                                        begin: Alignment.bottomCenter,
-                                        end: Alignment.topCenter,
-                                        colors: [
-                                          AppColors.primaryColor
-                                              .withOpacity(0.5),
-                                          AppColors.primaryColor
-                                              .withOpacity(0.5),
-                                        ],
-                                      ),
+
+                                // Bottom Blur Info
+                                Positioned(
+                                  bottom: 0,
+                                  left: 0,
+                                  right: 0,
+                                  child: ClipRRect(
+                                    borderRadius: const BorderRadius.only(
+                                      bottomLeft: Radius.circular(12),
+                                      bottomRight: Radius.circular(12),
                                     ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          randomRestaurant.resName,
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.white,
-                                            fontFamily: 'NunitoSans-Bold',
+                                    child: BackdropFilter(
+                                      filter: ImageFilter.blur(
+                                          sigmaX: 10, sigmaY: 10),
+                                      child: Container(
+                                        padding: const EdgeInsets.all(16),
+                                        decoration: BoxDecoration(
+                                          borderRadius: const BorderRadius.only(
+                                            bottomLeft: Radius.circular(12),
+                                            bottomRight: Radius.circular(12),
+                                          ),
+                                          gradient: LinearGradient(
+                                            begin: Alignment.bottomCenter,
+                                            end: Alignment.topCenter,
+                                            colors: [
+                                              AppColors.primaryColor
+                                                  .withOpacity(0.5),
+                                              AppColors.primaryColor
+                                                  .withOpacity(0.5),
+                                            ],
                                           ),
                                         ),
-                                        Text(
-                                          randomRestaurant.address,
-                                          style: const TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.white,
-                                            fontFamily: 'NunitoSans-Regular',
-                                          ),
-                                        ),
-                                        Row(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            Icon(
-                                              Icons.location_on_outlined,
-                                              size: 20,
-                                              color:
-                                                  Colors.white.withOpacity(0.9),
-                                            ),
-                                            const SizedBox(width: 6),
                                             Text(
-                                              distanceText,
+                                              randomRestaurant.resName,
                                               style: const TextStyle(
                                                 fontSize: 14,
-                                                fontWeight: FontWeight.w500,
+                                                fontWeight: FontWeight.w600,
                                                 color: Colors.white,
                                                 fontFamily: 'NunitoSans-Bold',
                                               ),
                                             ),
+                                            Text(
+                                              randomRestaurant.address,
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.white,
+                                                fontFamily:
+                                                    'NunitoSans-Regular',
+                                              ),
+                                            ),
+                                            Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.location_on_outlined,
+                                                  size: 20,
+                                                  color: Colors.white
+                                                      .withOpacity(0.9),
+                                                ),
+                                                const SizedBox(width: 6),
+                                                Text(
+                                                  distanceText,
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.white,
+                                                    fontFamily:
+                                                        'NunitoSans-Bold',
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ],
                                         ),
-                                      ],
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ),
 
-                            // ⭐ New: Bottom-Right Buttons (Filter & Direction)
-                            Positioned(
-                              bottom: 16,
-                              right: 16,
-                              child: Column(
-                                children: [
-                                  // Filter Button
-                                  GestureDetector(
-                                      onTap: () {
-                                        final allFilters = controller
-                                            .getAllFilters(randomRestaurant);
+                                // ⭐ New: Bottom-Right Buttons (Filter & Direction)
+                                Positioned(
+                                  bottom: 16,
+                                  right: 16,
+                                  child: Column(
+                                    children: [
+                                      // Filter Button
+                                      GestureDetector(
+                                          onTap: () {
+                                            final allFilters =
+                                                controller.getAllFilters(
+                                                    randomRestaurant);
 
-                                        showModalBottomSheet(
-                                          context: context,
-                                          isScrollControlled: true,
-                                          shape: const RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.vertical(
-                                              top: Radius.circular(20),
-                                            ),
-                                          ),
-                                          builder: (context) {
-                                            return Container(
-                                              padding:
-                                                  const EdgeInsets.fromLTRB(
-                                                      16, 16, 16, 0),
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.8,
-                                              child: Column(
-                                                children: [
-                                                  // Header with title and buttons
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
+                                            showModalBottomSheet(
+                                              context: context,
+                                              isScrollControlled: true,
+                                              shape:
+                                                  const RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.vertical(
+                                                  top: Radius.circular(20),
+                                                ),
+                                              ),
+                                              builder: (context) {
+                                                return Container(
+                                                  padding:
+                                                      const EdgeInsets.fromLTRB(
+                                                          16, 16, 16, 0),
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .height *
+                                                      0.8,
+                                                  child: Column(
                                                     children: [
-                                                      const Text(
-                                                        'Filters',
-                                                        style: TextStyle(
-                                                          color: AppColors
-                                                              .primaryColor,
-                                                          fontFamily:
-                                                              'NunitoSans-Bold',
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.w700,
-                                                        ),
-                                                      ),
-                                                      TextButton(
-                                                        onPressed: () =>
-                                                            Navigator.pop(
-                                                                context),
-                                                        child: const Text(
-                                                          'Cancel',
-                                                          style: TextStyle(
-                                                            color: Colors.red,
-                                                            fontFamily:
-                                                                'NunitoSans-Bold',
-                                                            fontSize: 16,
-                                                            fontWeight:
-                                                                FontWeight.w700,
+                                                      // Header with title and buttons
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          const Text(
+                                                            'Filters',
+                                                            style: TextStyle(
+                                                              color: AppColors
+                                                                  .primaryColor,
+                                                              fontFamily:
+                                                                  'NunitoSans-Bold',
+                                                              fontSize: 16,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700,
+                                                            ),
                                                           ),
+                                                          TextButton(
+                                                            onPressed: () =>
+                                                                Navigator.pop(
+                                                                    context),
+                                                            child: const Text(
+                                                              'Cancel',
+                                                              style: TextStyle(
+                                                                color:
+                                                                    Colors.red,
+                                                                fontFamily:
+                                                                    'NunitoSans-Bold',
+                                                                fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      const SizedBox(
+                                                          height: 16),
+
+                                                      // Main dynamic filters list
+                                                      Expanded(
+                                                        child: ListView.builder(
+                                                          itemCount:
+                                                              allFilters.length,
+                                                          itemBuilder:
+                                                              (context, index) {
+                                                            return Column(
+                                                              children: [
+                                                                ListTile(
+                                                                  title: Text(
+                                                                    allFilters[
+                                                                        index],
+                                                                    style: const TextStyle(
+                                                                        fontSize:
+                                                                            12,
+                                                                        fontFamily:
+                                                                            'NunitoSans-regular',
+                                                                        color: AppColors
+                                                                            .bottomSheetColor),
+                                                                  ),
+                                                                ),
+                                                                const Divider(
+                                                                    height: 1,
+                                                                    color: AppColors
+                                                                        .primaryColor),
+                                                              ],
+                                                            );
+                                                          },
                                                         ),
                                                       ),
                                                     ],
                                                   ),
-                                                  const SizedBox(height: 16),
-
-                                                  // Main dynamic filters list
-                                                  Expanded(
-                                                    child: ListView.builder(
-                                                      itemCount:
-                                                          allFilters.length,
-                                                      itemBuilder:
-                                                          (context, index) {
-                                                        return Column(
-                                                          children: [
-                                                            ListTile(
-                                                              title: Text(
-                                                                allFilters[
-                                                                    index],
-                                                                style: const TextStyle(
-                                                                    fontSize:
-                                                                        12,
-                                                                    fontFamily:
-                                                                        'NunitoSans-regular',
-                                                                    color: AppColors
-                                                                        .bottomSheetColor),
-                                                              ),
-                                                            ),
-                                                            const Divider(
-                                                                height: 1,
-                                                                color: AppColors
-                                                                    .primaryColor),
-                                                          ],
-                                                        );
-                                                      },
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
+                                                );
+                                              },
                                             );
                                           },
-                                        );
-                                      },
-                                      child: Image(
-                                        image: AssetImage(
-                                            "assets/images/filter.png"),
-                                        width: 20,
-                                        height: 20,
-                                      )),
-                                  const SizedBox(height: 8),
+                                          child: Image(
+                                            image: AssetImage(
+                                                "assets/images/filter.png"),
+                                            width: 20,
+                                            height: 20,
+                                          )),
+                                      const SizedBox(height: 8),
 
-                                  // Direction Button
-                                  GestureDetector(
-                                      onTap: () async {
-                                        final lat = randomRestaurant
-                                            .latitude; // Your restaurant's latitude
-                                        final lng = randomRestaurant
-                                            .longitude; // Your restaurant's longitude
-                                        final restaurantName =
-                                            Uri.encodeComponent(
-                                                randomRestaurant.resName);
+                                      // Direction Button
+                                      GestureDetector(
+                                          onTap: () async {
+                                            final lat = randomRestaurant
+                                                .latitude; // Your restaurant's latitude
+                                            final lng = randomRestaurant
+                                                .longitude; // Your restaurant's longitude
+                                            final restaurantName =
+                                                Uri.encodeComponent(
+                                                    randomRestaurant.resName);
 
-                                        // Create Google Maps URL with directions
-                                        final googleMapsUrl =
-                                            'https://www.google.com/maps/dir/?api=1'
-                                            '&destination=$lat,$lng'
-                                            '&destination_place_name=$restaurantName';
+                                            // Create Google Maps URL with directions
+                                            final googleMapsUrl =
+                                                'https://www.google.com/maps/dir/?api=1'
+                                                '&destination=$lat,$lng'
+                                                '&destination_place_name=$restaurantName';
 
-                                        try {
-                                          if (await canLaunch(googleMapsUrl)) {
-                                            await launch(googleMapsUrl);
-                                          } else {
-                                            // Fallback to web version if app isn't installed
-                                            final webUrl =
-                                                'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
-                                            await launch(webUrl);
-                                          }
-                                        } catch (e) {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            SnackBar(
-                                                content: Text(
-                                                    'Could not launch maps: ${e.toString()}')),
-                                          );
-                                        }
-                                      },
-                                      child: Image(
-                                        image: AssetImage(
-                                            "assets/images/direction.png"),
-                                        width: 20,
-                                        height: 20,
-                                      )),
-                                ],
-                              ),
+                                            try {
+                                              if (await canLaunch(
+                                                  googleMapsUrl)) {
+                                                await launch(googleMapsUrl);
+                                              } else {
+                                                // Fallback to web version if app isn't installed
+                                                final webUrl =
+                                                    'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
+                                                await launch(webUrl);
+                                              }
+                                            } catch (e) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                    content: Text(
+                                                        'Could not launch maps: ${e.toString()}')),
+                                              );
+                                            }
+                                          },
+                                          child: Image(
+                                            image: AssetImage(
+                                                "assets/images/direction.png"),
+                                            width: 20,
+                                            height: 20,
+                                          )),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(height: 24),
+                        ],
                       ),
-                     
-                        const SizedBox(height: 24),
-                      ],
-                    ),
-                  );
-                },
-              );
-            },
-          );
-        },
-      ),
-    ],
-  );
-}
-
-Widget _buildLoadingState() {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-    child: Column(
-      children: [
-        const SizedBox(height: 20),
-        Center(
-          child: CircularProgressIndicator(
-            color: AppColors.primaryColor,
-          ),
+                    );
+                  },
+                );
+              },
+            );
+          },
         ),
-        const SizedBox(height: 150), // Placeholder space
       ],
-    ),
-  );
-}
+    );
+  }
+
+  Widget _buildLoadingState() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        children: [
+          const SizedBox(height: 20),
+          Center(
+            child: CircularProgressIndicator(
+              color: AppColors.primaryColor,
+            ),
+          ),
+          const SizedBox(height: 150), // Placeholder space
+        ],
+      ),
+    );
+  }
+
 //.................................
   Widget _buildCategories() {
     return Obx(() => Column(
@@ -1205,736 +858,6 @@ Widget _buildLoadingState() {
         ));
   }
 
-  // Widget _buildTrendingSection() {
-  //   final HomeLocationController controller = Get.put(HomeLocationController());
-  //   return Padding(
-  //     padding: const EdgeInsets.only(left: 12),
-  //     child: StreamBuilder(
-  //       stream: controller.getTrendingRestaurants(),
-  //       builder: (context, snapshot) {
-  //         if (snapshot.connectionState == ConnectionState.waiting)
-  //           return SizedBox();
-  //         if (snapshot.hasError) {
-  //           print('Error during stream call ${snapshot.error}');
-  //           return Text('');
-  //         }
-  //         if (snapshot.data == null || snapshot.data!.isEmpty) return Text('');
-  //         List<RestaurantModel> restaurants = snapshot.data!;
-  //         WidgetsBinding.instance.addPostFrameCallback((_) {
-  //           controller.initailizedSelectors(resaturantsList: restaurants);
-  //         });
-
-  //         return Column(
-  //           children: [
-  //             SizedBox(height: 10),
-  //             Padding(
-  //               padding: EdgeInsets.only(right: 18),
-  //               child: Row(
-  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                 children: [
-  //                   Column(
-  //                     crossAxisAlignment: CrossAxisAlignment.start,
-  //                     children: [
-  //                       Text(
-  //                         'Trending',
-  //                         style: TextStyle(
-  //                           color: AppColors.bottomSheetColor,
-  //                           fontFamily: 'aftika-regular',
-  //                           fontSize: 16,
-  //                           fontWeight: FontWeight.w700,
-  //                           decoration: TextDecoration.underline,
-  //                         ),
-  //                       ),
-  //                       SizedBox(height: 5),
-  //                       Text(
-  //                         'Buzzing dishes right now',
-  //                         textAlign: TextAlign.justify,
-  //                         style: TextStyle(
-  //                           color: AppColors.bottomSheetColor,
-  //                           fontFamily: 'aftika-regular',
-  //                           fontSize: 12,
-  //                           fontWeight: FontWeight.w500,
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //             SizedBox(height: 10),
-  //             SizedBox(
-  //               height: Get.height * 0.25,
-  //               child: ListView.builder(
-  //                 shrinkWrap: true,
-  //                 scrollDirection: Axis.horizontal,
-  //                 itemCount: restaurants.length,
-  //                 itemBuilder: (context, index) {
-  //                   final item = restaurants[index];
-  //                   return Padding(
-  //                     padding: const EdgeInsets.only(right: 12.0),
-  //                     child: GestureDetector(
-  //                         onTap: () => Get.to(
-  //                             RestaurantDetailScreen(restaurantModel: item)),
-  //                         child: Container(
-  //                           width: 200,
-  //                           //height:  200,
-  //                           decoration: BoxDecoration(
-  //                             borderRadius: BorderRadius.circular(12),
-  //                             boxShadow: [
-  //                               BoxShadow(
-  //                                 color: Colors.black12,
-  //                                 blurRadius: 5,
-  //                                 offset: Offset(0, 2),
-  //                               )
-  //                             ],
-  //                           ),
-  //                           child: Stack(
-  //                             children: [
-  //                               /// Main Image
-  //                               ClipRRect(
-  //                                 borderRadius: BorderRadius.circular(12),
-  //                                 child: Image.network(
-  //                                   item.logoImage,
-  //                                   height: 200,
-  //                                   width: double.infinity,
-  //                                   fit: BoxFit.cover,
-  //                                 ),
-  //                               ),
-
-  //                               /// Blur Gradient Info at Bottom
-  //                               Positioned(
-  //                                 bottom: 0,
-  //                                 left: 0,
-  //                                 right: 0,
-  //                                 child: ClipRRect(
-  //                                   borderRadius: const BorderRadius.only(
-  //                                     bottomLeft: Radius.circular(12),
-  //                                     bottomRight: Radius.circular(12),
-  //                                   ),
-  //                                   child: BackdropFilter(
-  //                                     filter: ImageFilter.blur(
-  //                                         sigmaX: 10, sigmaY: 10),
-  //                                     child: Container(
-  //                                       // height: 80,
-  //                                       padding: const EdgeInsets.all(16),
-  //                                       decoration: BoxDecoration(
-  //                                         borderRadius: const BorderRadius.only(
-  //                                           bottomLeft: Radius.circular(12),
-  //                                           bottomRight: Radius.circular(12),
-  //                                         ),
-  //                                         gradient: LinearGradient(
-  //                                           begin: Alignment.bottomCenter,
-  //                                           end: Alignment.topCenter,
-  //                                           colors: [
-  //                                             AppColors.primaryColor
-  //                                                 .withOpacity(0.5),
-  //                                             AppColors.primaryColor
-  //                                                 .withOpacity(0.5),
-  //                                           ],
-  //                                         ),
-  //                                       ),
-  //                                       child: Column(
-  //                                         crossAxisAlignment:
-  //                                             CrossAxisAlignment.start,
-  //                                         children: [
-  //                                           /// Restaurant Name
-  //                                           Text(
-  //                                             item.resName,
-  //                                             style: const TextStyle(
-  //                                               fontSize: 14,
-  //                                               fontWeight: FontWeight.w800,
-  //                                               color: Colors.white,
-  //                                               fontFamily: 'Nunito-regular',
-  //                                             ),
-  //                                           ),
-
-  //                                           /// Location Text
-  //                                           Row(
-  //                                             children: [
-  //                                               Icon(
-  //                                                 Icons.location_on_outlined,
-  //                                                 size: 14,
-  //                                                 color: Colors.white
-  //                                                     .withOpacity(0.9),
-  //                                               ),
-  //                                               const SizedBox(width: 6),
-  //                                               Expanded(
-  //                                                 child: Text(
-  //                                                   item.address,
-  //                                                   style: const TextStyle(
-  //                                                     fontSize: 14,
-  //                                                     fontWeight:
-  //                                                         FontWeight.w600,
-  //                                                     color: Colors.white,
-  //                                                     fontFamily: 'Nunito-Sans',
-  //                                                   ),
-  //                                                   overflow:
-  //                                                       TextOverflow.ellipsis,
-  //                                                 ),
-  //                                               ),
-  //                                             ],
-  //                                           ),
-  //                                         ],
-  //                                       ),
-  //                                     ),
-  //                                   ),
-  //                                 ),
-  //                               ),
-  //                             ],
-  //                           ),
-  //                         )),
-  //                   );
-  //                 },
-  //               ),
-  //             ),
-  //           ],
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
-
-  // Widget _buildTrendingSection() {
-  //   final HomeLocationController controller = Get.put(HomeLocationController());
-
-  //   return Padding(
-  //     padding: const EdgeInsets.only(left: 12),
-  //     child: GetBuilder<HomeLocationController>(
-  //       builder: (_) {
-  //         return StreamBuilder<List<RestaurantModel>>(
-  //           stream: controller.getTrendingRestaurants(),
-  //           builder: (context, snapshot) {
-  //             if (snapshot.connectionState == ConnectionState.waiting) {
-  //               return SizedBox();
-  //             }
-  //             if (snapshot.hasError) {
-  //               print('Stream error: ${snapshot.error}');
-  //               return Text('Error loading restaurants');
-  //             }
-  //             if (!snapshot.hasData || snapshot.data!.isEmpty) {
-  //               return Text('No restaurants found');
-  //             }
-
-  //             List<RestaurantModel> restaurants = snapshot.data!;
-
-  //             return Column(
-  //               crossAxisAlignment: CrossAxisAlignment.start,
-  //               children: [
-  //                 SizedBox(height: 10),
-  //                 Padding(
-  //                   padding: const EdgeInsets.only(right: 18),
-  //                   child: Row(
-  //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                     children: [
-  //                       Column(
-  //                         crossAxisAlignment: CrossAxisAlignment.start,
-  //                         children: [
-  //                           Text(
-  //                             'Trending',
-  //                             style: TextStyle(
-  //                               color: AppColors.bottomSheetColor,
-  //                               fontFamily: 'aftika-regular',
-  //                               fontSize: 16,
-  //                               fontWeight: FontWeight.w700,
-  //                               decoration: TextDecoration.underline,
-  //                             ),
-  //                           ),
-  //                           SizedBox(height: 5),
-  //                           Text(
-  //                             'Buzzing dishes right now',
-  //                             textAlign: TextAlign.justify,
-  //                             style: TextStyle(
-  //                               color: AppColors.bottomSheetColor,
-  //                               fontFamily: 'aftika-regular',
-  //                               fontSize: 12,
-  //                               fontWeight: FontWeight.w500,
-  //                             ),
-  //                           ),
-  //                         ],
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ),
-  //                 SizedBox(height: 10),
-  //                 SizedBox(
-  //                   height: Get.height * 0.25,
-  //                   child: ListView.builder(
-  //                     scrollDirection: Axis.horizontal,
-  //                     itemCount: restaurants.length,
-  //                     itemBuilder: (context, index) {
-  //                       final item = restaurants[index];
-  //                       return Padding(
-  //                         padding: const EdgeInsets.only(right: 12.0),
-  //                         child: GestureDetector(
-  //                           onTap: () => Get.to(
-  //                               RestaurantDetailScreen(restaurantModel: item)),
-  //                           child: Container(
-  //                             width: 200,
-  //                             decoration: BoxDecoration(
-  //                               borderRadius: BorderRadius.circular(12),
-  //                               boxShadow: [
-  //                                 BoxShadow(
-  //                                   color: Colors.black12,
-  //                                   blurRadius: 5,
-  //                                   offset: Offset(0, 2),
-  //                                 )
-  //                               ],
-  //                             ),
-  //                             child: Stack(
-  //                               children: [
-  //                                 ClipRRect(
-  //                                   borderRadius: BorderRadius.circular(12),
-  //                                   child: Image.network(
-  //                                     item.logoImage,
-  //                                     height: 200,
-  //                                     width: double.infinity,
-  //                                     fit: BoxFit.cover,
-  //                                   ),
-  //                                 ),
-  //                                 Positioned(
-  //                                   bottom: 0,
-  //                                   left: 0,
-  //                                   right: 0,
-  //                                   child: ClipRRect(
-  //                                     borderRadius: const BorderRadius.only(
-  //                                       bottomLeft: Radius.circular(12),
-  //                                       bottomRight: Radius.circular(12),
-  //                                     ),
-  //                                     child: BackdropFilter(
-  //                                       filter: ImageFilter.blur(
-  //                                           sigmaX: 10, sigmaY: 10),
-  //                                       child: Container(
-  //                                         padding: const EdgeInsets.all(16),
-  //                                         decoration: BoxDecoration(
-  //                                           borderRadius:
-  //                                               const BorderRadius.only(
-  //                                             bottomLeft: Radius.circular(12),
-  //                                             bottomRight: Radius.circular(12),
-  //                                           ),
-  //                                           gradient: LinearGradient(
-  //                                             begin: Alignment.bottomCenter,
-  //                                             end: Alignment.topCenter,
-  //                                             colors: [
-  //                                               AppColors.primaryColor
-  //                                                   .withOpacity(0.5),
-  //                                               AppColors.primaryColor
-  //                                                   .withOpacity(0.5),
-  //                                             ],
-  //                                           ),
-  //                                         ),
-  //                                         child: Column(
-  //                                           crossAxisAlignment:
-  //                                               CrossAxisAlignment.start,
-  //                                           children: [
-  //                                             Text(
-  //                                               item.resName,
-  //                                               style: const TextStyle(
-  //                                                 fontSize: 14,
-  //                                                 fontWeight: FontWeight.w800,
-  //                                                 color: Colors.white,
-  //                                                 fontFamily: 'Nunito-regular',
-  //                                               ),
-  //                                             ),
-  //                                             Row(
-  //                                               children: [
-  //                                                 Icon(
-  //                                                     Icons
-  //                                                         .location_on_outlined,
-  //                                                     size: 14,
-  //                                                     color: Colors.white
-  //                                                         .withOpacity(0.9)),
-  //                                                 const SizedBox(width: 6),
-  //                                                 Expanded(
-  //                                                   child: Text(
-  //                                                     item.address,
-  //                                                     style: const TextStyle(
-  //                                                       fontSize: 14,
-  //                                                       fontWeight:
-  //                                                           FontWeight.w600,
-  //                                                       color: Colors.white,
-  //                                                       fontFamily:
-  //                                                           'Nunito-Sans',
-  //                                                     ),
-  //                                                     overflow:
-  //                                                         TextOverflow.ellipsis,
-  //                                                   ),
-  //                                                 ),
-  //                                               ],
-  //                                             ),
-  //                                           ],
-  //                                         ),
-  //                                       ),
-  //                                     ),
-  //                                   ),
-  //                                 ),
-  //                               ],
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       );
-  //                     },
-  //                   ),
-  //                 ),
-  //               ],
-  //             );
-  //           },
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
-
-// Widget _buildTrendingSection() {
-//   final HomeLocationController controller = Get.put(HomeLocationController());
-//      final filterController = Get.find<FilterController>();
-//   return Padding(
-//     padding: const EdgeInsets.only(left: 12),
-//     child: StreamBuilder(
-//       stream: controller.getTrendingRestaurants(),
-//       builder: (context, snapshot) {
-//         if (snapshot.connectionState == ConnectionState.waiting)
-//           return SizedBox();
-//         if (snapshot.hasError) {
-//           print('Error during stream call ${snapshot.error}');
-//           return Text('');
-//         }
-//         if (snapshot.data == null || snapshot.data!.isEmpty) return Text('');
-//         List<RestaurantModel> restaurants = snapshot.data!;
-//         WidgetsBinding.instance.addPostFrameCallback((_) {
-//           controller.initailizedSelectors(resaturantsList: restaurants);
-//         });
-
-//         // Take only the first restaurant for the main view
-//         final featuredRestaurant = restaurants.first;
-// // Subtracting left and right padding
-//         return Column(
-//           children: [
-//             SizedBox(height: 10),
-//             Padding(
-//               padding: EdgeInsets.only(right: 18),
-//               child: Row(
-//                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                 children: [
-//                   Text(
-//                     'Trending',
-//                     style: TextStyle(
-//                       color: AppColors.bottomSheetColor,
-//                       fontFamily: 'aftika-regular',
-//                       fontSize: 18,
-//                       fontWeight: FontWeight.w700,
-//                       decoration: TextDecoration.underline,
-//                     ),
-//                   ),
-//                   GestureDetector(
-//                     onTap: () {
-//                       // Navigate to a new page showing all trending restaurants
-//                       Get.to(TrendingRestaurantsPage(restaurants: restaurants));
-//                     },
-//                     child: Text(
-//                       'See more',
-//                       style: TextStyle(
-//                         color: AppColors.primaryColor,
-//                         fontFamily: 'aftika-regular',
-//                         fontSize: 14,
-//                         fontWeight: FontWeight.w500,
-//                       ),
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//             SizedBox(height: 16),
-//             GestureDetector(
-//               onTap: () {
-//                 Get.to(RestaurantDetailScreen(
-//                     restaurantModel: featuredRestaurant));
-//               },
-//               child: Stack(
-//                 children: [
-//                   ClipRRect(
-//                     borderRadius: BorderRadius.circular(12),
-//                     child: Image.network(
-//                       featuredRestaurant.logoImage,
-//                       height: 290,
-//                       width: double.infinity,
-//                       fit: BoxFit.cover,
-//                     ),
-//                   ),
-//                   Positioned(
-//                     bottom: 0,
-//                     left: 0,
-//                     right: 0,
-//                     child: ClipRRect(
-//                       borderRadius: const BorderRadius.only(
-//                         bottomLeft: Radius.circular(12),
-//                         bottomRight: Radius.circular(12),
-//                       ),
-//                       child: BackdropFilter(
-//                         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-//                         child: Container(
-//                           //height: 80,
-//                           padding: const EdgeInsets.all(16),
-//                           decoration: BoxDecoration(
-//                             borderRadius: const BorderRadius.only(
-//                               bottomLeft: Radius.circular(12),
-//                               bottomRight: Radius.circular(12),
-//                             ),
-//                             gradient: LinearGradient(
-//                               begin: Alignment.bottomCenter,
-//                               end: Alignment.topCenter,
-//                               colors: [
-//                                 AppColors.primaryColor.withOpacity(0.5),
-//                                 AppColors.primaryColor.withOpacity(0.5),
-//                               ],
-//                             ),
-//                           ),
-//                           child: Column(
-//                             crossAxisAlignment: CrossAxisAlignment.start,
-//                             children: [
-//                               Text(
-//                                 featuredRestaurant.resName,
-//                                 style: TextStyle(
-//                                   fontSize: 18,
-//                                   fontWeight: FontWeight.w800,
-//                                   color: Colors.white,
-//                                   fontFamily: 'Nunito-Sans',
-//                                 ),
-//                               ),
-//                               Row(
-//                                 children: [
-//                                   Icon(
-//                                     Icons.location_on_outlined,
-//                                     size: 18,
-//                                     color: Colors.white.withOpacity(0.9),
-//                                   ),
-//                                   const SizedBox(width: 6),
-//                                   Text(
-//                                     featuredRestaurant.address,
-//                                     style: TextStyle(
-//                                       fontSize: 14,
-//                                       fontWeight: FontWeight.w600,
-//                                       color: Colors.white,
-//                                       fontFamily: 'Nunito-Sans',
-//                                     ),
-//                                   ),
-//                                 ],
-//                               ),
-//                             ],
-//                           ),
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//             SizedBox(height: 20),
-//           ],
-//         );
-//       },
-//     ),
-//   );
-// }
-
-//-------------new code filter-----------------------
-
-// Widget _buildTrendingSection() {
-//   final HomeLocationController controller = Get.put(HomeLocationController());
-//   final filterController = Get.find<FilterController>();
-
-//   return Padding(
-//     padding: const EdgeInsets.only(left: 12),
-//     child: Obx(() {
-//       // Get updated values from filters
-//       final vibes = filterController.selectedVibes.toList();
-//       final experiences = filterController.selectedExperiences.toList();
-//       final cuisines = filterController.selectedCuisines.toList();
-
-//       return StreamBuilder(
-//         stream: controller.getTrendingRestaurants(
-//           vibes: vibes,
-//           experiences: experiences,
-//           cuisines: cuisines,
-//         ),
-//         builder: (context, snapshot) {
-//           if (snapshot.connectionState == ConnectionState.waiting) {
-//             return SizedBox();
-//           }
-//           if (snapshot.hasError) {
-//             print('Error during stream call ${snapshot.error}');
-//             return Text('');
-//           }
-//           if (snapshot.data == null || snapshot.data!.isEmpty) {
-//             return Column(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: [
-//                 Padding(
-//                   padding: EdgeInsets.only(right: 18),
-//                   child: Text(
-//                     'Trending',
-//                     style: TextStyle(
-//                       color: AppColors.bottomSheetColor,
-//                       fontFamily: 'aftika-regular',
-//                       fontSize: 18,
-//                       fontWeight: FontWeight.w700,
-//                       decoration: TextDecoration.underline,
-//                     ),
-//                   ),
-//                 ),
-//                 SizedBox(height: 16),
-//                 Center(
-//                   child: Text(
-//                     'No matching restaurants found',
-//                     style: TextStyle(
-//                       fontSize: 14,
-//                       color: Colors.grey[600],
-//                     ),
-//                   ),
-//                 ),
-//               ],
-//             );
-//           }
-
-//           List<RestaurantModel> restaurants = snapshot.data!;
-//           WidgetsBinding.instance.addPostFrameCallback((_) {
-//             controller.initailizedSelectors(resaturantsList: restaurants);
-//           });
-
-//           // Take only the first restaurant for the main view
-//           final featuredRestaurant = restaurants.first;
-
-//           return Column(
-//             children: [
-//               SizedBox(height: 10),
-//               Padding(
-//                 padding: EdgeInsets.only(right: 18),
-//                 child: Row(
-//                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                   children: [
-//                     Text(
-//                       'Trending',
-//                       style: TextStyle(
-//                         color: AppColors.bottomSheetColor,
-//                         fontFamily: 'aftika-regular',
-//                         fontSize: 18,
-//                         fontWeight: FontWeight.w700,
-//                         decoration: TextDecoration.underline,
-//                       ),
-//                     ),
-//                     GestureDetector(
-//                       onTap: () {
-//                         // Pass filtered restaurants to the "See more" page
-//                         Get.to(TrendingRestaurantsPage(
-//                           restaurants: restaurants,
-
-//                         ));
-//                       },
-//                       child: Text(
-//                         'See more',
-//                         style: TextStyle(
-//                           color: AppColors.primaryColor,
-//                           fontFamily: 'aftika-regular',
-//                           fontSize: 14,
-//                           fontWeight: FontWeight.w500,
-//                         ),
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//               SizedBox(height: 16),
-//               GestureDetector(
-//                 onTap: () {
-//                   Get.to(RestaurantDetailScreen(
-//                       restaurantModel: featuredRestaurant));
-//                 },
-//                 child: Stack(
-//                   children: [
-//                     ClipRRect(
-//                       borderRadius: BorderRadius.circular(12),
-//                       child: Image.network(
-//                         featuredRestaurant.logoImage,
-//                         height: 290,
-//                         width: double.infinity,
-//                         fit: BoxFit.cover,
-//                       ),
-//                     ),
-//                     Positioned(
-//                       bottom: 0,
-//                       left: 0,
-//                       right: 0,
-//                       child: ClipRRect(
-//                         borderRadius: const BorderRadius.only(
-//                           bottomLeft: Radius.circular(12),
-//                           bottomRight: Radius.circular(12),
-//                         ),
-//                         child: BackdropFilter(
-//                           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-//                           child: Container(
-//                             padding: const EdgeInsets.all(16),
-//                             decoration: BoxDecoration(
-//                               borderRadius: const BorderRadius.only(
-//                                 bottomLeft: Radius.circular(12),
-//                                 bottomRight: Radius.circular(12),
-//                               ),
-//                               gradient: LinearGradient(
-//                                 begin: Alignment.bottomCenter,
-//                                 end: Alignment.topCenter,
-//                                 colors: [
-//                                   AppColors.primaryColor.withOpacity(0.5),
-//                                   AppColors.primaryColor.withOpacity(0.5),
-//                                 ],
-//                               ),
-//                             ),
-//                             child: Column(
-//                               crossAxisAlignment: CrossAxisAlignment.start,
-//                               children: [
-//                                 Text(
-//                                   featuredRestaurant.resName,
-//                                   style: TextStyle(
-//                                     fontSize: 18,
-//                                     fontWeight: FontWeight.w800,
-//                                     color: Colors.white,
-//                                     fontFamily: 'Nunito-Sans',
-//                                   ),
-//                                 ),
-//                                 Row(
-//                                   children: [
-//                                     Icon(
-//                                       Icons.location_on_outlined,
-//                                       size: 18,
-//                                       color: Colors.white.withOpacity(0.9),
-//                                     ),
-//                                     const SizedBox(width: 6),
-//                                     Text(
-//                                       featuredRestaurant.address,
-//                                       style: TextStyle(
-//                                         fontSize: 14,
-//                                         fontWeight: FontWeight.w600,
-//                                         color: Colors.white,
-//                                         fontFamily: 'Nunito-Sans',
-//                                       ),
-//                                     ),
-//                                   ],
-//                                 ),
-//                               ],
-//                             ),
-//                           ),
-//                         ),
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//               SizedBox(height: 20),
-//             ],
-//           );
-//         },
-//       );
-//     }),
-//   );
-// }
-
   Future<double> getDistanceToRestaurant(double resLat, double resLng) async {
     try {
       Position position = await Geolocator.getCurrentPosition(
@@ -1952,405 +875,536 @@ Widget _buildLoadingState() {
     }
   }
 
+  // Widget _buildTrendingSection() {
+  //   final HomeLocationController homeLocationController =
+  //       Get.put(HomeLocationController());
+  //   final filterController = Get.find<HomeFilterSearchController>();
+
+  //   return Obx(
+  //     () {
+  //       // Get updated values from filters
+  //       final vibes = filterController.selectedVibes.toList();
+  //       final experiences = filterController.selectedExperiences.toList();
+  //       final cuisines = filterController.selectedCuisines.toList();
+
+  //       return StreamBuilder(
+  //           stream: homeLocationController.getTrendingRestaurants(
+  //             vibes: vibes,
+  //             experiences: experiences,
+  //             cuisines: cuisines,
+  //           ),
+  //           builder: (context, snapshot) {
+  //             if (snapshot.connectionState == ConnectionState.waiting) {
+  //               return Padding(
+  //                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
+  //                 child: Column(
+  //                   crossAxisAlignment: CrossAxisAlignment.start,
+  //                   children: [
+  //                     Text(
+  //                       'Trending',
+  //                       style: TextStyle(
+  //                         color: AppColors.bottomSheetColor,
+  //                         fontFamily: 'NunitoSans-Bold',
+  //                         fontSize: 16,
+  //                         fontWeight: FontWeight.w700,
+  //                         decoration: TextDecoration.underline,
+  //                       ),
+  //                     ),
+  //                     SizedBox(height: 16),
+  //                     Center(
+  //                       child: CircularProgressIndicator(
+  //                         color: AppColors.primaryColor,
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               );
+  //             }
+
+  //             if (snapshot.hasError) {
+  //               print('Error during stream call ${snapshot.error}');
+  //               return SizedBox();
+  //             }
+  //             if (snapshot.data == null || snapshot.data!.isEmpty) {
+  //               return Padding(
+  //                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
+  //                 child: Column(
+  //                   crossAxisAlignment: CrossAxisAlignment.start,
+  //                   children: [
+  //                     Text(
+  //                       'Trending',
+  //                       style: TextStyle(
+  //                         color: AppColors.bottomSheetColor,
+  //                         fontFamily: 'NunitoSans-Bold',
+  //                         fontSize: 16,
+  //                         fontWeight: FontWeight.w700,
+  //                         decoration: TextDecoration.underline,
+  //                       ),
+  //                     ),
+  //                     SizedBox(height: 16),
+  //                     Center(
+  //                       child: Text(
+  //                         'No matching restaurants found',
+  //                         style: TextStyle(
+  //                           color: AppColors.bottomSheetColor,
+  //                           fontFamily: 'NunitoSans-Regular',
+  //                           fontSize: 14,
+  //                           fontWeight: FontWeight.w400,
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               );
+  //             }
+
+  //             List<RestaurantModel> filteredRestaurants = snapshot.data!;
+  //             WidgetsBinding.instance.addPostFrameCallback((_) {
+  //               homeLocationController.initailizedSelectors(
+  //                   resaturantsList: filteredRestaurants);
+  //             });
+
+  //             // Take only the first restaurant for the main view
+  //             final featuredRestaurant = filteredRestaurants.first;
+
+  //             return Padding(
+  //               padding: const EdgeInsets.symmetric(horizontal: 16.0),
+  //               child: Column(
+  //                 children: [
+  //                   // SizedBox(height: 10),
+  //                   Row(
+  //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                     children: [
+  //                       Text(
+  //                         'Trending',
+  //                         style: TextStyle(
+  //                           color: AppColors.bottomSheetColor,
+  //                           fontFamily: 'NunitoSans-Bold',
+  //                           fontSize: 16,
+  //                           fontWeight: FontWeight.w700,
+  //                           decoration: TextDecoration.underline,
+  //                         ),
+  //                       ),
+  //                       GestureDetector(
+  //                         onTap: () {
+  //                           // Pass ONLY the filtered restaurants and active filters
+  //                           Get.to(TrendingRestaurantsPage(
+  //                             filteredRestaurants: filteredRestaurants,
+  //                             activeVibes: vibes,
+  //                             activeExperiences: experiences,
+  //                             activeCuisines: cuisines,
+  //                           ));
+  //                         },
+  //                         child: Text(
+  //                           'See more',
+  //                           style: TextStyle(
+  //                             color: AppColors.primaryColor,
+  //                             fontFamily: 'NunitoSans-Regular',
+  //                             fontSize: 14,
+  //                             fontWeight: FontWeight.w500,
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                   SizedBox(height: 16),
+  //                   TrendingRestaurantCard(
+  //                     restaurant: featuredRestaurant,
+  //                     onFilterTap: () {
+  //                       final allFilters =
+  //                           controller.getAllFilters(featuredRestaurant);
+  //                       showModalBottomSheet(
+  //                         context: context,
+  //                         isScrollControlled: true,
+  //                         shape: RoundedRectangleBorder(
+  //                           borderRadius:
+  //                               BorderRadius.vertical(top: Radius.circular(20)),
+  //                         ),
+  //                         builder: (_) =>
+  //                             HomeFilterBottomsheet(filters: allFilters),
+  //                       );
+  //                     },
+  //                   ),
+  //                 ],
+  //               ),
+  //             );
+  //           });
+  //     },
+  //   );
+  // }
+
   Widget _buildTrendingSection() {
-    final HomeLocationController homeLocationController =
-        Get.put(HomeLocationController());
+    final homeController = Get.find<HomeLocationController>();
     final filterController = Get.find<HomeFilterSearchController>();
 
     return Obx(() {
-      // Get updated values from filters
-      final vibes = filterController.selectedVibes.toList();
-      final experiences = filterController.selectedExperiences.toList();
-      final cuisines = filterController.selectedCuisines.toList();
+      final trendingList = homeController.trendingRestaurants;
 
-      return StreamBuilder(
-        stream: homeLocationController.getTrendingRestaurants(
-          vibes: vibes,
-          experiences: experiences,
-          cuisines: cuisines,
-        ),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Trending',
-                    style: TextStyle(
-                      color: AppColors.bottomSheetColor,
-                      fontFamily: 'NunitoSans-Bold',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  Center(
-                    child: CircularProgressIndicator(
-                      color: AppColors.primaryColor,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          if (snapshot.hasError) {
-            print('Error during stream call ${snapshot.error}');
-            return SizedBox();
-          }
-          if (snapshot.data == null || snapshot.data!.isEmpty) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Trending',
-                    style: TextStyle(
-                      color: AppColors.bottomSheetColor,
-                      fontFamily: 'NunitoSans-Bold',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  Center(
-                    child: Text(
-                      'No matching restaurants found',
-                      style: TextStyle(
-                        color: AppColors.bottomSheetColor,
-                        fontFamily: 'NunitoSans-Regular',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          List<RestaurantModel> filteredRestaurants = snapshot.data!;
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            homeLocationController.initailizedSelectors(
-                resaturantsList: filteredRestaurants);
-          });
-
-          // Take only the first restaurant for the main view
-          final featuredRestaurant = filteredRestaurants.first;
-
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              children: [
-                // SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Trending',
-                      style: TextStyle(
-                        color: AppColors.bottomSheetColor,
-                        fontFamily: 'NunitoSans-Bold',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        // Pass ONLY the filtered restaurants and active filters
-                        Get.to(TrendingRestaurantsPage(
-                          filteredRestaurants: filteredRestaurants,
-                          activeVibes: vibes,
-                          activeExperiences: experiences,
-                          activeCuisines: cuisines,
-                        ));
-                      },
-                      child: Text(
-                        'See more',
-                        style: TextStyle(
-                          color: AppColors.primaryColor,
-                          fontFamily: 'NunitoSans-Regular',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
+      if (!homeController.hasInitialized.value) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Trending',
+                style: TextStyle(
+                  color: AppColors.bottomSheetColor,
+                  fontFamily: 'NunitoSans-Bold',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  decoration: TextDecoration.underline,
                 ),
-                SizedBox(height: 16),
-TrendingRestaurantCard(
-  restaurant: featuredRestaurant,
-  onFilterTap: () {
-    final allFilters = controller.getAllFilters(featuredRestaurant);
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) => HomeFilterBottomsheet(filters: allFilters),
-    );
-  },
-),
+              ),
+              SizedBox(height: 16),
+              Center(
+                child: CircularProgressIndicator(
+                  color: AppColors.primaryColor,
+                ),
+              ),
+            ],
+          ),
+        );
+      }
 
+      if (trendingList.isEmpty) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Trending',
+                style: TextStyle(
+                  color: AppColors.bottomSheetColor,
+                  fontFamily: 'NunitoSans-Bold',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+              SizedBox(height: 16),
+              Center(
+                child: Text(
+                  'No matching restaurants found',
+                  style: TextStyle(
+                    color: AppColors.bottomSheetColor,
+                    fontFamily: 'NunitoSans-Regular',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+
+      final featuredRestaurant = trendingList.first;
+
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Trending',
+                  style: TextStyle(
+                    color: AppColors.bottomSheetColor,
+                    fontFamily: 'NunitoSans-Bold',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Get.to(() => TrendingRestaurantsPage(
+                          filteredRestaurants: trendingList,
+                          activeVibes: filterController.selectedVibes,
+                          activeExperiences:
+                              filterController.selectedExperiences,
+                          activeCuisines: filterController.selectedCuisines,
+                        ));
+                  },
+                  child: Text(
+                    'See more',
+                    style: TextStyle(
+                      color: AppColors.primaryColor,
+                      fontFamily: 'NunitoSans-Regular',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
               ],
-),
-
-
-                // GestureDetector(
-                //   onTap: () {
-                //     Get.to(RestaurantDetailScreen(
-                //         restaurantModel: featuredRestaurant));
-                //   },
-                //   child: Stack(
-                //     children: [
-                //       ClipRRect(
-                //         borderRadius: BorderRadius.circular(12),
-                //         child: Image.network(
-                //           featuredRestaurant.logoImage,
-                //           height: 290,
-                //           width: double.infinity,
-                //           fit: BoxFit.cover,
-                //         ),
-                //       ),
-
-                //       if (featuredRestaurant.distanceInMiles != null)
-                //         Positioned(
-                //           bottom: 0,
-                //           left: 0,
-                //           right: 0,
-                //           child: ClipRRect(
-                //             borderRadius: const BorderRadius.only(
-                //               bottomLeft: Radius.circular(12),
-                //               bottomRight: Radius.circular(12),
-                //             ),
-                //             child: BackdropFilter(
-                //               filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                //               child: Container(
-                //                 padding: const EdgeInsets.all(16),
-                //                 decoration: BoxDecoration(
-                //                   borderRadius: const BorderRadius.only(
-                //                     bottomLeft: Radius.circular(12),
-                //                     bottomRight: Radius.circular(12),
-                //                   ),
-                //                   gradient: LinearGradient(
-                //                     begin: Alignment.bottomCenter,
-                //                     end: Alignment.topCenter,
-                //                     colors: [
-                //                       AppColors.primaryColor.withOpacity(0.5),
-                //                       AppColors.primaryColor.withOpacity(0.5),
-                //                     ],
-                //                   ),
-                //                 ),
-                //                 child: Column(
-                //                   crossAxisAlignment: CrossAxisAlignment.start,
-                //                   children: [
-                //                     Text(
-                //                       featuredRestaurant.resName,
-                //                       style: TextStyle(
-                //                         fontSize: 14,
-                //                         fontWeight: FontWeight.w600,
-                //                         color: Colors.white,
-                //                         fontFamily: 'NunitoSans-Bold',
-                //                       ),
-                //                     ),
-                //                     Text(
-                //                       featuredRestaurant.address,
-                //                       style: TextStyle(
-                //                         fontSize: 12,
-                //                         fontWeight: FontWeight.w600,
-                //                         color: Colors.white,
-                //                         fontFamily: 'NunitoSans-Regular',
-                //                       ),
-                //                     ),
-                //                     Row(
-                //                       children: [
-                //                         Icon(
-                //                           Icons.location_on_outlined,
-                //                           size: 20,
-                //                           color: Colors.white.withOpacity(0.9),
-                //                         ),
-                //                         const SizedBox(width: 6),
-                //                         Text(
-                //                           '${featuredRestaurant.distanceInMiles!.toStringAsFixed(1)} mi',
-                //                           style: TextStyle(
-                //                             fontSize: 14,
-                //                             fontWeight: FontWeight.w500,
-                //                             color: Colors.white,
-                //                             fontFamily: 'NunitoSans-Regular',
-                //                           ),
-                //                         ),
-                //                       ],
-                //                     ),
-                //                   ],
-                //                 ),
-                //               ),
-                //             ),
-                //           ),
-                //         ),
-
-                //       Positioned(
-                //         bottom: 16,
-                //         right: 16,
-                //         child: Column(
-                //           children: [
-                //             // Filter Button
-                //             GestureDetector(
-                //                 onTap: () {
-                //                   final allFilters = controller
-                //                       .getAllFilters(featuredRestaurant);
-
-                //                   showModalBottomSheet(
-                //                     context: context,
-                //                     isScrollControlled: true,
-                //                     shape: const RoundedRectangleBorder(
-                //                       borderRadius: BorderRadius.vertical(
-                //                         top: Radius.circular(20),
-                //                       ),
-                //                     ),
-                //                     builder: (context) {
-                //                       return Container(
-                //                         padding: const EdgeInsets.fromLTRB(
-                //                             16, 16, 16, 0),
-                //                         height:
-                //                             MediaQuery.of(context).size.height *
-                //                                 0.8,
-                //                         child: Column(
-                //                           children: [
-                //                             // Header with title and buttons
-                //                             Row(
-                //                               mainAxisAlignment:
-                //                                   MainAxisAlignment
-                //                                       .spaceBetween,
-                //                               children: [
-                //                                 const Text(
-                //                                   'Filters',
-                //                                   style: TextStyle(
-                //                                     color:
-                //                                         AppColors.primaryColor,
-                //                                     fontFamily:
-                //                                         'NunitoSans-Bold',
-                //                                     fontSize: 16,
-                //                                     fontWeight: FontWeight.w700,
-                //                                   ),
-                //                                 ),
-                //                                 TextButton(
-                //                                   onPressed: () =>
-                //                                       Navigator.pop(context),
-                //                                   child: const Text('Cancel',
-                //                                       style: TextStyle(
-                //                                         color: Colors.red,
-                //                                         fontFamily:
-                //                                             'NunitoSans-Bold',
-                //                                         fontSize: 16,
-                //                                         fontWeight:
-                //                                             FontWeight.w700,
-                //                                       )),
-                //                                 ),
-                //                               ],
-                //                             ),
-                //                             const SizedBox(height: 16),
-
-                //                             // Main dynamic filters list
-                //                             Expanded(
-                //                               child: ListView.builder(
-                //                                 itemCount: allFilters.length,
-                //                                 itemBuilder: (context, index) {
-                //                                   return Column(
-                //                                     children: [
-                //                                       ListTile(
-                //                                         title: Text(
-                //                                           allFilters[index],
-                //                                           style: const TextStyle(
-                //                                               fontSize: 16,
-                //                                               fontFamily:
-                //                                                   'Nunito-regular',
-                //                                               color: AppColors
-                //                                                   .bottomSheetColor),
-                //                                         ),
-                //                                       ),
-                //                                       const Divider(
-                //                                           height: 1,
-                //                                           color: AppColors
-                //                                               .primaryColor),
-                //                                     ],
-                //                                   );
-                //                                 },
-                //                               ),
-                //                             ),
-                //                           ],
-                //                         ),
-                //                       );
-                //                     },
-                //                   );
-                //                 },
-                //                 child: Image(
-                //                   image: AssetImage("assets/images/filter.png"),
-                //                   width: 20,
-                //                   height: 20,
-                //                 )),
-                //             const SizedBox(height: 8),
-
-                //             // Direction Button
-                //             GestureDetector(
-                //                 onTap: () async {
-                //                   final lat = featuredRestaurant
-                //                       .latitude; // Your restaurant's latitude
-                //                   final lng = featuredRestaurant
-                //                       .longitude; // Your restaurant's longitude
-                //                   final restaurantName = Uri.encodeComponent(
-                //                       featuredRestaurant.resName);
-
-                //                   // Create Google Maps URL with directions
-                //                   final googleMapsUrl =
-                //                       'https://www.google.com/maps/dir/?api=1'
-                //                       '&destination=$lat,$lng'
-                //                       '&destination_place_name=$restaurantName';
-
-                //                   try {
-                //                     if (await canLaunch(googleMapsUrl)) {
-                //                       await launch(googleMapsUrl);
-                //                     } else {
-                //                       // Fallback to web version if app isn't installed
-                //                       final webUrl =
-                //                           'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
-                //                       await launch(webUrl);
-                //                     }
-                //                   } catch (e) {
-                //                     ScaffoldMessenger.of(context).showSnackBar(
-                //                       SnackBar(
-                //                           content: Text(
-                //                               'Could not launch maps: ${e.toString()}')),
-                //                     );
-                //                   }
-                //                 },
-                //                 child: Image(
-                //                   image:
-                //                       AssetImage("assets/images/direction.png"),
-                //                   width: 20,
-                //                   height: 20,
-                //                 )),
-                //           ],
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // ),
-                //SizedBox(height: 20),
-            
-          );
-        }
-          );
-        },
+            ),
+            SizedBox(height: 16),
+            TrendingRestaurantCard(
+              restaurant: featuredRestaurant,
+              onFilterTap: () {
+                final allFilters = controller.getAllFilters(featuredRestaurant);
+                showModalBottomSheet(
+                  context: Get.context!,
+                  isScrollControlled: true,
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(20)),
+                  ),
+                  builder: (_) => HomeFilterBottomsheet(filters: allFilters),
+                );
+              },
+            ),
+          ],
+        ),
       );
-    }
+    });
   }
+}
+
+//.........................................................................
+// GestureDetector(
+//   onTap: () {
+//     Get.to(RestaurantDetailScreen(
+//         restaurantModel: featuredRestaurant));
+//   },
+//   child: Stack(
+//     children: [
+//       ClipRRect(
+//         borderRadius: BorderRadius.circular(12),
+//         child: Image.network(
+//           featuredRestaurant.logoImage,
+//           height: 290,
+//           width: double.infinity,
+//           fit: BoxFit.cover,
+//         ),
+//       ),
+
+//       if (featuredRestaurant.distanceInMiles != null)
+//         Positioned(
+//           bottom: 0,
+//           left: 0,
+//           right: 0,
+//           child: ClipRRect(
+//             borderRadius: const BorderRadius.only(
+//               bottomLeft: Radius.circular(12),
+//               bottomRight: Radius.circular(12),
+//             ),
+//             child: BackdropFilter(
+//               filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+//               child: Container(
+//                 padding: const EdgeInsets.all(16),
+//                 decoration: BoxDecoration(
+//                   borderRadius: const BorderRadius.only(
+//                     bottomLeft: Radius.circular(12),
+//                     bottomRight: Radius.circular(12),
+//                   ),
+//                   gradient: LinearGradient(
+//                     begin: Alignment.bottomCenter,
+//                     end: Alignment.topCenter,
+//                     colors: [
+//                       AppColors.primaryColor.withOpacity(0.5),
+//                       AppColors.primaryColor.withOpacity(0.5),
+//                     ],
+//                   ),
+//                 ),
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     Text(
+//                       featuredRestaurant.resName,
+//                       style: TextStyle(
+//                         fontSize: 14,
+//                         fontWeight: FontWeight.w600,
+//                         color: Colors.white,
+//                         fontFamily: 'NunitoSans-Bold',
+//                       ),
+//                     ),
+//                     Text(
+//                       featuredRestaurant.address,
+//                       style: TextStyle(
+//                         fontSize: 12,
+//                         fontWeight: FontWeight.w600,
+//                         color: Colors.white,
+//                         fontFamily: 'NunitoSans-Regular',
+//                       ),
+//                     ),
+//                     Row(
+//                       children: [
+//                         Icon(
+//                           Icons.location_on_outlined,
+//                           size: 20,
+//                           color: Colors.white.withOpacity(0.9),
+//                         ),
+//                         const SizedBox(width: 6),
+//                         Text(
+//                           '${featuredRestaurant.distanceInMiles!.toStringAsFixed(1)} mi',
+//                           style: TextStyle(
+//                             fontSize: 14,
+//                             fontWeight: FontWeight.w500,
+//                             color: Colors.white,
+//                             fontFamily: 'NunitoSans-Regular',
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ),
+//           ),
+//         ),
+
+//       Positioned(
+//         bottom: 16,
+//         right: 16,
+//         child: Column(
+//           children: [
+//             // Filter Button
+//             GestureDetector(
+//                 onTap: () {
+//                   final allFilters = controller
+//                       .getAllFilters(featuredRestaurant);
+
+//                   showModalBottomSheet(
+//                     context: context,
+//                     isScrollControlled: true,
+//                     shape: const RoundedRectangleBorder(
+//                       borderRadius: BorderRadius.vertical(
+//                         top: Radius.circular(20),
+//                       ),
+//                     ),
+//                     builder: (context) {
+//                       return Container(
+//                         padding: const EdgeInsets.fromLTRB(
+//                             16, 16, 16, 0),
+//                         height:
+//                             MediaQuery.of(context).size.height *
+//                                 0.8,
+//                         child: Column(
+//                           children: [
+//                             // Header with title and buttons
+//                             Row(
+//                               mainAxisAlignment:
+//                                   MainAxisAlignment
+//                                       .spaceBetween,
+//                               children: [
+//                                 const Text(
+//                                   'Filters',
+//                                   style: TextStyle(
+//                                     color:
+//                                         AppColors.primaryColor,
+//                                     fontFamily:
+//                                         'NunitoSans-Bold',
+//                                     fontSize: 16,
+//                                     fontWeight: FontWeight.w700,
+//                                   ),
+//                                 ),
+//                                 TextButton(
+//                                   onPressed: () =>
+//                                       Navigator.pop(context),
+//                                   child: const Text('Cancel',
+//                                       style: TextStyle(
+//                                         color: Colors.red,
+//                                         fontFamily:
+//                                             'NunitoSans-Bold',
+//                                         fontSize: 16,
+//                                         fontWeight:
+//                                             FontWeight.w700,
+//                                       )),
+//                                 ),
+//                               ],
+//                             ),
+//                             const SizedBox(height: 16),
+
+//                             // Main dynamic filters list
+//                             Expanded(
+//                               child: ListView.builder(
+//                                 itemCount: allFilters.length,
+//                                 itemBuilder: (context, index) {
+//                                   return Column(
+//                                     children: [
+//                                       ListTile(
+//                                         title: Text(
+//                                           allFilters[index],
+//                                           style: const TextStyle(
+//                                               fontSize: 16,
+//                                               fontFamily:
+//                                                   'Nunito-regular',
+//                                               color: AppColors
+//                                                   .bottomSheetColor),
+//                                         ),
+//                                       ),
+//                                       const Divider(
+//                                           height: 1,
+//                                           color: AppColors
+//                                               .primaryColor),
+//                                     ],
+//                                   );
+//                                 },
+//                               ),
+//                             ),
+//                           ],
+//                         ),
+//                       );
+//                     },
+//                   );
+//                 },
+//                 child: Image(
+//                   image: AssetImage("assets/images/filter.png"),
+//                   width: 20,
+//                   height: 20,
+//                 )),
+//             const SizedBox(height: 8),
+
+//             // Direction Button
+//             GestureDetector(
+//                 onTap: () async {
+//                   final lat = featuredRestaurant
+//                       .latitude; // Your restaurant's latitude
+//                   final lng = featuredRestaurant
+//                       .longitude; // Your restaurant's longitude
+//                   final restaurantName = Uri.encodeComponent(
+//                       featuredRestaurant.resName);
+
+//                   // Create Google Maps URL with directions
+//                   final googleMapsUrl =
+//                       'https://www.google.com/maps/dir/?api=1'
+//                       '&destination=$lat,$lng'
+//                       '&destination_place_name=$restaurantName';
+
+//                   try {
+//                     if (await canLaunch(googleMapsUrl)) {
+//                       await launch(googleMapsUrl);
+//                     } else {
+//                       // Fallback to web version if app isn't installed
+//                       final webUrl =
+//                           'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
+//                       await launch(webUrl);
+//                     }
+//                   } catch (e) {
+//                     ScaffoldMessenger.of(context).showSnackBar(
+//                       SnackBar(
+//                           content: Text(
+//                               'Could not launch maps: ${e.toString()}')),
+//                     );
+//                   }
+//                 },
+//                 child: Image(
+//                   image:
+//                       AssetImage("assets/images/direction.png"),
+//                   width: 20,
+//                   height: 20,
+//                 )),
+//           ],
+//         ),
+//       ),
+//     ],
+//   ),
+// ),
+//SizedBox(height: 20),
 
 //   Widget _buildTrendingSection() {
 //     final HomeLocationController homeLocationController =
@@ -2409,9 +1463,6 @@ TrendingRestaurantCard(
 //       );
 //     });
 //   }
-
-
-
 
 // // Extracted loading section widget
 //   Widget _buildLoadingSection() {
@@ -2752,12 +1803,6 @@ TrendingRestaurantCard(
 //     }
 //   }
 
-
-
-
-
-
-
 // Widget _buildTrendingSection() {
 //   final HomeLocationController homeLocationController = Get.put(HomeLocationController());
 //   final filterController = Get.find<HomeFilterController>();
@@ -3095,217 +2140,217 @@ TrendingRestaurantCard(
 
 //correct code  filter resturant
 
-  // Widget _buildTrendingSection() {
-  //   final controller = Get.find<HomeLocationController>();
-  //   final filterController = Get.find<FilterController>();
+// Widget _buildTrendingSection() {
+//   final controller = Get.find<HomeLocationController>();
+//   final filterController = Get.find<FilterController>();
 
-  //   return Padding(
-  //     padding: const EdgeInsets.only(left: 12),
-  //     child: Obx(() {
-  //       // Get updated values from filters
-  //       final vibes = filterController.selectedVibes.toList();
-  //       final experiences = filterController.selectedExperiences.toList();
-  //       final cuisines = filterController.selectedCuisines.toList();
+//   return Padding(
+//     padding: const EdgeInsets.only(left: 12),
+//     child: Obx(() {
+//       // Get updated values from filters
+//       final vibes = filterController.selectedVibes.toList();
+//       final experiences = filterController.selectedExperiences.toList();
+//       final cuisines = filterController.selectedCuisines.toList();
 
-  //       return StreamBuilder<List<RestaurantModel>>(
-  //         stream: controller.getTrendingRestaurants(
-  //           vibes: vibes,
-  //           experiences: experiences,
-  //           cuisines: cuisines,
-  //         ),
-  //         builder: (context, snapshot) {
-  //           if (snapshot.connectionState == ConnectionState.waiting) {
-  //             return SizedBox(); // Show loader if you like
-  //           }
+//       return StreamBuilder<List<RestaurantModel>>(
+//         stream: controller.getTrendingRestaurants(
+//           vibes: vibes,
+//           experiences: experiences,
+//           cuisines: cuisines,
+//         ),
+//         builder: (context, snapshot) {
+//           if (snapshot.connectionState == ConnectionState.waiting) {
+//             return SizedBox(); // Show loader if you like
+//           }
 
-  //           if (snapshot.hasError) {
-  //             return Text('Error loading restaurants');
-  //           }
+//           if (snapshot.hasError) {
+//             return Text('Error loading restaurants');
+//           }
 
-  //           final restaurants = snapshot.data ?? [];
+//           final restaurants = snapshot.data ?? [];
 
-  //           return Column(
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             children: [
-  //               // const SizedBox(height: 10),
-  //               Padding(
-  //                 padding: const EdgeInsets.only(right: 18),
-  //                 child: Row(
-  //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                   children: [
-  //                     Column(
-  //                       crossAxisAlignment: CrossAxisAlignment.start,
-  //                       children: [
-  //                         Text(
-  //                           'Trending',
-  //                           style: TextStyle(
-  //                             color: AppColors.bottomSheetColor,
-  //                             fontFamily: 'NunitoSans-Bold',
-  //                             fontSize: 18,
-  //                             fontWeight: FontWeight.w700,
-  //                             decoration: TextDecoration.underline,
-  //                           ),
-  //                         ),
-  //                         const SizedBox(height: 5),
-  //                         Text(
-  //                           'Buzzing dishes right now',
-  //                           textAlign: TextAlign.justify,
-  //                           style: TextStyle(
-  //                             color: AppColors.bottomSheetColor,
-  //                             fontFamily: 'aftika-regular',
-  //                             fontSize: 12,
-  //                             fontWeight: FontWeight.w500,
-  //                           ),
-  //                         ),
-  //                       ],
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ),
-  //               const SizedBox(height: 10),
-  //               if (restaurants.isEmpty)
-  //                 Padding(
-  //                   padding: const EdgeInsets.symmetric(vertical: 30),
-  //                   child: Center(
-  //                     child: Text(
-  //                       'No related restaurants found.',
-  //                       style: TextStyle(
-  //                         fontSize: 14,
-  //                         color: Colors.grey[600],
-  //                         fontFamily: 'aftika-regular',
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 )
-  //               else
-  //                 SizedBox(
-  //                   height: Get.height * 0.25,
-  //                   child: ListView.builder(
-  //                     scrollDirection: Axis.horizontal,
-  //                     itemCount: restaurants.length,
-  //                     itemBuilder: (context, index) {
-  //                       final item = restaurants[index];
-  //                       return Padding(
-  //                         padding: const EdgeInsets.only(right: 12.0),
-  //                         child: GestureDetector(
-  //                           onTap: () => Get.to(
-  //                               RestaurantDetailScreen(restaurantModel: item)),
-  //                           child: Container(
-  //                             width: 200,
-  //                             decoration: BoxDecoration(
-  //                               borderRadius: BorderRadius.circular(12),
-  //                               boxShadow: [
-  //                                 BoxShadow(
-  //                                   color: Colors.black12,
-  //                                   blurRadius: 5,
-  //                                   offset: const Offset(0, 2),
-  //                                 )
-  //                               ],
-  //                             ),
-  //                             child: Stack(
-  //                               children: [
-  //                                 ClipRRect(
-  //                                   borderRadius: BorderRadius.circular(12),
-  //                                   child: Image.network(
-  //                                     item.logoImage,
-  //                                     height: 200,
-  //                                     width: double.infinity,
-  //                                     fit: BoxFit.cover,
-  //                                   ),
-  //                                 ),
-  //                                 Positioned(
-  //                                   bottom: 0,
-  //                                   left: 0,
-  //                                   right: 0,
-  //                                   child: ClipRRect(
-  //                                     borderRadius: const BorderRadius.only(
-  //                                       bottomLeft: Radius.circular(12),
-  //                                       bottomRight: Radius.circular(12),
-  //                                     ),
-  //                                     child: BackdropFilter(
-  //                                       filter: ImageFilter.blur(
-  //                                           sigmaX: 10, sigmaY: 10),
-  //                                       child: Container(
-  //                                         padding: const EdgeInsets.all(16),
-  //                                         decoration: BoxDecoration(
-  //                                           borderRadius:
-  //                                               const BorderRadius.only(
-  //                                             bottomLeft: Radius.circular(12),
-  //                                             bottomRight: Radius.circular(12),
-  //                                           ),
-  //                                           gradient: LinearGradient(
-  //                                             begin: Alignment.bottomCenter,
-  //                                             end: Alignment.topCenter,
-  //                                             colors: [
-  //                                               AppColors.primaryColor
-  //                                                   .withOpacity(0.5),
-  //                                               AppColors.primaryColor
-  //                                                   .withOpacity(0.5),
-  //                                             ],
-  //                                           ),
-  //                                         ),
-  //                                         child: Column(
-  //                                           crossAxisAlignment:
-  //                                               CrossAxisAlignment.start,
-  //                                           children: [
-  //                                             Text(
-  //                                               item.resName,
-  //                                               style: const TextStyle(
-  //                                                 fontSize: 14,
-  //                                                 fontWeight: FontWeight.w800,
-  //                                                 color: Colors.white,
-  //                                                 fontFamily: 'Nunito-regular',
-  //                                               ),
-  //                                             ),
-  //                                             Row(
-  //                                               children: [
-  //                                                 Icon(
-  //                                                   Icons.location_on_outlined,
-  //                                                   size: 14,
-  //                                                   color: Colors.white
-  //                                                       .withOpacity(0.9),
-  //                                                 ),
-  //                                                 const SizedBox(width: 6),
-  //                                                 Expanded(
-  //                                                   child: Text(
-  //                                                     item.address,
-  //                                                     style: const TextStyle(
-  //                                                       fontSize: 14,
-  //                                                       fontWeight:
-  //                                                           FontWeight.w600,
-  //                                                       color: Colors.white,
-  //                                                       fontFamily:
-  //                                                           'Nunito-Sans',
-  //                                                     ),
-  //                                                     overflow:
-  //                                                         TextOverflow.ellipsis,
-  //                                                   ),
-  //                                                 ),
-  //                                               ],
-  //                                             ),
-  //                                           ],
-  //                                         ),
-  //                                       ),
-  //                                     ),
-  //                                   ),
-  //                                 ),
-  //                               ],
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       );
-  //                     },
-  //                   ),
-  //                 ),
-  //             ],
-  //           );
-  //         },
-  //       );
-  //     }),
-  //   );
-  // }
+//           return Column(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               // const SizedBox(height: 10),
+//               Padding(
+//                 padding: const EdgeInsets.only(right: 18),
+//                 child: Row(
+//                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                   children: [
+//                     Column(
+//                       crossAxisAlignment: CrossAxisAlignment.start,
+//                       children: [
+//                         Text(
+//                           'Trending',
+//                           style: TextStyle(
+//                             color: AppColors.bottomSheetColor,
+//                             fontFamily: 'NunitoSans-Bold',
+//                             fontSize: 18,
+//                             fontWeight: FontWeight.w700,
+//                             decoration: TextDecoration.underline,
+//                           ),
+//                         ),
+//                         const SizedBox(height: 5),
+//                         Text(
+//                           'Buzzing dishes right now',
+//                           textAlign: TextAlign.justify,
+//                           style: TextStyle(
+//                             color: AppColors.bottomSheetColor,
+//                             fontFamily: 'aftika-regular',
+//                             fontSize: 12,
+//                             fontWeight: FontWeight.w500,
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//               const SizedBox(height: 10),
+//               if (restaurants.isEmpty)
+//                 Padding(
+//                   padding: const EdgeInsets.symmetric(vertical: 30),
+//                   child: Center(
+//                     child: Text(
+//                       'No related restaurants found.',
+//                       style: TextStyle(
+//                         fontSize: 14,
+//                         color: Colors.grey[600],
+//                         fontFamily: 'aftika-regular',
+//                       ),
+//                     ),
+//                   ),
+//                 )
+//               else
+//                 SizedBox(
+//                   height: Get.height * 0.25,
+//                   child: ListView.builder(
+//                     scrollDirection: Axis.horizontal,
+//                     itemCount: restaurants.length,
+//                     itemBuilder: (context, index) {
+//                       final item = restaurants[index];
+//                       return Padding(
+//                         padding: const EdgeInsets.only(right: 12.0),
+//                         child: GestureDetector(
+//                           onTap: () => Get.to(
+//                               RestaurantDetailScreen(restaurantModel: item)),
+//                           child: Container(
+//                             width: 200,
+//                             decoration: BoxDecoration(
+//                               borderRadius: BorderRadius.circular(12),
+//                               boxShadow: [
+//                                 BoxShadow(
+//                                   color: Colors.black12,
+//                                   blurRadius: 5,
+//                                   offset: const Offset(0, 2),
+//                                 )
+//                               ],
+//                             ),
+//                             child: Stack(
+//                               children: [
+//                                 ClipRRect(
+//                                   borderRadius: BorderRadius.circular(12),
+//                                   child: Image.network(
+//                                     item.logoImage,
+//                                     height: 200,
+//                                     width: double.infinity,
+//                                     fit: BoxFit.cover,
+//                                   ),
+//                                 ),
+//                                 Positioned(
+//                                   bottom: 0,
+//                                   left: 0,
+//                                   right: 0,
+//                                   child: ClipRRect(
+//                                     borderRadius: const BorderRadius.only(
+//                                       bottomLeft: Radius.circular(12),
+//                                       bottomRight: Radius.circular(12),
+//                                     ),
+//                                     child: BackdropFilter(
+//                                       filter: ImageFilter.blur(
+//                                           sigmaX: 10, sigmaY: 10),
+//                                       child: Container(
+//                                         padding: const EdgeInsets.all(16),
+//                                         decoration: BoxDecoration(
+//                                           borderRadius:
+//                                               const BorderRadius.only(
+//                                             bottomLeft: Radius.circular(12),
+//                                             bottomRight: Radius.circular(12),
+//                                           ),
+//                                           gradient: LinearGradient(
+//                                             begin: Alignment.bottomCenter,
+//                                             end: Alignment.topCenter,
+//                                             colors: [
+//                                               AppColors.primaryColor
+//                                                   .withOpacity(0.5),
+//                                               AppColors.primaryColor
+//                                                   .withOpacity(0.5),
+//                                             ],
+//                                           ),
+//                                         ),
+//                                         child: Column(
+//                                           crossAxisAlignment:
+//                                               CrossAxisAlignment.start,
+//                                           children: [
+//                                             Text(
+//                                               item.resName,
+//                                               style: const TextStyle(
+//                                                 fontSize: 14,
+//                                                 fontWeight: FontWeight.w800,
+//                                                 color: Colors.white,
+//                                                 fontFamily: 'Nunito-regular',
+//                                               ),
+//                                             ),
+//                                             Row(
+//                                               children: [
+//                                                 Icon(
+//                                                   Icons.location_on_outlined,
+//                                                   size: 14,
+//                                                   color: Colors.white
+//                                                       .withOpacity(0.9),
+//                                                 ),
+//                                                 const SizedBox(width: 6),
+//                                                 Expanded(
+//                                                   child: Text(
+//                                                     item.address,
+//                                                     style: const TextStyle(
+//                                                       fontSize: 14,
+//                                                       fontWeight:
+//                                                           FontWeight.w600,
+//                                                       color: Colors.white,
+//                                                       fontFamily:
+//                                                           'Nunito-Sans',
+//                                                     ),
+//                                                     overflow:
+//                                                         TextOverflow.ellipsis,
+//                                                   ),
+//                                                 ),
+//                                               ],
+//                                             ),
+//                                           ],
+//                                         ),
+//                                       ),
+//                                     ),
+//                                   ),
+//                                 ),
+//                               ],
+//                             ),
+//                           ),
+//                         ),
+//                       );
+//                     },
+//                   ),
+//                 ),
+//             ],
+//           );
+//         },
+//       );
+//     }),
+//   );
+// }
 
-  //-------------------
+//-------------------
 
 //   Widget _buildNearBySection() {
 //     final HomeLocationController controller = Get.put(HomeLocationController());
@@ -3413,136 +2458,83 @@ TrendingRestaurantCard(
 //     );
 //   }
 
-  Widget _buildNearBySection() {
-    final HomeLocationController controller = Get.put(HomeLocationController());
-    final HomeFilterSearchController filterController =
-        Get.put(HomeFilterSearchController());
+Widget _buildNearBySection() {
+  final HomeLocationController controller = Get.put(HomeLocationController());
+  final HomeFilterSearchController filterController =
+      Get.put(HomeFilterSearchController());
 
-    return StreamBuilder<List<RestaurantModel>>(
-      stream: controller.getAllRestaurants(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return SizedBox();
-        }
-        if (snapshot.hasError ||
-            snapshot.data == null ||
-            snapshot.data!.isEmpty) {
-          return SizedBox();
-        }
+  return StreamBuilder<List<RestaurantModel>>(
+    stream: controller.getAllRestaurants(),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return SizedBox();
+      }
+      if (snapshot.hasError ||
+          snapshot.data == null ||
+          snapshot.data!.isEmpty) {
+        return SizedBox();
+      }
 
-        List<RestaurantModel> allRestaurants = snapshot.data!;
+      List<RestaurantModel> allRestaurants = snapshot.data!;
 
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          controller.initailizedSelectors(resaturantsList: allRestaurants);
-        });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.initailizedSelectors(resaturantsList: allRestaurants);
+      });
 
-        // Use Obx to watch reactive filter lists
-        return Obx(() {
-          final selectedVibes = filterController.selectedVibes.toList();
-          final selectedExperiences =
-              filterController.selectedExperiences.toList();
-          final selectedCuisines = filterController.selectedCuisines.toList();
+      // Use Obx to watch reactive filter lists
+      return Obx(() {
+        final selectedVibes = filterController.selectedVibes.toList();
+        final selectedExperiences =
+            filterController.selectedExperiences.toList();
+        final selectedCuisines = filterController.selectedCuisines.toList();
 
-          final bool filtersApplied = selectedVibes.isNotEmpty ||
-              selectedExperiences.isNotEmpty ||
-              selectedCuisines.isNotEmpty;
+        final bool filtersApplied = selectedVibes.isNotEmpty ||
+            selectedExperiences.isNotEmpty ||
+            selectedCuisines.isNotEmpty;
 
-          final future = controller.getNearbyRestaurants(
-            allRestaurants,
-            20000000, // 50 km
-            vibes: selectedVibes,
-            experiences: selectedExperiences,
-            cuisines: selectedCuisines,
-          );
+        final future = controller.getNearbyRestaurants(
+          allRestaurants,
+          20000000, // 50 km
+          vibes: selectedVibes,
+          experiences: selectedExperiences,
+          cuisines: selectedCuisines,
+        );
 
-          return FutureBuilder<List<RestaurantModel>>(
-            future: future,
-            builder: (context, futureSnapshot) {
-              if (futureSnapshot.connectionState == ConnectionState.waiting) {
-                return SizedBox();
-              }
-              if (futureSnapshot.hasError) {
-                return Text("Something went wrong");
-              }
+        return FutureBuilder<List<RestaurantModel>>(
+          future: future,
+          builder: (context, futureSnapshot) {
+            if (futureSnapshot.connectionState == ConnectionState.waiting) {
+              return SizedBox();
+            }
+            if (futureSnapshot.hasError) {
+              return Text("Something went wrong");
+            }
 
-              List<RestaurantModel> restaurants = futureSnapshot.data ?? [];
+            List<RestaurantModel> restaurants = futureSnapshot.data ?? [];
 
-              if (restaurants.isEmpty) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(
-                        "Recommended for You",
-                        style: TextStyle(
-                          color: AppColors.bottomSheetColor,
-                          fontFamily: 'NunitoSans-Bold',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Center(
-                      child: Text(
-                        filtersApplied
-                            ? "No restaurants matched your filters. Try clearing them."
-                            : "No nearby restaurants found.",
-                        textAlign: TextAlign.justify,
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.bottomSheetColor,
-                          fontFamily: 'NunitoSans-Regular',
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              }
-
-              // Display horizontal list of restaurants
+            if (restaurants.isEmpty) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Recommended for You",
-                          style: TextStyle(
-                            color: AppColors.bottomSheetColor,
-                            fontFamily: 'NunitoSans-Bold',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () => Get.to(
-                              NearByAll(filteredRestaurants: restaurants)),
-                          child: Text(
-                            'See more',
-                            style: TextStyle(
-                              color: AppColors.primaryColor,
-                              fontFamily: 'NunitoSans-Regular',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      "Recommended for You",
+                      style: TextStyle(
+                        color: AppColors.bottomSheetColor,
+                        fontFamily: 'NunitoSans-Bold',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        decoration: TextDecoration.underline,
+                      ),
                     ),
                   ),
                   SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                  Center(
                     child: Text(
-                      "We’ve matched your vibe! Explore hot spots tailored to your style.",
+                      filtersApplied
+                          ? "No restaurants matched your filters. Try clearing them."
+                          : "No nearby restaurants found.",
                       textAlign: TextAlign.justify,
                       style: TextStyle(
                         fontSize: 12,
@@ -3552,196 +2544,98 @@ TrendingRestaurantCard(
                       ),
                     ),
                   ),
-                  SizedBox(height: 10),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: Row(
-                      children: List.generate(restaurants.length, (index) {
-                        final item = restaurants[index];
-                        return Padding(
-                          padding: EdgeInsets.only(
-                            left: index == 0
-                                ? 16
-                                : 8, // 👈 Fix: Give first card some space from left
-                            right: index == restaurants.length - 1
-                                ? 16
-                                : 0, // Optionally also right space for last
-                          ),
-                          child: HorizontalCardWidget(
-                            imageHeight: 106,
-                            containerHeight: 190,
-                            title: item.resName,
-                            imagePath: item.logoImage,
-                            description: item.address,
-                            isFavorite: false.obs,
-                            onTap: () => Get.to(
-                              RestaurantDetailScreen(restaurantModel: item),
-                            ),
-                          ),
-                        );
-                      }),
-                    ),
-                  ),
                 ],
               );
-            },
-          );
-        });
-      },
-    );
-  }
+            }
 
-//   Widget nearBySection() {
-//     List<String> img = [
-//       'assets/images/event_img5.png',
-//       'assets/images/event_ing2.png'
-//     ];
-//     List<String> nameOfRestaurant = ['ABSteak by Chef', 'Tsuri'];
-//     List<String> address = ['8500 Beverkt', ' 200 Manathan'];
-
-//     return Padding(
-//       padding: const EdgeInsets.only(left: 14, right: 14),
-//       child: Column(
-//         children: [
-//           Row(
-//             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//             children: [
-//               Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   Text(
-//                     "You might like",
-//                     style: TextStyle(
-//                       color: AppColors.bottomSheetColor,
-//                       fontFamily: 'aftika-regular',
-//                       fontSize: 16,
-//                       fontWeight: FontWeight.w700,
-//                     ),
-//                   ),
-//                   SizedBox(height: 5),
-//                   Text(
-//                     "For your best delicious food",
-//                     textAlign: TextAlign.justify,
-//                     style: TextStyle(
-//                       color: AppColors.bottomSheetColor,
-//                       fontFamily: 'aftika-regular',
-//                       fontSize: 12,
-//                       fontWeight: FontWeight.w500,
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//               InkWell(
-//                 onTap: () {},
-//                 child: Text(
-//                   'See more',
-//                   style: TextStyle(
-//                     color: AppColors.primaryColor,
-//                     fontFamily: 'aftika-regular',
-//                     fontSize: 14,
-//                     fontWeight: FontWeight.w500,
-//                   ),
-//                 ),
-//               ),
-//             ],
-//           ),
-//           SizedBox(height: 10),
-//           ListView.builder(
-//             shrinkWrap: true,
-//             physics: const NeverScrollableScrollPhysics(),
-//             itemCount: 2,
-//             itemBuilder: (context, index) {
-//               return InkWell(
-//                 onTap: () {},
-//                 child: Container(
-//                   width: Get.width,
-//                   height: 200,
-//                   decoration: BoxDecoration(
-//                     color: Colors.transparent,
-//                     borderRadius: BorderRadius.circular(10),
-//                   ),
-//                   child: Column(
-//                     crossAxisAlignment: CrossAxisAlignment.start,
-//                     mainAxisAlignment: MainAxisAlignment.start,
-//                     children: [
-//                       Container(
-//                         height: 82,
-//                         decoration: BoxDecoration(
-//                             borderRadius: BorderRadius.circular(5),
-//                             color: Colors.transparent,
-//                             image: DecorationImage(
-//                                 fit: BoxFit.cover,
-//                                 image: AssetImage(img[index]))),
-//                       ),
-//                       SizedBox(height: 8),
-//                       Padding(
-//                         padding: const EdgeInsets.symmetric(horizontal: 5),
-//                         child: Column(
-//                           children: [
-//                             Row(
-//                               crossAxisAlignment: CrossAxisAlignment.start,
-//                               mainAxisAlignment: MainAxisAlignment.start,
-//                               children: [
-//                                 SizedBox(
-//                                   width: 140,
-//                                   child: Text(
-//                                     nameOfRestaurant[index],
-//                                     overflow: TextOverflow.ellipsis,
-//                                     maxLines: 1,
-//                                     style: TextStyle(
-//                                       fontWeight: FontWeight.w700,
-//                                       fontSize: 14,
-//                                       fontFamily: 'Nunito-Regular',
-//                                       color: AppColors.textColor,
-//                                     ),
-//                                   ),
-//                                 ),
-//                                 Spacer(),
-//                                 SizedBox(
-//                                   width: 6,
-//                                 )
-//                               ],
-//                             ),
-//                             SizedBox(height: 2),
-//                             Row(
-//                               children: [
-//                                 Image.asset(
-//                                   'assets/images/location_icon2.png',
-//                                   height: 16,
-//                                   width: 16,
-//                                 ),
-//                                 SizedBox(
-//                                   child: Text(
-//                                     address[index],
-//                                     overflow: TextOverflow.ellipsis,
-//                                     style: TextStyle(
-//                                       fontWeight: FontWeight.w400,
-//                                       fontSize: 12,
-//                                       fontFamily: 'Nunito-Regular',
-//                                       color: AppColors.textColor,
-//                                     ),
-//                                   ),
-//                                 ),
-//                               ],
-//                             ),
-//                           ],
-//                         ),
-//                       ),
-//                       SizedBox(
-//                         height: 6,
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               );
-//             },
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-//}
+            // Display horizontal list of restaurants
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Recommended for You",
+                        style: TextStyle(
+                          color: AppColors.bottomSheetColor,
+                          fontFamily: 'NunitoSans-Bold',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () =>
+                            Get.to(NearByAll(filteredRestaurants: restaurants)),
+                        child: Text(
+                          'See more',
+                          style: TextStyle(
+                            color: AppColors.primaryColor,
+                            fontFamily: 'NunitoSans-Regular',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    "We’ve matched your vibe! Explore hot spots tailored to your style.",
+                    textAlign: TextAlign.justify,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.bottomSheetColor,
+                      fontFamily: 'NunitoSans-Regular',
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: Row(
+                    children: List.generate(restaurants.length, (index) {
+                      final item = restaurants[index];
+                      return Padding(
+                        padding: EdgeInsets.only(
+                          left: index == 0
+                              ? 16
+                              : 8, // 👈 Fix: Give first card some space from left
+                          right: index == restaurants.length - 1
+                              ? 16
+                              : 0, // Optionally also right space for last
+                        ),
+                        child: HorizontalCardWidget(
+                          imageHeight: 106,
+                          containerHeight: 190,
+                          title: item.resName,
+                          imagePath: item.logoImage,
+                          description: item.address,
+                          isFavorite: false.obs,
+                          onTap: () => Get.to(
+                            RestaurantDetailScreen(restaurantModel: item),
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      });
+    },
+  );
+}
 
 class ExpandableText extends StatefulWidget {
   final String text;
@@ -3809,570 +2703,6 @@ class _ExpandableTextState extends State<ExpandableText> {
     );
   }
 }
-
-// 10-6-2025
-
-// class FilterChipWidget extends StatelessWidget {
-//   final String label;
-//   final IconData icon;
-//   final List<String> menuOptions;
-//   final Function(String)? onOptionSelected;
-
-//   const FilterChipWidget({
-//     required this.label,
-//     required this.icon,
-//     required this.menuOptions,
-//     this.onOptionSelected,
-//     Key? key,
-//   }) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final GlobalKey key = GlobalKey();
-
-//     return GestureDetector(
-//       key: key,
-//       onTap: () async {
-//         final RenderBox renderBox =
-//             key.currentContext!.findRenderObject() as RenderBox;
-//         final Offset offset = renderBox.localToGlobal(Offset.zero);
-//         final Size size = renderBox.size;
-
-//         final selected = await showMenu<String>(
-//           context: context,
-//           position: RelativeRect.fromLTRB(
-//             offset.dx,
-//             offset.dy + size.height, // 👈 Menu shows below the chip
-//             offset.dx + size.width,
-//             offset.dy,
-//           ),
-//           items: menuOptions.map((option) {
-//             return PopupMenuItem<String>(
-//               value: option,
-//               child: Text(option),
-//             );
-//           }).toList(),
-//         );
-
-//         if (selected != null && onOptionSelected != null) {
-//           onOptionSelected!(selected);
-//         }
-//       },
-//       child: Chip(
-//         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-//         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-//         backgroundColor: Colors.white,
-//         label: Row(
-//           mainAxisSize: MainAxisSize.min,
-//           children: [
-//             Icon(icon, size: 18, color: Colors.black54),
-//             const SizedBox(width: 4),
-//             Text(label, style: const TextStyle(color: Colors.black87)),
-//             const SizedBox(width: 4),
-//             const Icon(Icons.keyboard_arrow_down,
-//                 size: 18, color: Colors.black54),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-//correct code
-
-// class FilterChipWidget extends StatefulWidget {
-//   final String label;
-//   final String image;
-//   final List<String> menuOptions;
-//   final List<String> selectedOptions;
-//   final Function(List<String>) onApply;
-
-//   const FilterChipWidget({
-//     required this.label,
-//     required this.image,
-//     required this.menuOptions,
-//     required this.selectedOptions,
-//     required this.onApply,
-//     Key? key,
-//   }) : super(key: key);
-
-//   @override
-//   State<FilterChipWidget> createState() => _FilterChipWidgetState();
-// }
-
-// class _FilterChipWidgetState extends State<FilterChipWidget> {
-//   final GlobalKey _chipKey = GlobalKey();
-//   late List<String> _tempSelected;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _tempSelected = List.from(widget.selectedOptions);
-//   }
-
-//   void _showMultiSelectMenu() async {
-//     _tempSelected = List.from(widget.selectedOptions);
-//     final RenderBox renderBox =
-//         _chipKey.currentContext!.findRenderObject() as RenderBox;
-//     final Offset offset = renderBox.localToGlobal(Offset.zero);
-//     final Size size = renderBox.size;
-
-//     final overlay =
-//         Overlay.of(context)?.context.findRenderObject() as RenderBox;
-//     final RelativeRect position = RelativeRect.fromRect(
-//       Rect.fromLTWH(offset.dx, offset.dy + size.height, size.width, 300),
-//       Offset.zero & overlay.size,
-//     );
-
-//     await showMenu(
-//       context: context,
-//       position: position,
-//       constraints: const BoxConstraints(maxWidth: 250),
-//       elevation: 0, // No shadow
-//       items: [
-//         PopupMenuItem(
-//           height: 0, // Remove default padding
-//           padding: EdgeInsets.zero,
-//           child: StatefulBuilder(
-//             builder: (context, setStatePopup) {
-//               return Material(
-//                 color: Colors.white, // Pure white background
-//                 borderRadius: BorderRadius.circular(12),
-//                 child: Container(
-//                   padding:
-//                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-//                   child: Column(
-//                     mainAxisSize: MainAxisSize.min,
-//                     crossAxisAlignment: CrossAxisAlignment.start,
-//                     children: [
-//                       // Heading
-//                       Padding(
-//                         padding: const EdgeInsets.only(bottom: 8),
-//                         child: Text(
-//                           widget.label,
-//                           style: const TextStyle(
-//                             fontSize: 16,
-//                             fontWeight: FontWeight.bold,
-//                             color: Colors.black87,
-//                           ),
-//                         ),
-//                       ),
-//                       // Checkbox list
-//                       Column(
-//                         children: widget.menuOptions.map((option) {
-//                           final isChecked = _tempSelected.contains(option);
-//                           return Material(
-//                             color: Colors.white, // White background for items
-//                             child: InkWell(
-//                               splashColor:
-//                                   Colors.transparent, // No ripple effect
-//                               highlightColor: Colors.transparent,
-//                               onTap: () {
-//                                 setStatePopup(() {
-//                                   if (isChecked) {
-//                                     _tempSelected.remove(option);
-//                                   } else {
-//                                     _tempSelected.add(option);
-//                                   }
-//                                 });
-//                               },
-//                               child: Padding(
-//                                 padding:
-//                                     const EdgeInsets.symmetric(vertical: 8),
-//                                 child: Row(
-//                                   children: [
-//                                     Checkbox(
-//                                       value: isChecked,
-//                                       onChanged: (value) {
-//                                         setStatePopup(() {
-//                                           if (value == true) {
-//                                             _tempSelected.add(option);
-//                                           } else {
-//                                             _tempSelected.remove(option);
-//                                           }
-//                                         });
-//                                       },
-//                                       shape: RoundedRectangleBorder(
-//                                         borderRadius: BorderRadius.circular(4),
-//                                       ),
-//                                       activeColor: AppColors.primaryColor,
-//                                     ),
-//                                     const SizedBox(width: 8),
-//                                     Text(
-//                                       option,
-//                                       style: const TextStyle(
-//                                         fontSize: 14,
-//                                         color: Colors.black87,
-//                                       ),
-//                                     ),
-//                                   ],
-//                                 ),
-//                               ),
-//                             ),
-//                           );
-//                         }).toList(),
-//                       ),
-//                       const SizedBox(height: 8),
-//                       // Divider and buttons
-//                       const Divider(height: 1, color: Colors.grey),
-//                       const SizedBox(height: 12),
-//                       Row(
-//                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                         children: [
-//                           TextButton(
-//                             onPressed: () {
-//                               _tempSelected.clear();
-//                               widget.onApply([]);
-//                               Navigator.pop(context);
-//                               setState(() {});
-//                             },
-//                             child: const Text(
-//                               "Clear",
-//                               style: TextStyle(
-//                                 color: Colors.black87,
-//                                 fontWeight: FontWeight.w500,
-//                               ),
-//                             ),
-//                           ),
-//                           ElevatedButton(
-//                             onPressed: () {
-//                               widget.onApply(_tempSelected);
-//                               Navigator.pop(context);
-//                               setState(() {});
-//                             },
-//                             style: ElevatedButton.styleFrom(
-//                               backgroundColor: AppColors.primaryColor,
-//                               shape: RoundedRectangleBorder(
-//                                 borderRadius: BorderRadius.circular(20),
-//                               ),
-//                               padding: const EdgeInsets.symmetric(
-//                                   horizontal: 20, vertical: 8),
-//                             ),
-//                             child: const Text(
-//                               "Apply",
-//                               style: TextStyle(
-//                                 color: Colors.white,
-//                                 fontWeight: FontWeight.w600,
-//                               ),
-//                             ),
-//                           ),
-//                         ],
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               );
-//             },
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return GestureDetector(
-//       key: _chipKey,
-//       onTap: _showMultiSelectMenu,
-//       child: Container(
-//         width: 120, // 🔁 Set exact width from Figma
-//         height: 32, // 🔁 Set exact height from Figma
-
-//         decoration: BoxDecoration(
-//           color: Colors.white,
-//           border: Border.all(color: Colors.white),
-//           borderRadius: BorderRadius.circular(20),
-//         ),
-//         child: Row(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             Image.asset(
-//               widget.image,
-//               width: 18,
-//               height: 18,
-//             ),
-//             const SizedBox(width: 4),
-//             Text(
-//               widget.label,
-//               style: const TextStyle(
-//                 color: Colors.black87,
-//                 fontSize: 10, // 🔁 Adjust as per Figma
-//               ),
-//             ),
-//             const SizedBox(width: 5),
-//             const Icon(
-//               Icons.keyboard_arrow_down,
-//               size: 18,
-//               color: Colors.black54,
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-// class FilterChipWidget extends StatefulWidget {
-//   final String label;
-//   final String image;
-//   final List<String> menuOptions;
-//   final List<String> selectedOptions;
-//   final Function(List<String>) onApply;
-
-//   const FilterChipWidget({
-//     required this.label,
-//     required this.image,
-//     required this.menuOptions,
-//     required this.selectedOptions,
-//     required this.onApply,
-//     Key? key,
-//   }) : super(key: key);
-
-//   @override
-//   State<FilterChipWidget> createState() => _FilterChipWidgetState();
-// }
-
-// class _FilterChipWidgetState extends State<FilterChipWidget> {
-//   final GlobalKey _chipKey = GlobalKey();
-//   late List<String> _tempSelected;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _tempSelected = List.from(widget.selectedOptions);
-//   }
-
-//   void _showMultiSelectMenu() async {
-//     _tempSelected = List.from(widget.selectedOptions);
-//     final RenderBox renderBox =
-//         _chipKey.currentContext!.findRenderObject() as RenderBox;
-//     final Offset offset = renderBox.localToGlobal(Offset.zero);
-//     final Size size = renderBox.size;
-
-//     final overlay =
-//         Overlay.of(context)?.context.findRenderObject() as RenderBox;
-//     final RelativeRect position = RelativeRect.fromRect(
-//       Rect.fromLTWH(offset.dx, offset.dy + size.height, size.width, 300),
-//       Offset.zero & overlay.size,
-//     );
-
-//     await showMenu(
-//       context: context,
-//       position: position,
-//       constraints: const BoxConstraints(maxWidth: 250),
-//       elevation: 0,
-//       items: [
-//         PopupMenuItem(
-//           height: 0,
-//           padding: EdgeInsets.zero,
-//           child: StatefulBuilder(
-//             builder: (context, setStatePopup) {
-//               return Container(
-//                 decoration: BoxDecoration(
-//                   color: Colors.white,
-//                   borderRadius: BorderRadius.circular(12),
-//                   // boxShadow: [
-//                   //   BoxShadow(
-//                   //     color: Colors.black.withOpacity(0.1),
-//                   //     blurRadius: 10,
-//                   //     spreadRadius: 2,
-//                   //   ),
-//                   // ],
-//                 ),
-//                 child: Column(
-//                   mainAxisSize: MainAxisSize.min,
-//                   children: [
-//                     // Header
-//                     Container(
-//                       padding: EdgeInsets.all(16),
-//                       decoration: BoxDecoration(
-//                         // border: Border(
-//                         //   bottom: BorderSide(
-//                         //     color: Colors.grey.shade200,
-//                         //     width: 1,
-//                         //   ),
-//                         // ),
-//                       ),
-//                       child: Row(
-//                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                         children: [
-//                           Text(
-//                             widget.label,
-//                             style: TextStyle(
-//                               fontSize: 16,
-//                               fontWeight: FontWeight.bold,
-//                               color: Colors.black87,
-//                             ),
-//                           ),
-//                           if (_tempSelected.isNotEmpty)
-//                             GestureDetector(
-//                               onTap: () {
-//                                 setStatePopup(() {
-//                                   _tempSelected.clear();
-//                                 });
-//                               },
-//                               child: Text(
-//                                 'Clear',
-//                                 style: TextStyle(
-//                                   color: AppColors.primaryColor,
-//                                   fontSize: 14,
-//                                 ),
-//                               ),
-//                             ),
-//                         ],
-//                       ),
-//                     ),
-//                     // Options list
-//                     Container(
-//                       constraints: BoxConstraints(maxHeight: 200),
-//                       child: SingleChildScrollView(
-//                         child: Column(
-//                           children: widget.menuOptions.map((option) {
-//                             final isChecked = _tempSelected.contains(option);
-//                             return InkWell(
-//                               onTap: () {
-//                                 setStatePopup(() {
-//                                   if (isChecked) {
-//                                     _tempSelected.remove(option);
-//                                   } else {
-//                                     _tempSelected.add(option);
-//                                   }
-//                                 });
-//                               },
-//                               child: Container(
-//                                 padding: EdgeInsets.symmetric(
-//                                     horizontal: 16, vertical: 12),
-//                                 decoration: BoxDecoration(
-//                                   border: Border(
-//                                     bottom: BorderSide(
-//                                       color: Colors.grey.shade100,
-//                                       width: 1,
-//                                     ),
-//                                   ),
-//                                 ),
-//                                 child: Row(
-//                                   children: [
-//                                     Container(
-//                                       width: 20,
-//                                       height: 20,
-//                                       decoration: BoxDecoration(
-//                                         borderRadius:
-//                                             BorderRadius.circular(4),
-//                                         border: Border.all(
-//                                           color: isChecked
-//                                               ? AppColors.primaryColor
-//                                               : Colors.grey.shade400,
-//                                         ),
-//                                         color: isChecked
-//                                             ? AppColors.primaryColor
-//                                             : Colors.transparent,
-//                                       ),
-//                                       child: isChecked
-//                                           ? Icon(
-//                                               Icons.check,
-//                                               size: 14,
-//                                               color: Colors.white,
-//                                             )
-//                                           : null,
-//                                     ),
-//                                     SizedBox(width: 12),
-//                                     Text(
-//                                       option,
-//                                       style: TextStyle(
-//                                         fontSize: 14,
-//                                         color: Colors.black87,
-//                                       ),
-//                                     ),
-//                                   ],
-//                                 ),
-//                               ),
-//                             );
-//                           }).toList(),
-//                         ),
-//                       ),
-//                     ),
-//                     // Apply button
-//                     Container(
-//                       padding: EdgeInsets.all(16),
-//                       child: SizedBox(
-//                         width: double.infinity,
-//                         child: ElevatedButton(
-//                           onPressed: () {
-//                             widget.onApply(_tempSelected);
-//                             Navigator.pop(context);
-//                             setState(() {});
-//                           },
-//                           style: ElevatedButton.styleFrom(
-//                             backgroundColor: AppColors.primaryColor,
-//                             shape: RoundedRectangleBorder(
-//                               borderRadius: BorderRadius.circular(8),
-//                             ),
-//                             padding: EdgeInsets.symmetric(vertical: 12),
-//                           ),
-//                           child: Text(
-//                             'Apply',
-//                             style: TextStyle(
-//                               color: Colors.white,
-//                               fontWeight: FontWeight.w600,
-//                             ),
-//                           ),
-//                         ),
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               );
-//             },
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return GestureDetector(
-//       key: _chipKey,
-//       onTap: _showMultiSelectMenu,
-//       child: Container(
-//         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-//         decoration: BoxDecoration(
-//           color: Colors.white,
-//           borderRadius: BorderRadius.circular(20),
-//           border: Border.all(
-//             color: Colors.grey.shade300,
-//             width: 1,
-//           ),
-//         ),
-//         child: Row(
-//           mainAxisSize: MainAxisSize.min,
-//           children: [
-//             Image.asset(
-//               widget.image,
-//               width: 16,
-//               height: 16,
-//             ),
-//             SizedBox(width: 4),
-//             Text(
-//               widget.label,
-//               style: TextStyle(
-//                 color: Colors.black87,
-//                 fontSize: 12,
-//                 fontWeight: FontWeight.w500,
-//               ),
-//             ),
-//             SizedBox(width: 4),
-//             Icon(
-//               Icons.keyboard_arrow_down,
-//               size: 16,
-//               color: Colors.grey.shade600,
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
 
 class FilterChipWidget extends StatefulWidget {
   final String label;
@@ -4537,9 +2867,24 @@ class _FilterChipWidgetState extends State<FilterChipWidget> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () {
-                            widget.onApply(_tempSelected);
+                            widget.onApply(
+                                _tempSelected); // Apply selected filters to controller
+
+                            // 🔁 Reset trending so it reloads with new filters
+                            final homeController =
+                                Get.find<HomeLocationController>();
+                            final filterController =
+                                Get.find<HomeFilterSearchController>();
+
+                            homeController.resetTrendingFlag();
+                            homeController.loadTrendingRestaurants(
+                              vibes: filterController.selectedVibes,
+                              // ✅ FIXED
+                              experiences: filterController.selectedExperiences,
+                              cuisines: filterController.selectedCuisines,
+                            );
+
                             Navigator.pop(context);
-                            setState(() {});
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primaryColor,
@@ -5676,3 +4021,1841 @@ class _FilterChipWidgetState extends State<FilterChipWidget> {
   //         ],
   //       ));
   // }
+
+
+
+
+// Widget _buildTrendingSection() {
+  //   final HomeLocationController controller = Get.put(HomeLocationController());
+  //   return Padding(
+  //     padding: const EdgeInsets.only(left: 12),
+  //     child: StreamBuilder(
+  //       stream: controller.getTrendingRestaurants(),
+  //       builder: (context, snapshot) {
+  //         if (snapshot.connectionState == ConnectionState.waiting)
+  //           return SizedBox();
+  //         if (snapshot.hasError) {
+  //           print('Error during stream call ${snapshot.error}');
+  //           return Text('');
+  //         }
+  //         if (snapshot.data == null || snapshot.data!.isEmpty) return Text('');
+  //         List<RestaurantModel> restaurants = snapshot.data!;
+  //         WidgetsBinding.instance.addPostFrameCallback((_) {
+  //           controller.initailizedSelectors(resaturantsList: restaurants);
+  //         });
+
+  //         return Column(
+  //           children: [
+  //             SizedBox(height: 10),
+  //             Padding(
+  //               padding: EdgeInsets.only(right: 18),
+  //               child: Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                 children: [
+  //                   Column(
+  //                     crossAxisAlignment: CrossAxisAlignment.start,
+  //                     children: [
+  //                       Text(
+  //                         'Trending',
+  //                         style: TextStyle(
+  //                           color: AppColors.bottomSheetColor,
+  //                           fontFamily: 'aftika-regular',
+  //                           fontSize: 16,
+  //                           fontWeight: FontWeight.w700,
+  //                           decoration: TextDecoration.underline,
+  //                         ),
+  //                       ),
+  //                       SizedBox(height: 5),
+  //                       Text(
+  //                         'Buzzing dishes right now',
+  //                         textAlign: TextAlign.justify,
+  //                         style: TextStyle(
+  //                           color: AppColors.bottomSheetColor,
+  //                           fontFamily: 'aftika-regular',
+  //                           fontSize: 12,
+  //                           fontWeight: FontWeight.w500,
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //             SizedBox(height: 10),
+  //             SizedBox(
+  //               height: Get.height * 0.25,
+  //               child: ListView.builder(
+  //                 shrinkWrap: true,
+  //                 scrollDirection: Axis.horizontal,
+  //                 itemCount: restaurants.length,
+  //                 itemBuilder: (context, index) {
+  //                   final item = restaurants[index];
+  //                   return Padding(
+  //                     padding: const EdgeInsets.only(right: 12.0),
+  //                     child: GestureDetector(
+  //                         onTap: () => Get.to(
+  //                             RestaurantDetailScreen(restaurantModel: item)),
+  //                         child: Container(
+  //                           width: 200,
+  //                           //height:  200,
+  //                           decoration: BoxDecoration(
+  //                             borderRadius: BorderRadius.circular(12),
+  //                             boxShadow: [
+  //                               BoxShadow(
+  //                                 color: Colors.black12,
+  //                                 blurRadius: 5,
+  //                                 offset: Offset(0, 2),
+  //                               )
+  //                             ],
+  //                           ),
+  //                           child: Stack(
+  //                             children: [
+  //                               /// Main Image
+  //                               ClipRRect(
+  //                                 borderRadius: BorderRadius.circular(12),
+  //                                 child: Image.network(
+  //                                   item.logoImage,
+  //                                   height: 200,
+  //                                   width: double.infinity,
+  //                                   fit: BoxFit.cover,
+  //                                 ),
+  //                               ),
+
+  //                               /// Blur Gradient Info at Bottom
+  //                               Positioned(
+  //                                 bottom: 0,
+  //                                 left: 0,
+  //                                 right: 0,
+  //                                 child: ClipRRect(
+  //                                   borderRadius: const BorderRadius.only(
+  //                                     bottomLeft: Radius.circular(12),
+  //                                     bottomRight: Radius.circular(12),
+  //                                   ),
+  //                                   child: BackdropFilter(
+  //                                     filter: ImageFilter.blur(
+  //                                         sigmaX: 10, sigmaY: 10),
+  //                                     child: Container(
+  //                                       // height: 80,
+  //                                       padding: const EdgeInsets.all(16),
+  //                                       decoration: BoxDecoration(
+  //                                         borderRadius: const BorderRadius.only(
+  //                                           bottomLeft: Radius.circular(12),
+  //                                           bottomRight: Radius.circular(12),
+  //                                         ),
+  //                                         gradient: LinearGradient(
+  //                                           begin: Alignment.bottomCenter,
+  //                                           end: Alignment.topCenter,
+  //                                           colors: [
+  //                                             AppColors.primaryColor
+  //                                                 .withOpacity(0.5),
+  //                                             AppColors.primaryColor
+  //                                                 .withOpacity(0.5),
+  //                                           ],
+  //                                         ),
+  //                                       ),
+  //                                       child: Column(
+  //                                         crossAxisAlignment:
+  //                                             CrossAxisAlignment.start,
+  //                                         children: [
+  //                                           /// Restaurant Name
+  //                                           Text(
+  //                                             item.resName,
+  //                                             style: const TextStyle(
+  //                                               fontSize: 14,
+  //                                               fontWeight: FontWeight.w800,
+  //                                               color: Colors.white,
+  //                                               fontFamily: 'Nunito-regular',
+  //                                             ),
+  //                                           ),
+
+  //                                           /// Location Text
+  //                                           Row(
+  //                                             children: [
+  //                                               Icon(
+  //                                                 Icons.location_on_outlined,
+  //                                                 size: 14,
+  //                                                 color: Colors.white
+  //                                                     .withOpacity(0.9),
+  //                                               ),
+  //                                               const SizedBox(width: 6),
+  //                                               Expanded(
+  //                                                 child: Text(
+  //                                                   item.address,
+  //                                                   style: const TextStyle(
+  //                                                     fontSize: 14,
+  //                                                     fontWeight:
+  //                                                         FontWeight.w600,
+  //                                                     color: Colors.white,
+  //                                                     fontFamily: 'Nunito-Sans',
+  //                                                   ),
+  //                                                   overflow:
+  //                                                       TextOverflow.ellipsis,
+  //                                                 ),
+  //                                               ),
+  //                                             ],
+  //                                           ),
+  //                                         ],
+  //                                       ),
+  //                                     ),
+  //                                   ),
+  //                                 ),
+  //                               ),
+  //                             ],
+  //                           ),
+  //                         )),
+  //                   );
+  //                 },
+  //               ),
+  //             ),
+  //           ],
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
+
+  // Widget _buildTrendingSection() {
+  //   final HomeLocationController controller = Get.put(HomeLocationController());
+
+  //   return Padding(
+  //     padding: const EdgeInsets.only(left: 12),
+  //     child: GetBuilder<HomeLocationController>(
+  //       builder: (_) {
+  //         return StreamBuilder<List<RestaurantModel>>(
+  //           stream: controller.getTrendingRestaurants(),
+  //           builder: (context, snapshot) {
+  //             if (snapshot.connectionState == ConnectionState.waiting) {
+  //               return SizedBox();
+  //             }
+  //             if (snapshot.hasError) {
+  //               print('Stream error: ${snapshot.error}');
+  //               return Text('Error loading restaurants');
+  //             }
+  //             if (!snapshot.hasData || snapshot.data!.isEmpty) {
+  //               return Text('No restaurants found');
+  //             }
+
+  //             List<RestaurantModel> restaurants = snapshot.data!;
+
+  //             return Column(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 SizedBox(height: 10),
+  //                 Padding(
+  //                   padding: const EdgeInsets.only(right: 18),
+  //                   child: Row(
+  //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                     children: [
+  //                       Column(
+  //                         crossAxisAlignment: CrossAxisAlignment.start,
+  //                         children: [
+  //                           Text(
+  //                             'Trending',
+  //                             style: TextStyle(
+  //                               color: AppColors.bottomSheetColor,
+  //                               fontFamily: 'aftika-regular',
+  //                               fontSize: 16,
+  //                               fontWeight: FontWeight.w700,
+  //                               decoration: TextDecoration.underline,
+  //                             ),
+  //                           ),
+  //                           SizedBox(height: 5),
+  //                           Text(
+  //                             'Buzzing dishes right now',
+  //                             textAlign: TextAlign.justify,
+  //                             style: TextStyle(
+  //                               color: AppColors.bottomSheetColor,
+  //                               fontFamily: 'aftika-regular',
+  //                               fontSize: 12,
+  //                               fontWeight: FontWeight.w500,
+  //                             ),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //                 SizedBox(height: 10),
+  //                 SizedBox(
+  //                   height: Get.height * 0.25,
+  //                   child: ListView.builder(
+  //                     scrollDirection: Axis.horizontal,
+  //                     itemCount: restaurants.length,
+  //                     itemBuilder: (context, index) {
+  //                       final item = restaurants[index];
+  //                       return Padding(
+  //                         padding: const EdgeInsets.only(right: 12.0),
+  //                         child: GestureDetector(
+  //                           onTap: () => Get.to(
+  //                               RestaurantDetailScreen(restaurantModel: item)),
+  //                           child: Container(
+  //                             width: 200,
+  //                             decoration: BoxDecoration(
+  //                               borderRadius: BorderRadius.circular(12),
+  //                               boxShadow: [
+  //                                 BoxShadow(
+  //                                   color: Colors.black12,
+  //                                   blurRadius: 5,
+  //                                   offset: Offset(0, 2),
+  //                                 )
+  //                               ],
+  //                             ),
+  //                             child: Stack(
+  //                               children: [
+  //                                 ClipRRect(
+  //                                   borderRadius: BorderRadius.circular(12),
+  //                                   child: Image.network(
+  //                                     item.logoImage,
+  //                                     height: 200,
+  //                                     width: double.infinity,
+  //                                     fit: BoxFit.cover,
+  //                                   ),
+  //                                 ),
+  //                                 Positioned(
+  //                                   bottom: 0,
+  //                                   left: 0,
+  //                                   right: 0,
+  //                                   child: ClipRRect(
+  //                                     borderRadius: const BorderRadius.only(
+  //                                       bottomLeft: Radius.circular(12),
+  //                                       bottomRight: Radius.circular(12),
+  //                                     ),
+  //                                     child: BackdropFilter(
+  //                                       filter: ImageFilter.blur(
+  //                                           sigmaX: 10, sigmaY: 10),
+  //                                       child: Container(
+  //                                         padding: const EdgeInsets.all(16),
+  //                                         decoration: BoxDecoration(
+  //                                           borderRadius:
+  //                                               const BorderRadius.only(
+  //                                             bottomLeft: Radius.circular(12),
+  //                                             bottomRight: Radius.circular(12),
+  //                                           ),
+  //                                           gradient: LinearGradient(
+  //                                             begin: Alignment.bottomCenter,
+  //                                             end: Alignment.topCenter,
+  //                                             colors: [
+  //                                               AppColors.primaryColor
+  //                                                   .withOpacity(0.5),
+  //                                               AppColors.primaryColor
+  //                                                   .withOpacity(0.5),
+  //                                             ],
+  //                                           ),
+  //                                         ),
+  //                                         child: Column(
+  //                                           crossAxisAlignment:
+  //                                               CrossAxisAlignment.start,
+  //                                           children: [
+  //                                             Text(
+  //                                               item.resName,
+  //                                               style: const TextStyle(
+  //                                                 fontSize: 14,
+  //                                                 fontWeight: FontWeight.w800,
+  //                                                 color: Colors.white,
+  //                                                 fontFamily: 'Nunito-regular',
+  //                                               ),
+  //                                             ),
+  //                                             Row(
+  //                                               children: [
+  //                                                 Icon(
+  //                                                     Icons
+  //                                                         .location_on_outlined,
+  //                                                     size: 14,
+  //                                                     color: Colors.white
+  //                                                         .withOpacity(0.9)),
+  //                                                 const SizedBox(width: 6),
+  //                                                 Expanded(
+  //                                                   child: Text(
+  //                                                     item.address,
+  //                                                     style: const TextStyle(
+  //                                                       fontSize: 14,
+  //                                                       fontWeight:
+  //                                                           FontWeight.w600,
+  //                                                       color: Colors.white,
+  //                                                       fontFamily:
+  //                                                           'Nunito-Sans',
+  //                                                     ),
+  //                                                     overflow:
+  //                                                         TextOverflow.ellipsis,
+  //                                                   ),
+  //                                                 ),
+  //                                               ],
+  //                                             ),
+  //                                           ],
+  //                                         ),
+  //                                       ),
+  //                                     ),
+  //                                   ),
+  //                                 ),
+  //                               ],
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       );
+  //                     },
+  //                   ),
+  //                 ),
+  //               ],
+  //             );
+  //           },
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
+
+// Widget _buildTrendingSection() {
+//   final HomeLocationController controller = Get.put(HomeLocationController());
+//      final filterController = Get.find<FilterController>();
+//   return Padding(
+//     padding: const EdgeInsets.only(left: 12),
+//     child: StreamBuilder(
+//       stream: controller.getTrendingRestaurants(),
+//       builder: (context, snapshot) {
+//         if (snapshot.connectionState == ConnectionState.waiting)
+//           return SizedBox();
+//         if (snapshot.hasError) {
+//           print('Error during stream call ${snapshot.error}');
+//           return Text('');
+//         }
+//         if (snapshot.data == null || snapshot.data!.isEmpty) return Text('');
+//         List<RestaurantModel> restaurants = snapshot.data!;
+//         WidgetsBinding.instance.addPostFrameCallback((_) {
+//           controller.initailizedSelectors(resaturantsList: restaurants);
+//         });
+
+//         // Take only the first restaurant for the main view
+//         final featuredRestaurant = restaurants.first;
+// // Subtracting left and right padding
+//         return Column(
+//           children: [
+//             SizedBox(height: 10),
+//             Padding(
+//               padding: EdgeInsets.only(right: 18),
+//               child: Row(
+//                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                 children: [
+//                   Text(
+//                     'Trending',
+//                     style: TextStyle(
+//                       color: AppColors.bottomSheetColor,
+//                       fontFamily: 'aftika-regular',
+//                       fontSize: 18,
+//                       fontWeight: FontWeight.w700,
+//                       decoration: TextDecoration.underline,
+//                     ),
+//                   ),
+//                   GestureDetector(
+//                     onTap: () {
+//                       // Navigate to a new page showing all trending restaurants
+//                       Get.to(TrendingRestaurantsPage(restaurants: restaurants));
+//                     },
+//                     child: Text(
+//                       'See more',
+//                       style: TextStyle(
+//                         color: AppColors.primaryColor,
+//                         fontFamily: 'aftika-regular',
+//                         fontSize: 14,
+//                         fontWeight: FontWeight.w500,
+//                       ),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//             SizedBox(height: 16),
+//             GestureDetector(
+//               onTap: () {
+//                 Get.to(RestaurantDetailScreen(
+//                     restaurantModel: featuredRestaurant));
+//               },
+//               child: Stack(
+//                 children: [
+//                   ClipRRect(
+//                     borderRadius: BorderRadius.circular(12),
+//                     child: Image.network(
+//                       featuredRestaurant.logoImage,
+//                       height: 290,
+//                       width: double.infinity,
+//                       fit: BoxFit.cover,
+//                     ),
+//                   ),
+//                   Positioned(
+//                     bottom: 0,
+//                     left: 0,
+//                     right: 0,
+//                     child: ClipRRect(
+//                       borderRadius: const BorderRadius.only(
+//                         bottomLeft: Radius.circular(12),
+//                         bottomRight: Radius.circular(12),
+//                       ),
+//                       child: BackdropFilter(
+//                         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+//                         child: Container(
+//                           //height: 80,
+//                           padding: const EdgeInsets.all(16),
+//                           decoration: BoxDecoration(
+//                             borderRadius: const BorderRadius.only(
+//                               bottomLeft: Radius.circular(12),
+//                               bottomRight: Radius.circular(12),
+//                             ),
+//                             gradient: LinearGradient(
+//                               begin: Alignment.bottomCenter,
+//                               end: Alignment.topCenter,
+//                               colors: [
+//                                 AppColors.primaryColor.withOpacity(0.5),
+//                                 AppColors.primaryColor.withOpacity(0.5),
+//                               ],
+//                             ),
+//                           ),
+//                           child: Column(
+//                             crossAxisAlignment: CrossAxisAlignment.start,
+//                             children: [
+//                               Text(
+//                                 featuredRestaurant.resName,
+//                                 style: TextStyle(
+//                                   fontSize: 18,
+//                                   fontWeight: FontWeight.w800,
+//                                   color: Colors.white,
+//                                   fontFamily: 'Nunito-Sans',
+//                                 ),
+//                               ),
+//                               Row(
+//                                 children: [
+//                                   Icon(
+//                                     Icons.location_on_outlined,
+//                                     size: 18,
+//                                     color: Colors.white.withOpacity(0.9),
+//                                   ),
+//                                   const SizedBox(width: 6),
+//                                   Text(
+//                                     featuredRestaurant.address,
+//                                     style: TextStyle(
+//                                       fontSize: 14,
+//                                       fontWeight: FontWeight.w600,
+//                                       color: Colors.white,
+//                                       fontFamily: 'Nunito-Sans',
+//                                     ),
+//                                   ),
+//                                 ],
+//                               ),
+//                             ],
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//             SizedBox(height: 20),
+//           ],
+//         );
+//       },
+//     ),
+//   );
+// }
+
+//-------------new code filter-----------------------
+
+// Widget _buildTrendingSection() {
+//   final HomeLocationController controller = Get.put(HomeLocationController());
+//   final filterController = Get.find<FilterController>();
+
+//   return Padding(
+//     padding: const EdgeInsets.only(left: 12),
+//     child: Obx(() {
+//       // Get updated values from filters
+//       final vibes = filterController.selectedVibes.toList();
+//       final experiences = filterController.selectedExperiences.toList();
+//       final cuisines = filterController.selectedCuisines.toList();
+
+//       return StreamBuilder(
+//         stream: controller.getTrendingRestaurants(
+//           vibes: vibes,
+//           experiences: experiences,
+//           cuisines: cuisines,
+//         ),
+//         builder: (context, snapshot) {
+//           if (snapshot.connectionState == ConnectionState.waiting) {
+//             return SizedBox();
+//           }
+//           if (snapshot.hasError) {
+//             print('Error during stream call ${snapshot.error}');
+//             return Text('');
+//           }
+//           if (snapshot.data == null || snapshot.data!.isEmpty) {
+//             return Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 Padding(
+//                   padding: EdgeInsets.only(right: 18),
+//                   child: Text(
+//                     'Trending',
+//                     style: TextStyle(
+//                       color: AppColors.bottomSheetColor,
+//                       fontFamily: 'aftika-regular',
+//                       fontSize: 18,
+//                       fontWeight: FontWeight.w700,
+//                       decoration: TextDecoration.underline,
+//                     ),
+//                   ),
+//                 ),
+//                 SizedBox(height: 16),
+//                 Center(
+//                   child: Text(
+//                     'No matching restaurants found',
+//                     style: TextStyle(
+//                       fontSize: 14,
+//                       color: Colors.grey[600],
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             );
+//           }
+
+//           List<RestaurantModel> restaurants = snapshot.data!;
+//           WidgetsBinding.instance.addPostFrameCallback((_) {
+//             controller.initailizedSelectors(resaturantsList: restaurants);
+//           });
+
+//           // Take only the first restaurant for the main view
+//           final featuredRestaurant = restaurants.first;
+
+//           return Column(
+//             children: [
+//               SizedBox(height: 10),
+//               Padding(
+//                 padding: EdgeInsets.only(right: 18),
+//                 child: Row(
+//                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                   children: [
+//                     Text(
+//                       'Trending',
+//                       style: TextStyle(
+//                         color: AppColors.bottomSheetColor,
+//                         fontFamily: 'aftika-regular',
+//                         fontSize: 18,
+//                         fontWeight: FontWeight.w700,
+//                         decoration: TextDecoration.underline,
+//                       ),
+//                     ),
+//                     GestureDetector(
+//                       onTap: () {
+//                         // Pass filtered restaurants to the "See more" page
+//                         Get.to(TrendingRestaurantsPage(
+//                           restaurants: restaurants,
+
+//                         ));
+//                       },
+//                       child: Text(
+//                         'See more',
+//                         style: TextStyle(
+//                           color: AppColors.primaryColor,
+//                           fontFamily: 'aftika-regular',
+//                           fontSize: 14,
+//                           fontWeight: FontWeight.w500,
+//                         ),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//               SizedBox(height: 16),
+//               GestureDetector(
+//                 onTap: () {
+//                   Get.to(RestaurantDetailScreen(
+//                       restaurantModel: featuredRestaurant));
+//                 },
+//                 child: Stack(
+//                   children: [
+//                     ClipRRect(
+//                       borderRadius: BorderRadius.circular(12),
+//                       child: Image.network(
+//                         featuredRestaurant.logoImage,
+//                         height: 290,
+//                         width: double.infinity,
+//                         fit: BoxFit.cover,
+//                       ),
+//                     ),
+//                     Positioned(
+//                       bottom: 0,
+//                       left: 0,
+//                       right: 0,
+//                       child: ClipRRect(
+//                         borderRadius: const BorderRadius.only(
+//                           bottomLeft: Radius.circular(12),
+//                           bottomRight: Radius.circular(12),
+//                         ),
+//                         child: BackdropFilter(
+//                           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+//                           child: Container(
+//                             padding: const EdgeInsets.all(16),
+//                             decoration: BoxDecoration(
+//                               borderRadius: const BorderRadius.only(
+//                                 bottomLeft: Radius.circular(12),
+//                                 bottomRight: Radius.circular(12),
+//                               ),
+//                               gradient: LinearGradient(
+//                                 begin: Alignment.bottomCenter,
+//                                 end: Alignment.topCenter,
+//                                 colors: [
+//                                   AppColors.primaryColor.withOpacity(0.5),
+//                                   AppColors.primaryColor.withOpacity(0.5),
+//                                 ],
+//                               ),
+//                             ),
+//                             child: Column(
+//                               crossAxisAlignment: CrossAxisAlignment.start,
+//                               children: [
+//                                 Text(
+//                                   featuredRestaurant.resName,
+//                                   style: TextStyle(
+//                                     fontSize: 18,
+//                                     fontWeight: FontWeight.w800,
+//                                     color: Colors.white,
+//                                     fontFamily: 'Nunito-Sans',
+//                                   ),
+//                                 ),
+//                                 Row(
+//                                   children: [
+//                                     Icon(
+//                                       Icons.location_on_outlined,
+//                                       size: 18,
+//                                       color: Colors.white.withOpacity(0.9),
+//                                     ),
+//                                     const SizedBox(width: 6),
+//                                     Text(
+//                                       featuredRestaurant.address,
+//                                       style: TextStyle(
+//                                         fontSize: 14,
+//                                         fontWeight: FontWeight.w600,
+//                                         color: Colors.white,
+//                                         fontFamily: 'Nunito-Sans',
+//                                       ),
+//                                     ),
+//                                   ],
+//                                 ),
+//                               ],
+//                             ),
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//               SizedBox(height: 20),
+//             ],
+//           );
+//         },
+//       );
+//     }),
+//   );
+// }
+
+
+
+
+
+// correct code .................
+
+  // Widget _featuredCategory() {
+  //   return FutureBuilder<Position>(
+  //     future: Geolocator.getCurrentPosition(),
+  //     builder: (context, locationSnapshot) {
+  //       if (!locationSnapshot.hasData) {
+  //         return const SizedBox();
+  //       }
+
+  //       final userPosition = locationSnapshot.data!;
+
+  //       return StreamBuilder<Map<String, dynamic>?>(
+  //         stream: homeController.getFeaturedRestaurantID(),
+  //         builder: (context, featuredIDSnapshot) {
+  //           if (!featuredIDSnapshot.hasData ||
+  //               featuredIDSnapshot.data == null ||
+  //               featuredIDSnapshot.data!.isEmpty) {
+  //             return const SizedBox();
+  //           }
+
+  //           return StreamBuilder<List<RestaurantModel>>(
+  //             stream: homeController.getAllRestaurants(),
+  //             builder: (context, allRestaurantsSnapshot) {
+  //               if (!allRestaurantsSnapshot.hasData ||
+  //                   allRestaurantsSnapshot.data == null ||
+  //                   allRestaurantsSnapshot.data!.isEmpty) {
+  //                 return const SizedBox();
+  //               }
+
+  //               final allRestaurants = allRestaurantsSnapshot.data!;
+  //               final data = featuredIDSnapshot.data as Map<String, dynamic>;
+
+  //               final random = Random();
+  //               RestaurantModel randomRestaurant;
+
+  //               // Exclude featured restaurant from random selection
+  //               do {
+  //                 randomRestaurant =
+  //                     allRestaurants[random.nextInt(allRestaurants.length)];
+  //               } while (randomRestaurant.docID == data['restaurantID']);
+
+  //               // Calculate distance
+  //               String distanceText = "Location unavailable";
+  //               if (randomRestaurant.latitude != null &&
+  //                   randomRestaurant.longitude != null) {
+  //                 final distanceInMeters = Geolocator.distanceBetween(
+  //                   userPosition.latitude,
+  //                   userPosition.longitude,
+  //                   randomRestaurant.latitude!,
+  //                   randomRestaurant.longitude!,
+  //                 );
+
+  //                 // Convert meters to miles
+  //                 final distanceInMiles = distanceInMeters / 1609.34;
+
+  //                 distanceText =
+  //                     "${distanceInMiles.toStringAsFixed(1)} mi"; // 1 decimal place
+  //               }
+
+  //               return Padding(
+  //                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
+  //                 child: Column(
+  //                   crossAxisAlignment: CrossAxisAlignment.start,
+  //                   children: [
+  //                     const SizedBox(height: 20),
+  //                     Row(
+  //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                       children: [
+  //                         Text(
+  //                           'Top Rated',
+  //                           style: TextStyle(
+  //                             color: AppColors.bottomSheetColor,
+  //                             fontFamily: 'NunitoSans-Bold',
+  //                             fontSize: 16,
+  //                             fontWeight: FontWeight.w700,
+  //                             decoration: TextDecoration.underline,
+  //                           ),
+  //                         ),
+  //                         GestureDetector(
+  //                           onTap: () {
+  //                             Get.to(() => AllRestaurantsPage(
+  //                                 restaurants: allRestaurants));
+  //                           },
+  //                           child: Text(
+  //                             'See more',
+  //                             style: TextStyle(
+  //                               color: AppColors.primaryColor,
+  //                               fontFamily: 'NunitoSans-Regular',
+  //                               fontSize: 14,
+  //                               fontWeight: FontWeight.w500,
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                     const SizedBox(height: 10),
+  //                     Text(
+  //                       data['description'] ??
+  //                           'Experience the art of Cuisine at our top rated restaurants',
+  //                       textAlign: TextAlign.justify,
+  //                       style: TextStyle(
+  //                         color: AppColors.bottomSheetColor,
+  //                         fontFamily: 'NunitoSans-Regular',
+  //                         fontSize: 12,
+  //                         fontWeight: FontWeight.w400,
+  //                       ),
+  //                     ),
+  //                     const SizedBox(height: 20),
+  //                     GestureDetector(
+  //                       onTap: () {
+  //                         Get.to(RestaurantDetailScreen(
+  //                             restaurantModel: randomRestaurant));
+  //                       },
+  //                       child: Stack(
+  //                         children: [
+  //                           ClipRRect(
+  //                             borderRadius: BorderRadius.circular(12),
+  //                             child: Image.network(
+  //                               randomRestaurant.logoImage,
+  //                               height: 290,
+  //                               width: double.infinity,
+  //                               fit: BoxFit.cover,
+  //                             ),
+  //                           ),
+
+  //                           // Bottom Blur Info
+  //                           Positioned(
+  //                             bottom: 0,
+  //                             left: 0,
+  //                             right: 0,
+  //                             child: ClipRRect(
+  //                               borderRadius: const BorderRadius.only(
+  //                                 bottomLeft: Radius.circular(12),
+  //                                 bottomRight: Radius.circular(12),
+  //                               ),
+  //                               child: BackdropFilter(
+  //                                 filter:
+  //                                     ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+  //                                 child: Container(
+  //                                   padding: const EdgeInsets.all(16),
+  //                                   decoration: BoxDecoration(
+  //                                     borderRadius: const BorderRadius.only(
+  //                                       bottomLeft: Radius.circular(12),
+  //                                       bottomRight: Radius.circular(12),
+  //                                     ),
+  //                                     gradient: LinearGradient(
+  //                                       begin: Alignment.bottomCenter,
+  //                                       end: Alignment.topCenter,
+  //                                       colors: [
+  //                                         AppColors.primaryColor
+  //                                             .withOpacity(0.5),
+  //                                         AppColors.primaryColor
+  //                                             .withOpacity(0.5),
+  //                                       ],
+  //                                     ),
+  //                                   ),
+  //                                   child: Column(
+  //                                     crossAxisAlignment:
+  //                                         CrossAxisAlignment.start,
+  //                                     children: [
+  //                                       Text(
+  //                                         randomRestaurant.resName,
+  //                                         style: const TextStyle(
+  //                                           fontSize: 14,
+  //                                           fontWeight: FontWeight.w600,
+  //                                           color: Colors.white,
+  //                                           fontFamily: 'NunitoSans-Bold',
+  //                                         ),
+  //                                       ),
+  //                                       Text(
+  //                                         randomRestaurant.address,
+  //                                         style: const TextStyle(
+  //                                           fontSize: 12,
+  //                                           fontWeight: FontWeight.w600,
+  //                                           color: Colors.white,
+  //                                           fontFamily: 'NunitoSans-Regular',
+  //                                         ),
+  //                                       ),
+  //                                       Row(
+  //                                         children: [
+  //                                           Icon(
+  //                                             Icons.location_on_outlined,
+  //                                             size: 20,
+  //                                             color:
+  //                                                 Colors.white.withOpacity(0.9),
+  //                                           ),
+  //                                           const SizedBox(width: 6),
+  //                                           Text(
+  //                                             distanceText,
+  //                                             style: const TextStyle(
+  //                                               fontSize: 14,
+  //                                               fontWeight: FontWeight.w500,
+  //                                               color: Colors.white,
+  //                                               fontFamily: 'NunitoSans-Bold',
+  //                                             ),
+  //                                           ),
+  //                                         ],
+  //                                       ),
+  //                                     ],
+  //                                   ),
+  //                                 ),
+  //                               ),
+  //                             ),
+  //                           ),
+
+  //                           // ⭐ New: Bottom-Right Buttons (Filter & Direction)
+  //                           Positioned(
+  //                             bottom: 16,
+  //                             right: 16,
+  //                             child: Column(
+  //                               children: [
+  //                                 // Filter Button
+  //                                 GestureDetector(
+  //                                     onTap: () {
+  //                                       final allFilters = controller
+  //                                           .getAllFilters(randomRestaurant);
+
+  //                                       showModalBottomSheet(
+  //                                         context: context,
+  //                                         isScrollControlled: true,
+  //                                         shape: const RoundedRectangleBorder(
+  //                                           borderRadius: BorderRadius.vertical(
+  //                                             top: Radius.circular(20),
+  //                                           ),
+  //                                         ),
+  //                                         builder: (context) {
+  //                                           return Container(
+  //                                             padding:
+  //                                                 const EdgeInsets.fromLTRB(
+  //                                                     16, 16, 16, 0),
+  //                                             height: MediaQuery.of(context)
+  //                                                     .size
+  //                                                     .height *
+  //                                                 0.8,
+  //                                             child: Column(
+  //                                               children: [
+  //                                                 // Header with title and buttons
+  //                                                 Row(
+  //                                                   mainAxisAlignment:
+  //                                                       MainAxisAlignment
+  //                                                           .spaceBetween,
+  //                                                   children: [
+  //                                                     const Text(
+  //                                                       'Filters',
+  //                                                       style: TextStyle(
+  //                                                         color: AppColors
+  //                                                             .primaryColor,
+  //                                                         fontFamily:
+  //                                                             'NunitoSans-Bold',
+  //                                                         fontSize: 16,
+  //                                                         fontWeight:
+  //                                                             FontWeight.w700,
+  //                                                       ),
+  //                                                     ),
+  //                                                     TextButton(
+  //                                                       onPressed: () =>
+  //                                                           Navigator.pop(
+  //                                                               context),
+  //                                                       child: const Text(
+  //                                                         'Cancel',
+  //                                                         style: TextStyle(
+  //                                                           color: Colors.red,
+  //                                                           fontFamily:
+  //                                                               'NunitoSans-Bold',
+  //                                                           fontSize: 16,
+  //                                                           fontWeight:
+  //                                                               FontWeight.w700,
+  //                                                         ),
+  //                                                       ),
+  //                                                     ),
+  //                                                   ],
+  //                                                 ),
+  //                                                 const SizedBox(height: 16),
+
+  //                                                 // Main dynamic filters list
+  //                                                 Expanded(
+  //                                                   child: ListView.builder(
+  //                                                     itemCount:
+  //                                                         allFilters.length,
+  //                                                     itemBuilder:
+  //                                                         (context, index) {
+  //                                                       return Column(
+  //                                                         children: [
+  //                                                           ListTile(
+  //                                                             title: Text(
+  //                                                               allFilters[
+  //                                                                   index],
+  //                                                               style: const TextStyle(
+  //                                                                   fontSize:
+  //                                                                       12,
+  //                                                                   fontFamily:
+  //                                                                       'NunitoSans-regular',
+  //                                                                   color: AppColors
+  //                                                                       .bottomSheetColor),
+  //                                                             ),
+  //                                                           ),
+  //                                                           const Divider(
+  //                                                               height: 1,
+  //                                                               color: AppColors
+  //                                                                   .primaryColor),
+  //                                                         ],
+  //                                                       );
+  //                                                     },
+  //                                                   ),
+  //                                                 ),
+  //                                               ],
+  //                                             ),
+  //                                           );
+  //                                         },
+  //                                       );
+  //                                     },
+  //                                     child: Image(
+  //                                       image: AssetImage(
+  //                                           "assets/images/filter.png"),
+  //                                       width: 20,
+  //                                       height: 20,
+  //                                     )),
+  //                                 const SizedBox(height: 8),
+
+  //                                 // Direction Button
+  //                                 GestureDetector(
+  //                                     onTap: () async {
+  //                                       final lat = randomRestaurant
+  //                                           .latitude; // Your restaurant's latitude
+  //                                       final lng = randomRestaurant
+  //                                           .longitude; // Your restaurant's longitude
+  //                                       final restaurantName =
+  //                                           Uri.encodeComponent(
+  //                                               randomRestaurant.resName);
+
+  //                                       // Create Google Maps URL with directions
+  //                                       final googleMapsUrl =
+  //                                           'https://www.google.com/maps/dir/?api=1'
+  //                                           '&destination=$lat,$lng'
+  //                                           '&destination_place_name=$restaurantName';
+
+  //                                       try {
+  //                                         if (await canLaunch(googleMapsUrl)) {
+  //                                           await launch(googleMapsUrl);
+  //                                         } else {
+  //                                           // Fallback to web version if app isn't installed
+  //                                           final webUrl =
+  //                                               'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
+  //                                           await launch(webUrl);
+  //                                         }
+  //                                       } catch (e) {
+  //                                         ScaffoldMessenger.of(context)
+  //                                             .showSnackBar(
+  //                                           SnackBar(
+  //                                               content: Text(
+  //                                                   'Could not launch maps: ${e.toString()}')),
+  //                                         );
+  //                                       }
+  //                                     },
+  //                                     child: Image(
+  //                                       image: AssetImage(
+  //                                           "assets/images/direction.png"),
+  //                                       width: 20,
+  //                                       height: 20,
+  //                                     )),
+  //                               ],
+  //                             ),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ),
+  //                     const SizedBox(height: 24),
+  //                   ],
+  //                 ),
+  //               );
+  //             },
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
+
+
+
+
+  // 10-6-2025
+
+// class FilterChipWidget extends StatelessWidget {
+//   final String label;
+//   final IconData icon;
+//   final List<String> menuOptions;
+//   final Function(String)? onOptionSelected;
+
+//   const FilterChipWidget({
+//     required this.label,
+//     required this.icon,
+//     required this.menuOptions,
+//     this.onOptionSelected,
+//     Key? key,
+//   }) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final GlobalKey key = GlobalKey();
+
+//     return GestureDetector(
+//       key: key,
+//       onTap: () async {
+//         final RenderBox renderBox =
+//             key.currentContext!.findRenderObject() as RenderBox;
+//         final Offset offset = renderBox.localToGlobal(Offset.zero);
+//         final Size size = renderBox.size;
+
+//         final selected = await showMenu<String>(
+//           context: context,
+//           position: RelativeRect.fromLTRB(
+//             offset.dx,
+//             offset.dy + size.height, // 👈 Menu shows below the chip
+//             offset.dx + size.width,
+//             offset.dy,
+//           ),
+//           items: menuOptions.map((option) {
+//             return PopupMenuItem<String>(
+//               value: option,
+//               child: Text(option),
+//             );
+//           }).toList(),
+//         );
+
+//         if (selected != null && onOptionSelected != null) {
+//           onOptionSelected!(selected);
+//         }
+//       },
+//       child: Chip(
+//         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+//         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+//         backgroundColor: Colors.white,
+//         label: Row(
+//           mainAxisSize: MainAxisSize.min,
+//           children: [
+//             Icon(icon, size: 18, color: Colors.black54),
+//             const SizedBox(width: 4),
+//             Text(label, style: const TextStyle(color: Colors.black87)),
+//             const SizedBox(width: 4),
+//             const Icon(Icons.keyboard_arrow_down,
+//                 size: 18, color: Colors.black54),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+//correct code
+
+// class FilterChipWidget extends StatefulWidget {
+//   final String label;
+//   final String image;
+//   final List<String> menuOptions;
+//   final List<String> selectedOptions;
+//   final Function(List<String>) onApply;
+
+//   const FilterChipWidget({
+//     required this.label,
+//     required this.image,
+//     required this.menuOptions,
+//     required this.selectedOptions,
+//     required this.onApply,
+//     Key? key,
+//   }) : super(key: key);
+
+//   @override
+//   State<FilterChipWidget> createState() => _FilterChipWidgetState();
+// }
+
+// class _FilterChipWidgetState extends State<FilterChipWidget> {
+//   final GlobalKey _chipKey = GlobalKey();
+//   late List<String> _tempSelected;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _tempSelected = List.from(widget.selectedOptions);
+//   }
+
+//   void _showMultiSelectMenu() async {
+//     _tempSelected = List.from(widget.selectedOptions);
+//     final RenderBox renderBox =
+//         _chipKey.currentContext!.findRenderObject() as RenderBox;
+//     final Offset offset = renderBox.localToGlobal(Offset.zero);
+//     final Size size = renderBox.size;
+
+//     final overlay =
+//         Overlay.of(context)?.context.findRenderObject() as RenderBox;
+//     final RelativeRect position = RelativeRect.fromRect(
+//       Rect.fromLTWH(offset.dx, offset.dy + size.height, size.width, 300),
+//       Offset.zero & overlay.size,
+//     );
+
+//     await showMenu(
+//       context: context,
+//       position: position,
+//       constraints: const BoxConstraints(maxWidth: 250),
+//       elevation: 0, // No shadow
+//       items: [
+//         PopupMenuItem(
+//           height: 0, // Remove default padding
+//           padding: EdgeInsets.zero,
+//           child: StatefulBuilder(
+//             builder: (context, setStatePopup) {
+//               return Material(
+//                 color: Colors.white, // Pure white background
+//                 borderRadius: BorderRadius.circular(12),
+//                 child: Container(
+//                   padding:
+//                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+//                   child: Column(
+//                     mainAxisSize: MainAxisSize.min,
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     children: [
+//                       // Heading
+//                       Padding(
+//                         padding: const EdgeInsets.only(bottom: 8),
+//                         child: Text(
+//                           widget.label,
+//                           style: const TextStyle(
+//                             fontSize: 16,
+//                             fontWeight: FontWeight.bold,
+//                             color: Colors.black87,
+//                           ),
+//                         ),
+//                       ),
+//                       // Checkbox list
+//                       Column(
+//                         children: widget.menuOptions.map((option) {
+//                           final isChecked = _tempSelected.contains(option);
+//                           return Material(
+//                             color: Colors.white, // White background for items
+//                             child: InkWell(
+//                               splashColor:
+//                                   Colors.transparent, // No ripple effect
+//                               highlightColor: Colors.transparent,
+//                               onTap: () {
+//                                 setStatePopup(() {
+//                                   if (isChecked) {
+//                                     _tempSelected.remove(option);
+//                                   } else {
+//                                     _tempSelected.add(option);
+//                                   }
+//                                 });
+//                               },
+//                               child: Padding(
+//                                 padding:
+//                                     const EdgeInsets.symmetric(vertical: 8),
+//                                 child: Row(
+//                                   children: [
+//                                     Checkbox(
+//                                       value: isChecked,
+//                                       onChanged: (value) {
+//                                         setStatePopup(() {
+//                                           if (value == true) {
+//                                             _tempSelected.add(option);
+//                                           } else {
+//                                             _tempSelected.remove(option);
+//                                           }
+//                                         });
+//                                       },
+//                                       shape: RoundedRectangleBorder(
+//                                         borderRadius: BorderRadius.circular(4),
+//                                       ),
+//                                       activeColor: AppColors.primaryColor,
+//                                     ),
+//                                     const SizedBox(width: 8),
+//                                     Text(
+//                                       option,
+//                                       style: const TextStyle(
+//                                         fontSize: 14,
+//                                         color: Colors.black87,
+//                                       ),
+//                                     ),
+//                                   ],
+//                                 ),
+//                               ),
+//                             ),
+//                           );
+//                         }).toList(),
+//                       ),
+//                       const SizedBox(height: 8),
+//                       // Divider and buttons
+//                       const Divider(height: 1, color: Colors.grey),
+//                       const SizedBox(height: 12),
+//                       Row(
+//                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                         children: [
+//                           TextButton(
+//                             onPressed: () {
+//                               _tempSelected.clear();
+//                               widget.onApply([]);
+//                               Navigator.pop(context);
+//                               setState(() {});
+//                             },
+//                             child: const Text(
+//                               "Clear",
+//                               style: TextStyle(
+//                                 color: Colors.black87,
+//                                 fontWeight: FontWeight.w500,
+//                               ),
+//                             ),
+//                           ),
+//                           ElevatedButton(
+//                             onPressed: () {
+//                               widget.onApply(_tempSelected);
+//                               Navigator.pop(context);
+//                               setState(() {});
+//                             },
+//                             style: ElevatedButton.styleFrom(
+//                               backgroundColor: AppColors.primaryColor,
+//                               shape: RoundedRectangleBorder(
+//                                 borderRadius: BorderRadius.circular(20),
+//                               ),
+//                               padding: const EdgeInsets.symmetric(
+//                                   horizontal: 20, vertical: 8),
+//                             ),
+//                             child: const Text(
+//                               "Apply",
+//                               style: TextStyle(
+//                                 color: Colors.white,
+//                                 fontWeight: FontWeight.w600,
+//                               ),
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               );
+//             },
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return GestureDetector(
+//       key: _chipKey,
+//       onTap: _showMultiSelectMenu,
+//       child: Container(
+//         width: 120, // 🔁 Set exact width from Figma
+//         height: 32, // 🔁 Set exact height from Figma
+
+//         decoration: BoxDecoration(
+//           color: Colors.white,
+//           border: Border.all(color: Colors.white),
+//           borderRadius: BorderRadius.circular(20),
+//         ),
+//         child: Row(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: [
+//             Image.asset(
+//               widget.image,
+//               width: 18,
+//               height: 18,
+//             ),
+//             const SizedBox(width: 4),
+//             Text(
+//               widget.label,
+//               style: const TextStyle(
+//                 color: Colors.black87,
+//                 fontSize: 10, // 🔁 Adjust as per Figma
+//               ),
+//             ),
+//             const SizedBox(width: 5),
+//             const Icon(
+//               Icons.keyboard_arrow_down,
+//               size: 18,
+//               color: Colors.black54,
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+// class FilterChipWidget extends StatefulWidget {
+//   final String label;
+//   final String image;
+//   final List<String> menuOptions;
+//   final List<String> selectedOptions;
+//   final Function(List<String>) onApply;
+
+//   const FilterChipWidget({
+//     required this.label,
+//     required this.image,
+//     required this.menuOptions,
+//     required this.selectedOptions,
+//     required this.onApply,
+//     Key? key,
+//   }) : super(key: key);
+
+//   @override
+//   State<FilterChipWidget> createState() => _FilterChipWidgetState();
+// }
+
+// class _FilterChipWidgetState extends State<FilterChipWidget> {
+//   final GlobalKey _chipKey = GlobalKey();
+//   late List<String> _tempSelected;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _tempSelected = List.from(widget.selectedOptions);
+//   }
+
+//   void _showMultiSelectMenu() async {
+//     _tempSelected = List.from(widget.selectedOptions);
+//     final RenderBox renderBox =
+//         _chipKey.currentContext!.findRenderObject() as RenderBox;
+//     final Offset offset = renderBox.localToGlobal(Offset.zero);
+//     final Size size = renderBox.size;
+
+//     final overlay =
+//         Overlay.of(context)?.context.findRenderObject() as RenderBox;
+//     final RelativeRect position = RelativeRect.fromRect(
+//       Rect.fromLTWH(offset.dx, offset.dy + size.height, size.width, 300),
+//       Offset.zero & overlay.size,
+//     );
+
+//     await showMenu(
+//       context: context,
+//       position: position,
+//       constraints: const BoxConstraints(maxWidth: 250),
+//       elevation: 0,
+//       items: [
+//         PopupMenuItem(
+//           height: 0,
+//           padding: EdgeInsets.zero,
+//           child: StatefulBuilder(
+//             builder: (context, setStatePopup) {
+//               return Container(
+//                 decoration: BoxDecoration(
+//                   color: Colors.white,
+//                   borderRadius: BorderRadius.circular(12),
+//                   // boxShadow: [
+//                   //   BoxShadow(
+//                   //     color: Colors.black.withOpacity(0.1),
+//                   //     blurRadius: 10,
+//                   //     spreadRadius: 2,
+//                   //   ),
+//                   // ],
+//                 ),
+//                 child: Column(
+//                   mainAxisSize: MainAxisSize.min,
+//                   children: [
+//                     // Header
+//                     Container(
+//                       padding: EdgeInsets.all(16),
+//                       decoration: BoxDecoration(
+//                         // border: Border(
+//                         //   bottom: BorderSide(
+//                         //     color: Colors.grey.shade200,
+//                         //     width: 1,
+//                         //   ),
+//                         // ),
+//                       ),
+//                       child: Row(
+//                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                         children: [
+//                           Text(
+//                             widget.label,
+//                             style: TextStyle(
+//                               fontSize: 16,
+//                               fontWeight: FontWeight.bold,
+//                               color: Colors.black87,
+//                             ),
+//                           ),
+//                           if (_tempSelected.isNotEmpty)
+//                             GestureDetector(
+//                               onTap: () {
+//                                 setStatePopup(() {
+//                                   _tempSelected.clear();
+//                                 });
+//                               },
+//                               child: Text(
+//                                 'Clear',
+//                                 style: TextStyle(
+//                                   color: AppColors.primaryColor,
+//                                   fontSize: 14,
+//                                 ),
+//                               ),
+//                             ),
+//                         ],
+//                       ),
+//                     ),
+//                     // Options list
+//                     Container(
+//                       constraints: BoxConstraints(maxHeight: 200),
+//                       child: SingleChildScrollView(
+//                         child: Column(
+//                           children: widget.menuOptions.map((option) {
+//                             final isChecked = _tempSelected.contains(option);
+//                             return InkWell(
+//                               onTap: () {
+//                                 setStatePopup(() {
+//                                   if (isChecked) {
+//                                     _tempSelected.remove(option);
+//                                   } else {
+//                                     _tempSelected.add(option);
+//                                   }
+//                                 });
+//                               },
+//                               child: Container(
+//                                 padding: EdgeInsets.symmetric(
+//                                     horizontal: 16, vertical: 12),
+//                                 decoration: BoxDecoration(
+//                                   border: Border(
+//                                     bottom: BorderSide(
+//                                       color: Colors.grey.shade100,
+//                                       width: 1,
+//                                     ),
+//                                   ),
+//                                 ),
+//                                 child: Row(
+//                                   children: [
+//                                     Container(
+//                                       width: 20,
+//                                       height: 20,
+//                                       decoration: BoxDecoration(
+//                                         borderRadius:
+//                                             BorderRadius.circular(4),
+//                                         border: Border.all(
+//                                           color: isChecked
+//                                               ? AppColors.primaryColor
+//                                               : Colors.grey.shade400,
+//                                         ),
+//                                         color: isChecked
+//                                             ? AppColors.primaryColor
+//                                             : Colors.transparent,
+//                                       ),
+//                                       child: isChecked
+//                                           ? Icon(
+//                                               Icons.check,
+//                                               size: 14,
+//                                               color: Colors.white,
+//                                             )
+//                                           : null,
+//                                     ),
+//                                     SizedBox(width: 12),
+//                                     Text(
+//                                       option,
+//                                       style: TextStyle(
+//                                         fontSize: 14,
+//                                         color: Colors.black87,
+//                                       ),
+//                                     ),
+//                                   ],
+//                                 ),
+//                               ),
+//                             );
+//                           }).toList(),
+//                         ),
+//                       ),
+//                     ),
+//                     // Apply button
+//                     Container(
+//                       padding: EdgeInsets.all(16),
+//                       child: SizedBox(
+//                         width: double.infinity,
+//                         child: ElevatedButton(
+//                           onPressed: () {
+//                             widget.onApply(_tempSelected);
+//                             Navigator.pop(context);
+//                             setState(() {});
+//                           },
+//                           style: ElevatedButton.styleFrom(
+//                             backgroundColor: AppColors.primaryColor,
+//                             shape: RoundedRectangleBorder(
+//                               borderRadius: BorderRadius.circular(8),
+//                             ),
+//                             padding: EdgeInsets.symmetric(vertical: 12),
+//                           ),
+//                           child: Text(
+//                             'Apply',
+//                             style: TextStyle(
+//                               color: Colors.white,
+//                               fontWeight: FontWeight.w600,
+//                             ),
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               );
+//             },
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return GestureDetector(
+//       key: _chipKey,
+//       onTap: _showMultiSelectMenu,
+//       child: Container(
+//         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+//         decoration: BoxDecoration(
+//           color: Colors.white,
+//           borderRadius: BorderRadius.circular(20),
+//           border: Border.all(
+//             color: Colors.grey.shade300,
+//             width: 1,
+//           ),
+//         ),
+//         child: Row(
+//           mainAxisSize: MainAxisSize.min,
+//           children: [
+//             Image.asset(
+//               widget.image,
+//               width: 16,
+//               height: 16,
+//             ),
+//             SizedBox(width: 4),
+//             Text(
+//               widget.label,
+//               style: TextStyle(
+//                 color: Colors.black87,
+//                 fontSize: 12,
+//                 fontWeight: FontWeight.w500,
+//               ),
+//             ),
+//             SizedBox(width: 4),
+//             Icon(
+//               Icons.keyboard_arrow_down,
+//               size: 16,
+//               color: Colors.grey.shade600,
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+
+
+
+
+//   Widget nearBySection() {
+//     List<String> img = [
+//       'assets/images/event_img5.png',
+//       'assets/images/event_ing2.png'
+//     ];
+//     List<String> nameOfRestaurant = ['ABSteak by Chef', 'Tsuri'];
+//     List<String> address = ['8500 Beverkt', ' 200 Manathan'];
+
+//     return Padding(
+//       padding: const EdgeInsets.only(left: 14, right: 14),
+//       child: Column(
+//         children: [
+//           Row(
+//             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//             children: [
+//               Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   Text(
+//                     "You might like",
+//                     style: TextStyle(
+//                       color: AppColors.bottomSheetColor,
+//                       fontFamily: 'aftika-regular',
+//                       fontSize: 16,
+//                       fontWeight: FontWeight.w700,
+//                     ),
+//                   ),
+//                   SizedBox(height: 5),
+//                   Text(
+//                     "For your best delicious food",
+//                     textAlign: TextAlign.justify,
+//                     style: TextStyle(
+//                       color: AppColors.bottomSheetColor,
+//                       fontFamily: 'aftika-regular',
+//                       fontSize: 12,
+//                       fontWeight: FontWeight.w500,
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//               InkWell(
+//                 onTap: () {},
+//                 child: Text(
+//                   'See more',
+//                   style: TextStyle(
+//                     color: AppColors.primaryColor,
+//                     fontFamily: 'aftika-regular',
+//                     fontSize: 14,
+//                     fontWeight: FontWeight.w500,
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//           SizedBox(height: 10),
+//           ListView.builder(
+//             shrinkWrap: true,
+//             physics: const NeverScrollableScrollPhysics(),
+//             itemCount: 2,
+//             itemBuilder: (context, index) {
+//               return InkWell(
+//                 onTap: () {},
+//                 child: Container(
+//                   width: Get.width,
+//                   height: 200,
+//                   decoration: BoxDecoration(
+//                     color: Colors.transparent,
+//                     borderRadius: BorderRadius.circular(10),
+//                   ),
+//                   child: Column(
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     mainAxisAlignment: MainAxisAlignment.start,
+//                     children: [
+//                       Container(
+//                         height: 82,
+//                         decoration: BoxDecoration(
+//                             borderRadius: BorderRadius.circular(5),
+//                             color: Colors.transparent,
+//                             image: DecorationImage(
+//                                 fit: BoxFit.cover,
+//                                 image: AssetImage(img[index]))),
+//                       ),
+//                       SizedBox(height: 8),
+//                       Padding(
+//                         padding: const EdgeInsets.symmetric(horizontal: 5),
+//                         child: Column(
+//                           children: [
+//                             Row(
+//                               crossAxisAlignment: CrossAxisAlignment.start,
+//                               mainAxisAlignment: MainAxisAlignment.start,
+//                               children: [
+//                                 SizedBox(
+//                                   width: 140,
+//                                   child: Text(
+//                                     nameOfRestaurant[index],
+//                                     overflow: TextOverflow.ellipsis,
+//                                     maxLines: 1,
+//                                     style: TextStyle(
+//                                       fontWeight: FontWeight.w700,
+//                                       fontSize: 14,
+//                                       fontFamily: 'Nunito-Regular',
+//                                       color: AppColors.textColor,
+//                                     ),
+//                                   ),
+//                                 ),
+//                                 Spacer(),
+//                                 SizedBox(
+//                                   width: 6,
+//                                 )
+//                               ],
+//                             ),
+//                             SizedBox(height: 2),
+//                             Row(
+//                               children: [
+//                                 Image.asset(
+//                                   'assets/images/location_icon2.png',
+//                                   height: 16,
+//                                   width: 16,
+//                                 ),
+//                                 SizedBox(
+//                                   child: Text(
+//                                     address[index],
+//                                     overflow: TextOverflow.ellipsis,
+//                                     style: TextStyle(
+//                                       fontWeight: FontWeight.w400,
+//                                       fontSize: 12,
+//                                       fontFamily: 'Nunito-Regular',
+//                                       color: AppColors.textColor,
+//                                     ),
+//                                   ),
+//                                 ),
+//                               ],
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+//                       SizedBox(
+//                         height: 6,
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               );
+//             },
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+//}

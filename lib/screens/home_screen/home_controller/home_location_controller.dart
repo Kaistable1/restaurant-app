@@ -297,6 +297,34 @@ class HomeLocationController extends GetxController {
   //   });
   // }
 
+  //...............        filpering problem solve ---------------------
+
+  RxBool hasInitialized = false.obs;
+
+  // Store filtered data once
+  RxList<RestaurantModel> trendingRestaurants = <RestaurantModel>[].obs;
+
+  Future<void> loadTrendingRestaurants({
+    required List<String> vibes,
+    required List<String> experiences,
+    required List<String> cuisines,
+  }) async {
+    final result = await getTrendingRestaurants(
+      vibes: vibes,
+      experiences: experiences,
+      cuisines: cuisines,
+    ).first;
+
+    trendingRestaurants.assignAll(result);
+    hasInitialized.value = true;
+  }
+
+  void resetTrendingFlag() {
+    hasInitialized.value = false;
+  }
+
+//...............................
+
   final RxList<String> selectedVibes = <String>[].obs;
   final RxList<String> selectedExperiences = <String>[].obs;
   final RxList<String> selectedCuisines = <String>[].obs;
@@ -942,6 +970,23 @@ class HomeLocationController extends GetxController {
     );
   }
 
+//............Top rated solve filpering issue -----------------------
+
+  Rxn<Position> userPosition = Rxn<Position>();
+  Rxn<Map<String, dynamic>> featuredRestaurantMeta =
+      Rxn<Map<String, dynamic>>();
+
+  Future<void> loadTopRatedData() async {
+    try {
+      userPosition.value = await Geolocator.getCurrentPosition();
+      featuredRestaurantMeta.value = await getFeaturedRestaurantID().first;
+      allRestaurants.assignAll(await getAllRestaurants().first);
+    } catch (e) {
+      print("Error loading top rated data: $e");
+    }
+  }
+
+//....................
   Stream<Map<String, dynamic>?> getFeaturedRestaurantID() {
     return FirebaseFirestore.instance
         .collection('featured')
@@ -973,6 +1018,9 @@ class HomeLocationController extends GetxController {
 }
 
 
+
+
+///----------------- solve filpering problem----------------
 
 
 

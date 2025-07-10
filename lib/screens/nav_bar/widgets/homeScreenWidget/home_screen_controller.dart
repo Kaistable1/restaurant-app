@@ -6,15 +6,15 @@ class HomeFilterSearchController extends GetxController {
   var selectedCuisines = <String>[].obs;
 
   void setSelectedVibes(List<String> values) {
-    selectedVibes.value = values;
+    selectedVibes.assignAll(values);
   }
 
   void setSelectedExperiences(List<String> values) {
-    selectedExperiences.value = values;
+    selectedExperiences.assignAll(values);
   }
 
   void setSelectedCuisines(List<String> values) {
-    selectedCuisines.value = values;
+    selectedCuisines.assignAll(values);
   }
 
   void clearAll() {

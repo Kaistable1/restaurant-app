@@ -1,0 +1,62 @@
+{
+  "main_library": {
+    "exported_symbols": [
+      {
+        "data": {
+          "global": [
+            "_TIME_UNSET",
+            "_video_player_avfoundationVersionString",
+            "_video_player_avfoundationVersionNumber"
+          ],
+          "objc_class": [
+            "FVPMessagesPigeonCodecWriter",
+            "FVPTextureBasedVideoPlayer",
+            "FVPDisplayLink",
+            "FVPNativeVideoViewFactory",
+            "FVPPlatformVideoViewTypeBox",
+            "FVPNativeVideoView",
+            "FVPMessagesPigeonCodecReader",
+            "FVPDefaultAVFactory",
+            "FVPVideoPlayer",
+            "FVPFrameUpdater",
+            "FVPMessagesPigeonCodecReaderWriter",
+            "FVPDefaultDisplayLinkFactory",
+            "FVPCreationOptions",
+            "FVPVideoPlayerPlugin",
+            "FVPDisplayLinkTarget",
+            "FVPPlatformVideoViewCreationParams",
+            "PodsDummy_video_player_avfoundation",
+            "FVPPlayerView"
+          ]
+        },
+        "text": {
+          "global": [
+            "_FVPGetMessagesCodec",
+            "_FVPGetStandardizedTransformForTrack",
+            "_SetUpFVPAVFoundationVideoPlayerApi",
+            "_SetUpFVPAVFoundationVideoPlayerApiWithSuffix"
+          ]
+        }
+      }
+    ],
+    "flags": [
+      {
+        "attributes": [
+          "not_app_extension_safe"
+        ]
+      }
+    ],
+    "install_names": [
+      {
+        "name": "@rpath/video_player_avfoundation.framework/video_player_avfoundation"
+      }
+    ],
+    "target_info": [
+      {
+        "min_deployment": "12",
+        "target": "arm64-ios"
+      }
+    ]
+  },
+  "tapi_tbd_version": 5
+}

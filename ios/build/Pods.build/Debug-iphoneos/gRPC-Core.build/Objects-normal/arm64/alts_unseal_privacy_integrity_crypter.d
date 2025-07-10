@@ -1,0 +1,41 @@
+dependencies: \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/src/core/tsi/alts/frame_protector/alts_unseal_privacy_integrity_crypter.cc \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/Target\ Support\ Files/gRPC-Core/gRPC-Core-prefix.pch \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/support/alloc.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/support/port_platform.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/src/core/tsi/alts/frame_protector/alts_counter.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/grpc.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/byte_buffer.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/impl/grpc_types.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/impl/channel_arg_names.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/impl/compression_types.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/slice.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/impl/slice_type.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/support/sync.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/support/time.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/support/sync_generic.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/support/atm.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/support/atm_gcc_atomic.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/support/sync_posix.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/status.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/slice_buffer.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/impl/connectivity_state.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/impl/propagation_bits.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/src/core/tsi/alts/frame_protector/alts_crypter.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/src/core/tsi/alts/crypt/gsec.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/event_engine/port.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphoneos/abseil/absl.framework/Headers/types/span.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphoneos/abseil/absl.framework/Headers/base/attributes.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphoneos/abseil/absl.framework/Headers/base/config.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphoneos/abseil/absl.framework/Headers/base/options.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphoneos/abseil/absl.framework/Headers/base/policy_checks.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphoneos/abseil/absl.framework/Headers/base/internal/throw_delegate.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphoneos/abseil/absl.framework/Headers/base/macros.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphoneos/abseil/absl.framework/Headers/base/optimization.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphoneos/abseil/absl.framework/Headers/base/port.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphoneos/abseil/absl.framework/Headers/base/nullability.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphoneos/abseil/absl.framework/Headers/base/internal/nullability_impl.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphoneos/abseil/absl.framework/Headers/meta/type_traits.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphoneos/abseil/absl.framework/Headers/types/internal/span.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphoneos/abseil/absl.framework/Headers/algorithm/algorithm.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/src/core/tsi/alts/frame_protector/alts_record_protocol_crypter_common.h

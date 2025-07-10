@@ -256,164 +256,166 @@ class _MapDetailWidgetState extends State<MapDetailWidget> {
           ),
           child: Padding(
             padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Dialog Title
-                Center(
-                  child: Text(
-                    "Claim your business",
-                    style: TextStyle(
-                      fontFamily: 'Nunito-Regular',
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textColor,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 15),
-
-                // Name Field
-                Text("Your Name", style: _textStyle()), SizedBox(height: 10),
-                TextField(
-                  controller: nameController,
-                  decoration: _inputDecoration("Enter your name"),
-                ),
-                SizedBox(height: 10),
-
-                // Email Field
-                Text("Email", style: _textStyle()), SizedBox(height: 10),
-                TextField(
-                  controller: emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: _inputDecoration("Enter your email"),
-                ),
-                SizedBox(height: 10),
-                // Email Field
-                Text("Contact No.", style: _textStyle()), SizedBox(height: 10),
-                TextField(
-                  controller: contactController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: _inputDecoration("Enter your email"),
-                ),
-                SizedBox(height: 10),
-
-                // Message Field
-                Text("Message", style: _textStyle()), SizedBox(height: 10),
-                TextField(
-                  controller: messageController,
-                  maxLines: 3,
-                  decoration: _inputDecoration("Enter your message"),
-                ),
-                SizedBox(height: 20),
-
-                // Buttons Row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Cancel Button
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        "Cancel",
-                        style: TextStyle(
-                          fontFamily: 'Nunito-Regular',
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red,
-                        ),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Dialog Title
+                  Center(
+                    child: Text(
+                      "Claim your business",
+                      style: TextStyle(
+                        fontFamily: 'Nunito-Regular',
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textColor,
                       ),
                     ),
-
-                    // Submit Button (Same as your UI)
-                    CustomButton(
-                      laBelText: 'Submit',
-                      textColor: AppColors.whiteColor,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      width: Get.width * 0.3,
-                      height: 40,
-                      ontapp: () async {
-                        if (nameController.text.isEmpty ||
-                            emailController.text.isEmpty ||
-                            messageController.text.isEmpty ||
-                            contactController.text.isEmpty) {
-                          Get.snackbar('SAVRLY', 'Please fill all fields');
-                        } else {
-                          try {
-                            Navigator.pop(context);
-
-                            // Get reference and auto-generate doc
-                            final docRef = FirebaseFirestore.instance
-                                .collection('businessClaims')
-                                .doc();
-
-                            // Prepare data
-                            final data = {
-                              'id': docRef.id,
-                              'ownerName': nameController.text.trim(),
-                              'contact': contactController.text.trim(),
-                              'message': messageController.text.trim(),
-                              'createdAt': FieldValue.serverTimestamp(),
-                              'status': 'Pending',
-                              'about': resaturant_model.about,
-                              'address': resaturant_model.address,
-                              'atmopshereList': resaturant_model
-                                  .atmosphereList, // Empty array as per your data
-                              'averageRating': resaturant_model.averageRating,
-                              'city': resaturant_model.city,
-                              'country': resaturant_model.country,
-                              'dietaryList': [], // Empty array as per your data
-                              'resID': resaturant_model
-                                  .docID, // Will be set after adding the document
-                              'entertainmentScheduleList': resaturant_model
-                                  .entertainmentScheduleList, // Empty array as per your data
-                              'facilityList': resaturant_model
-                                  .facilityList, // Empty array as per your data
-                              'resImages': resaturant_model.imagesList,
-                              'latitude': resaturant_model
-                                  .latitude, // Hardcoded for now; you can add a map picker later
-                              'photoUrl': resaturant_model.logoImage,
-                              'longitude': resaturant_model
-                                  .longitude, // Hardcoded for now; you can add a map picker later
-                              'menuList': [], // Empty array as per your data
-                              'password': '',
-                              'priceRange':
-                                  '', // Hardcoded for now; you can add a field for this
-                              'email': emailController.text.trim(),
-                              'restaurantsName': resaturant_model.resName,
-                              'socialLink': resaturant_model.instaLink,
-                              'socialMedia': resaturant_model.tiktokLink,
-                              'specialConditions':
-                                  resaturant_model.specialConditions,
-                              'spokenLanguage': resaturant_model.spokenLanguage,
-                            };
-
-                            // Upload to Firestore
-                            await docRef.set(data);
-
-                            // Show success message
-                            Get.snackbar(
-                              'SAVRLY',
-                              'Your claim submitted successfully!',
-                              backgroundColor: Colors.green,
-                              colorText: Colors.white,
-                              maxWidth: 400,
-                            );
-                          } catch (e) {
-                            print('Error submitting claim: $e');
-                            Get.snackbar('Error',
-                                'Something went wrong. Please try again later.');
+                  ),
+                  SizedBox(height: 15),
+              
+                  // Name Field
+                  Text("Your Name", style: _textStyle()), SizedBox(height: 10),
+                  TextField(
+                    controller: nameController,
+                    decoration: _inputDecoration("Enter your name"),
+                  ),
+                  SizedBox(height: 10),
+              
+                  // Email Field
+                  Text("Email", style: _textStyle()), SizedBox(height: 10),
+                  TextField(
+                    controller: emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: _inputDecoration("Enter your email"),
+                  ),
+                  SizedBox(height: 10),
+                  // Email Field
+                  Text("Contact No.", style: _textStyle()), SizedBox(height: 10),
+                  TextField(
+                    controller: contactController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: _inputDecoration("Enter your email"),
+                  ),
+                  SizedBox(height: 10),
+              
+                  // Message Field
+                  Text("Message", style: _textStyle()), SizedBox(height: 10),
+                  TextField(
+                    controller: messageController,
+                    maxLines: 3,
+                    decoration: _inputDecoration("Enter your message"),
+                  ),
+                  SizedBox(height: 20),
+              
+                  // Buttons Row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Cancel Button
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(
+                            fontFamily: 'Nunito-Regular',
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ),
+              
+                      // Submit Button (Same as your UI)
+                      CustomButton(
+                        laBelText: 'Submit',
+                        textColor: AppColors.whiteColor,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        width: Get.width * 0.3,
+                        height: 40,
+                        ontapp: () async {
+                          if (nameController.text.isEmpty ||
+                              emailController.text.isEmpty ||
+                              messageController.text.isEmpty ||
+                              contactController.text.isEmpty) {
+                            Get.snackbar('SAVRLY', 'Please fill all fields');
+                          } else {
+                            try {
+                              Navigator.pop(context);
+              
+                              // Get reference and auto-generate doc
+                              final docRef = FirebaseFirestore.instance
+                                  .collection('businessClaims')
+                                  .doc();
+              
+                              // Prepare data
+                              final data = {
+                                'id': docRef.id,
+                                'ownerName': nameController.text.trim(),
+                                'contact': contactController.text.trim(),
+                                'message': messageController.text.trim(),
+                                'createdAt': FieldValue.serverTimestamp(),
+                                'status': 'Pending',
+                                'about': resaturant_model.about,
+                                'address': resaturant_model.address,
+                                'atmopshereList': resaturant_model
+                                    .atmosphereList, // Empty array as per your data
+                                'averageRating': resaturant_model.averageRating,
+                                'city': resaturant_model.city,
+                                'country': resaturant_model.country,
+                                'dietaryList': [], // Empty array as per your data
+                                'resID': resaturant_model
+                                    .docID, // Will be set after adding the document
+                                'entertainmentScheduleList': resaturant_model
+                                    .entertainmentScheduleList, // Empty array as per your data
+                                'facilityList': resaturant_model
+                                    .facilityList, // Empty array as per your data
+                                'resImages': resaturant_model.imagesList,
+                                'latitude': resaturant_model
+                                    .latitude, // Hardcoded for now; you can add a map picker later
+                                'photoUrl': resaturant_model.logoImage,
+                                'longitude': resaturant_model
+                                    .longitude, // Hardcoded for now; you can add a map picker later
+                                'menuList': [], // Empty array as per your data
+                                'password': '',
+                                'priceRange':
+                                    '', // Hardcoded for now; you can add a field for this
+                                'email': emailController.text.trim(),
+                                'restaurantsName': resaturant_model.resName,
+                                'socialLink': resaturant_model.instaLink,
+                                'socialMedia': resaturant_model.tiktokLink,
+                                'specialConditions':
+                                    resaturant_model.specialConditions,
+                                'spokenLanguage': resaturant_model.spokenLanguage,
+                              };
+              
+                              // Upload to Firestore
+                              await docRef.set(data);
+              
+                              // Show success message
+                              Get.snackbar(
+                                'SAVRLY',
+                                'Your claim submitted successfully!',
+                                backgroundColor: Colors.green,
+                                colorText: Colors.white,
+                                maxWidth: 400,
+                              );
+                            } catch (e) {
+                              print('Error submitting claim: $e');
+                              Get.snackbar('Error',
+                                  'Something went wrong. Please try again later.');
+                            }
                           }
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ],
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         );

@@ -1,0 +1,28 @@
+{
+  "" : {
+    "diagnostics" : "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseSharedSwift.build/Objects-normal/x86_64/FirebaseSharedSwift-master.dia",
+    "emit-module-dependencies" : "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseSharedSwift.build/Objects-normal/x86_64/FirebaseSharedSwift-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseSharedSwift.build/Objects-normal/x86_64/FirebaseSharedSwift-master-emit-module.dia",
+    "swift-dependencies" : "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseSharedSwift.build/Objects-normal/x86_64/FirebaseSharedSwift-master.swiftdeps"
+  },
+  "/Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseSharedSwift/FirebaseSharedSwift/Sources/FirebaseRemoteConfigValueDecoding.swift" : {
+    "const-values" : "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseSharedSwift.build/Objects-normal/x86_64/FirebaseRemoteConfigValueDecoding.swiftconstvalues",
+    "dependencies" : "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseSharedSwift.build/Objects-normal/x86_64/FirebaseRemoteConfigValueDecoding.d",
+    "diagnostics" : "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseSharedSwift.build/Objects-normal/x86_64/FirebaseRemoteConfigValueDecoding.dia",
+    "index-unit-output-path" : "/Pods.build/Debug-iphonesimulator/FirebaseSharedSwift.build/Objects-normal/x86_64/FirebaseRemoteConfigValueDecoding.o",
+    "llvm-bc" : "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseSharedSwift.build/Objects-normal/x86_64/FirebaseRemoteConfigValueDecoding.bc",
+    "object" : "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseSharedSwift.build/Objects-normal/x86_64/FirebaseRemoteConfigValueDecoding.o",
+    "swift-dependencies" : "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseSharedSwift.build/Objects-normal/x86_64/FirebaseRemoteConfigValueDecoding.swiftdeps",
+    "swiftmodule" : "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseSharedSwift.build/Objects-normal/x86_64/FirebaseRemoteConfigValueDecoding~partial.swiftmodule"
+  },
+  "/Users/macos/Downloads/restaurant-app/ios/Pods/FirebaseSharedSwift/FirebaseSharedSwift/Sources/third_party/FirebaseDataEncoder/FirebaseDataEncoder.swift" : {
+    "const-values" : "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseSharedSwift.build/Objects-normal/x86_64/FirebaseDataEncoder.swiftconstvalues",
+    "dependencies" : "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseSharedSwift.build/Objects-normal/x86_64/FirebaseDataEncoder.d",
+    "diagnostics" : "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseSharedSwift.build/Objects-normal/x86_64/FirebaseDataEncoder.dia",
+    "index-unit-output-path" : "/Pods.build/Debug-iphonesimulator/FirebaseSharedSwift.build/Objects-normal/x86_64/FirebaseDataEncoder.o",
+    "llvm-bc" : "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseSharedSwift.build/Objects-normal/x86_64/FirebaseDataEncoder.bc",
+    "object" : "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseSharedSwift.build/Objects-normal/x86_64/FirebaseDataEncoder.o",
+    "swift-dependencies" : "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseSharedSwift.build/Objects-normal/x86_64/FirebaseDataEncoder.swiftdeps",
+    "swiftmodule" : "/Users/macos/Downloads/restaurant-app/ios/build/Pods.build/Debug-iphonesimulator/FirebaseSharedSwift.build/Objects-normal/x86_64/FirebaseDataEncoder~partial.swiftmodule"
+  }
+}
