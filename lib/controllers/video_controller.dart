@@ -11,6 +11,8 @@ import 'package:video_player/video_player.dart';
 
 class VideoController extends GetxController {
   RxList<Map<String, dynamic>> videoDataList = <Map<String, dynamic>>[].obs;
+  RxList filteredVideoDataList = <Map<String, dynamic>>[].obs;
+
   List<VideoPlayerController> controllers = [];
 
   /// 🔧 Add this to keep unfiltered original data
@@ -31,22 +33,16 @@ class VideoController extends GetxController {
   var selectedVideoData = <String, dynamic>{}.obs;
   VideoPlayerController? selectedPlayer;
 
-
   // edit data
   var isEditMode = false.obs;
-Map<String, dynamic>? editInitialData;
-String? editDocId;
+  Map<String, dynamic>? editInitialData;
+  String? editDocId;
 
-void showEditMode(Map<String, dynamic> data, String docId) {
-  editInitialData = data;
-  editDocId = docId;
-  isEditMode.value = true;
-}
-
-
-
-
-
+  void showEditMode(Map<String, dynamic> data, String docId) {
+    editInitialData = data;
+    editDocId = docId;
+    isEditMode.value = true;
+  }
 
   @override
   void onInit() {
@@ -54,36 +50,106 @@ void showEditMode(Map<String, dynamic> data, String docId) {
     fetchVideos();
   }
 
-  void videoapplyFilters(
-      List<String> selectedVibes, List<String> selectedAtmospheres) {
+  // void videoapplyFilters(
+  //     List<String> selectedVibes, List<String> selectedAtmospheres, List<String> selectedCuisine,List<String> selectedExperience ){
+  //   final filteredVideos = originalVideoList.where((video) {
+  //     final vibe = video['vibes'];
+  //     final atmosphere = video['atmosphere'];
+  //       final cusine = video['causines'];
+  //         final experience = video['experience'];
+
+  //     final vibeMatch =
+  //         selectedVibes.isNotEmpty && selectedVibes.contains(vibe);
+  //     final atmosphereMatch = selectedAtmospheres.isNotEmpty &&
+  //         selectedAtmospheres.contains(atmosphere);
+
+  //          final cusineMatch = selectedCuisine.isNotEmpty &&
+  //         selectedCuisine.contains(cusine);
+
+  //          final experienceMatch = selectedExperience.isNotEmpty &&
+  //         selectedExperience.contains(experience);
+
+  //     // Agar user ne dono filter lagaye hain, toh koi ek match kare toh chalega
+  //     if (selectedVibes.isNotEmpty && selectedAtmospheres.isNotEmpty && selectedCuisine.isNotEmpty && selectedExperience.isNotEmpty) {
+  //       return vibeMatch || atmosphereMatch || cusineMatch || experienceMatch ;
+  //     }
+  //     // Agar sirf vibe filter lagaya hai
+  //     else if (selectedVibes.isNotEmpty) {
+  //       return vibeMatch;
+  //     }
+  //     // Agar sirf atmosphere filter lagaya hai
+  //     else if (selectedAtmospheres.isNotEmpty) {
+  //       return atmosphereMatch;
+  //     }
+  //     else if (selectedExperience.isNotEmpty) {
+  //       return experienceMatch;
+  //     }
+
+  //     else if (selectedCuisine.isNotEmpty) {
+  //       return cusineMatch;
+  //     }
+  //     // Agar koi filter nahi lagaya
+  //     else {
+  //       return true;
+  //     }
+  //   }).toList();
+
+  //   videoDataList.value = filteredVideos;
+  //   update();
+  // }
+
+  void applyAllFiltersAndSearch({
+    List<String>? selectedVibes,
+    List<String>? selectedAtmospheres,
+    List<String>? selectedCuisine,
+    List<String>? selectedExperience,
+    String searchQuery = '',
+  }) {
+    final query = searchQuery.toLowerCase();
+
     final filteredVideos = originalVideoList.where((video) {
-      final vibe = video['vibes'];
-      final atmosphere = video['atmosphere'];
+      final vibe = video['vibes'] ?? '';
+      final atmosphere = video['atmosphere'] ?? '';
+      final cuisine = video['causines'] ?? '';
+      final experience = video['experience'] ?? '';
+      final restaurantName = video['restaurantName'] ?? '';
 
-      final vibeMatch =
-          selectedVibes.isNotEmpty && selectedVibes.contains(vibe);
-      final atmosphereMatch = selectedAtmospheres.isNotEmpty &&
-          selectedAtmospheres.contains(atmosphere);
+      final vibeMatch = selectedVibes != null && selectedVibes.isNotEmpty
+          ? selectedVibes.contains(vibe)
+          : false;
 
-      // Agar user ne dono filter lagaye hain, toh koi ek match kare toh chalega
-      if (selectedVibes.isNotEmpty && selectedAtmospheres.isNotEmpty) {
-        return vibeMatch || atmosphereMatch;
-      }
-      // Agar sirf vibe filter lagaya hai
-      else if (selectedVibes.isNotEmpty) {
-        return vibeMatch;
-      }
-      // Agar sirf atmosphere filter lagaya hai
-      else if (selectedAtmospheres.isNotEmpty) {
-        return atmosphereMatch;
-      }
-      // Agar koi filter nahi lagaya
-      else {
-        return true;
-      }
+      final atmosphereMatch =
+          selectedAtmospheres != null && selectedAtmospheres.isNotEmpty
+              ? selectedAtmospheres.contains(atmosphere)
+              : false;
+
+      final cuisineMatch = selectedCuisine != null && selectedCuisine.isNotEmpty
+          ? selectedCuisine.contains(cuisine)
+          : false;
+
+      final experienceMatch =
+          selectedExperience != null && selectedExperience.isNotEmpty
+              ? selectedExperience.contains(experience)
+              : false;
+
+      final nameMatch = restaurantName.toLowerCase().contains(query);
+
+      // Match filters using OR logic + must match search query
+      final filtersActive = selectedVibes!.isNotEmpty ||
+          selectedAtmospheres!.isNotEmpty ||
+          selectedCuisine!.isNotEmpty ||
+          selectedExperience!.isNotEmpty;
+
+      return nameMatch &&
+          (!filtersActive ||
+              vibeMatch ||
+              atmosphereMatch ||
+              cuisineMatch ||
+              experienceMatch);
     }).toList();
 
-    videoDataList.value = filteredVideos;
+    filteredVideoDataList
+        .assignAll(filteredVideos); // <- make sure to update this one
     update();
   }
 
@@ -97,6 +163,28 @@ void showEditMode(Map<String, dynamic> data, String docId) {
     videoPlayerController.value = null;
     isUploading.value = false;
     uploadProgress.value = 0.0;
+  }
+
+void loadVideos(List<Map<String, dynamic>> fetchedVideos) {
+  originalVideoList = fetchedVideos;
+  videoDataList.assignAll(fetchedVideos);         // ✅ required
+  filteredVideoDataList.assignAll(fetchedVideos); // ✅ required
+  update(); // if using GetBuilder
+}
+
+
+
+  void filterByRestaurantName(String query) {
+    if (query.isEmpty) {
+      filteredVideoDataList.assignAll(videoDataList);
+    } else {
+      filteredVideoDataList.assignAll(
+        videoDataList.where((video) => (video['restaurantName'] ?? '')
+            .toString()
+            .toLowerCase()
+            .contains(query.toLowerCase())),
+      );
+    }
   }
 
   void showViewMode(
@@ -149,6 +237,53 @@ void showEditMode(Map<String, dynamic> data, String docId) {
   //   update(); // notify UI
   // }
 
+  // Future<void> fetchVideos() async {
+  //   final snapshot = await FirebaseFirestore.instance
+  //       .collection('videos')
+  //       .orderBy('timestamp', descending: true)
+  //       .get();
+
+  //   // Dispose old controllers
+  //   for (var controller in controllers) {
+  //     controller.dispose();
+  //   }
+
+  //   final fetchedList = snapshot.docs
+  //       .map((doc) => {'id': doc.id, ...doc.data()})
+  //       .cast<Map<String, dynamic>>()
+  //       .toList();
+
+  //   /// 🔧 Save the unfiltered original list
+  //   originalVideoList = fetchedList;
+
+  //   /// 🔧 Show all videos initially
+  //   videoDataList.value = List<Map<String, dynamic>>.from(originalVideoList);
+
+  //   controllers.clear();
+
+  //   for (var data in videoDataList) {
+  //     final controller = VideoPlayerController.network(data['url']);
+  //     await controller.initialize();
+
+  //     controller.addListener(() {
+  //       final isFinished =
+  //           controller.value.position >= controller.value.duration &&
+  //               !controller.value.isPlaying;
+
+  //       if (isFinished) {
+  //         controller.pause();
+  //         controller.seekTo(Duration.zero);
+  //         update();
+  //       }
+  //     });
+
+  //     controller.setLooping(false);
+  //     controllers.add(controller);
+  //   }
+
+  //   update(); // notify UI
+  // }
+
   Future<void> fetchVideos() async {
     final snapshot = await FirebaseFirestore.instance
         .collection('videos')
@@ -168,8 +303,8 @@ void showEditMode(Map<String, dynamic> data, String docId) {
     /// 🔧 Save the unfiltered original list
     originalVideoList = fetchedList;
 
-    /// 🔧 Show all videos initially
-    videoDataList.value = List<Map<String, dynamic>>.from(originalVideoList);
+    /// 🔧 ✅ Use loadVideos instead of setting manually
+    loadVideos(fetchedList);
 
     controllers.clear();
 
@@ -209,8 +344,6 @@ void showEditMode(Map<String, dynamic> data, String docId) {
     controllers[index].dispose();
     await fetchVideos();
   }
-
-
 
   Future<void> pickVideo(BuildContext context) async {
     try {
@@ -270,52 +403,49 @@ void showEditMode(Map<String, dynamic> data, String docId) {
     }
   }
 
+  Future<Map<String, String>> uploadVideoOnly(
+      {required XFile pickedFile}) async {
+    try {
+      isUploading.value = true;
+      uploadProgress.value = 0.0;
 
+      final fileName =
+          'videos/${DateTime.now().millisecondsSinceEpoch}_${pickedFile.name}';
+      final ref = FirebaseStorage.instance.ref().child(fileName);
 
+      final uploadTask = ref.putData(await pickedFile.readAsBytes());
 
+      uploadTask.snapshotEvents.listen((event) {
+        uploadProgress.value =
+            (event.bytesTransferred / event.totalBytes).clamp(0.0, 1.0);
+      });
 
-Future<Map<String, String>> uploadVideoOnly({required XFile pickedFile}) async {
-  try {
-    isUploading.value = true;
-    uploadProgress.value = 0.0;
+      final snapshot = await uploadTask;
 
-    final fileName =
-        'videos/${DateTime.now().millisecondsSinceEpoch}_${pickedFile.name}';
-    final ref = FirebaseStorage.instance.ref().child(fileName);
-
-    final uploadTask = ref.putData(await pickedFile.readAsBytes());
-
-    uploadTask.snapshotEvents.listen((event) {
-      uploadProgress.value =
-          (event.bytesTransferred / event.totalBytes).clamp(0.0, 1.0);
-    });
-
-    final snapshot = await uploadTask;
-
-    if (snapshot.state == TaskState.success) {
-      final downloadUrl = await ref.getDownloadURL();
-      return {
-        'url': downloadUrl,
-        'fileName': pickedFile.name,
-      };
-    } else {
-      throw Exception('Upload failed');
+      if (snapshot.state == TaskState.success) {
+        final downloadUrl = await ref.getDownloadURL();
+        return {
+          'url': downloadUrl,
+          'fileName': pickedFile.name,
+        };
+      } else {
+        throw Exception('Upload failed');
+      }
+    } catch (e) {
+      throw Exception("Video upload failed: $e");
+    } finally {
+      isUploading.value = false;
+      uploadProgress.value = 0.0;
     }
-  } catch (e) {
-    throw Exception("Video upload failed: $e");
-  } finally {
-    isUploading.value = false;
-    uploadProgress.value = 0.0;
   }
-}
-
-
-
 
   Future<void> uploadVideo({
     required BuildContext context,
     required String restaurantName,
-    required String location,
+ required String streetNo,
+    required String city,
+    required String zipCode,
+    required String State,
     String? restaurantType,
     String? causine,
     String? vibes,
@@ -357,7 +487,10 @@ Future<Map<String, String>> uploadVideoOnly({required XFile pickedFile}) async {
           'url': downloadUrl,
           'fileName': pickedVideo.value!.name,
           'restaurantName': restaurantName,
-          'location': location,
+          'streetNo':streetNo,
+          'state': State,
+          'city':city,
+          'zipCode': zipCode,
           'restaurantType': restaurantType,
           'vibes': vibes,
           'atmosphere': atmosphere,

@@ -5,7 +5,11 @@ class VideoItem {
   final String url;
   final String caption;
   final String restaurantName;
-  final String restaurantAddress;
+  final String sreetNo;
+  final String city;
+  final String state;
+  final String zipCode;
+
   VideoPlayerController? controller;
 
   VideoItem({
@@ -13,7 +17,10 @@ class VideoItem {
     required this.url,
     required this.caption,
     required this.restaurantName,
-    required this.restaurantAddress,
+    required this.sreetNo,
+    required this.city,
+    required this.state,
+    required this.zipCode,
     this.controller,
   });
 }

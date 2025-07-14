@@ -1250,7 +1250,11 @@ class UploadVideoForm extends StatefulWidget {
 
 class _UploadVideoFormState extends State<UploadVideoForm> {
   final nameController = TextEditingController();
-  final locationController = TextEditingController();
+  final streetController = TextEditingController();
+  final cityController = TextEditingController();
+  final stateController = TextEditingController();
+  final zipCodeController = TextEditingController();
+
   final videoController = Get.find<VideoController>();
   String? selectedRestaurant;
   String? selectCusine;
@@ -1259,7 +1263,11 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
   String? selectExperience;
 
   bool showNameError = false;
-  bool showLocationError = false;
+  bool showCityError = false;
+  bool showStateError = false;
+  bool showStreetError = false;
+  bool showZipcodeError = false;
+
   bool showVideoError = false;
 
   final List<String> restaurants = [
@@ -1326,7 +1334,12 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
 
     if (widget.isEdit && widget.initialData != null) {
       nameController.text = widget.initialData!['restaurantName'] ?? '';
-      locationController.text = widget.initialData!['location'] ?? '';
+      streetController.text = widget.initialData!['sreetNo'] ?? '';
+
+      cityController.text = widget.initialData!['city'] ?? '';
+      stateController.text = widget.initialData!['state'] ?? '';
+      zipCodeController.text = widget.initialData!['zipCode'] ?? '';
+
       selectedRestaurant =
           restaurants.contains(widget.initialData!['restaurantType'])
               ? widget.initialData!['restaurantType']
@@ -1371,20 +1384,31 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
   @override
   void dispose() {
     nameController.dispose();
-    locationController.dispose();
+    streetController.dispose();
+    cityController.dispose();
+    stateController.dispose();
+    zipCodeController.dispose();
+
     super.dispose();
   }
 
   void clearFormFields() {
     nameController.clear();
-    locationController.clear();
+    streetController.clear();
+    stateController.clear();
+    cityController.clear();
+    zipCodeController.clear();
+
     selectedRestaurant = null;
     selectAtmosphere = null;
     selectCusine = null;
     selectExperience = null;
     selectVibes = null;
     showNameError = false;
-    showLocationError = false;
+    showStreetError = false;
+    showStateError = false;
+    showCityError = false;
+    showZipcodeError = false;
     showVideoError = false;
   }
 
@@ -1571,8 +1595,12 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
             _buildTextField(
                 nameController, "Kaistable", "Restaurant name", showNameError),
             const SizedBox(height: 16),
-            _buildTextField(locationController, "United States, uncategorized.",
-                "Location", showLocationError),
+            _buildTextField(
+                streetController, "Street no", "Address", showStreetError),
+            _buildTextField(cityController, "City", "", showCityError),
+            _buildTextField(stateController, "State", "", showStateError),
+            _buildTextField(
+                zipCodeController, "Zip code", "", showZipcodeError),
             const SizedBox(height: 16),
             _buildDropdown("Restaurant", selectedRestaurant, restaurants,
                 (value) {
@@ -1605,8 +1633,15 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
                     height: 47,
                     child: TextButton(
                       onPressed: () {
+                        if (widget.isEdit) {
+                          // Edit mode ke liye flag off karein
+                          videoController.isEditMode.value = false;
+                        } else {
+                          // Add mode ke liye flag toggle karein
+                          videoController.toggleUploadMode();
+                        }
+                        // Dono case mein controller clear karein
                         videoController.clearSelection();
-                        videoController.toggleUploadMode();
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.transparent,
@@ -1636,14 +1671,23 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
                             : () async {
                                 setState(() {
                                   showNameError = nameController.text.isEmpty;
-                                  showLocationError =
-                                      locationController.text.isEmpty;
+
+                                  showStreetError =
+                                      streetController.text.isEmpty;
+                                  showStateError = stateController.text.isEmpty;
+                                  showCityError = cityController.text.isEmpty;
+                                  showZipcodeError =
+                                      zipCodeController.text.isEmpty;
+
                                   showVideoError = !widget.isEdit &&
                                       videoController.pickedVideo.value == null;
                                 });
 
                                 if (showNameError ||
-                                    showLocationError ||
+                                    showStreetError ||
+                                    showStateError ||
+                                    showCityError ||
+                                    showZipcodeError ||
                                     showVideoError) return;
 
                                 if (widget.isEdit) {
@@ -1671,7 +1715,10 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
                                       .doc(widget.docId)
                                       .update({
                                     'restaurantName': nameController.text,
-                                    'location': locationController.text,
+                                    'state': stateController.text,
+                                    'streetNo': streetController.text,
+                                    'city': cityController.text,
+                                    'zipCode': zipCodeController.text,
                                     'restaurantType': selectedRestaurant,
                                     'causines': selectCusine,
                                     'vibes': selectVibes,
@@ -1702,7 +1749,10 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
                                   await videoController.uploadVideo(
                                     context: context,
                                     restaurantName: nameController.text,
-                                    location: locationController.text,
+                                    streetNo: streetController.text,
+                                    State: stateController.text,
+                                    zipCode: zipCodeController.text,
+                                    city: cityController.text,
                                     restaurantType: selectedRestaurant,
                                     atmosphere: selectAtmosphere,
                                     causine: selectCusine,

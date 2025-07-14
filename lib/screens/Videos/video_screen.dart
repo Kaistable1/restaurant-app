@@ -1989,15 +1989,32 @@ class AdminVideoPanel extends StatelessWidget {
                                       );
                                     }),
 ////////////
-                                      Divider(),
+                                    Divider(),
                                     Text('Cuisine',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold)),
                                     Obx(() {
                                       final CuisineList = [
-                                        'Outdoor',
-                                        'Indoor',
-                                        'Rooftop'
+                                        "American",
+                                        "Mexican",
+                                        "Italian",
+                                        "French",
+                                        "Chinese",
+                                        "Japanese",
+                                        "Thai",
+                                        "Indian",
+                                        "Korean",
+                                        "Vietnamese",
+                                        "Mediterranean",
+                                        "Caribbean",
+                                        "African",
+                                        "Middle Eastern",
+                                        "Spanish",
+                                        "Filipino",
+                                        "Brazilian",
+                                        "Peruvian",
+                                        "Russian",
+                                        "German",
                                       ];
                                       return Column(
                                         children: CuisineList.map((atm) {
@@ -2005,10 +2022,10 @@ class AdminVideoPanel extends StatelessWidget {
                                             title: Text(atm,
                                                 style: TextStyle(fontSize: 12)),
                                             value: filterController
-                                                .selectedAtmosphere
+                                                .selectedCuisine
                                                 .contains(atm),
                                             onChanged: (_) => filterController
-                                                .toggleAtmosphere(atm),
+                                                .toggleCuisine(atm),
                                             dense: true,
                                             controlAffinity:
                                                 ListTileControlAffinity.leading,
@@ -2017,15 +2034,22 @@ class AdminVideoPanel extends StatelessWidget {
                                       );
                                     }),
 
-                                      Divider(),
+                                    Divider(),
                                     Text('Experience',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold)),
                                     Obx(() {
                                       final experienceList = [
-                                        'Outdoor',
-                                        'Indoor',
-                                        'Rooftop'
+                                        "Live Music",
+                                        "Dj Night",
+                                        "Silent Party",
+                                        "Karaoke",
+                                        "Trivia Nights",
+                                        "Sports screenings",
+                                        "Hookah",
+                                        "Sip & Paint",
+                                        "Ladies Night",
+                                        "RnB Night"
                                       ];
                                       return Column(
                                         children: experienceList.map((atm) {
@@ -2033,10 +2057,10 @@ class AdminVideoPanel extends StatelessWidget {
                                             title: Text(atm,
                                                 style: TextStyle(fontSize: 12)),
                                             value: filterController
-                                                .selectedAtmosphere
+                                                .selectedExperience
                                                 .contains(atm),
                                             onChanged: (_) => filterController
-                                                .toggleAtmosphere(atm),
+                                                .toggleExperience(atm),
                                             dense: true,
                                             controlAffinity:
                                                 ListTileControlAffinity.leading,
@@ -2044,9 +2068,6 @@ class AdminVideoPanel extends StatelessWidget {
                                         }).toList(),
                                       );
                                     }),
-
-
-
 
                                     Row(
                                       mainAxisAlignment:
@@ -2055,20 +2076,44 @@ class AdminVideoPanel extends StatelessWidget {
                                         TextButton(
                                           onPressed: () {
                                             filterController.clearFilters();
-                                            videoController.videoapplyFilters(
-                                                [], []); // Update to match
+                                            videoController
+                                                .applyAllFiltersAndSearch(
+                                              selectedVibes: [],
+                                              selectedAtmospheres: [],
+                                              selectedCuisine: [],
+                                              selectedExperience: [],
+                                            ); // Update to match
                                             Navigator.pop(context);
                                           },
                                           child: Text("Clear"),
                                         ),
                                         ElevatedButton(
                                           onPressed: () {
-                                            videoController.videoapplyFilters(
-                                              filterController.selectedVibes,
-                                              filterController
-                                                  .selectedAtmosphere,
+                                            videoController
+                                                .applyAllFiltersAndSearch(
+                                              selectedVibes: filterController
+                                                  .selectedVibes,
+                                              selectedAtmospheres:
+                                                  filterController
+                                                      .selectedAtmosphere,
+                                              selectedCuisine: filterController
+                                                  .selectedCuisine,
+                                              selectedExperience:
+                                                  filterController
+                                                      .selectedExperience,
+                                              searchQuery: searchController
+                                                  .text, // 👈 pass search too
                                             );
                                             Navigator.pop(context);
+                                            // videoController.videoapplyFilters(
+                                            //   filterController.selectedVibes,
+                                            //   filterController
+                                            //       .selectedAtmosphere,
+                                            //   filterController.selectedCuisine,
+                                            //   filterController
+                                            //       .selectedExperience,
+                                            // );
+                                            //  Navigator.pop(context);
                                           },
                                           child: Text("Apply"),
                                         ),
@@ -2080,6 +2125,15 @@ class AdminVideoPanel extends StatelessWidget {
                             ],
                           ),
                           onChanged: (value) {
+                            videoController.applyAllFiltersAndSearch(
+                              selectedVibes: filterController.selectedVibes,
+                              selectedAtmospheres:
+                                  filterController.selectedAtmosphere,
+                              selectedCuisine: filterController.selectedCuisine,
+                              selectedExperience:
+                                  filterController.selectedExperience,
+                              searchQuery: value!,
+                            );
                             // Trigger search logic when search text changes
                           },
                         ),
@@ -2087,7 +2141,7 @@ class AdminVideoPanel extends StatelessWidget {
                     ),
                     GetBuilder<VideoController>(
                       builder: (controller) {
-                        final videoDataList = controller.videoDataList;
+                        final videoDataList = controller.filteredVideoDataList;
                         final controllers = controller.controllers;
                         if (controllers.isEmpty) {
                           return const Expanded(
@@ -2248,7 +2302,7 @@ class AdminVideoPanel extends StatelessWidget {
                                                   data, controller);
                                             } else if (value == 'edit') {
                                               videoController.clearSelection();
-                                           
+
                                               videoController.showEditMode(
                                                   data, data['id']);
                                               // Handle edit action

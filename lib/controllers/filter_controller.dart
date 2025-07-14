@@ -51,7 +51,7 @@ class FilterController extends GetxController {
     selectedVibes.clear();
     selectedAtmosphere.clear();
     selectedExperience.clear();
-    selectedAtmosphere.clear();
+    selectedCuisine.clear();
 
 
   }
