@@ -141,7 +141,12 @@ class _ViewVideoState extends State<ViewVideo> {
                 children: [
                   infoRow(
                       'Restaurant name:', widget.videoData['restaurantName']),
-                  infoRow('Location:', widget.videoData['location']),
+                  infoRow(
+                    'Location:',
+                    '${widget.videoData['city'] ?? 'Uncategorized'}, '
+                        '${widget.videoData['state'] ?? 'Uncategorized'} '
+                        '${widget.videoData['zipCode'] ?? ''}',
+                  ),
                   infoRow('Posted Date:',
                       formatDate(widget.videoData['timestamp'])),
                   infoRow('Posted Time:',

@@ -1994,10 +1994,13 @@ class _AdminVideoPanelState extends State<AdminVideoPanel> {
                                               if (expandedSections[
                                                   'Vibes']!) ...[
                                                 ...[
-                                                  'Live Music',
-                                                  'Romantic',
-                                                  'Family',
-                                                  'Casual'
+                                                  "Brunch Party",
+                                                  "Bottomless Brunch",
+                                                  "Day Party",
+                                                  "Pool Party",
+                                                  "Happy Hours",
+                                                  "Open Bar",
+                                                  "Rooftop Vibes"
                                                 ].map((vibe) {
                                                   return CheckboxListTile(
                                                     activeColor:
@@ -2052,9 +2055,12 @@ class _AdminVideoPanelState extends State<AdminVideoPanel> {
                                               if (expandedSections[
                                                   'Atmosphere']!) ...[
                                                 ...[
-                                                  'Outdoor',
-                                                  'Indoor',
-                                                  'Rooftop'
+                                                  "Casual Dining",
+                                                  "Fine Dining",
+                                                  "Fast Food",
+                                                  "Date Night",
+                                                  "Candlelit",
+                                                  "Outdoor",
                                                 ].map((item) {
                                                   return CheckboxListTile(
                                                     activeColor:
@@ -2116,7 +2122,17 @@ class _AdminVideoPanelState extends State<AdminVideoPanel> {
                                                   "Thai",
                                                   "Indian",
                                                   "Korean",
-                                                  "Vietnamese"
+                                                  "Vietnamese",
+                                                  "Mediterranean",
+                                                  "Caribbean",
+                                                  "African",
+                                                  "Middle Eastern",
+                                                  "Spanish",
+                                                  "Filipino",
+                                                  "Brazilian",
+                                                  "Peruvian",
+                                                  "Russian",
+                                                  "German",
                                                 ].map((item) {
                                                   return CheckboxListTile(
                                                     activeColor:
@@ -2305,13 +2321,19 @@ class _AdminVideoPanelState extends State<AdminVideoPanel> {
                         ),
                       ),
                     ),
+                    SizedBox(
+                      height: 30,
+                    ),
                     GetBuilder<VideoController>(
                       builder: (controller) {
                         final videoDataList = controller.filteredVideoDataList;
                         final controllers = controller.controllers;
                         if (controllers.isEmpty) {
                           return const Expanded(
-                            child: Center(child: CircularProgressIndicator(color: primaryColor,)),
+                            child: Center(
+                                child: CircularProgressIndicator(
+                              color: primaryColor,
+                            )),
                           );
                         }
 
@@ -2380,7 +2402,9 @@ class _AdminVideoPanelState extends State<AdminVideoPanel> {
                                                     )
                                                   : const Center(
                                                       child:
-                                                          CircularProgressIndicator(color: primaryColor,)),
+                                                          CircularProgressIndicator(
+                                                      color: primaryColor,
+                                                    )),
                                               Container(
                                                   color: Colors.black
                                                       .withOpacity(0.2)),
@@ -2410,7 +2434,7 @@ class _AdminVideoPanelState extends State<AdminVideoPanel> {
                                   const SizedBox(height: 4),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 4.0),
+                                        horizontal: 4.0,vertical: 10),
                                     child: Row(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
