@@ -123,8 +123,8 @@ class CustomDrawer extends StatelessWidget {
                   ),
                   _buildDrawerItem(
                     controller,
-                    'assets/images/sub_admin_icon.png',
-                    'assets/images/selected_sub_admin_icon.png',
+                    'assets/images/videoIcon.png',
+                    'assets/images/videoIcon.png',
                     6,
                     "Videos",
                     iconSize,

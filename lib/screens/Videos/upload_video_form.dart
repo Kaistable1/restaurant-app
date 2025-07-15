@@ -1229,6 +1229,9 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:savrly/constants/app_colors.dart';
+import 'package:savrly/constants/text_styles.dart';
+import 'package:savrly/models/resaturant_model.dart';
 import 'package:video_player/video_player.dart';
 import 'package:savrly/controllers/video_controller.dart';
 
@@ -1270,12 +1273,8 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
 
   bool showVideoError = false;
 
-  final List<String> restaurants = [
-    'Kristalle',
-    'Bistro',
-    'Cafe Delight',
-    'The Grill'
-  ];
+// 1. Add this to your state class
+  List<RestaurantModel> allRestaurants = [];
   final List<String> causine = [
     "American",
     "Mexican",
@@ -1331,19 +1330,21 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
   @override
   void initState() {
     super.initState();
+    FirebaseFirestore.instance.collection('restaurants').get().then((snapshot) {
+      setState(() {
+        allRestaurants = snapshot.docs
+            .map((doc) => RestaurantModel.fromDocumentSnapshot(doc))
+            .toList();
+      });
+    });
 
     if (widget.isEdit && widget.initialData != null) {
       nameController.text = widget.initialData!['restaurantName'] ?? '';
-      streetController.text = widget.initialData!['sreetNo'] ?? '';
+      streetController.text = widget.initialData!['streetNo'] ?? '';
 
       cityController.text = widget.initialData!['city'] ?? '';
       stateController.text = widget.initialData!['state'] ?? '';
       zipCodeController.text = widget.initialData!['zipCode'] ?? '';
-
-      selectedRestaurant =
-          restaurants.contains(widget.initialData!['restaurantType'])
-              ? widget.initialData!['restaurantType']
-              : null;
 
       selectCusine = causine.contains(widget.initialData!['causines'])
           ? widget.initialData!['causines']
@@ -1412,6 +1413,32 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
     showVideoError = false;
   }
 
+  Widget _buildDropdown(String hint, String? value, List<String> options,
+      ValueChanged<String?> onChanged) {
+    return SizedBox(
+      width: 604,
+      height: 56,
+      child: DropdownButtonFormField<String>(
+        decoration: InputDecoration(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30),
+            borderSide: const BorderSide(color: Colors.black),
+          ),
+        ),
+        value: value,
+        hint: Text(
+          hint,
+          style: simpleText.copyWith(fontSize: 14, fontWeight: FontWeight.w500),
+        ),
+        onChanged: onChanged,
+        items: options
+            .map((e) => DropdownMenuItem<String>(value: e, child: Text(e)))
+            .toList(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1438,7 +1465,6 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
             child: Center(
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            const SizedBox(height: 40),
             Obx(() {
               final hasVideo =
                   videoController.videoPlayerController.value != null &&
@@ -1565,17 +1591,31 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
                             )
                           : Column(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                SizedBox(height: 12),
-                                Text("Upload video",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18)),
+                              children: [
+                                Text(
+                                  "Upload video",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                Divider(
+                                  color: Colors.black,
+                                  thickness: 1,
+                                ),
                                 SizedBox(height: 24),
-                                Icon(Icons.upload_rounded, size: 40),
-                                SizedBox(height: 20),
-                                Text("upload  video here",
-                                    style: TextStyle(fontSize: 16)),
+                                Image.asset(
+                                  "assets/images/uploadIcon.png", // Your custom image
+                                  width: 82,
+                                  height: 82,
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  "upload video here",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                  ),
+                                ),
                               ],
                             ),
                     ),
@@ -1591,34 +1631,45 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
                 ],
               );
             }),
+
             const SizedBox(height: 30),
+
             _buildTextField(
-                nameController, "Kaistable", "Restaurant name", showNameError),
-            const SizedBox(height: 16),
+              nameController,
+              "Kaistable",
+              "Restaurant name",
+              showNameError,
+              prefixIcon: Icons.search,
+            ),
+
+            // No SizedBox here (Image shows no gap)
+            SizedBox(
+              height: 20,
+            ),
             _buildTextField(
                 streetController, "Street no", "Address", showStreetError),
             _buildTextField(cityController, "City", "", showCityError),
             _buildTextField(stateController, "State", "", showStateError),
             _buildTextField(
                 zipCodeController, "Zip code", "", showZipcodeError),
-            const SizedBox(height: 16),
-            _buildDropdown("Restaurant", selectedRestaurant, restaurants,
-                (value) {
-              setState(() => selectedRestaurant = value);
-            }),
-            const SizedBox(height: 16),
+
+            SizedBox(height: 30), // Equal spacing between address and dropdowns
+
             _buildDropdown("Cuisine", selectCusine, causine, (value) {
               setState(() => selectCusine = value);
             }),
-            const SizedBox(height: 16),
-            _buildDropdown("Vibes", selectVibes, vibes, (value) {
-              setState(() => selectVibes = value);
-            }),
-            const SizedBox(height: 16),
+            SizedBox(height: 20),
+
             _buildDropdown("Atmosphere", selectAtmosphere, atmosphere, (value) {
               setState(() => selectAtmosphere = value);
             }),
-            const SizedBox(height: 16),
+            SizedBox(height: 20),
+
+            _buildDropdown("Vibes", selectVibes, vibes, (value) {
+              setState(() => selectVibes = value);
+            }),
+            SizedBox(height: 20),
+
             _buildDropdown("Experience", selectExperience, experinece, (value) {
               setState(() => selectExperience = value);
             }),
@@ -1628,160 +1679,165 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox(
-                    width: 136,
-                    height: 47,
-                    child: TextButton(
-                      onPressed: () {
-                        if (widget.isEdit) {
-                          // Edit mode ke liye flag off karein
-                          videoController.isEditMode.value = false;
-                        } else {
-                          // Add mode ke liye flag toggle karein
-                          videoController.toggleUploadMode();
-                        }
-                        // Dono case mein controller clear karein
-                        videoController.clearSelection();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: SizedBox(
+                      width: 136,
+                      height: 47,
+                      child: TextButton(
+                        onPressed: () {
+                          if (widget.isEdit) {
+                            // Edit mode ke liye flag off karein
+                            videoController.isEditMode.value = false;
+                          } else {
+                            // Add mode ke liye flag toggle karein
+                            videoController.toggleUploadMode();
+                          }
+                          // Dono case mein controller clear karein
+                          videoController.clearSelection();
+                        },
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          minimumSize: Size(136, 47),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
-                        padding: EdgeInsets.symmetric(horizontal: 20),
-                        alignment: Alignment.centerLeft,
-                      ),
-                      child: const Text(
-                        "Cancel",
-                        style: TextStyle(
-                            color: Colors.red,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 18),
+                        child: const Text(
+                          "Cancel",
+                          style: TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 18),
+                        ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 16),
                   Obx(
-                    () => SizedBox(
-                      width: 136,
-                      height: 40,
-                      child: ElevatedButton(
-                        onPressed: videoController.isUploading.value
-                            ? null
-                            : () async {
-                                setState(() {
-                                  showNameError = nameController.text.isEmpty;
+                    () => Align(
+                      alignment: Alignment.centerRight,
+                      child: SizedBox(
+                        width: 150,
+                        height: 40,
+                        child: ElevatedButton(
+                          onPressed: videoController.isUploading.value
+                              ? null
+                              : () async {
+                                  setState(() {
+                                    showNameError = nameController.text.isEmpty;
 
-                                  showStreetError =
-                                      streetController.text.isEmpty;
-                                  showStateError = stateController.text.isEmpty;
-                                  showCityError = cityController.text.isEmpty;
-                                  showZipcodeError =
-                                      zipCodeController.text.isEmpty;
+                                    showStreetError =
+                                        streetController.text.isEmpty;
+                                    showStateError =
+                                        stateController.text.isEmpty;
+                                    showCityError = cityController.text.isEmpty;
+                                    showZipcodeError =
+                                        zipCodeController.text.isEmpty;
 
-                                  showVideoError = !widget.isEdit &&
-                                      videoController.pickedVideo.value == null;
-                                });
-
-                                if (showNameError ||
-                                    showStreetError ||
-                                    showStateError ||
-                                    showCityError ||
-                                    showZipcodeError ||
-                                    showVideoError) return;
-
-                                if (widget.isEdit) {
-                                  String? newVideoUrl;
-                                  String? newFileName;
-
-                                  // ✅ Instantly exit the edit form BEFORE doing any backend work
-                                  videoController.isEditMode.value = false;
-                                  videoController.isUploadMode.value = false;
-                                  // 👇 Check if user selected new video
-                                  if (videoController.pickedVideo.value !=
-                                      null) {
-                                    final result =
-                                        await videoController.uploadVideoOnly(
-                                      pickedFile:
-                                          videoController.pickedVideo.value!,
-                                    );
-                                    newVideoUrl = result['url'];
-                                    newFileName = result['fileName'];
-                                  }
-
-                                  // ✅ Update Firestore
-                                  await FirebaseFirestore.instance
-                                      .collection('videos')
-                                      .doc(widget.docId)
-                                      .update({
-                                    'restaurantName': nameController.text,
-                                    'state': stateController.text,
-                                    'streetNo': streetController.text,
-                                    'city': cityController.text,
-                                    'zipCode': zipCodeController.text,
-                                    'restaurantType': selectedRestaurant,
-                                    'causines': selectCusine,
-                                    'vibes': selectVibes,
-                                    'atmosphere': selectAtmosphere,
-                                    'experience': selectExperience,
-                                    'timestamp': Timestamp.now(),
-                                    if (newVideoUrl != null) 'url': newVideoUrl,
-                                    if (newFileName != null)
-                                      'fileName': newFileName,
+                                    showVideoError = !widget.isEdit &&
+                                        videoController.pickedVideo.value ==
+                                            null;
                                   });
 
-                                  await videoController.fetchVideos();
+                                  if (showNameError ||
+                                      showStreetError ||
+                                      showStateError ||
+                                      showCityError ||
+                                      showZipcodeError ||
+                                      showVideoError) return;
 
-                                  videoController.clearSelection();
+                                  if (widget.isEdit) {
+                                    String? newVideoUrl;
+                                    String? newFileName;
 
-                                  setState(() {
-                                    clearFormFields();
-                                  });
+                                    // ✅ Instantly exit the edit form BEFORE doing any backend work
+                                    videoController.isEditMode.value = false;
+                                    videoController.isUploadMode.value = false;
+                                    // 👇 Check if user selected new video
+                                    if (videoController.pickedVideo.value !=
+                                        null) {
+                                      final result =
+                                          await videoController.uploadVideoOnly(
+                                        pickedFile:
+                                            videoController.pickedVideo.value!,
+                                      );
+                                      newVideoUrl = result['url'];
+                                      newFileName = result['fileName'];
+                                    }
 
-                                  Get.snackbar(
-                                    "Updated",
-                                    "Video info updated successfully",
-                                    backgroundColor: Colors.green,
-                                    colorText: Colors.white,
-                                  );
-                                } else {
-                                  // ✅ UPLOAD LOGIC
-                                  await videoController.uploadVideo(
-                                    context: context,
-                                    restaurantName: nameController.text,
-                                    streetNo: streetController.text,
-                                    State: stateController.text,
-                                    zipCode: zipCodeController.text,
-                                    city: cityController.text,
-                                    restaurantType: selectedRestaurant,
-                                    atmosphere: selectAtmosphere,
-                                    causine: selectCusine,
-                                    experience: selectExperience,
-                                    vibes: selectVibes,
-                                  );
+                                    // ✅ Update Firestore
+                                    await FirebaseFirestore.instance
+                                        .collection('videos')
+                                        .doc(widget.docId)
+                                        .update({
+                                      'restaurantName': nameController.text,
+                                      'state': stateController.text,
+                                      'streetNo': streetController.text,
+                                      'city': cityController.text,
+                                      'zipCode': zipCodeController.text,
+                                      'restaurantType': selectedRestaurant,
+                                      'causines': selectCusine,
+                                      'vibes': selectVibes,
+                                      'atmosphere': selectAtmosphere,
+                                      'experience': selectExperience,
+                                      'timestamp': Timestamp.now(),
+                                      if (newVideoUrl != null)
+                                        'url': newVideoUrl,
+                                      if (newFileName != null)
+                                        'fileName': newFileName,
+                                    });
 
-                                  setState(() {
-                                    clearFormFields();
+                                    await videoController.fetchVideos();
+
                                     videoController.clearSelection();
-                                  });
-                                }
-                              },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF2FD2AF),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
+
+                                    setState(() {
+                                      clearFormFields();
+                                    });
+
+                                    Get.snackbar(
+                                      "Updated",
+                                      "Video info updated successfully",
+                                      backgroundColor: Colors.green,
+                                      colorText: Colors.white,
+                                    );
+                                  } else {
+                                    // ✅ UPLOAD LOGIC
+                                    await videoController.uploadVideo(
+                                      context: context,
+                                      restaurantName: nameController.text,
+                                      streetNo: streetController.text,
+                                      State: stateController.text,
+                                      zipCode: zipCodeController.text,
+                                      city: cityController.text,
+                                      restaurantType: selectedRestaurant,
+                                      atmosphere: selectAtmosphere,
+                                      causine: selectCusine,
+                                      experience: selectExperience,
+                                      vibes: selectVibes,
+                                    );
+
+                                    setState(() {
+                                      clearFormFields();
+                                      videoController.clearSelection();
+                                    });
+                                  }
+                                },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF2FD2AF),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
                           ),
-                        ),
-                        child: videoController.isUploading.value
-                            ? Text("Uploading...",
-                                style: TextStyle(color: Colors.white))
-                            : Text(
-                                widget.isEdit ? "Update" : "Upload",
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
+                          child: videoController.isUploading.value
+                              ? Text("Uploading...",
+                                  style: TextStyle(color: Colors.white))
+                              : Text(
+                                  widget.isEdit ? "Update" : "Upload",
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
-                              ),
+                        ),
                       ),
                     ),
                   ),
@@ -1793,19 +1849,31 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
         )));
   }
 
-  Widget _buildTextField(TextEditingController controller, String hint,
-      String label, bool showError) {
+  Widget _buildTextField(
+    TextEditingController controller,
+    String hint,
+    String label,
+    bool showError, {
+    IconData? prefixIcon,
+  }) {
     return SizedBox(
       width: 604,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(fontSize: 14)),
+          Text(
+            label,
+            style:
+                simpleText.copyWith(fontSize: 16, fontWeight: FontWeight.w600),
+          ),
           const SizedBox(height: 10),
           TextField(
             controller: controller,
             decoration: InputDecoration(
+              prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
               hintText: hint,
+              hintStyle: simpleText.copyWith(
+                  fontSize: 14, fontWeight: FontWeight.w500),
               contentPadding:
                   const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
               border:
@@ -1824,34 +1892,35 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
       ),
     );
   }
-
-  Widget _buildDropdown(String label, String? selectedValue,
-      List<String> options, ValueChanged<String?> onChanged) {
-    return SizedBox(
-      height: 56,
-      width: 604,
-      child: InputDecorator(
-        decoration: InputDecoration(
-          labelText: label,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-        ),
-        child: DropdownButtonHideUnderline(
-          child: DropdownButton<String>(
-            value: selectedValue,
-            isDense: true,
-            isExpanded: true,
-            hint: Text(label),
-            items: options.map((String value) {
-              return DropdownMenuItem<String>(value: value, child: Text(value));
-            }).toList(),
-            onChanged: onChanged,
-          ),
-        ),
-      ),
-    );
-  }
 }
+
+//   Widget _buildDropdown(String label, String? selectedValue,
+//       List<String> options, ValueChanged<String?> onChanged) {
+//     return SizedBox(
+//       height: 56,
+//       width: 604,
+//       child: InputDecorator(
+//         decoration: InputDecoration(
+//           labelText: label,
+//           contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+//           border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+//         ),
+//         child: DropdownButtonHideUnderline(
+//           child: DropdownButton<String>(
+//             value: selectedValue,
+//             isDense: true,
+//             isExpanded: true,
+//             hint: Text(label),
+//             items: options.map((String value) {
+//               return DropdownMenuItem<String>(value: value, child: Text(value));
+//             }).toList(),
+//             onChanged: onChanged,
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 
 

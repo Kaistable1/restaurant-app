@@ -1836,6 +1836,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:savrly/constants/app_colors.dart';
+import 'package:savrly/constants/text_styles.dart';
 import 'package:savrly/controllers/filter_controller.dart';
 import 'package:savrly/controllers/video_controller.dart';
 import 'package:savrly/screens/Videos/view_Video.dart';
@@ -1843,18 +1844,32 @@ import 'package:savrly/widgets/custom_textfield.dart';
 import 'package:video_player/video_player.dart';
 import 'upload_video_form.dart'; // Create this widget separately
 
-class AdminVideoPanel extends StatelessWidget {
+class AdminVideoPanel extends StatefulWidget {
   AdminVideoPanel({super.key});
 
+  @override
+  State<AdminVideoPanel> createState() => _AdminVideoPanelState();
+}
+
+class _AdminVideoPanelState extends State<AdminVideoPanel> {
   final videoController = Get.put(VideoController());
+
   final filterController = Get.put(FilterController());
 
   final searchController = TextEditingController();
+  final RxMap<String, bool> expandedSections = <String, bool>{
+    'Vibes': true,
+    'Atmosphere': false,
+    'Cuisine': false,
+    'Experience': false,
+  }.obs;
+
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         Scaffold(
+          backgroundColor: white,
           body: SafeArea(
             child: Obx(() {
               if (videoController.isUploadMode.value) {
@@ -1884,10 +1899,9 @@ class AdminVideoPanel extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
+                          Text(
                             "Videos",
-                            style: TextStyle(
-                                fontSize: 22, fontWeight: FontWeight.bold),
+                            style: headingText.copyWith(fontSize: 32),
                           ),
                           SizedBox(
                             height: 10,
@@ -1898,10 +1912,11 @@ class AdminVideoPanel extends StatelessWidget {
                               videoController.clearSelection();
                             },
                             child: Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: const BoxDecoration(
+                              width: 32,
+                              height: 32,
+                              decoration: BoxDecoration(
                                 color: Colors.green,
-                                shape: BoxShape.circle,
+                                borderRadius: BorderRadius.circular(6),
                               ),
                               child: const Icon(Icons.add,
                                   color: Colors.white, size: 20),
@@ -1918,211 +1933,362 @@ class AdminVideoPanel extends StatelessWidget {
                           horizontal: 16.0, vertical: 10),
                       child: SizedBox(
                         width: 389,
+                        height: 37,
                         child: CustomTextField(
                           controller: searchController,
                           hintText: 'Search',
                           borderColor: primaryColor,
                           hintTextColor: primaryColor,
                           prefixIcon: Icon(Icons.search, color: primaryColor),
-                          suffixIcon: PopupMenuButton<String>(
-                            icon: //Image(image: AssetImage("assets/images/filter.png"))
-                                Icon(Icons.filter_list, color: primaryColor),
-                            offset: Offset(0, 40),
-                            itemBuilder: (context) => [
-                              PopupMenuItem(
-                                enabled: false,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Vibes',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold)),
-                                    Obx(() {
-                                      final vibes = [
-                                        'Live Music',
-                                        'Romantic',
-                                        'Family',
-                                        'Casual'
-                                      ];
-                                      return Column(
-                                        children: vibes.map((vibe) {
-                                          return CheckboxListTile(
-                                            title: Text(vibe,
-                                                style: TextStyle(fontSize: 12)),
-                                            value: filterController
-                                                .selectedVibes
-                                                .contains(vibe),
-                                            onChanged: (_) => filterController
-                                                .toggleVibe(vibe),
-                                            dense: true,
-                                            controlAffinity:
-                                                ListTileControlAffinity.leading,
-                                          );
-                                        }).toList(),
-                                      );
-                                    }),
-                                    Divider(),
-                                    Text('Atmosphere',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold)),
-                                    Obx(() {
-                                      final atmosphereList = [
-                                        'Outdoor',
-                                        'Indoor',
-                                        'Rooftop'
-                                      ];
-                                      return Column(
-                                        children: atmosphereList.map((atm) {
-                                          return CheckboxListTile(
-                                            title: Text(atm,
-                                                style: TextStyle(fontSize: 12)),
-                                            value: filterController
-                                                .selectedAtmosphere
-                                                .contains(atm),
-                                            onChanged: (_) => filterController
-                                                .toggleAtmosphere(atm),
-                                            dense: true,
-                                            controlAffinity:
-                                                ListTileControlAffinity.leading,
-                                          );
-                                        }).toList(),
-                                      );
-                                    }),
-////////////
-                                    Divider(),
-                                    Text('Cuisine',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold)),
-                                    Obx(() {
-                                      final CuisineList = [
-                                        "American",
-                                        "Mexican",
-                                        "Italian",
-                                        "French",
-                                        "Chinese",
-                                        "Japanese",
-                                        "Thai",
-                                        "Indian",
-                                        "Korean",
-                                        "Vietnamese",
-                                        "Mediterranean",
-                                        "Caribbean",
-                                        "African",
-                                        "Middle Eastern",
-                                        "Spanish",
-                                        "Filipino",
-                                        "Brazilian",
-                                        "Peruvian",
-                                        "Russian",
-                                        "German",
-                                      ];
-                                      return Column(
-                                        children: CuisineList.map((atm) {
-                                          return CheckboxListTile(
-                                            title: Text(atm,
-                                                style: TextStyle(fontSize: 12)),
-                                            value: filterController
-                                                .selectedCuisine
-                                                .contains(atm),
-                                            onChanged: (_) => filterController
-                                                .toggleCuisine(atm),
-                                            dense: true,
-                                            controlAffinity:
-                                                ListTileControlAffinity.leading,
-                                          );
-                                        }).toList(),
-                                      );
-                                    }),
-
-                                    Divider(),
-                                    Text('Experience',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold)),
-                                    Obx(() {
-                                      final experienceList = [
-                                        "Live Music",
-                                        "Dj Night",
-                                        "Silent Party",
-                                        "Karaoke",
-                                        "Trivia Nights",
-                                        "Sports screenings",
-                                        "Hookah",
-                                        "Sip & Paint",
-                                        "Ladies Night",
-                                        "RnB Night"
-                                      ];
-                                      return Column(
-                                        children: experienceList.map((atm) {
-                                          return CheckboxListTile(
-                                            title: Text(atm,
-                                                style: TextStyle(fontSize: 12)),
-                                            value: filterController
-                                                .selectedExperience
-                                                .contains(atm),
-                                            onChanged: (_) => filterController
-                                                .toggleExperience(atm),
-                                            dense: true,
-                                            controlAffinity:
-                                                ListTileControlAffinity.leading,
-                                          );
-                                        }).toList(),
-                                      );
-                                    }),
-
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        TextButton(
-                                          onPressed: () {
-                                            filterController.clearFilters();
-                                            videoController
-                                                .applyAllFiltersAndSearch(
-                                              selectedVibes: [],
-                                              selectedAtmospheres: [],
-                                              selectedCuisine: [],
-                                              selectedExperience: [],
-                                            ); // Update to match
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text("Clear"),
-                                        ),
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            videoController
-                                                .applyAllFiltersAndSearch(
-                                              selectedVibes: filterController
-                                                  .selectedVibes,
-                                              selectedAtmospheres:
-                                                  filterController
-                                                      .selectedAtmosphere,
-                                              selectedCuisine: filterController
-                                                  .selectedCuisine,
-                                              selectedExperience:
-                                                  filterController
-                                                      .selectedExperience,
-                                              searchQuery: searchController
-                                                  .text, // 👈 pass search too
-                                            );
-                                            Navigator.pop(context);
-                                            // videoController.videoapplyFilters(
-                                            //   filterController.selectedVibes,
-                                            //   filterController
-                                            //       .selectedAtmosphere,
-                                            //   filterController.selectedCuisine,
-                                            //   filterController
-                                            //       .selectedExperience,
-                                            // );
-                                            //  Navigator.pop(context);
-                                          },
-                                          child: Text("Apply"),
-                                        ),
-                                      ],
-                                    )
-                                  ],
+                          suffixIcon: Theme(
+                            data: Theme.of(context).copyWith(
+                              popupMenuTheme: PopupMenuThemeData(
+                                color: Colors
+                                    .white, // 👈 white background for the popup
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
-                              )
-                            ],
+                                textStyle: simpleText.copyWith(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: blackColor,
+                                ),
+                              ),
+                            ),
+                            child: PopupMenuButton<String>(
+                              surfaceTintColor: white,
+                              icon: Image(
+                                  image:
+                                      AssetImage("assets/images/filter.png")),
+                              offset: Offset(0, 40),
+                              itemBuilder: (context) => [
+                                PopupMenuItem(
+                                  enabled: false,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      /// -------- Vibes Section --------
+                                      Obx(() => Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              ListTile(
+                                                contentPadding: EdgeInsets.zero,
+                                                title: Text('Vibes',
+                                                    style: simpleText.copyWith(
+                                                        fontSize: 14)),
+                                                trailing: Icon(
+                                                  expandedSections['Vibes']!
+                                                      ? Icons.keyboard_arrow_up
+                                                      : Icons
+                                                          .keyboard_arrow_down,
+                                                  size: 20,
+                                                ),
+                                                onTap: () {
+                                                  expandedSections['Vibes'] =
+                                                      !expandedSections[
+                                                          'Vibes']!;
+                                                },
+                                              ),
+                                              if (expandedSections[
+                                                  'Vibes']!) ...[
+                                                ...[
+                                                  'Live Music',
+                                                  'Romantic',
+                                                  'Family',
+                                                  'Casual'
+                                                ].map((vibe) {
+                                                  return CheckboxListTile(
+                                                    activeColor:
+                                                        primaryColor, // ✅ Tick color (when selected)
+                                                    checkColor: white,
+                                                    title: Text(vibe,
+                                                        style: TextStyle(
+                                                            fontSize: 12)),
+                                                    value: filterController
+                                                        .selectedVibes
+                                                        .contains(vibe),
+                                                    onChanged: (_) =>
+                                                        filterController
+                                                            .toggleVibe(vibe),
+                                                    dense: true,
+                                                    controlAffinity:
+                                                        ListTileControlAffinity
+                                                            .leading,
+                                                  );
+                                                }).toList(),
+                                              ],
+                                            ],
+                                          )),
+
+                                      Divider(),
+
+                                      /// -------- Atmosphere Section --------
+                                      Obx(() => Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              ListTile(
+                                                contentPadding: EdgeInsets.zero,
+                                                title: Text('Atmosphere',
+                                                    style: simpleText.copyWith(
+                                                        fontSize: 14)),
+                                                trailing: Icon(
+                                                  expandedSections[
+                                                          'Atmosphere']!
+                                                      ? Icons.keyboard_arrow_up
+                                                      : Icons
+                                                          .keyboard_arrow_down,
+                                                  size: 20,
+                                                ),
+                                                onTap: () {
+                                                  expandedSections[
+                                                          'Atmosphere'] =
+                                                      !expandedSections[
+                                                          'Atmosphere']!;
+                                                },
+                                              ),
+                                              if (expandedSections[
+                                                  'Atmosphere']!) ...[
+                                                ...[
+                                                  'Outdoor',
+                                                  'Indoor',
+                                                  'Rooftop'
+                                                ].map((item) {
+                                                  return CheckboxListTile(
+                                                    activeColor:
+                                                        primaryColor, // ✅ Tick color (when selected)
+                                                    checkColor: white,
+                                                    title: Text(item,
+                                                        style: TextStyle(
+                                                            fontSize: 12)),
+                                                    value: filterController
+                                                        .selectedAtmosphere
+                                                        .contains(item),
+                                                    onChanged: (_) =>
+                                                        filterController
+                                                            .toggleAtmosphere(
+                                                                item),
+                                                    dense: true,
+                                                    controlAffinity:
+                                                        ListTileControlAffinity
+                                                            .leading,
+                                                  );
+                                                }).toList(),
+                                              ],
+                                            ],
+                                          )),
+                                      Divider(),
+
+                                      /// -------- Cuisine Section --------
+                                      Obx(() => Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              ListTile(
+                                                contentPadding: EdgeInsets.zero,
+                                                title: Text('Cuisine',
+                                                    style: simpleText.copyWith(
+                                                        fontSize: 14)),
+                                                trailing: Icon(
+                                                  expandedSections['Cuisine']!
+                                                      ? Icons.keyboard_arrow_up
+                                                      : Icons
+                                                          .keyboard_arrow_down,
+                                                  size: 20,
+                                                ),
+                                                onTap: () {
+                                                  expandedSections['Cuisine'] =
+                                                      !expandedSections[
+                                                          'Cuisine']!;
+                                                },
+                                              ),
+                                              if (expandedSections[
+                                                  'Cuisine']!) ...[
+                                                ...[
+                                                  "American",
+                                                  "Mexican",
+                                                  "Italian",
+                                                  "French",
+                                                  "Chinese",
+                                                  "Japanese",
+                                                  "Thai",
+                                                  "Indian",
+                                                  "Korean",
+                                                  "Vietnamese"
+                                                ].map((item) {
+                                                  return CheckboxListTile(
+                                                    activeColor:
+                                                        primaryColor, // ✅ Tick color (when selected)
+                                                    checkColor: white,
+                                                    title: Text(item,
+                                                        style: TextStyle(
+                                                            fontSize: 12)),
+                                                    value: filterController
+                                                        .selectedCuisine
+                                                        .contains(item),
+                                                    onChanged: (_) =>
+                                                        filterController
+                                                            .toggleCuisine(
+                                                                item),
+                                                    dense: true,
+                                                    controlAffinity:
+                                                        ListTileControlAffinity
+                                                            .leading,
+                                                  );
+                                                }).toList(),
+                                              ],
+                                            ],
+                                          )),
+                                      Divider(),
+
+                                      /// -------- Experience Section --------
+                                      Obx(() => Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              ListTile(
+                                                contentPadding: EdgeInsets.zero,
+                                                title: Text('Experience',
+                                                    style: simpleText.copyWith(
+                                                        fontSize: 14)),
+                                                trailing: Icon(
+                                                  expandedSections[
+                                                          'Experience']!
+                                                      ? Icons.keyboard_arrow_up
+                                                      : Icons
+                                                          .keyboard_arrow_down,
+                                                  size: 20,
+                                                ),
+                                                onTap: () {
+                                                  expandedSections[
+                                                          'Experience'] =
+                                                      !expandedSections[
+                                                          'Experience']!;
+                                                },
+                                              ),
+                                              if (expandedSections[
+                                                  'Experience']!) ...[
+                                                ...[
+                                                  "Live Music",
+                                                  "Dj Night",
+                                                  "Silent Party",
+                                                  "Karaoke",
+                                                  "Trivia Nights",
+                                                  "Sports screenings",
+                                                  "Hookah",
+                                                  "Sip & Paint",
+                                                  "Ladies Night",
+                                                  "RnB Night"
+                                                ].map((item) {
+                                                  return CheckboxListTile(
+                                                    activeColor:
+                                                        primaryColor, // ✅ Tick color (when selected)
+                                                    checkColor: white,
+                                                    title: Text(item,
+                                                        style: TextStyle(
+                                                            fontSize: 12)),
+                                                    value: filterController
+                                                        .selectedExperience
+                                                        .contains(item),
+                                                    onChanged: (_) =>
+                                                        filterController
+                                                            .toggleExperience(
+                                                                item),
+                                                    dense: true,
+                                                    controlAffinity:
+                                                        ListTileControlAffinity
+                                                            .leading,
+                                                  );
+                                                }).toList(),
+                                              ],
+                                            ],
+                                          )),
+                                      Divider(),
+
+                                      /// -------- Buttons --------
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 12.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            // Clear Button
+                                            TextButton(
+                                              style: TextButton.styleFrom(
+                                                foregroundColor: primaryColor,
+                                                textStyle: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.w500),
+                                              ),
+                                              onPressed: () {
+                                                filterController.clearFilters();
+                                                videoController
+                                                    .applyAllFiltersAndSearch(
+                                                  selectedVibes: [],
+                                                  selectedAtmospheres: [],
+                                                  selectedCuisine: [],
+                                                  selectedExperience: [],
+                                                );
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text(
+                                                "Clear",
+                                                style:
+                                                    TextStyle(color: redColor),
+                                              ),
+                                            ),
+
+                                            // Apply Button
+                                            ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: primaryColor,
+                                                foregroundColor: white,
+                                                elevation: 2,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
+                                                ),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 24,
+                                                        vertical: 12),
+                                                textStyle: const TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              onPressed: () {
+                                                videoController
+                                                    .applyAllFiltersAndSearch(
+                                                  selectedVibes:
+                                                      filterController
+                                                          .selectedVibes,
+                                                  selectedAtmospheres:
+                                                      filterController
+                                                          .selectedAtmosphere,
+                                                  selectedCuisine:
+                                                      filterController
+                                                          .selectedCuisine,
+                                                  selectedExperience:
+                                                      filterController
+                                                          .selectedExperience,
+                                                  searchQuery:
+                                                      searchController.text,
+                                                );
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text("Apply"),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
                           onChanged: (value) {
                             videoController.applyAllFiltersAndSearch(
@@ -2145,17 +2311,19 @@ class AdminVideoPanel extends StatelessWidget {
                         final controllers = controller.controllers;
                         if (controllers.isEmpty) {
                           return const Expanded(
-                            child: Center(child: CircularProgressIndicator()),
+                            child: Center(child: CircularProgressIndicator(color: primaryColor,)),
                           );
                         }
 
                         if (videoDataList.isEmpty) {
-                          return const Expanded(
+                          return Expanded(
                             child: Center(
                               child: Text(
                                 'No restaurant found',
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.bold),
+                                style: simpleText.copyWith(
+                                  color: blackColor,
+                                  fontSize: 16,
+                                ),
                               ),
                             ),
                           );
@@ -2212,7 +2380,7 @@ class AdminVideoPanel extends StatelessWidget {
                                                     )
                                                   : const Center(
                                                       child:
-                                                          CircularProgressIndicator()),
+                                                          CircularProgressIndicator(color: primaryColor,)),
                                               Container(
                                                   color: Colors.black
                                                       .withOpacity(0.2)),
@@ -2255,96 +2423,280 @@ class AdminVideoPanel extends StatelessWidget {
                                               Text(
                                                 data['restaurantName'] ??
                                                     'Untitled',
-                                                style: const TextStyle(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.bold,
+                                                style: simpleText.copyWith(
+                                                  color: blackColor,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                 ),
+
+                                                // const TextStyle(
+                                                //   fontSize: 12,
+                                                //   fontWeight: FontWeight.bold,
+                                                //   overflow:
+                                                //       TextOverflow.ellipsis,
+                                                // ),
                                                 maxLines: 1,
                                               ),
-                                              Text(
-                                                data['location'] ??
-                                                    'Uncategorized',
-                                                style: TextStyle(
-                                                  fontSize: 10,
-                                                  color: Colors.grey[600],
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                                maxLines: 1,
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    data['city'] ??
+                                                        'Uncategorized',
+                                                    style: simpleText.copyWith(
+                                                      color: blackColor,
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                    maxLines: 1,
+                                                  ),
+                                                  SizedBox(
+                                                    width: 5,
+                                                  ),
+                                                  Text(
+                                                    data['state'] ??
+                                                        'Uncategorized',
+                                                    style: simpleText.copyWith(
+                                                      color: blackColor,
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                    maxLines: 1,
+                                                  ),
+                                                  SizedBox(
+                                                    width: 5,
+                                                  ),
+                                                  Text(
+                                                    data['zipCode'] ??
+                                                        'Uncategorized',
+                                                    style: simpleText.copyWith(
+                                                      color: blackColor,
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                    maxLines: 1,
+                                                  ),
+                                                ],
                                               ),
                                             ],
                                           ),
                                         ),
-                                        PopupMenuButton<String>(
-                                          icon: const Icon(Icons.more_vert,
-                                              size: 16),
-                                          itemBuilder: (context) => [
-                                            const PopupMenuItem(
-                                              value: 'view',
-                                              child: Text('View'),
+                                        Theme(
+                                          data: Theme.of(context).copyWith(
+                                            popupMenuTheme: PopupMenuThemeData(
+                                              color: Colors
+                                                  .white, // 👈 white background for the popup
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              textStyle: simpleText.copyWith(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                                color: blackColor,
+                                              ),
                                             ),
-                                            const PopupMenuItem(
-                                              value: 'edit',
-                                              child: Text('Edit'),
-                                            ),
-                                            const PopupMenuItem(
-                                              value: 'delete',
-                                              child: Text('Delete',
-                                                  style: TextStyle(
-                                                      color: Colors.red)),
-                                            ),
-                                          ],
-                                          onSelected: (value) async {
-                                            if (value == 'view') {
-                                              videoController.showViewMode(
-                                                  data, controller);
-                                            } else if (value == 'edit') {
-                                              videoController.clearSelection();
-
-                                              videoController.showEditMode(
-                                                  data, data['id']);
-                                              // Handle edit action
-                                            } else if (value == 'delete') {
-                                              final confirm =
-                                                  await showDialog<bool>(
-                                                context: context,
-                                                builder: (context) =>
-                                                    AlertDialog(
-                                                  title: const Text(
-                                                      "Delete Video"),
-                                                  content: const Text(
-                                                      "Are you sure you want to delete this video?"),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(
-                                                              context, false),
-                                                      child:
-                                                          const Text("Cancel"),
-                                                    ),
-                                                    ElevatedButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(
-                                                              context, true),
-                                                      style: ElevatedButton
-                                                          .styleFrom(
-                                                              backgroundColor:
-                                                                  Colors.red),
-                                                      child:
-                                                          const Text("Delete"),
-                                                    ),
-                                                  ],
+                                          ),
+                                          child: PopupMenuButton<String>(
+                                            icon: const Icon(Icons.more_vert,
+                                                size: 16),
+                                            itemBuilder: (context) => [
+                                              PopupMenuItem(
+                                                value: 'view',
+                                                child: Text(
+                                                  'View',
+                                                  style: simpleText.copyWith(
+                                                    color: blackColor,
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
                                                 ),
-                                              );
-                                              if (confirm == true) {
-                                                videoController.deleteVideo(
-                                                    data['id'], index);
+                                              ),
+                                              PopupMenuItem(
+                                                value: 'edit',
+                                                child: Text(
+                                                  'Edit',
+                                                  style: simpleText.copyWith(
+                                                    color: blackColor,
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              ),
+                                              PopupMenuItem(
+                                                value: 'delete',
+                                                child: Text(
+                                                  'Delete',
+                                                  style: simpleText.copyWith(
+                                                    color: blackColor,
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                            onSelected: (value) async {
+                                              if (value == 'view') {
+                                                videoController.showViewMode(
+                                                    data, controller);
+                                              } else if (value == 'edit') {
+                                                videoController
+                                                    .clearSelection();
+
+                                                videoController.showEditMode(
+                                                    data, data['id']);
+                                                // Handle edit action
+                                              } else if (value == 'delete') {
+                                                final confirm =
+                                                    await showDialog<bool>(
+                                                  context: context,
+                                                  barrierDismissible: false,
+                                                  builder: (context) => Dialog(
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              16),
+                                                    ),
+                                                    backgroundColor:
+                                                        white, // Light lavender background
+                                                    child: Container(
+                                                      width: 391,
+                                                      height:
+                                                          391, // fixed width for web feel
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 24,
+                                                          vertical: 32),
+                                                      child: Column(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        children: [
+                                                          const Icon(
+                                                            Icons
+                                                                .warning_amber_rounded,
+                                                            color: Colors.red,
+                                                            size: 60,
+                                                          ),
+                                                          const SizedBox(
+                                                              height: 20),
+                                                          const Text(
+                                                            'Are you sure\nyou want to delete this video?',
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            style: TextStyle(
+                                                              fontSize: 18,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              color:
+                                                                  Colors.black,
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                              height: 30),
+                                                          SizedBox(
+                                                            width:
+                                                                double.infinity,
+                                                            height: 48,
+                                                            child:
+                                                                ElevatedButton(
+                                                              style:
+                                                                  ElevatedButton
+                                                                      .styleFrom(
+                                                                backgroundColor:
+                                                                    primaryColor,
+                                                                shape:
+                                                                    RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              6),
+                                                                ),
+                                                              ),
+                                                              onPressed: () =>
+                                                                  Navigator.pop(
+                                                                      context,
+                                                                      true),
+                                                              child: const Text(
+                                                                "Yes",
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        16,
+                                                                    color: Colors
+                                                                        .white),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                              height: 12),
+                                                          SizedBox(
+                                                            width:
+                                                                double.infinity,
+                                                            height: 48,
+                                                            child:
+                                                                OutlinedButton(
+                                                              style:
+                                                                  OutlinedButton
+                                                                      .styleFrom(
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .transparent,
+                                                                side: const BorderSide(
+                                                                    color: Colors
+                                                                        .grey),
+                                                                shape:
+                                                                    RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              6),
+                                                                ),
+                                                              ),
+                                                              onPressed: () =>
+                                                                  Navigator.pop(
+                                                                      context,
+                                                                      false),
+                                                              child: const Text(
+                                                                "Cancel",
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        16,
+                                                                    color: Colors
+                                                                        .black),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+
+                                                if (confirm == true) {
+                                                  videoController.deleteVideo(
+                                                      data['id'], index);
+                                                }
                                               }
-                                            }
-                                          },
-                                        ),
+                                            },
+                                          ),
+                                        )
                                       ],
                                     ),
                                   ),

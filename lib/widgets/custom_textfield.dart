@@ -93,7 +93,7 @@ class CustomTextField extends StatelessWidget {
         prefixIcon: prefixIcon,
         prefixIconConstraints: BoxConstraints(minWidth: 40, minHeight: 40),
         suffixIcon: suffixIcon,
-        contentPadding: EdgeInsets.symmetric(vertical: 19, horizontal: 16),
+        contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
         errorText: errorText,
         
       ),
