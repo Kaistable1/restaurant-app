@@ -14,6 +14,8 @@ import 'package:kaistable_website/screens/home_screen/home_controller/home_locat
 import 'package:kaistable_website/screens/home_screen/new_view_all/new_viewall.dart';
 import 'package:kaistable_website/screens/home_screen/trending_all/trending_view_all.dart';
 import 'package:kaistable_website/screens/nav_bar/near_by_all.dart';
+import 'package:kaistable_website/screens/nav_bar/video_screen.dart';
+import 'package:kaistable_website/screens/nav_bar/videos/video_section.dart';
 import 'package:kaistable_website/screens/nav_bar/widgets/homeScreenWidget/all_restaurant_screen.dart';
 import 'package:kaistable_website/screens/nav_bar/widgets/homeScreenWidget/experience_vibes.dart';
 import 'package:kaistable_website/screens/nav_bar/widgets/homeScreenWidget/home_filter_bottomsheet.dart';
@@ -81,7 +83,6 @@ class _HomeScreenState extends State<HomeScreen> {
         cuisines: cuisines,
       );
     });
-  
   }
 
   @override
@@ -247,6 +248,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
 
                   SizedBox(height: 10),
+                buildTrendingVideosSection(),
+
+                  SizedBox(height: 10),
                   _buildNearBySection(),
 
                   SizedBox(height: 10),
@@ -361,7 +365,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
     );
   }
-
 
   Widget _featuredCategory() {
     // Show heading immediately
@@ -874,164 +877,6 @@ class _HomeScreenState extends State<HomeScreen> {
       return 0.0; // fallback
     }
   }
-
-  // Widget _buildTrendingSection() {
-  //   final HomeLocationController homeLocationController =
-  //       Get.put(HomeLocationController());
-  //   final filterController = Get.find<HomeFilterSearchController>();
-
-  //   return Obx(
-  //     () {
-  //       // Get updated values from filters
-  //       final vibes = filterController.selectedVibes.toList();
-  //       final experiences = filterController.selectedExperiences.toList();
-  //       final cuisines = filterController.selectedCuisines.toList();
-
-  //       return StreamBuilder(
-  //           stream: homeLocationController.getTrendingRestaurants(
-  //             vibes: vibes,
-  //             experiences: experiences,
-  //             cuisines: cuisines,
-  //           ),
-  //           builder: (context, snapshot) {
-  //             if (snapshot.connectionState == ConnectionState.waiting) {
-  //               return Padding(
-  //                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
-  //                 child: Column(
-  //                   crossAxisAlignment: CrossAxisAlignment.start,
-  //                   children: [
-  //                     Text(
-  //                       'Trending',
-  //                       style: TextStyle(
-  //                         color: AppColors.bottomSheetColor,
-  //                         fontFamily: 'NunitoSans-Bold',
-  //                         fontSize: 16,
-  //                         fontWeight: FontWeight.w700,
-  //                         decoration: TextDecoration.underline,
-  //                       ),
-  //                     ),
-  //                     SizedBox(height: 16),
-  //                     Center(
-  //                       child: CircularProgressIndicator(
-  //                         color: AppColors.primaryColor,
-  //                       ),
-  //                     ),
-  //                   ],
-  //                 ),
-  //               );
-  //             }
-
-  //             if (snapshot.hasError) {
-  //               print('Error during stream call ${snapshot.error}');
-  //               return SizedBox();
-  //             }
-  //             if (snapshot.data == null || snapshot.data!.isEmpty) {
-  //               return Padding(
-  //                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
-  //                 child: Column(
-  //                   crossAxisAlignment: CrossAxisAlignment.start,
-  //                   children: [
-  //                     Text(
-  //                       'Trending',
-  //                       style: TextStyle(
-  //                         color: AppColors.bottomSheetColor,
-  //                         fontFamily: 'NunitoSans-Bold',
-  //                         fontSize: 16,
-  //                         fontWeight: FontWeight.w700,
-  //                         decoration: TextDecoration.underline,
-  //                       ),
-  //                     ),
-  //                     SizedBox(height: 16),
-  //                     Center(
-  //                       child: Text(
-  //                         'No matching restaurants found',
-  //                         style: TextStyle(
-  //                           color: AppColors.bottomSheetColor,
-  //                           fontFamily: 'NunitoSans-Regular',
-  //                           fontSize: 14,
-  //                           fontWeight: FontWeight.w400,
-  //                         ),
-  //                       ),
-  //                     ),
-  //                   ],
-  //                 ),
-  //               );
-  //             }
-
-  //             List<RestaurantModel> filteredRestaurants = snapshot.data!;
-  //             WidgetsBinding.instance.addPostFrameCallback((_) {
-  //               homeLocationController.initailizedSelectors(
-  //                   resaturantsList: filteredRestaurants);
-  //             });
-
-  //             // Take only the first restaurant for the main view
-  //             final featuredRestaurant = filteredRestaurants.first;
-
-  //             return Padding(
-  //               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-  //               child: Column(
-  //                 children: [
-  //                   // SizedBox(height: 10),
-  //                   Row(
-  //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                     children: [
-  //                       Text(
-  //                         'Trending',
-  //                         style: TextStyle(
-  //                           color: AppColors.bottomSheetColor,
-  //                           fontFamily: 'NunitoSans-Bold',
-  //                           fontSize: 16,
-  //                           fontWeight: FontWeight.w700,
-  //                           decoration: TextDecoration.underline,
-  //                         ),
-  //                       ),
-  //                       GestureDetector(
-  //                         onTap: () {
-  //                           // Pass ONLY the filtered restaurants and active filters
-  //                           Get.to(TrendingRestaurantsPage(
-  //                             filteredRestaurants: filteredRestaurants,
-  //                             activeVibes: vibes,
-  //                             activeExperiences: experiences,
-  //                             activeCuisines: cuisines,
-  //                           ));
-  //                         },
-  //                         child: Text(
-  //                           'See more',
-  //                           style: TextStyle(
-  //                             color: AppColors.primaryColor,
-  //                             fontFamily: 'NunitoSans-Regular',
-  //                             fontSize: 14,
-  //                             fontWeight: FontWeight.w500,
-  //                           ),
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                   SizedBox(height: 16),
-  //                   TrendingRestaurantCard(
-  //                     restaurant: featuredRestaurant,
-  //                     onFilterTap: () {
-  //                       final allFilters =
-  //                           controller.getAllFilters(featuredRestaurant);
-  //                       showModalBottomSheet(
-  //                         context: context,
-  //                         isScrollControlled: true,
-  //                         shape: RoundedRectangleBorder(
-  //                           borderRadius:
-  //                               BorderRadius.vertical(top: Radius.circular(20)),
-  //                         ),
-  //                         builder: (_) =>
-  //                             HomeFilterBottomsheet(filters: allFilters),
-  //                       );
-  //                     },
-  //                   ),
-  //                 ],
-  //               ),
-  //             );
-  //           });
-  //     },
-  //   );
-  // }
 
   Widget _buildTrendingSection() {
     final homeController = Get.find<HomeLocationController>();

@@ -1,0 +1,35 @@
+dependencies: \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/src/core/util/fork.cc \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/Target\ Support\ Files/gRPC-Core/gRPC-Core-prefix.pch \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/src/core/util/fork.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/support/port_platform.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/support/atm.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/support/atm_gcc_atomic.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/support/sync.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/support/time.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/support/sync_generic.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/support/sync_posix.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/src/core/config/config_vars.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/strings/string_view.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/base/attributes.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/base/config.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/base/options.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/base/policy_checks.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/base/nullability.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/base/internal/nullability_impl.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/meta/type_traits.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/base/internal/throw_delegate.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/base/macros.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/base/optimization.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/base/port.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/types/optional.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/utility/utility.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/base/internal/inline_variable.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/base/internal/identity.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/base/internal/invoke.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/types/bad_optional_access.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/types/internal/optional.h \
+  /Users/macos/Downloads/restaurant-app/ios/build/Debug-iphonesimulator/abseil/absl.framework/Headers/memory/memory.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/src/core/lib/event_engine/thread_local.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/src/core/util/no_destruct.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/src/core/util/construct_destruct.h

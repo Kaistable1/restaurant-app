@@ -1,0 +1,38 @@
+dependencies: \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/include/grpc/module.modulemap \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/wire/internal/decode_fast.c \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/Target\ Support\ Files/gRPC-Core/gRPC-Core-prefix.pch \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/wire/internal/decode_fast.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/message/message.h \
+  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include/module.modulemap \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/mem/arena.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/usr/include/c_standard_library.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/usr/include/DarwinFoundation.modulemap \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/mem/alloc.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/port/def.inc \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/port/undef.inc \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/mem/internal/arena.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/message/internal/message.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/message/internal/extension.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/message/value.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/base/string_view.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/mini_table/extension.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/base/descriptor_constants.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/mini_table/internal/extension.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/mini_table/internal/field.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/mini_table/internal/size_log2.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/mini_table/internal/sub.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/mini_table/message.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/mini_table/enum.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/mini_table/internal/enum.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/mini_table/field.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/mini_table/internal/message.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/message/internal/types.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/message/array.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/message/internal/array.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/mini_table/sub.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/wire/internal/decoder.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/wire/decode.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/mini_table/extension_registry.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/upb/upb/wire/eps_copy_input_stream.h \
+  /Users/macos/Downloads/restaurant-app/ios/Pods/gRPC-Core/third_party/utf8_range/utf8_range.h
