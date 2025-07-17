@@ -309,14 +309,25 @@ class HomeLocationController extends GetxController {
     required List<String> experiences,
     required List<String> cuisines,
   }) async {
-    final result = await getTrendingRestaurants(
-      vibes: vibes,
-      experiences: experiences,
-      cuisines: cuisines,
-    ).first;
+    try {
+      hasInitialized.value = false;
 
-    trendingRestaurants.assignAll(result);
-    hasInitialized.value = true;
+      final result = await getTrendingRestaurants(
+        vibes: vibes,
+        experiences: experiences,
+        cuisines: cuisines,
+      )
+          .timeout(const Duration(seconds: 15)) // prevent infinite hang
+          .first;
+
+      trendingRestaurants.assignAll(result);
+      print("✅ Loaded ${result.length} trending restaurants");
+    } catch (e) {
+      print("❌ Failed to load trending restaurants: $e");
+      trendingRestaurants.clear(); // to ensure UI shows 'No restaurants'
+    } finally {
+      hasInitialized.value = true;
+    }
   }
 
   void resetTrendingFlag() {

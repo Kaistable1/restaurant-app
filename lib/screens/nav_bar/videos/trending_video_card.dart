@@ -1,17 +1,23 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
 import 'package:kaistable_website/models/video_model.dart';
+import 'package:kaistable_website/screens/nav_bar/controller/video_controller.dart';
 import 'package:video_player/video_player.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class TrendingVideoCard extends StatefulWidget {
   final VideoModel video;
   final VoidCallback onFilterTap;
+  final bool showBookmark; // 👈 new variable
 
   const TrendingVideoCard({
     required this.video,
     required this.onFilterTap,
+    this.showBookmark = true,
   });
 
   @override
@@ -87,6 +93,32 @@ class _TrendingVideoCardState extends State<TrendingVideoCard> {
             ),
           ),
         ),
+// 🔖 Bookmark Icon (top-right)
+        if (!widget.showBookmark)
+          Positioned(
+            top: 12,
+            right: 12,
+            child: Obx(() {
+              final isSaved = Get.find<VideoController>()
+                  .savedVideoIds
+                  .contains(widget.video.id);
+              return GestureDetector(
+                onTap: () {
+                  Get.find<VideoController>()
+                      .toggleSavedStatus(widget.video.id);
+                },
+                child: CircleAvatar(
+                  backgroundColor: Colors.black.withOpacity(0.5),
+                  radius: 18,
+                  child: Icon(
+                    isSaved ? Icons.bookmark : Icons.bookmark_border,
+                    color: AppColors.primaryColor,
+                    size: 20,
+                  ),
+                ),
+              );
+            }),
+          ),
 
         // Blurred Info Panel
         Positioned(

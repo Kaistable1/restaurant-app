@@ -10,11 +10,11 @@
 		</data>
 		<key>flutter_assets/AssetManifest.bin</key>
 		<data>
-		p6Xvr0UzPJ2aVs5h+gevQopCEcE=
+		XRfLrPd+lqKFNgb0dOaM5cEi+II=
 		</data>
 		<key>flutter_assets/AssetManifest.json</key>
 		<data>
-		hhzMkEBRXDOgQvsRyiy9eZaDLmo=
+		08meNTLrZ0yRHluFcc26zZR5Kcc=
 		</data>
 		<key>flutter_assets/FontManifest.json</key>
 		<data>
@@ -376,6 +376,10 @@
 		<data>
 		1vXwfLtXJYPqICmORgE8UDL5iGo=
 		</data>
+		<key>flutter_assets/assets/images/filtersButton.png</key>
+		<data>
+		UMdznpkWZWtd6fNRIXAAIlZ1wY8=
+		</data>
 		<key>flutter_assets/assets/images/flavor.png</key>
 		<data>
 		MgY0Qog2na11CvbmMzPAoyXmJZs=
@@ -706,7 +710,7 @@
 		</data>
 		<key>flutter_assets/kernel_blob.bin</key>
 		<data>
-		ehiU4+qHovNKolkUzZP4dxcIhB8=
+		pEfjyraTWvIZNFPiLAH51MdnxLE=
 		</data>
 		<key>flutter_assets/packages/awesome_notifications/test/assets/images/test_image.png</key>
 		<data>
@@ -739,14 +743,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			Mz5N36Z2Z2nwuLvOMkm8ysSa2EwNm8Whtbwe9uIoGNs=
+			2FbSHLNV6vUMnvUMLYzA+T2qwPPPXPdhRwVFOrvi6uI=
 			</data>
 		</dict>
 		<key>flutter_assets/AssetManifest.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			VOlnR43v3OW2Fy1uV6EX12eni08wCH7c2KFiFa2D2P8=
+			J65uhi1RQyYfgmu66m5ZJ/PO1lPLG0wAb3TE6Po9RoU=
 			</data>
 		</dict>
 		<key>flutter_assets/FontManifest.json</key>
@@ -1372,6 +1376,13 @@
 			TYEYCe8twR/qbGn9nRZ1sgTUAj/ge8e5XRo/PzCkgSA=
 			</data>
 		</dict>
+		<key>flutter_assets/assets/images/filtersButton.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			DOVYtB214dEskxPdBVkrOxB82jEQ4g/kL74naldpiFQ=
+			</data>
+		</dict>
 		<key>flutter_assets/assets/images/flavor.png</key>
 		<dict>
 			<key>hash2</key>
@@ -1950,7 +1961,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			1XEe8yqSw9n7EPnG+DC2dJ9osGnV6LZT0oXiln2jE20=
+			5uZVzP8pnIGdGv6BQYh7QNFvsyQQ9xe4kdECFc6JzJ8=
 			</data>
 		</dict>
 		<key>flutter_assets/packages/awesome_notifications/test/assets/images/test_image.png</key>

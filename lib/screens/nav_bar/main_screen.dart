@@ -25,7 +25,6 @@ class _MainScreenState extends State<MainScreen> {
       HomeScreen(),
       MyHomeScreen(),
       FavoriteScreen(),
-      VideoScreen(),
       ProfileScreen(),
     ];
   }
@@ -56,13 +55,6 @@ class _MainScreenState extends State<MainScreen> {
         title: "Favorite",
         activeColorPrimary: AppColors.primaryColor,
       ),
-    PersistentBottomNavBarItem(
-  icon: Image.asset('assets/images/videoFillicon.png'),
-  inactiveIcon: Image.asset('assets/images/videoIcon.png', color: AppColors.blackColor),
-  title: "Videos",
-  activeColorPrimary: AppColors.primaryColor,
-),
-
       PersistentBottomNavBarItem(
         icon: Image.asset('assets/images/account_selected.png',
             width: 34, height: 34),

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -5,12 +6,15 @@ import 'package:kaistable_website/models/video_model.dart';
 
 class VideoController extends GetxController {
   RxList<VideoModel> videos = <VideoModel>[].obs;
+  RxList<VideoModel> savedVideos = <VideoModel>[].obs;
+
   RxBool hasInitialized = false.obs;
 
   @override
   void onInit() {
     super.onInit();
     fetchVideos();
+    fetchSavedVideosForCurrentUser();
   }
 
   final RxSet<String> savedVideoIds = <String>{}.obs;
@@ -19,20 +23,37 @@ class VideoController extends GetxController {
   List<Map<String, dynamic>> originalVideoList = [];
   final TextEditingController searchController = TextEditingController();
 
-
-
   List<VideoModel> videosBackup = [];
 
+void toggleSavedStatus(String videoId) async {
+  final userId = FirebaseAuth.instance.currentUser?.uid;
 
-  
-
-  void toggleSavedStatus(String videoId) {
-    if (savedVideoIds.contains(videoId)) {
-      savedVideoIds.remove(videoId);
-    } else {
-      savedVideoIds.add(videoId);
-    }
+  if (userId == null) {
+    print('User not logged in!');
+    return;
   }
+
+  // Unique ID (optional): userId + videoId
+  final docId = '${userId}_$videoId';
+
+  final docRef = FirebaseFirestore.instance
+      .collection('saved_videos')
+      .doc(docId);
+
+  if (savedVideoIds.contains(videoId)) {
+    // Remove from Firestore
+    await docRef.delete();
+    savedVideoIds.remove(videoId);
+  } else {
+    // Save to Firestore
+    await docRef.set({
+      'userId': userId,
+      'videoId': videoId,
+      'savedAt': FieldValue.serverTimestamp(),
+    });
+    savedVideoIds.add(videoId);
+  }
+}
 
   // Future<void> fetchVideos() async {
   //   try {
@@ -73,7 +94,6 @@ class VideoController extends GetxController {
     } else {
       selectedVibes.add(vibe);
     }
-    refreshVideoList();
   }
 
   void toggleCuisine(String cuisine) {
@@ -82,7 +102,6 @@ class VideoController extends GetxController {
     } else {
       selectedCuisine.add(cuisine);
     }
-    refreshVideoList();
   }
 
   void toggleAtmosphere(String atmosphere) {
@@ -91,7 +110,6 @@ class VideoController extends GetxController {
     } else {
       selectedAtmosphere.add(atmosphere);
     }
-    refreshVideoList();
   }
 
   void toggleExperience(String experience) {
@@ -100,7 +118,6 @@ class VideoController extends GetxController {
     } else {
       selectedExperience.add(experience);
     }
-    refreshVideoList();
   }
 
   void clearFilters() {
@@ -110,90 +127,116 @@ class VideoController extends GetxController {
     selectedCuisine.clear();
   }
 
+  Future<void> fetchVideos() async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('videos')
+          .orderBy('timestamp', descending: true)
+          .get();
 
+      final list = snapshot.docs
+          .map((doc) => VideoModel.fromFirestore(doc.id, doc.data()))
+          .toList();
 
+      videos.value = list;
+      videosBackup = list; // ✅ keep full list for filtering
+      hasInitialized.value = true;
 
-Future<void> fetchVideos() async {
-  try {
-    final snapshot = await FirebaseFirestore.instance
-        .collection('videos')
-        .orderBy('timestamp', descending: true)
-        .get();
-
-    final list = snapshot.docs
-        .map((doc) => VideoModel.fromFirestore(doc.id, doc.data()))
-        .toList();
-
-    videos.value = list;
-    videosBackup = list; // ✅ keep full list for filtering
-    hasInitialized.value = true;
-  } catch (e) {
-    print('Error fetching videos: $e');
+      refreshVideoList(); // ✅ apply filters/search after loading
+    } catch (e) {
+      print('Error fetching videos: $e');
+    }
   }
-}
-
 
   void applyAllFiltersAndSearch({
-  List<String>? selectedVibes,
-  List<String>? selectedAtmospheres,
-  List<String>? selectedCuisine,
-  List<String>? selectedExperience,
-  String searchQuery = '',
-}) {
-  final query = searchQuery.toLowerCase();
+    List<String>? selectedVibes,
+    List<String>? selectedAtmospheres,
+    List<String>? selectedCuisine,
+    List<String>? selectedExperience,
+    String searchQuery = '',
+  }) {
+    if (videosBackup.isEmpty) return; // ← Skip filtering if backup is not ready
 
-  final filteredVideos = videosBackup.where((video) {
-    final vibe = video.vibes;
-    final atmosphere = video.atmosphere;
-    final cuisine = video.cuisines;
-    final experience = video.experience;
-    final restaurantName = video.restaurantName;
+    final query = searchQuery.toLowerCase();
 
-    final vibeMatch = selectedVibes != null && selectedVibes.isNotEmpty
-        ? selectedVibes.contains(vibe)
-        : false;
+    final filteredVideos = videosBackup.where((video) {
+      final vibe = video.vibes.toLowerCase();
+      final atmosphere = video.atmosphere.toLowerCase();
+      final cuisine = video.cuisines.toLowerCase();
+      final experience = video.experience.toLowerCase();
+      final restaurantName = video.restaurantName.toLowerCase();
 
-    final atmosphereMatch = selectedAtmospheres != null && selectedAtmospheres.isNotEmpty
-        ? selectedAtmospheres.contains(atmosphere)
-        : false;
+      final vibeMatch = selectedVibes == null || selectedVibes.isEmpty
+          ? true
+          : selectedVibes.any((v) => vibe.contains(v.toLowerCase()));
 
-    final cuisineMatch = selectedCuisine != null && selectedCuisine.isNotEmpty
-        ? selectedCuisine.contains(cuisine)
-        : false;
+      final atmosphereMatch =
+          selectedAtmospheres == null || selectedAtmospheres.isEmpty
+              ? true
+              : selectedAtmospheres
+                  .any((a) => atmosphere.contains(a.toLowerCase()));
 
-    final experienceMatch = selectedExperience != null && selectedExperience.isNotEmpty
-        ? selectedExperience.contains(experience)
-        : false;
+      final cuisineMatch = selectedCuisine == null || selectedCuisine.isEmpty
+          ? true
+          : selectedCuisine.any((c) => cuisine.contains(c.toLowerCase()));
 
-    final nameMatch = restaurantName.toLowerCase().contains(query);
+      final experienceMatch = selectedExperience == null ||
+              selectedExperience.isEmpty
+          ? true
+          : selectedExperience.any((e) => experience.contains(e.toLowerCase()));
 
-    final filtersActive = selectedVibes!.isNotEmpty ||
-        selectedAtmospheres!.isNotEmpty ||
-        selectedCuisine!.isNotEmpty ||
-        selectedExperience!.isNotEmpty;
+      final nameMatch = restaurantName.contains(query);
 
-    return nameMatch &&
-        (!filtersActive ||
-            vibeMatch ||
-            atmosphereMatch ||
-            cuisineMatch ||
-            experienceMatch);
-  }).toList();
+      return vibeMatch &&
+          atmosphereMatch &&
+          cuisineMatch &&
+          experienceMatch &&
+          nameMatch;
+    }).toList();
 
-  videos.value = filteredVideos; // ✅ Now UI will update!
+    videos.value = filteredVideos;
+  }
+
+  void refreshVideoList() {
+    applyAllFiltersAndSearch(
+      selectedVibes: selectedVibes,
+      selectedAtmospheres: selectedAtmosphere,
+      selectedCuisine: selectedCuisine,
+      selectedExperience: selectedExperience,
+      searchQuery: searchController.text,
+    );
+  }
+
+//saved video controller
+
+  Future<void> fetchSavedVideosForCurrentUser() async {
+  final userId = FirebaseAuth.instance.currentUser?.uid;
+  if (userId == null) return;
+
+  // Step 1: Fetch saved video IDs
+  final savedSnapshot = await FirebaseFirestore.instance
+      .collection('saved_videos')
+      .where('userId', isEqualTo: userId)
+      .get();
+
+  final savedIds = savedSnapshot.docs.map((doc) => doc['videoId'] as String).toList();
+
+  if (savedIds.isEmpty) {
+    savedVideos.value = []; // your observable list
+    return;
+  }
+
+  // Step 2: Fetch videos from 'videos' collection
+  final videoSnapshot = await FirebaseFirestore.instance
+      .collection('videos')
+      .where(FieldPath.documentId, whereIn: savedIds)
+      .get();
+
+  final savedList = videoSnapshot.docs
+      .map((doc) => VideoModel.fromFirestore(doc.id, doc.data()))
+      .toList();
+
+  savedVideos.value = savedList; // Update the observable list
 }
-
-
-void refreshVideoList() {
-  applyAllFiltersAndSearch(
-    selectedVibes: selectedVibes,
-    selectedAtmospheres: selectedAtmosphere,
-    selectedCuisine: selectedCuisine,
-    selectedExperience: selectedExperience,
-    searchQuery: searchController.text,
-  );
-}
-
-
 
 }
