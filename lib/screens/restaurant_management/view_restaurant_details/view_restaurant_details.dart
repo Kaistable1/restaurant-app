@@ -68,9 +68,12 @@ class ViewRestaurantDetails extends StatelessWidget {
                     screenWidth: screenWidth,
                     title: 'Basic Information',
                     restaurantName: restaurant.resName,
+                    websiteUrl: restaurant.websiteUrl,
+                    phoneNo: restaurant.phoneNo,
+                    resEmail: restaurant.resEmail,
                     location: restaurant.address,
-                    social:
-                        '${restaurant.socialLink}, ${restaurant.socialMedia}',
+                    tikTokeLink: restaurant.socialMedia,
+                    instagramLink: restaurant.socialLink,
                   ),
                   SizedBox(height: 16),
                   FacilitiesContainer(
@@ -87,6 +90,15 @@ class ViewRestaurantDetails extends StatelessWidget {
                     screenWidth: screenWidth,
                     entries: restaurant.dietaryList.join(', '),
                     title: 'Dietary Preferences',
+                  ),
+
+                   const SizedBox(height: 16),
+                  VibesContainer(
+                    screenHeight: screenHeight,
+                    mobileView: mobileView,
+                    screenWidth: screenWidth,
+                    entries: restaurant.vibesList.join(', '),
+                    title: 'Vibes',
                   ),
                   SizedBox(height: 16),
                   AtmospherePriceRangeContainer(
@@ -138,7 +150,11 @@ class BasicInfoContainer extends StatelessWidget {
     required this.title,
     required this.restaurantName,
     required this.location,
-    required this.social,
+    required this.phoneNo,
+    required this.websiteUrl,
+    required this.tikTokeLink,
+    required this.resEmail,
+    required this.instagramLink,
   });
 
   final double screenHeight;
@@ -147,7 +163,11 @@ class BasicInfoContainer extends StatelessWidget {
   final String title;
   final String restaurantName;
   final String location;
-  final String social;
+  final String phoneNo;
+  final String websiteUrl;
+  final String tikTokeLink;
+  final String resEmail;
+  final String instagramLink;
 
   @override
   Widget build(BuildContext context) {
@@ -223,14 +243,102 @@ class BasicInfoContainer extends StatelessWidget {
             text: TextSpan(
               children: [
                 TextSpan(
-                  text: 'Social: ',
+                  text: 'Phone No: ',
                   style: simpleText.copyWith(
                     fontWeight: FontWeight.w600,
                     fontSize: 16,
                   ),
                 ),
                 TextSpan(
-                  text: social,
+                  text: phoneNo,
+                  style: simpleText.copyWith(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                    color: secondaryColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 12),
+          RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: 'Website Url: ',
+                  style: simpleText.copyWith(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                ),
+                TextSpan(
+                  text: websiteUrl,
+                  style: simpleText.copyWith(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                    color: secondaryColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 12),
+          RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: 'Email: ',
+                  style: simpleText.copyWith(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                ),
+                TextSpan(
+                  text: resEmail,
+                  style: simpleText.copyWith(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                    color: secondaryColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 12),
+          RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: 'Instragram Link: ',
+                  style: simpleText.copyWith(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                ),
+                TextSpan(
+                  text: instagramLink,
+                  style: simpleText.copyWith(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                    color: secondaryColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 12),
+          RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: 'TikToke Link: ',
+                  style: simpleText.copyWith(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                ),
+                TextSpan(
+                  text: tikTokeLink,
                   style: simpleText.copyWith(
                     fontWeight: FontWeight.w500,
                     fontSize: 14,
@@ -432,6 +540,105 @@ class DietaryPreferencesContainer extends StatelessWidget {
     );
   }
 }
+
+
+//Vibes Container
+class VibesContainer extends StatelessWidget {
+  const VibesContainer({
+    super.key,
+    required this.screenHeight,
+    required this.mobileView,
+    required this.entries,
+    required this.screenWidth,
+    required this.title,
+  });
+
+  final double screenHeight;
+  final bool mobileView;
+  final double screenWidth;
+  final String title;
+  final String entries;
+
+  @override
+  Widget build(BuildContext context) {
+    // Initialize the controller if not already present
+    final amenitiesController = Get.put(
+      AmenitiesSubScreenController(),
+      permanent: false,
+    );
+
+    return Container(
+      width: mobileView ? screenWidth : screenWidth * 0.35,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: dimWhite,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 4,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: headingText.copyWith(fontSize: mobileView ? 16 : 20),
+          ),
+          const SizedBox(height: 16),
+          Obx(() {
+            // Get selected dietary preferences
+            final selectedVibesPreferences =
+                amenitiesController.getSelectedVibes();
+
+            if (selectedVibesPreferences.isEmpty) {
+              return Text(
+                entries,
+                style: simpleText.copyWith(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                  color: secondaryColor,
+                ),
+              );
+            }
+
+            return Wrap(
+              spacing: 8.0, // Horizontal spacing between items
+              runSpacing: 8.0, // Vertical spacing between rows
+              children: selectedVibesPreferences.map((preference) {
+                return Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: primaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    preference,
+                    style: simpleText.copyWith(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                      color: secondaryColor,
+                    ),
+                  ),
+                );
+              }).toList(),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+}
+
+
+
 
 class AtmospherePriceRangeContainer extends StatelessWidget {
   const AtmospherePriceRangeContainer({

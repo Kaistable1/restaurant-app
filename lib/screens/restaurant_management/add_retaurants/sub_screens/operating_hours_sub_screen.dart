@@ -182,11 +182,10 @@ class OperatingHoursSubScreen extends StatelessWidget {
                                                   : isTablet
                                                       ? 16
                                                       : 20,
-                                              onToggle: (val) {
-                                                controller
-                                                    .daySwitchControllers[day]
-                                                    ?.value = val;
-                                              },
+                                            onToggle: (val) {
+  controller.toggleDaySwitch(day);
+},
+
                                             ),
                                             const SizedBox(width: 4),
                                             Text(

@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:savrly/constants/text_styles.dart';
 import 'package:savrly/controllers/add_restaurants_controller.dart';
 import 'package:savrly/controllers/edit_restaurant_controller.dart';
+import 'package:savrly/controllers/experiences_sub_screen_controller.dart';
+import 'package:savrly/controllers/operating_hours_sub_screen_controller.dart';
 import 'package:savrly/models/resaturant_model.dart';
 import '../../constants/app_colors.dart';
 import '../../controllers/drawer_controller.dart';
@@ -632,20 +634,56 @@ class _RestaurantManagementScreenState
                                       ),
                                       onSelected: (value) async {
                                         if (value == 'delete') {
-                                          controller.deleteRestaurant(index);
+                                          controller.deleteRestaurantFromFiltered(restaurant);
                                         } else if (value == 'edit') {
+                                          // 1️⃣ Assign the selected restaurant
                                           addController.restaurantModel =
                                               restaurant;
                                           addController.isNewRegistery =
                                               restaurant.resEmail == '';
                                           addController.update();
                                           controller.update();
+
+                                          // 2️⃣ Delete sub-controllers to avoid stale data
+                                          if (Get.isRegistered<
+                                              ExperiencesSubScreenController>()) {
+                                            Get.delete<
+                                                ExperiencesSubScreenController>();
+                                          }
+                                          if (Get.isRegistered<
+                                              OperatingHoursSubScreenController>()) {
+                                            Get.delete<
+                                                OperatingHoursSubScreenController>();
+                                          }
+
+                                          // 3️⃣ Create a fresh edit controller
                                           final editRestaurantController =
                                               Get.put(
                                                   EditRestaurantController());
+
+                                          // 4️⃣ Fill basic info first
                                           await editRestaurantController
                                               .fillAllVarsInRestManagmentController();
 
+                                          // 5️⃣ Fill experiences
+                                          await editRestaurantController
+                                              .fillAllVarsforExperiencesController();
+
+                                          // ✅ ✅ ✅ IMPORTANT: Fill operating hours too
+                                          await editRestaurantController
+                                              .fillAllVarsforOperatingHoursController();
+
+                                          await editRestaurantController
+                                              .fillAllVarsforMenuController();
+
+                                          // 6️⃣ Fill amenities after short delay
+                                          Future.delayed(
+                                              Duration(milliseconds: 300), () {
+                                            editRestaurantController
+                                                .fillAllVarsforAmmenitiesController();
+                                          });
+
+                                          // 7️⃣ Navigate to Add Restaurant tab
                                           drawerController
                                               .addRestaurants.value = true;
                                         } else {

@@ -11,8 +11,13 @@ class RestaurantModel {
   String city;
   String address;
   String zipCode;
+  String websiteUrl;
+  String phoneNo;
+
   String logoImage;
   List<String> facilityList;
+  List<String> vibesList;
+
   List<String> imagesList;
   List<String> dietaryList;
   List<String> atmosphereList;
@@ -28,63 +33,67 @@ class RestaurantModel {
   String country;
 
   // Constructor
-  RestaurantModel({
-    required this.facilityList,
-    required this.docID,
-    required this.entertainmentScheduleList,
-    required this.menuList,
-    required this.city,
-    required this.averageRating,
-    required this.longitude,
-    required this.latitude,
-    required this.imagesList,
-    required this.resName,
-    required this.resEmail,
-    required this.dietaryList,
-    required this.specialConditions,
-    required this.socialLink,
-    required this.password,
-    required this.address,
-    required this.socialMedia,
-    required this.priceRange,
-    required this.atmosphereList,
-    required this.zipCode,
-    required this.logoImage,
-    required this.spokenLanguage,
-    required this.about,
-    required this.createdAt,
-    required this.country,
-  });
+  RestaurantModel(
+      {required this.facilityList,
+      required this.docID,
+      required this.entertainmentScheduleList,
+      required this.menuList,
+      required this.city,
+      required this.averageRating,
+      required this.longitude,
+      required this.latitude,
+      required this.imagesList,
+      required this.resName,
+      required this.resEmail,
+      required this.dietaryList,
+      required this.specialConditions,
+      required this.socialLink,
+      required this.password,
+      required this.address,
+      required this.socialMedia,
+      required this.priceRange,
+      required this.atmosphereList,
+      required this.zipCode,
+      required this.logoImage,
+      required this.spokenLanguage,
+      required this.about,
+      required this.createdAt,
+      required this.country,
+      required this.websiteUrl,
+      required this.phoneNo,
+      required this.vibesList});
 
   // Initialize the model with defaults
   static RestaurantModel initialize() {
     return RestaurantModel(
-      resName: '',
-      docID: '',
-      socialLink: '',
-      averageRating: 0.0,
-      resEmail: '',
-      city: '',
-      address: '',
-      logoImage: '',
-      facilityList: <String>[],
-      dietaryList: <String>[],
-      atmosphereList: <String>[],
-      imagesList: <String>[],
-      specialConditions: '',
-      password: '',
-      spokenLanguage: '',
-      latitude: 0.0,
-      longitude: 0.0,
-      socialMedia: 'Tiktok',
-      priceRange: '',
-      zipCode: '',
-      entertainmentScheduleList: [],
-      menuList: [],
-      about: '',
-      createdAt: DateTime.now(),
-      country: '',
-    );
+        vibesList: <String>[],
+        resName: '',
+        docID: '',
+        socialLink: '',
+        averageRating: 0.0,
+        resEmail: '',
+        city: '',
+        address: '',
+        logoImage: '',
+        facilityList: <String>[],
+        dietaryList: <String>[],
+        atmosphereList: <String>[],
+        imagesList: <String>[],
+        specialConditions: '',
+        password: '',
+        spokenLanguage: '',
+        latitude: 0.0,
+        longitude: 0.0,
+        socialMedia: 'Tiktok',
+        priceRange: '',
+        zipCode: '',
+        entertainmentScheduleList: [],
+        menuList: [],
+        about: '',
+        createdAt: DateTime.now(),
+        country: '',
+        websiteUrl: '',
+        phoneNo: '');
   }
 
   // Convert to Map
@@ -104,6 +113,7 @@ class RestaurantModel {
       'facilityList': facilityList,
       'dietaryList': dietaryList,
       'atmopshereList': atmosphereList,
+      'vibesList': vibesList,
       'resEmail': resEmail,
       'averageRating': averageRating,
       'socialLink': socialLink,
@@ -124,39 +134,43 @@ class RestaurantModel {
       'createdAt': createdAt.toIso8601String(),
       'country': country,
       'zipcode': zipCode,
+      'phoneNo': phoneNo,
+      'websiteUrl': websiteUrl
     };
   }
 
   // Optional: Factory to create from map
   factory RestaurantModel.fromMap(Map<String, dynamic> data) {
     return RestaurantModel(
-      about: data['about'] ?? '',
-      address: data['address'] ?? '',
-      atmosphereList: List<String>.from(data['atmopshereList'] ?? []),
-      averageRating: (data['averageRating'] ?? 0).toDouble(),
-      city: data['city'] ?? '',
-      country: data['country'] ?? '',
-      createdAt: data['createdAt'] ?? Timestamp.now(),
-      dietaryList: List<String>.from(data['dietaryList'] ?? []),
-      docID: data['docID'] ?? '',
-      entertainmentScheduleList: List<EntertainmentScheduleModel>.from(
-          data['entertainmentScheduleList'] ?? []),
-      facilityList: List<String>.from(data['facilityList'] ?? []),
-      imagesList: List<String>.from(data['resImages'] ?? []),
-      latitude: (data['latitude'] ?? 0.0).toDouble(),
-      logoImage: data['logoImage'] ?? '',
-      longitude: (data['longitude'] ?? 0.0).toDouble(),
-      menuList: List<MenuModel>.from(data['menuList'] ?? []),
-      password: data['password'] ?? '',
-      priceRange: data['priceRange'] ?? '',
-      resEmail: data['resEmail'] ?? '',
-      resName: data['resName'] ?? '',
-      specialConditions: data['specialConditions'] ?? '',
-      spokenLanguage: data['spokenLanguage'] ?? '',
-      socialLink: '',
-      socialMedia: '',
-      zipCode: data['zipcode'] ?? '',
-    );
+        about: data['about'] ?? '',
+        address: data['address'] ?? '',
+        atmosphereList: List<String>.from(data['atmopshereList'] ?? []),
+        vibesList:  List<String>.from(data['vibesList'] ?? []),
+        averageRating: (data['averageRating'] ?? 0).toDouble(),
+        city: data['city'] ?? '',
+        country: data['country'] ?? '',
+        createdAt: data['createdAt'] ?? Timestamp.now(),
+        dietaryList: List<String>.from(data['dietaryList'] ?? []),
+        docID: data['docID'] ?? '',
+        entertainmentScheduleList: List<EntertainmentScheduleModel>.from(
+            data['entertainmentScheduleList'] ?? []),
+        facilityList: List<String>.from(data['facilityList'] ?? []),
+        imagesList: List<String>.from(data['resImages'] ?? []),
+        latitude: (data['latitude'] ?? 0.0).toDouble(),
+        logoImage: data['logoImage'] ?? '',
+        longitude: (data['longitude'] ?? 0.0).toDouble(),
+        menuList: List<MenuModel>.from(data['menuList'] ?? []),
+        password: data['password'] ?? '',
+        priceRange: data['priceRange'] ?? '',
+        resEmail: data['resEmail'] ?? '',
+        resName: data['resName'] ?? '',
+        specialConditions: data['specialConditions'] ?? '',
+        spokenLanguage: data['spokenLanguage'] ?? '',
+        socialLink: '',
+        socialMedia: '',
+        zipCode: data['zipcode'] ?? '',
+        phoneNo: data['phoneNo'] ?? "",
+        websiteUrl: data['websiteUrl'] ?? " ");
   }
 
   // From Firestore Document
@@ -167,8 +181,10 @@ class RestaurantModel {
     return RestaurantModel(
       resName: data['resName'] ?? '',
       averageRating: (data['averageRating'] ?? 0).toDouble(),
-      docID: data['docID'] ?? '',
+     docID: snapshot.id,
       zipCode: data['zipcode'] ?? '',
+      phoneNo: data['phoneNo'] ?? '',
+      websiteUrl: data['websiteUrl'] ?? '',
       imagesList: List<String>.from(data['resImages'] ?? []),
       city: data['city'] ?? '',
       resEmail: data['resEmail'] ?? '',
@@ -178,6 +194,7 @@ class RestaurantModel {
       longitude: (data['longitude'] ?? 0).toDouble(),
       facilityList: List<String>.from(data['facilityList'] ?? []),
       atmosphereList: List<String>.from(data['atmopshereList'] ?? []),
+      vibesList: List<String>.from(data['vibesList'] ?? []),
       dietaryList: List<String>.from(data['dietaryList'] ?? []),
       specialConditions: data['specialConditions'] ?? '',
       password: data['password'] ?? '',

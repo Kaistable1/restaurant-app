@@ -310,6 +310,42 @@ class BasicInfoSubScreen extends StatelessWidget {
                   ),
                 ],
               ),
+              //add extra fields phone number and website url
+               Row(
+                children: [
+                  Expanded(
+                    child: TextAndFieldsOrDropDown(
+                      labelText: 'Phone No',
+                      fieldHintText: '(123) 456-7890',
+                      fieldController: controller.phoneNoController,
+                      fieldValidator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter phoneNo.';
+                        }
+                        return null;
+                      },
+                      isDropDown: false,
+                    ),
+                  ),
+                  const SizedBox(width: 24),
+                  Expanded(
+                    child: TextAndFieldsOrDropDown(
+                      labelText: 'Website Url',
+                      fieldHintText: 'https://example.com',
+                      fieldController: controller.websiteUrlController,
+                      
+                        fieldValidator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter website url.';
+                        }
+                        return null;
+                      },
+                      isDropDown: false,
+                    ),
+                  ),
+                ],
+              ),
+
               Row(
                 children: [
                   Expanded(
@@ -337,6 +373,7 @@ class BasicInfoSubScreen extends StatelessWidget {
                   ),
                 ],
               ),
+              
               Text(
                 'Map',
                 style: headingText.copyWith(fontSize: mobileView ? 16 : 20),

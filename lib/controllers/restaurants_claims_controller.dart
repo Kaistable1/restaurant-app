@@ -88,6 +88,7 @@ class RestaurantsClaimsController extends GetxController {
           userPassword: passwordController.text.trim());
 
       final restaurantData = {
+        'vibesList':[],
         'about': 'Coming Soon!! Stay tuned for something exciting!',
         'address': restaurantModel.address,
         'atmopshereList': [], // Empty array as per your data

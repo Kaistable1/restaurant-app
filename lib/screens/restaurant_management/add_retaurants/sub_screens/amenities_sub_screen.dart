@@ -34,6 +34,7 @@ class AmenitiesSubScreen extends StatelessWidget {
               mobileView: mobileView,
               buttonTextSize: buttonTextSize,
             ),
+
             const SizedBox(height: 24),
 
             // 2. Dietary Preferences
@@ -62,6 +63,22 @@ class AmenitiesSubScreen extends StatelessWidget {
               mobileView: mobileView,
               buttonTextSize: buttonTextSize,
             ),
+
+            const SizedBox(height: 24),
+
+            // 3. Atmosphere
+            _buildSection(
+              context: context,
+              title: 'Vibes',
+              isExpanded: controller.isVibesExpanded,
+              toggleExpanded: controller.toggleVibesExpanded,
+              items: controller.vibes,
+              toggleCheckbox: controller.toggleVibesCheckbox,
+              addItem: controller.addVibes,
+              mobileView: mobileView,
+              buttonTextSize: buttonTextSize,
+            ),
+
             const SizedBox(height: 24),
 
             // 4. Price Range

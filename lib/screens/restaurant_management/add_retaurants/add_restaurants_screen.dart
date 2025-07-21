@@ -145,7 +145,7 @@ class AddRestaurantsScreen extends StatelessWidget {
                                     backgroundColor: Colors.red,
                                     colorText: Colors.white,
                                   );
-                                } else if (formState != null &&
+                         } else if (formState != null && 
                                     formState.validate() &&
                                     tabController.areBasicInfoFieldsFilled()) {
                                   if (tabController.restaurantModel != null) {

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -29,12 +30,16 @@ class _MapWidgetState extends State<MapWidget> {
 
   // Your valid Google Maps API key
   final String _googleApiKey = 'AIzaSyAGSu_k6uEQT8siB78VTkI-u3_K05IeCOI';
+  Set<Polyline> _polylines = {};
+  List<LatLng> _polylineCoordinates = [];
 
   Timer? _debounceTimer;
 
   @override
   void initState() {
     super.initState();
+
+    _getCurrentLocation();
     // // Initialize map with current location if no coordinates are provided
     // if (widget.latitude == null && widget.longitude == null) {
     //   _getCurrentLocation();
@@ -153,6 +158,40 @@ class _MapWidgetState extends State<MapWidget> {
     }
   }
 
+  Future<void> _getDirections(double destLat, double destLng) async {
+    Position? position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+    final startLat = position.latitude;
+    final startLng = position.longitude;
+
+    final url = Uri.parse(
+      'https://maps.googleapis.com/maps/api/directions/json?origin=$startLat,$startLng&destination=$destLat,$destLng&key=$_googleApiKey',
+    );
+
+    final response = await http.get(url);
+    final data = json.decode(response.body);
+
+    if (data['routes'].isEmpty) return;
+
+    String encodedPolyline = data['routes'][0]['overview_polyline']['points'];
+    _polylineCoordinates = PolylinePoints()
+        .decodePolyline(encodedPolyline)
+        .map((e) => LatLng(e.latitude, e.longitude))
+        .toList();
+
+    setState(() {
+      _polylines = {
+        Polyline(
+          polylineId: const PolylineId('route'),
+          points: _polylineCoordinates,
+          color: Colors.red,
+          width: 5,
+        ),
+      };
+    });
+  }
+
   Future<void> _fetchAddress(double latitude, double longitude) async {
     // Try using the geocoding package first to get address from coordinates
     try {
@@ -255,6 +294,7 @@ class _MapWidgetState extends State<MapWidget> {
               ),
             ),
           );
+          await _getDirections(latitude, longitude);
 
           setState(() {});
         } else {
@@ -269,9 +309,9 @@ class _MapWidgetState extends State<MapWidget> {
   }
 
   void _setFallbackLocation() {
-    // Set default location if current location fails
     const double fallbackLatitude = 37.7749;
     const double fallbackLongitude = -122.4194;
+
     addController.latitude.value = fallbackLatitude;
     addController.longitude.value = fallbackLongitude;
     addEventController.cityController.text = 'San Francisco';
@@ -279,6 +319,7 @@ class _MapWidgetState extends State<MapWidget> {
     addEventController.update();
 
     _fetchAddress(fallbackLatitude, fallbackLongitude);
+    _getDirections(fallbackLatitude, fallbackLongitude); // ⬅️ Add this
 
     _mapController.future.then((controller) {
       controller.animateCamera(
@@ -315,30 +356,20 @@ class _MapWidgetState extends State<MapWidget> {
           return Obx(() {
             // Render the Google Map with dynamic coordinates
             return SizedBox(
-              height: mapHeight,
-              child: GoogleMap(
-                mapType: MapType.normal,
-                initialCameraPosition: CameraPosition(
-                  target: LatLng(
-                    widget.latitude == null
-                        ? addController.latitude.value != 0.0
-                            ? addController.latitude.value
-                            : 37.7749
-                        : widget.latitude!,
-                    widget.longitude == null
-                        ? addController.longitude.value != 0.0
-                            ? addController.longitude.value
-                            : -122.4194
-                        : widget.longitude!,
+                height: mapHeight,
+                child: GoogleMap(
+                  mapType: MapType.normal,
+                  initialCameraPosition: CameraPosition(
+                    target: LatLng(
+                      widget.latitude ?? addController.latitude.value,
+                      widget.longitude ?? addController.longitude.value,
+                    ),
+                    zoom: 14,
                   ),
-                  zoom: 14,
-                ),
-                onMapCreated: (GoogleMapController controller) {
-                  _mapController.complete(controller);
-                },
-                markers: {
-                  if (addController.latitude.value != 0.0 &&
-                      addController.longitude.value != 0.0)
+                  onMapCreated: (GoogleMapController controller) {
+                    _mapController.complete(controller);
+                  },
+                  markers: {
                     Marker(
                       markerId: const MarkerId('currentLocation'),
                       position: LatLng(
@@ -346,19 +377,12 @@ class _MapWidgetState extends State<MapWidget> {
                         addController.longitude.value,
                       ),
                     ),
-                },
-                myLocationButtonEnabled: true,
-                onCameraMove: (CameraPosition position) {
-                  // Update coordinates and fetch address when map moves
-                  addController.latitude.value = position.target.latitude;
-                  addController.longitude.value = position.target.longitude;
-                  _fetchAddress(
-                    position.target.latitude,
-                    position.target.longitude,
-                  );
-                },
-              ),
-            );
+                  },
+                  polylines: _polylines,
+                  myLocationButtonEnabled:
+                      false, // hide current location button
+                  myLocationEnabled: true,
+                ));
           });
         },
       ),

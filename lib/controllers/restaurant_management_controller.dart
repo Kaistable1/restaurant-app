@@ -438,30 +438,36 @@ class RestaurantManagementController extends GetxController {
     }
   }
 
-  deleteRestaurant(int index) async {
-    try {
-      String docID = restaurants[index].docID;
-      await FirebaseFirestore.instance
-          .collection('restaurants')
-          .doc(docID)
-          .delete();
-      restaurants.removeAt(index);
-      if (currentSearchQuery.value.isNotEmpty ||
-          (currentCityFilter.value.isNotEmpty &&
-              currentCityFilter.value != 'All')) {
-        filteredResults.removeWhere((restaurant) => restaurant.docID == docID);
-      }
-      getAllRestaurantsLength(
-        searchQuery: currentSearchQuery.value,
-        cityFilter: currentCityFilter.value,
-        cuisineFilter: currentCuisineFilter.value,
-      );
-      Get.snackbar('Success', 'Restaurant deleted successfully');
-    } catch (e) {
-      print('Error deleting restaurant: $e');
-      Get.snackbar('Error', 'Failed to delete restaurant');
-    }
+void deleteRestaurantFromFiltered(RestaurantModel restaurant) async {
+  try {
+    final docID = restaurant.docID;
+    print('Deleting docID: $docID');
+
+    await FirebaseFirestore.instance
+        .collection('restaurants')
+        .doc(docID)
+        .delete();
+
+    restaurants.removeWhere((r) => r.docID == docID);
+    restaurants.refresh();
+
+    filteredResults.removeWhere((r) => r.docID == docID);
+    filteredResults.refresh();
+
+    getAllRestaurantsLength(
+      searchQuery: currentSearchQuery.value,
+      cityFilter: currentCityFilter.value,
+      cuisineFilter: currentCuisineFilter.value,
+    );
+
+    Get.snackbar('Success', '${restaurant.resName} deleted.');
+  } catch (e) {
+    print('Error deleting restaurant: $e');
+    Get.snackbar('Error', 'Deletion failed');
   }
+}
+
+
 
   final TextEditingController descriptionController = TextEditingController();
   Future<void> setFeaturedRestaurant({

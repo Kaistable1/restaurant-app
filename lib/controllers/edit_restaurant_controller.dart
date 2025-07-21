@@ -62,6 +62,12 @@ class EditRestaurantController extends GetxController {
       addRestaurantController.tiktokLinkController.text =
           restaurantDetailsModel!.socialMedia;
 
+      //PHONE NUMBER AND WEBISTE INFORMATIO ADDED
+      addRestaurantController.websiteUrlController.text =
+          restaurantDetailsModel!.websiteUrl;
+      addRestaurantController.phoneNoController.text =
+          restaurantDetailsModel!.phoneNo;
+
       addRestaurantController.selectedState.value =
           restaurantDetailsModel!.country;
 
@@ -94,75 +100,141 @@ class EditRestaurantController extends GetxController {
     }
   }
 
-  // Fill variables in AmenitiesSubScreenController (Amenities)
-  fillAllVarsforAmmenitiesController() {
-    final amenitiesController = Get.put(AmenitiesSubScreenController());
+  fillAllVarsforAmmenitiesController() async {
+    final amenitiesController = Get.find<AmenitiesSubScreenController>();
     restaurantDetailsModel = restaurantController.restaurantModel;
 
+    // ✅ Wait until all data is loaded
+    while (amenitiesController.facilities.isEmpty ||
+        amenitiesController.vibes.isEmpty ||
+        amenitiesController.dietaryPreferences.isEmpty ||
+        amenitiesController.atmosphere.isEmpty ||
+        amenitiesController.priceRange.isEmpty) {
+      await Future.delayed(Duration(milliseconds: 100));
+    }
+
     if (restaurantDetailsModel != null) {
-      // Update facilities
       for (var facility in amenitiesController.facilities) {
         facility['isChecked'] =
             restaurantDetailsModel!.facilityList.contains(facility['name']);
       }
 
-      // Update dietary preferences
       for (var dietary in amenitiesController.dietaryPreferences) {
         dietary['isChecked'] =
             restaurantDetailsModel!.dietaryList.contains(dietary['name']);
       }
 
-      // Update atmosphere
+      for (var vibe in amenitiesController.vibes) {
+        vibe['isChecked'] =
+            restaurantDetailsModel!.vibesList.contains(vibe['name']);
+      }
+
       for (var atm in amenitiesController.atmosphere) {
         atm['isChecked'] =
             restaurantDetailsModel!.atmosphereList.contains(atm['name']);
       }
 
-      // Update price range
       for (var price in amenitiesController.priceRange) {
         price['isChecked'] =
             restaurantDetailsModel!.priceRange == price['name'];
       }
 
+      // ✅ Refresh lists
       amenitiesController.facilities.refresh();
       amenitiesController.dietaryPreferences.refresh();
+      amenitiesController.vibes.refresh();
       amenitiesController.atmosphere.refresh();
       amenitiesController.priceRange.refresh();
+
       amenitiesController.update();
     }
   }
 
-  // Fill variables in ExperiencesSubScreenController (Experiences)
   Future<void> fillAllVarsforExperiencesController() async {
-    final experiencesController = Get.put(ExperiencesSubScreenController());
-    restaurantDetailsModel = restaurantController.restaurantModel;
-
-    if (restaurantDetailsModel != null) {
-      experiencesController.events.clear();
-
-      // Map each item to a Future<Map<String, dynamic>> and resolve all futures
-      final maps = await Future.wait(
-        restaurantDetailsModel!.entertainmentScheduleList.map(
-          (item) => item.toMap(),
-        ),
-      );
-
-      // Add the resolved maps to events
-      experiencesController.events.addAll(maps);
-
-      experiencesController.events.refresh();
-      experiencesController.update();
+    // ❌ Delete previous instance to avoid old data
+    if (Get.isRegistered<ExperiencesSubScreenController>()) {
+      Get.delete<ExperiencesSubScreenController>();
     }
+
+    // ✅ Create a new instance
+    final experiencesController = Get.put(ExperiencesSubScreenController());
+    final addController = Get.find<AddRestaurantTabController>();
+
+    // ✅ Wait for restaurantModel and its list to be available
+    while (addController.restaurantModel == null) {
+      await Future.delayed(const Duration(milliseconds: 100));
+    }
+
+    final restaurantDetailsModel = addController.restaurantModel!;
+
+    // ✅ Just in case list is still loading
+    if (restaurantDetailsModel.entertainmentScheduleList.isEmpty) {
+      // Optional: Add an artificial delay or skip filling if needed
+      await Future.delayed(const Duration(milliseconds: 100));
+    }
+
+    // ✅ Clear old events and update UI
+    experiencesController.events.clear();
+    experiencesController.update();
+
+    // ✅ Safely map list to maps
+    final maps = await Future.wait(
+      restaurantDetailsModel.entertainmentScheduleList
+          .map((item) async => item.toMap()),
+    );
+
+    // ✅ Add mapped data and refresh UI
+    experiencesController.events.addAll(maps);
+    experiencesController.events.refresh();
+    experiencesController.update();
   }
 
-  // Fill variables in OperatingHoursSubScreenController (Operating Hours)
   Future<void> fillAllVarsforOperatingHoursController() async {
+    if (Get.isRegistered<OperatingHoursSubScreenController>()) {
+      Get.delete<OperatingHoursSubScreenController>(); // ❌ Clear old data
+    }
     final operatingHoursController =
-        Get.put(OperatingHoursSubScreenController());
+        Get.put(OperatingHoursSubScreenController()); // ✅ Fresh state
+
+    // Step 1: Clear previous data
+    operatingHoursController.daySwitches.clear();
+    operatingHoursController.daySwitchControllers.clear();
+    operatingHoursController.slotStates.clear();
+    operatingHoursController.slotTimes.clear();
+
+    // Step 2: Initialize default values for 7 days
+    final daysOfWeek = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday'
+    ];
+
+    for (var day in daysOfWeek) {
+      operatingHoursController.daySwitches[day] = false;
+      operatingHoursController.daySwitchControllers[day] =
+          ValueNotifier<bool>(false);
+      operatingHoursController.slotStates[day] = {
+        'Breakfast': false,
+        'Brunch': false,
+        'Lunch': false,
+        'Dinner': false,
+      };
+      operatingHoursController.slotTimes[day] = {
+        'Breakfast': '',
+        'Brunch': '',
+        'Lunch': '',
+        'Dinner': '',
+      };
+    }
+
     restaurantDetailsModel = restaurantController.restaurantModel;
 
     if (restaurantDetailsModel != null) {
-      // Fetch operating hours from Firestore subcollection
+      // Step 3: Fetch operating hours from Firestore subcollection
       final snapshot = await FirebaseFirestore.instance
           .collection('restaurants')
           .doc(restaurantDetailsModel!.docID)
@@ -173,11 +245,6 @@ class EditRestaurantController extends GetxController {
         final day = doc.id;
         final data = doc.data();
 
-        // Initialize daySwitches and daySwitchControllers if not set
-        operatingHoursController.daySwitches[day] ??= true;
-        operatingHoursController.daySwitchControllers[day] ??=
-            ValueNotifier<bool>(true);
-
         // Check if all slots are closed
         bool allClosed = true;
         for (var meal in ['Breakfast', 'Brunch', 'Lunch', 'Dinner']) {
@@ -187,18 +254,18 @@ class EditRestaurantController extends GetxController {
           }
         }
 
-        // Update daySwitches and daySwitchControllers
+        // Update day switches
         operatingHoursController.daySwitches[day] = !allClosed;
         operatingHoursController.daySwitchControllers[day]!.value = !allClosed;
 
-        // Update slot states and times
+        // Update slots
         for (var meal in ['Breakfast', 'Brunch', 'Lunch', 'Dinner']) {
-          operatingHoursController.slotStates[day]![meal] =
-              data[meal] != null && data[meal]['isClosed'] == false;
           if (data[meal] != null && data[meal]['isClosed'] == false) {
+            operatingHoursController.slotStates[day]![meal] = true;
             operatingHoursController.slotTimes[day]![meal] =
                 '${data[meal]['startTime']} - ${data[meal]['endTime']}';
           } else {
+            operatingHoursController.slotStates[day]![meal] = false;
             operatingHoursController.slotTimes[day]![meal] = '';
           }
         }

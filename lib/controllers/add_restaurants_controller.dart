@@ -21,6 +21,9 @@ class AddRestaurantTabController extends GetxController {
   final assignPasswordController = TextEditingController();
   final areaController = TextEditingController();
   final zipCodeController = TextEditingController();
+  final phoneNoController = TextEditingController();
+  final websiteUrlController = TextEditingController();
+
   final tiktokLinkController = TextEditingController();
   final instagramController = TextEditingController();
   RestaurantModel? restaurantModel;
@@ -86,7 +89,7 @@ class AddRestaurantTabController extends GetxController {
         assignPasswordController.text.trim().isNotEmpty &&
         areaController.text.trim().isNotEmpty &&
         selectedState.value.isNotEmpty &&
-        selectedCity.value.isNotEmpty;
+        selectedCity.value.isNotEmpty && phoneNoController.text.trim().isNotEmpty && websiteUrlController.text.isNotEmpty;
   }
 
   void clearFields() {
@@ -96,6 +99,8 @@ class AddRestaurantTabController extends GetxController {
     areaController.clear();
     instagramController.clear();
     tiktokLinkController.clear();
+    phoneNoController.clear();
+    websiteUrlController.clear();
     uploadedImage.clear();
     selectedState.value = '';
     selectedCity.value = '';
@@ -129,9 +134,12 @@ class AddRestaurantTabController extends GetxController {
       }
       // Prepare the restaurant data
       final restaurantData = {
+        'phoneNo': phoneNoController.text.trim(),
+        'websiteUrl': websiteUrlController.text.trim(),
         'about': 'Coming Soon!! Stay tuned for something exciting!',
         'address': areaController.text.trim(),
-        'atmopshereList': [], // Empty array as per your data
+        'atmopshereList': [],
+        'vibesList': [] ,// Empty array as per your data
         'averageRating': 0,
         'reviewCount': 0,
         'city': selectedCity.value.trim(),
@@ -239,6 +247,8 @@ class AddRestaurantTabController extends GetxController {
         'socialLink': instagramController.text.trim(),
         'socialMedia': tiktokLinkController.text.trim(),
         'spokenLanguage': selectedSpokenLanguage.value.trim(),
+        'phoneNo':phoneNoController.text.trim(),
+        'websiteUrl':websiteUrlController.text.trim()
       };
 
       await FirebaseFirestore.instance

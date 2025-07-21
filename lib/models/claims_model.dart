@@ -13,6 +13,7 @@ class RestaurantClaimsModel {
   final String about;
   final String address;
   final List<dynamic> atmopshereList;
+  final List<dynamic> vibesList;
   final double averageRating;
   final String city;
   final String country;
@@ -27,76 +28,82 @@ class RestaurantClaimsModel {
   final String password;
   final String priceRange;
   final String InstagramLink;
+  final String websiteUrl;
+  final String phoneNo;
   final String TiktokLink;
   final String specialConditions;
   final String spokenLanguage;
 
-  RestaurantClaimsModel({
-    required this.id,
-    required this.restaurantsName,
-    required this.ownerName,
-    required this.email,
-    required this.contact,
-    required this.message,
-    required this.status,
-    required this.photoUrl,
-    this.createdAt,
-    required this.about,
-    required this.address,
-    required this.atmopshereList,
-    required this.averageRating,
-    required this.city,
-    required this.country,
-    required this.dietaryList,
-    required this.resID,
-    required this.entertainmentScheduleList,
-    required this.facilityList,
-    required this.resImages,
-    required this.latitude,
-    required this.longitude,
-    required this.menuList,
-    required this.password,
-    required this.priceRange,
-    required this.InstagramLink,
-    required this.TiktokLink,
-    required this.specialConditions,
-    required this.spokenLanguage,
-  });
+  RestaurantClaimsModel(
+      {required this.id,
+      required this.restaurantsName,
+      required this.ownerName,
+      required this.email,
+      required this.contact,
+      required this.message,
+      required this.status,
+      required this.photoUrl,
+      this.createdAt,
+      required this.about,
+      required this.address,
+      required this.atmopshereList,
+      required this.vibesList,
+      required this.averageRating,
+      required this.city,
+      required this.country,
+      required this.dietaryList,
+      required this.resID,
+      required this.entertainmentScheduleList,
+      required this.facilityList,
+      required this.resImages,
+      required this.latitude,
+      required this.longitude,
+      required this.menuList,
+      required this.password,
+      required this.priceRange,
+      required this.InstagramLink,
+      required this.TiktokLink,
+      required this.specialConditions,
+      required this.spokenLanguage,
+      required this.phoneNo,
+      required this.websiteUrl});
 
   factory RestaurantClaimsModel.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return RestaurantClaimsModel(
-      id: doc.id,
-      restaurantsName: data['restaurantsName'] ?? '',
-      ownerName: data['ownerName'] ?? '',
-      email: data['email'] ?? '',
-      message: data['message'] ?? '',
-      status: data['status'] ?? 'Pending',
-      photoUrl: data['photoUrl'] ?? '',
-      createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
-      contact: data['contact'] ?? '',
-      about: data['about'] ?? '',
-      address: data['address'] ?? '',
-      atmopshereList: List.from(data['atmopshereList'] ?? []),
-      averageRating: data['averageRating']?.toDouble() ?? 0.0,
-      city: data['city'] ?? '',
-      country: data['country'] ?? '',
-      dietaryList: List.from(data['dietaryList'] ?? []),
-      resID: data['resID'] ?? '',
-      entertainmentScheduleList:
-          List.from(data['entertainmentScheduleList'] ?? []),
-      facilityList: List.from(data['facilityList'] ?? []),
-      resImages: List.from(data['resImages'] ?? []),
-      latitude: data['latitude']?.toDouble() ?? 0.0,
-      longitude: data['longitude']?.toDouble() ?? 0.0,
-      menuList: List.from(data['menuList'] ?? []),
-      password: data['password'] ?? '',
-      priceRange: data['priceRange'] ?? '',
-      InstagramLink: data['InstagramLink'] ?? '',
-      TiktokLink: data['TiktokLink'] ?? '',
-      specialConditions: data['specialConditions'] ?? '',
-      spokenLanguage: data['spokenLanguage'] ?? '',
-    );
+        id: doc.id,
+        restaurantsName: data['restaurantsName'] ?? '',
+        ownerName: data['ownerName'] ?? '',
+        email: data['email'] ?? '',
+        message: data['message'] ?? '',
+        status: data['status'] ?? 'Pending',
+        photoUrl: data['photoUrl'] ?? '',
+        createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
+        contact: data['contact'] ?? '',
+        about: data['about'] ?? '',
+        address: data['address'] ?? '',
+        atmopshereList: List.from(data['atmopshereList'] ?? []),
+        vibesList: List.from(data['vibesList'] ?? []),
+        averageRating: data['averageRating']?.toDouble() ?? 0.0,
+        city: data['city'] ?? '',
+        country: data['country'] ?? '',
+        dietaryList: List.from(data['dietaryList'] ?? []),
+        resID: data['resID'] ?? '',
+        entertainmentScheduleList:
+            List.from(data['entertainmentScheduleList'] ?? []),
+        facilityList: List.from(data['facilityList'] ?? []),
+        resImages: List.from(data['resImages'] ?? []),
+        latitude: data['latitude']?.toDouble() ?? 0.0,
+        longitude: data['longitude']?.toDouble() ?? 0.0,
+        menuList: List.from(data['menuList'] ?? []),
+        password: data['password'] ?? '',
+        priceRange: data['priceRange'] ?? '',
+        InstagramLink: data['InstagramLink'] ?? '',
+        TiktokLink: data['TiktokLink'] ?? '',
+        specialConditions: data['specialConditions'] ?? '',
+        spokenLanguage: data['spokenLanguage'] ?? '',
+        websiteUrl: data['websiteUrl'] ?? " ",
+        phoneNo: data['phoneNo']);
   }
 
   Map<String, dynamic> toJson() {
@@ -114,6 +121,7 @@ class RestaurantClaimsModel {
       'about': about,
       'address': address,
       'atmopshereList': atmopshereList,
+      'vibesList': vibesList,
       'averageRating': averageRating,
       'city': city,
       'country': country,
@@ -131,6 +139,8 @@ class RestaurantClaimsModel {
       'TiktokLink': TiktokLink,
       'specialConditions': specialConditions,
       'spokenLanguage': spokenLanguage,
+      'websiteUrl': websiteUrl,
+      'phoneNo': phoneNo
     };
   }
 }
