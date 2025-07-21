@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
+import 'package:kaistable_website/custom_widget/separate_text_field.dart';
 import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/screens/detail_screens/restaurant_detail_screen.dart';
@@ -22,6 +23,7 @@ import 'package:kaistable_website/screens/nav_bar/widgets/homeScreenWidget/home_
 import 'package:kaistable_website/screens/nav_bar/widgets/homeScreenWidget/home_screen_controller.dart';
 import 'package:kaistable_website/screens/nav_bar/widgets/homeScreenWidget/location_search_widget.dart';
 import 'package:kaistable_website/screens/nav_bar/widgets/homeScreenWidget/restaurant_card_widget.dart';
+import 'package:kaistable_website/screens/nav_bar/widgets/homeScreenWidget/search_page.dart';
 import 'package:kaistable_website/screens/nav_bar/widgets/homeScreenWidget/trending_restaurant.dart';
 import 'package:kaistable_website/widgets/global_functions.dart';
 import 'package:showcaseview/showcaseview.dart';
@@ -85,6 +87,8 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  final TextEditingController searchController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     eventController.onInit();
@@ -136,8 +140,25 @@ class _HomeScreenState extends State<HomeScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // const SizedBox(height: 16),
-                          LocationSearchWidget(),
-                          const SizedBox(height: 16),
+                          // LocationSearchWidget(),
+
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        SearchPage()), // new page
+                              );
+                            },
+                            child: CustomSeparateTextField(
+                              controller: searchController,
+                              hintText: 'Search Restaurants...',
+                              suffixIcon: const Icon(Icons.my_location,
+                                  color: AppColors.bottomSheetColor, size: 18),
+                            ),
+                          ),
+                          SizedBox(height: 16),
 
                           Row(
                             //                          spacing: 10, // Like SizedBox(width: 10)
@@ -248,7 +269,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
 
                   SizedBox(height: 10),
-                buildTrendingVideosSection(),
+                  buildTrendingVideosSection(),
 
                   SizedBox(height: 10),
                   _buildNearBySection(),
@@ -2464,7 +2485,7 @@ Widget _buildNearBySection() {
                           title: item.resName,
                           imagePath: item.logoImage,
                           description: item.address,
-                          isFavorite: false.obs,
+                          restaurantId: item.docID,
                           onTap: () => Get.to(
                             RestaurantDetailScreen(restaurantModel: item),
                           ),

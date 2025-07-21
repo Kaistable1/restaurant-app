@@ -102,20 +102,19 @@
 //   }
 // }
 
-
-
-
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
+import 'package:kaistable_website/main.dart';
+import 'package:kaistable_website/screens/home_screen/home_controller/home_location_controller.dart';
 
 class CircleContainerWidget extends StatelessWidget {
   final String imgPath;
   final String titleText;
   final String descriptionText;
   final bool isLocation;
-  final RxBool isFavourite;
+
   final double? width;
   final double? height;
   final VoidCallback? ontap;
@@ -127,7 +126,7 @@ class CircleContainerWidget extends StatelessWidget {
     required this.descriptionText,
     this.isLocation = false,
     this.ontap,
-    required this.isFavourite,
+  
     this.width,
     this.height,
   });
@@ -148,22 +147,6 @@ class CircleContainerWidget extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ),
-      
-          /// Heart Icon
-          Positioned(
-            top: 10,
-            right: 10,
-            child: Obx(() => GestureDetector(
-                  onTap: () => isFavourite.value = !isFavourite.value,
-                  child: Icon(
-                    isFavourite.value ? Icons.favorite : Icons.favorite_border,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                )),
-          ),
-      
-          /// Bottom Blur Info
           Positioned(
             bottom: 0,
             left: 0,
@@ -201,12 +184,13 @@ class CircleContainerWidget extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 4),
-      
+
                       /// Location
                       Row(
                         children: [
                           if (isLocation)
-                            const Icon(Icons.location_on, color: Colors.white, size: 14),
+                            const Icon(Icons.location_on,
+                                color: Colors.white, size: 14),
                           if (isLocation) const SizedBox(width: 5),
                           Expanded(
                             child: Text(

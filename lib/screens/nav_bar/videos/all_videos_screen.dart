@@ -91,7 +91,13 @@ class _AllTrendingVideosScreenState extends State<AllTrendingVideosScreen> {
                   const Icon(Icons.search, color: AppColors.blackColor),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: TextField(
+                    child: 
+                    
+                  
+                  
+                  
+                  
+                    TextField(
                       style: const TextStyle(
                         fontSize: 14,
                         fontFamily: 'NunitoSans-Regular',
@@ -117,8 +123,8 @@ class _AllTrendingVideosScreenState extends State<AllTrendingVideosScreen> {
                             icon: Image(
                               image:
                                   AssetImage("assets/images/filtersButton.png"),
-                              width: 16,
-                              height: 18,
+                              width: 30,
+                              height: 30,
                             ),
                             offset: Offset(0, 40),
                             itemBuilder: (context) => [
@@ -539,6 +545,14 @@ class _AllTrendingVideosScreenState extends State<AllTrendingVideosScreen> {
                         // TODO: implement search filter logic if needed
                       },
                     ),
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
                   ),
                 ],
               ),
@@ -594,6 +608,7 @@ class _AllTrendingVideosScreenState extends State<AllTrendingVideosScreen> {
                           );
                         },
                         child: TrendingVideoCard(
+                          isplay: false,
                           video: video,
                           onFilterTap: () {
                             final allFiltersMap =

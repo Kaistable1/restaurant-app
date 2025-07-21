@@ -44,32 +44,29 @@ class EventScreen extends StatelessWidget {
           /// Search bar
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: SizedBox(
-              height: 38,
-              child: CustomSeparateTextField(
-                controller: controller.searchController,
-                hintText: 'Try searching for restaurant name',
-                hintStyle: TextStyle(
-                  color: AppColors.hintText,
-                  fontFamily: "Nunito-Regular",
-                  fontWeight: FontWeight.w400,
-                  fontSize: 12,
-                ),
-                isPrefixIcon: true,
-                maxLines: 1,
-                isShadow: true,
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 4, top: 8, bottom: 8, right: 0),
-                  child: Image.asset(
-                    'assets/images/search_icon.png',
-                    fit: BoxFit.contain,
-                    height: 20,
-                    width: 20,
-                  ),
-                ),
-                isSuffixIcon: true,
-              ),
+            child: CustomSeparateTextField(
+              controller: controller.searchController,
+              hintText: 'Try searching for restaurant name',
+              // hintStyle: TextStyle(
+              //   color: AppColors.hintText,
+              //   fontFamily: "Nunito-Regular",
+              //   fontWeight: FontWeight.w400,
+              //   fontSize: 12,
+              // ),
+              // isPrefixIcon: true,
+              // maxLines: 1,
+              // isShadow: true,
+              // prefixIcon: Padding(
+              //   padding: const EdgeInsets.only(
+              //       left: 4, top: 8, bottom: 8, right: 0),
+              //   child: Image.asset(
+              //     'assets/images/search_icon.png',
+              //     fit: BoxFit.contain,
+              //     height: 20,
+              //     width: 20,
+              //   ),
+              // ),
+              // isSuffixIcon: true,
             ),
           ),
           SizedBox(

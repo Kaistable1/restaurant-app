@@ -32,87 +32,42 @@ class FilterWidget extends StatelessWidget {
         Padding(
           padding:
               const EdgeInsets.only(top: 10.0, left: 12, right: 10, bottom: 6),
-          child: Row(
-            children: [
-              Expanded(
-                  child: SizedBox(
-                height: 38,
-                child: CustomSeparateTextField(
-                  controller: controller.searchController,
-                  hintText: 'Try searching for restaurant name',
-                  hintStyle: TextStyle(
-                    color: AppColors.hintText,
-                    fontFamily: "Nunito-Regular",
-                    fontWeight: FontWeight.w400,
-                    fontSize: 12,
-                  ),
-                  isPrefixIcon: true,
-                  isShadow: true,
-                  prefixIcon: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 4, top: 8, bottom: 8, right: 0),
-                    child: Image.asset(
-                      'assets/images/search_icon.png',
-                      fit: BoxFit.contain,
-                      height: 20,
-                      width: 20,
-                    ),
-                  ),
-                  isSuffixIcon: true,
-                  suffixIcon: Container(
-                    height: 38,
-                    width: 66,
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryColor,
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(10),
-                        bottomRight: Radius.circular(10),
+          child: CustomSeparateTextField(
+                    controller: controller.searchController,
+                    hintText: 'Try searching for restaurant name',
+                    // hintStyle: TextStyle(
+                    //   color: AppColors.hintText,
+                    //   fontFamily: "Nunito-Regular",
+                    //   fontWeight: FontWeight.w400,
+                    //   fontSize: 12,
+                    // ),
+                    // isPrefixIcon: true,
+                    // isShadow: true,
+                    // prefixIcon: Padding(
+                    //   padding: const EdgeInsets.only(
+                    //       left: 4, top: 8, bottom: 8, right: 0),
+                    //   child: Image.asset(
+                    //     'assets/images/search_icon.png',
+                    //     fit: BoxFit.contain,
+                    //     height: 20,
+                    //     width: 20,
+                    //   ),
+                    // ),
+                    // isSuffixIcon: true,
+                    suffixIcon: GestureDetector(
+                      onTap: () => showFilterBottomSheet(),
+                      child: Image.asset(
+                        'assets/images/filter_image__.png',
+                        height: 30,
+                        width: 30,
                       ),
                     ),
-                    child: Center(
-                      child: Text(
-                        'Search',
-                        style: TextStyle(
-                          color: AppColors.bottomSheetColor,
-                          fontFamily: "Nunito-Bold",
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              )),
-              SizedBox(
-                width: 4,
-              ),
-              GestureDetector(
-                onTap: () {
-                  showFilterBottomSheet();
-                
-                },
-                child: Image.asset(
-                  'assets/images/filter_image__.png',
-                  width: 32,
-                  height: 30,
-                ),
-              ),
-            ],
           ),
         ),
-    
-        
       ],
     );
   }
 }
-
-
-
-
-
-
-
 
 // class SelectedFilterWidgets extends StatelessWidget {
 //   final String filterName;
@@ -165,8 +120,6 @@ class FilterWidget extends StatelessWidget {
 //     );
 //   }
 // }
-
-
 
 class FilterBox extends StatelessWidget {
   final HomeLocationController controller = Get.put(HomeLocationController());

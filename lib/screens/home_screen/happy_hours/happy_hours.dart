@@ -105,7 +105,7 @@ class HappyHours extends StatelessWidget {
                             imagePath: item.imagePath,
                             timetext: item.startTimeText,
                             percentText: item.percentText,
-                            isFavorite: false.obs,
+                           
                             endTimeText: item.endTimeText,
                           );
                         },

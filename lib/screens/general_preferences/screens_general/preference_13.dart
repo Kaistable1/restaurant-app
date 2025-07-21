@@ -107,7 +107,7 @@ class Preference13 extends StatelessWidget {
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly,
                   ],
-                  isShadow: true,
+                 // isShadow: true,
                   validator: (value) {
                     if (value!.isEmpty) {
                       return 'Enter zip code.';

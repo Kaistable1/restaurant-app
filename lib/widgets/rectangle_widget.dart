@@ -144,11 +144,12 @@ class RectangleWidget extends StatelessWidget {
   final String timetext;
   final String? endTimeText;
   final String percentText;
-  final RxBool isFavorite;
+
   final double? width;
   final double? height;
   final double? imgHeight;
   final Color? boxColor;
+ 
   String? resturant_id;
   final Function(int)? onNavigate;
 
@@ -160,7 +161,7 @@ class RectangleWidget extends StatelessWidget {
     required this.description,
     required this.timetext,
     required this.percentText,
-    required this.isFavorite,
+
     this.onNavigate,
     this.endTimeText,
     this.width,
@@ -252,16 +253,10 @@ class RectangleWidget extends StatelessWidget {
         Positioned(
           top: 8,
           right: 8,
-          child: Obx(() => GestureDetector(
-                onTap: () {
-                  isFavorite.value = !isFavorite.value;
-                },
-                child: Icon(
-                  isFavorite.value ? Icons.favorite : Icons.favorite_border,
-                  color: AppColors.whiteColor,
-                  size: 18,
-                ),
-              )),
+          child: auth.currentUser == null || resturant_id == ''
+              ? SizedBox()
+              : HomeLocationController()
+                  .favoriteHeart(resturant_id: resturant_id??""),
         ),
       ],
     );

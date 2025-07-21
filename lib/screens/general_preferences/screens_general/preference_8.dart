@@ -145,7 +145,7 @@ class Preference8 extends StatelessWidget {
                                         controller:
                                             controller.screen8Controller,
                                         keyboardType: TextInputType.name,
-                                        isShadow: false,
+                                        //isShadow: false,
                                       ),
                                     ),
                                   ],

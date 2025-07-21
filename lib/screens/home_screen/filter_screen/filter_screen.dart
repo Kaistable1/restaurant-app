@@ -276,7 +276,7 @@ class FilterScreen extends StatelessWidget {
                                 timetext: item.timetext,
                                 percentText: item.percentText,
                                 endTimeText: item.endTimeText,
-                                isFavorite: false.obs,
+                              
                                 height: 250,
                                 //scrollcontroller: scrollcontroller,
                               ),

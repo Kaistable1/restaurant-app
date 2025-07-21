@@ -200,6 +200,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               FilterWidget(),
+              SizedBox(height: 20,),
 
               // 🔄 UPDATED: Filter logic to always apply on fresh snapshot.data
 
@@ -405,7 +406,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
               timetext: '10 AM',
               percentText: '25%',
               endTimeText: '9 PM',
-              isFavorite: false.obs,
+            
                height: 250,
             ),
           ),

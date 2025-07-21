@@ -96,7 +96,11 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
               auth.currentUser == null || widget.restaurantModel?.docID == ''
                   ? SizedBox()
                   : HomeLocationController().favoriteHeart(
-                      resturant_id: widget.restaurantModel?.docID),
+  resturant_id: widget.restaurantModel?.docID ?? '',
+),
+
+
+
               SizedBox(
                 width: 12,
               )

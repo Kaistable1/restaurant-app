@@ -1,22 +1,43 @@
-# Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
+# Dart/Pub
 .dart_tool/
+.packages
+.pub-cache/
+build/
+*.lock
+
+# Flutter generated
 .flutter-plugins
 .flutter-plugins-dependencies
-.pub-cache/
-.pub/
-/build/
 
-/ios/build/   # 👈 this is required to ignore iOS build output
+# VS Code & IntelliJ
+.vscode/
+.idea/
+*.iml
+*.log
 
-# Symbolication related
-app.*.symbols
+# Android
+android/.gradle/
+android/app/build/
+android/local.properties
 
-# Obfuscation related
-app.*.map.json
+# iOS
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/
+ios/build/
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+# macOS
+macos/Flutter/ephemeral/
+macos/build/
+
+# Web
+web/.dart_tool/
+web/build/
+
+# Windows
+windows/Flutter/ephemeral/
+windows/build/
+
+# Linux
+linux/Flutter/ephemeral/
+linux/build/

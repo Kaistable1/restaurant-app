@@ -11,6 +11,7 @@ import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/models/recent_view.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/models/review_model.dart';
+import 'package:kaistable_website/screens/favorite_screen/controller/favorite_controller.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/filter_selection_controller.dart';
 import 'package:kaistable_website/screens/nav_bar/widgets/homeScreenWidget/home_screen_controller.dart';
 import 'package:kaistable_website/utils/loading.dart';
@@ -899,87 +900,115 @@ class HomeLocationController extends GetxController {
     }
   }
 
-  Widget favoriteHeart({resturant_id}) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('users')
-          .doc(auth.currentUser?.uid) // Current user's document
-          .collection('favorite')
-          .where('resturantID',
-              isEqualTo: resturant_id) // Filter by restaurantID
-          .snapshots(), // Stream the snapshot for real-time updates
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Icon(
-            Icons.favorite_border_outlined,
-            size: 22,
-            color: AppColors.primaryColor,
-          ); // Show loading indicator while waiting for data
-        }
+  // Widget favoriteHeart({resturant_id}) {
+  //   return StreamBuilder<QuerySnapshot>(
+  //     stream: FirebaseFirestore.instance
+  //         .collection('users')
+  //         .doc(auth.currentUser?.uid) // Current user's document
+  //         .collection('favorite')
+  //         .where('resturantID',
+  //             isEqualTo: resturant_id) // Filter by restaurantID
+  //         .snapshots(), // Stream the snapshot for real-time updates
+  //     builder: (context, snapshot) {
+  //       if (snapshot.connectionState == ConnectionState.waiting) {
+  //         return Icon(
+  //           Icons.favorite_border_outlined,
+  //           size: 22,
+  //           color: AppColors.primaryColor,
+  //         ); // Show loading indicator while waiting for data
+  //       }
 
-        if (snapshot.hasError) {
-          return Icon(
-            Icons.favorite_border_outlined,
-            size: 22,
-            color: AppColors.primaryColor,
-          ); // Show error icon if there's an error
-        }
+  //       if (snapshot.hasError) {
+  //         return Icon(
+  //           Icons.favorite_border_outlined,
+  //           size: 22,
+  //           color: AppColors.primaryColor,
+  //         ); // Show error icon if there's an error
+  //       }
 
-        // Check if the restaurant exists in the favorite collection
-        bool isFavorite = snapshot.data?.docs.isNotEmpty ?? false;
+  //       // Check if the restaurant exists in the favorite collection
+  //       bool isFavorite = snapshot.data?.docs.isNotEmpty ?? false;
 
-        return InkWell(
-          onTap: () {
-            // Toggle favorite status
-            if (isFavorite) {
-              // Remove the restaurant from favorites
-              FirebaseFirestore.instance
-                  .collection('users')
-                  .doc(auth.currentUser!.uid)
-                  .collection('favorite')
-                  .where('resturantID', isEqualTo: resturant_id)
-                  .get()
-                  .then((snapshot) {
-                for (var doc in snapshot.docs) {
-                  doc.reference.delete(); // Remove from favorites
-                }
-              });
-            } else {
-              // Add the restaurant to favorites
-              String favId = FirebaseFirestore.instance
-                  .collection('users')
-                  .doc(auth.currentUser!.uid)
-                  .collection('favorite')
-                  .doc()
-                  .id;
+  //       return InkWell(
+  //         onTap: () {
+  //           // Toggle favorite status
+  //           if (isFavorite) {
+  //             // Remove the restaurant from favorites
+  //             FirebaseFirestore.instance
+  //                 .collection('users')
+  //                 .doc(auth.currentUser!.uid)
+  //                 .collection('favorite')
+  //                 .where('resturantID', isEqualTo: resturant_id)
+  //                 .get()
+  //                 .then((snapshot) {
+  //               for (var doc in snapshot.docs) {
+  //                 doc.reference.delete(); // Remove from favorites
+  //               }
+  //             });
+  //           } else {
+  //             // Add the restaurant to favorites
+  //             String favId = FirebaseFirestore.instance
+  //                 .collection('users')
+  //                 .doc(auth.currentUser!.uid)
+  //                 .collection('favorite')
+  //                 .doc()
+  //                 .id;
 
-              FirebaseFirestore.instance
-                  .collection('users')
-                  .doc(auth.currentUser!.uid)
-                  .collection('favorite')
-                  .doc(favId)
-                  .set({
-                'resturantID': resturant_id,
-                'favID': favId,
-              });
-            }
-          },
-          child: isFavorite
-              ? Image.asset(
-                  'assets/images/heart_icon.png',
-                  color: AppColors.primaryColor,
-                  height: 22,
-                  width: 22,
-                )
-              : Icon(
-                  Icons.favorite_border_outlined,
-                  size: 22,
-                  color: AppColors.primaryColor,
-                ),
-        );
+  //             FirebaseFirestore.instance
+  //                 .collection('users')
+  //                 .doc(auth.currentUser!.uid)
+  //                 .collection('favorite')
+  //                 .doc(favId)
+  //                 .set({
+  //               'resturantID': resturant_id,
+  //               'favID': favId,
+  //             });
+  //           }
+  //         },
+  //         child: isFavorite
+  //             ? Image.asset(
+  //                 'assets/images/heart_icon.png',
+  //                 color: AppColors.primaryColor,
+  //                 height: 22,
+  //                 width: 22,
+  //               )
+  //             : Icon(
+  //                 Icons.favorite_border_outlined,
+  //                 size: 22,
+  //                 color: AppColors.primaryColor,
+  //               ),
+  //       );
+  //     },
+  //   );
+  // }
+
+
+
+Widget favoriteHeart({required String resturant_id}) {
+  final favoriteController = Get.find<FavoriteController>();
+
+  return Obx(() {
+    bool isFavorite = favoriteController.favoriteIds.contains(resturant_id);
+
+    return InkWell(
+      onTap: () {
+        favoriteController.toggleFavorite(resturant_id);
       },
+      child: isFavorite
+          ? Image.asset(
+              'assets/images/heart_icon.png',
+              color: AppColors.primaryColor,
+              height: 22,
+              width: 22,
+            )
+          : Icon(
+              Icons.favorite_border_outlined,
+              size: 22,
+              color: AppColors.primaryColor,
+            ),
     );
-  }
+  });
+}
 
 //............Top rated solve filpering issue -----------------------
 

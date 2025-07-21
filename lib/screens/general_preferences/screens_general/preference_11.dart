@@ -134,7 +134,7 @@ class Preference11 extends StatelessWidget {
                                   hintText: 'Enter text',
                                   controller: controller.screen8Controller,
                                   keyboardType: TextInputType.name,
-                                  isShadow: false,
+                                //  isShadow: false,
                                 ),
                               ),
                             )

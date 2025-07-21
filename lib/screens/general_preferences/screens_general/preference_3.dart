@@ -135,7 +135,7 @@ class Preference3 extends StatelessWidget {
                                   hintText: 'Enter text',
                                   controller: controller.screen3Controller,
                                   keyboardType: TextInputType.name,
-                                  isShadow: false,
+                                  //isShadow: false,
                                 ),
                               ),
                             )

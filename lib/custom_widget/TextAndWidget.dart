@@ -49,9 +49,7 @@ class TextAndFieldWidget extends StatelessWidget {
         CustomSeparateTextField(
           hintText: hintText,
           controller: controller!,
-          isSuffixIcon: isSuffixIcon,
           keyboardType: keyboardType,
-          isShadow: true,
           readOnly: readOnly ?? false,
           obscureText: obscureText,
           suffixIcon: suffixIcon,

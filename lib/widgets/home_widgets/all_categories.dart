@@ -118,7 +118,7 @@ class AllCategories extends StatelessWidget {
                             endTimeText: '9 PM',
                             // percentageOff: item.menuList.percentageOff,
                             // happyhour: item.menuList.happyHourSpecials,
-                            isFavorite: false.obs,
+                      
                             height: 250,
                           ),
                         ),

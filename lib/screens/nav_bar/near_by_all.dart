@@ -91,7 +91,7 @@ Widget build(BuildContext context) {
                   title: item.resName,
                   imagePath: item.logoImage,
                   description: item.address,
-                  isFavorite: false.obs,
+                  restaurantId: item.docID, 
                   imageHeight: 190,
                   containerHeight: 250,
                   onTap: () => Get.to(

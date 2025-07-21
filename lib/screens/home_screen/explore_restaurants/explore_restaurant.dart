@@ -84,49 +84,46 @@ class ExploreRestaurant extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 10),
-                    SizedBox(
-                      height: 38,
-                      child: CustomSeparateTextField(
-                        controller: controller.searchController,
-                        hintText: 'Try searching for restaurant name',
-                        hintStyle: TextStyle(
-                          color: AppColors.hintText,
-                          fontFamily: "Nunito-Regular",
-                          fontWeight: FontWeight.w400,
-                          fontSize: 12,
-                        ),
-                        isPrefixIcon: true,
-                        isShadow: true,
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 4, top: 8, bottom: 8, right: 0),
-                          child: Image.asset(
-                            'assets/images/search_icon.png',
-                            fit: BoxFit.contain,
-                            height: 20,
-                            width: 20,
+                    CustomSeparateTextField(
+                      controller: controller.searchController,
+                      hintText: 'Try searching for restaurant name',
+                      // hintStyle: TextStyle(
+                      //   color: AppColors.hintText,
+                      //   fontFamily: "Nunito-Regular",
+                      //   fontWeight: FontWeight.w400,
+                      //   fontSize: 12,
+                      // ),
+                      // isPrefixIcon: true,
+                      // isShadow: true,
+                      // prefixIcon: Padding(
+                      //   padding: const EdgeInsets.only(
+                      //       left: 4, top: 8, bottom: 8, right: 0),
+                      //   child: Image.asset(
+                      //     'assets/images/search_icon.png',
+                      //     fit: BoxFit.contain,
+                      //     height: 20,
+                      //     width: 20,
+                      //   ),
+                      // ),
+                      // isSuffixIcon: true,
+                      suffixIcon: Container(
+                        height: 38,
+                        width: 66,
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryColor,
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(10),
+                            bottomRight: Radius.circular(10),
                           ),
                         ),
-                        isSuffixIcon: true,
-                        suffixIcon: Container(
-                          height: 38,
-                          width: 66,
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryColor,
-                            borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(10),
-                              bottomRight: Radius.circular(10),
-                            ),
-                          ),
-                          child: Center(
-                            child: Text(
-                              'Search',
-                              style: TextStyle(
-                                color: AppColors.bottomSheetColor,
-                                fontFamily: "Nunito-Bold",
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                              ),
+                        child: Center(
+                          child: Text(
+                            'Search',
+                            style: TextStyle(
+                              color: AppColors.bottomSheetColor,
+                              fontFamily: "Nunito-Bold",
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
                             ),
                           ),
                         ),
@@ -211,7 +208,7 @@ class ExploreRestaurant extends StatelessWidget {
                                       timetext: '10 AM',
                                       percentText: '25%',
                                       endTimeText: '9 PM',
-                                      isFavorite: false.obs,
+                                  
                                     ),
                                   ),
                                 );

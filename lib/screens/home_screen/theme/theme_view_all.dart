@@ -76,7 +76,7 @@ class ThemeViewAll extends StatelessWidget {
               ontap: () {
                 Get.to(LocationScreen());
               },
-              isFavourite: false.obs,
+             
               isLocation: true,
               imgPath: item.imgPath,
               titleText: item.titleText,

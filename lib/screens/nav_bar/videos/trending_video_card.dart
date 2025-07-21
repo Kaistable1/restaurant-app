@@ -12,9 +12,11 @@ import 'package:url_launcher/url_launcher.dart';
 class TrendingVideoCard extends StatefulWidget {
   final VideoModel video;
   final VoidCallback onFilterTap;
+  final bool isplay;
   final bool showBookmark; // 👈 new variable
 
   const TrendingVideoCard({
+  required this.isplay,
     required this.video,
     required this.onFilterTap,
     this.showBookmark = true,
@@ -77,7 +79,7 @@ class _TrendingVideoCardState extends State<TrendingVideoCard> {
         Positioned.fill(
           child: Center(
             child: GestureDetector(
-              onTap: _togglePlayPause,
+            onTap: widget.isplay? _togglePlayPause:null,
               child: Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(

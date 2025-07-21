@@ -47,43 +47,95 @@ class _FullScreenVideoPlayerScreenState
     }
   }
 
-  void _manageControllers() {
-    for (int i = _currentPage - 1; i <= _currentPage + 1; i++) {
-      if (i >= 0 && i < widget.videos.length) {
-        if (!_controllers.containsKey(i)) {
-          final controller =
-              VideoPlayerController.network(widget.videos[i].url);
+  // void _manageControllers() {
+  //   for (int i = _currentPage - 1; i <= _currentPage + 1; i++) {
+  //     if (i >= 0 && i < widget.videos.length) {
+  //       if (!_controllers.containsKey(i)) {
+  //         final controller =
+  //             VideoPlayerController.network(widget.videos[i].url);
 
-          controller.initialize().then((_) {
-            controller.setLooping(true);
-            if (i == _currentPage) controller.play();
+  //         controller.initialize().then((_) {
+  //           controller.setLooping(true);
+  //           if (i == _currentPage) controller.play();
 
-            // ✅ Add listener to update progress
-            VoidCallback listener = () => setState(() {});
-            controller.addListener(listener);
-            _controllerListeners[i] = listener;
+  //           // ✅ Add listener to update progress
+  //           VoidCallback listener = () => setState(() {});
+  //           controller.addListener(listener);
+  //           _controllerListeners[i] = listener;
 
-            setState(() {});
-          });
+  //           setState(() {});
+  //         });
 
-          _controllers[i] = controller;
-        } else {
-          if (i == _currentPage && !_controllers[i]!.value.isPlaying) {
-            _controllers[i]!.play();
-          }
-        }
-      }
-    }
+  //         _controllers[i] = controller;
+  //       } else {
+  //         if (i == _currentPage && !_controllers[i]!.value.isPlaying) {
+  //           _controllers[i]!.play();
+  //         }
+  //       }
+  //     }
+  //   }
 
-    final removeKeys = _controllers.keys
-        .where((k) => k < _currentPage - 1 || k > _currentPage + 1)
-        .toList();
+  //   final removeKeys = _controllers.keys
+  //       .where((k) => k < _currentPage - 1 || k > _currentPage + 1)
+  //       .toList();
 
-    for (var i in removeKeys) {
-      _controllers[i]?.dispose();
-      _controllers.remove(i);
+  //   for (var i in removeKeys) {
+  //     _controllers[i]?.dispose();
+  //     _controllers.remove(i);
+  //   }
+  // }
+
+
+
+void _manageControllers() {
+  // ✅ Pause all currently playing videos
+  for (var controller in _controllers.values) {
+    if (controller.value.isPlaying) {
+      controller.pause();
     }
   }
+
+  // ✅ Loop: preload previous, current, next
+  for (int i = _currentPage - 1; i <= _currentPage + 1; i++) {
+    if (i >= 0 && i < widget.videos.length) {
+      if (!_controllers.containsKey(i)) {
+        final controller =
+            VideoPlayerController.network(widget.videos[i].url);
+
+        controller.initialize().then((_) {
+          controller.setLooping(true);
+          if (i == _currentPage) controller.play();
+
+          VoidCallback listener = () => setState(() {});
+          controller.addListener(listener);
+          _controllerListeners[i] = listener;
+
+          setState(() {});
+        });
+
+        _controllers[i] = controller;
+      }
+    }
+  }
+
+  // ✅ Only play current page’s controller
+  if (_controllers[_currentPage] != null &&
+      _controllers[_currentPage]!.value.isInitialized) {
+    _controllers[_currentPage]!.play();
+  }
+
+  // ✅ Dispose unnecessary controllers (outside ±1 range)
+  final removeKeys = _controllers.keys
+      .where((k) => k < _currentPage - 1 || k > _currentPage + 1)
+      .toList();
+
+  for (var i in removeKeys) {
+    _controllers[i]?.removeListener(_controllerListeners[i]!);
+    _controllers[i]?.dispose();
+    _controllers.remove(i);
+    _controllerListeners.remove(i);
+  }
+}
 
  
   @override

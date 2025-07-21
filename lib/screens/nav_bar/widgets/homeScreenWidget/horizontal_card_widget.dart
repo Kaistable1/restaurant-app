@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
+import 'package:kaistable_website/main.dart';
+import 'package:kaistable_website/screens/home_screen/home_controller/home_location_controller.dart';
 
 // class HorizontalCardWidget extends StatelessWidget {
 //   final String title;
@@ -129,19 +131,19 @@ class HorizontalCardWidget extends StatelessWidget {
   final String title;
   final String imagePath;
   final String description;
-  final RxBool isFavorite;
   final VoidCallback onTap;
   final double imageHeight;
   final double containerHeight;
+  final String restaurantId;
 
   const HorizontalCardWidget({
     required this.title,
     required this.imagePath,
     required this.description,
-    required this.isFavorite,
     required this.onTap,
     required this.imageHeight,
     required this.containerHeight,
+    required this.restaurantId,
     Key? key,
   }) : super(key: key);
 
@@ -200,16 +202,10 @@ class HorizontalCardWidget extends StatelessWidget {
                           maxLines: 1,
                         ),
                       ),
-                      Obx(() => GestureDetector(
-                            onTap: () => isFavorite.toggle(),
-                            child: Icon(
-                              isFavorite.value
-                                  ? Icons.favorite
-                                  : Icons.favorite_border,
-                              color: AppColors.blackColor,
-                              size: 18,
-                            ),
-                          )),
+                      auth.currentUser == null || restaurantId == ''
+                          ? const SizedBox()
+                          : HomeLocationController()
+                              .favoriteHeart(resturant_id: restaurantId),
                     ],
                   ),
                   const SizedBox(height: 4),

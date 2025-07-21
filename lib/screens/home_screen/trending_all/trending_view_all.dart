@@ -113,57 +113,33 @@ class _TrendingViewAllState extends State<TrendingViewAll> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    SizedBox(
-                      height: 38,
-                      child: CustomSeparateTextField(
-                        controller: homeController.searchController,
-                        hintText: 'Try searching for restaurant name',
-                        onChanged: (v) {
-                          if (v.trim().isNotEmpty)
-                            homeController.filterRestaurants(v);
-                        },
-                        hintStyle: TextStyle(
-                          color: AppColors.hintText,
-                          fontFamily: "Nunito-Regular",
-                          fontWeight: FontWeight.w400,
-                          fontSize: 12,
-                        ),
-                        isPrefixIcon: true,
-                        isShadow: true,
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 4, top: 8, bottom: 8, right: 0),
-                          child: Image.asset(
-                            'assets/images/search_icon.png',
-                            fit: BoxFit.contain,
-                            height: 20,
-                            width: 20,
-                          ),
-                        ),
-                        isSuffixIcon: true,
-                        suffixIcon: Container(
-                          height: 38,
-                          width: 66,
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryColor,
-                            borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(10),
-                              bottomRight: Radius.circular(10),
-                            ),
-                          ),
-                          child: Center(
-                            child: Text(
-                              'Search',
-                              style: TextStyle(
-                                color: AppColors.bottomSheetColor,
-                                fontFamily: "Nunito-Bold",
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
+                    CustomSeparateTextField(
+                      controller: homeController.searchController,
+                      hintText: 'Try searching for restaurant name',
+                      onChanged: (v) {
+                        if (v.trim().isNotEmpty)
+                          homeController.filterRestaurants(v);
+                      },
+                      // hintStyle: TextStyle(
+                      //   color: AppColors.hintText,
+                      //   fontFamily: "Nunito-Regular",
+                      //   fontWeight: FontWeight.w400,
+                      //   fontSize: 12,
+                      // ),
+                      // isPrefixIcon: true,
+                      // isShadow: true,
+                      // prefixIcon: Padding(
+                      //   padding: const EdgeInsets.only(
+                      //       left: 4, top: 8, bottom: 8, right: 0),
+                      //   child: Image.asset(
+                      //     'assets/images/search_icon.png',
+                      //     fit: BoxFit.contain,
+                      //     height: 20,
+                      //     width: 20,
+                      //   ),
+                      // ),
+                      // isSuffixIcon: true,
+                    
                     ),
                     SizedBox(height: 16),
                     Row(
@@ -243,7 +219,7 @@ class _TrendingViewAllState extends State<TrendingViewAll> {
                                         //     item.menuList.percentageOff,
                                         // happyhour:
                                         //     item.menuList.happyHourSpecials,
-                                        isFavorite: false.obs,
+                                     
                                       ),
                                     ),
                                   );

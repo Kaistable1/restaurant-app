@@ -107,6 +107,7 @@ Widget buildTrendingVideosSection() {
           ),
           SizedBox(height: 16),
           TrendingVideoCard(
+            isplay: true,
             video: featuredVideo,
             onFilterTap: () {
               final allFiltersMap =

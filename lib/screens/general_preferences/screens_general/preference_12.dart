@@ -143,7 +143,7 @@ class Preference12 extends StatelessWidget {
                                         controller:
                                             controller.screen12Controller,
                                         keyboardType: TextInputType.name,
-                                        isShadow: false,
+                                       // isShadow: false,
                                       ),
                                     ),
                                   ],

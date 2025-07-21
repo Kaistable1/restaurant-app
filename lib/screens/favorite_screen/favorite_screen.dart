@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -42,31 +44,7 @@ class FavoriteScreen extends StatelessWidget {
           ),
           centerTitle: true,
           automaticallyImplyLeading: true,
-          // leading: Padding(
-          //   padding: const EdgeInsets.all(12.0),
-          //   child: Container(
-          //     height: 16,
-          //     width: 16,
-          //     decoration: BoxDecoration(
-          //       color: Colors.white,
-          //       shape: BoxShape.circle,
-          //       boxShadow: [
-          //         BoxShadow(
-          //           color: Colors.black.withOpacity(0.1),
-          //           spreadRadius: 1,
-          //           blurRadius: 3,
-          //           offset: const Offset(0, 1),
-          //         ),
-          //       ],
-          //     ),
-          //     child: GestureDetector(
-          //       onTap: () {
-          //         Get.off(MyHomeScreen());
-          //       },
-          //       child: Icon(Icons.arrow_back, size: 18),
-          //     ),
-          //   ),
-          // ),
+         
 
           title: Text(
             'Favorites',
@@ -124,7 +102,7 @@ class FavoriteScreen extends StatelessWidget {
                         ),
                       )
                     : StreamBuilder(
-                        stream: mycontroller.getRestaurants(),
+                        stream: controller.getFavoriteRestaurants(),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
@@ -172,7 +150,7 @@ class FavoriteScreen extends StatelessWidget {
 
                                 // Extract restaurant IDs from the favorite collection
                                 var favoriteRestaurantIds = snapshot.data!.docs
-                                    .map((doc) => doc['resturantID'])
+                                    .map((doc) =>  doc.id)
                                     .toList();
 
                                 // Filter the restaurant list to show only the favorites
@@ -181,6 +159,10 @@ class FavoriteScreen extends StatelessWidget {
                                         .contains(restaurant
                                             .docID)) // Assuming 'id' is a property of restaurant
                                     .toList();
+                                log(
+                                    'All Restaurant IDs: ${restaurants.map((e) => e.docID).toList()}');
+                                log(
+                                    'Favorite IDs from Firestore: $favoriteRestaurantIds');
                                 if (favoriteRestaurants.isEmpty) {
                                   return Container(
                                     width: double.infinity,
@@ -201,11 +183,13 @@ class FavoriteScreen extends StatelessWidget {
                                   //   mainAxisSpacing: 20,
                                   // ),
                                   itemCount: favoriteRestaurants
-                                      .length, // Set the item count to the length of favorite restaurants
+                                      .length, 
+                                 // Set the item count to the length of favorite restaurants
                                   itemBuilder: (context, index) {
                                     final item = favoriteRestaurants[index];
                                     return Padding(
-                                      padding: const EdgeInsets.only(bottom: 20),
+                                      padding:
+                                          const EdgeInsets.only(bottom: 20),
                                       child: InkWell(
                                         onTap: () {
                                           Get.to(RestaurantDetailScreen(
@@ -221,7 +205,6 @@ class FavoriteScreen extends StatelessWidget {
                                           endTimeText: '',
                                           percentText: '',
                                           resturant_id: item.docID,
-                                          isFavorite: true.obs,
                                           height: 250,
                                         ),
                                       ),
