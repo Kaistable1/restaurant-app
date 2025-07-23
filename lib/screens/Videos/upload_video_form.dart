@@ -1309,15 +1309,19 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
     "Date Night",
     "Candlelit",
     "Outdoor",
+    "Rooftop",
+    "Ocean View"
   ];
   final List<String> vibes = [
-    "Brunch Party",
-    "Bottomless Brunch",
-    "Day Party",
-    "Pool Party",
+    "Lively",
+    "Chill",
+    "Flirty",
+    "Bougie",
+    "Low key",
+    "Turn Up",
+    "Take Out",
     "Happy Hours",
     "Open Bar",
-    "Rooftop Vibes"
   ];
 
   final List<String> experinece = [
@@ -1325,12 +1329,14 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
     "Dj Night",
     "Silent Party",
     "Karaoke",
-    "Trivia Nights",
-    "Sports screenings",
+    "Sports Viewing",
     "Hookah",
-    "Sip & Paint",
+    "Sip and Paint",
+    "RnB Night",
+    "Happy Hour",
+    "Day Party",
+    "Pool Party",
     "Ladies Night",
-    "RnB Night"
   ];
   @override
   void initState() {

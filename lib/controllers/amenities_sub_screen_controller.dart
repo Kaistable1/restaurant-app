@@ -49,16 +49,20 @@ class AmenitiesSubScreenController extends GetxController {
     {'name': 'Date Night', 'isChecked': false},
     {'name': 'Candlelit', 'isChecked': false},
     {'name': 'Outdoor', 'isChecked': false},
+    {'name': 'Rooftop', 'isChecked': false},
+    {'name': 'Ocean View', 'isChecked': false},
   ].obs;
 
   var vibes = <Map<String, dynamic>>[
-    {'name': 'Brunch Party', 'isChecked': false},
-    {'name': 'Bottomless Brunch', 'isChecked': false},
-    {'name': 'Day Party', 'isChecked': false},
-    {'name': 'Pool Party', 'isChecked': false},
+    {'name': 'Lively', 'isChecked': false},
+    {'name': 'Chill', 'isChecked': false},
+    {'name': 'Flirty', 'isChecked': false},
+    {'name': 'Bougie', 'isChecked': false},
+    {'name': 'Low key', 'isChecked': false},
+    {'name': 'Turn Up', 'isChecked': false},
+    {'name': 'Take Out', 'isChecked': false},
     {'name': 'Happy Hours', 'isChecked': false},
     {'name': 'Open Bar', 'isChecked': false},
-    {'name': 'Rooftop Vibes', 'isChecked': false},
   ].obs;
 
   var priceRange = <Map<String, dynamic>>[
@@ -198,7 +202,7 @@ class AmenitiesSubScreenController extends GetxController {
       'dietary': dietaryValid,
       'atmosphere': atmosphereValid,
       'priceRange': priceRangeValid,
-      'vibes':vibesValid
+      'vibes': vibesValid
     };
   }
 
@@ -278,7 +282,7 @@ class AmenitiesSubScreenController extends GetxController {
 
       final addRestaurantTabController = Get.find<AddRestaurantTabController>();
       final restaurantID = addRestaurantTabController.restaurantModel!.docID;
-      
+
       print('restaurantID ${restaurantID}');
       if (restaurantID.isEmpty) {
         throw Exception("Restaurant ID is missing");

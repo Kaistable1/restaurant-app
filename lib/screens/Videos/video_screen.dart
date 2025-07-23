@@ -1994,13 +1994,15 @@ class _AdminVideoPanelState extends State<AdminVideoPanel> {
                                               if (expandedSections[
                                                   'Vibes']!) ...[
                                                 ...[
-                                                  "Brunch Party",
-                                                  "Bottomless Brunch",
-                                                  "Day Party",
-                                                  "Pool Party",
+                                                  "Lively",
+                                                  "Chill",
+                                                  "Flirty",
+                                                  "Bougie",
+                                                  "Low key",
+                                                  "Turn Up",
+                                                  "Take Out",
                                                   "Happy Hours",
                                                   "Open Bar",
-                                                  "Rooftop Vibes"
                                                 ].map((vibe) {
                                                   return CheckboxListTile(
                                                     activeColor:
@@ -2061,6 +2063,8 @@ class _AdminVideoPanelState extends State<AdminVideoPanel> {
                                                   "Date Night",
                                                   "Candlelit",
                                                   "Outdoor",
+                                                  "Rooftop",
+                                                  "Ocean View",
                                                 ].map((item) {
                                                   return CheckboxListTile(
                                                     activeColor:
@@ -2191,12 +2195,14 @@ class _AdminVideoPanelState extends State<AdminVideoPanel> {
                                                   "Dj Night",
                                                   "Silent Party",
                                                   "Karaoke",
-                                                  "Trivia Nights",
-                                                  "Sports screenings",
+                                                  "Sports Viewing",
                                                   "Hookah",
-                                                  "Sip & Paint",
+                                                  "Sip and Paint",
+                                                  "RnB Night",
+                                                  "Happy Hour",
+                                                  "Day Party",
+                                                  "Pool Party",
                                                   "Ladies Night",
-                                                  "RnB Night"
                                                 ].map((item) {
                                                   return CheckboxListTile(
                                                     activeColor:
@@ -2434,7 +2440,7 @@ class _AdminVideoPanelState extends State<AdminVideoPanel> {
                                   const SizedBox(height: 4),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 4.0,vertical: 10),
+                                        horizontal: 4.0, vertical: 10),
                                     child: Row(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
