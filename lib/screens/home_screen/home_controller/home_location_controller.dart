@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -363,9 +362,15 @@ class HomeLocationController extends GetxController {
       }
 
       // ✅ Convert RxList to plain list inside the stream function
-      final vibes = filterController.selectedVibes.toList();
-      final experiences = filterController.selectedExperiences.toList();
-      final cuisines = filterController.selectedCuisines.toList();
+
+      // final vibes = filterController.selectedVibes.toList();
+      // final experiences = filterController.selectedExperiences.toList();
+      // final cuisines = filterController.selectedCuisines.toList();
+
+      // use the values passed in function
+      final filteredVibes = vibes;
+      final filteredExperiences = experiences;
+      final filteredCuisines = cuisines;
 
       final restaurants = await Future.wait(snapshot.docs.map((doc) async {
         final reviewsSnapshot = await doc.reference.collection('reviews').get();
@@ -398,20 +403,33 @@ class HomeLocationController extends GetxController {
         final cuisineLower = restaurant.menuList
             .map((e) => e.cuisineType.toLowerCase())
             .toList();
-
-        bool matchesVibes = vibes.isEmpty ||
-            vibes.any((v) =>
+        bool matchesVibes = filteredVibes.isEmpty ||
+            filteredVibes.any((v) =>
                 atmosphereLower.contains(v.toLowerCase()) ||
                 facilityLower.contains(v.toLowerCase()));
 
-        bool matchesExperiences = experiences.isEmpty ||
-            experiences.any((e) =>
+        bool matchesExperiences = filteredExperiences.isEmpty ||
+            filteredExperiences.any((e) =>
                 facilityLower.contains(e.toLowerCase()) ||
                 atmosphereLower.contains(e.toLowerCase()));
 
-        bool matchesCuisines = cuisines.isEmpty ||
-            cuisines
+        bool matchesCuisines = filteredCuisines.isEmpty ||
+            filteredCuisines
                 .any((cuisine) => cuisineLower.contains(cuisine.toLowerCase()));
+
+        // bool matchesVibes = vibes.isEmpty ||
+        //     vibes.any((v) =>
+        //         atmosphereLower.contains(v.toLowerCase()) ||
+        //         facilityLower.contains(v.toLowerCase()));
+
+        // bool matchesExperiences = experiences.isEmpty ||
+        //     experiences.any((e) =>
+        //         facilityLower.contains(e.toLowerCase()) ||
+        //         atmosphereLower.contains(e.toLowerCase()));
+
+        // bool matchesCuisines = cuisines.isEmpty ||
+        //     cuisines
+        //         .any((cuisine) => cuisineLower.contains(cuisine.toLowerCase()));
 
         if (totalReviews > 0 &&
             matchesVibes &&
@@ -982,33 +1000,31 @@ class HomeLocationController extends GetxController {
   //   );
   // }
 
+  Widget favoriteHeart({required String resturant_id}) {
+    final favoriteController = Get.find<FavoriteController>();
 
+    return Obx(() {
+      bool isFavorite = favoriteController.favoriteIds.contains(resturant_id);
 
-Widget favoriteHeart({required String resturant_id}) {
-  final favoriteController = Get.find<FavoriteController>();
-
-  return Obx(() {
-    bool isFavorite = favoriteController.favoriteIds.contains(resturant_id);
-
-    return InkWell(
-      onTap: () {
-        favoriteController.toggleFavorite(resturant_id);
-      },
-      child: isFavorite
-          ? Image.asset(
-              'assets/images/heart_icon.png',
-              color: AppColors.primaryColor,
-              height: 22,
-              width: 22,
-            )
-          : Icon(
-              Icons.favorite_border_outlined,
-              size: 22,
-              color: AppColors.primaryColor,
-            ),
-    );
-  });
-}
+      return InkWell(
+        onTap: () {
+          favoriteController.toggleFavorite(resturant_id);
+        },
+        child: isFavorite
+            ? Image.asset(
+                'assets/images/heart_icon.png',
+                color: AppColors.primaryColor,
+                height: 22,
+                width: 22,
+              )
+            : Icon(
+                Icons.favorite_border_outlined,
+                size: 22,
+                color: AppColors.primaryColor,
+              ),
+      );
+    });
+  }
 
 //............Top rated solve filpering issue -----------------------
 

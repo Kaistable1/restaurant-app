@@ -183,7 +183,7 @@ class _ExperienceVibesGridState extends State<ExperienceVibesGrid> {
       children: [
         // Header Section
         Padding(
-           padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -201,12 +201,12 @@ class _ExperienceVibesGridState extends State<ExperienceVibesGrid> {
               Text(
                 'More than meals — these places are designed to impress. Vibes, views, and experiences you won’t forget.',
                 textAlign: TextAlign.justify,
-                style:TextStyle(
-                          color: AppColors.bottomSheetColor,
-                          fontFamily: 'NunitoSans-Regular',
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                        ),
+                style: TextStyle(
+                  color: AppColors.bottomSheetColor,
+                  fontFamily: 'NunitoSans-Regular',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
             ],
           ),
@@ -273,10 +273,10 @@ class _ExperienceVibesGridState extends State<ExperienceVibesGrid> {
                   });
                 },
                 child: Container(
-                 
-                  decoration:  BoxDecoration(
+                  decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: AppColors.blackColor.withOpacity(0.75), // solid black background
+                    color: AppColors.blackColor
+                        .withOpacity(0.75), // solid black background
                   ),
                   padding: const EdgeInsets.all(6), // adjust for size
                   child: Icon(

@@ -122,36 +122,93 @@ class _SearchPageState extends State<SearchPage> {
   List<AutocompletePrediction> predictions = [];
   List<DocumentSnapshot> filteredRestaurants = [];
 
+  // void autoCompleteSearch(String value) async {
+  //   var result = await googlePlace.autocomplete.get(value);
+  //   if (result != null && result.predictions != null) {
+  //     setState(() {
+  //       predictions = result.predictions!;
+  //     });
+  //   }
+  // }
+
+
   void autoCompleteSearch(String value) async {
-    var result = await googlePlace.autocomplete.get(value);
-    if (result != null && result.predictions != null) {
-      setState(() {
-        predictions = result.predictions!;
-      });
-    }
+  var result = await googlePlace.autocomplete.get(
+    value,
+    components: [Component("country", "us")], // Limit to USA
+    types: "establishment", // Focus on businesses like restaurants
+  );
+
+  if (result != null && result.predictions != null) {
+    setState(() {
+      predictions = result.predictions!;
+    });
   }
+}
+
+
+  // void getPlaceDetails(String placeId) async {
+  //   var details = await googlePlace.details.get(placeId);
+  //   if (details != null && details.result != null) {
+  //     String? placeName = details.result!.name;
+
+  //     if (placeName != null && placeName.isNotEmpty) {
+  //       filterRestaurantsByName(placeName);
+  //     }
+  //   }
+  // }
+
 
   void getPlaceDetails(String placeId) async {
-    var details = await googlePlace.details.get(placeId);
-    if (details != null && details.result != null) {
-      String? placeName = details.result!.name;
+  var details = await googlePlace.details.get(placeId);
+  if (details != null && details.result != null) {
+    String? placeName = details.result!.name;
+    String? address = details.result!.formattedAddress;
 
-      if (placeName != null && placeName.isNotEmpty) {
-        filterRestaurantsByName(placeName);
-      }
+    if (placeName != null && placeName.isNotEmpty) {
+      filterRestaurantsByName(placeName, address);
     }
   }
+}
 
- void filterRestaurantsByName(String input) async {
-  if (input.isEmpty) {
-    setState(() {
-      filteredRestaurants = [];
-    });
-    return;
-  }
+//  void filterRestaurantsByName(String input) async {
+//   if (input.isEmpty) {
+//     setState(() {
+//       filteredRestaurants = [];
+//     });
+//     return;
+//   }
 
-  var snapshot =
-      await FirebaseFirestore.instance.collection("restaurants").get();
+//   var snapshot =
+//       await FirebaseFirestore.instance.collection("restaurants").get();
+
+//   List<DocumentSnapshot> allDocs = snapshot.docs;
+
+//   List<DocumentSnapshot> matchingDocs = allDocs.where((doc) {
+//     var data = doc.data() as Map<String, dynamic>;
+
+//     String resName = (data['resName'] ?? '').toString().toLowerCase();
+//     String city = (data['city'] ?? '').toString().toLowerCase();
+//     String country = (data['country'] ?? '').toString().toLowerCase();
+//     String zipcode = (data['zipcode'] ?? '').toString().toLowerCase();
+
+//     String searchInput = input.toLowerCase();
+
+//     return resName.contains(searchInput) ||
+//         city.contains(searchInput) ||
+//         country.contains(searchInput) ||
+//         zipcode.contains(searchInput);
+//   }).toList();
+
+//   setState(() {
+//     filteredRestaurants = matchingDocs;
+//   });
+// }
+
+
+
+void filterRestaurantsByName(String input, [String? address]) async {
+  var snapshot = await FirebaseFirestore.instance.collection("restaurants").get();
 
   List<DocumentSnapshot> allDocs = snapshot.docs;
 
@@ -159,16 +216,16 @@ class _SearchPageState extends State<SearchPage> {
     var data = doc.data() as Map<String, dynamic>;
 
     String resName = (data['resName'] ?? '').toString().toLowerCase();
-    String city = (data['city'] ?? '').toString().toLowerCase();
-    String country = (data['country'] ?? '').toString().toLowerCase();
-    String zipcode = (data['zipcode'] ?? '').toString().toLowerCase();
+    String resAddress = (data['address'] ?? '').toString().toLowerCase();
 
-    String searchInput = input.toLowerCase();
+    String nameInput = input.toLowerCase();
+    String addressInput = (address ?? '').toLowerCase();
 
-    return resName.contains(searchInput) ||
-        city.contains(searchInput) ||
-        country.contains(searchInput) ||
-        zipcode.contains(searchInput);
+    return resName.contains(nameInput) ||
+        resAddress.contains(nameInput) ||
+        
+        resName.contains(addressInput) ||
+        resAddress.contains(addressInput);
   }).toList();
 
   setState(() {

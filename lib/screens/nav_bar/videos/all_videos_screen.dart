@@ -91,13 +91,7 @@ class _AllTrendingVideosScreenState extends State<AllTrendingVideosScreen> {
                   const Icon(Icons.search, color: AppColors.blackColor),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: 
-                    
-                  
-                  
-                  
-                  
-                    TextField(
+                    child: TextField(
                       style: const TextStyle(
                         fontSize: 14,
                         fontFamily: 'NunitoSans-Regular',
@@ -161,13 +155,15 @@ class _AllTrendingVideosScreenState extends State<AllTrendingVideosScreen> {
                                             ),
                                             if (expandedSections['Vibes']!) ...[
                                               ...[
-                                                "Brunch Party",
-                                                "Bottomless Brunch",
-                                                "Day Party",
-                                                "Pool Party",
+                                                "Lively",
+                                                "Chill",
+                                                "Flirty",
+                                                "Bougie",
+                                                "Low key",
+                                                "Turn Up",
+                                                "Take Out",
                                                 "Happy Hours",
                                                 "Open Bar",
-                                                "Rooftop Vibes"
                                               ].map((vibe) {
                                                 return CheckboxListTile(
                                                   activeColor: AppColors
@@ -238,6 +234,8 @@ class _AllTrendingVideosScreenState extends State<AllTrendingVideosScreen> {
                                                 "Date Night",
                                                 "Candlelit",
                                                 "Outdoor",
+                                                "Rooftop",
+                                                "Ocean View"
                                               ].map((item) {
                                                 return CheckboxListTile(
                                                   activeColor: AppColors
@@ -390,12 +388,14 @@ class _AllTrendingVideosScreenState extends State<AllTrendingVideosScreen> {
                                                 "Dj Night",
                                                 "Silent Party",
                                                 "Karaoke",
-                                                "Trivia Nights",
-                                                "Sports screenings",
+                                                "Sports Viewing",
                                                 "Hookah",
-                                                "Sip & Paint",
-                                                "Ladies Night",
-                                                "RnB Night"
+                                                "Sip and Paint",
+                                                "RnB Night",
+                                                "Happy Hour",
+                                                "Day Party",
+                                                "Pool Party",
+                                                    "Ladies Night",
                                               ].map((item) {
                                                 return CheckboxListTile(
                                                   activeColor: AppColors
@@ -545,14 +545,6 @@ class _AllTrendingVideosScreenState extends State<AllTrendingVideosScreen> {
                         // TODO: implement search filter logic if needed
                       },
                     ),
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
                   ),
                 ],
               ),

@@ -73,16 +73,17 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     requestLocationPermission();
 
-    final vibes = filterController.selectedVibes;
-    final experiences = filterController.selectedExperiences;
-    final cuisines = filterController.selectedCuisines;
+    // Optional: clear filters
+    filterController.selectedVibes.clear();
+    filterController.selectedExperiences.clear();
+    filterController.selectedCuisines.clear();
 
-    // Load once
+    // Always load trending unfiltered at launch
     WidgetsBinding.instance.addPostFrameCallback((_) {
       homeController.loadTrendingRestaurants(
-        vibes: vibes,
-        experiences: experiences,
-        cuisines: cuisines,
+        vibes: [],
+        experiences: [],
+        cuisines: [],
       );
     });
   }
@@ -172,9 +173,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               FilterChipWidget(
                                 label: "Vibes",
                                 menuOptions: [
-                                  "Brunch Party",
-                                  "Day Party",
-                                  "Pool Party",
+                                  "Lively",
+                                  "Chill",
+                                  "Flirty",
+                                  "Bougie",
+                                  "Low key",
+                                  "Turn Up",
+                                  "Take Out",
                                   "Happy Hours",
                                   "Open Bar",
                                 ],
@@ -191,8 +196,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                   "Live Music",
                                   "Dj Night",
                                   "Silent Party",
-                                  "Ladies Night",
+                                  "Karaoke",
+                                  "Sports Viewing",
+                                  "Hookah",
+                                  "Sip and Paint",
                                   "RnB Night",
+                                  "Happy Hour",
+                                  "Day Party",
+                                  "Pool Party",
+                                  "Ladies Night",
                                 ],
                                 selectedOptions:
                                     filterController.selectedExperiences,
@@ -233,6 +245,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   SizedBox(
                     height: 5,
                   ),
+
                   _buildTrendingSection(),
 
                   SizedBox(
