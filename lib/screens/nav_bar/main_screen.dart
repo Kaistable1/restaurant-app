@@ -8,6 +8,8 @@ import 'package:kaistable_website/screens/favorite_screen/favorite_screen.dart';
 import 'package:kaistable_website/screens/home_screen/my_home_screen.dart';
 import 'package:kaistable_website/screens/nav_bar/controller/home_controller.dart';
 import 'package:kaistable_website/screens/nav_bar/profile.dart';
+import 'package:kaistable_website/screens/nav_bar/search.dart';
+import 'package:kaistable_website/screens/nav_bar/widgets/home_screen_new.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 
 import '../home_screen/notification_screen/notification_screen.dart';
@@ -25,7 +27,9 @@ class _MainScreenState extends State<MainScreen> {
 
   List<Widget> _buildScreens() {
     return [
-      HomeScreen(),
+      HomeScreenNew(),
+      // HomeScreen(),
+      // SearchScreen(),
       MyHomeScreen(),
       FavoriteScreen(),
       ProfileScreen(),
@@ -71,7 +75,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-        HomeController homeController = Get.put(HomeController());
+    HomeController homeController = Get.put(HomeController());
 
     return Scaffold(
       appBar: _currentIndex == 0
@@ -114,45 +118,40 @@ class _MainScreenState extends State<MainScreen> {
               ],
             )
           : null, // Hide AppBar for other screens
-      body:
-         GetBuilder<HomeController>(
-              builder: (controller) {
-
-                return homeController.isSpotlightFinish.value == false
+      body: GetBuilder<HomeController>(builder: (controller) {
+        return homeController.isSpotlightFinish.value == false
             ? HomeScreen()
-            :  PersistentTabView(
-                    context,
-                    controller: _controller,
-                    screens: _buildScreens(),
-                    items: _navBarsItems(),
-                    handleAndroidBackButtonPress: true,
-                    // resizeToAvoidBottomInset: true,
-                    // stateManagement: true,
-                    hideNavigationBarWhenKeyboardAppears: true,
-                    popBehaviorOnSelectedNavBarItemPress: PopBehavior.all,
-                    backgroundColor: AppColors.whiteColor,
-                    decoration: NavBarDecoration(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
-                      ),
-                      colorBehindNavBar: AppColors.whiteColor.withOpacity(.3),
-                    ),
-                    isVisible: true,
-                    // confineToSafeArea: true,
-                    navBarHeight: 60,
-                    padding: EdgeInsets.zero,
-                    navBarStyle: NavBarStyle.style3,
-                    onItemSelected: (index) {
-                      setState(() {
-                        _currentIndex =
-                            index; // Update the AppBar visibility dynamically
-                      });
-                    },
-                  );
-              }
-            ),
-     
+            : PersistentTabView(
+                context,
+                controller: _controller,
+                screens: _buildScreens(),
+                items: _navBarsItems(),
+                handleAndroidBackButtonPress: true,
+                // resizeToAvoidBottomInset: true,
+                // stateManagement: true,
+                hideNavigationBarWhenKeyboardAppears: true,
+                popBehaviorOnSelectedNavBarItemPress: PopBehavior.all,
+                backgroundColor: AppColors.whiteColor,
+                decoration: NavBarDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                  colorBehindNavBar: AppColors.whiteColor.withOpacity(.3),
+                ),
+                isVisible: true,
+                // confineToSafeArea: true,
+                navBarHeight: 60,
+                padding: EdgeInsets.zero,
+                navBarStyle: NavBarStyle.style3,
+                onItemSelected: (index) {
+                  setState(() {
+                    _currentIndex =
+                        index; // Update the AppBar visibility dynamically
+                  });
+                },
+              );
+      }),
     );
   }
 }
