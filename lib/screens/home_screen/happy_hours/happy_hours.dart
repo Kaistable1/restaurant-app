@@ -1,0 +1,122 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:kaistable_website/constants/app_colors.dart';
+import 'package:kaistable_website/widgets/rectangle_widget.dart';
+
+import '../../../widgets/home_widgets/filter_widget.dart';
+import '../home_controller/home_location_controller.dart';
+import 'controller/happy_hours_controller.dart';
+
+class HappyHours extends StatelessWidget {
+  final Function(int)? onNavigate;
+
+  final controller = Get.put(HappyHoursController());
+  final HomeLocationController mycontroller = Get.put(HomeLocationController());
+
+  HappyHours({super.key, this.onNavigate});
+
+  @override
+  Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isLargeScreen = screenWidth > 1400;
+    return WillPopScope(
+      onWillPop: () async {
+        // Clear any errors before popping the screen
+        Get.back(); // Navigate back to the home screen
+        return false; // Prevent the default back navigation
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.bgColor,
+        appBar: AppBar(
+          backgroundColor: AppColors.bgColor,
+          iconTheme: IconThemeData(
+            color: AppColors
+                .primaryColor, // Set your desired color for the drawer icon
+          ),
+          centerTitle: true,
+          automaticallyImplyLeading: true,
+          leading: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Container(
+              height: 16,
+              width: 16,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    spreadRadius: 1,
+                    blurRadius: 3,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
+              ),
+              child: GestureDetector(
+                onTap: () {
+                  Get.back();
+                  ; // Navigate back to the home screen
+                },
+                child: Icon(Icons.arrow_back, size: 18),
+              ),
+            ),
+          ),
+          title: Text(
+            'Happy hour',
+            style: TextStyle(
+              fontSize: 17,
+              color: AppColors.bottomSheetColor,
+              fontWeight: FontWeight.w700,
+              fontFamily: 'Nunito-Bold',
+            ),
+          ),
+        ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 6, right: 6),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(height: 10),
+                FilterBox(),
+                SizedBox(height: 10),
+                Obx(() {
+                  return Padding(
+                      padding: EdgeInsets.only(left: 8, right: 8),
+                      child: GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          mainAxisExtent: 220,
+                          crossAxisCount: 2,
+                          crossAxisSpacing:
+                              10, // Adjust this if needed for column spacing
+                          mainAxisSpacing:
+                              5, // Reduced mainAxisSpacing to minimize row spacing
+                        ),
+                        itemCount: controller.happyHoursItems.length,
+                        itemBuilder: (context, index) {
+                          final item = controller.happyHoursItems[index];
+                          return RectangleWidget(
+                            onNavigate: onNavigate,
+                            title: item.title,
+                            description: item.description,
+                            imagePath: item.imagePath,
+                            timetext: item.startTimeText,
+                            percentText: item.percentText,
+                            isFavorite: false.obs,
+                            endTimeText: item.endTimeText,
+                          );
+                        },
+                      ));
+                }),
+                SizedBox(height: 30),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
