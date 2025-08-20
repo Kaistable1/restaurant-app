@@ -18,6 +18,7 @@ import 'package:video_player/video_player.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../custom_widget/app_bar.dart';
+import '../full_screen_video/full_screen_video_screen.dart';
 import 'controller/restaurant_detail_controller.dart';
 import 'controller/restaurant_video_controller.dart';
 import 'widget/about_section_widget.dart';
@@ -591,148 +592,78 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                     }
                 
                                                     return GridView.builder(
-                                                        gridDelegate:
-                                                            SliverGridDelegateWithFixedCrossAxisCount(
-                                                          crossAxisCount: 3,
-                                                          crossAxisSpacing: 8,
-                                                          childAspectRatio: 110 / 120,
-                                                          mainAxisSpacing: 8,
-                                                        ),
-                                                        itemCount: vc.videos.length,
-                                                        shrinkWrap: true,
-                                                        primary: false,
-                                                        itemBuilder:
-                                                            (context, index) {
-                                                          // final String? video =
-                                                          //     vc.videos[index].url;
-                                                          // RxBool isPlaying = (vc
-                                                          //             .playingIndex
-                                                          //             .value ==
-                                                          //         index)
-                                                          //     .obs;
-                
-                                                          // RxBool isStartedOnce = false.obs;
-                
-                                                          return GestureDetector(
-                                                            onTap: () async {
-                                                              if(vc.playingIndex.value != index){
-                                                                vc.playingIndex.value = -1;
-                                                              }
-                                                              vc.isPlaying[index].value = await vc.playVideo(index);
-                                                              if(vc.isPlaying[index].value){
-                                                                vc.isStartedOnce[index].value = true;
-                                                              }
-                                                            },
-                                                            child: Stack(
-                                                              alignment:
-                                                                  Alignment.center,
-                                                              children: [
-                                                                AspectRatio(
-                                                                  aspectRatio:
-                                                                  110 / 120,
-                                                                  child: ClipRRect(
-                                                                    borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                        10),
-                                                                    child: Obx(
-                                                                          () => vc.isStartedOnce[index]
-                                                                          .value && vc.playingIndex.value == index &&
-                                                                          vc.playerController !=
-                                                                              null &&
-                                                                          vc.playerController!.value
-                                                                              .isInitialized
-                                                                          ? FittedBox(
-                                                                        fit: BoxFit.cover,
-                                                                        child: SizedBox(
-                                                                            width: vc.playerController!.value.size.width,
-                                                                            height: vc.playerController!.value.size.height,
-                                                                            child: VideoPlayer(vc.playerController!)),
-                                                                      )
-                                                                          : Obx(() {
-                                                                        return vc.thumbnailPaths[index] != null
-                                                                            ? Image.file(
-                                                                          File(vc.thumbnailPaths[index]!),
-                                                                          fit: BoxFit.cover,
-                                                                        )
-                                                                            : Image.network(
-                                                                          'https://via.placeholder.com/640x360',
-                                                                          fit: BoxFit.cover,
-                                                                          loadingBuilder: (context, child, loadingProgress) {
-                                                                            if (loadingProgress == null) return child;
-                                                                            return const Center(child: CircularProgressIndicator());
-                                                                          },
-                                                                          errorBuilder: (context, error, stackTrace) => Container(
-                                                                            color: Colors.grey[300],
-                                                                            child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
-                                                                          ),
-                                                                        );
-                                                                      }),
-                                                                    ),
+                                                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                                        crossAxisCount: 3,
+                                                        crossAxisSpacing: 8,
+                                                        childAspectRatio: 110 / 120,
+                                                        mainAxisSpacing: 8,
+                                                      ),
+                                                      itemCount: vc.videos.length,
+                                                      shrinkWrap: true,
+                                                      primary: false,
+                                                      itemBuilder: (context, index) {
+                                                        final video = vc.videos[index];
+
+                                                        // Trigger thumbnail generation
+                                                        if (vc.thumbnailPaths[index] == null &&
+                                                            video.url != null &&
+                                                            video.url!.isNotEmpty) {
+                                                          vc.generateThumbnail(index, video.url!);
+                                                        }
+
+                                                        return GestureDetector(
+                                                          onTap: () async {
+                                                            Get.back();
+                                                            await Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder: (context) => FullVideoScreen(video: video),
+                                                              ),
+                                                            );
+                                                          },
+                                                          child: Stack(
+                                                            alignment: Alignment.center,
+                                                            children: [
+                                                              AspectRatio(
+                                                                aspectRatio: 110 / 120,
+                                                                child: ClipRRect(
+                                                                  borderRadius: BorderRadius.circular(10),
+                                                                  child: Obx(() {
+                                                                    return vc.thumbnailPaths[index] != null
+                                                                        ? Image.file(
+                                                                      File(vc.thumbnailPaths[index]!),
+                                                                      fit: BoxFit.cover,
+                                                                    )
+                                                                        : Image.network(
+                                                                      'https://via.placeholder.com/640x360',
+                                                                      fit: BoxFit.cover,
+                                                                      loadingBuilder: (context, child, loadingProgress) {
+                                                                        if (loadingProgress == null) return child;
+                                                                        return const Center(child: CircularProgressIndicator());
+                                                                      },
+                                                                      errorBuilder: (context, error, stackTrace) => Container(
+                                                                        color: Colors.grey[300],
+                                                                        child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
+                                                                      ),
+                                                                    );
+                                                                  }),
+                                                                ),
+                                                              ),
+                                                              Positioned.fill(
+                                                                child: Align(
+                                                                  alignment: Alignment.center,
+                                                                  child: Icon(
+                                                                    Icons.play_circle_fill_rounded,
+                                                                    size: 60,
+                                                                    color: Colors.white,
                                                                   ),
                                                                 ),
-                                                                // if (!vc.isPlaying[index].value ||
-                                                                //     (vc.isPlaying[index]
-                                                                //             .value &&
-                                                                //         vc.playerController !=
-                                                                //             null &&
-                                                                //         !vc
-                                                                //             .playerController!
-                                                                //             .value
-                                                                //             .isInitialized))
-                                                                  Positioned.fill(
-                                                                    child: Align(
-                                                                      alignment:
-                                                                          Alignment
-                                                                              .center,
-                                                                      child: Obx(
-                                                                        () => vc.isPlaying[index].value && vc.playingIndex.value == index
-                                                                            ? const SizedBox()
-                                                                            : IconButton(
-                                                                                iconSize:
-                                                                                    60,
-                                                                                color:
-                                                                                    Colors.white,
-                                                                                icon:
-                                                                                    Icon(
-                                                                                  // isPlaying
-                                                                                  //     ? Icons
-                                                                                  //         .pause_circle_filled
-                                                                                  //     :
-                                                                                  Icons.play_circle_fill_rounded,
-                                                                                      size: 24,
-                                                                                ),
-                                                                                onPressed:
-                                                                                    () async {
-                                                                                  if(vc.playingIndex.value != index){
-                                                                                    vc.playingIndex.value = -1;
-                                                                                  }
-                                                                                  vc.isPlaying[index].value = await vc.playVideo(index);
-                                                                                      if(vc.isPlaying[index].value){
-                                                                                        vc.isStartedOnce[index].value = true;
-                                                                                      }
-                                                                                },
-                                                                              ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                // if (isPlaying &&
-                                                                //     vc.playerController !=
-                                                                //         null &&
-                                                                //     !vc
-                                                                //         .playerController!
-                                                                //         .value
-                                                                //         .isInitialized)
-                                                                //   const Positioned
-                                                                //       .fill(
-                                                                //     child: Center(
-                                                                //         child:
-                                                                //             CircularProgressIndicator()),
-                                                                //   ),
-                                                              ],
-                                                            ),
-                                                          );
-                                                        });
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        );
+                                                      },
+                                                    );
                                                   }),
                                                 ]),
                                           )

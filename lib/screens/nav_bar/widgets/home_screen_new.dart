@@ -8,7 +8,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:kaistable_website/screens/events/all_events_screen.dart';
 import 'package:kaistable_website/streams/views/streams_view.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:video_player/video_player.dart';
 import 'dart:io';
 
 import '../../../constants/app_colors.dart';
