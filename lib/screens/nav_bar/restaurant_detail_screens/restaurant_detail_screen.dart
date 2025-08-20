@@ -1,27 +1,21 @@
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
-import 'package:kaistable_website/screens/home_screen/events_screen/events_details_screen/event_details_gallary.dart';
-import 'package:kaistable_website/screens/home_screen/home_controller/home_location_controller.dart';
 import 'package:kaistable_website/screens/nav_bar/widgets/custom_button.dart';
-import 'package:kaistable_website/utils/responsive.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:video_player/video_player.dart';
+import 'package:map_launcher/map_launcher.dart' as ml;
 
 import '../../../constants/app_colors.dart';
 import '../../../custom_widget/app_bar.dart';
 import '../full_screen_video/full_screen_video_screen.dart';
 import 'controller/restaurant_detail_controller.dart';
 import 'controller/restaurant_video_controller.dart';
-import 'widget/about_section_widget.dart';
 
 class RestaurantDetailScreen extends StatelessWidget {
   List<String>? happyList;
@@ -34,6 +28,9 @@ class RestaurantDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    vc.fetchVideos(restaurantModel!.resName, restaurantModel!.zipCode);
+
     return DefaultTabController(
       length: 4,
       child: Scaffold(
@@ -67,7 +64,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                '4.6',
+                                restaurantModel!.averageRating.toStringAsFixed(1),
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
@@ -80,7 +77,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                 child: RatingBar(
                                   itemSize: 10,
                                   ignoreGestures: true,
-                                  initialRating: 5,
+                                  initialRating: restaurantModel!.averageRating,
                                   minRating: 1,
                                   direction: Axis.horizontal,
                                   allowHalfRating: true,
@@ -218,7 +215,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                           border: Border.all(
                                               color: Colors.black.withOpacity(0.04))),
                                       child: Text(
-                                        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.',
+                                        restaurantModel!.about, // 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.',
                                         style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500,
@@ -239,7 +236,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                 width: 12)),
                                         const SizedBox(width: 8),
                                         Text(
-                                          '304 Liverpool Blvd, Portsmouth, CA 30103',
+                                          restaurantModel!.address, // '304 Liverpool Blvd, Portsmouth, CA 30103',
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500,
@@ -290,7 +287,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                         ),
                                         const SizedBox(width: 8),
                                         Text(
-                                          'www.website.com',
+                                          restaurantModel!.resEmail, // 'www.website.com',
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500,
@@ -466,7 +463,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                   Marker(
                                                     markerId: MarkerId('1'),
                                                     position:
-                                                        LatLng(40.7128, -74.0060),
+                                                        LatLng(restaurantModel!.latitude, restaurantModel!.longitude),
                                                   )
                                                 },
                                                 zoomControlsEnabled: false,
@@ -498,7 +495,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                     const SizedBox(width: 8),
                                                     Expanded(
                                                       child: Text(
-                                                        '304 Liverpool Blvd, Portsmouth, CA 30103',
+                                                        restaurantModel!.address, // '304 Liverpool Blvd, Portsmouth, CA 30103',
                                                         style: TextStyle(
                                                           fontSize: 14,
                                                           fontWeight: FontWeight.w500,
@@ -553,27 +550,47 @@ class RestaurantDetailScreen extends StatelessWidget {
                                             ],
                                           ),
                                           const SizedBox(height: 32),
-                                          CustomButton(
-                                            laBelText: 'Get Directions',
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600,
-                                            fontFamily: 'PlusJakartaSans',
-                                            textColor: Colors.white,
-                                            containerColor: AppColors.primaryColor,
-                                            height: 32,
-                                            radius: BorderRadius.circular(15),
+                                          GestureDetector(
+                                            onTap: () async {
+                                              final availableMaps = await ml.MapLauncher.installedMaps;
+
+                                              await availableMaps.first.showDirections(
+                                                destination: ml.Coords(restaurantModel!.latitude, restaurantModel!.longitude),
+                                                destinationTitle: restaurantModel!.resName,
+                                              );
+                                            },
+                                            child: CustomButton(
+                                              laBelText: 'Get Directions',
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                              fontFamily: 'PlusJakartaSans',
+                                              textColor: Colors.white,
+                                              containerColor: AppColors.primaryColor,
+                                              height: 32,
+                                              radius: BorderRadius.circular(15),
+                                            ),
                                           ),
                                           const SizedBox(height: 16),
-                                          CustomButton(
-                                            laBelText: 'Copy Address',
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600,
-                                            fontFamily: 'PlusJakartaSans',
-                                            textColor: Colors.black,
-                                            containerColor: AppColors.secondaryColor
-                                                .withOpacity(0.4),
-                                            height: 32,
-                                            radius: BorderRadius.circular(15),
+                                          GestureDetector(
+                                            onTap: () async {
+                                              // Copy text to clipboard
+                                              await Clipboard.setData(ClipboardData(text: restaurantModel!.address));
+                                              // Show a snackbar to confirm the action
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(content: Text('Text copied to clipboard!')),
+                                              );
+                                            },
+                                            child: CustomButton(
+                                              laBelText: 'Copy Address',
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                              fontFamily: 'PlusJakartaSans',
+                                              textColor: Colors.black,
+                                              containerColor: AppColors.secondaryColor
+                                                  .withOpacity(0.4),
+                                              height: 32,
+                                              radius: BorderRadius.circular(15),
+                                            ),
                                           ),
                                         ]),
                                       )

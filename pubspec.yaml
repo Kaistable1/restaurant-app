@@ -79,6 +79,7 @@ dependencies:
   latlong2: ^0.9.1
   cached_network_image: ^3.4.1
   chewie: ^1.12.1
+  map_launcher: ^4.0.1
 
 
 

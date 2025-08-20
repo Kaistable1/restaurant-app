@@ -19,14 +19,13 @@ class RestaurantVideoController extends GetxController{
 
   @override
   void onInit() {
-    fetchVideos();
     super.onInit();
   }
 
-  Future<void> fetchVideos() async {
+  Future<void> fetchVideos(String restaurantName, String zipCode) async {
     try {
       var snapshot = await FirebaseFirestore.instance
-          .collection('videos')
+          .collection('videos').where('restaurantName', isEqualTo: restaurantName).where('zipCode', isEqualTo: zipCode)
           .orderBy('timestamp', descending: true)
           .get();
 

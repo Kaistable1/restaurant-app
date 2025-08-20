@@ -421,135 +421,141 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
           ],
         ),
         const SizedBox(height: 8),
-        Container(
-          width: 364,
-          height: 300,
-          margin: const EdgeInsets.only(bottom: 8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: homeLocationCtrl.buildImage(
-                    restaurant.imagesList.isNotEmpty
-                        ? restaurant.imagesList.first
-                        : restaurant.logoImage.isNotEmpty
-                        ? restaurant.logoImage
-                        : 'assets/images/event_img3.png',
-                    width: 364,
-                    fit: BoxFit.cover,
+        GestureDetector(
+          onTap: (){
+            Get.to(()=>RestaurantDetailScreen(restaurantModel: restaurant));
+          },
+          child: Container(
+            // width: 364,
+            width: Get.width - 32,
+            height: 300,
+            margin: const EdgeInsets.only(bottom: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: homeLocationCtrl.buildImage(
+                      restaurant.imagesList.isNotEmpty
+                          ? restaurant.imagesList.first
+                          : restaurant.logoImage.isNotEmpty
+                          ? restaurant.logoImage
+                          : 'assets/images/event_img3.png',
+                      width: 364,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              Container(
-                width: 364,
-                height: 50,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 4,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            restaurant.resName.isNotEmpty ? restaurant.resName : 'Unknown Restaurant',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
+                const SizedBox(height: 8),
+                Container(
+                  // width: 364,
+                  height: 50,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 4,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              restaurant.resName.isNotEmpty ? restaurant.resName : 'Unknown Restaurant',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 4),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                '${restaurant.averageRating.toStringAsFixed(1)} stars',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: const Color.fromRGBO(142, 142, 147, 1),
-                                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              const SizedBox(width: 15),
-                              FutureBuilder<Map<String, dynamic>?>(
-                                future: HomeLocationController.getOperatingHours(restaurant.docID),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState == ConnectionState.waiting || !snapshot.hasData) {
-                                    return const Text(
-                                      'Loading...',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Color.fromRGBO(142, 142, 147, 1),
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    );
-                                  }
-                                  final operatingHours = snapshot.data;
-                                  final timeOfDay = filterCtrl.selectedFilters['Time']?.isNotEmpty ?? false
-                                      ? filterCtrl.selectedFilters['Time']!.first
-                                      : 'Dinner';
-                                  final isClosed = operatingHours?[timeOfDay]?['isClosed'] ?? true;
-                                  return Text(
-                                    isClosed ? 'Closed' : operatingHours?[timeOfDay]?['hours'] ?? '6PM–9PM',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: const Color.fromRGBO(142, 142, 147, 1),
-                                      fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  );
-                                },
-                              ),
-                              const SizedBox(width: 15),
-                              Image.asset(
-                                'assets/images/Icon (1).png',
-                                width: 15,
-                                height: 13,
-                              ),
-                              const SizedBox(width: 4),
-                              Expanded(
-                                child: Text(
-                                  restaurant.address.isNotEmpty ? restaurant.address : 'Unknown Address',
+                            const SizedBox(height: 4),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '${restaurant.averageRating.toStringAsFixed(1)} stars',
                                   style: TextStyle(
                                     fontSize: 12,
                                     color: const Color.fromRGBO(142, 142, 147, 1),
                                     fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                                     fontWeight: FontWeight.w500,
                                   ),
-                                  overflow: TextOverflow.ellipsis,
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                                const SizedBox(width: 15),
+                                FutureBuilder<Map<String, dynamic>?>(
+                                  future: HomeLocationController.getOperatingHours(restaurant.docID),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState == ConnectionState.waiting || !snapshot.hasData) {
+                                      return const Text(
+                                        'Loading...',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Color.fromRGBO(142, 142, 147, 1),
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      );
+                                    }
+                                    final operatingHours = snapshot.data;
+                                    final timeOfDay = filterCtrl.selectedFilters['Time']?.isNotEmpty ?? false
+                                        ? filterCtrl.selectedFilters['Time']!.first
+                                        : 'Dinner';
+                                    final isClosed = operatingHours?[timeOfDay]?['isClosed'] ?? true;
+                                    return Text(
+                                      isClosed ? 'Closed' : operatingHours?[timeOfDay]?['hours'] ?? '6PM–9PM',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: const Color.fromRGBO(142, 142, 147, 1),
+                                        fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    );
+                                  },
+                                ),
+                                const SizedBox(width: 15),
+                                Image.asset(
+                                  'assets/images/Icon (1).png',
+                                  width: 15,
+                                  height: 13,
+                                ),
+                                const SizedBox(width: 4),
+                                Expanded(
+                                  child: Text(
+                                    restaurant.address.isNotEmpty ? restaurant.address : 'Unknown Address',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: const Color.fromRGBO(142, 142, 147, 1),
+                                      fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Image.asset(
-                      'assets/images/Group (5).png',
-                      width: 20,
-                      height: 20,
-                    ),
-                  ],
+                      Image.asset(
+                        'assets/images/Group (5).png',
+                        width: 20,
+                        height: 20,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         )
       ],
@@ -577,7 +583,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
 
           // Search bar
           Positioned(
-            top: 50,
+            top: 70,
             left: 16,
             right: 16,
             child: Column(
@@ -587,7 +593,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                   clipBehavior: Clip.none,
                   children: [
                     Material(
-                      elevation: 5,
+                      elevation: 0,
                       borderRadius: BorderRadius.circular(30),
                       child: Container(
                         height: 48,
@@ -685,7 +691,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
 
           // Filters
           Positioned(
-            top: 120,
+            top: 130,
             left: 0,
             right: 0,
             child: SizedBox(
@@ -713,8 +719,9 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                             showFilterDropdowns.refresh();
                           },
                           child: Container(
+                            height: 36,
                             margin: const EdgeInsets.only(right: 8),
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, /*vertical: 6*/),
                             decoration: BoxDecoration(
                               border: Border.all(color: Colors.grey.shade300),
                               borderRadius: BorderRadius.circular(30),
@@ -728,7 +735,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                       (filterCtrl.selectedFilters[category]?.isNotEmpty ?? false
                                           ? ' (${filterCtrl.selectedFilters[category]?.length ?? 0})'
                                           : ''),
-                                  style: const TextStyle(color: Colors.black, fontSize: 14),
+                                  style: const TextStyle(color: Colors.black, fontSize: 18),
                                 )),
                                 const SizedBox(width: 4),
                                 const Icon(Icons.arrow_drop_down, size: 20, color: Colors.black),
@@ -741,14 +748,14 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                             final optionCount = filterCtrl.filterOptions[category]?.length ?? 0;
                             final dropdownHeight = optionCount * 40.0 + 24.0;
                             return Positioned(
-                              top: 40,
+                              top: 50,
                               left: 0,
                               child: Material(
                                 elevation: 5,
                                 borderRadius: BorderRadius.circular(12),
                                 child: Container(
                                   width: 150,
-                                  height: dropdownHeight,
+                                  height: dropdownHeight < 190 ? dropdownHeight : 190, // dropdownHeight,
                                   padding: const EdgeInsets.fromLTRB(8, 8, 8, 16),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
@@ -809,7 +816,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
           DraggableScrollableSheet(
             initialChildSize: 0.3,
             minChildSize: 0.1,
-            maxChildSize: 0.8,
+            maxChildSize: 0.79,
             snap: true,
             builder: (context, scrollCtrl) {
               return Container(
