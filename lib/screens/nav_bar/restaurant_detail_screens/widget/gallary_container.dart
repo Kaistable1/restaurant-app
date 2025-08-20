@@ -2,8 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-import '../../../constants/app_colors.dart';
-import '../../../utils/responsive.dart';
+import '../../../../constants/app_colors.dart';
+import '../../../../utils/responsive.dart';
 class GallaryContainer extends StatelessWidget {
   const GallaryContainer({super.key});
 

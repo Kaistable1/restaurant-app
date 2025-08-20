@@ -6,8 +6,6 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:kaistable_website/screens/events/all_events_screen.dart';
-import 'package:kaistable_website/screens/home_screen/events_screen/event_screen.dart';
-import 'package:kaistable_website/screens/restaurant_detail_screens/restaurant_detail_screen.dart';
 import 'package:kaistable_website/streams/views/streams_view.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:video_player/video_player.dart';
@@ -20,6 +18,8 @@ import '../../../streams/model/streams_model.dart';
 import '../../../widgets/custom_button.dart';
 import '../../home_screen/home_controller/home_location_controller.dart';
 import '../controller/search_controller.dart';
+import '../full_screen_video/full_screen_video_screen.dart';
+import '../restaurant_detail_screens/restaurant_detail_screen.dart';
 import 'discover_page.dart';
 
 class HomeScreenNew extends StatefulWidget {
@@ -214,7 +214,14 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
     }
 
     return GestureDetector(
-      onTap: () => videoCtrl.playVideo(index),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => FullVideoScreen(video: video),
+          ),
+        );
+      },
       child: Container(
         width: 173,
         height: 295,
@@ -261,31 +268,11 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                     height: 191,
                     width: 163,
                     color: Colors.black,
-                    child: Obx(() {
-                      final isPlaying = videoCtrl.playingIndex.value == index;
-                      if (isPlaying &&
-                          videoCtrl.playerController != null &&
-                          videoCtrl.playerController!.value.isInitialized) {
-                        return VideoPlayer(videoCtrl.playerController!);
-                      }
-                      return videoCtrl.thumbnailPaths[index] != null
-                          ? Image.file(
-                        File(videoCtrl.thumbnailPaths[index]!),
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Image.network(
-                          'https://via.placeholder.com/163x191',
-                          fit: BoxFit.cover,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return const Center(child: CircularProgressIndicator());
-                          },
-                          errorBuilder: (context, error, stackTrace) => Container(
-                            color: Colors.grey[300],
-                            child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
-                          ),
-                        ),
-                      )
-                          : Image.network(
+                    child: videoCtrl.thumbnailPaths[index] != null
+                        ? Image.file(
+                      File(videoCtrl.thumbnailPaths[index]!),
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Image.network(
                         'https://via.placeholder.com/163x191',
                         fit: BoxFit.cover,
                         loadingBuilder: (context, child, loadingProgress) {
@@ -296,32 +283,32 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                           color: Colors.grey[300],
                           child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
                         ),
-                      );
-                    }),
+                      ),
+                    )
+                        : Image.network(
+                      'https://via.placeholder.com/163x191',
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return const Center(child: CircularProgressIndicator());
+                      },
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        color: Colors.grey[300],
+                        child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
+                      ),
+                    ),
                   ),
                 ),
                 Positioned.fill(
                   child: Align(
                     alignment: Alignment.center,
-                    child: Obx(() {
-                      final isPlaying = videoCtrl.playingIndex.value == index;
-                      return IconButton(
-                        iconSize: 32,
-                        color: Colors.white,
-                        icon: Icon(
-                          isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill,
-                        ),
-                        onPressed: () => videoCtrl.playVideo(index),
-                      );
-                    }),
+                    child: Icon(
+                      Icons.play_circle_fill,
+                      size: 32,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-                if (videoCtrl.playingIndex.value == index &&
-                    videoCtrl.playerController != null &&
-                    !videoCtrl.playerController!.value.isInitialized)
-                  const Positioned.fill(
-                    child: Center(child: CircularProgressIndicator()),
-                  ),
               ],
             ),
             const SizedBox(height: 8),

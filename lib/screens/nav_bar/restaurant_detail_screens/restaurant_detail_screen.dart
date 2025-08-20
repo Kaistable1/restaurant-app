@@ -12,16 +12,12 @@ import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/screens/home_screen/events_screen/events_details_screen/event_details_gallary.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_location_controller.dart';
 import 'package:kaistable_website/screens/nav_bar/widgets/custom_button.dart';
-import 'package:kaistable_website/screens/restaurant_detail_screens/widget/map_widget.dart';
-import 'package:kaistable_website/screens/restaurant_detail_screens/widget/restaurant_details_widget.dart';
-import 'package:kaistable_website/screens/restaurant_detail_screens/widget/review_widget.dart';
 import 'package:kaistable_website/utils/responsive.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../constants/app_colors.dart';
-import '../../custom_widget/app_bar.dart';
-import '../home_screen/location_pages/location_controller/location_list_controller.dart';
+import '../../../custom_widget/app_bar.dart';
 import 'controller/restaurant_detail_controller.dart';
 import 'controller/restaurant_video_controller.dart';
 import 'widget/about_section_widget.dart';

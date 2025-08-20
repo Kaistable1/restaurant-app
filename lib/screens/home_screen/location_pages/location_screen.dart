@@ -6,7 +6,7 @@ import 'package:kaistable_website/screens/onboarding_screen/onboarding_controlle
 import '../../../constants/app_colors.dart';
 import '../../../custom_widget/separate_text_field.dart';
 import '../../../widgets/rectangle_widget.dart';
-import '../../restaurant_detail_screens/restaurant_detail_screen.dart';
+import '../../nav_bar/restaurant_detail_screens/restaurant_detail_screen.dart';
 import '../home_controller/home_location_controller.dart';
 import 'location_controller/location_controller.dart';
 

@@ -11,7 +11,7 @@ import 'package:kaistable_website/screens/nav_bar/widgets/custom_button.dart';
 import 'package:kaistable_website/widgets/rectangle_widget.dart';
 
 import '../home_screen/home_controller/home_location_controller.dart';
-import '../restaurant_detail_screens/restaurant_detail_screen.dart';
+import '../nav_bar/restaurant_detail_screens/restaurant_detail_screen.dart';
 import 'controller/favorite_controller.dart';
 
 class FavoriteScreen extends StatelessWidget {

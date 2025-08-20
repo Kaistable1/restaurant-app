@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_location_controller.dart';
+import 'package:kaistable_website/screens/nav_bar/restaurant_detail_screens/restaurant_detail_screen.dart';
 import 'package:kaistable_website/widgets/global_functions.dart';
 import 'package:kaistable_website/widgets/rectangle_widget.dart';
 
 import '../../../constants/app_colors.dart';
-import '../restaurant_detail_screens/restaurant_detail_screen.dart';
 
 class NearByAll extends StatelessWidget {
   NearByAll({

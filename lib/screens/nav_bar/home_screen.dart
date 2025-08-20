@@ -9,6 +9,7 @@ import 'package:kaistable_website/screens/home_screen/home_controller/home_locat
 import 'package:kaistable_website/screens/home_screen/new_view_all/new_viewall.dart';
 import 'package:kaistable_website/screens/home_screen/trending_all/trending_view_all.dart';
 import 'package:kaistable_website/screens/nav_bar/near_by_all.dart';
+import 'package:kaistable_website/screens/nav_bar/restaurant_detail_screens/restaurant_detail_screen.dart';
 import 'package:kaistable_website/widgets/carousel_slider_banner.dart';
 import 'package:kaistable_website/widgets/global_functions.dart';
 import 'package:kaistable_website/widgets/rectangle_widget.dart';
@@ -18,7 +19,6 @@ import '../home_screen/events_screen/common_widget/days_tile.dart';
 import '../home_screen/events_screen/controller/events_controller.dart';
 import '../home_screen/events_screen/event_screen.dart';
 import '../home_screen/events_screen/events_details_screen/event_details_screen.dart';
-import '../restaurant_detail_screens/restaurant_detail_screen.dart';
 import 'controller/home_controller.dart';
 
 class HomeScreen extends StatefulWidget {

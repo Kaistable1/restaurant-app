@@ -25,7 +25,7 @@ import '../../widgets/home_widgets/filter_widget.dart';
 import '../../widgets/rectangle_widget.dart';
 import '../change_pass/changePassword_dialoge.dart';
 import '../edit_profile/edit_profile_page.dart';
-import '../restaurant_detail_screens/restaurant_detail_screen.dart';
+import '../nav_bar/restaurant_detail_screens/restaurant_detail_screen.dart';
 import 'home_controller/filter_selection_controller.dart';
 
 class MyHomeScreen extends StatefulWidget {

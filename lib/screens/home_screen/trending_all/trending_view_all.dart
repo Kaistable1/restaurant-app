@@ -7,7 +7,7 @@ import 'package:kaistable_website/widgets/rectangle_widget.dart';
 import '../../../constants/app_colors.dart';
 import '../../../custom_widget/separate_text_field.dart';
 import '../../../utils/responsive.dart';
-import '../../restaurant_detail_screens/restaurant_detail_screen.dart';
+import '../../nav_bar/restaurant_detail_screens/restaurant_detail_screen.dart';
 import '../home_controller/home_location_controller.dart';
 import '../home_controller/home_trending_controller.dart';
 

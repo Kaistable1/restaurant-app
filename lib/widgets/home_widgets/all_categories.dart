@@ -7,7 +7,7 @@ import 'package:kaistable_website/widgets/global_functions.dart';
 import '../../../constants/app_colors.dart';
 import '../../../widgets/rectangle_widget.dart';
 import '../../screens/home_screen/home_controller/home_location_controller.dart';
-import '../../screens/restaurant_detail_screens/restaurant_detail_screen.dart';
+import '../../screens/nav_bar/restaurant_detail_screens/restaurant_detail_screen.dart';
 
 class AllCategories extends StatelessWidget {
   AllCategories({super.key});

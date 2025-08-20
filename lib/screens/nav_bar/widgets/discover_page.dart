@@ -7,8 +7,8 @@ import 'package:shimmer/shimmer.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../home_screen/home_controller/home_location_controller.dart';
-import '../../restaurant_detail_screens/restaurant_detail_screen.dart';
 import '../controller/search_controller.dart';
+import '../restaurant_detail_screens/restaurant_detail_screen.dart';
 import 'discover_controller.dart';
 
 class RestaurantsPage extends StatefulWidget {

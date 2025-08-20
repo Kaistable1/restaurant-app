@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
 import '../../utils/responsive.dart';
-import '../screens/restaurant_detail_screens/restaurant_detail_screen.dart';
+import '../screens/nav_bar/restaurant_detail_screens/restaurant_detail_screen.dart';
 
 class CustomRectangleWidget extends StatelessWidget {
  // final ScrollController scrollcontroller;
