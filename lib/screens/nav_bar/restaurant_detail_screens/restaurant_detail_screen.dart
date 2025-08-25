@@ -1,18 +1,25 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/screens/nav_bar/widgets/custom_button.dart';
 import 'package:map_launcher/map_launcher.dart' as ml;
+import 'package:maps_launcher/maps_launcher.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../custom_widget/app_bar.dart';
+import '../../../utils/firebase_datebase.dart';
+import '../../../utils/functions.dart';
 import '../full_screen_video/full_screen_video_screen.dart';
 import 'controller/restaurant_detail_controller.dart';
 import 'controller/restaurant_video_controller.dart';
@@ -25,6 +32,11 @@ class RestaurantDetailScreen extends StatelessWidget {
 
   RxInt tabIndex = 0.obs;
   RestaurantVideoController vc = Get.put(RestaurantVideoController());
+
+  RxBool expExpand = false.obs;
+  RxBool vibExpand = false.obs;
+  RxBool atmExpand = false.obs;
+  RxBool facExpand = false.obs;
 
   @override
   Widget build(BuildContext context) {
@@ -114,14 +126,60 @@ class RestaurantDetailScreen extends StatelessWidget {
                                   width: 12,
                                 ),
                               ),
-                              Text(
-                                '   3.5 miles',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  fontFamily: 'PlusJakartaSans',
-                                ),
+                              FutureBuilder(
+                                future: getCurrentLocation(context).then((position) =>
+                                (Geolocator.distanceBetween(
+                                  position.latitude,
+                                  position.longitude,
+                                  restaurantModel!.latitude,
+                                  restaurantModel!.longitude,
+                                ) /
+                                    1000) / 1.609),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                    return Text(
+                                      '   Calculating...',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                        color: const Color.fromRGBO(142, 142, 147, 1),
+                                      ),
+                                    );
+                                  }
+
+                                  if (snapshot.hasError) {
+                                    print('Error retrieving location: ${snapshot.error}');
+                                    return Text(
+                                      '',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: 'PlusJakartaSans',
+                                      ),
+                                    );
+                                  }
+
+                                  return Text(
+                                    snapshot.hasData
+                                        ? '   ${snapshot.data!.toStringAsFixed(2)} miles'
+                                        : '   Unknown',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: 'PlusJakartaSans',
+                                    ),
+                                  );
+                                },
                               ),
+                              // Text(
+                              //   '   3.5 miles',
+                              //   style: TextStyle(
+                              //     fontSize: 14,
+                              //     fontWeight: FontWeight.w500,
+                              //     fontFamily: 'PlusJakartaSans',
+                              //   ),
+                              // ),
                             ],
                           ),
                           const SizedBox(height: 4),
@@ -137,6 +195,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 28),
+                      restaurantModel!.imagesList.length == 0 ?
                       Row(
                         children: [
                           ClipRRect(
@@ -168,6 +227,79 @@ class RestaurantDetailScreen extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(10),
                                 child: Image.asset(
                                   'assets/images/restaurant_detail_img3.png',
+                                  height: (246 - 8) / 2,
+                                  width: (Get.width - 24 - 24 - 8) / 2,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ) : restaurantModel!.imagesList.length == 1 ?
+                      ClipRRect(
+                        clipBehavior: Clip.hardEdge,
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.network(
+                          restaurantModel!.imagesList.first, // 'assets/images/restaurant_detail_img1.png',
+                          height: 246,
+                          width: Get.width - 48,
+                          fit: BoxFit.cover,
+                        ),
+                      ) : restaurantModel!.imagesList.length ==2 ?
+                      Row(
+                        children: [
+                        ClipRRect(
+                        clipBehavior: Clip.hardEdge,
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.network(
+                          restaurantModel!.imagesList.first,
+                          height: 246,
+                          width: (Get.width - 24 - 24 - 8) / 2,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    const SizedBox(width: 8),
+                          ClipRRect(
+                            clipBehavior: Clip.hardEdge,
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.network(
+                              restaurantModel!.imagesList.last,
+                              height: 246,
+                              width: (Get.width - 24 - 24 - 8) / 2,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          ]) : Row(
+                        children: [
+                          ClipRRect(
+                            clipBehavior: Clip.hardEdge,
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.network(
+                              restaurantModel!.imagesList.first,
+                              height: 246,
+                              width: (Get.width - 24 - 24 - 8) / 2,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Column(
+                            children: [
+                              ClipRRect(
+                                clipBehavior: Clip.hardEdge,
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.network(
+                                  restaurantModel!.imagesList[1],
+                                  height: (246 - 8) / 2,
+                                  width: (Get.width - 24 - 24 - 8) / 2,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              ClipRRect(
+                                clipBehavior: Clip.hardEdge,
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.network(
+                                  restaurantModel!.imagesList[2],
                                   height: (246 - 8) / 2,
                                   width: (Get.width - 24 - 24 - 8) / 2,
                                   fit: BoxFit.cover,
@@ -249,32 +381,341 @@ class RestaurantDetailScreen extends StatelessWidget {
                                     Divider(color: AppColors.dividerColor),
                                     const SizedBox(height: 16),
                                     Row(
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.only(top: 2),
-                                          child: Image.asset('assets/icons/time.png',
-                                              height: 12, width: 12),
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.only(top: 2),
+                                              child: Image.asset('assets/icons/time.png',
+                                                  height: 12, width: 12),
+                                            ),
+                                            const SizedBox(width: 8),
+
+                                            Expanded(
+                                              child: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                                                future: getRestaurantOperatingHours(restaurantModel!.docID).get(),
+                                                builder: (context, restHours) {
+                                                  if (restHours.connectionState == ConnectionState.waiting) {
+                                                    return Text(
+                                                      'Retrieving...',
+                                                      style: TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight: FontWeight.w500,
+                                                        fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                                        color: const Color.fromRGBO(142, 142, 147, 1),
+                                                      ),
+                                                    );
+                                                  }
+
+                                                  if (!restHours.hasData || restHours.data!.docs.isEmpty) {
+                                                    print('No timings mentioned in database');
+                                                    return Text(
+                                                      'Not mentioned',
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.w500,
+                                                        fontFamily: 'PlusJakartaSans',
+                                                      ),
+                                                    );
+                                                  }
+
+                                                  bool isOpen = false;
+                                                  TimeOfDay? startTime;
+                                                  TimeOfDay? endTime;
+
+                                                  // Get current day (Monday, August 25, 2025)
+                                                  final currentDay = 'Monday';
+                                                  final dayDoc = restHours.data!.docs.firstWhere(
+                                                        (doc) => doc.id == currentDay
+                                                  );
+
+                                                  final meals = ['Breakfast', 'Brunch', 'Lunch', 'Dinner'];
+                                                  for (var meal in meals) {
+                                                    if (!dayDoc[meal]['isClosed']) {
+                                                      bool startIsPM = dayDoc[meal]['startTime']
+                                                          .toString()
+                                                          .toLowerCase()
+                                                          .contains('pm');
+                                                      int startHours = int.parse(dayDoc[meal]['startTime']
+                                                          .toString()
+                                                          .split(':')
+                                                          .first);
+                                                      int startMins = int.parse(dayDoc[meal]['startTime']
+                                                          .toString()
+                                                          .split(' ')
+                                                          .first
+                                                          .split(':')
+                                                          .last);
+
+                                                      bool endIsPM = dayDoc[meal]['endTime']
+                                                          .toString()
+                                                          .toLowerCase()
+                                                          .contains('pm');
+                                                      int endHours = int.parse(dayDoc[meal]['endTime']
+                                                          .toString()
+                                                          .split(':')
+                                                          .first);
+                                                      int endMins = int.parse(dayDoc[meal]['endTime']
+                                                          .toString()
+                                                          .split(' ')
+                                                          .first
+                                                          .split(':')
+                                                          .last);
+
+                                                      startTime ??= TimeOfDay(
+                                                          hour: startHours + (startIsPM ? 12 : 0), minute: startMins);
+                                                      endTime = TimeOfDay(hour: endHours + (endIsPM ? 12 : 0), minute: endMins);
+                                                    }
+                                                  }
+
+                                                  isOpen = startTime != null &&
+                                                      endTime != null &&
+                                                      TimeOfDay.now().isAfter(startTime) &&
+                                                      TimeOfDay.now().isBefore(endTime);
+
+                                                  // Weekly hours
+                                                  List<Map<String, String>> weeklyHours = [];
+                                                  final days = [
+                                                    'Monday',
+                                                    'Tuesday',
+                                                    'Wednesday',
+                                                    'Thursday',
+                                                    'Friday',
+                                                    'Saturday',
+                                                    'Sunday'
+                                                  ];
+                                                  for (var day in days) {
+                                                    final dayDoc = restHours.data!.docs.firstWhere(
+                                                          (doc) => doc.id == day,
+                                                    );
+                                                    String hours = '';
+                                                    final meals = ['Breakfast', 'Brunch', 'Lunch', 'Dinner'];
+                                                    bool isClosed = true;
+                                                    for (var meal in meals) {
+                                                      if (!dayDoc[meal]['isClosed']) {
+                                                        isClosed = false;
+                                                        hours = '${dayDoc[meal]['startTime']} - ${dayDoc[meal]['endTime']}';
+                                                        break; // Use first non-closed meal's hours
+                                                      }
+                                                    }
+                                                    weeklyHours.add({
+                                                      'day': day,
+                                                      'hours': isClosed ? 'Closed' : hours,
+                                                    });
+                                                                                                    }
+
+                                                  return Row(
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    children: [
+                                                      Text(
+                                                        isOpen ? 'Open' : 'Closed',
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight: FontWeight.w500,
+                                                          fontFamily: 'PlusJakartaSans',
+                                                          color: isOpen ? Colors.green : Colors.red,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(width: 16),
+                                                      DropdownButtonHideUnderline(
+                                                        child: DropdownButton2<String>(
+                                                          hint: Text(
+                                                            isOpen
+                                                                ? 'Closes ${endTime.hour >= 12 ? endTime.hour - 12 : endTime.hour}:${endTime.minute < 10 ? '0${endTime.minute}' : endTime.minute} ${endTime.hour >= 12 ? 'PM' : 'AM'}'
+                                                                : 'View Hours',
+                                                            style: TextStyle(
+                                                              fontSize: 14,
+                                                              fontWeight: FontWeight.w500,
+                                                              fontFamily: 'PlusJakartaSans',
+                                                            ),
+                                                          ),
+                                                          items: weeklyHours
+                                                              .map((dayHours) => DropdownMenuItem<String>(
+                                                            value: dayHours['day'],
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.spaceBetween,
+                                                              children: [
+                                                                Text(
+                                                                  dayHours['day']! == 'Monday' ? 'Mon' : dayHours['day']! == 'Tuesday' ? 'Tue':dayHours['day']! == 'Wednesday' ? 'Wed':dayHours['day']! == 'Thursday' ? 'Thu':dayHours['day']! == 'Friday' ? 'Fri':dayHours['day']! == 'Saturday' ? 'Sat': 'Sun',
+                                                                  style: TextStyle(
+                                                                    fontSize: 15,
+                                                                    fontWeight: FontWeight.w600,
+                                                                    fontFamily: 'PlusJakartaSans',
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  dayHours['hours']!,
+                                                                  style: TextStyle(
+                                                                    fontSize: 14,
+                                                                    fontWeight: FontWeight.w500,
+                                                                    fontFamily: 'PlusJakartaSans',
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ))
+                                                              .toList(),
+                                                          onChanged: (value) {}, // No action needed on selection
+                                                          buttonStyleData: ButtonStyleData(
+                                                            padding: EdgeInsets.symmetric(horizontal: 12),
+                                                            decoration: BoxDecoration(
+                                                              borderRadius: BorderRadius.circular(5),
+                                                            ),
+                                                          ),
+                                                          dropdownStyleData: DropdownStyleData(
+                                                            maxHeight: 200,
+                                                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                                            decoration: BoxDecoration(
+                                                              color: Colors.white,
+                                                              borderRadius: BorderRadius.circular(10),
+                                                              border: Border.all(
+                                                                  color: Colors.black.withOpacity(0.04)),
+                                                            ),
+                                                          ),
+                                                          menuItemStyleData: MenuItemStyleData(
+                                                            padding: EdgeInsets.symmetric(vertical: 4),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              ),
+                                            ),
+
+                                            // FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                                            //   future: getRestaurantOperatingHours(restaurantModel!.docID).get(),
+                                            //   builder: (context, restHours) {
+                                            //
+                                            //     if (restHours.connectionState == ConnectionState.waiting) {
+                                            //       return Text(
+                                            //         'Retrieving...',
+                                            //         style: TextStyle(
+                                            //           fontSize: 12,
+                                            //           fontWeight: FontWeight.w500,
+                                            //           fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                            //           color: const Color.fromRGBO(142, 142, 147, 1),
+                                            //         ),
+                                            //       );
+                                            //     }
+                                            //
+                                            //     if(!restHours.hasData || !restHours.data!.exists){
+                                            //
+                                            //       print('No timings mentioned in database');
+                                            //
+                                            //       return Text(
+                                            //         'Not mentioned',
+                                            //         style: TextStyle(
+                                            //           fontSize: 14,
+                                            //           fontWeight: FontWeight.w500,
+                                            //           fontFamily: 'PlusJakartaSans',
+                                            //         ),
+                                            //       );
+                                            //     }
+                                            //
+                                            //     if(!restHours.data!['Breakfast']['isClosed'] && !restHours.data!['Brunch']['isClosed'] && !restHours.data!['Lunch']['isClosed'] && !restHours.data!['Dinner']['isClosed']){
+                                            //       return Text(
+                                            //         'Closed',
+                                            //         style: TextStyle(
+                                            //           fontSize: 14,
+                                            //           fontWeight: FontWeight.w500,
+                                            //           fontFamily: 'PlusJakartaSans',
+                                            //           color: Colors.red,
+                                            //         ),
+                                            //       );
+                                            //     }
+                                            //
+                                            //     TimeOfDay? startTime;
+                                            //     TimeOfDay? endTime;
+                                            //     if(!restHours.data!['Breakfast']['isClosed']){
+                                            //       bool startIsPM = restHours.data!['Breakfast']['startTime'].toString().toLowerCase().contains('pm');
+                                            //       int startHours = int.parse(restHours.data!['Breakfast']['startTime'].toString().split(':').first);
+                                            //       int startMins = int.parse(restHours.data!['Breakfast']['startTime'].toString().split(' ').first.split(':').last);
+                                            //
+                                            //       bool endIsPM = restHours.data!['Breakfast']['endTime'].toString().toLowerCase().contains('pm');
+                                            //       int endHours = int.parse(restHours.data!['Breakfast']['endTime'].toString().split(':').first);
+                                            //       int endMins = int.parse(restHours.data!['Breakfast']['endTime'].toString().split(' ').first.split(':').last);
+                                            //
+                                            //       startTime = TimeOfDay(hour: startHours + (startIsPM ? 12 : 0), minute: startMins);
+                                            //       endTime = TimeOfDay(hour: endHours + (endIsPM ? 12 : 0), minute: endMins);
+                                            //     }
+                                            //
+                                            //     if(!restHours.data!['Brunch']['isClosed']){
+                                            //       if(startTime == null){
+                                            //         bool startIsPM = restHours.data!['Brunch']['startTime'].toString().toLowerCase().contains('pm');
+                                            //         int startHours = int.parse(restHours.data!['Brunch']['startTime'].toString().split(':').first);
+                                            //         int startMins = int.parse(restHours.data!['Brunch']['startTime'].toString().split(' ').first.split(':').last);
+                                            //
+                                            //         startTime = TimeOfDay(hour: startHours + (startIsPM ? 12 : 0), minute: startMins);
+                                            //       }
+                                            //
+                                            //       bool endIsPM = restHours.data!['Brunch']['endTime'].toString().toLowerCase().contains('pm');
+                                            //       int endHours = int.parse(restHours.data!['Brunch']['endTime'].toString().split(':').first);
+                                            //       int endMins = int.parse(restHours.data!['Brunch']['endTime'].toString().split(' ').first.split(':').last);
+                                            //
+                                            //       endTime = TimeOfDay(hour: endHours + (endIsPM ? 12 : 0), minute: endMins);
+                                            //     }
+                                            //
+                                            //     if(!restHours.data!['Lunch']['isClosed']){
+                                            //       if(startTime == null){
+                                            //         bool startIsPM = restHours.data!['Lunch']['startTime'].toString().toLowerCase().contains('pm');
+                                            //         int startHours = int.parse(restHours.data!['Lunch']['startTime'].toString().split(':').first);
+                                            //         int startMins = int.parse(restHours.data!['Lunch']['startTime'].toString().split(' ').first.split(':').last);
+                                            //
+                                            //         startTime = TimeOfDay(hour: startHours + (startIsPM ? 12 : 0), minute: startMins);
+                                            //       }
+                                            //
+                                            //       bool endIsPM = restHours.data!['Lunch']['endTime'].toString().toLowerCase().contains('pm');
+                                            //       int endHours = int.parse(restHours.data!['Lunch']['endTime'].toString().split(':').first);
+                                            //       int endMins = int.parse(restHours.data!['Lunch']['endTime'].toString().split(' ').first.split(':').last);
+                                            //
+                                            //       endTime = TimeOfDay(hour: endHours + (endIsPM ? 12 : 0), minute: endMins);
+                                            //     }
+                                            //
+                                            //     if(!restHours.data!['Dinner']['isClosed']){
+                                            //       if(startTime == null){
+                                            //         bool startIsPM = restHours.data!['Dinner']['startTime'].toString().toLowerCase().contains('pm');
+                                            //         int startHours = int.parse(restHours.data!['Dinner']['startTime'].toString().split(':').first);
+                                            //         int startMins = int.parse(restHours.data!['Dinner']['startTime'].toString().split(' ').first.split(':').last);
+                                            //
+                                            //         startTime = TimeOfDay(hour: startHours + (startIsPM ? 12 : 0), minute: startMins);
+                                            //       }
+                                            //
+                                            //       bool endIsPM = restHours.data!['Dinner']['endTime'].toString().toLowerCase().contains('pm');
+                                            //       int endHours = int.parse(restHours.data!['Dinner']['endTime'].toString().split(':').first);
+                                            //       int endMins = int.parse(restHours.data!['Dinner']['endTime'].toString().split(' ').first.split(':').last);
+                                            //
+                                            //       endTime = TimeOfDay(hour: endHours + (endIsPM ? 12 : 0), minute: endMins);
+                                            //     }
+                                            //
+                                            //
+                                            //     bool isOpen = (TimeOfDay.now().isAfter(startTime!) && TimeOfDay.now().isBefore(endTime!));
+                                            //
+                                            //     return Row(
+                                            //       children: [
+                                            //         Text(
+                                            //           isOpen ? 'Open' : 'Closed',
+                                            //           style: TextStyle(
+                                            //             fontSize: 14,
+                                            //             fontWeight: FontWeight.w500,
+                                            //             fontFamily: 'PlusJakartaSans',
+                                            //             color: isOpen ? Colors.green : Colors.red,
+                                            //           ),
+                                            //         ),
+                                            //         isOpen ? Text(
+                                            //           '        Closes ${endTime.hour >= 12 ? endTime.hour-12 : endTime.hour}:${endTime.minute<10 ? '0${endTime.minute.toString()}' : endTime.minute.toString()} ${endTime.hour >= 12 ? 'PM' : 'AM'}',
+                                            //           style: TextStyle(
+                                            //             fontSize: 14,
+                                            //             fontWeight: FontWeight.w500,
+                                            //             fontFamily: 'PlusJakartaSans',
+                                            //           ),
+                                            //         ) : SizedBox(),
+                                            //       ],
+                                            //     );
+                                            //   }
+                                            // ),
+                                          ],
                                         ),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          'Open',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                            fontFamily: 'PlusJakartaSans',
-                                            color: Colors.green,
-                                          ),
-                                        ),
-                                        Text(
-                                          '        Closes 10PM',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                            fontFamily: 'PlusJakartaSans',
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+
                                     const SizedBox(height: 16),
                                     Divider(color: AppColors.dividerColor),
                                     const SizedBox(height: 16),
@@ -287,7 +728,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                         ),
                                         const SizedBox(width: 8),
                                         Text(
-                                          restaurantModel!.resEmail, // 'www.website.com',
+                                          restaurantModel == null || restaurantModel!.resEmail == '' ? 'No website' : restaurantModel!.resEmail, // 'www.website.com',
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500,
@@ -298,29 +739,29 @@ class RestaurantDetailScreen extends StatelessWidget {
                                     ),
                                     const SizedBox(height: 16),
                                     Divider(color: AppColors.dividerColor),
-                                    const SizedBox(height: 16),
-                                    Row(
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.only(top: 2),
-                                          child: Image.asset(
-                                              'assets/icons/cuisine.png',
-                                              height: 12,
-                                              width: 12),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          'Cuisine',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                            fontFamily: 'PlusJakartaSans',
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 16),
-                                    Divider(color: AppColors.dividerColor),
+                                    // const SizedBox(height: 16),
+                                    // Row(
+                                    //   children: [
+                                    //     Padding(
+                                    //       padding: EdgeInsets.only(top: 2),
+                                    //       child: Image.asset(
+                                    //           'assets/icons/cuisine.png',
+                                    //           height: 12,
+                                    //           width: 12),
+                                    //     ),
+                                    //     const SizedBox(width: 8),
+                                    //     Text(
+                                    //       restaurantModel!.dietaryList.isEmpty ? 'Cuisine' : restaurantModel!.dietaryList.map((e)=>e.toString()).join(', '), // 'Cuisine',
+                                    //       style: TextStyle(
+                                    //         fontSize: 14,
+                                    //         fontWeight: FontWeight.w500,
+                                    //         fontFamily: 'PlusJakartaSans',
+                                    //       ),
+                                    //     ),
+                                    //   ],
+                                    // ),
+                                    // const SizedBox(height: 16),
+                                    // Divider(color: AppColors.dividerColor),
                                   ],
                                 ),
                               )
@@ -328,119 +769,361 @@ class RestaurantDetailScreen extends StatelessWidget {
                                 ? Container(
                                     padding: const EdgeInsets.symmetric(vertical: 16),
                                     child: Column(children: [
-                                      InkWell(
-                                        onTap: () {},
-                                        child: Container(
-                                          padding: EdgeInsets.all(16),
-                                          child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  'Experiences',
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w500,
-                                                    fontFamily: 'PlusJakartaSans',
-                                                  ),
-                                                ),
-                                                Icon(Icons.chevron_right, size: 14)
-                                              ]),
-                                        ),
-                                      ),
-                                      Divider(color: AppColors.dividerColor),
-                                      InkWell(
-                                        onTap: () {},
-                                        child: Container(
-                                          padding: EdgeInsets.all(16),
-                                          child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  'Vibes',
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w500,
-                                                    fontFamily: 'PlusJakartaSans',
-                                                  ),
-                                                ),
-                                                Icon(Icons.chevron_right, size: 14)
-                                              ]),
-                                        ),
-                                      ),
-                                      Divider(color: AppColors.dividerColor),
-                                      InkWell(
-                                        onTap: () {},
-                                        child: Container(
-                                          padding: EdgeInsets.all(16),
-                                          child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  'Atmosphere',
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w500,
-                                                    fontFamily: 'PlusJakartaSans',
-                                                  ),
-                                                ),
-                                                Icon(Icons.chevron_right, size: 14)
-                                              ]),
-                                        ),
-                                      ),
-                                      Divider(color: AppColors.dividerColor),
-                                      InkWell(
-                                        onTap: () {},
-                                        child: Container(
-                                          padding: EdgeInsets.all(16),
-                                          child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  'Facilities',
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w500,
-                                                    fontFamily: 'PlusJakartaSans',
-                                                  ),
-                                                ),
-                                                Icon(Icons.chevron_right, size: 14)
-                                              ]),
-                                        ),
-                                      ),
-                                      Divider(color: AppColors.dividerColor),
-                                      const SizedBox(height: 16),
-                                      GestureDetector(
-                                        onTap: () {},
-                                        child: Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 16, vertical: 12),
-                                          decoration: BoxDecoration(
-                                            color: Colors.transparent,
-                                            borderRadius: BorderRadius.circular(10),
-                                          ),
-                                          child: Text(
-                                            'Reset',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                              fontFamily: 'PlusJakartaSans',
-                                              color: Colors.green,
-                                            ),
+                                      // InkWell(
+                                      //   onTap: () => expExpand.toggle(),
+                                      //   child: Container(
+                                      //     padding: EdgeInsets.all(16),
+                                      //     child: Row(
+                                      //         mainAxisAlignment:
+                                      //             MainAxisAlignment.spaceBetween,
+                                      //         crossAxisAlignment:
+                                      //             CrossAxisAlignment.center,
+                                      //         children: [
+                                      //           Text(
+                                      //             'Experiences',
+                                      //             style: TextStyle(
+                                      //               fontSize: 14,
+                                      //               fontWeight: FontWeight.w500,
+                                      //               fontFamily: 'PlusJakartaSans',
+                                      //             ),
+                                      //           ),
+                                      //           Icon(Icons.chevron_right, size: 14)
+                                      //         ]),
+                                      //   ),
+                                      // ),
+                                      // Obx(()=>expExpand.value ?
+                                      //     Wrap(
+                                      //       children: restaurantModel!.entertainmentScheduleList.map((ele){
+                                      //         return Container(
+                                      //           child: Column(
+                                      //             crossAxisAlignment: CrossAxisAlignment.start,
+                                      //             mainAxisSize: MainAxisSize.min,
+                                      //             children: [
+                                      //               Row(
+                                      //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      //                 children: [
+                                      //                   Text(ele.eventName, style: TextStyle(
+                                      //                     fontSize: 12,
+                                      //                     fontFamily: 'PlusJakartaSans',
+                                      //                   ),),
+                                      //                   Text(ele.eventBy, style: TextStyle(
+                                      //                     fontSize: 12,
+                                      //                     fontFamily: 'PlusJakartaSans',
+                                      //                   ),),
+                                      //                 ],
+                                      //               ),
+                                      //               Text(ele.day + '    ' + ele.startTime + ' - ' + ele.endTime, style: TextStyle(
+                                      //                 fontSize: 12,
+                                      //                 fontFamily: 'PlusJakartaSans',
+                                      //               ),),
+                                      //             ],
+                                      //           ),
+                                      //         );
+                                      //       }).toList(),
+                                      //     )
+                                      //     : const SizedBox()),
+                                      // Divider(color: AppColors.dividerColor),
+                                      ExpansionTile(
+                                        title: Text(
+                                          'Experiences',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            fontFamily: 'PlusJakartaSans',
                                           ),
                                         ),
-                                      )
+                                        tilePadding: EdgeInsets.symmetric(horizontal: 16),
+                                        shape: Border.all(width: 0, color: Colors.transparent),
+                                        iconColor: Colors.grey[800],
+                                        expandedAlignment: Alignment.centerLeft,
+                                        children: [
+                                          Wrap(
+                                            spacing: 8,
+                                            runSpacing: 8,
+                                            children: restaurantModel!.entertainmentScheduleList
+                                                .map((schedule) => Container(
+                                              width: Get.width - 32,
+                                                  height: 40,
+                                                  padding: EdgeInsets.symmetric(horizontal: 18),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.green,
+                                                    borderRadius: BorderRadius.circular(20),
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child: Text(
+                                                          schedule.eventName + '(${schedule.eventBy})',
+                                                          style: TextStyle(
+                                                            fontSize: 12,
+                                                            fontFamily: 'PlusJakartaSans',
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Colors.white
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      const SizedBox(width: 4),
+                                                      Text(
+                                                        schedule.day + '    ' + schedule.startTime + ' - ' + schedule.endTime,
+                                                        style: TextStyle(
+                                                            fontSize: 12,
+                                                            fontFamily: 'PlusJakartaSans',
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Colors.white
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+
+
+
+
+                                                ))
+                                                .toList(),
+                                          ),
+                                        ],
+                                      ),
+                                      Divider(color: AppColors.dividerColor),
+                                      // InkWell(
+                                      //   onTap: () => vibExpand.toggle(),
+                                      //   child: Container(
+                                      //     padding: EdgeInsets.all(16),
+                                      //     child: Row(
+                                      //         mainAxisAlignment:
+                                      //             MainAxisAlignment.spaceBetween,
+                                      //         crossAxisAlignment:
+                                      //             CrossAxisAlignment.center,
+                                      //         children: [
+                                      //           Text(
+                                      //             'Vibes',
+                                      //             style: TextStyle(
+                                      //               fontSize: 14,
+                                      //               fontWeight: FontWeight.w500,
+                                      //               fontFamily: 'PlusJakartaSans',
+                                      //             ),
+                                      //           ),
+                                      //           Icon(Icons.chevron_right, size: 14)
+                                      //         ]),
+                                      //   ),
+                                      // ),
+                                      ExpansionTile(
+                                        title: Text(
+                                          'Vibes',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            fontFamily: 'PlusJakartaSans',
+                                          ),
+                                        ),
+                                        tilePadding: EdgeInsets.symmetric(horizontal: 16),
+                                        shape: Border.all(width: 0, color: Colors.transparent),
+                                        iconColor: Colors.grey[800],
+                                        expandedAlignment: Alignment.centerLeft,
+                                        children: [
+                                          Wrap(
+                                            spacing: 8,
+                                            runSpacing: 0,
+                                            children: restaurantModel!.vibesList
+                                                .map((vibe) => Chip(
+                                              label: Text(
+                                                vibe ?? '',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontFamily: 'PlusJakartaSans',
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                              side: BorderSide(color: Colors.transparent, width: 0),
+                                              backgroundColor: Colors.green,
+                                              labelPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                                            ))
+                                                .toList(),
+                                          ),
+                                        ],
+                                      ),
+                                      Divider(color: AppColors.dividerColor),
+                                      // InkWell(
+                                      //   onTap: () => atmExpand.toggle(),
+                                      //   child: Container(
+                                      //     padding: EdgeInsets.all(16),
+                                      //     child: Row(
+                                      //         mainAxisAlignment:
+                                      //             MainAxisAlignment.spaceBetween,
+                                      //         crossAxisAlignment:
+                                      //             CrossAxisAlignment.center,
+                                      //         children: [
+                                      //           Text(
+                                      //             'Atmosphere',
+                                      //             style: TextStyle(
+                                      //               fontSize: 14,
+                                      //               fontWeight: FontWeight.w500,
+                                      //               fontFamily: 'PlusJakartaSans',
+                                      //             ),
+                                      //           ),
+                                      //           Icon(Icons.chevron_right, size: 14)
+                                      //         ]),
+                                      //   ),
+                                      // ),
+                                      ExpansionTile(
+                                        title: Text(
+                                          'Atmosphere',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            fontFamily: 'PlusJakartaSans',
+                                          ),
+                                        ),
+                                        tilePadding: EdgeInsets.symmetric(horizontal: 16),
+                                        shape: Border.all(width: 0, color: Colors.transparent),
+                                        iconColor: Colors.grey[800],
+                                        expandedAlignment: Alignment.centerLeft,
+                                        children: [
+                                          Wrap(
+                                            spacing: 8,
+                                            runSpacing: 0,
+                                            children: restaurantModel!.atmosphereList
+                                                .map((atm) => Chip(
+                                              label: Text(
+                                                atm ?? '',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontFamily: 'PlusJakartaSans',
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                              side: BorderSide(color: Colors.transparent, width: 0),
+                                              backgroundColor: Colors.green,
+                                              labelPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                                            ))
+                                                .toList(),
+                                          ),
+                                        ],
+                                      ),
+                                      Divider(color: AppColors.dividerColor),
+                                      // InkWell(
+                                      //   onTap: () => facExpand.toggle(),
+                                      //   child: Container(
+                                      //     padding: EdgeInsets.all(16),
+                                      //     child: Row(
+                                      //         mainAxisAlignment:
+                                      //             MainAxisAlignment.spaceBetween,
+                                      //         crossAxisAlignment:
+                                      //             CrossAxisAlignment.center,
+                                      //         children: [
+                                      //           Text(
+                                      //             'Facilities',
+                                      //             style: TextStyle(
+                                      //               fontSize: 14,
+                                      //               fontWeight: FontWeight.w500,
+                                      //               fontFamily: 'PlusJakartaSans',
+                                      //             ),
+                                      //           ),
+                                      //           Icon(Icons.chevron_right, size: 14)
+                                      //         ]),
+                                      //   ),
+                                      // ),
+                                      ExpansionTile(
+                                        title: Text(
+                                          'Facilities',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            fontFamily: 'PlusJakartaSans',
+                                          ),
+                                        ),
+                                        tilePadding: EdgeInsets.symmetric(horizontal: 16),
+                                        shape: Border.all(width: 0, color: Colors.transparent),
+                                        iconColor: Colors.grey[800],
+                                        expandedAlignment: Alignment.centerLeft,
+                                        children: [
+                                          Wrap(
+                                            spacing: 8,
+                                            runSpacing: 0,
+                                            children: restaurantModel!.facilityList
+                                                .map((fac) => Chip(
+                                              label: Text(
+                                                fac ?? '',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontFamily: 'PlusJakartaSans',
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                              side: BorderSide(color: Colors.transparent, width: 0),
+                                              backgroundColor: Colors.green,
+                                              labelPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                                            ))
+                                                .toList(),
+                                          ),
+                                        ],
+                                      ),
+                                      Divider(color: AppColors.dividerColor),
+                                      ExpansionTile(
+                                        title: Text(
+                                          'Cuisines',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            fontFamily: 'PlusJakartaSans',
+                                          ),
+                                        ),
+                                        tilePadding: EdgeInsets.symmetric(horizontal: 16),
+                                        shape: Border.all(width: 0, color: Colors.transparent),
+                                        iconColor: Colors.grey[800],
+                                        expandedAlignment: Alignment.centerLeft,
+                                        children: [
+                                          Wrap(
+                                            spacing: 8,
+                                            runSpacing: 0,
+                                            children: restaurantModel!.menuList
+                                                .map((menu) => Chip(
+                                              label: Text(
+                                                menu.cuisineType ?? '',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontFamily: 'PlusJakartaSans',
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                              side: BorderSide(color: Colors.transparent, width: 0),
+                                              backgroundColor: Colors.green,
+                                              labelPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                                            ))
+                                                .toList(),
+                                          ),
+                                        ],
+                                      ),
+                                      Divider(color: AppColors.dividerColor),
+                                      // const SizedBox(height: 16),
+                                      // GestureDetector(
+                                      //   onTap: () {},
+                                      //   child: Container(
+                                      //     padding: EdgeInsets.symmetric(
+                                      //         horizontal: 16, vertical: 12),
+                                      //     decoration: BoxDecoration(
+                                      //       color: Colors.transparent,
+                                      //       borderRadius: BorderRadius.circular(10),
+                                      //     ),
+                                      //     child: Text(
+                                      //       'Reset',
+                                      //       style: TextStyle(
+                                      //         fontSize: 14,
+                                      //         fontWeight: FontWeight.w500,
+                                      //         fontFamily: 'PlusJakartaSans',
+                                      //         color: Colors.green,
+                                      //       ),
+                                      //     ),
+                                      //   ),
+                                      // )
                                     ]),
                                   )
                                 : tabIndex.value == 2
@@ -455,8 +1138,8 @@ class RestaurantDetailScreen extends StatelessWidget {
                                               clipBehavior: Clip.hardEdge,
                                               child: GoogleMap(
                                                 initialCameraPosition:
-                                                    const CameraPosition(
-                                                  target: LatLng(40.7128, -74.0060),
+                                                    CameraPosition(
+                                                  target: LatLng(restaurantModel!.latitude, restaurantModel!.longitude),
                                                   zoom: 14,
                                                 ),
                                                 markers: {
@@ -508,15 +1191,90 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                 ),
                                               ),
                                               const SizedBox(width: 24),
-                                              Text(
-                                                '3.5 km away',
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontFamily: 'PlusJakartaSans',
-                                                  color: Colors.grey[400],
-                                                ),
-                                              ),
+                FutureBuilder(
+                  future: getCurrentLocation(context).then((position) =>
+                  Geolocator.distanceBetween(
+                    position.latitude,
+                    position.longitude,
+                    restaurantModel!.latitude,
+                    restaurantModel!.longitude,
+                  ) /
+                      1000),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Text(
+                        'Calculating...',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                          color: const Color.fromRGBO(142, 142, 147, 1),
+                        ),
+                      );
+                    }
+
+                    if (snapshot.hasError) {
+                      print('Error retrieving location: ${snapshot.error}');
+                      return Text(
+                        '',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'PlusJakartaSans',
+                          color: Colors.grey[400],
+                        ),
+                      );
+                    }
+
+                    return Text(
+                      snapshot.hasData
+                          ? '${snapshot.data!.toStringAsFixed(2)} km away'
+                          : 'Unknown',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: 'PlusJakartaSans',
+                        color: Colors.grey[400],
+                      ),
+                    );
+                  },
+                ),
+                                              // FutureBuilder(
+                                              //   future: getCurrentLocation(context).then((position) =>
+                                              //   Geolocator.distanceBetween(
+                                              //     position.latitude,
+                                              //     position.longitude,
+                                              //     restaurantModel!.latitude,
+                                              //     restaurantModel!.longitude,
+                                              //   ) /
+                                              //       1000),
+                                              //   builder: (context, snapshot) {
+                                              //
+                                              //     if (snapshot.connectionState == ConnectionState.waiting) {
+                                              //       return Text(
+                                              //         'Calculating...',
+                                              //         style: TextStyle(
+                                              //           fontSize: 12,
+                                              //           fontWeight: FontWeight.w500,
+                                              //           fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                              //           color: const Color.fromRGBO(142, 142, 147, 1),
+                                              //         ),
+                                              //       );
+                                              //     }
+                                              //
+                                              //     return Text(
+                                              //       snapshot.hasData
+                                              //           ? '${snapshot.data!.toStringAsFixed(1)} km away'
+                                              //           : 'Unknown',
+                                              //       style: TextStyle(
+                                              //         fontSize: 14,
+                                              //         fontWeight: FontWeight.w500,
+                                              //         fontFamily: 'PlusJakartaSans',
+                                              //         color: Colors.grey[400],
+                                              //       ),
+                                              //     );
+                                              //   }
+                                              // ),
                                             ],
                                           ),
                                           const SizedBox(height: 16),
@@ -530,34 +1288,151 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                     width: 12),
                                               ),
                                               const SizedBox(width: 8),
-                                              Text(
-                                                '6PM-9PM',
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontFamily: 'PlusJakartaSans',
-                                                ),
-                                              ),
-                                              Text(
-                                                '        Closed now',
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontFamily: 'PlusJakartaSans',
-                                                  color: Colors.red,
-                                                ),
+                                              FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                                                  future: getRestaurantOperatingHoursForToday(restaurantModel!.docID).get(),
+                                                  builder: (context, restHours) {
+
+                                                    if (restHours.connectionState == ConnectionState.waiting) {
+                                                      return Text(
+                                                        'Retrieving...',
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          fontWeight: FontWeight.w500,
+                                                          fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                                          color: const Color.fromRGBO(142, 142, 147, 1),
+                                                        ),
+                                                      );
+                                                    }
+
+                                                    if(!restHours.hasData || !restHours.data!.exists){
+
+                                                      print('No timings mentioned in database');
+
+                                                      return Text(
+                                                        'Not mentioned',
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight: FontWeight.w500,
+                                                          fontFamily: 'PlusJakartaSans',
+                                                        ),
+                                                      );
+                                                    }
+
+                                                    if(!restHours.data!['Breakfast']['isClosed'] && !restHours.data!['Brunch']['isClosed'] && !restHours.data!['Lunch']['isClosed'] && !restHours.data!['Dinner']['isClosed']){
+                                                      return Text(
+                                                        'Closed for today',
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight: FontWeight.w500,
+                                                          fontFamily: 'PlusJakartaSans',
+                                                          color: Colors.red,
+                                                        ),
+                                                      );
+                                                    }
+
+                                                    TimeOfDay? startTime;
+                                                    TimeOfDay? endTime;
+                                                    if(!restHours.data!['Breakfast']['isClosed']){
+                                                      bool startIsPM = restHours.data!['Breakfast']['startTime'].toString().toLowerCase().contains('pm');
+                                                      int startHours = int.parse(restHours.data!['Breakfast']['startTime'].toString().split(':').first);
+                                                      int startMins = int.parse(restHours.data!['Breakfast']['startTime'].toString().split(' ').first.split(':').last);
+
+                                                      bool endIsPM = restHours.data!['Breakfast']['endTime'].toString().toLowerCase().contains('pm');
+                                                      int endHours = int.parse(restHours.data!['Breakfast']['endTime'].toString().split(':').first);
+                                                      int endMins = int.parse(restHours.data!['Breakfast']['endTime'].toString().split(' ').first.split(':').last);
+
+                                                      startTime = TimeOfDay(hour: startHours + (startIsPM ? 12 : 0), minute: startMins);
+                                                      endTime = TimeOfDay(hour: endHours + (endIsPM ? 12 : 0), minute: endMins);
+                                                    }
+
+                                                    if(!restHours.data!['Brunch']['isClosed']){
+                                                      if(startTime == null){
+                                                        bool startIsPM = restHours.data!['Brunch']['startTime'].toString().toLowerCase().contains('pm');
+                                                        int startHours = int.parse(restHours.data!['Brunch']['startTime'].toString().split(':').first);
+                                                        int startMins = int.parse(restHours.data!['Brunch']['startTime'].toString().split(' ').first.split(':').last);
+
+                                                        startTime = TimeOfDay(hour: startHours + (startIsPM ? 12 : 0), minute: startMins);
+                                                      }
+
+                                                      bool endIsPM = restHours.data!['Brunch']['endTime'].toString().toLowerCase().contains('pm');
+                                                      int endHours = int.parse(restHours.data!['Brunch']['endTime'].toString().split(':').first);
+                                                      int endMins = int.parse(restHours.data!['Brunch']['endTime'].toString().split(' ').first.split(':').last);
+
+                                                      endTime = TimeOfDay(hour: endHours + (endIsPM ? 12 : 0), minute: endMins);
+                                                    }
+
+                                                    if(!restHours.data!['Lunch']['isClosed']){
+                                                      if(startTime == null){
+                                                        bool startIsPM = restHours.data!['Lunch']['startTime'].toString().toLowerCase().contains('pm');
+                                                        int startHours = int.parse(restHours.data!['Lunch']['startTime'].toString().split(':').first);
+                                                        int startMins = int.parse(restHours.data!['Lunch']['startTime'].toString().split(' ').first.split(':').last);
+
+                                                        startTime = TimeOfDay(hour: startHours + (startIsPM ? 12 : 0), minute: startMins);
+                                                      }
+
+                                                      bool endIsPM = restHours.data!['Lunch']['endTime'].toString().toLowerCase().contains('pm');
+                                                      int endHours = int.parse(restHours.data!['Lunch']['endTime'].toString().split(':').first);
+                                                      int endMins = int.parse(restHours.data!['Lunch']['endTime'].toString().split(' ').first.split(':').last);
+
+                                                      endTime = TimeOfDay(hour: endHours + (endIsPM ? 12 : 0), minute: endMins);
+                                                    }
+
+                                                    if(!restHours.data!['Dinner']['isClosed']){
+                                                      if(startTime == null){
+                                                        bool startIsPM = restHours.data!['Dinner']['startTime'].toString().toLowerCase().contains('pm');
+                                                        int startHours = int.parse(restHours.data!['Dinner']['startTime'].toString().split(':').first);
+                                                        int startMins = int.parse(restHours.data!['Dinner']['startTime'].toString().split(' ').first.split(':').last);
+
+                                                        startTime = TimeOfDay(hour: startHours + (startIsPM ? 12 : 0), minute: startMins);
+                                                      }
+
+                                                      bool endIsPM = restHours.data!['Dinner']['endTime'].toString().toLowerCase().contains('pm');
+                                                      int endHours = int.parse(restHours.data!['Dinner']['endTime'].toString().split(':').first);
+                                                      int endMins = int.parse(restHours.data!['Dinner']['endTime'].toString().split(' ').first.split(':').last);
+
+                                                      endTime = TimeOfDay(hour: endHours + (endIsPM ? 12 : 0), minute: endMins);
+                                                    }
+
+
+                                                    bool isOpen = (TimeOfDay.now().isAfter(startTime!) && TimeOfDay.now().isBefore(endTime!));
+
+                                                    return Row(
+                                                      children: [
+                                                        Text(
+                                                          '${endTime!.hour >= 12 ? endTime.hour-12 : endTime.hour}:${endTime.minute<10 ? '0${endTime.minute.toString()}' : endTime.minute.toString()} ${endTime.hour >= 12 ? 'PM' : 'AM'}',
+                                                          style: TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight: FontWeight.w500,
+                                                            fontFamily: 'PlusJakartaSans',
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          isOpen ? 'Open now' : 'Closed now',
+                                                          style: TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight: FontWeight.w500,
+                                                            fontFamily: 'PlusJakartaSans',
+                                                            color: isOpen ? Colors.green : Colors.red,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  }
                                               ),
                                             ],
                                           ),
                                           const SizedBox(height: 32),
                                           GestureDetector(
                                             onTap: () async {
-                                              final availableMaps = await ml.MapLauncher.installedMaps;
+                                              MapsLauncher.launchCoordinates(
+                                                  restaurantModel!.latitude, restaurantModel!.longitude, restaurantModel!.resName,);
 
-                                              await availableMaps.first.showDirections(
-                                                destination: ml.Coords(restaurantModel!.latitude, restaurantModel!.longitude),
-                                                destinationTitle: restaurantModel!.resName,
-                                              );
+                                              // final availableMaps = await ml.MapLauncher.installedMaps;
+                                              //
+                                              // await availableMaps.first.showDirections(
+                                              //   destination: ml.Coords(restaurantModel!.latitude, restaurantModel!.longitude),
+                                              //   destinationTitle: restaurantModel!.resName,
+                                              // );
                                             },
                                             child: CustomButton(
                                               laBelText: 'Get Directions',

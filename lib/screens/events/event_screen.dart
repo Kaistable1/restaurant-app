@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kaistable_website/models/resaturant_model.dart';
 
 import '../../constants/app_colors.dart';
 import '../../custom_widget/app_bar.dart';
 
 class EventScreen extends StatelessWidget {
 
-  EventScreen({super.key});
+  RestaurantModel restModel;
+
+  EventScreen({super.key, required this.restModel});
 
   RxInt tabIndex = 0.obs;
 

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class Event {
   String? docId; // Firestore document ID
@@ -8,6 +9,7 @@ class Event {
   String city;
   String country;
   String date;
+  DateTime? dtDate;
   String time;
   String phoneNumber;
   String url;
@@ -33,7 +35,9 @@ class Event {
     required this.latitude,
     required this.longitude,
     required this.createdAt,
-  });
+  }){
+    this.dtDate = date == '' ? null : DateFormat('yyyy-MM-dd').parse(date);
+  }
 
   // Convert Event to Map for Firestore
   Map<String, dynamic> toMap() {

@@ -1,0 +1,6 @@
+framework module map_launcher {
+  umbrella header "map_launcher-umbrella.h"
+
+  export *
+  module * { export * }
+}

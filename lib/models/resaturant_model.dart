@@ -16,6 +16,7 @@ class RestaurantModel {
   List<String> imagesList;
   List<String> dietaryList;
   List<String> atmosphereList;
+  List<String> vibesList;
   String spokenLanguage;
   String socialMedia;
   String priceRange;
@@ -51,6 +52,7 @@ class RestaurantModel {
     required this.socialMedia,
     required this.priceRange,
     required this.atmosphereList,
+    required this.vibesList,
     required this.zipCode,
     required this.logoImage,
     required this.spokenLanguage,
@@ -77,6 +79,7 @@ class RestaurantModel {
       dietaryList: <String>[],
       atmosphereList: <String>[],
       imagesList: <String>[],
+      vibesList: <String>[],
       specialConditions: '',
       password: '',
       spokenLanguage: '',
@@ -96,13 +99,13 @@ class RestaurantModel {
   }
 
   // Convert to Map
-  Future<Map<String, dynamic>> toMap() async {
+  Map<String, dynamic> toMap() {
     logoImage = '';
     List<Map<String, dynamic>> data = [];
     List<Map<String, dynamic>> menuData = [];
 
     for (var element in entertainmentScheduleList) {
-      var d = await element.toMap();
+      var d = element.toMap();
       data.add(d);
     }
 
@@ -152,6 +155,7 @@ class RestaurantModel {
           data['entertainmentScheduleList'] ?? []),
       facilityList: List<String>.from(data['facilityList'] ?? []),
       imagesList: List<String>.from(data['resImages'] ?? []),
+      vibesList: List<String>.from(data['vibesList'] ?? []),
       latitude: (data['latitude'] ?? 0.0).toDouble(),
       logoImage: data['logoImage'] ?? '',
       longitude: (data['longitude'] ?? 0.0).toDouble(),
@@ -190,6 +194,7 @@ class RestaurantModel {
       facilityList: List<String>.from(data['facilityList'] ?? []),
       atmosphereList: List<String>.from(data['atmopshereList'] ?? []),
       dietaryList: List<String>.from(data['dietaryList'] ?? []),
+      vibesList: List<String>.from(data['vibesList'] ?? []),
       specialConditions: data['specialConditions'] ?? '',
       password: data['password'] ?? '',
       spokenLanguage: data['spokenLanguage'] ?? '',
@@ -250,7 +255,7 @@ class EntertainmentScheduleModel {
   }
 
   // Convert to Map for Firestore
-  Future<Map<String, dynamic>> toMap() async {
+  Map<String, dynamic> toMap() {
     return {
       'eventName': eventName,
       'eventBy': eventBy,

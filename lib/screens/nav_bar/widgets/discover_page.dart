@@ -220,7 +220,7 @@ class _RestaurantsPageState extends State<RestaurantsPage> {
                                             ],
                                           ),
                                           FutureBuilder<Map<String, dynamic>?>(
-                                            future: HomeLocationController.getOperatingHours(restaurant.docID),
+                                            future: controller.getOperatingHours(restaurant.docID),
                                             builder: (context, snapshot) {
                                               if (snapshot.connectionState == ConnectionState.waiting) {
                                                 return Text(
@@ -267,8 +267,7 @@ class _RestaurantsPageState extends State<RestaurantsPage> {
                                                       position.longitude,
                                                       restaurant.latitude,
                                                       restaurant.longitude,
-                                                    ) /
-                                                        1000),
+                                                    ) / 1000),
                                                     builder: (context, snapshot) {
                                                       if (snapshot.connectionState == ConnectionState.waiting) {
                                                         return Text(

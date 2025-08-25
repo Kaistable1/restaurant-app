@@ -18,6 +18,7 @@ import 'package:kaistable_website/widgets/global_functions.dart';
 import 'package:latlong2/latlong.dart' as latlng;
 import 'package:rxdart/rxdart.dart' hide Rx;
 
+import '../../../streams/model/streams_model.dart';
 import '../../nav_bar/controller/search_controller.dart';
 import 'filter_selection_controller.dart';
 
@@ -26,10 +27,18 @@ class HomeLocationController extends GetxController {
   RxList selectedHappyhour = [].obs;
   Rx<latlng.LatLng> location = latlng.LatLng(37.5665, 126.9780).obs;
 
+  Position? userPosition = null;
+  RxMap<String, Map<String, dynamic>> operatingHoursCache = <String, Map<String, dynamic>>{}.obs;
+  RxBool isFetchingInitialData = true.obs;
+
+  final distanceOptions = ['1 mi', '3 mi', '5 mi', '10 mi', '25 mi', 'All'];
+  RxInt selectedDistance = 0.obs;
+
   final FilterController filterCtrl = Get.put(FilterController());
   final FilterSelectionController filterSelectionCtrl =
       Get.find<FilterSelectionController>();
   final TextEditingController searchController = TextEditingController();
+  RxBool searchToggle = true.obs;
   final _searchSubject = BehaviorSubject<String>.seeded('');
   ScrollController scrollController = ScrollController();
   var selectedLetter = ''.obs;
@@ -57,6 +66,8 @@ class HomeLocationController extends GetxController {
         .listen((query) {
       update();
     });
+
+    fetchInitialData();
   }
 
   @override
@@ -65,6 +76,36 @@ class HomeLocationController extends GetxController {
     _searchSubject.close();
     searchController.dispose();
     super.onClose();
+  }
+
+  Future<void> fetchInitialData() async {
+    isFetchingInitialData.value = true;
+    print('Fetching initial data: user position and operating hours');
+    // Fetch user position
+    try {
+      Position position = await getCurrentLocation(Get.context!);
+      userPosition = position;
+      print('User position fetched: ${position.latitude}, ${position.longitude}');
+    } catch (e) {
+      print('Error fetching user position: $e');
+      userPosition = null;
+    }
+    // Fetch initial restaurants and pre-fetch operating hours
+    var restaurantsStream = await getAllRestaurantsFiltered().first;
+    for (var restaurant in restaurantsStream) {
+      await getOperatingHours(restaurant.docID); // Pre-fetch to populate cache
+    }
+    isFetchingInitialData.value = false;
+  }
+
+  Future<void> fetchUserPosition(BuildContext context) async {
+    if (userPosition != null) return;
+    try {
+      userPosition = await getCurrentLocation(context);
+    } catch (e) {
+      print('Error fetching user position: $e');
+      // Optionally handle error, e.g., show a snackbar
+    }
   }
 
   void initailizedSelectors({required List<RestaurantModel> resaturantsList}) {
@@ -593,8 +634,11 @@ class HomeLocationController extends GetxController {
     });
   }
 
-  static Future<Map<String, dynamic>?> getOperatingHours(
-      String restaurantId) async {
+  Future<Map<String, dynamic>?> getOperatingHours(String restaurantId) async {
+    if (operatingHoursCache.containsKey(restaurantId)) {
+      print('Returning cached operating hours for $restaurantId');
+      return operatingHoursCache[restaurantId];
+    }
     try {
       String currentDay = DateFormat('EEEE').format(DateTime.now());
       var operatingHoursDoc = await FirebaseFirestore.instance
@@ -603,17 +647,68 @@ class HomeLocationController extends GetxController {
           .collection('operatingHours')
           .doc(currentDay)
           .get();
-
-      if (operatingHoursDoc.exists) {
-        return operatingHoursDoc.data();
-      } else {
-        return null;
-      }
+      Map<String, dynamic> data = operatingHoursDoc.exists ? (operatingHoursDoc.data() ?? {}) : {};
+      operatingHoursCache[restaurantId] = data;
+      operatingHoursCache.refresh();
+      print('Fetched operating hours for $restaurantId: $data');
+      return data;
     } catch (e) {
-      print('Error fetching operating hours: $e');
-      return null;
+      print('Error fetching operating hours for $restaurantId: $e');
+      operatingHoursCache[restaurantId] = {};
+      operatingHoursCache.refresh();
+      return {};
     }
   }
+
+  // Future<Map<String, dynamic>?> getOperatingHours(String restaurantId) async {
+  //   if (operatingHoursCache.containsKey(restaurantId)) {
+  //     return operatingHoursCache[restaurantId];
+  //   }
+  //   try {
+  //     String currentDay = DateFormat('EEEE').format(DateTime.now());
+  //     var operatingHoursDoc = await FirebaseFirestore.instance
+  //         .collection('restaurants')
+  //         .doc(restaurantId)
+  //         .collection('operatingHours')
+  //         .doc(currentDay)
+  //         .get();
+  //     Map<String, dynamic>? data;
+  //     if (operatingHoursDoc.exists) {
+  //       data = operatingHoursDoc.data();
+  //     }
+  //     operatingHoursCache[restaurantId] = data;
+  //     operatingHoursCache.refresh(); // Refresh to notify observers
+  //     return data;
+  //   } catch (e) {
+  //     print('Error fetching operating hours: $e');
+  //     operatingHoursCache[restaurantId] = null;
+  //     operatingHoursCache.refresh();
+  //     return null;
+  //   }
+  // }
+
+  // static Future<Map<String, dynamic>?> getOperatingHours(
+  //     String restaurantId)
+  // async {
+  //   try {
+  //     String currentDay = DateFormat('EEEE').format(DateTime.now());
+  //     var operatingHoursDoc = await FirebaseFirestore.instance
+  //         .collection('restaurants')
+  //         .doc(restaurantId)
+  //         .collection('operatingHours')
+  //         .doc(currentDay)
+  //         .get();
+  //
+  //     if (operatingHoursDoc.exists) {
+  //       return operatingHoursDoc.data();
+  //     } else {
+  //       return null;
+  //     }
+  //   } catch (e) {
+  //     print('Error fetching operating hours: $e');
+  //     return null;
+  //   }
+  // }
 
   Future<List<RestaurantModel>> getFilteredByTimeOfDay(
       List<RestaurantModel> restaurants) async {
@@ -811,29 +906,24 @@ class HomeLocationController extends GetxController {
 
       List<RestaurantModel> restaurantsList = await Future.wait(
         snapshot.docs.map((doc) async {
-          return RestaurantModel.fromDocumentSnapshot(
+          final restaurant = RestaurantModel.fromDocumentSnapshot(
               doc as DocumentSnapshot<Map<String, dynamic>>);
+          // Pre-fetch operating hours for each restaurant
+          if (!operatingHoursCache.containsKey(restaurant.docID)) {
+            await getOperatingHours(restaurant.docID);
+          }
+          return restaurant;
         }),
       );
-
-      Map<String, Map<String, dynamic>?> operatingHoursCache = {};
-      for (var restaurant in restaurantsList) {
-        operatingHoursCache[restaurant.docID] =
-            await getOperatingHours(restaurant.docID);
-      }
 
       restaurantsList = await compute(filterRestaurantsWithNewFiltersStatic, {
         'restaurants': restaurantsList,
         'query': _searchSubject.value,
-        'selectedFilters':
-            filterCtrl.selectedFilters.values.expand((list) => list).toList(),
+        'selectedFilters': filterCtrl.selectedFilters.values.expand((list) => list).toList(),
         'selectedTimeOfDay': filterCtrl.selectedFilters['Time']?.toList() ?? [],
-        'selectedAtmosphere':
-            filterCtrl.selectedFilters['Vibes']?.toList() ?? [],
-        'selectedEntertainment':
-            filterCtrl.selectedFilters['Experience']?.toList() ?? [],
-        'selectedDietary':
-            filterCtrl.selectedFilters['Dietary']?.toList() ?? [],
+        'selectedAtmosphere': filterCtrl.selectedFilters['Vibes']?.toList() ?? [],
+        'selectedEntertainment': filterCtrl.selectedFilters['Experience']?.toList() ?? [],
+        'selectedDietary': filterCtrl.selectedFilters['Dietary']?.toList() ?? [],
         'selectedCity': filterCtrl.selectedCity.value,
         'selectedCountry': filterCtrl.selectedCountry.value,
         'operatingHoursCache': operatingHoursCache,
@@ -847,6 +937,57 @@ class HomeLocationController extends GetxController {
       return [];
     });
   }
+
+  // Stream<List<RestaurantModel>> getAllRestaurantsFiltered() {
+  //   return _firestore
+  //       .collection('restaurants')
+  //       .orderBy('createdAt', descending: true)
+  //       .snapshots()
+  //       .asyncMap((snapshot) async {
+  //     if (snapshot.docs.isNotEmpty) {
+  //       lastDocument = snapshot.docs.last;
+  //     } else {
+  //       lastDocument = null;
+  //     }
+  //
+  //     List<RestaurantModel> restaurantsList = await Future.wait(
+  //       snapshot.docs.map((doc) async {
+  //         return RestaurantModel.fromDocumentSnapshot(
+  //             doc as DocumentSnapshot<Map<String, dynamic>>);
+  //       }),
+  //     );
+  //
+  //     Map<String, Map<String, dynamic>?> operatingHoursCache = {};
+  //     for (var restaurant in restaurantsList) {
+  //       operatingHoursCache[restaurant.docID] =
+  //           await getOperatingHours(restaurant.docID);
+  //     }
+  //
+  //     restaurantsList = await compute(filterRestaurantsWithNewFiltersStatic, {
+  //       'restaurants': restaurantsList,
+  //       'query': _searchSubject.value,
+  //       'selectedFilters':
+  //           filterCtrl.selectedFilters.values.expand((list) => list).toList(),
+  //       'selectedTimeOfDay': filterCtrl.selectedFilters['Time']?.toList() ?? [],
+  //       'selectedAtmosphere':
+  //           filterCtrl.selectedFilters['Vibes']?.toList() ?? [],
+  //       'selectedEntertainment':
+  //           filterCtrl.selectedFilters['Experience']?.toList() ?? [],
+  //       'selectedDietary':
+  //           filterCtrl.selectedFilters['Dietary']?.toList() ?? [],
+  //       'selectedCity': filterCtrl.selectedCity.value,
+  //       'selectedCountry': filterCtrl.selectedCountry.value,
+  //       'operatingHoursCache': operatingHoursCache,
+  //     });
+  //
+  //     restaurants.assignAll(restaurantsList);
+  //     print('Filtered restaurants fetched: ${restaurantsList.length}');
+  //     return restaurantsList;
+  //   }).handleError((error) {
+  //     print('Firestore error: $error');
+  //     return [];
+  //   });
+  // }
 
   Stream<List<RestaurantModel>> getExperienceVibesRestaurantsFiltered() {
     return _firestore
@@ -1150,6 +1291,20 @@ class HomeLocationController extends GetxController {
     } catch (e) {
       print('Error getting nearby restaurants: $e');
       return restaurants;
+    }
+  }
+
+  RestaurantModel? findRestaurantForVideo(VideoModel video) {
+    try {
+      return restaurants.firstWhere(
+            (restaurant) =>
+        restaurant.resName == video.restaurantName &&
+            restaurant.zipCode == video.zipCode,
+        orElse: () => RestaurantModel.initialize(), // Return initialized empty model if not found
+      );
+    } catch (e) {
+      print('Error finding restaurant for video: $e');
+      return null;
     }
   }
 

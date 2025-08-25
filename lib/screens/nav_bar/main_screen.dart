@@ -30,7 +30,7 @@ class _MainScreenState extends State<MainScreen> {
       const HomeScreenNew(),
       const RestaurantsPage(),
       const VideosListView(),
-      SavedRestaurantsPage(),
+      // SavedRestaurantsPage(),
       const ProfileScreen(),
     ];
   }
@@ -41,7 +41,7 @@ class _MainScreenState extends State<MainScreen> {
       const HomeScreenNew(),
       const RestaurantsPage(),
       const VideosListView(),
-      SavedRestaurantsPage(),
+      // SavedRestaurantsPage(),
       const ProfileScreen(),
     ];
   }
@@ -63,16 +63,16 @@ class _MainScreenState extends State<MainScreen> {
       ),
       PersistentBottomNavBarItem(
         icon: Image.asset('assets/images/icons8-car (2) (1).png', width: 34, height: 34),
-        title: "Post",
+        title: "Streams",
         activeColorPrimary: AppColors.primaryColor,
         inactiveColorPrimary: AppColors.blackColor,
       ),
-      PersistentBottomNavBarItem(
-        icon: Image.asset('assets/images/oui_app-saved-objects.png', width: 34, height: 34),
-        title: "Saved",
-        activeColorPrimary: AppColors.primaryColor,
-        inactiveColorPrimary: AppColors.blackColor,
-      ),
+      // PersistentBottomNavBarItem(
+      //   icon: Image.asset('assets/images/oui_app-saved-objects.png', width: 34, height: 34),
+      //   title: "Saved",
+      //   activeColorPrimary: AppColors.primaryColor,
+      //   inactiveColorPrimary: AppColors.blackColor,
+      // ),
       PersistentBottomNavBarItem(
         icon: Image.asset('assets/images/icons8-account (1).png', width: 34, height: 34),
         title: "Profile",
@@ -99,16 +99,16 @@ class _MainScreenState extends State<MainScreen> {
       ),
       PersistentBottomNavBarItem(
         icon: Image.asset('assets/images/icons8-car (2) (1).png', width: 34, height: 34),
-        title: "Post",
+        title: "Streams",
         activeColorPrimary: AppColors.primaryColor,
         inactiveColorPrimary: AppColors.blackColor,
       ),
-      PersistentBottomNavBarItem(
-        icon: Image.asset('assets/images/oui_app-saved-objects.png', width: 34, height: 34),
-        title: "Saved",
-        activeColorPrimary: AppColors.primaryColor,
-        inactiveColorPrimary: AppColors.blackColor,
-      ),
+      // PersistentBottomNavBarItem(
+      //   icon: Image.asset('assets/images/oui_app-saved-objects.png', width: 34, height: 34),
+      //   title: "Saved",
+      //   activeColorPrimary: AppColors.primaryColor,
+      //   inactiveColorPrimary: AppColors.blackColor,
+      // ),
       PersistentBottomNavBarItem(
         icon: Image.asset('assets/images/icons8-account (1).png', width: 34, height: 34),
         title: "Profile",
