@@ -130,7 +130,7 @@ class SavedRestaurantsPage extends StatelessWidget {
                                   ],
                                 ),
                                 FutureBuilder<Map<String, dynamic>?>(
-                                  future: controller.getOperatingHours(restaurant.docID),
+                                  future: controller.getOperatingHours1(restaurant.docID),
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState == ConnectionState.waiting) {
                                       return Text(

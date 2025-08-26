@@ -7,7 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:kaistable_website/screens/events/all_events_screen.dart';
+import 'package:intl/intl.dart';
 import 'package:kaistable_website/streams/views/streams_view.dart';
 import 'package:shimmer/shimmer.dart';
 import 'dart:io';
@@ -16,8 +16,6 @@ import '../../../constants/app_colors.dart';
 import '../../../models/resaturant_model.dart';
 import '../../../streams/controllers/streams_controller.dart';
 import '../../../streams/model/streams_model.dart';
-import '../../../utils/functions.dart';
-import '../../../widgets/custom_button.dart';
 import '../../home_screen/home_controller/home_location_controller.dart';
 import '../controller/search_controller.dart';
 import '../full_screen_video/full_screen_video_screen.dart';
@@ -36,7 +34,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
   final HomeLocationController homeLocationCtrl = Get.put(HomeLocationController());
   final RxBool showDistanceOptions = false.obs;
   final RxMap<String, bool> showFilterDropdowns = <String, bool>{}.obs;
-  // final TextEditingController searchController = TextEditingController();
   final RxBool isLoading = true.obs;
 
   @override
@@ -53,6 +50,8 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
       Future.delayed(const Duration(seconds: 1), () {
         isLoading.value = false;
       });
+      // Initialize search and filter application
+      homeLocationCtrl.applySearchAndFilters();
     });
   }
 
@@ -66,13 +65,13 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
           scrollDirection: Axis.horizontal,
           children: List.generate(
             3, (_) => Container(
-              width: 200,
-              margin: const EdgeInsets.only(right: 12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-              ),
+            width: 200,
+            margin: const EdgeInsets.only(right: 12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
             ),
+          ),
           ),
         ),
       ),
@@ -86,12 +85,12 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
     final textContainerHeight = (cardWidth * 0.35).clamp(50.0, 70.0);
 
     return GestureDetector(
-      onTap: (){
-        Get.to(()=>RestaurantDetailScreen(restaurantModel: restaurant));
+      onTap: () {
+        Get.to(() => RestaurantDetailScreen(restaurantModel: restaurant));
       },
       child: Container(
         width: cardWidth,
-        height: cardWidth * 1.5, // Maintain aspect ratio (1.5:1 height to width)
+        height: cardWidth * 1.5,
         decoration: BoxDecoration(
           border: Border.all(color: AppColors.borderColor),
           borderRadius: BorderRadius.circular(5),
@@ -132,7 +131,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
               padding: const EdgeInsets.all(8.0),
               child: Container(
                 height: textContainerHeight,
-                width: cardWidth - 16, // Account for padding
+                width: cardWidth - 16,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -140,23 +139,23 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                     Text(
                       restaurant.resName.isNotEmpty ? restaurant.resName : 'Unknown Restaurant',
                       style: TextStyle(
-                        fontSize: (cardWidth * 0.1).clamp(12.0, 14.0), // Responsive font size
+                        fontSize: (cardWidth * 0.1).clamp(12.0, 14.0),
                         fontWeight: FontWeight.w700,
                         fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                         color: Colors.black,
                       ),
                       maxLines: 1,
-                      overflow: TextOverflow.ellipsis, // Truncate with ellipsis
+                      overflow: TextOverflow.ellipsis,
                       softWrap: true,
                     ),
                     const SizedBox(height: 2),
                     Obx(() {
-                      var operatingHours = homeLocationCtrl.operatingHoursCache[restaurant.docID];
+                      final operatingHours = homeLocationCtrl.operatingHoursCache[restaurant.docID];
+                      final currentDay = DateFormat('EEEE').format(DateTime.now());
                       final timeOfDay = filterCtrl.selectedFilters['Time']?.isNotEmpty ?? false
                           ? filterCtrl.selectedFilters['Time']!.first
                           : 'Dinner';
-                      if (operatingHours == null) {
-                        // Not in cache: trigger fetch
+                      if (operatingHours == null || operatingHours[currentDay] == null) {
                         homeLocationCtrl.getOperatingHours(restaurant.docID);
                         return Text(
                           'Fetching hours...',
@@ -168,10 +167,12 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                           ),
                         );
                       }
-                      // In cache: either data map or empty map (no data)
-                      final isClosed = operatingHours[timeOfDay]?['isClosed'] ?? true;
+                      final dayHours = operatingHours[currentDay]!;
+                      final isClosed = dayHours[timeOfDay]?['isClosed'] ?? true;
+                      final startTime = dayHours[timeOfDay]?['startTime'] ?? '6:00 PM';
+                      final endTime = dayHours[timeOfDay]?['endTime'] ?? '9:00 PM';
                       return Text(
-                        isClosed ? 'Closed' : operatingHours[timeOfDay]?['hours'] ?? '6PM–9PM',
+                        isClosed ? 'Closed' : '$startTime–$endTime',
                         style: TextStyle(
                           fontSize: 12,
                           color: const Color.fromRGBO(142, 142, 147, 1),
@@ -180,36 +181,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                         ),
                       );
                     }),
-                    // FutureBuilder<Map<String, dynamic>?>(
-                    //   future: HomeLocationController.getOperatingHours(restaurant.docID),
-                    //   builder: (context, snapshot) {
-                    //     if (snapshot.connectionState == ConnectionState.waiting || !snapshot.hasData) {
-                    //       return Text(
-                    //         'Loading...',
-                    //         style: TextStyle(
-                    //           fontSize: (cardWidth * 0.09).clamp(11.0, 12.0),
-                    //           fontWeight: FontWeight.w500,
-                    //           fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                    //           color: Colors.black,
-                    //         ),
-                    //       );
-                    //     }
-                    //     final operatingHours = snapshot.data;
-                    //     final timeOfDay = filterCtrl.selectedFilters['Time']?.isNotEmpty ?? false
-                    //         ? filterCtrl.selectedFilters['Time']!.first
-                    //         : 'Dinner';
-                    //     final isClosed = operatingHours?[timeOfDay]?['isClosed'] ?? true;
-                    //     return Text(
-                    //       isClosed ? 'Closed' : operatingHours?[timeOfDay]?['hours'] ?? '6PM-9PM',
-                    //       style: TextStyle(
-                    //         fontSize: (cardWidth * 0.09).clamp(11.0, 12.0),
-                    //         fontWeight: FontWeight.w500,
-                    //         fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                    //         color: Colors.black,
-                    //       ),
-                    //     );
-                    //   },
-                    // ),
                     const SizedBox(height: 4),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -220,10 +191,8 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                           height: (cardWidth * 0.1).clamp(12.0, 14.0),
                         ),
                         const SizedBox(width: 4),
-
                         Obx(() {
                           if ((homeLocationCtrl.isFetchingInitialData.value || !homeLocationCtrl.isFetchingInitialData.value) && homeLocationCtrl.userPosition == null) {
-                            // Trigger fetch if not available
                             homeLocationCtrl.fetchUserPosition(context);
                             return Text(
                               'Fetching location...',
@@ -251,64 +220,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                             ),
                           );
                         }),
-
-                        // FutureBuilder(
-                        //   future: getCurrentLocation(context).then((position) =>
-                        //   Geolocator.distanceBetween(
-                        //     position.latitude,
-                        //     position.longitude,
-                        //     restaurant.latitude,
-                        //     restaurant.longitude,
-                        //   ) / 1000),
-                        //   builder: (context, snapshot) {
-                        //     if (snapshot.connectionState == ConnectionState.waiting) {
-                        //       return Text(
-                        //         'Calculating...',
-                        //         style: TextStyle(
-                        //           fontSize: 12,
-                        //           fontWeight: FontWeight.w500,
-                        //           fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                        //           color: const Color.fromRGBO(142, 142, 147, 1),
-                        //         ),
-                        //       );
-                        //     }
-                        //
-                        //     if (snapshot.hasError) {
-                        //       print('Error retrieving location: ${snapshot.error}');
-                        //       return Text(
-                        //         '',
-                        //         style: TextStyle(
-                        //           fontSize: 14,
-                        //           fontWeight: FontWeight.w500,
-                        //           fontFamily: 'PlusJakartaSans',
-                        //           color: Colors.grey[400],
-                        //         ),
-                        //       );
-                        //     }
-                        //
-                        //     return Text(
-                        //       snapshot.hasData
-                        //           ? '${snapshot.data!.toStringAsFixed(2)} km away'
-                        //           : 'Unknown',
-                        //       style: TextStyle(
-                        //             fontSize: (cardWidth * 0.08).clamp(9.0, 10.0),
-                        //             fontWeight: FontWeight.w500,
-                        //             fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                        //             color: const Color.fromRGBO(142, 142, 147, 1),
-                        //           ),
-                        //     );
-                        //   },
-                        // ),
-
-                        // Text(
-                        //   '3.5 km away', // Placeholder; update with real distance if needed
-                        //   style: TextStyle(
-                        //     fontSize: (cardWidth * 0.08).clamp(9.0, 10.0),
-                        //     fontWeight: FontWeight.w500,
-                        //     fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                        //     color: const Color.fromRGBO(142, 142, 147, 1),
-                        //   ),
-                        // ),
                       ],
                     ),
                   ],
@@ -320,87 +231,74 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
       ),
     );
   }
+
   Widget buildStreamCard(VideoModel video, int index) {
     if (videoCtrl.thumbnailPaths[index] == null && video.url != null && video.url!.isNotEmpty) {
       videoCtrl.generateThumbnail(index, video.url!);
     }
 
-    // Find the matching restaurant
     final restaurant = homeLocationCtrl.findRestaurantForVideo(video);
 
     return GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => FullVideoScreen(video: video),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => FullVideoScreen(video: video),
+          ),
+        );
+      },
+      child: Container(
+        width: 173,
+        height: 295,
+        margin: const EdgeInsets.only(right: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const CircleAvatar(
+                  radius: 17,
+                  backgroundImage: AssetImage('assets/images/Ellipse 19.png'),
+                ),
+                const SizedBox(width: 8),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Emmanuel Sanchez",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                      ),
+                    ),
+                    Text(
+                      'Tourist',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: const Color.fromRGBO(142, 142, 147, 1),
+                        fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          );
-        },
-        child: Container(
-          width: 173,
-          height: 295,
-          margin: const EdgeInsets.only(right: 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  const CircleAvatar(
-                    radius: 17,
-                    backgroundImage: AssetImage('assets/images/Ellipse 19.png'),
-                  ),
-                  const SizedBox(width: 8),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Emmanuel Sanchez", // Placeholder, update if dynamic user data available
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                        ),
-                      ),
-                      Text(
-                        'Tourist',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: const Color.fromRGBO(142, 142, 147, 1),
-                          fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Container(
-                      height: 191,
-                      width: 163,
-                      color: Colors.black,
-                      child: videoCtrl.thumbnailPaths[index] != null
-                          ? Image.file(
-                        File(videoCtrl.thumbnailPaths[index]!),
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Image.network(
-                          'https://via.placeholder.com/163x191',
-                          fit: BoxFit.cover,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return const Center(child: CircularProgressIndicator());
-                          },
-                          errorBuilder: (context, error, stackTrace) => Container(
-                            color: Colors.grey[300],
-                            child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
-                          ),
-                        ),
-                      )
-                          : Image.network(
+            const SizedBox(height: 8),
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    height: 191,
+                    width: 163,
+                    color: Colors.black,
+                    child: videoCtrl.thumbnailPaths[index] != null
+                        ? Image.file(
+                      File(videoCtrl.thumbnailPaths[index]!),
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Image.network(
                         'https://via.placeholder.com/163x191',
                         fit: BoxFit.cover,
                         loadingBuilder: (context, child, loadingProgress) {
@@ -412,92 +310,77 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                           child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
                         ),
                       ),
-                    ),
-                  ),
-                  Positioned.fill(
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Icon(
-                        Icons.play_circle_fill,
-                        size: 32,
-                        color: Colors.white,
+                    )
+                        : Image.network(
+                      'https://via.placeholder.com/163x191',
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return const Center(child: CircularProgressIndicator());
+                      },
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        color: Colors.grey[300],
+                        child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
                       ),
                     ),
                   ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Container(
-                width: 163,
-                height: 50,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      video.restaurantName ?? 'Kaistable at Drews',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                ),
+                Positioned.fill(
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Icon(
+                      Icons.play_circle_fill,
+                      size: 32,
+                      color: Colors.white,
                     ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Text(
-                          restaurant != null && restaurant.averageRating > 0
-                              ? '${restaurant.averageRating.toStringAsFixed(1)} stars'
-                              : '0 stars',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: const Color.fromRGBO(142, 142, 147, 1),
-                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                          ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Container(
+              width: 163,
+              height: 50,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    video.restaurantName ?? 'Kaistable at Drews',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Text(
+                        restaurant != null && restaurant.averageRating > 0
+                            ? '${restaurant.averageRating.toStringAsFixed(1)} stars'
+                            : '0 stars',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: const Color.fromRGBO(142, 142, 147, 1),
+                          fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                         ),
-                        const SizedBox(width: 8),
-                        Image.asset(
-                          'assets/images/Icon (1).png',
-                          width: 15,
-                          height: 13,
-                        ),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Obx(() {
-                            if ((homeLocationCtrl.isFetchingInitialData.value || !homeLocationCtrl.isFetchingInitialData.value) && homeLocationCtrl.userPosition == null) {
-                              // Trigger fetch if null
-                              homeLocationCtrl.fetchUserPosition(context);
-                              return Text(
-                                'Calculating distance...',
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                  color: const Color.fromRGBO(142, 142, 147, 1),
-                                ),
-                              );
-                            }
-                            if (restaurant == null || restaurant.latitude == 0.0 || restaurant.longitude == 0.0) {
-                              return Text(
-                                'Unknown distance',overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                  color: const Color.fromRGBO(142, 142, 147, 1),
-                                ),
-                              );
-                            }
-                            double distance = Geolocator.distanceBetween(
-                              homeLocationCtrl.userPosition!.latitude,
-                              homeLocationCtrl.userPosition!.longitude,
-                              restaurant.latitude,
-                              restaurant.longitude,
-                            ) / 1000;
+                      ),
+                      const SizedBox(width: 8),
+                      Image.asset(
+                        'assets/images/Icon (1).png',
+                        width: 15,
+                        height: 13,
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Obx(() {
+                          if ((homeLocationCtrl.isFetchingInitialData.value || !homeLocationCtrl.isFetchingInitialData.value) && homeLocationCtrl.userPosition == null) {
+                            homeLocationCtrl.fetchUserPosition(context);
                             return Text(
-                              '${distance.toStringAsFixed(2)} km away',overflow: TextOverflow.ellipsis,
+                              'Calculating distance...',
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
@@ -505,187 +388,53 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                 color: const Color.fromRGBO(142, 142, 147, 1),
                               ),
                             );
-                          }),
-                        ),
-                        const SizedBox(width: 10),
-                        Image.asset(
-                          'assets/images/Group (5).png',
-                          width: 15,
-                          height: 13,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                          }
+                          if (restaurant == null || (restaurant.latitude == 0.0 && restaurant.longitude == 0.0)) {
+                            return Text(
+                              'Unknown distance',
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                color: const Color.fromRGBO(142, 142, 147, 1),
+                              ),
+                            );
+                          }
+                          double distance = Geolocator.distanceBetween(
+                            homeLocationCtrl.userPosition!.latitude,
+                            homeLocationCtrl.userPosition!.longitude,
+                            restaurant.latitude,
+                            restaurant.longitude,
+                          ) / 1000;
+                          return Text(
+                            '${distance.toStringAsFixed(1)} km away',
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                              color: const Color.fromRGBO(142, 142, 147, 1),
+                            ),
+                          );
+                        }),
+                      ),
+                      const SizedBox(width: 10),
+                      Image.asset(
+                        'assets/images/Group (5).png',
+                        width: 15,
+                        height: 13,
+                      ),
+                    ],
+                  ),
+                ],
               ),
-            ],
-          ),
-        )
+            ),
+          ],
+        ),
+      ),
     );
-    }
-  // Widget buildStreamCard(VideoModel video, int index) {
-  //   if (videoCtrl.thumbnailPaths[index] == null && video.url != null && video.url!.isNotEmpty) {
-  //     videoCtrl.generateThumbnail(index, video.url!);
-  //   }
-  //
-  //   return GestureDetector(
-  //     onTap: () {
-  //       Navigator.push(
-  //         context,
-  //         MaterialPageRoute(
-  //           builder: (context) => FullVideoScreen(video: video),
-  //         ),
-  //       );
-  //     },
-  //     child: Container(
-  //       width: 173,
-  //       height: 295,
-  //       margin: const EdgeInsets.only(right: 12),
-  //       child: Column(
-  //         crossAxisAlignment: CrossAxisAlignment.start,
-  //         children: [
-  //           Row(
-  //             children: [
-  //               const CircleAvatar(
-  //                 radius: 17,
-  //                 backgroundImage: AssetImage('assets/images/Ellipse 19.png'),
-  //               ),
-  //               const SizedBox(width: 8),
-  //               Column(
-  //                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                 children: [
-  //                   Text(
-  //                     "Emmanuel Sanchez",
-  //                     style: TextStyle(
-  //                       fontSize: 14,
-  //                       fontWeight: FontWeight.w400,
-  //                       fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-  //                     ),
-  //                   ),
-  //                   Text(
-  //                     'Tourist',
-  //                     style: TextStyle(
-  //                       fontSize: 12,
-  //                       color: const Color.fromRGBO(142, 142, 147, 1),
-  //                       fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ],
-  //           ),
-  //           const SizedBox(height: 8),
-  //           Stack(
-  //             children: [
-  //               ClipRRect(
-  //                 borderRadius: BorderRadius.circular(12),
-  //                 child: Container(
-  //                   height: 191,
-  //                   width: 163,
-  //                   color: Colors.black,
-  //                   child: videoCtrl.thumbnailPaths[index] != null
-  //                       ? Image.file(
-  //                     File(videoCtrl.thumbnailPaths[index]!),
-  //                     fit: BoxFit.cover,
-  //                     errorBuilder: (context, error, stackTrace) => Image.network(
-  //                       'https://via.placeholder.com/163x191',
-  //                       fit: BoxFit.cover,
-  //                       loadingBuilder: (context, child, loadingProgress) {
-  //                         if (loadingProgress == null) return child;
-  //                         return const Center(child: CircularProgressIndicator());
-  //                       },
-  //                       errorBuilder: (context, error, stackTrace) => Container(
-  //                         color: Colors.grey[300],
-  //                         child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
-  //                       ),
-  //                     ),
-  //                   )
-  //                       : Image.network(
-  //                     'https://via.placeholder.com/163x191',
-  //                     fit: BoxFit.cover,
-  //                     loadingBuilder: (context, child, loadingProgress) {
-  //                       if (loadingProgress == null) return child;
-  //                       return const Center(child: CircularProgressIndicator());
-  //                     },
-  //                     errorBuilder: (context, error, stackTrace) => Container(
-  //                       color: Colors.grey[300],
-  //                       child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
-  //                     ),
-  //                   ),
-  //                 ),
-  //               ),
-  //               Positioned.fill(
-  //                 child: Align(
-  //                   alignment: Alignment.center,
-  //                   child: Icon(
-  //                     Icons.play_circle_fill,
-  //                     size: 32,
-  //                     color: Colors.white,
-  //                   ),
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //           const SizedBox(height: 8),
-  //           Container(
-  //             width: 163,
-  //             height: 50,
-  //             child: Column(
-  //               crossAxisAlignment: CrossAxisAlignment.start,
-  //               children: [
-  //                 Text(
-  //                   video.restaurantName ?? 'Kaistable at Drews',
-  //                   style: TextStyle(
-  //                     fontSize: 15,
-  //                     fontWeight: FontWeight.w700,
-  //                     fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-  //                   ),
-  //                   maxLines: 1,
-  //                   overflow: TextOverflow.ellipsis,
-  //                 ),
-  //                 const SizedBox(height: 8),
-  //                 Row(
-  //                   children: [
-  //                     Text(
-  //                       '4.2 stars',
-  //                       style: TextStyle(
-  //                         fontSize: 12,
-  //                         color: const Color.fromRGBO(142, 142, 147, 1),
-  //                         fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-  //                       ),
-  //                     ),
-  //                     const SizedBox(width: 8),
-  //                     Image.asset(
-  //                       'assets/images/Icon (1).png',
-  //                       width: 15,
-  //                       height: 13,
-  //                     ),
-  //                     const SizedBox(width: 4),
-  //                     Text(
-  //                       '3.5 km away',
-  //                       style: TextStyle(
-  //                         fontSize: 12,
-  //                         fontWeight: FontWeight.w500,
-  //                         fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-  //                         color: const Color.fromRGBO(142, 142, 147, 1),
-  //                       ),
-  //                     ),
-  //                     const SizedBox(width: 10),
-  //                     Image.asset(
-  //                       'assets/images/Group (5).png',
-  //                       width: 15,
-  //                       height: 13,
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
+  }
 
   Widget buildExperienceVibeCard(RestaurantModel restaurant) {
     return Column(
@@ -695,7 +444,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
           children: [
             CircleAvatar(
               radius: 20,
-              backgroundImage: AssetImage('assets/images/Ellipse 19.png'), // Placeholder
+              backgroundImage: AssetImage('assets/images/Ellipse 19.png'),
             ),
             const SizedBox(width: 8),
             Expanded(
@@ -706,7 +455,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Emmanuel Sanchez", // Placeholder
+                        "Emmanuel Sanchez",
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
@@ -714,7 +463,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                         ),
                       ),
                       Text(
-                        'Tourist', // Placeholder
+                        'Tourist',
                         style: TextStyle(
                           fontSize: 12,
                           color: const Color.fromRGBO(142, 142, 147, 1),
@@ -738,11 +487,10 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
         ),
         const SizedBox(height: 8),
         GestureDetector(
-          onTap: (){
-            Get.to(()=>RestaurantDetailScreen(restaurantModel: restaurant));
+          onTap: () {
+            Get.to(() => RestaurantDetailScreen(restaurantModel: restaurant));
           },
           child: Container(
-            // width: 364,
             width: Get.width - 32,
             height: 300,
             margin: const EdgeInsets.only(bottom: 8),
@@ -758,7 +506,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                           : restaurant.logoImage.isNotEmpty
                           ? restaurant.logoImage
                           : 'assets/images/event_img3.png',
-                      // width: 364,
                       width: Get.width - 32,
                       fit: BoxFit.cover,
                     ),
@@ -766,7 +513,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                 ),
                 const SizedBox(height: 8),
                 Container(
-                  // width: 364,
                   height: 50,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
@@ -811,12 +557,12 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                 ),
                                 const SizedBox(width: 15),
                                 Obx(() {
-                                  var operatingHours = homeLocationCtrl.operatingHoursCache[restaurant.docID];
+                                  final operatingHours = homeLocationCtrl.operatingHoursCache[restaurant.docID];
+                                  final currentDay = DateFormat('EEEE').format(DateTime.now());
                                   final timeOfDay = filterCtrl.selectedFilters['Time']?.isNotEmpty ?? false
                                       ? filterCtrl.selectedFilters['Time']!.first
                                       : 'Dinner';
-                                  if (operatingHours == null) {
-                                    // Trigger fetch if not cached
+                                  if (operatingHours == null || operatingHours[currentDay] == null) {
                                     homeLocationCtrl.getOperatingHours(restaurant.docID);
                                     return Text(
                                       'Fetching hours...',
@@ -828,9 +574,12 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                       ),
                                     );
                                   }
-                                  final isClosed = operatingHours[timeOfDay]?['isClosed'] ?? true;
+                                  final dayHours = operatingHours[currentDay]!;
+                                  final isClosed = dayHours[timeOfDay]?['isClosed'] ?? true;
+                                  final startTime = dayHours[timeOfDay]?['startTime'] ?? '6:00 PM';
+                                  final endTime = dayHours[timeOfDay]?['endTime'] ?? '9:00 PM';
                                   return Text(
-                                    isClosed ? 'Closed' : operatingHours[timeOfDay]?['hours'] ?? '6PM–9PM',
+                                    isClosed ? 'Closed' : '$startTime–$endTime',
                                     style: TextStyle(
                                       fontSize: 12,
                                       color: const Color.fromRGBO(142, 142, 147, 1),
@@ -839,35 +588,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                     ),
                                   );
                                 }),
-                                // FutureBuilder<Map<String, dynamic>?>(
-                                //   future: HomeLocationController.getOperatingHours(restaurant.docID),
-                                //   builder: (context, snapshot) {
-                                //     if (snapshot.connectionState == ConnectionState.waiting || !snapshot.hasData) {
-                                //       return const Text(
-                                //         'Loading...',
-                                //         style: TextStyle(
-                                //           fontSize: 12,
-                                //           color: Color.fromRGBO(142, 142, 147, 1),
-                                //           fontWeight: FontWeight.w500,
-                                //         ),
-                                //       );
-                                //     }
-                                //     final operatingHours = snapshot.data;
-                                //     final timeOfDay = filterCtrl.selectedFilters['Time']?.isNotEmpty ?? false
-                                //         ? filterCtrl.selectedFilters['Time']!.first
-                                //         : 'Dinner';
-                                //     final isClosed = operatingHours?[timeOfDay]?['isClosed'] ?? true;
-                                //     return Text(
-                                //       isClosed ? 'Closed' : operatingHours?[timeOfDay]?['hours'] ?? '6PM–9PM',
-                                //       style: TextStyle(
-                                //         fontSize: 12,
-                                //         color: const Color.fromRGBO(142, 142, 147, 1),
-                                //         fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                //         fontWeight: FontWeight.w500,
-                                //       ),
-                                //     );
-                                //   },
-                                // ),
                                 const SizedBox(width: 15),
                                 Image.asset(
                                   'assets/images/Icon (1).png',
@@ -876,15 +596,62 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                 ),
                                 const SizedBox(width: 4),
                                 Expanded(
-                                  child: Text(
-                                    restaurant.address.isNotEmpty ? restaurant.address : 'Unknown Address',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: const Color.fromRGBO(142, 142, 147, 1),
-                                      fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          restaurant.address.isNotEmpty ? restaurant.address : 'Unknown Address',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: const Color.fromRGBO(142, 142, 147, 1),
+                                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Obx(() {
+                                        if ((homeLocationCtrl.isFetchingInitialData.value || !homeLocationCtrl.isFetchingInitialData.value) && homeLocationCtrl.userPosition == null) {
+                                          homeLocationCtrl.fetchUserPosition(context);
+                                          return Text(
+                                            'Fetching...',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: const Color.fromRGBO(142, 142, 147, 1),
+                                              fontWeight: FontWeight.w500,
+                                              fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                            ),
+                                          );
+                                        }
+                                        if (restaurant.latitude == 0.0 && restaurant.longitude == 0.0) {
+                                          return Text(
+                                            'Unknown distance',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: const Color.fromRGBO(142, 142, 147, 1),
+                                              fontWeight: FontWeight.w500,
+                                              fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                            ),
+                                          );
+                                        }
+                                        double distance = Geolocator.distanceBetween(
+                                          homeLocationCtrl.userPosition!.latitude,
+                                          homeLocationCtrl.userPosition!.longitude,
+                                          restaurant.latitude,
+                                          restaurant.longitude,
+                                        ) / 1000;
+                                        return Text(
+                                          '', // '${distance.toStringAsFixed(1)} km away',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: const Color.fromRGBO(142, 142, 147, 1),
+                                            fontWeight: FontWeight.w500,
+                                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                          ),
+                                        );
+                                      }),
+                                    ],
                                   ),
                                 ),
                               ],
@@ -903,7 +670,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
               ],
             ),
           ),
-        )
+        ),
       ],
     );
   }
@@ -926,138 +693,11 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
               Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer()),
             },
           ),
-
-          // Filters
-          // Positioned(
-          //   top: 130,
-          //   left: 0,
-          //   right: 0,
-          //   child: SizedBox(
-          //     height: 250,
-          //     child: Obx(() {
-          //       if (filterCtrl.filterOptions.isEmpty) {
-          //         return const SizedBox.shrink();
-          //       }
-          //       return ListView(
-          //         scrollDirection: Axis.horizontal,
-          //         padding: const EdgeInsets.symmetric(horizontal: 16),
-          //         children: filterCtrl.filterOptions.keys.map((category) {
-          //           showFilterDropdowns.putIfAbsent(category, () => false);
-          //           return Stack(
-          //             clipBehavior: Clip.none,
-          //             children: [
-          //               GestureDetector(
-          //                 onTap: () {
-          //                   showFilterDropdowns[category] = !showFilterDropdowns[category]!;
-          //                   showFilterDropdowns.forEach((key, value) {
-          //                     if (key != category) {
-          //                       showFilterDropdowns[key] = false;
-          //                     }
-          //                   });
-          //                   showFilterDropdowns.refresh();
-          //                 },
-          //                 child: Container(
-          //                   height: 36,
-          //                   margin: const EdgeInsets.only(right: 8),
-          //                   padding: const EdgeInsets.symmetric(horizontal: 16, /*vertical: 6*/),
-          //                   decoration: BoxDecoration(
-          //                     border: Border.all(color: Colors.grey.shade300),
-          //                     borderRadius: BorderRadius.circular(30),
-          //                     color: Colors.white,
-          //                   ),
-          //                   child: Row(
-          //                     mainAxisSize: MainAxisSize.min,
-          //                     children: [
-          //                       Obx(() => Text(
-          //                         category +
-          //                             (filterCtrl.selectedFilters[category]?.isNotEmpty ?? false
-          //                                 ? ' (${filterCtrl.selectedFilters[category]?.length ?? 0})'
-          //                                 : ''),
-          //                         style: const TextStyle(color: Colors.black, fontSize: 18),
-          //                       )),
-          //                       const SizedBox(width: 4),
-          //                       const Icon(Icons.arrow_drop_down, size: 20, color: Colors.black),
-          //                     ],
-          //                   ),
-          //                 ),
-          //               ),
-          //               Obx(() {
-          //                 if (showFilterDropdowns[category] ?? false) {
-          //                   final optionCount = filterCtrl.filterOptions[category]?.length ?? 0;
-          //                   final dropdownHeight = optionCount * 40.0; // + 24.0;
-          //                   return Positioned(
-          //                     top: 50,
-          //                     left: 0,
-          //                     child: Material(
-          //                       elevation: 5,
-          //                       borderRadius: BorderRadius.circular(12),
-          //                       child: Container(
-          //                         width: 150,
-          //                         height: dropdownHeight < 190 ? dropdownHeight : 190, // dropdownHeight,
-          //                         padding: const EdgeInsets.fromLTRB(8, 8, 8, 16),
-          //                         decoration: BoxDecoration(
-          //                           color: Colors.white,
-          //                           borderRadius: BorderRadius.circular(12),
-          //                         ),
-          //                         child: SingleChildScrollView(
-          //                           child: Column(
-          //                             crossAxisAlignment: CrossAxisAlignment.start,
-          //                             children: (filterCtrl.filterOptions[category] ?? []).map((option) => InkWell(
-          //                               onTap: () {
-          //                                 final selectedList = filterCtrl.selectedFilters[category] ?? <String>[].obs;
-          //                                 if (selectedList.contains(option)) {
-          //                                   selectedList.remove(option);
-          //                                 } else {
-          //                                   selectedList.add(option);
-          //                                 }
-          //                                 filterCtrl.selectedFilters[category] = selectedList;
-          //                                 filterCtrl.selectedFilters.refresh();
-          //                                 showFilterDropdowns[category] = false;
-          //                                 showFilterDropdowns.refresh();
-          //                                 isLoading.value = true;
-          //                                 Future.delayed(const Duration(milliseconds: 1500), () {
-          //                                   isLoading.value = false;
-          //                                   setState(() {});
-          //                                 });
-          //                               },
-          //                               child: Padding(
-          //                                 padding: const EdgeInsets.symmetric(vertical: 8),
-          //                                 child: Row(
-          //                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //                                   children: [
-          //                                     Text(
-          //                                       option,
-          //                                       style: const TextStyle(fontSize: 16),
-          //                                     ),
-          //                                     if (filterCtrl.selectedFilters[category]?.contains(option) ?? false)
-          //                                       const Icon(Icons.check, color: Colors.green, size: 16),
-          //                                   ],
-          //                                 ),
-          //                               ),
-          //                             )).toList(),
-          //                           ),
-          //                         ),
-          //                       ),
-          //                     ),
-          //                   );
-          //                 }
-          //                 return const SizedBox.shrink();
-          //               }),
-          //             ],
-          //           );
-          //         }).toList(),
-          //       );
-          //     }),
-          //   ),
-          // ),
-
-          // Search bar
           Positioned(
             top: 70,
             left: 16,
             right: 16,
-            child:
-            Column(
+            child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1087,60 +727,72 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                   border: InputBorder.none,
                                   hintStyle: TextStyle(fontSize: 16, color: Colors.grey[600]),
                                 ),
-                                onSubmitted: (value){
-                                  homeLocationCtrl.searchToggle.toggle();
+                                // onChanged: (value) {
+                                //   homeLocationCtrl.searchQuery.value = value;
+                                //   isLoading.value = true;
+                                //   Future.delayed(const Duration(milliseconds: 500), () {
+                                //     homeLocationCtrl.applySearchAndFilters();
+                                //     isLoading.value = false;
+                                //   });
+                                // },
+                                onSubmitted: (value) {
+                                  // homeLocationCtrl.searchController.text = value;
+                                  homeLocationCtrl.applySearchAndFilters();
+                                  isLoading.value = true;
+                                  Future.delayed(const Duration(milliseconds: 500), () {
+                                    isLoading.value = false;
+                                  });
                                 },
                               ),
                             ),
                             DropdownButtonHideUnderline(
-                                child: Obx(
-                                      ()=> DropdownButton2<String>(
-                                    buttonStyleData: ButtonStyleData(
-                                      width: 55,
-                                    ),
-                                    dropdownStyleData: DropdownStyleData(
-                                      width: 65,
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(10)
-                                      ),
-                                    ),
-                                    hint: Text(
-                                      'miles',
-                                      style: const TextStyle(fontSize: 14),
-                                    ),
-                                    value: homeLocationCtrl.selectedDistance.value == 0 ? 'All' : homeLocationCtrl.selectedDistance.value.toString() + ' mi',
-                                    items: homeLocationCtrl.distanceOptions.map((ele)=>DropdownMenuItem(
-                                      value: ele,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 8),
-                                        child: Text(
-                                          ele,
-                                          style: const TextStyle(fontSize: 14),
-                                        ),
-                                      ),
-                                    ),).toList(),
-                                    onChanged: (val){
-                                      if (val == 'All') {
-                                        homeLocationCtrl.selectedDistance.value = 0;
-                                      } else {
-                                        homeLocationCtrl.selectedDistance.value = int.parse(val!.replaceAll(' mi', ''));
-                                      }
-                                      homeLocationCtrl.searchToggle.toggle();
-                                    },
+                              child: Obx(
+                                    () => DropdownButton2<String>(
+                                  buttonStyleData: ButtonStyleData(
+                                    width: 55,
                                   ),
-                                )
+                                  dropdownStyleData: DropdownStyleData(
+                                    width: 65,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                  hint: Text(
+                                    'miles',
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                  value: homeLocationCtrl.selectedDistance.value == 0
+                                      ? 'All'
+                                      : homeLocationCtrl.selectedDistance.value.toString() + ' mi',
+                                  items: homeLocationCtrl.distanceOptions
+                                      .map((ele) => DropdownMenuItem(
+                                    value: ele,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 8),
+                                      child: Text(
+                                        ele,
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                    ),
+                                  ))
+                                      .toList(),
+                                  onChanged: (val) {
+                                    if (val == 'All') {
+                                      homeLocationCtrl.selectedDistance.value = 0;
+                                    } else {
+                                      homeLocationCtrl.selectedDistance.value =
+                                          int.parse(val!.replaceAll(' mi', ''));
+                                    }
+                                    isLoading.value = true;
+                                    Future.delayed(const Duration(milliseconds: 500), () {
+                                      homeLocationCtrl.applySearchAndFilters();
+                                      isLoading.value = false;
+                                    });
+                                  },
+                                ),
+                              ),
                             ),
-                            // GestureDetector(
-                            //   onTap: () {
-                            //     showDistanceOptions.toggle();
-                            //     showFilterDropdowns.forEach((key, _) {
-                            //       showFilterDropdowns[key] = false;
-                            //     });
-                            //     showFilterDropdowns.refresh();
-                            //   },
-                            //   child: const Icon(Icons.arrow_drop_down, size: 24),
-                            // ),
                           ],
                         ),
                       ),
@@ -1149,7 +801,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                 ),
                 const SizedBox(height: 12),
                 Obx(
-    ()=> SizedBox(
+                      () => SizedBox(
                     height: showFilterDropdowns.values.contains(true) ? 250 : 36,
                     child: Obx(() {
                       if (filterCtrl.filterOptions.isEmpty) {
@@ -1157,32 +809,11 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                       }
                       return ListView(
                         scrollDirection: Axis.horizontal,
-                        padding: EdgeInsets.zero, // const EdgeInsets.symmetric(horizontal: 16),
+                        padding: EdgeInsets.zero,
                         children: filterCtrl.filterOptions.keys.map((category) {
-                          // showFilterDropdowns.putIfAbsent(category, () => false);
                           return Stack(
                             clipBehavior: Clip.none,
                             children: [
-                              // DropdownButtonHideUnderline(child:
-                              // DropdownButton2(
-                              //
-                              //     items: filterCtrl.filterOptions[category]!.map((option){
-                              //       return DropdownMenuItem(
-                              //           child: Row(
-                              //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              //             children: [
-                              //               Text(
-                              //                 option,
-                              //                 style: const TextStyle(fontSize: 16),
-                              //               ),
-                              //               if (filterCtrl.selectedFilters[category]?.contains(option) ?? false)
-                              //                 const Icon(Icons.check, color: Colors.green, size: 16),
-                              //             ],
-                              //           ),
-                              //       );
-                              //     }).toList(),
-                              // ),
-                              // ),
                               GestureDetector(
                                 onTap: () {
                                   showFilterDropdowns[category] = !showFilterDropdowns[category]!;
@@ -1196,7 +827,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                 child: Container(
                                   height: 36,
                                   margin: const EdgeInsets.only(right: 8),
-                                  padding: const EdgeInsets.symmetric(horizontal: 16, /*vertical: 6*/),
+                                  padding: const EdgeInsets.symmetric(horizontal: 16),
                                   decoration: BoxDecoration(
                                     border: Border.all(color: Colors.grey.shade300),
                                     borderRadius: BorderRadius.circular(30),
@@ -1221,7 +852,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                               Obx(() {
                                 if (showFilterDropdowns[category] ?? false) {
                                   final optionCount = filterCtrl.filterOptions[category]?.length ?? 0;
-                                  final dropdownHeight = optionCount * 40.0; // + 24.0;
+                                  final dropdownHeight = optionCount * 40.0;
                                   return Positioned(
                                     top: 50,
                                     left: 0,
@@ -1230,7 +861,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                       borderRadius: BorderRadius.circular(12),
                                       child: Container(
                                         width: 150,
-                                        height: dropdownHeight < 190 ? dropdownHeight : 190, // dropdownHeight,
+                                        height: dropdownHeight < 190 ? dropdownHeight : 190,
                                         padding: const EdgeInsets.fromLTRB(8, 8, 8, 16),
                                         decoration: BoxDecoration(
                                           color: Colors.white,
@@ -1252,9 +883,9 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                                 showFilterDropdowns[category] = false;
                                                 showFilterDropdowns.refresh();
                                                 isLoading.value = true;
-                                                Future.delayed(const Duration(milliseconds: 1500), () {
+                                                Future.delayed(const Duration(milliseconds: 500), () {
+                                                  homeLocationCtrl.applySearchAndFilters();
                                                   isLoading.value = false;
-                                                  setState(() {});
                                                 });
                                               },
                                               child: Padding(
@@ -1290,7 +921,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
               ],
             ),
           ),
-
           DraggableScrollableSheet(
             initialChildSize: 0.3,
             minChildSize: 0.1,
@@ -1304,226 +934,162 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                   boxShadow: [BoxShadow(blurRadius: 10, color: Colors.black12)],
                 ),
                 child: Obx(
-                  () {
-
+                      () {
                     if (homeLocationCtrl.isFetchingInitialData.value) {
                       return _buildShimmer();
                     }
-                      return ListView(
-                        controller: scrollCtrl,
-                        physics: const ClampingScrollPhysics(),
-                        padding: const EdgeInsets.all(16),
-                        children: [
-                          Center(
-                            child: Container(
-                              width: 65,
-                              height: 4,
-                              margin: const EdgeInsets.only(bottom: 12),
-                              decoration: BoxDecoration(
-                                color: Colors.grey,
-                                borderRadius: BorderRadius.circular(2),
-                              ),
+                    return ListView(
+                      controller: scrollCtrl,
+                      physics: const ClampingScrollPhysics(),
+                      padding: const EdgeInsets.all(16),
+                      children: [
+                        Center(
+                          child: Container(
+                            width: 65,
+                            height: 4,
+                            margin: const EdgeInsets.only(bottom: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.grey,
+                              borderRadius: BorderRadius.circular(2),
                             ),
                           ),
-                          Center(
+                        ),
+                        Center(
+                          child: Text(
+                            'Restaurants in the area',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w900,
+                              fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 11),
+                        Obx(() {
+                          return SizedBox(
+                            height: 220,
+                            child: isLoading.value
+                                ? _buildShimmer()
+                                : StreamBuilder<List<RestaurantModel>>(
+                              stream: homeLocationCtrl.filteredRestaurantsStream.value,
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return _buildShimmer();
+                                }
+                                if (snapshot.hasError) {
+                                  return const Center(child: Text('Error loading restaurants'));
+                                }
+                                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                  return const Center(child: Text('No restaurants match your criteria'));
+                                }
+                                final restaurants = snapshot.data!.take(4).toList();
+                                return ListView(
+                                  scrollDirection: Axis.horizontal,
+                                  children: restaurants.map((restaurant) => buildRestaurantCard(restaurant)).toList(),
+                                );
+                              },
+                            ),
+                          );
+                        }),
+                        Align(
+                          alignment: Alignment.center,
+                          child: TextButton(
+                            onPressed: () {
+                              Get.to(() => RestaurantsPage());
+                            },
                             child: Text(
-                              'Restaurants in the area',
+                              'See all',
                               style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w900,
-                                fontFamily: GoogleFonts
-                                    .plusJakartaSans()
-                                    .fontFamily,
+                                color: Colors.green,
+                                fontSize: 16,
+                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                fontWeight: FontWeight.w400,
                               ),
                             ),
                           ),
-                          const SizedBox(height: 11),
-                          Obx(() {
-                            return SizedBox(
-                              height: 220,
-                              child: isLoading.value
-                                  ? _buildShimmer()
-                                  : StreamBuilder<List<RestaurantModel>>(
-                                stream: filterCtrl.selectedFilters.values.any((
-                                    list) => list.isNotEmpty)
-                                    ? homeLocationCtrl.getFilteredRestaurants()
-                                    : homeLocationCtrl.getAllRestaurants(),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return _buildShimmer();
-                                  }
-                                  if (snapshot.hasError) {
-                                    return const Center(child: Text(
-                                        'Error loading restaurants'));
-                                  }
-                                  if (!snapshot.hasData ||
-                                      snapshot.data!.isEmpty) {
-                                    return const Center(child: Text(
-                                        'No restaurants available'));
-                                  }
-                                  final restaurants = snapshot.data!
-                                      .take(4)
-                                      .toList();
-                                  return ListView(
-                                    scrollDirection: Axis.horizontal,
-                                    children: restaurants
-                                        .map((restaurant) =>
-                                        buildRestaurantCard(restaurant))
-                                        .toList(),
-                                  );
-                                },
-                              ),
-                            );
-                          }),
-                          Align(
-                            alignment: Alignment.center,
-                            child: TextButton(
-                              onPressed: () {
-                                Get.to(() => RestaurantsPage());
-                              },
-                              child: Text(
-                                'See all',
-                                style: TextStyle(
-                                  color: Colors.green,
-                                  fontSize: 16,
-                                  fontFamily: GoogleFonts
-                                      .plusJakartaSans()
-                                      .fontFamily,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Streams',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w900,
+                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Streams',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w900,
-                              fontFamily: GoogleFonts
-                                  .plusJakartaSans()
-                                  .fontFamily,
+                        ),
+                        const SizedBox(height: 8),
+                        Obx(() {
+                          return SizedBox(
+                            height: 300,
+                            child: videoCtrl.videos.isEmpty
+                                ? const Center(child: Text('No videos available'))
+                                : ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: videoCtrl.videos.asMap().entries.take(4).map((entry) {
+                                final index = entry.key;
+                                final video = entry.value;
+                                return buildStreamCard(video, index);
+                              }).toList(),
                             ),
-                          ),
-                          const SizedBox(height: 8),
-                          Obx(() {
-                            return SizedBox(
-                              height: 300,
-                              child: videoCtrl.videos.isEmpty
-                                  ? const Center(
-                                  child: Text('No videos available'))
-                                  : ListView(
-                                scrollDirection: Axis.horizontal,
-                                children: videoCtrl.videos
-                                    .asMap()
-                                    .entries
-                                    .take(4)
-                                    .map((entry) {
-                                  final index = entry.key;
-                                  final video = entry.value;
-                                  return buildStreamCard(video, index);
-                                }).toList(),
-                              ),
-                            );
-                          }),
-                          Align(
-                            alignment: Alignment.center,
-                            child: TextButton(
-                              onPressed: () {
-                                Get.to(VideosListView());
-                              },
-                              child: Text(
-                                'See all',
-                                style: TextStyle(
-                                  color: Colors.green,
-                                  fontSize: 16,
-                                  fontFamily: GoogleFonts
-                                      .plusJakartaSans()
-                                      .fontFamily,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'Experience & Vibes',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w900,
-                              fontFamily: GoogleFonts
-                                  .plusJakartaSans()
-                                  .fontFamily,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          StreamBuilder<List<RestaurantModel>>(
-                            stream: filterCtrl.selectedFilters.values.any((
-                                list) => list.isNotEmpty)
-                                ? homeLocationCtrl.getFilteredRestaurants()
-                                : homeLocationCtrl.getAllRestaurants(),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting || isLoading.value) {
-                                return _buildShimmer();
-                              }
-                              if (snapshot.hasError) {
-                                return const Center(
-                                    child: Text('Error loading restaurants'));
-                              }
-                              if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                return const Center(
-                                    child: Text('No restaurants available'));
-                              }
-                              final restaurants = snapshot.data!
-                                  .take(4)
-                                  .toList();
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: restaurants
-                                    .map((restaurant) =>
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          bottom: 12),
-                                      child: buildExperienceVibeCard(
-                                          restaurant),
-                                    ))
-                                    .toList(),
-                              );
+                          );
+                        }),
+                        Align(
+                          alignment: Alignment.center,
+                          child: TextButton(
+                            onPressed: () {
+                              Get.to(VideosListView());
                             },
+                            child: Text(
+                              'See all',
+                              style: TextStyle(
+                                color: Colors.green,
+                                fontSize: 16,
+                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
                           ),
-                          const SizedBox(height: 10),
-                          // CustomButton(
-                          //   ontapp: (){
-                          //     Get.to(()=>EventScreen());
-                          //   },
-                          //   laBelText: 'See All Events',
-                          //   fontSize: 16,
-                          //   fontWeight: FontWeight.w600,
-                          //   fontFamily: 'PlusJakartaSans',
-                          //   textColor: Colors.white,
-                          //   containerColor: AppColors.primaryColor,
-                          //   height: 32,
-                          //   radius: BorderRadius.circular(15),
-                          // ),
-                          // const SizedBox(height: 10),
-                          CustomButton(
-                            ontapp: () {
-                              Get.to(() => AllEventsScreen());
-                            },
-                            laBelText: 'See All Events',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            fontFamily: 'PlusJakartaSans',
-                            textColor: Colors.white,
-                            containerColor: AppColors.primaryColor,
-                            height: 32,
-                            radius: BorderRadius.circular(15),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Experience & Vibes',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w900,
+                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                           ),
-                        ],
-                      );
-                    }
+                        ),
+                        const SizedBox(height: 10),
+                        StreamBuilder<List<RestaurantModel>>(
+                          stream: filterCtrl.selectedFilters.values.any((list) => list.isNotEmpty)
+                              ? homeLocationCtrl.getFilteredRestaurants()
+                              : homeLocationCtrl.getAllRestaurants(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting || isLoading.value) {
+                              return _buildShimmer();
+                            }
+                            if (snapshot.hasError) {
+                              return const Center(child: Text('Error loading restaurants'));
+                            }
+                            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                              return const Center(child: Text('No restaurants available'));
+                            }
+                            final restaurants = snapshot.data!.take(4).toList();
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: restaurants
+                                  .map((restaurant) => Padding(
+                                padding: const EdgeInsets.only(bottom: 12),
+                                child: buildExperienceVibeCard(restaurant),
+                              ))
+                                  .toList(),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+                    );
+                  },
                 ),
               );
             },
