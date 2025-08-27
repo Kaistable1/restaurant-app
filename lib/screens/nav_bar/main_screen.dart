@@ -29,7 +29,7 @@ class _MainScreenState extends State<MainScreen> {
     return [
       const HomeScreenNew(),
       const RestaurantsPage(),
-      const VideosListView(),
+      VideosListView(),
       // SavedRestaurantsPage(),
       const ProfileScreen(),
     ];
@@ -40,7 +40,7 @@ class _MainScreenState extends State<MainScreen> {
     return [
       const HomeScreenNew(),
       const RestaurantsPage(),
-      const VideosListView(),
+      VideosListView(),
       // SavedRestaurantsPage(),
       const ProfileScreen(),
     ];

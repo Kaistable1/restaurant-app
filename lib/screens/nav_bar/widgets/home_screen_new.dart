@@ -30,7 +30,7 @@ class HomeScreenNew extends StatefulWidget {
 
 class _HomeScreenNewState extends State<HomeScreenNew> {
   final FilterController filterCtrl = Get.put(FilterController());
-  final VideoController videoCtrl = Get.put(VideoController());
+  // final VideoController videoCtrl = Get.put(VideoController());
   final HomeLocationController homeLocationCtrl = Get.put(HomeLocationController());
   final RxBool showDistanceOptions = false.obs;
   final RxMap<String, bool> showFilterDropdowns = <String, bool>{}.obs;
@@ -233,8 +233,8 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
   }
 
   Widget buildStreamCard(VideoModel video, int index) {
-    if (videoCtrl.thumbnailPaths[index] == null && video.url != null && video.url!.isNotEmpty) {
-      videoCtrl.generateThumbnail(index, video.url!);
+    if (homeLocationCtrl.thumbnailPaths[index] == null && video.url != null && video.url!.isNotEmpty) {
+      homeLocationCtrl.generateThumbnail(index, video.url!);
     }
 
     final restaurant = homeLocationCtrl.findRestaurantForVideo(video);
@@ -255,37 +255,37 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                const CircleAvatar(
-                  radius: 17,
-                  backgroundImage: AssetImage('assets/images/Ellipse 19.png'),
-                ),
-                const SizedBox(width: 8),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Emmanuel Sanchez",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                      ),
-                    ),
-                    Text(
-                      'Tourist',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: const Color.fromRGBO(142, 142, 147, 1),
-                        fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
+            // Row(
+            //   children: [
+            //     const CircleAvatar(
+            //       radius: 17,
+            //       backgroundImage: AssetImage('assets/images/Ellipse 19.png'),
+            //     ),
+            //     const SizedBox(width: 8),
+            //     Column(
+            //       crossAxisAlignment: CrossAxisAlignment.start,
+            //       children: [
+            //         Text(
+            //           "Emmanuel Sanchez",
+            //           style: TextStyle(
+            //             fontSize: 14,
+            //             fontWeight: FontWeight.w400,
+            //             fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+            //           ),
+            //         ),
+            //         Text(
+            //           'Tourist',
+            //           style: TextStyle(
+            //             fontSize: 12,
+            //             color: const Color.fromRGBO(142, 142, 147, 1),
+            //             fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ],
+            // ),
+            // const SizedBox(height: 8),
             Stack(
               children: [
                 ClipRRect(
@@ -294,9 +294,9 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                     height: 191,
                     width: 163,
                     color: Colors.black,
-                    child: videoCtrl.thumbnailPaths[index] != null
+                    child: homeLocationCtrl.thumbnailPaths[index] != null
                         ? Image.file(
-                      File(videoCtrl.thumbnailPaths[index]!),
+                      File(homeLocationCtrl.thumbnailPaths[index]!),
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) => Image.network(
                         'https://via.placeholder.com/163x191',
@@ -335,6 +335,13 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                     ),
                   ),
                 ),
+                Positioned(
+                    top: 4,
+                    left: 4,
+                    child: const CircleAvatar(
+                            radius: 17,
+                            backgroundImage: AssetImage('assets/images/Ellipse 19.png'),
+                          ),),
               ],
             ),
             const SizedBox(height: 8),
@@ -440,209 +447,134 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            CircleAvatar(
-              radius: 20,
-              backgroundImage: AssetImage('assets/images/Ellipse 19.png'),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Emmanuel Sanchez",
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                        ),
-                      ),
-                      Text(
-                        'Tourist',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: const Color.fromRGBO(142, 142, 147, 1),
-                          fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    'Follow',
-                    style: TextStyle(
-                      color: Colors.green,
-                      fontSize: 12,
-                      fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
+        // Row(
+        //   children: [
+        //     CircleAvatar(
+        //       radius: 20,
+        //       backgroundImage: AssetImage('assets/images/Ellipse 19.png'),
+        //     ),
+        //     // const SizedBox(width: 8),
+        //     // Expanded(
+        //     //   child: Row(
+        //     //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //     //     children: [
+        //     //       Column(
+        //     //         crossAxisAlignment: CrossAxisAlignment.start,
+        //     //         children: [
+        //     //           Text(
+        //     //             "Emmanuel Sanchez",
+        //     //             style: TextStyle(
+        //     //               fontSize: 14,
+        //     //               fontWeight: FontWeight.w400,
+        //     //               fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+        //     //             ),
+        //     //           ),
+        //     //           Text(
+        //     //             'Tourist',
+        //     //             style: TextStyle(
+        //     //               fontSize: 12,
+        //     //               color: const Color.fromRGBO(142, 142, 147, 1),
+        //     //               fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+        //     //             ),
+        //     //           ),
+        //     //         ],
+        //     //       ),
+        //     //       Text(
+        //     //         'Follow',
+        //     //         style: TextStyle(
+        //     //           color: Colors.green,
+        //     //           fontSize: 12,
+        //     //           fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+        //     //         ),
+        //     //       ),
+        //     //     ],
+        //     //   ),
+        //     // ),
+        //   ],
+        // ),
+        // const SizedBox(height: 8),
         GestureDetector(
           onTap: () {
             Get.to(() => RestaurantDetailScreen(restaurantModel: restaurant));
           },
-          child: Container(
-            width: Get.width - 32,
-            height: 300,
-            margin: const EdgeInsets.only(bottom: 8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: homeLocationCtrl.buildImage(
-                      restaurant.imagesList.isNotEmpty
-                          ? restaurant.imagesList.first
-                          : restaurant.logoImage.isNotEmpty
-                          ? restaurant.logoImage
-                          : 'assets/images/event_img3.png',
-                      width: Get.width - 32,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  height: 50,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 4,
-                        offset: Offset(0, 2),
+          child: Stack(
+            children: [
+              Container(
+                width: Get.width - 32,
+                height: 300,
+                margin: const EdgeInsets.only(bottom: 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: homeLocationCtrl.buildImage(
+                          restaurant.imagesList.isNotEmpty
+                              ? restaurant.imagesList.first
+                              : restaurant.logoImage.isNotEmpty
+                              ? restaurant.logoImage
+                              : 'assets/images/event_img3.png',
+                          width: Get.width - 32,
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              restaurant.resName.isNotEmpty ? restaurant.resName : 'Unknown Restaurant',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 4),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      height: 50,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 4,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  '${restaurant.averageRating.toStringAsFixed(1)} stars',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: const Color.fromRGBO(142, 142, 147, 1),
-                                    fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                    fontWeight: FontWeight.w500,
+                                  restaurant.resName.isNotEmpty ? restaurant.resName : 'Unknown Restaurant',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
                                   ),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                                const SizedBox(width: 15),
-                                Obx(() {
-                                  final operatingHours = homeLocationCtrl.operatingHoursCache[restaurant.docID];
-                                  final currentDay = DateFormat('EEEE').format(DateTime.now());
-                                  final timeOfDay = filterCtrl.selectedFilters['Time']?.isNotEmpty ?? false
-                                      ? filterCtrl.selectedFilters['Time']!.first
-                                      : 'Dinner';
-                                  if (operatingHours == null || operatingHours[currentDay] == null) {
-                                    homeLocationCtrl.getOperatingHours(restaurant.docID);
-                                    return Text(
-                                      'Fetching hours...',
+                                const SizedBox(height: 4),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      '${restaurant.averageRating.toStringAsFixed(1)} stars',
                                       style: TextStyle(
                                         fontSize: 12,
                                         color: const Color.fromRGBO(142, 142, 147, 1),
-                                        fontWeight: FontWeight.w500,
                                         fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                        fontWeight: FontWeight.w500,
                                       ),
-                                    );
-                                  }
-                                  final dayHours = operatingHours[currentDay]!;
-                                  final isClosed = dayHours[timeOfDay]?['isClosed'] ?? true;
-                                  final startTime = dayHours[timeOfDay]?['startTime'] ?? '6:00 PM';
-                                  final endTime = dayHours[timeOfDay]?['endTime'] ?? '9:00 PM';
-                                  return Text(
-                                    isClosed ? 'Closed' : '$startTime–$endTime',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: const Color.fromRGBO(142, 142, 147, 1),
-                                      fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                      fontWeight: FontWeight.w500,
                                     ),
-                                  );
-                                }),
-                                const SizedBox(width: 15),
-                                Image.asset(
-                                  'assets/images/Icon (1).png',
-                                  width: 15,
-                                  height: 13,
-                                ),
-                                const SizedBox(width: 4),
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          restaurant.address.isNotEmpty ? restaurant.address : 'Unknown Address',
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: const Color.fromRGBO(142, 142, 147, 1),
-                                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Obx(() {
-                                        if ((homeLocationCtrl.isFetchingInitialData.value || !homeLocationCtrl.isFetchingInitialData.value) && homeLocationCtrl.userPosition == null) {
-                                          homeLocationCtrl.fetchUserPosition(context);
-                                          return Text(
-                                            'Fetching...',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: const Color.fromRGBO(142, 142, 147, 1),
-                                              fontWeight: FontWeight.w500,
-                                              fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                            ),
-                                          );
-                                        }
-                                        if (restaurant.latitude == 0.0 && restaurant.longitude == 0.0) {
-                                          return Text(
-                                            'Unknown distance',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: const Color.fromRGBO(142, 142, 147, 1),
-                                              fontWeight: FontWeight.w500,
-                                              fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                            ),
-                                          );
-                                        }
-                                        double distance = Geolocator.distanceBetween(
-                                          homeLocationCtrl.userPosition!.latitude,
-                                          homeLocationCtrl.userPosition!.longitude,
-                                          restaurant.latitude,
-                                          restaurant.longitude,
-                                        ) / 1000;
+                                    const SizedBox(width: 15),
+                                    Obx(() {
+                                      final operatingHours = homeLocationCtrl.operatingHoursCache[restaurant.docID];
+                                      final currentDay = DateFormat('EEEE').format(DateTime.now());
+                                      final timeOfDay = filterCtrl.selectedFilters['Time']?.isNotEmpty ?? false
+                                          ? filterCtrl.selectedFilters['Time']!.first
+                                          : 'Dinner';
+                                      if (operatingHours == null || operatingHours[currentDay] == null) {
+                                        homeLocationCtrl.getOperatingHours(restaurant.docID);
                                         return Text(
-                                          '', // '${distance.toStringAsFixed(1)} km away',
+                                          'Fetching hours...',
                                           style: TextStyle(
                                             fontSize: 12,
                                             color: const Color.fromRGBO(142, 142, 147, 1),
@@ -650,25 +582,112 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                             fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                                           ),
                                         );
-                                      }),
-                                    ],
-                                  ),
+                                      }
+                                      final dayHours = operatingHours[currentDay]!;
+                                      final isClosed = dayHours[timeOfDay]?['isClosed'] ?? true;
+                                      final startTime = dayHours[timeOfDay]?['startTime'] ?? '6:00 PM';
+                                      final endTime = dayHours[timeOfDay]?['endTime'] ?? '9:00 PM';
+                                      return Text(
+                                        isClosed ? 'Closed' : '$startTime–$endTime',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: const Color.fromRGBO(142, 142, 147, 1),
+                                          fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      );
+                                    }),
+                                    const SizedBox(width: 15),
+                                    Image.asset(
+                                      'assets/images/Icon (1).png',
+                                      width: 15,
+                                      height: 13,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Expanded(
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              restaurant.address.isNotEmpty ? restaurant.address : 'Unknown Address',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: const Color.fromRGBO(142, 142, 147, 1),
+                                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Obx(() {
+                                            if ((homeLocationCtrl.isFetchingInitialData.value || !homeLocationCtrl.isFetchingInitialData.value) && homeLocationCtrl.userPosition == null) {
+                                              homeLocationCtrl.fetchUserPosition(context);
+                                              return Text(
+                                                'Fetching...',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: const Color.fromRGBO(142, 142, 147, 1),
+                                                  fontWeight: FontWeight.w500,
+                                                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                                ),
+                                              );
+                                            }
+                                            if (restaurant.latitude == 0.0 && restaurant.longitude == 0.0) {
+                                              return Text(
+                                                'Unknown distance',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: const Color.fromRGBO(142, 142, 147, 1),
+                                                  fontWeight: FontWeight.w500,
+                                                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                                ),
+                                              );
+                                            }
+                                            double distance = Geolocator.distanceBetween(
+                                              homeLocationCtrl.userPosition!.latitude,
+                                              homeLocationCtrl.userPosition!.longitude,
+                                              restaurant.latitude,
+                                              restaurant.longitude,
+                                            ) / 1000;
+                                            return Text(
+                                              '', // '${distance.toStringAsFixed(1)} km away',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: const Color.fromRGBO(142, 142, 147, 1),
+                                                fontWeight: FontWeight.w500,
+                                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                              ),
+                                            );
+                                          }),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
-                          ],
-                        ),
+                          ),
+                          Image.asset(
+                            'assets/images/Group (5).png',
+                            width: 20,
+                            height: 20,
+                          ),
+                        ],
                       ),
-                      Image.asset(
-                        'assets/images/Group (5).png',
-                        width: 20,
-                        height: 20,
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              Positioned(
+                top: 4,
+                left: 4,
+                child: CircleAvatar(
+                  radius: 20,
+                  backgroundImage: AssetImage('assets/images/Ellipse 19.png'),
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -695,8 +714,8 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
           ),
           Positioned(
             top: 70,
-            left: 16,
-            right: 16,
+            left: 0,
+            right: 0,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -704,96 +723,99 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                 Stack(
                   clipBehavior: Clip.none,
                   children: [
-                    Material(
-                      elevation: 0,
-                      borderRadius: BorderRadius.circular(30),
-                      child: Container(
-                        height: 48,
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.search, size: 24),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: TextField(
-                                controller: homeLocationCtrl.searchController,
-                                decoration: InputDecoration(
-                                  hintText: 'Search for restaurants, events, live music...',
-                                  border: InputBorder.none,
-                                  hintStyle: TextStyle(fontSize: 16, color: Colors.grey[600]),
-                                ),
-                                // onChanged: (value) {
-                                //   homeLocationCtrl.searchQuery.value = value;
-                                //   isLoading.value = true;
-                                //   Future.delayed(const Duration(milliseconds: 500), () {
-                                //     homeLocationCtrl.applySearchAndFilters();
-                                //     isLoading.value = false;
-                                //   });
-                                // },
-                                onSubmitted: (value) {
-                                  // homeLocationCtrl.searchController.text = value;
-                                  homeLocationCtrl.applySearchAndFilters();
-                                  isLoading.value = true;
-                                  Future.delayed(const Duration(milliseconds: 500), () {
-                                    isLoading.value = false;
-                                  });
-                                },
-                              ),
-                            ),
-                            DropdownButtonHideUnderline(
-                              child: Obx(
-                                    () => DropdownButton2<String>(
-                                  buttonStyleData: ButtonStyleData(
-                                    width: 55,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Material(
+                        elevation: 0,
+                        borderRadius: BorderRadius.circular(30),
+                        child: Container(
+                          height: 48,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.search, size: 24),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: TextField(
+                                  controller: homeLocationCtrl.searchController,
+                                  decoration: InputDecoration(
+                                    hintText: 'Search for restaurants, events, live music...',
+                                    border: InputBorder.none,
+                                    hintStyle: TextStyle(fontSize: 16, color: Colors.grey[600]),
                                   ),
-                                  dropdownStyleData: DropdownStyleData(
-                                    width: 65,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                  hint: Text(
-                                    'miles',
-                                    style: const TextStyle(fontSize: 14),
-                                  ),
-                                  value: homeLocationCtrl.selectedDistance.value == 0
-                                      ? 'All'
-                                      : homeLocationCtrl.selectedDistance.value.toString() + ' mi',
-                                  items: homeLocationCtrl.distanceOptions
-                                      .map((ele) => DropdownMenuItem(
-                                    value: ele,
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 8),
-                                      child: Text(
-                                        ele,
-                                        style: const TextStyle(fontSize: 14),
-                                      ),
-                                    ),
-                                  ))
-                                      .toList(),
-                                  onChanged: (val) {
-                                    if (val == 'All') {
-                                      homeLocationCtrl.selectedDistance.value = 0;
-                                    } else {
-                                      homeLocationCtrl.selectedDistance.value =
-                                          int.parse(val!.replaceAll(' mi', ''));
-                                    }
+                                  // onChanged: (value) {
+                                  //   homeLocationCtrl.searchQuery.value = value;
+                                  //   isLoading.value = true;
+                                  //   Future.delayed(const Duration(milliseconds: 500), () {
+                                  //     homeLocationCtrl.applySearchAndFilters();
+                                  //     isLoading.value = false;
+                                  //   });
+                                  // },
+                                  onSubmitted: (value) {
+                                    // homeLocationCtrl.searchController.text = value;
+                                    homeLocationCtrl.applySearchAndFilters();
                                     isLoading.value = true;
                                     Future.delayed(const Duration(milliseconds: 500), () {
-                                      homeLocationCtrl.applySearchAndFilters();
                                       isLoading.value = false;
                                     });
                                   },
                                 ),
                               ),
-                            ),
-                          ],
+                              DropdownButtonHideUnderline(
+                                child: Obx(
+                                      () => DropdownButton2<String>(
+                                    buttonStyleData: ButtonStyleData(
+                                      width: 55,
+                                    ),
+                                    dropdownStyleData: DropdownStyleData(
+                                      width: 65,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                    hint: Text(
+                                      'miles',
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                    value: homeLocationCtrl.selectedDistance.value == 0
+                                        ? 'All'
+                                        : homeLocationCtrl.selectedDistance.value.toString() + ' mi',
+                                    items: homeLocationCtrl.distanceOptions
+                                        .map((ele) => DropdownMenuItem(
+                                      value: ele,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 8),
+                                        child: Text(
+                                          ele,
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
+                                      ),
+                                    ))
+                                        .toList(),
+                                    onChanged: (val) {
+                                      if (val == 'All') {
+                                        homeLocationCtrl.selectedDistance.value = 0;
+                                      } else {
+                                        homeLocationCtrl.selectedDistance.value =
+                                            int.parse(val!.replaceAll(' mi', ''));
+                                      }
+                                      isLoading.value = true;
+                                      Future.delayed(const Duration(milliseconds: 500), () {
+                                        homeLocationCtrl.applySearchAndFilters();
+                                        isLoading.value = false;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -809,7 +831,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                       }
                       return ListView(
                         scrollDirection: Axis.horizontal,
-                        padding: EdgeInsets.zero,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
                         children: filterCtrl.filterOptions.keys.map((category) {
                           return Stack(
                             clipBehavior: Clip.none,
@@ -1021,11 +1043,11 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                         Obx(() {
                           return SizedBox(
                             height: 300,
-                            child: videoCtrl.videos.isEmpty
+                            child: homeLocationCtrl.videos.isEmpty
                                 ? const Center(child: Text('No videos available'))
                                 : ListView(
                               scrollDirection: Axis.horizontal,
-                              children: videoCtrl.videos.asMap().entries.take(4).map((entry) {
+                              children: homeLocationCtrl.videos.asMap().entries.take(4).map((entry) {
                                 final index = entry.key;
                                 final video = entry.value;
                                 return buildStreamCard(video, index);

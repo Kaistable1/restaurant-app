@@ -15,7 +15,9 @@ import 'package:kaistable_website/models/review_model.dart';
 import 'package:kaistable_website/utils/loading.dart';
 import 'package:kaistable_website/widgets/global_functions.dart';
 import 'package:latlong2/latlong.dart' as latlng;
+import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart' hide Rx;
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 import '../../../streams/model/streams_model.dart';
 import '../../nav_bar/controller/search_controller.dart';
@@ -44,12 +46,60 @@ class HomeLocationController extends GetxController {
   final FilterController filterCtrl = Get.put(FilterController());
   List top = ['Most Reviewed', 'Discount', 'Dining'];
 
+  //// video variables
+  var videos = <VideoModel>[].obs;
+  var thumbnailPaths = <int, String>{}.obs;
+  bool _isGeneratingThumbnail = false;
+  ////
+
   @override
   void onInit() {
     super.onInit();
     fetchUserPosition(Get.context!);
     applySearchAndFilters();
+    fetchVideos();
   }
+
+  //// video functions
+  Future<void> fetchVideos() async {
+    try {
+      var snapshot = await FirebaseFirestore.instance
+          .collection('videos')
+          .orderBy('timestamp', descending: true)
+          .get();
+
+      videos.value = snapshot.docs
+          .map((doc) => VideoModel.fromMap(doc.data()))
+          .toList();
+    } catch (e) {
+      print("Error fetching videos: $e");
+      Get.snackbar('Error', 'Failed to load videos: $e',
+          snackPosition: SnackPosition.BOTTOM);
+    }
+  }
+
+  Future<void> generateThumbnail(int index, String videoUrl) async {
+    if (_isGeneratingThumbnail || thumbnailPaths[index] != null) return;
+    _isGeneratingThumbnail = true;
+
+    try {
+      final thumbnailPath = await VideoThumbnail.thumbnailFile(
+        video: videoUrl,
+        thumbnailPath: (await getTemporaryDirectory()).path,
+        imageFormat: ImageFormat.PNG,
+        maxHeight: 200, // Reduced for performance
+        quality: 50,    // Reduced for performance
+      );
+      if (thumbnailPath != null) {
+        thumbnailPaths[index] = thumbnailPath;
+      }
+    } catch (e) {
+      print("Error generating thumbnail for $videoUrl: $e");
+    } finally {
+      _isGeneratingThumbnail = false;
+    }
+  }
+  ////
 
   void fetchUserPosition(BuildContext context) async {
     bool serviceEnabled;
@@ -142,13 +192,21 @@ class HomeLocationController extends GetxController {
               return hours.values.any((dayHours) =>
                   selectedOptions.every((timeOfDay) => !(dayHours[timeOfDay]?['isClosed'] ?? true))
               );
-            } else if (category == 'Cuisine') {
+            } else if (category == 'Cuisines') {
               final menuList = restaurant.menuList;
-              if (menuList == null || menuList.isEmpty) {
+              if (menuList.isEmpty) {
                 return false; // Exclude if no menu items
               }
               return selectedOptions.every((cuisine) =>
                   menuList.any((menu) => menu.cuisineType == cuisine)
+              );
+            } else if (category == 'Experience') {
+              final entertainmentList = restaurant.entertainmentScheduleList;
+              if (entertainmentList.isEmpty) {
+                return false; // Exclude if no entertainment schedule
+              }
+              return selectedOptions.every((experience) =>
+                  entertainmentList.any((event) => event.eventName == experience)
               );
             }
             return true;
@@ -200,13 +258,21 @@ class HomeLocationController extends GetxController {
               return hours.values.any((dayHours) =>
                   selectedOptions.every((timeOfDay) => !(dayHours[timeOfDay]?['isClosed'] ?? true))
               );
-            } else if (category == 'Cuisine') {
+            } else if (category == 'Cuisines') {
               final menuList = restaurant.menuList;
-              if (menuList == null || menuList.isEmpty) {
+              if (menuList.isEmpty) {
                 return false; // Exclude if no menu items
               }
               return selectedOptions.every((cuisine) =>
                   menuList.any((menu) => menu.cuisineType == cuisine)
+              );
+            } else if (category == 'Experience') {
+              final entertainmentList = restaurant.entertainmentScheduleList;
+              if (entertainmentList.isEmpty) {
+                return false; // Exclude if no entertainment schedule
+              }
+              return selectedOptions.every((experience) =>
+                  entertainmentList.any((event) => event.eventName == experience)
               );
             }
             return true;
@@ -310,6 +376,37 @@ class HomeLocationController extends GetxController {
       operatingHoursCache.refresh();
       print('Fetched operating hours for $restaurantId: $data');
       return data;
+    } catch (e) {
+      print('Error fetching operating hours for $restaurantId: $e');
+      operatingHoursCache[restaurantId] = {};
+      operatingHoursCache.refresh();
+      return {};
+    }
+  }
+
+  Future<Map<String, Map<String, Map<String, dynamic>>>?> getOperatingHours2(String restaurantId) async {
+    if (operatingHoursCache.containsKey(restaurantId)) {
+      print('Returning cached operating hours for $restaurantId');
+      return operatingHoursCache[restaurantId];
+    }
+    try {
+      var querySnapshot = await FirebaseFirestore.instance
+          .collection('restaurants')
+          .doc(restaurantId)
+          .collection('operatingHours')
+          .get();
+
+      Map<String, Map<String, Map<String, dynamic>>> daysHours = {};
+
+      for (var doc in querySnapshot.docs) {
+        String day = doc.id;
+        daysHours[day] = (doc.data()).map((key, value) => MapEntry(key, value as Map<String, dynamic>));
+      }
+
+      operatingHoursCache[restaurantId] = daysHours;
+      operatingHoursCache.refresh();
+      print('Fetched operating hours for $restaurantId: ${daysHours.toString()}');
+      return daysHours;
     } catch (e) {
       print('Error fetching operating hours for $restaurantId: $e');
       operatingHoursCache[restaurantId] = {};
