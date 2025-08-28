@@ -14,7 +14,6 @@ import 'dart:io';
 
 import '../../../constants/app_colors.dart';
 import '../../../models/resaturant_model.dart';
-import '../../../streams/controllers/streams_controller.dart';
 import '../../../streams/model/streams_model.dart';
 import '../../home_screen/home_controller/home_location_controller.dart';
 import '../controller/search_controller.dart';
@@ -757,7 +756,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                   //   });
                                   // },
                                   onSubmitted: (value) {
-                                    // homeLocationCtrl.searchController.text = value;
+                                    homeLocationCtrl.searchQuery.value = value;
                                     homeLocationCtrl.applySearchAndFilters();
                                     isLoading.value = true;
                                     Future.delayed(const Duration(milliseconds: 500), () {

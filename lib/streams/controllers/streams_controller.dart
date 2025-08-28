@@ -14,7 +14,7 @@ class VideoController extends GetxController {
   var videos = <VideoModel>[].obs;
   var filteredVideos = <VideoModel>[].obs;
   var playingIndex = (-1).obs;
-  var thumbnailPaths = <int, String>{}.obs;
+  var thumbnailPaths = <String, String>{}.obs;
   VideoPlayerController? playerController;
   bool _isGeneratingThumbnail = false;
 
@@ -35,6 +35,11 @@ class VideoController extends GetxController {
           .map((doc) => VideoModel.fromMap(doc.data()))
           .toList();
       filteredVideos.value = videos; // Initialize filteredVideos with all videos
+      for (var video in filteredVideos) {
+        if (video.url != null && video.url!.isNotEmpty) {
+          generateThumbnail(video.url!);
+        }
+      }
     } catch (e) {
       print("Error fetching videos: $e");
       Get.snackbar('Error', 'Failed to load videos: $e',
@@ -66,6 +71,15 @@ class VideoController extends GetxController {
       }
 
       filteredVideos.value = filtered;
+
+      for (var video in filteredVideos) {
+        if (video.url != null && video.url!.isNotEmpty) {
+          generateThumbnail(video.url!);
+        }
+      }
+
+
+
     } catch (e) {
       print("Error applying filters: $e");
       Get.snackbar('Error', 'Failed to apply filters: $e',
@@ -73,8 +87,8 @@ class VideoController extends GetxController {
     }
   }
 
-  Future<void> generateThumbnail(int index, String videoUrl) async {
-    if (_isGeneratingThumbnail || thumbnailPaths[index] != null) return;
+  Future<void> generateThumbnail(String videoUrl) async {
+    if (_isGeneratingThumbnail || thumbnailPaths[videoUrl] != null) return;
     _isGeneratingThumbnail = true;
 
     try {
@@ -83,10 +97,10 @@ class VideoController extends GetxController {
         thumbnailPath: (await getTemporaryDirectory()).path,
         imageFormat: ImageFormat.PNG,
         maxHeight: 200,
-        quality: 50,
+        quality: 70,
       );
       if (thumbnailPath != null) {
-        thumbnailPaths[index] = thumbnailPath;
+        thumbnailPaths[videoUrl] = thumbnailPath;
       }
     } catch (e) {
       print("Error generating thumbnail for $videoUrl: $e");

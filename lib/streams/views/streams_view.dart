@@ -29,49 +29,6 @@ class VideosListView extends StatelessWidget {
     ],
   }.obs;
 
-  // Widget _buildSearchBar() {
-  //   return Material(
-  //     elevation: 0,
-  //     borderRadius: BorderRadius.circular(30),
-  //     child: Container(
-  //       height: 48,
-  //       padding: const EdgeInsets.symmetric(horizontal: 16),
-  //       alignment: Alignment.center,
-  //       decoration: BoxDecoration(
-  //         color: Colors.white,
-  //         borderRadius: BorderRadius.circular(30),
-  //         boxShadow: [
-  //           BoxShadow(
-  //             color: Colors.black.withOpacity(0.04),
-  //             blurRadius: 16,
-  //             spreadRadius: 0,
-  //             offset: Offset(0, 4),
-  //           )
-  //         ],
-  //       ),
-  //       child: Row(
-  //         children: [
-  //           const Icon(Icons.search, size: 24),
-  //           const SizedBox(width: 8),
-  //           Expanded(
-  //             child: TextField(
-  //               controller: searchController,
-  //               decoration: InputDecoration(
-  //                 hintText: 'Search for restaurants',
-  //                 border: InputBorder.none,
-  //                 hintStyle: TextStyle(color: Colors.grey[600]),
-  //               ),
-  //               onSubmitted: (value) {
-  //                 Get.find<VideoController>().applySearchAndFilters(searchController.text, selectedFilters);
-  //               },
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(VideoController());
@@ -271,10 +228,10 @@ class VideosListView extends StatelessWidget {
                   itemCount: controller.filteredVideos.length,
                   itemBuilder: (context, index) {
                     final video = controller.filteredVideos[index];
-                    if (controller.thumbnailPaths[index] == null &&
+                    if (controller.thumbnailPaths[video.url] == null &&
                         video.url != null &&
                         video.url!.isNotEmpty) {
-                      controller.generateThumbnail(index, video.url!);
+                      controller.generateThumbnail(video.url!);
                     }
                     return GestureDetector(
                       onTap: () {
@@ -296,11 +253,11 @@ class VideosListView extends StatelessWidget {
                           alignment: Alignment.center,
                           children: [
                             AspectRatio(
-                              aspectRatio: 110 / 120,
+                              aspectRatio: 356 / 520,
                               child: Obx(() {
-                                return controller.thumbnailPaths[index] != null
+                                return controller.thumbnailPaths[video.url] != null
                                     ? Image.file(
-                                  File(controller.thumbnailPaths[index]!),
+                                  File(controller.thumbnailPaths[video.url]!),
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) => Image.network(
                                     'https://via.placeholder.com/640x360',
@@ -339,56 +296,56 @@ class VideosListView extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            Positioned(
-                              bottom: 0,
-                              left: 0,
-                              right: 0,
-                              child: Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: Colors.teal.withOpacity(0.85),
-                                  borderRadius: const BorderRadius.only(
-                                    bottomLeft: Radius.circular(16),
-                                    bottomRight: Radius.circular(16),
-                                  ),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          video.restaurantName ?? 'Unknown Restaurant',
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        Image.asset(
-                                          'assets/images/Group (5).png',
-                                          width: 20,
-                                          height: 20,
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      "${video.streetNo ?? ''} ${video.city ?? ''} ${video.zipCode ?? ''}",
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.white,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                            // Positioned(
+                            //   bottom: 0,
+                            //   left: 0,
+                            //   right: 0,
+                            //   child: Container(
+                            //     padding: const EdgeInsets.all(10),
+                            //     decoration: BoxDecoration(
+                            //       color: Colors.teal.withOpacity(0.85),
+                            //       borderRadius: const BorderRadius.only(
+                            //         bottomLeft: Radius.circular(16),
+                            //         bottomRight: Radius.circular(16),
+                            //       ),
+                            //     ),
+                            //     child: Column(
+                            //       crossAxisAlignment: CrossAxisAlignment.start,
+                            //       children: [
+                            //         Row(
+                            //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            //           children: [
+                            //             Text(
+                            //               video.restaurantName ?? 'Unknown Restaurant',
+                            //               style: const TextStyle(
+                            //                 fontSize: 16,
+                            //                 fontWeight: FontWeight.bold,
+                            //                 color: Colors.white,
+                            //               ),
+                            //               maxLines: 1,
+                            //               overflow: TextOverflow.ellipsis,
+                            //             ),
+                            //             Image.asset(
+                            //               'assets/images/Group (5).png',
+                            //               width: 20,
+                            //               height: 20,
+                            //             ),
+                            //           ],
+                            //         ),
+                            //         const SizedBox(height: 4),
+                            //         Text(
+                            //           "${video.streetNo ?? ''} ${video.city ?? ''} ${video.zipCode ?? ''}",
+                            //           style: const TextStyle(
+                            //             fontSize: 14,
+                            //             color: Colors.white,
+                            //           ),
+                            //           maxLines: 1,
+                            //           overflow: TextOverflow.ellipsis,
+                            //         ),
+                            //       ],
+                            //     ),
+                            //   ),
+                            // ),
                           ],
                         ),
                       ),

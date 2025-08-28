@@ -1,8 +1,6 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -14,21 +12,19 @@ import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/models/review_model.dart';
 import 'package:kaistable_website/utils/loading.dart';
 import 'package:kaistable_website/widgets/global_functions.dart';
-import 'package:latlong2/latlong.dart' as latlng;
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart' hide Rx;
 import 'package:video_thumbnail/video_thumbnail.dart';
 
 import '../../../streams/model/streams_model.dart';
 import '../../nav_bar/controller/search_controller.dart';
-import 'filter_selection_controller.dart';
 
 class HomeLocationController extends GetxController {
   Position? userPosition = null;
   final RxBool isFetchingInitialData = true.obs;
   final RxInt selectedDistance = 0.obs;
   final List<String> distanceOptions = ['All', '1 mi', '5 mi', '10 mi', '25 mi'];
-  // final RxString searchQuery = ''.obs;
+  final RxString searchQuery = ''.obs;
   final TextEditingController searchController = TextEditingController();
   final RxMap<String, Map<String, Map<String, Map<String, dynamic>>>> operatingHoursCache = <String, Map<String, Map<String, Map<String, dynamic>>>>{}.obs;
   final Rx<Stream<List<RestaurantModel>>> filteredRestaurantsStream = Rx<Stream<List<RestaurantModel>>>(Stream.value([]));
@@ -228,8 +224,8 @@ class HomeLocationController extends GetxController {
           .toList();
 
       // Apply search query
-      if (searchController.text.isNotEmpty) {
-        final query = searchController.text.toLowerCase();
+      if (searchQuery.value.isNotEmpty) {
+        final query = searchQuery.value.toLowerCase();
         restaurants = restaurants.where((restaurant) {
           return restaurant.resName.toLowerCase().contains(query) ||
               restaurant.address.toLowerCase().contains(query) ||
