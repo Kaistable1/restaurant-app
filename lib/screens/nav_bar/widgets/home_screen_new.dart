@@ -150,14 +150,16 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                     const SizedBox(height: 2),
                     Obx(() {
                       final operatingHours = homeLocationCtrl.operatingHoursCache[restaurant.docID];
+                      final isFetching = homeLocationCtrl.fetchingOperatingHours.contains(restaurant.docID);
                       final currentDay = DateFormat('EEEE').format(DateTime.now());
-                      final timeOfDay = filterCtrl.selectedFilters['Time']?.isNotEmpty ?? false
-                          ? filterCtrl.selectedFilters['Time']!.first
-                          : 'Dinner';
+                      final timeFilter = filterCtrl.selectedFilters['Time'];
+
                       if (operatingHours == null || operatingHours[currentDay] == null) {
-                        homeLocationCtrl.getOperatingHours(restaurant.docID);
+                        if (!isFetching) {
+                          homeLocationCtrl.getOperatingHours(restaurant.docID, triggerFilterUpdate: true);
+                        }
                         return Text(
-                          'Fetching hours...',
+                          isFetching ? 'Loading...' : 'Unavailable',
                           style: TextStyle(
                             fontSize: 12,
                             color: const Color.fromRGBO(142, 142, 147, 1),
@@ -166,7 +168,35 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                           ),
                         );
                       }
+
+                      if (operatingHours.isEmpty) {
+                        return Text(
+                          'Unavailable',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: const Color.fromRGBO(142, 142, 147, 1),
+                            fontWeight: FontWeight.w500,
+                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                          ),
+                        );
+                      }
+
                       final dayHours = operatingHours[currentDay]!;
+                      // Check if no time filter is selected
+                      if (timeFilter == null || timeFilter.isEmpty) {
+                        return Text(
+                          homeLocationCtrl.getFullDayHours(dayHours),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: const Color.fromRGBO(142, 142, 147, 1),
+                            fontWeight: FontWeight.w500,
+                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                          ),
+                        );
+                      }
+
+                      // Use selected time slot
+                      final timeOfDay = timeFilter.first;
                       final isClosed = dayHours[timeOfDay]?['isClosed'] ?? true;
                       final startTime = dayHours[timeOfDay]?['startTime'] ?? '6:00 PM';
                       final endTime = dayHours[timeOfDay]?['endTime'] ?? '9:00 PM';
@@ -566,14 +596,16 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                     const SizedBox(width: 15),
                                     Obx(() {
                                       final operatingHours = homeLocationCtrl.operatingHoursCache[restaurant.docID];
+                                      final isFetching = homeLocationCtrl.fetchingOperatingHours.contains(restaurant.docID);
                                       final currentDay = DateFormat('EEEE').format(DateTime.now());
-                                      final timeOfDay = filterCtrl.selectedFilters['Time']?.isNotEmpty ?? false
-                                          ? filterCtrl.selectedFilters['Time']!.first
-                                          : 'Dinner';
+                                      final timeFilter = filterCtrl.selectedFilters['Time'];
+
                                       if (operatingHours == null || operatingHours[currentDay] == null) {
-                                        homeLocationCtrl.getOperatingHours(restaurant.docID);
+                                        if (!isFetching) {
+                                          homeLocationCtrl.getOperatingHours(restaurant.docID, triggerFilterUpdate: true);
+                                        }
                                         return Text(
-                                          'Fetching hours...',
+                                          isFetching ? 'Loading...' : 'Unavailable',
                                           style: TextStyle(
                                             fontSize: 12,
                                             color: const Color.fromRGBO(142, 142, 147, 1),
@@ -582,7 +614,35 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                           ),
                                         );
                                       }
+
+                                      if (operatingHours.isEmpty) {
+                                        return Text(
+                                          'Unavailable',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: const Color.fromRGBO(142, 142, 147, 1),
+                                            fontWeight: FontWeight.w500,
+                                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                          ),
+                                        );
+                                      }
+
                                       final dayHours = operatingHours[currentDay]!;
+                                      // Check if no time filter is selected
+                                      if (timeFilter == null || timeFilter.isEmpty) {
+                                        return Text(
+                                          homeLocationCtrl.getFullDayHours(dayHours),
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: const Color.fromRGBO(142, 142, 147, 1),
+                                            fontWeight: FontWeight.w500,
+                                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                          ),
+                                        );
+                                      }
+
+                                      // Use selected time slot
+                                      final timeOfDay = timeFilter.first;
                                       final isClosed = dayHours[timeOfDay]?['isClosed'] ?? true;
                                       final startTime = dayHours[timeOfDay]?['startTime'] ?? '6:00 PM';
                                       final endTime = dayHours[timeOfDay]?['endTime'] ?? '9:00 PM';
@@ -711,8 +771,181 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
               Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer()),
             },
           ),
+
+          DraggableScrollableSheet(
+            initialChildSize: 0.3,
+            minChildSize: 0.1,
+            maxChildSize: (Get.height - (Platform.isAndroid ? 60 : 70) - 48 - 12 - 36 - 16 - 12) / Get.height, // 0.79,
+            snap: true,
+            builder: (context, scrollCtrl) {
+              return Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                  boxShadow: [BoxShadow(blurRadius: 10, color: Colors.black12)],
+                ),
+                child: Obx(
+                      () {
+                    if (homeLocationCtrl.isFetchingInitialData.value) {
+                      return _buildShimmer();
+                    }
+                    return ListView(
+                      controller: scrollCtrl,
+                      physics: const ClampingScrollPhysics(),
+                      padding: const EdgeInsets.all(16),
+                      children: [
+                        Center(
+                          child: Container(
+                            width: 65,
+                            height: 4,
+                            margin: const EdgeInsets.only(bottom: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.grey,
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                          ),
+                        ),
+                        Text(
+                          'Restaurants in the area',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w900,
+                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                          ),
+                        ),
+                        const SizedBox(height: 11),
+                        Obx(() {
+                          return SizedBox(
+                            height: 220,
+                            child: isLoading.value
+                                ? _buildShimmer()
+                                : StreamBuilder<List<RestaurantModel>>(
+                              stream: homeLocationCtrl.filteredRestaurantsStream.value,
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return _buildShimmer();
+                                }
+                                if (snapshot.hasError) {
+                                  return const Center(child: Text('Error loading restaurants'));
+                                }
+                                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                  return const Center(child: Text('No restaurants match your criteria'));
+                                }
+                                final restaurants = snapshot.data!.take(4).toList();
+                                return ListView(
+                                  scrollDirection: Axis.horizontal,
+                                  children: restaurants.map((restaurant) => buildRestaurantCard(restaurant)).toList(),
+                                );
+                              },
+                            ),
+                          );
+                        }),
+                        Align(
+                          alignment: Alignment.center,
+                          child: TextButton(
+                            onPressed: () {
+                              Get.to(() => RestaurantsPage());
+                            },
+                            child: Text(
+                              'See all',
+                              style: TextStyle(
+                                color: Colors.green,
+                                fontSize: 16,
+                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Streams',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w900,
+                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Obx(() {
+                          return SizedBox(
+                            height: 252,
+                            child: homeLocationCtrl.filteredVideos.isEmpty
+                                ? const Center(child: Text('No videos available'))
+                                : ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: homeLocationCtrl.filteredVideos.asMap().entries.take(4).map((entry) {
+                                final index = entry.key;
+                                final video = entry.value;
+                                return buildStreamCard(video, index);
+                              }).toList(),
+                            ),
+                          );
+                        }),
+                        Align(
+                          alignment: Alignment.center,
+                          child: TextButton(
+                            onPressed: () {
+                              Get.to(VideosListView());
+                            },
+                            child: Text(
+                              'See all',
+                              style: TextStyle(
+                                color: Colors.green,
+                                fontSize: 16,
+                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Experience & Vibes',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w900,
+                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        StreamBuilder<List<RestaurantModel>>(
+                          stream: filterCtrl.selectedFilters.values.any((list) => list.isNotEmpty)
+                              ? homeLocationCtrl.getFilteredRestaurants()
+                              : homeLocationCtrl.getAllRestaurants(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting || isLoading.value) {
+                              return _buildShimmer();
+                            }
+                            if (snapshot.hasError) {
+                              return const Center(child: Text('Error loading restaurants'));
+                            }
+                            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                              return const Center(child: Text('No restaurants available'));
+                            }
+                            final restaurants = snapshot.data!.take(4).toList();
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: restaurants
+                                  .map((restaurant) => Padding(
+                                padding: const EdgeInsets.only(bottom: 12),
+                                child: buildExperienceVibeCard(restaurant),
+                              ))
+                                  .toList(),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+
           Positioned(
-            top: 70,
+            top: Platform.isAndroid ? 60 : 70,
             left: 0,
             right: 0,
             child: Column(
@@ -941,177 +1174,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                 ),
               ],
             ),
-          ),
-          DraggableScrollableSheet(
-            initialChildSize: 0.3,
-            minChildSize: 0.1,
-            maxChildSize: 0.79,
-            snap: true,
-            builder: (context, scrollCtrl) {
-              return Container(
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                  boxShadow: [BoxShadow(blurRadius: 10, color: Colors.black12)],
-                ),
-                child: Obx(
-                      () {
-                    if (homeLocationCtrl.isFetchingInitialData.value) {
-                      return _buildShimmer();
-                    }
-                    return ListView(
-                      controller: scrollCtrl,
-                      physics: const ClampingScrollPhysics(),
-                      padding: const EdgeInsets.all(16),
-                      children: [
-                        Center(
-                          child: Container(
-                            width: 65,
-                            height: 4,
-                            margin: const EdgeInsets.only(bottom: 12),
-                            decoration: BoxDecoration(
-                              color: Colors.grey,
-                              borderRadius: BorderRadius.circular(2),
-                            ),
-                          ),
-                        ),
-                        Text(
-                          'Restaurants in the area',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w900,
-                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                          ),
-                        ),
-                        const SizedBox(height: 11),
-                        Obx(() {
-                          return SizedBox(
-                            height: 220,
-                            child: isLoading.value
-                                ? _buildShimmer()
-                                : StreamBuilder<List<RestaurantModel>>(
-                              stream: homeLocationCtrl.filteredRestaurantsStream.value,
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return _buildShimmer();
-                                }
-                                if (snapshot.hasError) {
-                                  return const Center(child: Text('Error loading restaurants'));
-                                }
-                                if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                  return const Center(child: Text('No restaurants match your criteria'));
-                                }
-                                final restaurants = snapshot.data!.take(4).toList();
-                                return ListView(
-                                  scrollDirection: Axis.horizontal,
-                                  children: restaurants.map((restaurant) => buildRestaurantCard(restaurant)).toList(),
-                                );
-                              },
-                            ),
-                          );
-                        }),
-                        Align(
-                          alignment: Alignment.center,
-                          child: TextButton(
-                            onPressed: () {
-                              Get.to(() => RestaurantsPage());
-                            },
-                            child: Text(
-                              'See all',
-                              style: TextStyle(
-                                color: Colors.green,
-                                fontSize: 16,
-                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Streams',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w900,
-                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Obx(() {
-                          return SizedBox(
-                            height: 252,
-                            child: homeLocationCtrl.filteredVideos.isEmpty
-                                ? const Center(child: Text('No videos available'))
-                                : ListView(
-                              scrollDirection: Axis.horizontal,
-                              children: homeLocationCtrl.filteredVideos.asMap().entries.take(4).map((entry) {
-                                final index = entry.key;
-                                final video = entry.value;
-                                return buildStreamCard(video, index);
-                              }).toList(),
-                            ),
-                          );
-                        }),
-                        Align(
-                          alignment: Alignment.center,
-                          child: TextButton(
-                            onPressed: () {
-                              Get.to(VideosListView());
-                            },
-                            child: Text(
-                              'See all',
-                              style: TextStyle(
-                                color: Colors.green,
-                                fontSize: 16,
-                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Experience & Vibes',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w900,
-                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        StreamBuilder<List<RestaurantModel>>(
-                          stream: filterCtrl.selectedFilters.values.any((list) => list.isNotEmpty)
-                              ? homeLocationCtrl.getFilteredRestaurants()
-                              : homeLocationCtrl.getAllRestaurants(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting || isLoading.value) {
-                              return _buildShimmer();
-                            }
-                            if (snapshot.hasError) {
-                              return const Center(child: Text('Error loading restaurants'));
-                            }
-                            if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                              return const Center(child: Text('No restaurants available'));
-                            }
-                            final restaurants = snapshot.data!.take(4).toList();
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: restaurants
-                                  .map((restaurant) => Padding(
-                                padding: const EdgeInsets.only(bottom: 12),
-                                child: buildExperienceVibeCard(restaurant),
-                              ))
-                                  .toList(),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                      ],
-                    );
-                  },
-                ),
-              );
-            },
           ),
         ],
       ),

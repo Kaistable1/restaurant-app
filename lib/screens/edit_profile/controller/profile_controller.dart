@@ -1,9 +1,12 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/models/usermodel.dart';
@@ -26,6 +29,9 @@ class ProfileController extends GetxController {
       true.obs; // Toggles for new password field visibility
   var isConfirmPasswordHidden =
       true.obs; // Toggles for confirm password field visibility
+
+  final String cloudFunctionUrl =
+      'https://us-central1-<your-project-id>.cloudfunctions.net/updateUserProfile';
 
   @override
   void onInit() {
@@ -78,7 +84,6 @@ class ProfileController extends GetxController {
       loadingDialog(message: 'Please wait!', height: 150, loading: true);
       String imgUrl = '';
       if (imagePath.value != '') {
-// Upload the selected image to Firebase and get its URL
         imgUrl = await uploadImageToFirebase('profile', imageBytes!);
       }
 
@@ -104,8 +109,8 @@ class ProfileController extends GetxController {
       // Fetch the updated user data to reflect changes
       getCurrentUserData();
 
-      // Close the loading dialog
-      Get.back();
+      // Close the loading dialog and Profile edit screen
+      Get.close(2);
 
       // Show a success message to the user
       Get.snackbar('SAVRLY', 'Profile updated successfully!');
@@ -115,4 +120,54 @@ class ProfileController extends GetxController {
       print('Error update profile $e');
     }
   }
+
+
+
+//   updateProfile() async {
+//     try {
+//       // Show a loading dialog while updating the profile
+//       loadingDialog(message: 'Please wait!', height: 150, loading: true);
+//       String imgUrl = '';
+//       if (imagePath.value != '') {
+// // Upload the selected image to Firebase and get its URL
+//         imgUrl = await uploadImageToFirebase('profile', imageBytes!);
+//       }
+//
+//       if (imagePath.value != '') {
+// // Update the user document in the Firestore database with the new data
+//         await FirebaseFirestore.instance
+//             .collection('users')
+//             .doc(auth.currentUser?.uid)
+//             .update({
+//           'userImage': imgUrl, // Update the profile image URL
+//           'username': userNameController.text, // Update the username
+//         });
+//         currentUserDataModel!.value.userImage.value = imgUrl;
+//         currentUserDataModel!.value.username.text = userNameController.text;
+//       } else {
+//         // Update the user document in the Firestore database with the new data
+//         await FirebaseFirestore.instance
+//             .collection('users')
+//             .doc(auth.currentUser?.uid)
+//             .update({
+//           'username': userNameController.text, // Update the username
+//         });
+//
+//         currentUserDataModel!.value.username.text = userNameController.text;
+//       }
+//
+//       // Fetch the updated user data to reflect changes
+//       getCurrentUserData();
+//
+//       // Close the loading dialog
+//       Get.close(2);
+//
+//       // Show a success message to the user
+//       Get.snackbar('SAVRLY', 'Profile updated successfully!');
+//     } catch (e) {
+//       // Handle any errors and close the loading dialog
+//       Get.back();
+//       print('Error update profile $e');
+//     }
+//   }
 }

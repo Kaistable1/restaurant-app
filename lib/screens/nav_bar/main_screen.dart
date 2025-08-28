@@ -31,7 +31,7 @@ class _MainScreenState extends State<MainScreen> {
       const RestaurantsPage(),
       VideosListView(),
       // SavedRestaurantsPage(),
-      const ProfileScreen(),
+      ProfileScreen(),
     ];
   }
 
@@ -42,7 +42,7 @@ class _MainScreenState extends State<MainScreen> {
       const RestaurantsPage(),
       VideosListView(),
       // SavedRestaurantsPage(),
-      const ProfileScreen(),
+      ProfileScreen(),
     ];
   }
 

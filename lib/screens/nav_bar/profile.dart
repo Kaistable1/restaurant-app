@@ -17,7 +17,9 @@ import 'package:kaistable_website/screens/general_preferences/screens_general/pr
 import 'package:kaistable_website/screens/nav_bar/widgets/custom_button.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  ProfileScreen({super.key});
+
+  RxBool profileToggle = true.obs;
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +46,7 @@ class ProfileScreen extends StatelessWidget {
       backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
         backgroundColor: AppColors.whiteColor,
+        surfaceTintColor: Colors.white,
         centerTitle: true,
         automaticallyImplyLeading: false,
         title: Text(
@@ -96,7 +99,7 @@ class ProfileScreen extends StatelessWidget {
               : Obx(
                   () => Container(
                     width: Get.width,
-                    height: 67,
+                    height: profileToggle.value ? 67 : 67,
                     decoration: const BoxDecoration(
                       color: AppColors.whiteColor,
                     ),
@@ -173,8 +176,9 @@ class ProfileScreen extends StatelessWidget {
                         ),
                         const Spacer(),
                         GestureDetector(
-                            onTap: () {
-                              Get.to(() => EditProfilePage());
+                            onTap: () async {
+                              await Get.to(() => EditProfilePage());
+                              profileToggle.toggle();
                             },
                             child: Container(
                               width: 100,

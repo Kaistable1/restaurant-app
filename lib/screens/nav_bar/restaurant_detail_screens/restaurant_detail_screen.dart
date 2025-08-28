@@ -11,6 +11,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/screens/nav_bar/widgets/custom_button.dart';
 import 'package:map_launcher/map_launcher.dart' as ml;
@@ -20,6 +21,7 @@ import '../../../constants/app_colors.dart';
 import '../../../custom_widget/app_bar.dart';
 import '../../../utils/firebase_datebase.dart';
 import '../../../utils/functions.dart';
+import '../../home_screen/home_controller/home_location_controller.dart';
 import '../full_screen_video/full_screen_video_screen.dart';
 import 'controller/restaurant_detail_controller.dart';
 import 'controller/restaurant_video_controller.dart';
@@ -379,344 +381,148 @@ class RestaurantDetailScreen extends StatelessWidget {
                                     ),
                                     const SizedBox(height: 16),
                                     Divider(color: AppColors.dividerColor),
-                                    const SizedBox(height: 16),
+                                    // const SizedBox(height: 16),
                                     Row(
-                                          children: [
-                                            Padding(
-                                              padding: EdgeInsets.only(top: 2),
-                                              child: Image.asset('assets/icons/time.png',
-                                                  height: 12, width: 12),
-                                            ),
-                                            const SizedBox(width: 8),
-
-                                            Expanded(
-                                              child: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                                                future: getRestaurantOperatingHours(restaurantModel!.docID).get(),
-                                                builder: (context, restHours) {
-                                                  if (restHours.connectionState == ConnectionState.waiting) {
-                                                    return Text(
-                                                      'Retrieving...',
-                                                      style: TextStyle(
-                                                        fontSize: 12,
-                                                        fontWeight: FontWeight.w500,
-                                                        fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                                        color: const Color.fromRGBO(142, 142, 147, 1),
-                                                      ),
-                                                    );
-                                                  }
-
-                                                  if (!restHours.hasData || restHours.data!.docs.isEmpty) {
-                                                    print('No timings mentioned in database');
-                                                    return Text(
-                                                      'Not mentioned',
-                                                      style: TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight: FontWeight.w500,
-                                                        fontFamily: 'PlusJakartaSans',
-                                                      ),
-                                                    );
-                                                  }
-
-                                                  bool isOpen = false;
-                                                  TimeOfDay? startTime;
-                                                  TimeOfDay? endTime;
-
-                                                  // Get current day (Monday, August 25, 2025)
-                                                  final currentDay = 'Monday';
-                                                  final dayDoc = restHours.data!.docs.firstWhere(
-                                                        (doc) => doc.id == currentDay
-                                                  );
-
-                                                  final meals = ['Breakfast', 'Brunch', 'Lunch', 'Dinner'];
-                                                  for (var meal in meals) {
-                                                    if (!dayDoc[meal]['isClosed']) {
-                                                      bool startIsPM = dayDoc[meal]['startTime']
-                                                          .toString()
-                                                          .toLowerCase()
-                                                          .contains('pm');
-                                                      int startHours = int.parse(dayDoc[meal]['startTime']
-                                                          .toString()
-                                                          .split(':')
-                                                          .first);
-                                                      int startMins = int.parse(dayDoc[meal]['startTime']
-                                                          .toString()
-                                                          .split(' ')
-                                                          .first
-                                                          .split(':')
-                                                          .last);
-
-                                                      bool endIsPM = dayDoc[meal]['endTime']
-                                                          .toString()
-                                                          .toLowerCase()
-                                                          .contains('pm');
-                                                      int endHours = int.parse(dayDoc[meal]['endTime']
-                                                          .toString()
-                                                          .split(':')
-                                                          .first);
-                                                      int endMins = int.parse(dayDoc[meal]['endTime']
-                                                          .toString()
-                                                          .split(' ')
-                                                          .first
-                                                          .split(':')
-                                                          .last);
-
-                                                      startTime ??= TimeOfDay(
-                                                          hour: startHours + (startIsPM ? 12 : 0), minute: startMins);
-                                                      endTime = TimeOfDay(hour: endHours + (endIsPM ? 12 : 0), minute: endMins);
-                                                    }
-                                                  }
-
-                                                  isOpen = startTime != null &&
-                                                      endTime != null &&
-                                                      TimeOfDay.now().isAfter(startTime) &&
-                                                      TimeOfDay.now().isBefore(endTime);
-
-                                                  // Weekly hours
-                                                  List<Map<String, String>> weeklyHours = [];
-                                                  final days = [
-                                                    'Monday',
-                                                    'Tuesday',
-                                                    'Wednesday',
-                                                    'Thursday',
-                                                    'Friday',
-                                                    'Saturday',
-                                                    'Sunday'
-                                                  ];
-                                                  for (var day in days) {
-                                                    final dayDoc = restHours.data!.docs.firstWhere(
-                                                          (doc) => doc.id == day,
-                                                    );
-                                                    String hours = '';
-                                                    final meals = ['Breakfast', 'Brunch', 'Lunch', 'Dinner'];
-                                                    bool isClosed = true;
-                                                    for (var meal in meals) {
-                                                      if (!dayDoc[meal]['isClosed']) {
-                                                        isClosed = false;
-                                                        hours = '${dayDoc[meal]['startTime']} - ${dayDoc[meal]['endTime']}';
-                                                        break; // Use first non-closed meal's hours
-                                                      }
-                                                    }
-                                                    weeklyHours.add({
-                                                      'day': day,
-                                                      'hours': isClosed ? 'Closed' : hours,
-                                                    });
-                                                                                                    }
-
-                                                  return Row(
-                                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                                    children: [
-                                                      Text(
-                                                        isOpen ? 'Open' : 'Closed',
-                                                        style: TextStyle(
-                                                          fontSize: 14,
-                                                          fontWeight: FontWeight.w500,
-                                                          fontFamily: 'PlusJakartaSans',
-                                                          color: isOpen ? Colors.green : Colors.red,
-                                                        ),
-                                                      ),
-                                                      const SizedBox(width: 16),
-                                                      DropdownButtonHideUnderline(
-                                                        child: DropdownButton2<String>(
-                                                          hint: Text(
-                                                            isOpen
-                                                                ? 'Closes ${endTime.hour >= 12 ? endTime.hour - 12 : endTime.hour}:${endTime.minute < 10 ? '0${endTime.minute}' : endTime.minute} ${endTime.hour >= 12 ? 'PM' : 'AM'}'
-                                                                : 'View Hours',
-                                                            style: TextStyle(
-                                                              fontSize: 14,
-                                                              fontWeight: FontWeight.w500,
-                                                              fontFamily: 'PlusJakartaSans',
-                                                            ),
-                                                          ),
-                                                          items: weeklyHours
-                                                              .map((dayHours) => DropdownMenuItem<String>(
-                                                            value: dayHours['day'],
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                              MainAxisAlignment.spaceBetween,
-                                                              children: [
-                                                                Text(
-                                                                  dayHours['day']! == 'Monday' ? 'Mon' : dayHours['day']! == 'Tuesday' ? 'Tue':dayHours['day']! == 'Wednesday' ? 'Wed':dayHours['day']! == 'Thursday' ? 'Thu':dayHours['day']! == 'Friday' ? 'Fri':dayHours['day']! == 'Saturday' ? 'Sat': 'Sun',
-                                                                  style: TextStyle(
-                                                                    fontSize: 15,
-                                                                    fontWeight: FontWeight.w600,
-                                                                    fontFamily: 'PlusJakartaSans',
-                                                                  ),
-                                                                ),
-                                                                Text(
-                                                                  dayHours['hours']!,
-                                                                  style: TextStyle(
-                                                                    fontSize: 14,
-                                                                    fontWeight: FontWeight.w500,
-                                                                    fontFamily: 'PlusJakartaSans',
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ))
-                                                              .toList(),
-                                                          onChanged: (value) {}, // No action needed on selection
-                                                          buttonStyleData: ButtonStyleData(
-                                                            padding: EdgeInsets.symmetric(horizontal: 12),
-                                                            decoration: BoxDecoration(
-                                                              borderRadius: BorderRadius.circular(5),
-                                                            ),
-                                                          ),
-                                                          dropdownStyleData: DropdownStyleData(
-                                                            maxHeight: 200,
-                                                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                                            decoration: BoxDecoration(
-                                                              color: Colors.white,
-                                                              borderRadius: BorderRadius.circular(10),
-                                                              border: Border.all(
-                                                                  color: Colors.black.withOpacity(0.04)),
-                                                            ),
-                                                          ),
-                                                          menuItemStyleData: MenuItemStyleData(
-                                                            padding: EdgeInsets.symmetric(vertical: 4),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  );
-                                                },
-                                              ),
-                                            ),
-
-                                            // FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-                                            //   future: getRestaurantOperatingHours(restaurantModel!.docID).get(),
-                                            //   builder: (context, restHours) {
-                                            //
-                                            //     if (restHours.connectionState == ConnectionState.waiting) {
-                                            //       return Text(
-                                            //         'Retrieving...',
-                                            //         style: TextStyle(
-                                            //           fontSize: 12,
-                                            //           fontWeight: FontWeight.w500,
-                                            //           fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                            //           color: const Color.fromRGBO(142, 142, 147, 1),
-                                            //         ),
-                                            //       );
-                                            //     }
-                                            //
-                                            //     if(!restHours.hasData || !restHours.data!.exists){
-                                            //
-                                            //       print('No timings mentioned in database');
-                                            //
-                                            //       return Text(
-                                            //         'Not mentioned',
-                                            //         style: TextStyle(
-                                            //           fontSize: 14,
-                                            //           fontWeight: FontWeight.w500,
-                                            //           fontFamily: 'PlusJakartaSans',
-                                            //         ),
-                                            //       );
-                                            //     }
-                                            //
-                                            //     if(!restHours.data!['Breakfast']['isClosed'] && !restHours.data!['Brunch']['isClosed'] && !restHours.data!['Lunch']['isClosed'] && !restHours.data!['Dinner']['isClosed']){
-                                            //       return Text(
-                                            //         'Closed',
-                                            //         style: TextStyle(
-                                            //           fontSize: 14,
-                                            //           fontWeight: FontWeight.w500,
-                                            //           fontFamily: 'PlusJakartaSans',
-                                            //           color: Colors.red,
-                                            //         ),
-                                            //       );
-                                            //     }
-                                            //
-                                            //     TimeOfDay? startTime;
-                                            //     TimeOfDay? endTime;
-                                            //     if(!restHours.data!['Breakfast']['isClosed']){
-                                            //       bool startIsPM = restHours.data!['Breakfast']['startTime'].toString().toLowerCase().contains('pm');
-                                            //       int startHours = int.parse(restHours.data!['Breakfast']['startTime'].toString().split(':').first);
-                                            //       int startMins = int.parse(restHours.data!['Breakfast']['startTime'].toString().split(' ').first.split(':').last);
-                                            //
-                                            //       bool endIsPM = restHours.data!['Breakfast']['endTime'].toString().toLowerCase().contains('pm');
-                                            //       int endHours = int.parse(restHours.data!['Breakfast']['endTime'].toString().split(':').first);
-                                            //       int endMins = int.parse(restHours.data!['Breakfast']['endTime'].toString().split(' ').first.split(':').last);
-                                            //
-                                            //       startTime = TimeOfDay(hour: startHours + (startIsPM ? 12 : 0), minute: startMins);
-                                            //       endTime = TimeOfDay(hour: endHours + (endIsPM ? 12 : 0), minute: endMins);
-                                            //     }
-                                            //
-                                            //     if(!restHours.data!['Brunch']['isClosed']){
-                                            //       if(startTime == null){
-                                            //         bool startIsPM = restHours.data!['Brunch']['startTime'].toString().toLowerCase().contains('pm');
-                                            //         int startHours = int.parse(restHours.data!['Brunch']['startTime'].toString().split(':').first);
-                                            //         int startMins = int.parse(restHours.data!['Brunch']['startTime'].toString().split(' ').first.split(':').last);
-                                            //
-                                            //         startTime = TimeOfDay(hour: startHours + (startIsPM ? 12 : 0), minute: startMins);
-                                            //       }
-                                            //
-                                            //       bool endIsPM = restHours.data!['Brunch']['endTime'].toString().toLowerCase().contains('pm');
-                                            //       int endHours = int.parse(restHours.data!['Brunch']['endTime'].toString().split(':').first);
-                                            //       int endMins = int.parse(restHours.data!['Brunch']['endTime'].toString().split(' ').first.split(':').last);
-                                            //
-                                            //       endTime = TimeOfDay(hour: endHours + (endIsPM ? 12 : 0), minute: endMins);
-                                            //     }
-                                            //
-                                            //     if(!restHours.data!['Lunch']['isClosed']){
-                                            //       if(startTime == null){
-                                            //         bool startIsPM = restHours.data!['Lunch']['startTime'].toString().toLowerCase().contains('pm');
-                                            //         int startHours = int.parse(restHours.data!['Lunch']['startTime'].toString().split(':').first);
-                                            //         int startMins = int.parse(restHours.data!['Lunch']['startTime'].toString().split(' ').first.split(':').last);
-                                            //
-                                            //         startTime = TimeOfDay(hour: startHours + (startIsPM ? 12 : 0), minute: startMins);
-                                            //       }
-                                            //
-                                            //       bool endIsPM = restHours.data!['Lunch']['endTime'].toString().toLowerCase().contains('pm');
-                                            //       int endHours = int.parse(restHours.data!['Lunch']['endTime'].toString().split(':').first);
-                                            //       int endMins = int.parse(restHours.data!['Lunch']['endTime'].toString().split(' ').first.split(':').last);
-                                            //
-                                            //       endTime = TimeOfDay(hour: endHours + (endIsPM ? 12 : 0), minute: endMins);
-                                            //     }
-                                            //
-                                            //     if(!restHours.data!['Dinner']['isClosed']){
-                                            //       if(startTime == null){
-                                            //         bool startIsPM = restHours.data!['Dinner']['startTime'].toString().toLowerCase().contains('pm');
-                                            //         int startHours = int.parse(restHours.data!['Dinner']['startTime'].toString().split(':').first);
-                                            //         int startMins = int.parse(restHours.data!['Dinner']['startTime'].toString().split(' ').first.split(':').last);
-                                            //
-                                            //         startTime = TimeOfDay(hour: startHours + (startIsPM ? 12 : 0), minute: startMins);
-                                            //       }
-                                            //
-                                            //       bool endIsPM = restHours.data!['Dinner']['endTime'].toString().toLowerCase().contains('pm');
-                                            //       int endHours = int.parse(restHours.data!['Dinner']['endTime'].toString().split(':').first);
-                                            //       int endMins = int.parse(restHours.data!['Dinner']['endTime'].toString().split(' ').first.split(':').last);
-                                            //
-                                            //       endTime = TimeOfDay(hour: endHours + (endIsPM ? 12 : 0), minute: endMins);
-                                            //     }
-                                            //
-                                            //
-                                            //     bool isOpen = (TimeOfDay.now().isAfter(startTime!) && TimeOfDay.now().isBefore(endTime!));
-                                            //
-                                            //     return Row(
-                                            //       children: [
-                                            //         Text(
-                                            //           isOpen ? 'Open' : 'Closed',
-                                            //           style: TextStyle(
-                                            //             fontSize: 14,
-                                            //             fontWeight: FontWeight.w500,
-                                            //             fontFamily: 'PlusJakartaSans',
-                                            //             color: isOpen ? Colors.green : Colors.red,
-                                            //           ),
-                                            //         ),
-                                            //         isOpen ? Text(
-                                            //           '        Closes ${endTime.hour >= 12 ? endTime.hour-12 : endTime.hour}:${endTime.minute<10 ? '0${endTime.minute.toString()}' : endTime.minute.toString()} ${endTime.hour >= 12 ? 'PM' : 'AM'}',
-                                            //           style: TextStyle(
-                                            //             fontSize: 14,
-                                            //             fontWeight: FontWeight.w500,
-                                            //             fontFamily: 'PlusJakartaSans',
-                                            //           ),
-                                            //         ) : SizedBox(),
-                                            //       ],
-                                            //     );
-                                            //   }
-                                            // ),
-                                          ],
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(top: 2),
+                                          child: Image.asset('assets/icons/time.png', height: 12, width: 12),
                                         ),
+                                        const SizedBox(width: 8),
+                                        Obx(() {
+                                          final controller = Get.find<HomeLocationController>();
+                                          final operatingHours = controller.operatingHoursCache[restaurantModel!.docID];
+                                          final isFetching = controller.fetchingOperatingHours.contains(restaurantModel!.docID);
+                                          final currentDay = DateFormat('EEEE').format(DateTime.now());
 
-                                    const SizedBox(height: 16),
+                                          if (operatingHours == null || operatingHours[currentDay] == null) {
+                                            if (!isFetching) {
+                                              controller.getOperatingHours(restaurantModel!.docID, triggerFilterUpdate: false);
+                                            }
+                                            return Text(
+                                              isFetching ? 'Retrieving...' : 'Not mentioned',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                                fontFamily: 'PlusJakartaSans',
+                                                color: const Color.fromRGBO(142, 142, 147, 1),
+                                              ),
+                                            );
+                                          }
+
+                                          if (operatingHours.isEmpty) {
+                                            return Text(
+                                              'Not mentioned',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                                fontFamily: 'PlusJakartaSans',
+                                              ),
+                                            );
+                                          }
+
+                                          final dayHours = operatingHours[currentDay]!;
+                                          final fullDayHours = controller.getFullDayHours(dayHours);
+                                          bool isOpen = false;
+                                          if (fullDayHours != 'Closed' && fullDayHours != 'Unavailable') {
+                                            try {
+                                              final timeFormat = DateFormat('h:mm a');
+                                              final times = fullDayHours.split('–');
+                                              final startTime = timeFormat.parse(times[0]);
+                                              final endTime = timeFormat.parse(times[1]);
+                                              final now = DateTime.now();
+                                              final currentTime = DateTime(2025, 8, 28, now.hour, now.minute);
+                                              isOpen = currentTime.isAfter(startTime) && currentTime.isBefore(endTime);
+                                            } catch (e) {
+                                              print('Error parsing time: $e');
+                                            }
+                                          }
+
+                                          // Weekly hours for dropdown
+                                          List<Map<String, String>> weeklyHours = [];
+                                          final days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+                                          for (var day in days) {
+                                            final hours = operatingHours[day] != null ? controller.getFullDayHours(operatingHours[day]!) : 'Closed';
+                                            weeklyHours.add({'day': day, 'hours': hours});
+                                          }
+
+                                          return Row(
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                isOpen ? 'Open' : 'Closed',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontFamily: 'PlusJakartaSans',
+                                                  color: isOpen ? Colors.green : Colors.red,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 16),
+                                              DropdownButtonHideUnderline(
+                                                child: DropdownButton2<String>(
+                                                  hint: Text(
+                                                    isOpen ? 'Closes ${fullDayHours.split('–')[1]}' : 'View Hours',
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.w500,
+                                                      fontFamily: 'PlusJakartaSans',
+                                                    ),
+                                                  ),
+                                                  items: weeklyHours
+                                                      .map((dayHours) => DropdownMenuItem<String>(
+                                                    value: dayHours['day'],
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                          dayHours['day']! == 'Monday' ? 'Mon' : dayHours['day']! == 'Tuesday' ? 'Tue' : dayHours['day']! == 'Wednesday' ? 'Wed' : dayHours['day']! == 'Thursday' ? 'Thu' : dayHours['day']! == 'Friday' ? 'Fri' : dayHours['day']! == 'Saturday' ? 'Sat' : 'Sun',
+                                                          style: TextStyle(
+                                                            fontSize: 15,
+                                                            fontWeight: FontWeight.w600,
+                                                            fontFamily: 'PlusJakartaSans',
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          dayHours['hours']!,
+                                                          style: TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight: FontWeight.w500,
+                                                            fontFamily: 'PlusJakartaSans',
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ))
+                                                      .toList(),
+                                                  onChanged: (value) {},
+                                                  buttonStyleData: ButtonStyleData(
+                                                    padding: EdgeInsets.symmetric(horizontal: 12),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(5),
+                                                    ),
+                                                  ),
+                                                  dropdownStyleData: DropdownStyleData(
+                                                    maxHeight: 200,
+                                                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius: BorderRadius.circular(10),
+                                                      border: Border.all(color: Colors.black.withOpacity(0.04)),
+                                                    ),
+                                                  ),
+                                                  menuItemStyleData: MenuItemStyleData(
+                                                    padding: EdgeInsets.symmetric(vertical: 4),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        }),
+                                      ],
+                                    ),
+
+                                    // const SizedBox(height: 16),
                                     Divider(color: AppColors.dividerColor),
                                     const SizedBox(height: 16),
                                     Row(
@@ -855,6 +661,8 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                       Expanded(
                                                         child: Text(
                                                           schedule.eventName + '(${schedule.eventBy})',
+                                                          overflow: TextOverflow.ellipsis,
+                                                          maxLines: 2,
                                                           style: TextStyle(
                                                             fontSize: 12,
                                                             fontFamily: 'PlusJakartaSans',
@@ -1282,143 +1090,81 @@ class RestaurantDetailScreen extends StatelessWidget {
                                             children: [
                                               Padding(
                                                 padding: EdgeInsets.only(top: 2),
-                                                child: Image.asset(
-                                                    'assets/icons/time.png',
-                                                    height: 12,
-                                                    width: 12),
+                                                child: Image.asset('assets/icons/time.png', height: 12, width: 12),
                                               ),
                                               const SizedBox(width: 8),
-                                              FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-                                                  future: getRestaurantOperatingHoursForToday(restaurantModel!.docID).get(),
-                                                  builder: (context, restHours) {
+                                              Obx(() {
+                                                final controller = Get.find<HomeLocationController>();
+                                                final operatingHours = controller.operatingHoursCache[restaurantModel!.docID];
+                                                final isFetching = controller.fetchingOperatingHours.contains(restaurantModel!.docID);
+                                                final currentDay = DateFormat('EEEE').format(DateTime.now());
 
-                                                    if (restHours.connectionState == ConnectionState.waiting) {
-                                                      return Text(
-                                                        'Retrieving...',
-                                                        style: TextStyle(
-                                                          fontSize: 12,
-                                                          fontWeight: FontWeight.w500,
-                                                          fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                                          color: const Color.fromRGBO(142, 142, 147, 1),
-                                                        ),
-                                                      );
-                                                    }
-
-                                                    if(!restHours.hasData || !restHours.data!.exists){
-
-                                                      print('No timings mentioned in database');
-
-                                                      return Text(
-                                                        'Not mentioned',
-                                                        style: TextStyle(
-                                                          fontSize: 14,
-                                                          fontWeight: FontWeight.w500,
-                                                          fontFamily: 'PlusJakartaSans',
-                                                        ),
-                                                      );
-                                                    }
-
-                                                    if(!restHours.data!['Breakfast']['isClosed'] && !restHours.data!['Brunch']['isClosed'] && !restHours.data!['Lunch']['isClosed'] && !restHours.data!['Dinner']['isClosed']){
-                                                      return Text(
-                                                        'Closed for today',
-                                                        style: TextStyle(
-                                                          fontSize: 14,
-                                                          fontWeight: FontWeight.w500,
-                                                          fontFamily: 'PlusJakartaSans',
-                                                          color: Colors.red,
-                                                        ),
-                                                      );
-                                                    }
-
-                                                    TimeOfDay? startTime;
-                                                    TimeOfDay? endTime;
-                                                    if(!restHours.data!['Breakfast']['isClosed']){
-                                                      bool startIsPM = restHours.data!['Breakfast']['startTime'].toString().toLowerCase().contains('pm');
-                                                      int startHours = int.parse(restHours.data!['Breakfast']['startTime'].toString().split(':').first);
-                                                      int startMins = int.parse(restHours.data!['Breakfast']['startTime'].toString().split(' ').first.split(':').last);
-
-                                                      bool endIsPM = restHours.data!['Breakfast']['endTime'].toString().toLowerCase().contains('pm');
-                                                      int endHours = int.parse(restHours.data!['Breakfast']['endTime'].toString().split(':').first);
-                                                      int endMins = int.parse(restHours.data!['Breakfast']['endTime'].toString().split(' ').first.split(':').last);
-
-                                                      startTime = TimeOfDay(hour: startHours + (startIsPM ? 12 : 0), minute: startMins);
-                                                      endTime = TimeOfDay(hour: endHours + (endIsPM ? 12 : 0), minute: endMins);
-                                                    }
-
-                                                    if(!restHours.data!['Brunch']['isClosed']){
-                                                      if(startTime == null){
-                                                        bool startIsPM = restHours.data!['Brunch']['startTime'].toString().toLowerCase().contains('pm');
-                                                        int startHours = int.parse(restHours.data!['Brunch']['startTime'].toString().split(':').first);
-                                                        int startMins = int.parse(restHours.data!['Brunch']['startTime'].toString().split(' ').first.split(':').last);
-
-                                                        startTime = TimeOfDay(hour: startHours + (startIsPM ? 12 : 0), minute: startMins);
-                                                      }
-
-                                                      bool endIsPM = restHours.data!['Brunch']['endTime'].toString().toLowerCase().contains('pm');
-                                                      int endHours = int.parse(restHours.data!['Brunch']['endTime'].toString().split(':').first);
-                                                      int endMins = int.parse(restHours.data!['Brunch']['endTime'].toString().split(' ').first.split(':').last);
-
-                                                      endTime = TimeOfDay(hour: endHours + (endIsPM ? 12 : 0), minute: endMins);
-                                                    }
-
-                                                    if(!restHours.data!['Lunch']['isClosed']){
-                                                      if(startTime == null){
-                                                        bool startIsPM = restHours.data!['Lunch']['startTime'].toString().toLowerCase().contains('pm');
-                                                        int startHours = int.parse(restHours.data!['Lunch']['startTime'].toString().split(':').first);
-                                                        int startMins = int.parse(restHours.data!['Lunch']['startTime'].toString().split(' ').first.split(':').last);
-
-                                                        startTime = TimeOfDay(hour: startHours + (startIsPM ? 12 : 0), minute: startMins);
-                                                      }
-
-                                                      bool endIsPM = restHours.data!['Lunch']['endTime'].toString().toLowerCase().contains('pm');
-                                                      int endHours = int.parse(restHours.data!['Lunch']['endTime'].toString().split(':').first);
-                                                      int endMins = int.parse(restHours.data!['Lunch']['endTime'].toString().split(' ').first.split(':').last);
-
-                                                      endTime = TimeOfDay(hour: endHours + (endIsPM ? 12 : 0), minute: endMins);
-                                                    }
-
-                                                    if(!restHours.data!['Dinner']['isClosed']){
-                                                      if(startTime == null){
-                                                        bool startIsPM = restHours.data!['Dinner']['startTime'].toString().toLowerCase().contains('pm');
-                                                        int startHours = int.parse(restHours.data!['Dinner']['startTime'].toString().split(':').first);
-                                                        int startMins = int.parse(restHours.data!['Dinner']['startTime'].toString().split(' ').first.split(':').last);
-
-                                                        startTime = TimeOfDay(hour: startHours + (startIsPM ? 12 : 0), minute: startMins);
-                                                      }
-
-                                                      bool endIsPM = restHours.data!['Dinner']['endTime'].toString().toLowerCase().contains('pm');
-                                                      int endHours = int.parse(restHours.data!['Dinner']['endTime'].toString().split(':').first);
-                                                      int endMins = int.parse(restHours.data!['Dinner']['endTime'].toString().split(' ').first.split(':').last);
-
-                                                      endTime = TimeOfDay(hour: endHours + (endIsPM ? 12 : 0), minute: endMins);
-                                                    }
-
-
-                                                    bool isOpen = (TimeOfDay.now().isAfter(startTime!) && TimeOfDay.now().isBefore(endTime!));
-
-                                                    return Row(
-                                                      children: [
-                                                        Text(
-                                                          '${endTime!.hour >= 12 ? endTime.hour-12 : endTime.hour}:${endTime.minute<10 ? '0${endTime.minute.toString()}' : endTime.minute.toString()} ${endTime.hour >= 12 ? 'PM' : 'AM'}',
-                                                          style: TextStyle(
-                                                            fontSize: 14,
-                                                            fontWeight: FontWeight.w500,
-                                                            fontFamily: 'PlusJakartaSans',
-                                                          ),
-                                                        ),
-                                                        Text(
-                                                          isOpen ? 'Open now' : 'Closed now',
-                                                          style: TextStyle(
-                                                            fontSize: 14,
-                                                            fontWeight: FontWeight.w500,
-                                                            fontFamily: 'PlusJakartaSans',
-                                                            color: isOpen ? Colors.green : Colors.red,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    );
+                                                if (operatingHours == null || operatingHours[currentDay] == null) {
+                                                  if (!isFetching) {
+                                                    controller.getOperatingHours(restaurantModel!.docID, triggerFilterUpdate: false);
                                                   }
-                                              ),
+                                                  return Text(
+                                                    isFetching ? 'Retrieving...' : 'Not mentioned',
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.w500,
+                                                      fontFamily: 'PlusJakartaSans',
+                                                      color: const Color.fromRGBO(142, 142, 147, 1),
+                                                    ),
+                                                  );
+                                                }
+
+                                                if (operatingHours.isEmpty) {
+                                                  return Text(
+                                                    'Not mentioned',
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.w500,
+                                                      fontFamily: 'PlusJakartaSans',
+                                                    ),
+                                                  );
+                                                }
+
+                                                final dayHours = operatingHours[currentDay]!;
+                                                final fullDayHours = controller.getFullDayHours(dayHours);
+                                                bool isOpen = false;
+                                                if (fullDayHours != 'Closed' && fullDayHours != 'Unavailable') {
+                                                  try {
+                                                    final timeFormat = DateFormat('h:mm a');
+                                                    final times = fullDayHours.split('–');
+                                                    final startTime = timeFormat.parse(times[0]);
+                                                    final endTime = timeFormat.parse(times[1]);
+                                                    final now = DateTime.now();
+                                                    final currentTime = DateTime(2025, 8, 28, now.hour, now.minute);
+                                                    isOpen = currentTime.isAfter(startTime) && currentTime.isBefore(endTime);
+                                                  } catch (e) {
+                                                    print('Error parsing time: $e');
+                                                  }
+                                                }
+
+                                                return Row(
+                                                  children: [
+                                                    Text(
+                                                      fullDayHours,
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.w500,
+                                                        fontFamily: 'PlusJakartaSans',
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    Text(
+                                                      isOpen ? 'Open now' : 'Closed now',
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.w500,
+                                                        fontFamily: 'PlusJakartaSans',
+                                                        color: isOpen ? Colors.green : Colors.red,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                );
+                                              }),
                                             ],
                                           ),
                                           const SizedBox(height: 32),

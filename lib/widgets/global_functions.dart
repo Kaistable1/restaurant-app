@@ -38,7 +38,7 @@ Future<String> uploadImageToFirebase(
     String url = '';
 
     String id = auth.currentUser != null
-        ? "${DateTime.now().millisecondsSinceEpoch}${auth.currentUser!.uid.toString()}"
+        ? "${auth.currentUser!.uid.toString()}"
         : '${DateTime.now().millisecondsSinceEpoch}';
 
     final ref = FirebaseStorage.instance.ref(refPath).child(id);

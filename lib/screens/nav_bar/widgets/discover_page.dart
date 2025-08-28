@@ -59,10 +59,10 @@ class _RestaurantsPageState extends State<RestaurantsPage> {
 
   // NEW: Method to apply local filters (search by name and distance) to the category-filtered list
   // This is called whenever the category stream emits, or when local search/distance changes
-  void applyLocalFilters() {
+  void applyLocalFilters() async {
     var filtered = categoryFilteredRestaurants.toList();
 
-    // Apply search query (local to RestaurantsPage)
+    // Apply search query
     if (searchController.text.isNotEmpty) {
       final query = searchController.text.toLowerCase();
       filtered = filtered
@@ -70,9 +70,9 @@ class _RestaurantsPageState extends State<RestaurantsPage> {
           .toList();
     }
 
-    // Apply distance filter (local to RestaurantsPage)
+    // Apply distance filter
     if (controller.selectedDistance.value > 0 && controller.userPosition != null) {
-      final maxDistanceKm = controller.selectedDistance.value * 1.60934; // Convert miles to km
+      final maxDistanceKm = controller.selectedDistance.value * 1.60934;
       filtered = filtered.where((restaurant) {
         if (restaurant.latitude == 0.0 && restaurant.longitude == 0.0) {
           return false;
@@ -82,10 +82,18 @@ class _RestaurantsPageState extends State<RestaurantsPage> {
           controller.userPosition!.longitude,
           restaurant.latitude,
           restaurant.longitude,
-        ) / 1000; // Distance in km
+        ) / 1000;
         return distance <= maxDistanceKm;
       }).toList();
     }
+
+    // Pre-fetch operating hours for all filtered restaurants
+    await Future.wait(filtered.map((restaurant) {
+      if (!controller.operatingHoursCache.containsKey(restaurant.docID)) {
+        return controller.getOperatingHours(restaurant.docID, triggerFilterUpdate: false);
+      }
+      return Future.value();
+    }));
 
     displayedRestaurants.value = filtered;
   }
@@ -318,46 +326,68 @@ class _RestaurantsPageState extends State<RestaurantsPage> {
                                           ),
                                         ],
                                       ),
-                                      FutureBuilder<Map<String, Map<String, Map<String, dynamic>>>?>(
-                                        future: controller.getOperatingHours2(restaurant.docID),
-                                        builder: (context, snapshot) {
-                                          if (snapshot.connectionState == ConnectionState.waiting) {
-                                            return Text(
-                                              'Loading...',
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500,
-                                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                                color: Colors.black,
-                                              ),
-                                            );
-                                          }
-                                          final operatingHours = snapshot.data;
-                                          final currentDay = DateFormat('EEEE').format(DateTime.now());
-                                          final timeOfDay = 'Dinner';
-                                          final dayHours = operatingHours?[currentDay] ?? null;
+                                      Obx(() {
+                                        final operatingHours = controller.operatingHoursCache[restaurant.docID];
+                                        final isFetching = controller.fetchingOperatingHours.contains(restaurant.docID);
+                                        final currentDay = DateFormat('EEEE').format(DateTime.now());
+                                        final timeFilter = filterCtrl.selectedFilters['Time'];
 
-                                          String time = '';
-                                          if (dayHours == null) {
-                                            time = 'Unavailable';
-                                          } else {
-                                            final isClosed = dayHours[timeOfDay]?['isClosed'] ?? true;
-                                            final startTime = dayHours[timeOfDay]?['startTime'] ?? '6:00 PM';
-                                            final endTime = dayHours[timeOfDay]?['endTime'] ?? '9:00 PM';
-                                            time = isClosed ? 'Closed' : '$startTime–$endTime';
+                                        if (operatingHours == null || operatingHours[currentDay] == null) {
+                                          if (!isFetching) {
+                                            controller.getOperatingHours(restaurant.docID, triggerFilterUpdate: false);
                                           }
-
                                           return Text(
-                                            time,
+                                            isFetching ? 'Loading...' : 'Unavailable',
                                             style: TextStyle(
                                               fontSize: 12,
-                                              color: const Color.fromRGBO(142, 142, 147, 1),
-                                              fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                                               fontWeight: FontWeight.w500,
+                                              fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                              color: const Color.fromRGBO(142, 142, 147, 1),
                                             ),
                                           );
-                                        },
-                                      ),
+                                        }
+
+                                        if (operatingHours.isEmpty) {
+                                          return Text(
+                                            'Unavailable',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                              fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                              color: const Color.fromRGBO(142, 142, 147, 1),
+                                            ),
+                                          );
+                                        }
+
+                                        final dayHours = operatingHours[currentDay]!;
+                                        // Check if no time filter is selected
+                                        if (timeFilter == null || timeFilter.isEmpty) {
+                                          return Text(
+                                            controller.getFullDayHours(dayHours),
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                              fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                              color: const Color.fromRGBO(142, 142, 147, 1),
+                                            ),
+                                          );
+                                        }
+
+                                        // Use selected time slot
+                                        final timeOfDay = timeFilter.first;
+                                        final isClosed = dayHours[timeOfDay]?['isClosed'] ?? true;
+                                        final startTime = dayHours[timeOfDay]?['startTime'] ?? '6:00 PM';
+                                        final endTime = dayHours[timeOfDay]?['endTime'] ?? '9:00 PM';
+                                        return Text(
+                                          isClosed ? 'Closed' : '$startTime–$endTime',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w500,
+                                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                            color: const Color.fromRGBO(142, 142, 147, 1),
+                                          ),
+                                        );
+                                      }),
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [

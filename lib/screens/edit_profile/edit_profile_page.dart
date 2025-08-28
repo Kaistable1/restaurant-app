@@ -23,6 +23,7 @@ class EditProfilePage extends StatelessWidget {
       backgroundColor: AppColors.bgColor,
       appBar: AppBar(
         backgroundColor: AppColors.bgColor,
+        surfaceTintColor: AppColors.bgColor,
         iconTheme: IconThemeData(
           color: AppColors.primaryColor,
         ),

@@ -27,6 +27,7 @@ class HomeLocationController extends GetxController {
   final RxString searchQuery = ''.obs;
   final TextEditingController searchController = TextEditingController();
   final RxMap<String, Map<String, Map<String, Map<String, dynamic>>>> operatingHoursCache = <String, Map<String, Map<String, Map<String, dynamic>>>>{}.obs;
+  final RxSet<String> fetchingOperatingHours = <String>{}.obs;
   final Rx<Stream<List<RestaurantModel>>> filteredRestaurantsStream = Rx<Stream<List<RestaurantModel>>>(Stream.value([]));
 
 
@@ -360,10 +361,46 @@ class HomeLocationController extends GetxController {
     });
   }
 
-  Future<void> getOperatingHours(String restaurantId) async {
+  // Future<void> getOperatingHours(String restaurantId) async {
+  //   if (operatingHoursCache.containsKey(restaurantId)) {
+  //     return;
+  //   }
+  //
+  //   try {
+  //     var querySnapshot = await FirebaseFirestore.instance
+  //         .collection('restaurants')
+  //         .doc(restaurantId)
+  //         .collection('operatingHours')
+  //         .get();
+  //
+  //     Map<String, Map<String, Map<String, dynamic>>> daysHours = {};
+  //
+  //     for (var doc in querySnapshot.docs) {
+  //       String day = doc.id;
+  //       daysHours[day] = (doc.data()).map((key, value) => MapEntry(key, value as Map<String, dynamic>));
+  //     }
+  //
+  //     operatingHoursCache[restaurantId] = daysHours;
+  //     operatingHoursCache.refresh();
+  //     applySearchAndFilters(); // Trigger re-filter after fetch
+  //   } catch (e) {
+  //     print('Error fetching operating hours for $restaurantId: $e');
+  //     operatingHoursCache[restaurantId] = {};
+  //     operatingHoursCache.refresh();
+  //     applySearchAndFilters();
+  //   }
+  // }
+
+  Future<Map<String, Map<String, Map<String, dynamic>>>?> getOperatingHours(
+      String restaurantId, {bool triggerFilterUpdate = false}) async {
     if (operatingHoursCache.containsKey(restaurantId)) {
-      return;
+      print('Returning cached operating hours for $restaurantId');
+      return operatingHoursCache[restaurantId];
     }
+
+    // Set fetching state
+    fetchingOperatingHours.add(restaurantId);
+    fetchingOperatingHours.refresh();
 
     try {
       var querySnapshot = await FirebaseFirestore.instance
@@ -381,13 +418,77 @@ class HomeLocationController extends GetxController {
 
       operatingHoursCache[restaurantId] = daysHours;
       operatingHoursCache.refresh();
-      applySearchAndFilters(); // Trigger re-filter after fetch
+      print('Fetched operating hours for $restaurantId: ${daysHours.toString()}');
+      if (triggerFilterUpdate) {
+        applySearchAndFilters();
+      }
+      return daysHours;
     } catch (e) {
       print('Error fetching operating hours for $restaurantId: $e');
       operatingHoursCache[restaurantId] = {};
       operatingHoursCache.refresh();
-      applySearchAndFilters();
+      if (triggerFilterUpdate) {
+        applySearchAndFilters();
+      }
+      return {};
+    } finally {
+      fetchingOperatingHours.remove(restaurantId);
+      fetchingOperatingHours.refresh();
     }
+  }
+
+  String getFullDayHours(Map<String, Map<String, dynamic>>? dayHours) {
+    if (dayHours == null || dayHours.isEmpty) {
+      return 'Unavailable';
+    }
+
+    // Parse times to find earliest start and latest end
+    DateFormat timeFormat = DateFormat('h:mm a');
+    DateTime? earliestStart;
+    DateTime? latestEnd;
+    bool allClosed = true;
+
+    for (var slot in dayHours.values) {
+      bool isClosed = slot['isClosed'] ?? true;
+      if (!isClosed) {
+        allClosed = false;
+        String startTimeStr = slot['startTime'] ?? '12:00 AM';
+        String endTimeStr = slot['endTime'] ?? '11:59 PM';
+
+        try {
+          DateTime startTime = timeFormat.parse(startTimeStr);
+          DateTime endTime = timeFormat.parse(endTimeStr);
+
+          // Adjust for times crossing midnight
+          if (endTime.isBefore(startTime)) {
+            endTime = endTime.add(Duration(days: 1));
+          }
+
+          if (earliestStart == null || startTime.isBefore(earliestStart)) {
+            earliestStart = startTime;
+          }
+          if (latestEnd == null || endTime.isAfter(latestEnd)) {
+            latestEnd = endTime;
+          }
+        } catch (e) {
+          print('Error parsing time for slot: $e');
+          continue;
+        }
+      }
+    }
+
+    if (allClosed) {
+      return 'Closed';
+    }
+
+    if (earliestStart == null || latestEnd == null) {
+      return 'Unavailable';
+    }
+
+    // Format the combined range
+    String startFormatted = timeFormat.format(earliestStart);
+    String endFormatted = timeFormat.format(latestEnd);
+    return '$startFormatted–$endFormatted';
   }
 
   Future<Map<String, dynamic>?> getOperatingHours1(String restaurantId) async {

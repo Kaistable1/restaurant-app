@@ -11,6 +11,8 @@ import 'dart:io';
 class VideoController extends GetxController {
   final TextEditingController searchController = TextEditingController();
 
+  RxBool isLoading = false.obs;
+
   var videos = <VideoModel>[].obs;
   var filteredVideos = <VideoModel>[].obs;
   var playingIndex = (-1).obs;
@@ -26,6 +28,8 @@ class VideoController extends GetxController {
 
   Future<void> fetchVideos() async {
     try {
+      isLoading.value = true;
+
       var snapshot = await FirebaseFirestore.instance
           .collection('videos')
           .orderBy('timestamp', descending: true)
@@ -40,7 +44,10 @@ class VideoController extends GetxController {
           generateThumbnail(video.url!);
         }
       }
+
+      isLoading.value = false;
     } catch (e) {
+      isLoading.value = false;
       print("Error fetching videos: $e");
       Get.snackbar('Error', 'Failed to load videos: $e',
           snackPosition: SnackPosition.BOTTOM);
