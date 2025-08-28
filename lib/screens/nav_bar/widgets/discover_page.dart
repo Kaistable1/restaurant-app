@@ -28,7 +28,6 @@ class _RestaurantsPageState extends State<RestaurantsPage> {
   final FilterController filterCtrl = Get.find<FilterController>(); // NEW: Find the shared FilterController instance to access category filters
   final RxBool isLoading = false.obs;
 
-  final RxInt selectedDistance = 0.obs;
   final RxList<RestaurantModel> categoryFilteredRestaurants = <RestaurantModel>[].obs; // NEW: RxList to hold the category-filtered restaurants from the stream
   final RxList<RestaurantModel> displayedRestaurants = <RestaurantModel>[].obs; // NEW: RxList to hold the final list after applying local search and distance
 
@@ -72,8 +71,8 @@ class _RestaurantsPageState extends State<RestaurantsPage> {
     }
 
     // Apply distance filter (local to RestaurantsPage)
-    if (selectedDistance.value > 0 && controller.userPosition != null) {
-      final maxDistanceKm = selectedDistance.value * 1.60934; // Convert miles to km
+    if (controller.selectedDistance.value > 0 && controller.userPosition != null) {
+      final maxDistanceKm = controller.selectedDistance.value * 1.60934; // Convert miles to km
       filtered = filtered.where((restaurant) {
         if (restaurant.latitude == 0.0 && restaurant.longitude == 0.0) {
           return false;
@@ -150,9 +149,9 @@ class _RestaurantsPageState extends State<RestaurantsPage> {
                     'miles',
                     style: const TextStyle(fontSize: 14),
                   ),
-                  value: selectedDistance.value == 0
+                  value: controller.selectedDistance.value == 0
                       ? 'All'
-                      : selectedDistance.value.toString() + ' mi',
+                      : controller.selectedDistance.value.toString() + ' mi',
                   items: controller.distanceOptions
                       .map((ele) => DropdownMenuItem(
                     value: ele,
@@ -167,9 +166,9 @@ class _RestaurantsPageState extends State<RestaurantsPage> {
                       .toList(),
                   onChanged: (val) {
                     if (val == 'All') {
-                      selectedDistance.value = 0;
+                      controller.selectedDistance.value = 0;
                     } else {
-                      selectedDistance.value =
+                      controller.selectedDistance.value =
                           int.parse(val!.replaceAll(' mi', ''));
                     }
                     isLoading.value = true; // Show loading during "processing"
@@ -177,6 +176,7 @@ class _RestaurantsPageState extends State<RestaurantsPage> {
                     Future.delayed(const Duration(milliseconds: 500), () {
                       isLoading.value = false;
                     });
+                    controller.applySearchAndFilters();
                   },
                 ),
               ),
