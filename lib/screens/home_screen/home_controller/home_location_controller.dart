@@ -43,17 +43,17 @@ class HomeLocationController extends GetxController {
   List top = ['Most Reviewed', 'Discount', 'Dining'];
 
   //// video variables
+  final RxList<VideoModel> filteredVideos = <VideoModel>[].obs;
   var videos = <VideoModel>[].obs;
   var thumbnailPaths = <int, String>{}.obs;
   bool _isGeneratingThumbnail = false;
   ////
 
-  @override
   void onInit() {
     super.onInit();
     fetchUserPosition(Get.context!);
-    applySearchAndFilters();
     fetchVideos();
+    applySearchAndFilters();
   }
 
   //// video functions
@@ -67,6 +67,9 @@ class HomeLocationController extends GetxController {
       videos.value = snapshot.docs
           .map((doc) => VideoModel.fromMap(doc.data()))
           .toList();
+
+      filteredVideos.value = videos.toList(); // Initialize filteredVideos with all videos
+      applySearchAndFilters(); // Apply initial filtering if filters are set
     } catch (e) {
       print("Error fetching videos: $e");
       Get.snackbar('Error', 'Failed to load videos: $e',
@@ -223,19 +226,19 @@ class HomeLocationController extends GetxController {
           .map((doc) => RestaurantModel.fromDocumentSnapshot(doc))
           .toList();
 
-      // Apply search query
+      // Apply search query (unchanged for restaurants)
       if (searchQuery.value.isNotEmpty) {
         final query = searchQuery.value.toLowerCase();
         restaurants = restaurants.where((restaurant) {
           return restaurant.resName.toLowerCase().contains(query) ||
-              restaurant.address.toLowerCase().contains(query) ||
-              restaurant.dietaryList.any((diet) => diet.toLowerCase().contains(query)) ||
-              restaurant.vibesList.any((vibe) => vibe.toLowerCase().contains(query)) ||
-              restaurant.menuList.any((menu) => menu.cuisineType.toLowerCase().contains(query));
+              restaurant.address.toLowerCase().contains(query); // ||
+              // restaurant.dietaryList.any((diet) => diet.toLowerCase().contains(query)) ||
+              // restaurant.vibesList.any((vibe) => vibe.toLowerCase().contains(query)) ||
+              // restaurant.menuList.any((menu) => menu.cuisineType.toLowerCase().contains(query));
         }).toList();
       }
 
-      // Apply AND logic across category filters
+      // Apply AND logic across category filters (unchanged for restaurants)
       final filterCtrl = Get.find<FilterController>();
       for (var category in filterCtrl.selectedFilters.keys) {
         final selectedOptions = filterCtrl.selectedFilters[category];
@@ -276,7 +279,7 @@ class HomeLocationController extends GetxController {
         }
       }
 
-      // Apply distance filter
+      // Apply distance filter (unchanged for restaurants)
       if (selectedDistance.value > 0 && userPosition != null) {
         final maxDistanceKm = selectedDistance.value * 1.60934; // Convert miles to kilometers
         restaurants = restaurants.where((restaurant) {
@@ -295,6 +298,39 @@ class HomeLocationController extends GetxController {
 
       return restaurants;
     });
+
+    // NEW: Filter videos directly using cuisines, vibes, experience fields
+    if (videos.isNotEmpty) {
+      final filterCtrl = Get.find<FilterController>();
+      final query = searchQuery.value.toLowerCase();
+      final selectedCuisines = filterCtrl.selectedFilters['Cuisines'] ?? <String>[].obs;
+      final selectedExperiences = filterCtrl.selectedFilters['Experience'] ?? <String>[].obs;
+      final selectedVibes = filterCtrl.selectedFilters['Vibes'] ?? <String>[].obs;
+
+      filteredVideos.value = videos.where((video) {
+        // Search: matches if restaurantName or city contains query
+        final matchesSearch = query.isEmpty ||
+            (video.restaurantName?.toLowerCase().contains(query) ?? false); // || (video.city?.toLowerCase().contains(query) ?? false);
+
+        // Cuisines: OR - any selected cuisine matches video.cuisines (assuming it's a comma-separated string or single value)
+        final videoCuisines = video.causines?.split(',').map((c) => c.trim()).toList() ?? [];
+        final matchesCuisines = selectedCuisines.isEmpty ||
+            selectedCuisines.any((cuisine) => videoCuisines.contains(cuisine));
+
+        // Experiences: OR - any selected experience matches video.experience
+        final videoExperiences = video.experience?.split(',').map((e) => e.trim()).toList() ?? [];
+        final matchesExperiences = selectedExperiences.isEmpty ||
+            selectedExperiences.any((experience) => videoExperiences.contains(experience));
+
+        // Vibes: OR - any selected vibe matches video.vibes
+        final videoVibes = video.vibes?.split(',').map((v) => v.trim()).toList() ?? [];
+        final matchesVibes = selectedVibes.isEmpty ||
+            selectedVibes.any((vibe) => videoVibes.contains(vibe));
+
+        // AND between different filters
+        return matchesSearch && matchesCuisines && matchesExperiences && matchesVibes;
+      }).toList();
+    }
   }
 
   Stream<List<RestaurantModel>> getRestaurants() {

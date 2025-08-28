@@ -975,14 +975,12 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                             ),
                           ),
                         ),
-                        Center(
-                          child: Text(
-                            'Restaurants in the area',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w900,
-                              fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                            ),
+                        Text(
+                          'Restaurants in the area',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w900,
+                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                           ),
                         ),
                         const SizedBox(height: 11),
@@ -1041,12 +1039,12 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                         const SizedBox(height: 8),
                         Obx(() {
                           return SizedBox(
-                            height: 300,
-                            child: homeLocationCtrl.videos.isEmpty
+                            height: 252,
+                            child: homeLocationCtrl.filteredVideos.isEmpty
                                 ? const Center(child: Text('No videos available'))
                                 : ListView(
                               scrollDirection: Axis.horizontal,
-                              children: homeLocationCtrl.videos.asMap().entries.take(4).map((entry) {
+                              children: homeLocationCtrl.filteredVideos.asMap().entries.take(4).map((entry) {
                                 final index = entry.key;
                                 final video = entry.value;
                                 return buildStreamCard(video, index);
