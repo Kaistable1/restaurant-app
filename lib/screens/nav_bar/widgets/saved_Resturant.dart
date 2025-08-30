@@ -1,19 +1,94 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../main.dart';
 import '../../home_screen/home_controller/home_location_controller.dart';
 import '../controller/search_controller.dart';
 import 'discover_controller.dart';
 
 class SavedRestaurantsPage extends StatelessWidget {
+  SavedRestaurantsPage({Key? key}) : super(key: key);
+
   final HomeLocationController controller = Get.find<HomeLocationController>();
   final RestaurantController restaurantCtrl = Get.find<RestaurantController>();
 
-  SavedRestaurantsPage({Key? key}) : super(key: key);
+  RxBool refreshToggle = true.obs;
+
+  Future<List<RestaurantModel>> _fetchSavedRestaurants() async {
+    List<String> favoriteIds = [];
+
+    if (auth.currentUser != null) {
+      // Authenticated user: Fetch from Firestore
+      final userId = auth.currentUser!.uid;
+      final favoritesSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('favorite')
+          .get();
+
+      favoriteIds = favoritesSnapshot.docs.map((doc) => doc.id).toList();
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setStringList('favorite_restaurants', favoriteIds);
+      restaurantCtrl.favoriteIds.value = favoriteIds;
+    } else {
+      // Unauthenticated user: Fetch from SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      favoriteIds = prefs.getStringList('favorite_restaurants') ?? [];
+      restaurantCtrl.favoriteIds.value = favoriteIds;
+    }
+
+    if (favoriteIds.isEmpty) {
+      return [];
+    }
+
+    // Fetch only the saved restaurants from 'restaurants' collection
+    final futures = favoriteIds.map((id) => FirebaseFirestore.instance
+        .collection('restaurants')
+        .doc(id)
+        .get());
+
+    final docs = await Future.wait(futures);
+    return docs
+        .where((doc) => doc.exists)
+        .map((doc) => RestaurantModel.fromDocumentSnapshot(doc))
+        .toList();
+  }
+
+  Future<void> removeFavoriteRestaurant(String restaurantId) async {
+    try {
+      if (auth.currentUser != null) {
+        // Authenticated user: Delete from Firestore
+        final userId = auth.currentUser!.uid;
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .collection('favorite')
+            .doc(restaurantId)
+            .delete();
+        print('Removed restaurant $restaurantId from Firestore favorites');
+      }
+        // Unauthenticated user: Update SharedPreferences
+        final prefs = await SharedPreferences.getInstance();
+        final favoriteIds = prefs.getStringList('favorite_restaurants') ?? [];
+        favoriteIds.remove(restaurantId);
+        await prefs.setStringList('favorite_restaurants', favoriteIds);
+        print('Removed restaurant $restaurantId from SharedPreferences');
+      restaurantCtrl.favoriteIds.value = favoriteIds;
+
+      refreshToggle.toggle();
+    } catch (e) {
+      print('Error removing favorite restaurant: $e');
+      Get.snackbar('Error', 'Failed to remove restaurant: $e',
+          snackPosition: SnackPosition.BOTTOM);
+    }
+  }
 
   Widget _buildShimmer() {
     return ListView.builder(
@@ -38,31 +113,24 @@ class SavedRestaurantsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
         title: const Center(child: Text('Saved Restaurants')),
         leading: const BackButton(),
       ),
-      body: Obx(() {
-        final favoriteIds = restaurantCtrl.bookmarkedIds.toSet();
-        if (favoriteIds.isEmpty) {
-          return const Center(child: Text('No saved restaurants yet.'));
-        }
-        return StreamBuilder<List<RestaurantModel>>(
-          stream: controller.getAllRestaurants(),
+      body: Obx(
+          ()=> FutureBuilder<List<RestaurantModel>>(
+          future: refreshToggle.value ? _fetchSavedRestaurants() : _fetchSavedRestaurants(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return _buildShimmer();
             }
             if (snapshot.hasError) {
-              return const Center(child: Text('Error loading restaurants'));
+              return const Center(child: Text('Error loading saved restaurants'));
             }
-            if (snapshot.data == null || snapshot.data!.isEmpty) {
-              return const Center(child: Text('No restaurants available'));
-            }
-
-            final savedRestaurants = snapshot.data!
-                .where((restaurant) => favoriteIds.contains(restaurant.docID))
-                .toList();
+            final savedRestaurants = snapshot.data ?? [];
 
             if (savedRestaurants.isEmpty) {
               return const Center(child: Text('No saved restaurants yet.'));
@@ -73,28 +141,34 @@ class SavedRestaurantsPage extends StatelessWidget {
               itemBuilder: (context, index) {
                 final restaurant = savedRestaurants[index];
                 return Card(
+                  color: Colors.white,
+
                   margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.0),
                     side: BorderSide(color: Colors.grey[300]!),
                   ),
                   child: Container(
-                    height: 83,
+                    height: 84,
                     width: 362,
+                    padding: EdgeInsets.zero,
                     child: Row(
                       children: [
-                        ClipRRect(
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(12.0),
-                            bottomLeft: Radius.circular(12.0),
-                          ),
-                          child: controller.buildImage(
-                            restaurant.logoImage.isNotEmpty
-                                ? restaurant.logoImage
-                                : 'assets/images/event_img5.png',
-                            width: 120,
-                            height: 130,
-                            fit: BoxFit.cover,
+                        SizedBox(
+                          height: 84,
+                          child: ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(12.0),
+                              bottomLeft: Radius.circular(12.0),
+                            ),
+                            child: controller.buildImage(
+                              restaurant.logoImage.isNotEmpty
+                                  ? restaurant.logoImage
+                                  : 'assets/images/event_img5.png',
+                              width: 120,
+                              height: 130,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                         Expanded(
@@ -123,7 +197,7 @@ class SavedRestaurantsPage extends StatelessWidget {
                                     ),
                                     GestureDetector(
                                       onTap: () {
-                                        restaurantCtrl.removeBookmark(restaurant.docID);
+                                        removeFavoriteRestaurant(restaurant.docID);
                                       },
                                       child: const Icon(Icons.bookmark_remove, color: Colors.red),
                                     ),
@@ -169,19 +243,34 @@ class SavedRestaurantsPage extends StatelessWidget {
                                       width: 15,
                                       height: 13,
                                     ),
+                                    // Replace the per-restaurant getCurrentLocation call with a shared positionFuture. This calculates distance only if position is available, showing 'Unknown' if location is disabled or error occurred, preventing multiple dialogs.
                                     FutureBuilder<double>(
-                                      future: controller.getCurrentLocation(context).then((position) =>
-                                      Geolocator.distanceBetween(
-                                        position.latitude,
-                                        position.longitude,
-                                        restaurant.latitude,
-                                        restaurant.longitude,
-                                      ) /
-                                          1000),
+                                      future: controller.positionFuture.then((position) {
+                                        if (position == null) {
+                                          return -1.0; // Sentinel value for disabled/unknown
+                                        }
+                                        return Geolocator.distanceBetween(
+                                          position.latitude,
+                                          position.longitude,
+                                          restaurant.latitude,
+                                          restaurant.longitude,
+                                        ) / 1000;
+                                      }),
                                       builder: (context, snapshot) {
                                         if (snapshot.connectionState == ConnectionState.waiting) {
                                           return Text(
                                             'Calculating...',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                              fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                              color: const Color.fromRGBO(142, 142, 147, 1),
+                                            ),
+                                          );
+                                        }
+                                        if (snapshot.hasData && snapshot.data == -1.0) {
+                                          return Text(
+                                            'Unknown',
                                             style: TextStyle(
                                               fontSize: 12,
                                               fontWeight: FontWeight.w500,
@@ -203,11 +292,17 @@ class SavedRestaurantsPage extends StatelessWidget {
                                         );
                                       },
                                     ),
-                                    const SizedBox(width: 85),
-                                    Image.asset(
-                                      'assets/images/Group (5).png',
-                                      width: 15,
-                                      height: 15,
+                                    const Spacer(),
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Image.asset(
+                                          'assets/images/Group (5).png',
+                                          width: 15,
+                                          height: 15,
+                                        ),
+                                        const SizedBox(width: 4),
+                                      ],
                                     ),
                                   ],
                                 ),
@@ -222,8 +317,8 @@ class SavedRestaurantsPage extends StatelessWidget {
               },
             );
           },
-        );
-      }),
+        ),
+      ),
     );
   }
 }

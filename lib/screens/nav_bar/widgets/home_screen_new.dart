@@ -36,6 +36,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
   final RxBool isLoading = true.obs;
 
   @override
+  @override
   void initState() {
     super.initState();
     for (var category in filterCtrl.filterOptions.keys) {
@@ -45,6 +46,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
       }
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      homeLocationCtrl.fetchUserPosition(context);  // ADD THIS: Fallback call with context to prompt dialog if needed
       showFilterDropdowns.refresh();
       Future.delayed(const Duration(seconds: 1), () {
         isLoading.value = false;
@@ -81,7 +83,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
     final screenWidth = MediaQuery.of(context).size.width;
     final cardWidth = (screenWidth * 0.3).clamp(120.0, 160.0);
     final imageHeight = (cardWidth * 0.55).clamp(66.0, 88.0);
-    final textContainerHeight = (cardWidth * 0.35).clamp(50.0, 70.0);
+    // final textContainerHeight = (cardWidth * 0.35).clamp(50.0, 70.0);
 
     return GestureDetector(
       onTap: () {
@@ -89,7 +91,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
       },
       child: Container(
         width: cardWidth,
-        height: cardWidth * 1.5,
+        // height: cardWidth * 1.5,
         decoration: BoxDecoration(
           border: Border.all(color: AppColors.borderColor),
           borderRadius: BorderRadius.circular(5),
@@ -129,7 +131,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
-                height: textContainerHeight,
+                // height: textContainerHeight,
                 width: cardWidth - 16,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -154,7 +156,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                       final currentDay = DateFormat('EEEE').format(DateTime.now());
                       final timeFilter = filterCtrl.selectedFilters['Time'];
 
-                      if (operatingHours == null || operatingHours[currentDay] == null) {
+                      if (operatingHours == null) {
                         if (!isFetching) {
                           homeLocationCtrl.getOperatingHours(restaurant.docID, triggerFilterUpdate: true);
                         }
@@ -169,7 +171,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                         );
                       }
 
-                      if (operatingHours.isEmpty) {
+                      if (operatingHours.isEmpty || operatingHours[currentDay] == null) {
                         return Text(
                           'Unavailable',
                           style: TextStyle(
@@ -221,18 +223,32 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                         ),
                         const SizedBox(width: 4),
                         Obx(() {
-                          if ((homeLocationCtrl.isFetchingInitialData.value || !homeLocationCtrl.isFetchingInitialData.value) && homeLocationCtrl.userPosition == null) {
+                          if (homeLocationCtrl.isFetchingInitialData.value && homeLocationCtrl.userPosition == null) {
                             homeLocationCtrl.fetchUserPosition(context);
                             return Text(
                               'Fetching location...',
                               style: TextStyle(
-                                fontSize: (cardWidth * 0.08).clamp(9.0, 10.0),
+                                fontSize: 12,
                                 fontWeight: FontWeight.w500,
                                 fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                                 color: const Color.fromRGBO(142, 142, 147, 1),
                               ),
                             );
                           }
+
+                          if (!homeLocationCtrl.isFetchingInitialData.value && homeLocationCtrl.userPosition == null) {
+                            // FIX 1: Change text to 'Location disabled' instead of 'Fetching location...' to avoid misleading users when location is off. No need to call fetchUserPosition repeatedly as it won't succeed without enabling location.
+                            return Text(
+                              'Location disabled',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                color: const Color.fromRGBO(142, 142, 147, 1),
+                              ),
+                            );
+                          }
+
                           double distance = Geolocator.distanceBetween(
                             homeLocationCtrl.userPosition!.latitude,
                             homeLocationCtrl.userPosition!.longitude,
@@ -242,7 +258,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                           return Text(
                             '${distance.toStringAsFixed(2)} km away',
                             style: TextStyle(
-                              fontSize: (cardWidth * 0.08).clamp(9.0, 10.0),
+                              fontSize: 12,
                               fontWeight: FontWeight.w500,
                               fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                               color: const Color.fromRGBO(142, 142, 147, 1),
@@ -369,7 +385,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                     left: 4,
                     child: const CircleAvatar(
                             radius: 17,
-                            backgroundImage: AssetImage('assets/images/Ellipse 19.png'),
+                            backgroundImage: AssetImage('assets/images/show_logo.png'),
                           ),),
               ],
             ),
@@ -393,15 +409,33 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      Text(
-                        restaurant != null && restaurant.averageRating > 0
-                            ? '${restaurant.averageRating.toStringAsFixed(1)} stars'
-                            : '0 stars',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: const Color.fromRGBO(142, 142, 147, 1),
-                          fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                        ),
+                      FutureBuilder<RestaurantModel?>(
+                        future: homeLocationCtrl.findRestaurantForVideo(video),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return Text(
+                              'Loading...',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                color: const Color.fromRGBO(142, 142, 147, 1),
+                              ),
+                            );
+                          }
+                          final restaurant = snapshot.data;
+                          return Text(
+                            restaurant != null && restaurant.averageRating > 0
+                                ? '${restaurant.averageRating.toStringAsFixed(1)} stars'
+                                : '0 stars',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                              color: const Color.fromRGBO(142, 142, 147, 1),
+                            ),
+                          );
+                        },
                       ),
                       const SizedBox(width: 8),
                       Image.asset(
@@ -412,10 +446,9 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                       const SizedBox(width: 4),
                       Expanded(
                         child: Obx(() {
-                          if ((homeLocationCtrl.isFetchingInitialData.value || !homeLocationCtrl.isFetchingInitialData.value) && homeLocationCtrl.userPosition == null) {
-                            homeLocationCtrl.fetchUserPosition(context);
+                          if (homeLocationCtrl.userPosition == null) {
                             return Text(
-                              'Calculating distance...',
+                              'Location disabled',
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 fontSize: 12,
@@ -425,33 +458,51 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                               ),
                             );
                           }
-                          if (restaurant == null || (restaurant.latitude == 0.0 && restaurant.longitude == 0.0)) {
-                            return Text(
-                              'Unknown distance',
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                color: const Color.fromRGBO(142, 142, 147, 1),
-                              ),
-                            );
-                          }
-                          double distance = Geolocator.distanceBetween(
-                            homeLocationCtrl.userPosition!.latitude,
-                            homeLocationCtrl.userPosition!.longitude,
-                            restaurant.latitude,
-                            restaurant.longitude,
-                          ) / 1000;
-                          return Text(
-                            '${distance.toStringAsFixed(1)} km away',
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                              color: const Color.fromRGBO(142, 142, 147, 1),
-                            ),
+                          return FutureBuilder<RestaurantModel?>(
+                            future: homeLocationCtrl.findRestaurantForVideo(video),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return Text(
+                                  'Calculating...',
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                    color: const Color.fromRGBO(142, 142, 147, 1),
+                                  ),
+                                );
+                              }
+                              final restaurant = snapshot.data;
+                              if (restaurant == null || (restaurant.latitude == 0.0 && restaurant.longitude == 0.0)) {
+                                return Text(
+                                  'Unknown distance',
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                    color: const Color.fromRGBO(142, 142, 147, 1),
+                                  ),
+                                );
+                              }
+                              double distance = Geolocator.distanceBetween(
+                                homeLocationCtrl.userPosition!.latitude,
+                                homeLocationCtrl.userPosition!.longitude,
+                                restaurant.latitude,
+                                restaurant.longitude,
+                              ) / 1000;
+                              return Text(
+                                '${distance.toStringAsFixed(1)} km away',
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                  color: const Color.fromRGBO(142, 142, 147, 1),
+                                ),
+                              );
+                            },
                           );
                         }),
                       ),
@@ -600,7 +651,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                       final currentDay = DateFormat('EEEE').format(DateTime.now());
                                       final timeFilter = filterCtrl.selectedFilters['Time'];
 
-                                      if (operatingHours == null || operatingHours[currentDay] == null) {
+                                      if (operatingHours == null) {
                                         if (!isFetching) {
                                           homeLocationCtrl.getOperatingHours(restaurant.docID, triggerFilterUpdate: true);
                                         }
@@ -615,7 +666,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                         );
                                       }
 
-                                      if (operatingHours.isEmpty) {
+                                      if (operatingHours.isEmpty || operatingHours[currentDay] == null) {
                                         return Text(
                                           'Unavailable',
                                           style: TextStyle(
@@ -680,7 +731,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                           ),
                                           const SizedBox(width: 4),
                                           Obx(() {
-                                            if ((homeLocationCtrl.isFetchingInitialData.value || !homeLocationCtrl.isFetchingInitialData.value) && homeLocationCtrl.userPosition == null) {
+                                            if (homeLocationCtrl.isFetchingInitialData.value && homeLocationCtrl.userPosition == null) {
                                               homeLocationCtrl.fetchUserPosition(context);
                                               return Text(
                                                 'Fetching...',
@@ -692,6 +743,20 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                                 ),
                                               );
                                             }
+
+                                            if (!homeLocationCtrl.isFetchingInitialData.value && homeLocationCtrl.userPosition == null) {
+                                              // FIX 1: Similar change as above.
+                                              return Text(
+                                                'Location disabled',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: const Color.fromRGBO(142, 142, 147, 1),
+                                                  fontWeight: FontWeight.w500,
+                                                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                                ),
+                                              );
+                                            }
+
                                             if (restaurant.latitude == 0.0 && restaurant.longitude == 0.0) {
                                               return Text(
                                                 'Unknown distance',
@@ -727,11 +792,11 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                               ],
                             ),
                           ),
-                          Image.asset(
-                            'assets/images/Group (5).png',
-                            width: 20,
-                            height: 20,
-                          ),
+                          // Image.asset(
+                          //   'assets/images/Group (5).png',
+                          //   width: 20,
+                          //   height: 20,
+                          // ),
                         ],
                       ),
                     ),
@@ -743,7 +808,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                 left: 4,
                 child: CircleAvatar(
                   radius: 20,
-                  backgroundImage: AssetImage('assets/images/Ellipse 19.png'),
+                  backgroundImage: AssetImage('assets/images/show_logo.png'),
                 ),
               ),
             ],
@@ -816,7 +881,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                         const SizedBox(height: 11),
                         Obx(() {
                           return SizedBox(
-                            height: 220,
+                            height: 156,
                             child: isLoading.value
                                 ? _buildShimmer()
                                 : StreamBuilder<List<RestaurantModel>>(
@@ -832,6 +897,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                   return const Center(child: Text('No restaurants match your criteria'));
                                 }
                                 final restaurants = snapshot.data!.take(4).toList();
+                                Future.wait(restaurants.map((restaurant) => homeLocationCtrl.getOperatingHours(restaurant.docID, triggerFilterUpdate: false)));
                                 return ListView(
                                   scrollDirection: Axis.horizontal,
                                   children: restaurants.map((restaurant) => buildRestaurantCard(restaurant)).toList(),
@@ -924,6 +990,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                               return const Center(child: Text('No restaurants available'));
                             }
                             final restaurants = snapshot.data!.take(4).toList();
+                            Future.wait(restaurants.map((restaurant) => homeLocationCtrl.getOperatingHours(restaurant.docID, triggerFilterUpdate: false)));
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: restaurants

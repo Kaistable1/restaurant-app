@@ -30,7 +30,7 @@ class RestaurantVideoController extends GetxController{
           .get();
 
       videos.value = snapshot.docs
-          .map((doc) => VideoModel.fromMap(doc.data()))
+          .map((doc) => VideoModel.fromMap(doc.data(), doc.id))
           .toList();
 
       for(int i=0; i<videos.length; i++) {

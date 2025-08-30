@@ -77,49 +77,6 @@ class RestaurantDetailScreen extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text(
-                                restaurantModel!.averageRating.toStringAsFixed(1),
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  fontFamily: 'PlusJakartaSans',
-                                ),
-                              ),
-                              const SizedBox(width: 4),
-                              SizedBox(
-                                height: 10,
-                                child: RatingBar(
-                                  itemSize: 10,
-                                  ignoreGestures: true,
-                                  initialRating: restaurantModel!.averageRating,
-                                  minRating: 1,
-                                  direction: Axis.horizontal,
-                                  allowHalfRating: true,
-                                  itemCount: 5,
-                                  ratingWidget: RatingWidget(
-                                    full: Image.asset(
-                                      'assets/images/star yellow.png',
-                                      height: 14,
-                                      color: Colors.yellow[600],
-                                    ),
-                                    half: Image.asset(
-                                      'assets/images/star yellow.png',
-                                      height: 14,
-                                      color: Colors.yellow[600],
-                                    ),
-                                    empty: Image.asset(
-                                      'assets/images/star_empty.png',
-                                      height: 14,
-                                      color: const Color(0xFFBBBBBB),
-                                    ),
-                                  ),
-                                  itemPadding: const EdgeInsets.only(left: 2.0),
-                                  onRatingUpdate: (rating) {
-                                    print(rating);
-                                  },
-                                ),
-                              ),
-                              const SizedBox(width: 16),
                               Padding(
                                 padding: const EdgeInsets.only(top: 2),
                                 child: Image.asset(

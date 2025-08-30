@@ -34,9 +34,9 @@ class FilterController extends GetxController {
     } else {
       availableCities.value = [];
     }
-    if(availableCities.isNotEmpty) {
+    if(availableCities.isNotEmpty) { //
       filterOptions['City'] = availableCities.toList(); // Sync with filterOptions
-    }
+    } //
     print("Available cities: ${availableCities.length}");
     update();
   }

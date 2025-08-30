@@ -47,9 +47,9 @@ class CategoryController extends GetxController {
 
   final locationController = Get.find<HomeLocationController>();
   getCurrentLatLong(context) async {
-    Position userLocation =
+    Position? userLocation =
         await locationController.getCurrentLocation(context);
-    userLatitude.value = userLocation.latitude;
+    userLatitude.value = userLocation!.latitude;
     userLongitude.value = userLocation.longitude;
   }
 }

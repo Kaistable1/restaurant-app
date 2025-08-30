@@ -48,11 +48,22 @@ class HomeLocationController extends GetxController {
   var videos = <VideoModel>[].obs;
   var thumbnailPaths = <int, String>{}.obs;
   bool _isGeneratingThumbnail = false;
+  final RxMap<String, RestaurantModel?> restaurantCache = <String, RestaurantModel?>{}.obs;
   ////
 
+  @override
   void onInit() {
     super.onInit();
-    fetchUserPosition(Get.context!);
+    isFetchingInitialData.value = true;
+    positionFuture = getCurrentLocation(null).catchError((e) {
+      print('Location error: $e');
+      return null;
+    });
+    positionFuture.then((pos) {
+      userPosition = pos;
+    }).whenComplete(() {
+      isFetchingInitialData.value = false;
+    });
     fetchVideos();
     applySearchAndFilters();
   }
@@ -66,7 +77,7 @@ class HomeLocationController extends GetxController {
           .get();
 
       videos.value = snapshot.docs
-          .map((doc) => VideoModel.fromMap(doc.data()))
+          .map((doc) => VideoModel.fromMap(doc.data(), doc.id))
           .toList();
 
       filteredVideos.value = videos.toList(); // Initialize filteredVideos with all videos
@@ -102,29 +113,18 @@ class HomeLocationController extends GetxController {
   ////
 
   void fetchUserPosition(BuildContext context) async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return;
+    isFetchingInitialData.value = true;
+    try {
+      positionFuture = getCurrentLocation(context).catchError((e) {
+        print(e);
+        return null;
+      });
+      userPosition = await positionFuture;
+    } catch (e) {
+      userPosition = null;
+    } finally {
+      isFetchingInitialData.value = false;
     }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return;
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      return;
-    }
-
-    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    userPosition = position;
-    isFetchingInitialData.value = false;
   }
 
   Widget buildImage(String url, {required double width, BoxFit fit = BoxFit.cover, double height = 0}) {
@@ -150,9 +150,36 @@ class HomeLocationController extends GetxController {
   //   };
   // }
 
-  RestaurantModel? findRestaurantForVideo(VideoModel video) {
-    // Mock implementation for finding restaurant
-    return null;
+  Future<RestaurantModel?> findRestaurantForVideo(VideoModel video) async {
+    if (video.videoId == null || video.zipCode == null || video.restaurantName == null) {
+      return null;
+    }
+
+    // Check cache first
+    if (restaurantCache.containsKey(video.videoId)) {
+      return restaurantCache[video.videoId];
+    }
+
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('restaurants')
+          .where('zipCode', isEqualTo: video.zipCode)
+          .where('resName', isEqualTo: video.restaurantName)
+          .limit(1)
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        final restaurant = RestaurantModel.fromDocumentSnapshot(snapshot.docs.first);
+        restaurantCache[video.videoId!] = restaurant;
+        return restaurant;
+      }
+      restaurantCache[video.videoId!] = null;
+      return null;
+    } catch (e) {
+      print('Error finding restaurant for video ${video.videoId}: $e');
+      restaurantCache[video.videoId!] = null;
+      return null;
+    }
   }
 
   Stream<List<RestaurantModel>> getAllRestaurants() {
@@ -392,7 +419,8 @@ class HomeLocationController extends GetxController {
   // }
 
   Future<Map<String, Map<String, Map<String, dynamic>>>?> getOperatingHours(
-      String restaurantId, {bool triggerFilterUpdate = false}) async {
+      String restaurantId, {bool triggerFilterUpdate = false})
+  async {
     if (operatingHoursCache.containsKey(restaurantId)) {
       print('Returning cached operating hours for $restaurantId');
       return operatingHoursCache[restaurantId];
@@ -548,14 +576,18 @@ class HomeLocationController extends GetxController {
     }
   }
 
-  Future<Position> getCurrentLocation(BuildContext context) async {
+  late Future<Position?> positionFuture;
+  Future<Position?> getCurrentLocation(BuildContext? context) async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
 
     while (!serviceEnabled) {
+      if (context == null) {
+        return Future.error('Location services are disabled.');
+      }
       bool? enableLocation = await showDialog<bool>(
         context: context,
         barrierDismissible: false,
-        builder: (BuildContext context) {
+        builder: (BuildContext dialogContext) {
           return AlertDialog(
             title: const Text('Location Services Disabled'),
             content: const Text('Please enable location services to continue.'),
@@ -563,14 +595,14 @@ class HomeLocationController extends GetxController {
               TextButton(
                 child: const Text('Cancel'),
                 onPressed: () {
-                  Navigator.of(context).pop(false);
+                  Navigator.of(dialogContext).pop(false);
                 },
               ),
               TextButton(
                 child: const Text('Open Settings'),
                 onPressed: () async {
                   await Geolocator.openLocationSettings();
-                  Navigator.of(context).pop(true);
+                  Navigator.of(dialogContext).pop(true); // Dismiss dialog after opening settings
                 },
               ),
             ],
@@ -578,22 +610,28 @@ class HomeLocationController extends GetxController {
         },
       );
 
-      if (enableLocation == false) {
-        return Future.error('Location services are disabled.');
-      }
-
       serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        if (enableLocation == false) {
+          return Future.error('Location services are disabled.');
+        }
+        // continue loop if returned from settings but still disabled
+      }
     }
 
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.deniedForever) {
-        return Future.error('Location permissions are permanently denied.');
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied.');
       }
     }
 
-    return await Geolocator.getCurrentPosition();
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error('Location permissions are permanently denied.');
+    }
+
+    return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
   }
 
   void filterRestaurants(String query) {
@@ -723,7 +761,7 @@ class HomeLocationController extends GetxController {
       List<RestaurantModel> restaurants,
       double radiusKm,
       BuildContext context) async {
-    Position userLocation = await getCurrentLocation(context);
+    Position? userLocation = await getCurrentLocation(context);
     List<String> selectedFilters =
         filterCtrl.selectedFilters.values.expand((list) => list).toList();
     selectedFilters.addAll([
@@ -738,7 +776,7 @@ class HomeLocationController extends GetxController {
 
     return timeFilteredRestaurants.where((restaurant) {
       bool withinRadius = isWithinRadius(
-        userLocation,
+        userLocation!,
         restaurant.latitude,
         restaurant.longitude,
         radiusKm,

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class VideoModel {
+  final String? videoId;
   final String? atmosphere;
   final String? causines;
   final String? city;
@@ -16,6 +17,7 @@ class VideoModel {
   final String? zipCode;
 
   VideoModel({
+    this.videoId,
     this.atmosphere,
     this.causines,
     this.city,
@@ -31,8 +33,9 @@ class VideoModel {
     this.zipCode,
   });
 
-  factory VideoModel.fromMap(Map<String, dynamic> map) {
+  factory VideoModel.fromMap(Map<String, dynamic> map, String docId) {
     return VideoModel(
+      videoId: docId,
       atmosphere: map['atmosphere'],
       causines: map['causines'],
       city: map['city'],

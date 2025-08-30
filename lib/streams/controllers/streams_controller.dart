@@ -36,7 +36,7 @@ class VideoController extends GetxController {
           .get();
 
       videos.value = snapshot.docs
-          .map((doc) => VideoModel.fromMap(doc.data()))
+          .map((doc) => VideoModel.fromMap(doc.data(), doc.id))
           .toList();
       filteredVideos.value = videos; // Initialize filteredVideos with all videos
       for (var video in filteredVideos) {

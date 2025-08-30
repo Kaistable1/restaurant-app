@@ -124,12 +124,14 @@ class VideosListView extends StatelessWidget {
                         }
                         return GestureDetector(
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => FullVideoScreen(video: video),
-                              ),
-                            );
+                            Get.to(()=>FullVideoScreen(video: video));
+
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => FullVideoScreen(video: video),
+                            //   ),
+                            // );
                           },
                           child: Container(
                             margin: const EdgeInsets.only(bottom: 20),

@@ -1,6 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../../main.dart';
+import '../../../models/resaturant_model.dart';
 import '../../../streams/model/streams_model.dart';
 
 class FullVideoScreen extends StatefulWidget {
@@ -16,6 +21,9 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
   late VideoPlayerController _controller;
   bool _isPlaying = true;
 
+  // Explanation: Tracks whether the video is bookmarked, updated reactively.
+  final RxBool _isBookmarked = false.obs;
+
   @override
   void initState() {
     super.initState();
@@ -25,12 +33,107 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
         _controller.setLooping(true);
         setState(() {});
       });
+
+    // Explanation: For authenticated users, listen to Firestore stream; for unauthenticated, check SharedPreferences.
+    if (auth.currentUser != null) {
+      final userId = auth.currentUser!.uid;
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('saved_videos')
+          .doc(widget.video.videoId) // Assumes videoId property; adjust if different
+          .snapshots()
+          .listen(
+            (snapshot) async {
+          _isBookmarked.value = snapshot.exists;
+          final prefs = await SharedPreferences.getInstance();
+          final savedVideos = prefs.getStringList('saved_videos') ?? [];
+          if(!savedVideos.contains(widget.video.videoId)){
+            savedVideos.add(widget.video.videoId!);
+            prefs.setStringList('saved_videos', savedVideos) ?? [];
+          }
+
+        },
+        onError: (e) {
+          print('Error streaming bookmark status: $e');
+          Get.snackbar('Error', 'Failed to load bookmark status: $e',
+              snackPosition: SnackPosition.BOTTOM);
+        },
+      );
+    } else {
+      _fetchBookmarkStatus();
+    }
   }
 
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  // Explanation: Checks if the video ID is in SharedPreferences 'saved_videos' list.
+  Future<void> _fetchBookmarkStatus() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedVideos = prefs.getStringList('saved_videos') ?? [];
+      _isBookmarked.value = savedVideos.contains(widget.video.videoId);
+    } catch (e) {
+      print('Error fetching bookmark status: $e');
+      Get.snackbar('Error', 'Failed to load bookmark status: $e',
+          snackPosition: SnackPosition.BOTTOM);
+    }
+  }
+
+  // Explanation: Adds or removes the video from favorites in Firestore or SharedPreferences.
+  Future<void> _toggleBookmark() async {
+    try {
+      final videoId = widget.video.videoId; // Assumes videoId property; adjust if different
+      if (_isBookmarked.value) {
+        // Remove from favorites
+        if (auth.currentUser != null) {
+          final userId = auth.currentUser!.uid;
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(userId)
+              .collection('saved_videos')
+              .doc(videoId)
+              .delete();
+          print('Removed video $videoId from Firestore saved_videos');
+        }
+          final prefs = await SharedPreferences.getInstance();
+          final savedVideos = prefs.getStringList('saved_videos') ?? [];
+          savedVideos.remove(videoId);
+          await prefs.setStringList('saved_videos', savedVideos);
+          print('Removed video $videoId from SharedPreferences');
+          _isBookmarked.value = false; // Update RxBool for unauthenticated users
+
+      } else {
+        // Add to favorites
+        if (auth.currentUser != null) {
+          final userId = auth.currentUser!.uid;
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(userId)
+              .collection('saved_videos')
+              .doc(videoId)
+              .set({'videoID': videoId});
+          print('Added video $videoId to Firestore saved_videos');
+        }
+          final prefs = await SharedPreferences.getInstance();
+          final savedVideos = prefs.getStringList('saved_videos') ?? [];
+          if (!savedVideos.contains(videoId)) {
+            savedVideos.add(videoId!);
+            await prefs.setStringList('saved_videos', savedVideos);
+            print('Added video $videoId to SharedPreferences');
+            _isBookmarked.value = true; // Update RxBool for unauthenticated users
+          }
+
+      }
+    } catch (e) {
+      print('Error toggling bookmark: $e');
+      Get.snackbar('Error', 'Failed to update bookmark: $e',
+          snackPosition: SnackPosition.BOTTOM);
+    }
   }
 
   void _togglePlayPause() {
@@ -82,7 +185,7 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
                       children: [
                         const CircleAvatar(
                           radius: 20,
-                          backgroundImage: AssetImage('assets/images/Ellipse 19.png'),
+                          backgroundImage: AssetImage('assets/images/show_logo.png'),
                         ),
                         const SizedBox(width: 8),
                         Expanded(
@@ -96,32 +199,55 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
                             ),
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            // restaurantCtrl.toggleBookmark(restaurant.docID);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 8),
-                            child: Icon(
-                              Icons.bookmark, //  : Icons.bookmark_border,
-                              color: Colors.white,
-                              size: 22,
+                        Obx(
+                              () => GestureDetector(
+                            onTap: _toggleBookmark,
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 8),
+                              child: Icon(
+                                _isBookmarked.value ? Icons.bookmark : Icons.bookmark_border,
+                                color: Colors.white,
+                                size: 22,
+                              ),
                             ),
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 8),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 64),
-                      child: Text(
-                        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white,
-                          fontFamily: 'PlusJakartaSans',
-                        ),
-                      ),
+                    FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                      future: FirebaseFirestore.instance
+        .collection('restaurants')
+        .where('zipCode', isEqualTo: widget.video.zipCode)
+        .where('resName', isEqualTo: widget.video.restaurantName)
+        .limit(1)
+        .get(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return Text(
+                            'Loading description...',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontFamily: 'PlusJakartaSans',
+                            ),
+                          );
+                        }
+                        final restaurant = snapshot.data;
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 64),
+                          child: Text(
+                            restaurant != null && restaurant.size != 0
+                                ? restaurant.docs.first['about']
+                                : 'No description available.',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontFamily: 'PlusJakartaSans',
+                            ),
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 8),
                     Row(
@@ -130,7 +256,7 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
                         Image.asset('assets/icons/location.png', height: 12, width: 12, color: Colors.white,),
                         const SizedBox(width: 4),
                         Text(
-                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                          (widget.video.streetNo ?? '') + ', ' + (widget.video.city ?? '') + ', ' + (widget.video.state ?? ''), // 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.white,

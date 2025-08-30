@@ -15,6 +15,7 @@ import 'package:kaistable_website/screens/edit_profile/edit_profile_page.dart';
 import 'package:kaistable_website/screens/favorite_screen/favorite_screen.dart';
 import 'package:kaistable_website/screens/general_preferences/screens_general/preference_1.dart';
 import 'package:kaistable_website/screens/nav_bar/widgets/custom_button.dart';
+import 'package:kaistable_website/screens/nav_bar/widgets/saved_Resturant.dart';
 
 class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
@@ -23,24 +24,26 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> iconPaths = [
-      'assets/images/change_pass.png',
-      'assets/images/terms_condition-icon.png',
-      'assets/images/terms_condition-icon.png',
-      'assets/images/privacy_img.png',
-      'assets/images/about_img.png',
-      'assets/images/contact_us_img.png',
-      'assets/images/privacy_img.png',
-    ];
-    List<String> tilesNames = [
-      'Change Password',
-      'Change preferences',
-      'Terms and conditions',
-      'Privacy policy',
-      'About app',
-      'Contact us',
-      'Delete Account'
-    ];
+    // List<String> iconPaths = [
+    //   'assets/images/oui_app-saved-objects.png'
+    //   'assets/images/change_pass.png',
+    //   'assets/images/terms_condition-icon.png',
+    //   'assets/images/terms_condition-icon.png',
+    //   'assets/images/privacy_img.png',
+    //   'assets/images/about_img.png',
+    //   'assets/images/contact_us_img.png',
+    //   'assets/images/privacy_img.png',
+    // ];
+    // List<String> tilesNames = [
+    //   'Saved',
+    //   'Change Password',
+    //   'Change preferences',
+    //   'Terms and conditions',
+    //   'Privacy policy',
+    //   'About app',
+    //   'Contact us',
+    //   'Delete Account'
+    // ];
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
@@ -77,7 +80,7 @@ class ProfileScreen extends StatelessWidget {
                         height: 43,
                         width: Get.width * 0.3,
                         ontapp: () async {
-                          await FirebaseAuth.instance.signOut();
+                          await auth.signOut();
                           Get.offAll(() => LoginScreen());
                         },
                       ),
@@ -89,7 +92,7 @@ class ProfileScreen extends StatelessWidget {
                         height: 43,
                         width: Get.width * 0.3,
                         ontapp: () async {
-                          await FirebaseAuth.instance.signOut();
+                          await auth.signOut();
                           Get.offAll(() => SignupScreen());
                         },
                       ),
@@ -205,86 +208,44 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
 
-          //tiles section
-          Flexible(
-            child: ListView.builder(
-              itemCount: auth.currentUser == null
-                  ? tilesNames.length - 2
-                  : tilesNames.length,
-              itemBuilder: (context, index) {
-                // Adjust index if the first tile (Change Password) is hidden
-                int adjustedIndex =
-                    auth.currentUser == null ? index + 2 : index;
-
-                return GestureDetector(
-                  onTap: () {
-                    switch (adjustedIndex) {
-                      case 0:
-                        changePasswordDialogBox();
-                        break;
-                      case 1:
-                        Get.to(Preference1(
-                          isComeFromSetting: true,
-                        ));
-                        break;
-                      case 2:
-                        Get.to(TermsAndCondition());
-                        break;
-                      case 3:
-                        Get.to(const PrivacyPolicy());
-                        break;
-                      case 4:
-                        Get.to(AboutApp());
-                        break;
-                      case 5:
-                        Get.to(ContactUs());
-                        break;
-                      case 6:
-                        deleteAccountDialog(context);
-                        break;
-                    }
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Card(
-                      elevation: 2,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      color: AppColors.whiteColor,
-                      child: ListTile(
-                        leading: Image.asset(
-                          iconPaths[adjustedIndex],
-                          height: 24,
-                          width: 24,
-                          color: AppColors.primaryColor,
-                        ),
-                        title: Text(
-                          tilesNames[adjustedIndex],
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: AppColors.bottomSheetColor,
-                            fontWeight: FontWeight.w400,
-                            fontFamily: 'Nunito-Bold',
-                          ),
-                        ),
-                        trailing: Icon(
-                          Icons.arrow_forward_ios,
-                          size: 16,
-                          color: AppColors.primaryColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  profileListTile(0, context, 'assets/images/oui_app-saved-objects.png', 'Saved'),
+                  auth.currentUser == null ? const SizedBox() : profileListTile(1, context, 'assets/images/change_pass.png', 'Change Password',),
+                  auth.currentUser == null ? const SizedBox() : profileListTile(2, context, 'assets/images/terms_condition-icon.png', 'Change preferences',),
+                  profileListTile(3, context, 'assets/images/terms_condition-icon.png', 'Terms and conditions',),
+                  profileListTile(4, context, 'assets/images/privacy_img.png', 'Privacy policy',),
+                  profileListTile(5, context, 'assets/images/about_img.png', 'About app',),
+                  profileListTile(6, context, 'assets/images/contact_us_img.png', 'Contact us',),
+                  auth.currentUser == null ? const SizedBox() : profileListTile(7, context, 'assets/images/privacy_img.png', 'Delete Account'),
+                ],
+              ),
             ),
           ),
+
+          // //tiles section
+          // Flexible(
+          //   child: ListView.builder(
+          //     itemCount: auth.currentUser == null
+          //         ? tilesNames.length - 3 // Exclude Change Password, Change preferences, Delete Account
+          //         : tilesNames.length,
+          //     itemBuilder: (context, index) {
+          //       int adjustedIndex = auth.currentUser == null
+          //           ? (index == 0 ? 0 : index + 2) // Map index 0 to 0, others skip to 3+
+          //           : index;
+          //
+          //       return profileListTile(adjustedIndex, context, iconPaths[adjustedIndex], tilesNames[adjustedIndex]);
+          //     },
+          //   ),
+          // ),
 
           auth.currentUser == null
               ? SizedBox()
               : Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 75),
+                  padding: const EdgeInsets.only(left: 75, right: 75, top: 4),
                   child: CustomButton(
                     laBelText: 'Logout',
                     fontSize: 15,
@@ -299,9 +260,7 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
 
-          SizedBox(
-            height: Get.height * 0.05,
-          ),
+          SizedBox(height: 20),
         ],
       ),
     );
@@ -354,5 +313,72 @@ deleteAccountDialog(context) async {
         ],
       );
     },
+  );
+}
+
+profileListTile(int adjustedIndex, BuildContext context, String iconPath, String tileName){
+  return GestureDetector(
+    onTap: () {
+      switch (adjustedIndex) {
+        case 0:
+          Get.to(()=>SavedRestaurantsPage());
+          break;
+        case 1:
+          changePasswordDialogBox();
+          break;
+        case 2:
+          Get.to(Preference1(
+            isComeFromSetting: true,
+          ));
+          break;
+        case 3:
+          Get.to(TermsAndCondition());
+          break;
+        case 4:
+          Get.to(const PrivacyPolicy());
+          break;
+        case 5:
+          Get.to(AboutApp());
+          break;
+        case 6:
+          Get.to(ContactUs());
+          break;
+        case 7:
+          Get.to(deleteAccountDialog(context));
+          break;
+      }
+    },
+    child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        color: AppColors.whiteColor,
+        child: ListTile(
+          leading: Image.asset(
+            iconPath,
+            height: 24,
+            width: 24,
+            color: AppColors.primaryColor,
+          ),
+          title: Text(
+            tileName,
+            style: TextStyle(
+              fontSize: 12,
+              color: AppColors.bottomSheetColor,
+              fontWeight: FontWeight.w400,
+              fontFamily: 'Nunito-Bold',
+            ),
+          ),
+          trailing: Icon(
+            Icons.arrow_forward_ios,
+            size: 16,
+            color: AppColors.primaryColor,
+          ),
+        ),
+      ),
+    ),
   );
 }
