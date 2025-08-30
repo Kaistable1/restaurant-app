@@ -225,26 +225,32 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                         Obx(() {
                           if (homeLocationCtrl.isFetchingInitialData.value && homeLocationCtrl.userPosition == null) {
                             homeLocationCtrl.fetchUserPosition(context);
-                            return Text(
-                              'Fetching location...',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                color: const Color.fromRGBO(142, 142, 147, 1),
+                            return Expanded(
+                              child: Text(
+                                'Fetching location...',
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                  color: const Color.fromRGBO(142, 142, 147, 1),
+                                ),
                               ),
                             );
                           }
 
                           if (!homeLocationCtrl.isFetchingInitialData.value && homeLocationCtrl.userPosition == null) {
                             // FIX 1: Change text to 'Location disabled' instead of 'Fetching location...' to avoid misleading users when location is off. No need to call fetchUserPosition repeatedly as it won't succeed without enabling location.
-                            return Text(
-                              'Location disabled',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                color: const Color.fromRGBO(142, 142, 147, 1),
+                            return Expanded(
+                              child: Text(
+                                'Location disabled',
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                  color: const Color.fromRGBO(142, 142, 147, 1),
+                                ),
                               ),
                             );
                           }
@@ -255,13 +261,15 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                             restaurant.latitude,
                             restaurant.longitude,
                           ) / 1000;
-                          return Text(
-                            '${distance.toStringAsFixed(2)} km away',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                              color: const Color.fromRGBO(142, 142, 147, 1),
+                          return Expanded(
+                            child: Text(
+                              '${distance.toStringAsFixed(2)} km away',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                color: const Color.fromRGBO(142, 142, 147, 1),
+                              ),
                             ),
                           );
                         }),
@@ -409,35 +417,35 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      FutureBuilder<RestaurantModel?>(
-                        future: homeLocationCtrl.findRestaurantForVideo(video),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return Text(
-                              'Loading...',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                color: const Color.fromRGBO(142, 142, 147, 1),
-                              ),
-                            );
-                          }
-                          final restaurant = snapshot.data;
-                          return Text(
-                            restaurant != null && restaurant.averageRating > 0
-                                ? '${restaurant.averageRating.toStringAsFixed(1)} stars'
-                                : '0 stars',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                              color: const Color.fromRGBO(142, 142, 147, 1),
-                            ),
-                          );
-                        },
-                      ),
-                      const SizedBox(width: 8),
+                      // FutureBuilder<RestaurantModel?>(
+                      //   future: homeLocationCtrl.findRestaurantForVideo(video),
+                      //   builder: (context, snapshot) {
+                      //     if (snapshot.connectionState == ConnectionState.waiting) {
+                      //       return Text(
+                      //         'Loading...',
+                      //         style: TextStyle(
+                      //           fontSize: 12,
+                      //           fontWeight: FontWeight.w500,
+                      //           fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                      //           color: const Color.fromRGBO(142, 142, 147, 1),
+                      //         ),
+                      //       );
+                      //     }
+                      //     final restaurant = snapshot.data;
+                      //     return Text(
+                      //       restaurant != null && restaurant.averageRating > 0
+                      //           ? '${restaurant.averageRating.toStringAsFixed(1)} stars'
+                      //           : '0 stars',
+                      //       style: TextStyle(
+                      //         fontSize: 12,
+                      //         fontWeight: FontWeight.w500,
+                      //         fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                      //         color: const Color.fromRGBO(142, 142, 147, 1),
+                      //       ),
+                      //     );
+                      //   },
+                      // ),
+                      // const SizedBox(width: 8),
                       Image.asset(
                         'assets/images/Icon (1).png',
                         width: 15,
@@ -445,9 +453,9 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                       ),
                       const SizedBox(width: 4),
                       Expanded(
-                        child: Obx(() {
-                          if (homeLocationCtrl.userPosition == null) {
-                            return Text(
+                        child:
+                          homeLocationCtrl.userPosition == null ?
+                            Text(
                               'Location disabled',
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
@@ -456,9 +464,9 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                 fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                                 color: const Color.fromRGBO(142, 142, 147, 1),
                               ),
-                            );
-                          }
-                          return FutureBuilder<RestaurantModel?>(
+                            ) :
+
+                          FutureBuilder<RestaurantModel?>(
                             future: homeLocationCtrl.findRestaurantForVideo(video),
                             builder: (context, snapshot) {
                               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -503,8 +511,8 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                 ),
                               );
                             },
-                          );
-                        }),
+                          ),
+
                       ),
                       const SizedBox(width: 10),
                       Image.asset(
@@ -635,16 +643,16 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
-                                      '${restaurant.averageRating.toStringAsFixed(1)} stars',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: const Color.fromRGBO(142, 142, 147, 1),
-                                        fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 15),
+                                    // Text(
+                                    //   '${restaurant.averageRating.toStringAsFixed(1)} stars',
+                                    //   style: TextStyle(
+                                    //     fontSize: 12,
+                                    //     color: const Color.fromRGBO(142, 142, 147, 1),
+                                    //     fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                    //     fontWeight: FontWeight.w500,
+                                    //   ),
+                                    // ),
+                                    // const SizedBox(width: 15),
                                     Obx(() {
                                       final operatingHours = homeLocationCtrl.operatingHoursCache[restaurant.docID];
                                       final isFetching = homeLocationCtrl.fetchingOperatingHours.contains(restaurant.docID);
@@ -719,7 +727,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                         children: [
                                           Expanded(
                                             child: Text(
-                                              restaurant.address.isNotEmpty ? restaurant.address : 'Unknown Address',
+                                              '${restaurant.address}, ${restaurant.city}, ${restaurant.country}${restaurant.zipCode == '' ? '' : ', ${restaurant.zipCode}' }',
                                               style: TextStyle(
                                                 fontSize: 12,
                                                 color: const Color.fromRGBO(142, 142, 147, 1),
@@ -734,7 +742,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                             if (homeLocationCtrl.isFetchingInitialData.value && homeLocationCtrl.userPosition == null) {
                                               homeLocationCtrl.fetchUserPosition(context);
                                               return Text(
-                                                'Fetching...',
+                                                'Fetching ...',
                                                 style: TextStyle(
                                                   fontSize: 12,
                                                   color: const Color.fromRGBO(142, 142, 147, 1),
@@ -857,7 +865,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                     return ListView(
                       controller: scrollCtrl,
                       physics: const ClampingScrollPhysics(),
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
                       children: [
                         Center(
                           child: Container(
@@ -870,12 +878,15 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                             ),
                           ),
                         ),
-                        Text(
-                          'Restaurants in the area',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w900,
-                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            'Restaurants in the area',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w900,
+                              fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 11),
@@ -900,6 +911,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                 Future.wait(restaurants.map((restaurant) => homeLocationCtrl.getOperatingHours(restaurant.docID, triggerFilterUpdate: false)));
                                 return ListView(
                                   scrollDirection: Axis.horizontal,
+                                  padding: const EdgeInsets.symmetric(horizontal: 16),
                                   children: restaurants.map((restaurant) => buildRestaurantCard(restaurant)).toList(),
                                 );
                               },
@@ -910,7 +922,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                           alignment: Alignment.center,
                           child: TextButton(
                             onPressed: () {
-                              Get.to(() => RestaurantsPage());
+                              Get.to(() => RestaurantsPage(fromHome: true));
                             },
                             child: Text(
                               'See all',
@@ -924,12 +936,15 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        Text(
-                          'Streams',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w900,
-                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            'Streams',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w900,
+                              fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -940,6 +955,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                 ? const Center(child: Text('No videos available'))
                                 : ListView(
                               scrollDirection: Axis.horizontal,
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
                               children: homeLocationCtrl.filteredVideos.asMap().entries.take(4).map((entry) {
                                 final index = entry.key;
                                 final video = entry.value;
@@ -952,7 +968,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                           alignment: Alignment.center,
                           child: TextButton(
                             onPressed: () {
-                              Get.to(VideosListView());
+                              Get.to(VideosListView(fromHome: true));
                             },
                             child: Text(
                               'See all',
@@ -966,12 +982,15 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        Text(
-                          'Experience & Vibes',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w900,
-                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            'Curated for you',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w900,
+                              fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -991,14 +1010,17 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                             }
                             final restaurants = snapshot.data!.take(4).toList();
                             Future.wait(restaurants.map((restaurant) => homeLocationCtrl.getOperatingHours(restaurant.docID, triggerFilterUpdate: false)));
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: restaurants
-                                  .map((restaurant) => Padding(
-                                padding: const EdgeInsets.only(bottom: 12),
-                                child: buildExperienceVibeCard(restaurant),
-                              ))
-                                  .toList(),
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: restaurants
+                                    .map((restaurant) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 12),
+                                  child: buildExperienceVibeCard(restaurant),
+                                ))
+                                    .toList(),
+                              ),
                             );
                           },
                         ),

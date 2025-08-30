@@ -5,7 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../main.dart';
-import '../../../models/resaturant_model.dart';
 import '../../../streams/model/streams_model.dart';
 
 class FullVideoScreen extends StatefulWidget {
@@ -29,7 +28,7 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
     super.initState();
     _controller = VideoPlayerController.networkUrl(Uri.parse(widget.video.url!))
       ..initialize().then((_) {
-        _controller.play();
+        // _controller.play();
         _controller.setLooping(true);
         setState(() {});
       });
@@ -164,9 +163,21 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            _controller.value.isInitialized
-                ? VideoPlayer(_controller)
-                : const Center(child: CircularProgressIndicator()),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              color: Colors.black,
+              child: _controller.value.isInitialized
+                  ? FittedBox(
+                fit: BoxFit.cover,
+                child: SizedBox(
+                  width: _controller.value.size.width,
+                  height: _controller.value.size.height,
+                  child: VideoPlayer(_controller),
+                ),
+              )
+                  : const Center(child: CircularProgressIndicator()),
+            ),
             Positioned(
               bottom: 16, // Position above the bottom navigation bar height
               left: 0,

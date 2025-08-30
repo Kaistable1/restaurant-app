@@ -139,40 +139,40 @@ class RestaurantModel {
     };
   }
 
-  // Optional: Factory to create from map
-  factory RestaurantModel.fromMap(Map<String, dynamic> data) {
-    return RestaurantModel(
-      about: data['about'] ?? '',
-      address: data['address'] ?? '',
-      atmosphereList: List<String>.from(data['atmopshereList'] ?? []),
-      averageRating: (data['averageRating'] ?? 0).toDouble(),
-      city: data['city'] ?? '',
-      country: data['country'] ?? '',
-      createdAt: data['createdAt'] ?? Timestamp.now(),
-      dietaryList: List<String>.from(data['dietaryList'] ?? []),
-      docID: data['docID'] ?? '',
-      entertainmentScheduleList: List<EntertainmentScheduleModel>.from(
-          data['entertainmentScheduleList'] ?? []),
-      facilityList: List<String>.from(data['facilityList'] ?? []),
-      imagesList: List<String>.from(data['resImages'] ?? []),
-      vibesList: List<String>.from(data['vibesList'] ?? []),
-      latitude: (data['latitude'] ?? 0.0).toDouble(),
-      logoImage: data['logoImage'] ?? '',
-      longitude: (data['longitude'] ?? 0.0).toDouble(),
-      menuList: List<MenuModel>.from(data['menuList'] ?? []),
-      password: data['password'] ?? '',
-      priceRange: data['priceRange'] ?? '',
-      resEmail: data['resEmail'] ?? '',
-      resName: data['resName'] ?? '',
-      instaLink: data['socialLink'] ?? '',
-      tiktokLink: data['socialMedia'] ?? '',
-      specialConditions: data['specialConditions'] ?? '',
-      spokenLanguage: data['spokenLanguage'] ?? '',
-      socialLink: '',
-      socialMedia: '',
-      zipCode: '',
-    );
-  }
+  // // Optional: Factory to create from map
+  // factory RestaurantModel.fromMap(Map<String, dynamic> data) {
+  //   return RestaurantModel(
+  //     about: data['about'] ?? '',
+  //     address: data['address'] ?? '',
+  //     atmosphereList: List<String>.from(data['atmopshereList'] ?? []),
+  //     averageRating: (data['averageRating'] ?? 0).toDouble(),
+  //     city: data['city'] ?? '',
+  //     country: data['country'] ?? '',
+  //     createdAt: data['createdAt'] ?? Timestamp.now(),
+  //     dietaryList: List<String>.from(data['dietaryList'] ?? []),
+  //     docID: data['docID'] ?? '',
+  //     entertainmentScheduleList: List<EntertainmentScheduleModel>.from(
+  //         data['entertainmentScheduleList'] ?? []),
+  //     facilityList: List<String>.from(data['facilityList'] ?? []),
+  //     imagesList: List<String>.from(data['resImages'] ?? []),
+  //     vibesList: List<String>.from(data['vibesList'] ?? []),
+  //     latitude: (data['latitude'] ?? 0.0).toDouble(),
+  //     logoImage: data['logoImage'] ?? '',
+  //     longitude: (data['longitude'] ?? 0.0).toDouble(),
+  //     menuList: List<MenuModel>.from(data['menuList'] ?? []),
+  //     password: data['password'] ?? '',
+  //     priceRange: data['priceRange'] ?? '',
+  //     resEmail: data['resEmail'] ?? '',
+  //     resName: data['resName'] ?? '',
+  //     instaLink: data['socialLink'] ?? '',
+  //     tiktokLink: data['socialMedia'] ?? '',
+  //     specialConditions: data['specialConditions'] ?? '',
+  //     spokenLanguage: data['spokenLanguage'] ?? '',
+  //     socialLink: '',
+  //     socialMedia: '',
+  //     zipCode: '',
+  //   );
+  // }
 
   // From Firestore Document
   static RestaurantModel fromDocumentSnapshot(
@@ -183,7 +183,7 @@ class RestaurantModel {
       resName: data['resName'] ?? '',
       averageRating: (data['averageRating'] ?? 0).toDouble(),
       docID: data['docID'] ?? '',
-      zipCode: data['zipCode'] ?? '',
+      zipCode: data['zipcode'] ?? '',
       imagesList: List<String>.from(data['resImages'] ?? []),
       city: data['city'] ?? '',
       resEmail: data['resEmail'] ?? '',

@@ -327,7 +327,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                 width: 12)),
                                         const SizedBox(width: 8),
                                         Text(
-                                          restaurantModel!.address, // '304 Liverpool Blvd, Portsmouth, CA 30103',
+                                          '${restaurantModel?.address ?? ''}, ${restaurantModel?.city ?? ''}, ${restaurantModel?.country ?? ''}${restaurantModel == null || restaurantModel!.zipCode == '' ? '' : ', ${restaurantModel!.zipCode}' }', // '304 Liverpool Blvd, Portsmouth, CA 30103',
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500,

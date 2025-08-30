@@ -12,24 +12,24 @@ import 'package:kaistable_website/screens/nav_bar/controller/home_controller.dar
 import 'package:kaistable_website/screens/nav_bar/widgets/discover_controller.dart';
 import 'package:kaistable_website/screens/nav_bar/controller/search_controller.dart';
 
+import '../../main.dart';
 import '../../streams/views/streams_view.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  MainScreen({super.key});
 
   @override
   _MainScreenState createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-  final PersistentTabController _controller = PersistentTabController(initialIndex: 0);
 
   // List of screens for the bottom navigation bar
   List<Widget> _buildScreens() {
     return [
       const HomeScreenNew(),
-      const RestaurantsPage(),
-      VideosListView(),
+      RestaurantsPage(fromHome: false),
+      VideosListView(fromHome: false),
       // SavedRestaurantsPage(),
       ProfileScreen(),
     ];
@@ -39,8 +39,8 @@ class _MainScreenState extends State<MainScreen> {
   List<Widget> _buildSplashScreen() {
     return [
       const HomeScreenNew(),
-      const RestaurantsPage(),
-      VideosListView(),
+      RestaurantsPage(fromHome: false),
+      VideosListView(fromHome: false),
       // SavedRestaurantsPage(),
       ProfileScreen(),
     ];
@@ -120,6 +120,9 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void initState() {
+
+    navbarController = PersistentTabController(initialIndex: 0);
+
     super.initState();
     // Initialize controllers
     Get.put(HomeController());
@@ -135,7 +138,7 @@ class _MainScreenState extends State<MainScreen> {
         builder: (controller) {
           return PersistentTabView(
             context,
-            controller: _controller,
+            controller: navbarController,
             screens: controller.isSpotlightFinish.value ? _buildScreens() : _buildSplashScreen(),
             items: controller.isSpotlightFinish.value ? _navBarsItems() : _splashNavBarItems(),
             handleAndroidBackButtonPress: true,

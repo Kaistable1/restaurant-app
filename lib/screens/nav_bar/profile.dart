@@ -50,23 +50,23 @@ class ProfileScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.whiteColor,
         surfaceTintColor: Colors.white,
-        centerTitle: true,
         automaticallyImplyLeading: false,
         title: Text(
           'Profile',
           style: TextStyle(
-            fontSize: 17,
-            color: AppColors.bottomSheetColor,
-            fontWeight: FontWeight.w700,
-            fontFamily: 'Nunito-Bold',
-          ),
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),),
+        centerTitle: true,
+        leading: BackButton(
+          onPressed: () => navbarController.jumpToTab(0),
         ),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          auth.currentUser == null
+          auth.currentUser == null || currentUserDataModel == null
               ? Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),
                   child: Row(
@@ -214,13 +214,13 @@ class ProfileScreen extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   profileListTile(0, context, 'assets/images/oui_app-saved-objects.png', 'Saved'),
-                  auth.currentUser == null ? const SizedBox() : profileListTile(1, context, 'assets/images/change_pass.png', 'Change Password',),
-                  auth.currentUser == null ? const SizedBox() : profileListTile(2, context, 'assets/images/terms_condition-icon.png', 'Change preferences',),
+                  auth.currentUser == null || currentUserDataModel == null ? const SizedBox() : profileListTile(1, context, 'assets/images/change_pass.png', 'Change Password',),
+                  auth.currentUser == null || currentUserDataModel == null ? const SizedBox() : profileListTile(2, context, 'assets/images/terms_condition-icon.png', 'Change preferences',),
                   profileListTile(3, context, 'assets/images/terms_condition-icon.png', 'Terms and conditions',),
                   profileListTile(4, context, 'assets/images/privacy_img.png', 'Privacy policy',),
                   profileListTile(5, context, 'assets/images/about_img.png', 'About app',),
                   profileListTile(6, context, 'assets/images/contact_us_img.png', 'Contact us',),
-                  auth.currentUser == null ? const SizedBox() : profileListTile(7, context, 'assets/images/privacy_img.png', 'Delete Account'),
+                  auth.currentUser == null || currentUserDataModel == null ? const SizedBox() : profileListTile(7, context, 'assets/images/privacy_img.png', 'Delete Account'),
                 ],
               ),
             ),
@@ -242,7 +242,7 @@ class ProfileScreen extends StatelessWidget {
           //   ),
           // ),
 
-          auth.currentUser == null
+          auth.currentUser == null || currentUserDataModel == null
               ? SizedBox()
               : Padding(
                   padding: const EdgeInsets.only(left: 75, right: 75, top: 4),

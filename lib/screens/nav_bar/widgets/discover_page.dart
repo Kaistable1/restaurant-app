@@ -17,7 +17,8 @@ import 'discover_controller.dart';
 
 
 class RestaurantsPage extends StatefulWidget {
-  const RestaurantsPage({Key? key}) : super(key: key);
+  bool fromHome = false;
+  RestaurantsPage({Key? key, required this.fromHome}) : super(key: key);
 
   @override
   State<RestaurantsPage> createState() => _RestaurantsPageState();
@@ -314,8 +315,15 @@ class _RestaurantsPageState extends State<RestaurantsPage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
-        title: const Center(child: Text('Restaurants in the area')),
-        leading: const BackButton(),
+        title: Text('Restaurants in the area',
+          style: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),),
+        centerTitle: true,
+        leading: BackButton(
+          onPressed: () => widget.fromHome ? Get.back() : navbarController.jumpToTab(0),
+        ),
       ),
       body: Column(
         children: [

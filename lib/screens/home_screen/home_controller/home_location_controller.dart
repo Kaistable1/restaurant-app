@@ -612,9 +612,9 @@ class HomeLocationController extends GetxController {
 
       serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        if (enableLocation == false) {
+        // if (enableLocation == false) {
           return Future.error('Location services are disabled.');
-        }
+        // }
         // continue loop if returned from settings but still disabled
       }
     }

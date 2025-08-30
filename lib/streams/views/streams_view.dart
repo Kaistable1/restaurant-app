@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:io';
 
+import '../../main.dart';
 import '../../screens/nav_bar/full_screen_video/full_screen_video_screen.dart';
 import '../controllers/streams_controller.dart';
 import '../model/streams_model.dart';
 
 
 class VideosListView extends StatelessWidget {
-  VideosListView({super.key});
+  bool fromHome = false;
+  VideosListView({super.key, required this.fromHome});
 
 
   final RxMap<String, bool> showFilterDropdowns = <String, bool>{}.obs;
@@ -50,7 +53,9 @@ class VideosListView extends StatelessWidget {
           ),
         ),
         centerTitle: true,
-        leading: const BackButton(),
+        leading: BackButton(
+          onPressed: () => fromHome ? Get.back() : navbarController.jumpToTab(0),
+        ),
       ),
       backgroundColor: Colors.white,
       body: Stack(
@@ -104,53 +109,68 @@ class VideosListView extends StatelessWidget {
               const SizedBox(height: 36),
               const SizedBox(height: 16),
               Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Obx(() {
-                    if (controller.isLoading.value) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    if (controller.filteredVideos.isEmpty) {
-                      return const Center(child: Text('No videos available'));
-                    }
-                    return ListView.builder(
-                      itemCount: controller.filteredVideos.length,
-                      itemBuilder: (context, index) {
-                        final video = controller.filteredVideos[index];
-                        if (controller.thumbnailPaths[video.url] == null &&
-                            video.url != null &&
-                            video.url!.isNotEmpty) {
-                          controller.generateThumbnail(video.url!);
-                        }
-                        return GestureDetector(
-                          onTap: () {
-                            Get.to(()=>FullVideoScreen(video: video));
+                child: Obx(() {
+                  if (controller.isLoading.value) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (controller.filteredVideos.isEmpty) {
+                    return const Center(child: Text('No videos available'));
+                  }
+                  return ListView.builder(
+                    itemCount: controller.filteredVideos.length,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemBuilder: (context, index) {
+                      final video = controller.filteredVideos[index];
+                      if (controller.thumbnailPaths[video.url] == null &&
+                          video.url != null &&
+                          video.url!.isNotEmpty) {
+                        controller.generateThumbnail(video.url!);
+                      }
+                      return GestureDetector(
+                        onTap: () {
+                          Get.to(()=>FullVideoScreen(video: video));
 
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) => FullVideoScreen(video: video),
-                            //   ),
-                            // );
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.only(bottom: 20),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              color: Colors.grey[200],
-                            ),
-                            clipBehavior: Clip.antiAlias,
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                AspectRatio(
-                                  aspectRatio: 356 / 520,
-                                  child: Obx(() {
-                                    return controller.thumbnailPaths[video.url] != null
-                                        ? Image.file(
-                                      File(controller.thumbnailPaths[video.url]!),
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (context, error, stackTrace) => Image.network(
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) => FullVideoScreen(video: video),
+                          //   ),
+                          // );
+                        },
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.only(bottom: 16),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16),
+                                color: Colors.grey[200],
+                              ),
+                              clipBehavior: Clip.antiAlias,
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  AspectRatio(
+                                    aspectRatio: 356 / 520,
+                                    child: Obx(() {
+                                      return controller.thumbnailPaths[video.url] != null
+                                          ? Image.file(
+                                        File(controller.thumbnailPaths[video.url]!),
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (context, error, stackTrace) => Image.network(
+                                          'https://via.placeholder.com/640x360',
+                                          fit: BoxFit.cover,
+                                          loadingBuilder: (context, child, loadingProgress) {
+                                            if (loadingProgress == null) return child;
+                                            return const Center(child: CircularProgressIndicator());
+                                          },
+                                          errorBuilder: (context, error, stackTrace) => Container(
+                                            color: Colors.grey[300],
+                                            child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
+                                          ),
+                                        ),
+                                      )
+                                          : Image.network(
                                         'https://via.placeholder.com/640x360',
                                         fit: BoxFit.cover,
                                         loadingBuilder: (context, child, loadingProgress) {
@@ -161,90 +181,88 @@ class VideosListView extends StatelessWidget {
                                           color: Colors.grey[300],
                                           child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
                                         ),
+                                      );
+                                    }),
+                                  ),
+                                  Positioned.fill(
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child: Icon(
+                                        Icons.play_circle_fill,
+                                        size: 60,
+                                        color: Colors.white,
                                       ),
-                                    )
-                                        : Image.network(
-                                      'https://via.placeholder.com/640x360',
-                                      fit: BoxFit.cover,
-                                      loadingBuilder: (context, child, loadingProgress) {
-                                        if (loadingProgress == null) return child;
-                                        return const Center(child: CircularProgressIndicator());
-                                      },
-                                      errorBuilder: (context, error, stackTrace) => Container(
-                                        color: Colors.grey[300],
-                                        child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
-                                      ),
-                                    );
-                                  }),
-                                ),
-                                Positioned.fill(
-                                  child: Align(
-                                    alignment: Alignment.center,
-                                    child: Icon(
-                                      Icons.play_circle_fill,
-                                      size: 60,
-                                      color: Colors.white,
                                     ),
                                   ),
-                                ),
-                                // Positioned(
-                                //   bottom: 0,
-                                //   left: 0,
-                                //   right: 0,
-                                //   child: Container(
-                                //     padding: const EdgeInsets.all(10),
-                                //     decoration: BoxDecoration(
-                                //       color: Colors.teal.withOpacity(0.85),
-                                //       borderRadius: const BorderRadius.only(
-                                //         bottomLeft: Radius.circular(16),
-                                //         bottomRight: Radius.circular(16),
-                                //       ),
-                                //     ),
-                                //     child: Column(
-                                //       crossAxisAlignment: CrossAxisAlignment.start,
-                                //       children: [
-                                //         Row(
-                                //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                //           children: [
-                                //             Text(
-                                //               video.restaurantName ?? 'Unknown Restaurant',
-                                //               style: const TextStyle(
-                                //                 fontSize: 16,
-                                //                 fontWeight: FontWeight.bold,
-                                //                 color: Colors.white,
-                                //               ),
-                                //               maxLines: 1,
-                                //               overflow: TextOverflow.ellipsis,
-                                //             ),
-                                //             Image.asset(
-                                //               'assets/images/Group (5).png',
-                                //               width: 20,
-                                //               height: 20,
-                                //             ),
-                                //           ],
-                                //         ),
-                                //         const SizedBox(height: 4),
-                                //         Text(
-                                //           "${video.streetNo ?? ''} ${video.city ?? ''} ${video.zipCode ?? ''}",
-                                //           style: const TextStyle(
-                                //             fontSize: 14,
-                                //             color: Colors.white,
-                                //           ),
-                                //           maxLines: 1,
-                                //           overflow: TextOverflow.ellipsis,
-                                //         ),
-                                //       ],
-                                //     ),
-                                //   ),
-                                // ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    );
-                  }),
-                ),
+                            Container(
+                              // height: 50,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.black12,
+                                    blurRadius: 4,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          video.restaurantName ?? '',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Image.asset(
+                                              'assets/images/Icon (1).png',
+                                              width: 15,
+                                              height: 13,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Expanded(
+                                              child: Text(
+                                                '${video.streetNo ?? ''}, ${video.city ?? ''}, ${video.state ?? ''}, ${video.zipCode ?? ''}',
+                                                style: TextStyle(
+                                                  fontSize: 13,
+                                                  color: const Color.fromRGBO(142, 142, 147, 1),
+                                                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 28),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                }),
               ),
             ],
           ),

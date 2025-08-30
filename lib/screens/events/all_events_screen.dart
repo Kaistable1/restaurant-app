@@ -396,7 +396,7 @@ class AllEventsScreen extends StatelessWidget {
                                           GestureDetector(
                                             onTap: () async {
 
-                                              RestaurantModel? restModel = await FirebaseFirestore.instance.collection('restaurants').where('address', isEqualTo: tabList[index].location).withConverter(fromFirestore: (snapshot, _)=>RestaurantModel.fromMap(snapshot.data()!), toFirestore: (RestaurantModel rest, _)=>rest.toMap()).get().then((val)=>val.docs.first.data());
+                                              RestaurantModel? restModel = await FirebaseFirestore.instance.collection('restaurants').where('address', isEqualTo: tabList[index].location).withConverter(fromFirestore: (snapshot, _)=>RestaurantModel.fromDocumentSnapshot(snapshot), toFirestore: (RestaurantModel rest, _)=>rest.toMap()).get().then((val)=>val.docs.first.data());
 
                                               if(restModel != null) {
                                                 Get.to(() => EventScreen(restModel: restModel));

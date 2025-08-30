@@ -9,6 +9,7 @@ import 'package:kaistable_website/models/usermodel.dart';
 import 'package:kaistable_website/splash_screen/splashscreen.dart';
 import 'package:kaistable_website/widgets/global_functions.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 import 'main_controller.dart';
@@ -112,6 +113,8 @@ Future<void> subscribeToTopic(String topic) async {
 }
 
 RxBool showcaseInProgress = false.obs;
+
+late PersistentTabController navbarController;
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});
