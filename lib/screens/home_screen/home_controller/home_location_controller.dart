@@ -20,7 +20,7 @@ import '../../../streams/model/streams_model.dart';
 import '../../nav_bar/controller/search_controller.dart';
 
 class HomeLocationController extends GetxController {
-  Position? userPosition = null;
+  final Rx<Position?> userPosition = Rx<Position?>(null);
   final RxBool isFetchingInitialData = true.obs;
   final RxInt selectedDistance = 0.obs;
   final List<String> distanceOptions = ['All', '1 mi', '5 mi', '10 mi', '25 mi'];
@@ -60,7 +60,7 @@ class HomeLocationController extends GetxController {
       return null;
     });
     positionFuture.then((pos) {
-      userPosition = pos;
+      userPosition.value = pos;
     }).whenComplete(() {
       isFetchingInitialData.value = false;
     });
@@ -119,9 +119,9 @@ class HomeLocationController extends GetxController {
         print(e);
         return null;
       });
-      userPosition = await positionFuture;
+      userPosition.value = await positionFuture;
     } catch (e) {
-      userPosition = null;
+      userPosition.value = null;
     } finally {
       isFetchingInitialData.value = false;
     }
@@ -308,15 +308,15 @@ class HomeLocationController extends GetxController {
       }
 
       // Apply distance filter (unchanged for restaurants)
-      if (selectedDistance.value > 0 && userPosition != null) {
+      if (selectedDistance.value > 0 && userPosition.value != null) {
         final maxDistanceKm = selectedDistance.value * 1.60934; // Convert miles to kilometers
         restaurants = restaurants.where((restaurant) {
           if (restaurant.latitude == 0.0 && restaurant.longitude == 0.0) {
             return false;
           }
           final distance = Geolocator.distanceBetween(
-            userPosition!.latitude,
-            userPosition!.longitude,
+            userPosition.value!.latitude,
+            userPosition.value!.longitude,
             restaurant.latitude,
             restaurant.longitude,
           ) / 1000; // Distance in kilometers

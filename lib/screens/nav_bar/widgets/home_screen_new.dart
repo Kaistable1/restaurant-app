@@ -27,7 +27,7 @@ class HomeScreenNew extends StatefulWidget {
   _HomeScreenNewState createState() => _HomeScreenNewState();
 }
 
-class _HomeScreenNewState extends State<HomeScreenNew> {
+class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserver {
   final FilterController filterCtrl = Get.put(FilterController());
   // final VideoController videoCtrl = Get.put(VideoController());
   final HomeLocationController homeLocationCtrl = Get.put(HomeLocationController());
@@ -39,6 +39,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     for (var category in filterCtrl.filterOptions.keys) {
       showFilterDropdowns[category] = false;
       if (!filterCtrl.selectedFilters.containsKey(category)) {
@@ -54,6 +55,24 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
       // Initialize search and filter application
       homeLocationCtrl.applySearchAndFilters();
     });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // CHANGE: Add this method
+    if (state == AppLifecycleState.resumed) {
+      Geolocator.isLocationServiceEnabled().then((enabled) {
+        if (enabled && homeLocationCtrl.userPosition.value == null) {
+          homeLocationCtrl.fetchUserPosition(context);
+        }
+      });
+    }
   }
 
   Widget _buildShimmer() {
@@ -223,8 +242,8 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                         ),
                         const SizedBox(width: 4),
                         Obx(() {
-                          if (homeLocationCtrl.isFetchingInitialData.value && homeLocationCtrl.userPosition == null) {
-                            homeLocationCtrl.fetchUserPosition(context);
+                          if (homeLocationCtrl.isFetchingInitialData.value && homeLocationCtrl.userPosition.value == null) {
+                            // REMOVE: homeLocationCtrl.fetchUserPosition(context);  // Removed to prevent multiple calls; handled by init and resume.
                             return Expanded(
                               child: Text(
                                 'Fetching location...',
@@ -239,8 +258,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                             );
                           }
 
-                          if (!homeLocationCtrl.isFetchingInitialData.value && homeLocationCtrl.userPosition == null) {
-                            // FIX 1: Change text to 'Location disabled' instead of 'Fetching location...' to avoid misleading users when location is off. No need to call fetchUserPosition repeatedly as it won't succeed without enabling location.
+                          if (!homeLocationCtrl.isFetchingInitialData.value && homeLocationCtrl.userPosition.value == null) {
                             return Expanded(
                               child: Text(
                                 'Location disabled',
@@ -256,8 +274,9 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                           }
 
                           double distance = Geolocator.distanceBetween(
-                            homeLocationCtrl.userPosition!.latitude,
-                            homeLocationCtrl.userPosition!.longitude,
+                            // CHANGE: homeLocationCtrl.userPosition!.latitude -> homeLocationCtrl.userPosition.value!.latitude
+                            homeLocationCtrl.userPosition.value!.latitude,
+                            homeLocationCtrl.userPosition.value!.longitude,
                             restaurant.latitude,
                             restaurant.longitude,
                           ) / 1000;
@@ -466,6 +485,19 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                               ),
                             ) :
 
+                          Obx(() =>  // ADD: Wrap in Obx to react to userPosition changes
+                          homeLocationCtrl.userPosition.value == null ?
+                          Text(
+                            'Location disabled',
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                              color: const Color.fromRGBO(142, 142, 147, 1),
+                            ),
+                          ) :
+
                           FutureBuilder<RestaurantModel?>(
                             future: homeLocationCtrl.findRestaurantForVideo(video),
                             builder: (context, snapshot) {
@@ -495,8 +527,9 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                 );
                               }
                               double distance = Geolocator.distanceBetween(
-                                homeLocationCtrl.userPosition!.latitude,
-                                homeLocationCtrl.userPosition!.longitude,
+                                // CHANGE: homeLocationCtrl.userPosition!.latitude -> homeLocationCtrl.userPosition.value!.latitude
+                                homeLocationCtrl.userPosition.value!.latitude,
+                                homeLocationCtrl.userPosition.value!.longitude,
                                 restaurant.latitude,
                                 restaurant.longitude,
                               ) / 1000;
@@ -511,6 +544,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                 ),
                               );
                             },
+                          ),
                           ),
 
                       ),
@@ -739,8 +773,8 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                           ),
                                           const SizedBox(width: 4),
                                           Obx(() {
-                                            if (homeLocationCtrl.isFetchingInitialData.value && homeLocationCtrl.userPosition == null) {
-                                              homeLocationCtrl.fetchUserPosition(context);
+                                            if (homeLocationCtrl.isFetchingInitialData.value && homeLocationCtrl.userPosition.value == null) {
+                                              // REMOVE: homeLocationCtrl.fetchUserPosition(context);  // Removed
                                               return Text(
                                                 'Fetching ...',
                                                 style: TextStyle(
@@ -752,8 +786,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                               );
                                             }
 
-                                            if (!homeLocationCtrl.isFetchingInitialData.value && homeLocationCtrl.userPosition == null) {
-                                              // FIX 1: Similar change as above.
+                                            if (!homeLocationCtrl.isFetchingInitialData.value && homeLocationCtrl.userPosition.value == null) {
                                               return Text(
                                                 'Location disabled',
                                                 style: TextStyle(
@@ -777,8 +810,9 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                               );
                                             }
                                             double distance = Geolocator.distanceBetween(
-                                              homeLocationCtrl.userPosition!.latitude,
-                                              homeLocationCtrl.userPosition!.longitude,
+                                              // CHANGE: homeLocationCtrl.userPosition!.latitude -> homeLocationCtrl.userPosition.value!.latitude
+                                              homeLocationCtrl.userPosition.value!.latitude,
+                                              homeLocationCtrl.userPosition.value!.longitude,
                                               restaurant.latitude,
                                               restaurant.longitude,
                                             ) / 1000;

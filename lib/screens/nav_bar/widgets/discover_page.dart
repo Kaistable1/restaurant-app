@@ -24,7 +24,7 @@ class RestaurantsPage extends StatefulWidget {
   State<RestaurantsPage> createState() => _RestaurantsPageState();
 }
 
-class _RestaurantsPageState extends State<RestaurantsPage> {
+class _RestaurantsPageState extends State<RestaurantsPage> with WidgetsBindingObserver {
   final TextEditingController searchController = TextEditingController();
   final HomeLocationController controller = Get.find<HomeLocationController>();
   final RestaurantController restaurantCtrl = Get.find<RestaurantController>();
@@ -37,8 +37,12 @@ class _RestaurantsPageState extends State<RestaurantsPage> {
   @override
   void initState() {
     super.initState();
-    // REMOVED: Old searchController listener and direct stream setup
-    // NEW: Listen to the category-filtered stream from HomeLocationController
+    WidgetsBinding.instance.addObserver(this);
+
+    if (controller.userPosition.value == null) {
+      controller.fetchUserPosition(context);
+    }
+
     // This stream provides restaurants filtered only by categories (Time, Cuisines, Dietary, Vibes, Experience)
     controller.getFilteredRestaurants().listen((list) {
       categoryFilteredRestaurants.value = list;
@@ -80,8 +84,20 @@ class _RestaurantsPageState extends State<RestaurantsPage> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     searchController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      Geolocator.isLocationServiceEnabled().then((enabled) {
+        if (enabled && controller.userPosition.value == null) {
+          controller.fetchUserPosition(context);
+        }
+      });
+    }
   }
 
   // Explanation: Fetches favorite IDs from SharedPreferences for unauthenticated users.
@@ -161,15 +177,15 @@ class _RestaurantsPageState extends State<RestaurantsPage> {
     }
 
     // Apply distance filter
-    if (controller.selectedDistance.value > 0 && controller.userPosition != null) {
+    if (controller.selectedDistance.value > 0 && controller.userPosition.value != null) {
       final maxDistanceKm = controller.selectedDistance.value * 1.60934;
       filtered = filtered.where((restaurant) {
         if (restaurant.latitude == 0.0 && restaurant.longitude == 0.0) {
           return false;
         }
         final distance = Geolocator.distanceBetween(
-          controller.userPosition!.latitude,
-          controller.userPosition!.longitude,
+          controller.userPosition.value!.latitude,
+          controller.userPosition.value!.longitude,
           restaurant.latitude,
           restaurant.longitude,
         ) / 1000;
@@ -502,45 +518,11 @@ class _RestaurantsPageState extends State<RestaurantsPage> {
                                                   height: 13,
                                                 ),
                                                 // Replace the per-restaurant getCurrentLocation call with a shared positionFuture. This calculates distance only if position is available, showing 'Unknown' if location is disabled or error occurred, preventing multiple dialogs.
-                                                FutureBuilder<double>(
-                                                  future: controller.positionFuture.then((position) {
-                                                    if (position == null) {
-                                                      return -1.0; // Sentinel value for disabled/unknown
-                                                    }
-                                                    return Geolocator.distanceBetween(
-                                                      position.latitude,
-                                                      position.longitude,
-                                                      restaurant.latitude,
-                                                      restaurant.longitude,
-                                                    ) / 1000;
-                                                  }),
-                                                  builder: (context, snapshot) {
-                                                    if (snapshot.connectionState == ConnectionState.waiting) {
-                                                      return Text(
-                                                        'Calculating...',
-                                                        style: TextStyle(
-                                                          fontSize: 12,
-                                                          fontWeight: FontWeight.w500,
-                                                          fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                                          color: const Color.fromRGBO(142, 142, 147, 1),
-                                                        ),
-                                                      );
-                                                    }
-                                                    if (snapshot.hasData && snapshot.data == -1.0) {
-                                                      return Text(
-                                                        'Unknown',
-                                                        style: TextStyle(
-                                                          fontSize: 12,
-                                                          fontWeight: FontWeight.w500,
-                                                          fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                                          color: const Color.fromRGBO(142, 142, 147, 1),
-                                                        ),
-                                                      );
-                                                    }
+                                                Obx(() {
+                                                  final pos = controller.userPosition.value;
+                                                  if (pos == null) {
                                                     return Text(
-                                                      snapshot.hasData
-                                                          ? '${snapshot.data!.toStringAsFixed(1)} km away'
-                                                          : 'Unknown',
+                                                      controller.isFetchingInitialData.value ? 'Fetching...' : 'Location disabled',
                                                       style: TextStyle(
                                                         fontSize: 12,
                                                         fontWeight: FontWeight.w500,
@@ -548,8 +530,24 @@ class _RestaurantsPageState extends State<RestaurantsPage> {
                                                         color: const Color.fromRGBO(142, 142, 147, 1),
                                                       ),
                                                     );
-                                                  },
-                                                ),
+                                                  } else {
+                                                    double distance = Geolocator.distanceBetween(
+                                                      pos.latitude,
+                                                      pos.longitude,
+                                                      restaurant.latitude,
+                                                      restaurant.longitude,
+                                                    ) / 1000;
+                                                    return Text(
+                                                      '${distance.toStringAsFixed(1)} km away',
+                                                      style: TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight: FontWeight.w500,
+                                                        fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                                        color: const Color.fromRGBO(142, 142, 147, 1),
+                                                      ),
+                                                    );
+                                                  }
+                                                }),
                                                 const SizedBox(width: 24),
                                               ],
                                             ),
