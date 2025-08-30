@@ -35,6 +35,10 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
   final RxMap<String, bool> showFilterDropdowns = <String, bool>{}.obs;
   final RxBool isLoading = true.obs;
 
+  final RxSet<Marker> mapMarkers = <Marker>{}.obs;
+
+  GoogleMapController? _mapController;
+
   @override
   @override
   void initState() {
@@ -54,12 +58,26 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
       });
       // Initialize search and filter application
       homeLocationCtrl.applySearchAndFilters();
+      // listener to userPosition to update map camera
+      homeLocationCtrl.userPosition.listen((position) {
+        if (position != null && _mapController != null) {
+          _mapController!.animateCamera(
+            CameraUpdate.newCameraPosition(
+              CameraPosition(
+                target: LatLng(position.latitude, position.longitude),
+                zoom: 14,
+              ),
+            ),
+          );
+        }
+      });
     });
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _mapController?.dispose();
     super.dispose();
   }
 
@@ -73,6 +91,24 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
         }
       });
     }
+  }
+
+  void updateUserMarker() {
+    mapMarkers.clear();
+    if (homeLocationCtrl.userPosition.value != null) {
+      mapMarkers.add(
+        Marker(
+          markerId: const MarkerId('user_location'),
+          position: LatLng(
+            homeLocationCtrl.userPosition.value!.latitude,
+            homeLocationCtrl.userPosition.value!.longitude,
+          ),
+          infoWindow: const InfoWindow(title: 'Your Location'),
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+        ),
+      );
+    }
+    mapMarkers.refresh();
   }
 
   Widget _buildShimmer() {
@@ -94,6 +130,17 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
           ),
           ),
         ),
+      ),
+    );
+  }
+
+  // map-specific shimmer widget
+  Widget _buildMapShimmer() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Container(
+        color: Colors.grey[300],
       ),
     );
   }
@@ -865,19 +912,68 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
     return Scaffold(
       body: Stack(
         children: [
-          GoogleMap(
-            initialCameraPosition: const CameraPosition(
-              target: LatLng(40.7128, -74.0060),
-              zoom: 14,
-            ),
-            zoomControlsEnabled: false,
-            myLocationEnabled: true,
-            myLocationButtonEnabled: false,
-            mapType: MapType.normal,
-            gestureRecognizers: {
-              Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer()),
-            },
-          ),
+          // Initialize with fallback location, animate to userPosition when available
+          Obx(() {
+            // Determine initial camera position
+            LatLng initialPosition;
+            if (homeLocationCtrl.userPosition.value != null) {
+              initialPosition = LatLng(
+                homeLocationCtrl.userPosition.value!.latitude,
+                homeLocationCtrl.userPosition.value!.longitude,
+              );
+            } else {
+              // Fallback: Use selected city/country if available, else default to San Francisco
+              String selectedCity = filterCtrl.selectedCity.value;
+              String selectedCountry = filterCtrl.selectedCountry.value;
+              if (selectedCity.isNotEmpty && selectedCountry == 'USA') {
+                if (filterCtrl.newYorkCitiesList.contains(selectedCity)) {
+                  initialPosition = LatLng(40.7128, -74.0060); // New York City
+                } else if (filterCtrl.losAngelusCities.contains(selectedCity)) {
+                  initialPosition = LatLng(34.0522, -118.2437); // Los Angeles
+                } else {
+                  initialPosition = LatLng(37.7749, -122.4194); // San Francisco default
+                }
+              } else if (selectedCountry == 'France') {
+                initialPosition = LatLng(48.8566, 2.3522); // Paris
+              } else {
+                initialPosition = LatLng(37.7749, -122.4194); // San Francisco default
+              }
+            }
+
+            return GoogleMap(
+              padding: EdgeInsets.only(top: (Platform.isAndroid ? 60 : 70) + 48 + 12 + 36 + 16 + 12),
+              initialCameraPosition: CameraPosition(
+                target: initialPosition,
+                zoom: 14,
+              ),
+              zoomControlsEnabled: false,
+              myLocationEnabled: true, // Shows default blue dot for user location
+              myLocationButtonEnabled: true, // Allows centering map on user location
+              mapType: MapType.normal,
+              gestureRecognizers: {
+                Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer()),
+              },
+              markers: mapMarkers.toSet(), // Empty for now, ready for future restaurant markers
+              onMapCreated: (GoogleMapController controller) {
+                // Store controller for camera updates
+                _mapController = controller;
+                // If userPosition is already available, move camera immediately
+                if (homeLocationCtrl.userPosition.value != null) {
+                  controller.animateCamera(
+                    CameraUpdate.newCameraPosition(
+                      CameraPosition(
+                        target: LatLng(
+                          homeLocationCtrl.userPosition.value!.latitude,
+                          homeLocationCtrl.userPosition.value!.longitude,
+                        ),
+                        zoom: 14,
+                      ),
+                    ),
+                  );
+                }
+              },
+            );
+          }),
 
           DraggableScrollableSheet(
             initialChildSize: 0.3,
