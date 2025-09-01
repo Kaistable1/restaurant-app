@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_maps_cluster_manager/google_maps_cluster_manager.dart';
+import 'package:google_maps_flutter_platform_interface/src/types/location.dart';
+import 'package:latlong2/latlong.dart' hide LatLng;
 
-class RestaurantModel {
+class RestaurantModel with ClusterItem{
   String resName;
   String docID;
   String resEmail;
@@ -30,6 +33,13 @@ class RestaurantModel {
   // New Fields
   String instaLink; //https://instagram.com/
   String tiktokLink; //https://tiktok.com
+
+  // @override
+  // // TODO: implement geohash
+  // String get geohash => throw UnimplementedError();
+
+  @override
+  LatLng get location => LatLng(latitude, longitude);
 
   // Constructor
   RestaurantModel({
@@ -221,6 +231,8 @@ class RestaurantModel {
       tiktokLink: data['socialMedia'] ?? '',
     );
   }
+
+
 }
 
 class EntertainmentScheduleModel {

@@ -14,6 +14,7 @@ import 'package:kaistable_website/utils/loading.dart';
 import 'package:kaistable_website/widgets/global_functions.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart' hide Rx;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
 import '../../../streams/model/streams_model.dart';
@@ -60,7 +61,10 @@ class HomeLocationController extends GetxController {
       return null;
     });
     positionFuture.then((pos) {
-      userPosition.value = pos;
+      if (pos != null) {
+        userPosition.value = pos;
+        _saveUserPosition(pos);  // NEW: Save to shared prefs
+      }
     }).whenComplete(() {
       isFetchingInitialData.value = false;
     });
@@ -112,6 +116,35 @@ class HomeLocationController extends GetxController {
   }
   ////
 
+  // Method to save position to shared prefs
+  Future<void> _saveUserPosition(Position position) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('user_latitude', position.latitude);
+    await prefs.setDouble('user_longitude', position.longitude);
+  }
+
+  // Method to load position from shared prefs
+  Future<Position?> _loadUserPosition() async {
+    final prefs = await SharedPreferences.getInstance();
+    final double? lat = prefs.getDouble('user_latitude');
+    final double? lng = prefs.getDouble('user_longitude');
+    if (lat != null && lng != null) {
+      return Position(
+        latitude: lat,
+        longitude: lng,
+        timestamp: DateTime.now(),
+        accuracy: 0.0,
+        altitude: 0.0,
+        altitudeAccuracy: 0.0,
+        heading: 0.0,
+        headingAccuracy: 0.0,
+        speed: 0.0,
+        speedAccuracy: 0.0,
+      );
+    }
+    return null;
+  }
+
   void fetchUserPosition(BuildContext context) async {
     isFetchingInitialData.value = true;
     try {
@@ -119,9 +152,23 @@ class HomeLocationController extends GetxController {
         print(e);
         return null;
       });
-      userPosition.value = await positionFuture;
+      Position? pos = await positionFuture;
+      if (pos != null) {
+        userPosition.value = pos;
+        await _saveUserPosition(pos);  // Save to shared prefs
+      } else {
+        pos = await _loadUserPosition();  // Fallback to shared prefs
+        if (pos != null) {
+          userPosition.value = pos;
+        }
+      }
     } catch (e) {
-      userPosition.value = null;
+      Position? pos = await _loadUserPosition();  // Fallback in catch block
+      if (pos != null) {
+        userPosition.value = pos;
+      } else {
+        userPosition.value = null;
+      }
     } finally {
       isFetchingInitialData.value = false;
     }
@@ -186,9 +233,32 @@ class HomeLocationController extends GetxController {
     return FirebaseFirestore.instance
         .collection('restaurants')
         .snapshots()
-        .map((snapshot) => snapshot.docs
-        .map((doc) => RestaurantModel.fromDocumentSnapshot(doc))
-        .toList());
+        .map((snapshot) {
+      var restaurants = snapshot.docs
+          .map((doc) => RestaurantModel.fromDocumentSnapshot(doc))
+          .toList();
+      // Sort by distance if user position is available
+      if (userPosition.value != null) {
+        restaurants.sort((a, b) {
+          if (a.latitude == 0.0 && a.longitude == 0.0) return 1;
+          if (b.latitude == 0.0 && b.longitude == 0.0) return -1;
+          final distanceA = Geolocator.distanceBetween(
+            userPosition.value!.latitude,
+            userPosition.value!.longitude,
+            a.latitude,
+            a.longitude,
+          );
+          final distanceB = Geolocator.distanceBetween(
+            userPosition.value!.latitude,
+            userPosition.value!.longitude,
+            b.latitude,
+            b.longitude,
+          );
+          return distanceA.compareTo(distanceB);
+        });
+      }
+      return restaurants;
+    });
   }
 
   Stream<List<RestaurantModel>> getFilteredRestaurants() {
@@ -214,7 +284,7 @@ class HomeLocationController extends GetxController {
               final hours = operatingHoursCache[restaurant.docID];
               if (hours == null || hours.isEmpty) {
                 getOperatingHours(restaurant.docID);
-                return false; // Exclude until hours are fetched
+                return false;
               }
               return hours.values.any((dayHours) =>
                   selectedOptions.every((timeOfDay) => !(dayHours[timeOfDay]?['isClosed'] ?? true))
@@ -222,7 +292,7 @@ class HomeLocationController extends GetxController {
             } else if (category == 'Cuisines') {
               final menuList = restaurant.menuList;
               if (menuList.isEmpty) {
-                return false; // Exclude if no menu items
+                return false;
               }
               return selectedOptions.every((cuisine) =>
                   menuList.any((menu) => menu.cuisineType == cuisine)
@@ -230,7 +300,7 @@ class HomeLocationController extends GetxController {
             } else if (category == 'Experience') {
               final entertainmentList = restaurant.entertainmentScheduleList;
               if (entertainmentList.isEmpty) {
-                return false; // Exclude if no entertainment schedule
+                return false;
               }
               return selectedOptions.every((experience) =>
                   entertainmentList.any((event) => event.eventName == experience)
@@ -239,6 +309,27 @@ class HomeLocationController extends GetxController {
             return true;
           }).toList();
         }
+      }
+
+      // Sort by distance if user position is available
+      if (userPosition.value != null) {
+        restaurants.sort((a, b) {
+          if (a.latitude == 0.0 && a.longitude == 0.0) return 1;
+          if (b.latitude == 0.0 && b.longitude == 0.0) return -1;
+          final distanceA = Geolocator.distanceBetween(
+            userPosition.value!.latitude,
+            userPosition.value!.longitude,
+            a.latitude,
+            a.longitude,
+          );
+          final distanceB = Geolocator.distanceBetween(
+            userPosition.value!.latitude,
+            userPosition.value!.longitude,
+            b.latitude,
+            b.longitude,
+          );
+          return distanceA.compareTo(distanceB);
+        });
       }
 
       return restaurants;
@@ -254,19 +345,18 @@ class HomeLocationController extends GetxController {
           .map((doc) => RestaurantModel.fromDocumentSnapshot(doc))
           .toList();
 
-      // Apply search query (unchanged for restaurants)
+      // Apply search query
       if (searchQuery.value.isNotEmpty) {
         final query = searchQuery.value.toLowerCase();
         restaurants = restaurants.where((restaurant) {
           return restaurant.resName.toLowerCase().contains(query) ||
-              restaurant.address.toLowerCase().contains(query); // ||
-              // restaurant.dietaryList.any((diet) => diet.toLowerCase().contains(query)) ||
-              // restaurant.vibesList.any((vibe) => vibe.toLowerCase().contains(query)) ||
-              // restaurant.menuList.any((menu) => menu.cuisineType.toLowerCase().contains(query));
+              restaurant.address.toLowerCase().contains(query) ||
+          restaurant.city.toLowerCase().contains(query) ||
+          restaurant.country.toLowerCase().contains(query);
         }).toList();
       }
 
-      // Apply AND logic across category filters (unchanged for restaurants)
+      // Apply AND logic across category filters
       final filterCtrl = Get.find<FilterController>();
       for (var category in filterCtrl.selectedFilters.keys) {
         final selectedOptions = filterCtrl.selectedFilters[category];
@@ -280,7 +370,7 @@ class HomeLocationController extends GetxController {
               final hours = operatingHoursCache[restaurant.docID];
               if (hours == null || hours.isEmpty) {
                 getOperatingHours(restaurant.docID);
-                return false; // Exclude until hours are fetched
+                return false;
               }
               return hours.values.any((dayHours) =>
                   selectedOptions.every((timeOfDay) => !(dayHours[timeOfDay]?['isClosed'] ?? true))
@@ -288,7 +378,7 @@ class HomeLocationController extends GetxController {
             } else if (category == 'Cuisines') {
               final menuList = restaurant.menuList;
               if (menuList.isEmpty) {
-                return false; // Exclude if no menu items
+                return false;
               }
               return selectedOptions.every((cuisine) =>
                   menuList.any((menu) => menu.cuisineType == cuisine)
@@ -296,7 +386,7 @@ class HomeLocationController extends GetxController {
             } else if (category == 'Experience') {
               final entertainmentList = restaurant.entertainmentScheduleList;
               if (entertainmentList.isEmpty) {
-                return false; // Exclude if no entertainment schedule
+                return false;
               }
               return selectedOptions.every((experience) =>
                   entertainmentList.any((event) => event.eventName == experience)
@@ -307,9 +397,9 @@ class HomeLocationController extends GetxController {
         }
       }
 
-      // Apply distance filter (unchanged for restaurants)
+      // Apply distance filter
       if (selectedDistance.value > 0 && userPosition.value != null) {
-        final maxDistanceKm = selectedDistance.value * 1.60934; // Convert miles to kilometers
+        final maxDistanceKm = selectedDistance.value * 1.60934;
         restaurants = restaurants.where((restaurant) {
           if (restaurant.latitude == 0.0 && restaurant.longitude == 0.0) {
             return false;
@@ -319,15 +409,36 @@ class HomeLocationController extends GetxController {
             userPosition.value!.longitude,
             restaurant.latitude,
             restaurant.longitude,
-          ) / 1000; // Distance in kilometers
+          ) / 1000;
           return distance <= maxDistanceKm;
         }).toList();
+      }
+
+      // Sort by distance if user position is available
+      if (userPosition.value != null) {
+        restaurants.sort((a, b) {
+          if (a.latitude == 0.0 && a.longitude == 0.0) return 1;
+          if (b.latitude == 0.0 && b.longitude == 0.0) return -1;
+          final distanceA = Geolocator.distanceBetween(
+            userPosition.value!.latitude,
+            userPosition.value!.longitude,
+            a.latitude,
+            a.longitude,
+          );
+          final distanceB = Geolocator.distanceBetween(
+            userPosition.value!.latitude,
+            userPosition.value!.longitude,
+            b.latitude,
+            b.longitude,
+          );
+          return distanceA.compareTo(distanceB);
+        });
       }
 
       return restaurants;
     });
 
-    // NEW: Filter videos directly using cuisines, vibes, experience fields
+    // Filter videos directly using cuisines, vibes, experience fields
     if (videos.isNotEmpty) {
       final filterCtrl = Get.find<FilterController>();
       final query = searchQuery.value.toLowerCase();
@@ -336,26 +447,21 @@ class HomeLocationController extends GetxController {
       final selectedVibes = filterCtrl.selectedFilters['Vibes'] ?? <String>[].obs;
 
       filteredVideos.value = videos.where((video) {
-        // Search: matches if restaurantName or city contains query
         final matchesSearch = query.isEmpty ||
-            (video.restaurantName?.toLowerCase().contains(query) ?? false); // || (video.city?.toLowerCase().contains(query) ?? false);
+            (video.restaurantName?.toLowerCase().contains(query) ?? false);
 
-        // Cuisines: OR - any selected cuisine matches video.cuisines (assuming it's a comma-separated string or single value)
         final videoCuisines = video.causines?.split(',').map((c) => c.trim()).toList() ?? [];
         final matchesCuisines = selectedCuisines.isEmpty ||
             selectedCuisines.any((cuisine) => videoCuisines.contains(cuisine));
 
-        // Experiences: OR - any selected experience matches video.experience
         final videoExperiences = video.experience?.split(',').map((e) => e.trim()).toList() ?? [];
         final matchesExperiences = selectedExperiences.isEmpty ||
             selectedExperiences.any((experience) => videoExperiences.contains(experience));
 
-        // Vibes: OR - any selected vibe matches video.vibes
         final videoVibes = video.vibes?.split(',').map((v) => v.trim()).toList() ?? [];
         final matchesVibes = selectedVibes.isEmpty ||
             selectedVibes.any((vibe) => videoVibes.contains(vibe));
 
-        // AND between different filters
         return matchesSearch && matchesCuisines && matchesExperiences && matchesVibes;
       }).toList();
     }

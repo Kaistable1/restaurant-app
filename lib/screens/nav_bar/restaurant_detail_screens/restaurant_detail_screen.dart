@@ -339,14 +339,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                     const SizedBox(height: 16),
                                     Divider(color: AppColors.dividerColor),
                                     // const SizedBox(height: 16),
-                                    Row(
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.only(top: 2),
-                                          child: Image.asset('assets/icons/time.png', height: 12, width: 12),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Obx(() {
+                                    Obx(() {
                                           final controller = Get.find<HomeLocationController>();
                                           final operatingHours = controller.operatingHoursCache[restaurantModel!.docID];
                                           final isFetching = controller.fetchingOperatingHours.contains(restaurantModel!.docID);
@@ -356,25 +349,62 @@ class RestaurantDetailScreen extends StatelessWidget {
                                             if (!isFetching) {
                                               controller.getOperatingHours(restaurantModel!.docID, triggerFilterUpdate: false);
                                             }
-                                            return Text(
-                                              isFetching ? 'Retrieving...' : 'Not mentioned',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                                fontFamily: 'PlusJakartaSans',
-                                                color: const Color.fromRGBO(142, 142, 147, 1),
-                                              ),
+                                            return Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                const SizedBox(height: 16),
+                                                Row(
+                                                  children: [
+                                                    Padding(
+                                                      padding: EdgeInsets.only(top: 2),
+                                                      child: Image.asset('assets/icons/time.png', height: 12, width: 12),
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    Text(
+                                                      isFetching ? 'Retrieving...' : 'Not mentioned',
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.w500,
+                                                        fontFamily: 'PlusJakartaSans',
+                                                        color: const Color.fromRGBO(142, 142, 147, 1),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 16),
+                                              ],
                                             );
                                           }
 
                                           if (operatingHours.isEmpty) {
-                                            return Text(
-                                              'Not mentioned',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                                fontFamily: 'PlusJakartaSans',
-                                              ),
+                                            return Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Column(
+                                                  children: [
+                                                    const SizedBox(height: 16),
+                                                  ],
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Padding(
+                                                      padding: EdgeInsets.only(top: 2),
+                                                      child: Image.asset('assets/icons/time.png', height: 12, width: 12),
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    Text(
+                                                      isFetching ? 'Retrieving...' : 'Not mentioned',
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.w500,
+                                                        fontFamily: 'PlusJakartaSans',
+                                                        color: const Color.fromRGBO(142, 142, 147, 1),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 16),
+                                              ],
                                             );
                                           }
 
@@ -403,81 +433,94 @@ class RestaurantDetailScreen extends StatelessWidget {
                                             weeklyHours.add({'day': day, 'hours': hours});
                                           }
 
-                                          return Row(
-                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                          return Column(
+                                            mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              Text(
-                                                isOpen ? 'Open' : 'Closed',
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontFamily: 'PlusJakartaSans',
-                                                  color: isOpen ? Colors.green : Colors.red,
-                                                ),
-                                              ),
-                                              const SizedBox(width: 16),
-                                              DropdownButtonHideUnderline(
-                                                child: DropdownButton2<String>(
-                                                  hint: Text(
-                                                    isOpen ? 'Closes ${fullDayHours.split('–')[1]}' : 'View Hours',
-                                                    style: TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight: FontWeight.w500,
-                                                      fontFamily: 'PlusJakartaSans',
-                                                    ),
+                                              Row(
+                                                children: [
+                                                  Padding(
+                                                    padding: EdgeInsets.only(top: 2),
+                                                    child: Image.asset('assets/icons/time.png', height: 12, width: 12),
                                                   ),
-                                                  items: weeklyHours
-                                                      .map((dayHours) => DropdownMenuItem<String>(
-                                                    value: dayHours['day'],
-                                                    child: Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                      children: [
-                                                        Text(
-                                                          dayHours['day']! == 'Monday' ? 'Mon' : dayHours['day']! == 'Tuesday' ? 'Tue' : dayHours['day']! == 'Wednesday' ? 'Wed' : dayHours['day']! == 'Thursday' ? 'Thu' : dayHours['day']! == 'Friday' ? 'Fri' : dayHours['day']! == 'Saturday' ? 'Sat' : 'Sun',
-                                                          style: TextStyle(
-                                                            fontSize: 15,
-                                                            fontWeight: FontWeight.w600,
-                                                            fontFamily: 'PlusJakartaSans',
+                                                  const SizedBox(width: 8),
+                                                  Row(
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Text(
+                                                        isOpen ? 'Open' : 'Closed',
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight: FontWeight.w500,
+                                                          fontFamily: 'PlusJakartaSans',
+                                                          color: isOpen ? Colors.green : Colors.red,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(width: 16),
+                                                      DropdownButtonHideUnderline(
+                                                        child: DropdownButton2<String>(
+                                                          hint: Text(
+                                                            isOpen ? 'Closes ${fullDayHours.split('–')[1]}' : 'View Hours',
+                                                            style: TextStyle(
+                                                              fontSize: 14,
+                                                              fontWeight: FontWeight.w500,
+                                                              fontFamily: 'PlusJakartaSans',
+                                                            ),
+                                                          ),
+                                                          items: weeklyHours
+                                                              .map((dayHours) => DropdownMenuItem<String>(
+                                                            value: dayHours['day'],
+                                                            child: Row(
+                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                              children: [
+                                                                Text(
+                                                                  dayHours['day']! == 'Monday' ? 'Mon' : dayHours['day']! == 'Tuesday' ? 'Tue' : dayHours['day']! == 'Wednesday' ? 'Wed' : dayHours['day']! == 'Thursday' ? 'Thu' : dayHours['day']! == 'Friday' ? 'Fri' : dayHours['day']! == 'Saturday' ? 'Sat' : 'Sun',
+                                                                  style: TextStyle(
+                                                                    fontSize: 15,
+                                                                    fontWeight: FontWeight.w600,
+                                                                    fontFamily: 'PlusJakartaSans',
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  dayHours['hours']!,
+                                                                  style: TextStyle(
+                                                                    fontSize: 14,
+                                                                    fontWeight: FontWeight.w500,
+                                                                    fontFamily: 'PlusJakartaSans',
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ))
+                                                              .toList(),
+                                                          onChanged: (value) {},
+                                                          buttonStyleData: ButtonStyleData(
+                                                            padding: EdgeInsets.symmetric(horizontal: 12),
+                                                            decoration: BoxDecoration(
+                                                              borderRadius: BorderRadius.circular(5),
+                                                            ),
+                                                          ),
+                                                          dropdownStyleData: DropdownStyleData(
+                                                            maxHeight: 200,
+                                                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                                            decoration: BoxDecoration(
+                                                              color: Colors.white,
+                                                              borderRadius: BorderRadius.circular(10),
+                                                              border: Border.all(color: Colors.black.withOpacity(0.04)),
+                                                            ),
+                                                          ),
+                                                          menuItemStyleData: MenuItemStyleData(
+                                                            padding: EdgeInsets.symmetric(vertical: 4),
                                                           ),
                                                         ),
-                                                        Text(
-                                                          dayHours['hours']!,
-                                                          style: TextStyle(
-                                                            fontSize: 14,
-                                                            fontWeight: FontWeight.w500,
-                                                            fontFamily: 'PlusJakartaSans',
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ))
-                                                      .toList(),
-                                                  onChanged: (value) {},
-                                                  buttonStyleData: ButtonStyleData(
-                                                    padding: EdgeInsets.symmetric(horizontal: 12),
-                                                    decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius.circular(5),
-                                                    ),
+                                                      ),
+                                                    ],
                                                   ),
-                                                  dropdownStyleData: DropdownStyleData(
-                                                    maxHeight: 200,
-                                                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.white,
-                                                      borderRadius: BorderRadius.circular(10),
-                                                      border: Border.all(color: Colors.black.withOpacity(0.04)),
-                                                    ),
-                                                  ),
-                                                  menuItemStyleData: MenuItemStyleData(
-                                                    padding: EdgeInsets.symmetric(vertical: 4),
-                                                  ),
-                                                ),
+                                                ],
                                               ),
                                             ],
                                           );
                                         }),
-                                      ],
-                                    ),
 
                                     // const SizedBox(height: 16),
                                     Divider(color: AppColors.dividerColor),
@@ -943,7 +986,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                     const SizedBox(width: 8),
                                                     Expanded(
                                                       child: Text(
-                                                        restaurantModel!.address, // '304 Liverpool Blvd, Portsmouth, CA 30103',
+                                                        '${restaurantModel?.address ?? ''}, ${restaurantModel?.city ?? ''}, ${restaurantModel?.country ?? ''}${restaurantModel == null || restaurantModel!.zipCode == '' ? '' : ', ${restaurantModel!.zipCode}' }', // '304 Liverpool Blvd, Portsmouth, CA 30103',
                                                         style: TextStyle(
                                                           fontSize: 14,
                                                           fontWeight: FontWeight.w500,

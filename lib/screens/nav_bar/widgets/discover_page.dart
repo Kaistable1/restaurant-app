@@ -193,6 +193,27 @@ class _RestaurantsPageState extends State<RestaurantsPage> with WidgetsBindingOb
       }).toList();
     }
 
+    // Sort by distance if user position is available
+    if (controller.userPosition.value != null) {
+      filtered.sort((a, b) {
+        if (a.latitude == 0.0 && a.longitude == 0.0) return 1;
+        if (b.latitude == 0.0 && b.longitude == 0.0) return -1;
+        final distanceA = Geolocator.distanceBetween(
+          controller.userPosition.value!.latitude,
+          controller.userPosition.value!.longitude,
+          a.latitude,
+          a.longitude,
+        );
+        final distanceB = Geolocator.distanceBetween(
+          controller.userPosition.value!.latitude,
+          controller.userPosition.value!.longitude,
+          b.latitude,
+          b.longitude,
+        );
+        return distanceA.compareTo(distanceB);
+      });
+    }
+
     // Pre-fetch operating hours for all filtered restaurants
     await Future.wait(filtered.map((restaurant) {
       if (!controller.operatingHoursCache.containsKey(restaurant.docID)) {

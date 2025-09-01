@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/foundation.dart';
@@ -6,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_maps_cluster_manager/google_maps_cluster_manager.dart' as gmcluster;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:kaistable_website/streams/views/streams_view.dart';
@@ -35,7 +38,8 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
   final RxMap<String, bool> showFilterDropdowns = <String, bool>{}.obs;
   final RxBool isLoading = true.obs;
 
-  final RxSet<Marker> mapMarkers = <Marker>{}.obs;
+  late gmcluster.ClusterManager _manager;  // Cluster manager
+  Set<Marker> _markers = {};
 
   GoogleMapController? _mapController;
 
@@ -50,6 +54,9 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
         filterCtrl.selectedFilters[category] = <String>[].obs;
       }
     }
+
+    _manager = _initClusterManager();  // Initialize cluster manager
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       homeLocationCtrl.fetchUserPosition(context);  // ADD THIS: Fallback call with context to prompt dialog if needed
       showFilterDropdowns.refresh();
@@ -58,7 +65,17 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
       });
       // Initialize search and filter application
       homeLocationCtrl.applySearchAndFilters();
-      // listener to userPosition to update map camera
+
+      // Listen to filtered restaurants and add to cluster manager (limited to 100)
+      homeLocationCtrl.filteredRestaurantsStream.value.listen((list) {
+        final items = list
+            .where((r) => r.latitude != 0.0 && r.longitude != 0.0)
+            .take(100)
+            .toList();
+        _manager.setItems(items);
+      });
+
+      // listener to userPosition to update map camera and re-sort
       homeLocationCtrl.userPosition.listen((position) {
         if (position != null && _mapController != null) {
           _mapController!.animateCamera(
@@ -69,6 +86,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
               ),
             ),
           );
+          homeLocationCtrl.applySearchAndFilters();  // Re-apply filters to re-sort by new distance
         }
       });
     });
@@ -78,6 +96,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _mapController?.dispose();
+    // _manager.dispose();
     super.dispose();
   }
 
@@ -93,22 +112,74 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
     }
   }
 
-  void updateUserMarker() {
-    mapMarkers.clear();
-    if (homeLocationCtrl.userPosition.value != null) {
-      mapMarkers.add(
-        Marker(
-          markerId: const MarkerId('user_location'),
-          position: LatLng(
-            homeLocationCtrl.userPosition.value!.latitude,
-            homeLocationCtrl.userPosition.value!.longitude,
+  // Initialize cluster manager
+  gmcluster.ClusterManager _initClusterManager() {
+    return gmcluster.ClusterManager<RestaurantModel>(
+      const [], // Initial empty list
+      _updateMarkers,
+      markerBuilder: _markerBuilder,
+      levels: const [1, 4.25, 6.75, 8.25, 11.5, 14.5, 16.0, 16.5, 20.0], // Optional: default levels
+      extraPercent: 0.2, // Optional: default
+      stopClusteringZoom: 17.0, // Optional: adjusted to 17.0
+    );
+  }
+
+  // Update markers from cluster manager (uses Set<Marker>); add user marker separately
+  void _updateMarkers(Set<Marker> markers) {
+    setState(() {
+      _markers = markers;
+      if (homeLocationCtrl.userPosition.value != null) {
+        _markers.add(
+          Marker(
+            markerId: const MarkerId('user_location'),
+            position: LatLng(
+              homeLocationCtrl.userPosition.value!.latitude,
+              homeLocationCtrl.userPosition.value!.longitude,
+            ),
+            infoWindow: const InfoWindow(title: 'Your Location'),
+            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
           ),
-          infoWindow: const InfoWindow(title: 'Your Location'),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-        ),
+        );
+      }
+    });
+  }
+
+  // Custom marker builder for clusters/individuals
+  Future<Marker> _markerBuilder(dynamic cluster) async {
+    final gmcluster.Cluster<RestaurantModel> typedCluster = cluster as gmcluster.Cluster<RestaurantModel>;
+    return Marker(
+      markerId: MarkerId(typedCluster.getId()),
+      position: typedCluster.location,
+      icon: await _getMarkerBitmap(
+        typedCluster.isMultiple ? 125 : 75,
+        text: typedCluster.isMultiple ? typedCluster.count.toString() : null,
+      ),
+    );
+  }
+
+  // Generate bitmap for markers/clusters
+  Future<BitmapDescriptor> _getMarkerBitmap(int size, {String? text}) async {
+    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(pictureRecorder);
+    final Paint paint = Paint()..color = Colors.blue;
+    canvas.drawCircle(Offset(size / 2, size / 2), size / 2.0, paint);
+
+    if (text != null) {
+      TextPainter painter = TextPainter(textDirection: ui.TextDirection.ltr);
+      painter.text = TextSpan(
+        text: text,
+        style: TextStyle(fontSize: size / 3, color: Colors.white, fontWeight: FontWeight.bold),
+      );
+      painter.layout();
+      painter.paint(
+        canvas,
+        Offset((size / 2) - painter.width / 2, (size / 2) - painter.height / 2),
       );
     }
-    mapMarkers.refresh();
+
+    final img = await pictureRecorder.endRecording().toImage(size, size);
+    final data = await img.toByteData(format: ui.ImageByteFormat.png);
+    return BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
   }
 
   Widget _buildShimmer() {
@@ -130,17 +201,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
           ),
           ),
         ),
-      ),
-    );
-  }
-
-  // map-specific shimmer widget
-  Widget _buildMapShimmer() {
-    return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
-      child: Container(
-        color: Colors.grey[300],
       ),
     );
   }
@@ -953,10 +1013,10 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
               gestureRecognizers: {
                 Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer()),
               },
-              markers: mapMarkers.toSet(), // Empty for now, ready for future restaurant markers
               onMapCreated: (GoogleMapController controller) {
                 // Store controller for camera updates
                 _mapController = controller;
+                _manager.setMapId(controller.mapId);  // Set map ID for cluster manager
                 // If userPosition is already available, move camera immediately
                 if (homeLocationCtrl.userPosition.value != null) {
                   controller.animateCamera(
@@ -972,6 +1032,9 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                   );
                 }
               },
+              onCameraMove: (position) => _manager.onCameraMove(position),  // Handle camera move for clustering
+              onCameraIdle: _manager.updateMap,  // Update clusters on idle
+              markers: _markers,  // Use clustered markers
             );
           }),
 
