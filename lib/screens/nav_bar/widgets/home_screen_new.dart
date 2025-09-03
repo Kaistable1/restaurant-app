@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:custom_info_window/custom_info_window.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -38,12 +40,19 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
   final RxMap<String, bool> showFilterDropdowns = <String, bool>{}.obs;
   final RxBool isLoading = true.obs;
 
+  // Cache for the restaurant list to prevent reloading
+  final RxList<RestaurantModel> cachedRestaurants = <RestaurantModel>[].obs;
+
   late gmcluster.ClusterManager _manager;  // Cluster manager
   Set<Marker> _markers = {};
 
   GoogleMapController? _mapController;
 
-  @override
+  final CustomInfoWindowController _customInfoWindowController = CustomInfoWindowController();
+
+  // StreamSubscription to manage the listener for filtered restaurants
+  StreamSubscription<List<RestaurantModel>>? _filteredSub;
+
   @override
   void initState() {
     super.initState();
@@ -66,13 +75,23 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
       // Initialize search and filter application
       homeLocationCtrl.applySearchAndFilters();
 
-      // Listen to filtered restaurants and add to cluster manager (limited to 100)
-      homeLocationCtrl.filteredRestaurantsStream.value.listen((list) {
-        final items = list
-            .where((r) => r.latitude != 0.0 && r.longitude != 0.0)
-            .take(100)
-            .toList();
-        _manager.setItems(items);
+      // Use GetX 'ever' to reactively listen for changes to the filteredRestaurantsStream Rx variable.
+      // When the stream changes (e.g., due to filters/search/distance updates in applySearchAndFilters()),
+      // cancel the old subscription and attach a new listener to the updated stream.
+      // This ensures the map markers update with the latest filtered list.
+      ever(homeLocationCtrl.filteredRestaurantsStream, (Stream<List<RestaurantModel>> newStream) {
+        _filteredSub?.cancel();
+        _filteredSub = newStream.listen((list) {
+          final items = list
+              .where((r) => r.latitude != 0.0 && r.longitude != 0.0)
+              .toList();
+          _manager.setItems(items);
+          // Update cachedRestaurants only when new data is received
+          cachedRestaurants.assignAll(items);
+
+          // Prefetch operating hours for the first 4 visible restaurants
+          Future.wait(items.take(4).map((restaurant) => homeLocationCtrl.getOperatingHours(restaurant.docID, triggerFilterUpdate: false)));
+        });
       });
 
       // listener to userPosition to update map camera and re-sort
@@ -97,12 +116,14 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
     WidgetsBinding.instance.removeObserver(this);
     _mapController?.dispose();
     // _manager.dispose();
+    _filteredSub?.cancel(); // Cancel the subscription to prevent memory leaks
+    _customInfoWindowController.dispose();
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // CHANGE: Add this method
+    // Add this method
     if (state == AppLifecycleState.resumed) {
       Geolocator.isLocationServiceEnabled().then((enabled) {
         if (enabled && homeLocationCtrl.userPosition.value == null) {
@@ -118,41 +139,98 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
       const [], // Initial empty list
       _updateMarkers,
       markerBuilder: _markerBuilder,
-      levels: const [1, 4.25, 6.75, 8.25, 11.5, 14.5, 16.0, 16.5, 20.0], // Optional: default levels
+      levels: const [1, 4.25, 6.75, 8.25, 11.0, 12.0, 13.0, 14.0], // Optional: default levels
       extraPercent: 0.2, // Optional: default
-      stopClusteringZoom: 17.0, // Optional: adjusted to 17.0
+      stopClusteringZoom: 15.0, // Optional: adjusted to 15.0
     );
   }
 
-  // Update markers from cluster manager (uses Set<Marker>); add user marker separately
+  // Update markers from cluster manager (uses Set<Marker>)
   void _updateMarkers(Set<Marker> markers) {
     setState(() {
-      _markers = markers;
-      if (homeLocationCtrl.userPosition.value != null) {
-        _markers.add(
-          Marker(
-            markerId: const MarkerId('user_location'),
-            position: LatLng(
-              homeLocationCtrl.userPosition.value!.latitude,
-              homeLocationCtrl.userPosition.value!.longitude,
-            ),
-            infoWindow: const InfoWindow(title: 'Your Location'),
-            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-          ),
-        );
-      }
+      _markers = markers; // Only use cluster markers
     });
   }
 
   // Custom marker builder for clusters/individuals
+  // Single restaurant clusters (isMultiple: false) show as individual markers even below zoom 15
+  // includes custom info window for single restaurants
   Future<Marker> _markerBuilder(dynamic cluster) async {
     final gmcluster.Cluster<RestaurantModel> typedCluster = cluster as gmcluster.Cluster<RestaurantModel>;
     return Marker(
       markerId: MarkerId(typedCluster.getId()),
       position: typedCluster.location,
-      icon: await _getMarkerBitmap(
-        typedCluster.isMultiple ? 125 : 75,
-        text: typedCluster.isMultiple ? typedCluster.count.toString() : null,
+      icon: typedCluster.isMultiple
+          ? await _getMarkerBitmap(125, text: typedCluster.count.toString())
+          : BitmapDescriptor.defaultMarker,
+      // onTap to show custom info window for single restaurants
+      onTap: typedCluster.isMultiple
+          ? null
+          : () {
+        _customInfoWindowController.addInfoWindow!(
+          _buildCustomInfoWindow(typedCluster.items.first),
+          typedCluster.location,
+        );
+      },
+      // infoWindow for default behavior (optional, as we use custom info window)
+      // infoWindow: typedCluster.isMultiple
+      //     ? InfoWindow.noText
+      //     : InfoWindow(
+      //   title: typedCluster.items.first.resName,
+      //   onTap: () {
+      //     Get.to(() => RestaurantDetailScreen(restaurantModel: typedCluster.items.first));
+      //   },
+      // ),
+    );
+  }
+
+  // Method to build the custom info window widget
+  Widget _buildCustomInfoWindow(RestaurantModel restaurant) {
+    return GestureDetector(
+      onTap: () {
+        Get.to(() => RestaurantDetailScreen(restaurantModel: restaurant));
+      },
+      child: Container(
+        width: 200,
+        // height: 80,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              restaurant.resName.isNotEmpty ? restaurant.resName : 'Unknown Restaurant',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                color: Colors.black,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Tap for details',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[600],
+                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -283,11 +361,9 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                       final timeFilter = filterCtrl.selectedFilters['Time'];
 
                       if (operatingHours == null) {
-                        if (!isFetching) {
-                          homeLocationCtrl.getOperatingHours(restaurant.docID, triggerFilterUpdate: true);
-                        }
+                        // REMOVED: if (!isFetching) { homeLocationCtrl.getOperatingHours(restaurant.docID, triggerFilterUpdate: true); }
                         return Text(
-                          isFetching ? 'Loading...' : 'Unavailable',
+                          isFetching ? 'Loading...' : 'Unavailable',  // CHANGED: Show 'Unavailable' if not fetching
                           style: TextStyle(
                             fontSize: 12,
                             color: const Color.fromRGBO(142, 142, 147, 1),
@@ -428,7 +504,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
         );
       },
       child: Container(
-        width: 173,
+        width: 163,
         height: 295,
         margin: const EdgeInsets.only(right: 12),
         child: Column(
@@ -801,11 +877,9 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                                       final timeFilter = filterCtrl.selectedFilters['Time'];
 
                                       if (operatingHours == null) {
-                                        if (!isFetching) {
-                                          homeLocationCtrl.getOperatingHours(restaurant.docID, triggerFilterUpdate: true);
-                                        }
+                                        // REMOVED: if (!isFetching) { homeLocationCtrl.getOperatingHours(restaurant.docID, triggerFilterUpdate: true); }
                                         return Text(
-                                          isFetching ? 'Loading...' : 'Unavailable',
+                                          isFetching ? 'Loading...' : 'Unavailable',  // CHANGED: Show 'Unavailable' if not fetching
                                           style: TextStyle(
                                             fontSize: 12,
                                             color: const Color.fromRGBO(142, 142, 147, 1),
@@ -1017,6 +1091,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                 // Store controller for camera updates
                 _mapController = controller;
                 _manager.setMapId(controller.mapId);  // Set map ID for cluster manager
+                _customInfoWindowController.googleMapController = controller;
                 // If userPosition is already available, move camera immediately
                 if (homeLocationCtrl.userPosition.value != null) {
                   controller.animateCamera(
@@ -1032,12 +1107,23 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                   );
                 }
               },
-              onCameraMove: (position) => _manager.onCameraMove(position),  // Handle camera move for clustering
+              onCameraMove: (position) {
+                print('camera position zoom ${position.zoom}');
+                _manager.onCameraMove(position);
+                // Update info window position during camera move
+                _customInfoWindowController.onCameraMove!();
+              },  // Handle camera move for clustering
+              onTap: (position) => _customInfoWindowController.hideInfoWindow!(),
               onCameraIdle: _manager.updateMap,  // Update clusters on idle
               markers: _markers,  // Use clustered markers
             );
           }),
-
+          CustomInfoWindow(
+            controller: _customInfoWindowController,
+            height: 80,
+            width: 200,
+            offset: 50,
+          ),
           DraggableScrollableSheet(
             initialChildSize: 0.3,
             minChildSize: 0.1,
@@ -1050,177 +1136,168 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                   borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                   boxShadow: [BoxShadow(blurRadius: 10, color: Colors.black12)],
                 ),
-                child: Obx(
-                      () {
-                    if (homeLocationCtrl.isFetchingInitialData.value) {
-                      return _buildShimmer();
-                    }
-                    return ListView(
-                      controller: scrollCtrl,
-                      physics: const ClampingScrollPhysics(),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      children: [
-                        Center(
-                          child: Container(
-                            width: 65,
-                            height: 4,
-                            margin: const EdgeInsets.only(bottom: 12),
-                            decoration: BoxDecoration(
-                              color: Colors.grey,
-                              borderRadius: BorderRadius.circular(2),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
-                            'Restaurants in the area',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w900,
-                              fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 11),
-                        Obx(() {
-                          return SizedBox(
-                            height: 156,
-                            child: isLoading.value
-                                ? _buildShimmer()
-                                : StreamBuilder<List<RestaurantModel>>(
-                              stream: homeLocationCtrl.filteredRestaurantsStream.value,
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return _buildShimmer();
-                                }
-                                if (snapshot.hasError) {
-                                  return const Center(child: Text('Error loading restaurants'));
-                                }
-                                if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                  return const Center(child: Text('No restaurants match your criteria'));
-                                }
-                                final restaurants = snapshot.data!.take(4).toList();
-                                Future.wait(restaurants.map((restaurant) => homeLocationCtrl.getOperatingHours(restaurant.docID, triggerFilterUpdate: false)));
-                                return ListView(
-                                  scrollDirection: Axis.horizontal,
-                                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                                  children: restaurants.map((restaurant) => buildRestaurantCard(restaurant)).toList(),
-                                );
-                              },
-                            ),
-                          );
-                        }),
-                        Align(
-                          alignment: Alignment.center,
-                          child: TextButton(
-                            onPressed: () {
-                              Get.to(() => RestaurantsPage(fromHome: true));
-                            },
-                            child: Text(
-                              'See all',
-                              style: TextStyle(
-                                color: Colors.green,
-                                fontSize: 16,
-                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                fontWeight: FontWeight.w400,
+                child: ClipRRect(
+                  clipBehavior: Clip.hardEdge,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                  child: Obx(
+                        () {
+                      if (homeLocationCtrl.isFetchingInitialData.value) {
+                        return _buildShimmer();
+                      }
+                      return ListView(
+                        controller: scrollCtrl,
+                        physics: const ClampingScrollPhysics(),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        children: [
+                          Center(
+                            child: Container(
+                              width: 65,
+                              height: 4,
+                              margin: const EdgeInsets.only(bottom: 12),
+                              decoration: BoxDecoration(
+                                color: Colors.grey,
+                                borderRadius: BorderRadius.circular(2),
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
-                            'Streams',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w900,
-                              fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Obx(() {
-                          return SizedBox(
-                            height: 252,
-                            child: homeLocationCtrl.filteredVideos.isEmpty
-                                ? const Center(child: Text('No videos available'))
-                                : ListView(
-                              scrollDirection: Axis.horizontal,
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
-                              children: homeLocationCtrl.filteredVideos.asMap().entries.take(4).map((entry) {
-                                final index = entry.key;
-                                final video = entry.value;
-                                return buildStreamCard(video, index);
-                              }).toList(),
-                            ),
-                          );
-                        }),
-                        Align(
-                          alignment: Alignment.center,
-                          child: TextButton(
-                            onPressed: () {
-                              Get.to(VideosListView(fromHome: true));
-                            },
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: Text(
-                              'See all',
+                              'Restaurants in the area',
                               style: TextStyle(
-                                color: Colors.green,
-                                fontSize: 16,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w900,
                                 fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                fontWeight: FontWeight.w400,
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 16),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
-                            'Curated for you',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w900,
-                              fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        StreamBuilder<List<RestaurantModel>>(
-                          stream: filterCtrl.selectedFilters.values.any((list) => list.isNotEmpty)
-                              ? homeLocationCtrl.getFilteredRestaurants()
-                              : homeLocationCtrl.getAllRestaurants(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting || isLoading.value) {
-                              return _buildShimmer();
-                            }
-                            if (snapshot.hasError) {
-                              return const Center(child: Text('Error loading restaurants'));
-                            }
-                            if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                              return const Center(child: Text('No restaurants available'));
-                            }
-                            final restaurants = snapshot.data!.take(4).toList();
-                            Future.wait(restaurants.map((restaurant) => homeLocationCtrl.getOperatingHours(restaurant.docID, triggerFilterUpdate: false)));
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: restaurants
-                                    .map((restaurant) => Padding(
-                                  padding: const EdgeInsets.only(bottom: 12),
-                                  child: buildExperienceVibeCard(restaurant),
-                                ))
+                          const SizedBox(height: 11),
+                          Obx(() {
+                            return SizedBox(
+                              height: 156,
+                              child: isLoading.value || cachedRestaurants.isEmpty
+                                  ? _buildShimmer()
+                                  : ListView(
+                                scrollDirection: Axis.horizontal,
+                                padding: const EdgeInsets.only(left: 16, right: 4),
+                                children: cachedRestaurants
+                                    .take(4)
+                                    .map((restaurant) => buildRestaurantCard(restaurant))
                                     .toList(),
                               ),
                             );
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                      ],
-                    );
-                  },
+                          }),
+                          Align(
+                            alignment: Alignment.center,
+                            child: TextButton(
+                              onPressed: () {
+                                Get.to(() => RestaurantsPage(fromHome: true));
+                              },
+                              child: Text(
+                                'See all',
+                                style: TextStyle(
+                                  color: Colors.green,
+                                  fontSize: 16,
+                                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Text(
+                              'Streams',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w900,
+                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Obx(() {
+                            return SizedBox(
+                              height: 252,
+                              child: homeLocationCtrl.filteredVideos.isEmpty
+                                  ? const Center(child: Text('No videos available'))
+                                  : ListView(
+                                scrollDirection: Axis.horizontal,
+                                padding: const EdgeInsets.only(left: 16, right: 4),
+                                children: homeLocationCtrl.filteredVideos.asMap().entries.take(4).map((entry) {
+                                  final index = entry.key;
+                                  final video = entry.value;
+                                  return buildStreamCard(video, index);
+                                }).toList(),
+                              ),
+                            );
+                          }),
+                          Align(
+                            alignment: Alignment.center,
+                            child: TextButton(
+                              onPressed: () {
+                                Get.to(VideosListView(fromHome: true));
+                              },
+                              child: Text(
+                                'See all',
+                                style: TextStyle(
+                                  color: Colors.green,
+                                  fontSize: 16,
+                                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Text(
+                              'Curated for you',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w900,
+                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          StreamBuilder<List<RestaurantModel>>(
+                            stream: filterCtrl.selectedFilters.values.any((list) => list.isNotEmpty)
+                                ? homeLocationCtrl.getFilteredRestaurants()
+                                : homeLocationCtrl.getAllRestaurants(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting || isLoading.value) {
+                                return _buildShimmer();
+                              }
+                              if (snapshot.hasError) {
+                                return const Center(child: Text('Error loading restaurants'));
+                              }
+                              if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                return const Center(child: Text('No restaurants available'));
+                              }
+                              final restaurants = snapshot.data!.take(4).toList();
+                              Future.wait(restaurants.map((restaurant) => homeLocationCtrl.getOperatingHours(restaurant.docID, triggerFilterUpdate: false)));
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: restaurants
+                                      .map((restaurant) => Padding(
+                                    padding: const EdgeInsets.only(bottom: 12),
+                                    child: buildExperienceVibeCard(restaurant),
+                                  ))
+                                      .toList(),
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 10),
+                        ],
+                      );
+                    },
+                  ),
                 ),
               );
             },

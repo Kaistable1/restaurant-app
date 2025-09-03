@@ -28,7 +28,7 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
     super.initState();
     _controller = VideoPlayerController.networkUrl(Uri.parse(widget.video.url!))
       ..initialize().then((_) {
-        // _controller.play();
+        _controller.play();
         _controller.setLooping(true);
         setState(() {});
       });
@@ -267,7 +267,7 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
                         Image.asset('assets/icons/location.png', height: 12, width: 12, color: Colors.white,),
                         const SizedBox(width: 4),
                         Text(
-                          (widget.video.streetNo ?? '') + ', ' + (widget.video.city ?? '') + ', ' + (widget.video.state ?? ''), // 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                          (widget.video.streetNo ?? '') + ', ' + (widget.video.city ?? '') + ', ' + (widget.video.state ?? '') + (widget.video.zipCode == null || widget.video.zipCode == '' ? '' : ', ${widget.video.zipCode}'), // 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.white,

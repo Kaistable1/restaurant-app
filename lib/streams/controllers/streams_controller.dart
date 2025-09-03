@@ -104,7 +104,7 @@ class VideoController extends GetxController {
         thumbnailPath: (await getTemporaryDirectory()).path,
         imageFormat: ImageFormat.PNG,
         maxHeight: 200,
-        quality: 70,
+        quality: 100,
       );
       if (thumbnailPath != null) {
         thumbnailPaths[videoUrl] = thumbnailPath;

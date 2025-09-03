@@ -277,13 +277,13 @@ class HomeLocationController extends GetxController {
         if (selectedOptions != null && selectedOptions.isNotEmpty) {
           restaurants = restaurants.where((restaurant) {
             if (category == 'Dietary') {
-              return selectedOptions.any((option) => restaurant.dietaryList.contains(option));
+              return selectedOptions.every((option) => restaurant.dietaryList.contains(option));
             } else if (category == 'Vibes') {
-              return selectedOptions.any((option) => restaurant.vibesList.contains(option));
+              return selectedOptions.every((option) => restaurant.vibesList.contains(option));
             } else if (category == 'Time') {
               final hours = operatingHoursCache[restaurant.docID];
               if (hours == null || hours.isEmpty) {
-                getOperatingHours(restaurant.docID);
+                getOperatingHours(restaurant.docID, triggerFilterUpdate: true);
                 return false;
               }
               return hours.values.any((dayHours) =>
@@ -363,13 +363,13 @@ class HomeLocationController extends GetxController {
         if (selectedOptions != null && selectedOptions.isNotEmpty) {
           restaurants = restaurants.where((restaurant) {
             if (category == 'Dietary') {
-              return selectedOptions.any((option) => restaurant.dietaryList.contains(option));
+              return selectedOptions.every((option) => restaurant.dietaryList.contains(option));
             } else if (category == 'Vibes') {
-              return selectedOptions.any((option) => restaurant.vibesList.contains(option));
+              return selectedOptions.every((option) => restaurant.vibesList.contains(option));
             } else if (category == 'Time') {
               final hours = operatingHoursCache[restaurant.docID];
               if (hours == null || hours.isEmpty) {
-                getOperatingHours(restaurant.docID);
+                getOperatingHours(restaurant.docID, triggerFilterUpdate: true);
                 return false;
               }
               return hours.values.any((dayHours) =>
