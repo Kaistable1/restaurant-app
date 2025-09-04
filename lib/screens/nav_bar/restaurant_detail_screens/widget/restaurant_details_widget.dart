@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
-import 'package:kaistable_website/models/resaturant_model.dart';
+import 'package:kaistable_website/models/restaurant_model.dart';
 import 'package:kaistable_website/screens/nav_bar/widgets/custom_button.dart';
 
 class MapDetailWidget extends StatelessWidget {

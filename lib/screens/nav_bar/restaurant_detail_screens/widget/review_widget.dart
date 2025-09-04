@@ -3,7 +3,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
 import 'package:kaistable_website/main.dart';
-import 'package:kaistable_website/models/resaturant_model.dart';
+import 'package:kaistable_website/models/restaurant_model.dart';
 import 'package:kaistable_website/models/review_model.dart';
 import 'package:kaistable_website/screens/auth_screens/signup/signup_screen.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_location_controller.dart';

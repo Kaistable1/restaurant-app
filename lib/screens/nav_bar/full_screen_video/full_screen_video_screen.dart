@@ -17,7 +17,7 @@ class FullVideoScreen extends StatefulWidget {
 }
 
 class _FullVideoScreenState extends State<FullVideoScreen> {
-  late VideoPlayerController _controller;
+  late VideoPlayerController? _controller;
   bool _isPlaying = true;
 
   // Explanation: Tracks whether the video is bookmarked, updated reactively.
@@ -26,12 +26,14 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.video.url!))
-      ..initialize().then((_) {
-        _controller.play();
-        _controller.setLooping(true);
-        setState(() {});
-      });
+    if (widget.video.mediaType == 'video') {  // Only initialize for videos
+      _controller = VideoPlayerController.networkUrl(Uri.parse(widget.video.url!))
+        ..initialize().then((_) {
+          _controller!.play();
+          _controller!.setLooping(true);
+          setState(() {});
+        });
+    }
 
     // Explanation: For authenticated users, listen to Firestore stream; for unauthenticated, check SharedPreferences.
     if (auth.currentUser != null) {
@@ -66,7 +68,9 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    if(_controller != null){
+      _controller?.dispose();
+    }
     super.dispose();
   }
 
@@ -136,12 +140,13 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
   }
 
   void _togglePlayPause() {
+    if (widget.video.mediaType != 'video') return;  // Skip for images
     setState(() {
       _isPlaying = !_isPlaying;
       if (_isPlaying) {
-        _controller.play();
+        _controller?.play();
       } else {
-        _controller.pause();
+        _controller?.pause();
       }
     });
   }
@@ -167,16 +172,29 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               color: Colors.black,
-              child: _controller.value.isInitialized
+              child: widget.video.mediaType == 'video'
+                  ? (_controller?.value.isInitialized ?? false
                   ? FittedBox(
                 fit: BoxFit.cover,
                 child: SizedBox(
-                  width: _controller.value.size.width,
-                  height: _controller.value.size.height,
-                  child: VideoPlayer(_controller),
+                  width: _controller!.value.size.width,
+                  height: _controller!.value.size.height,
+                  child: VideoPlayer(_controller!),
                 ),
               )
-                  : const Center(child: CircularProgressIndicator()),
+                  : const Center(child: CircularProgressIndicator()))
+                  : Image.network(  // For images
+                widget.video.url ?? '',
+                fit: BoxFit.cover,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return const Center(child: CircularProgressIndicator());
+                },
+                errorBuilder: (context, error, stackTrace) => Container(
+                  color: Colors.grey[300],
+                  child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
+                ),
+              ),
             ),
             Positioned(
               bottom: 16, // Position above the bottom navigation bar height

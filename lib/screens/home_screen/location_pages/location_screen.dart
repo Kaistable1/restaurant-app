@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:kaistable_website/models/resaturant_model.dart';
+import 'package:kaistable_website/models/restaurant_model.dart';
 import 'package:kaistable_website/screens/onboarding_screen/onboarding_controller/onboarding_controller.dart';
 
 import '../../../constants/app_colors.dart';

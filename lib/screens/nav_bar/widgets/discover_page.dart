@@ -12,7 +12,7 @@ import '../../home_screen/home_controller/home_location_controller.dart';
 import '../controller/search_controller.dart';
 import '../restaurant_detail_screens/restaurant_detail_screen.dart';
 import '../../../constants/app_colors.dart';
-import '../../../models/resaturant_model.dart';
+import '../../../models/restaurant_model.dart';
 import 'discover_controller.dart';
 
 
@@ -1046,7 +1046,7 @@ class _RestaurantsPageState extends State<RestaurantsPage> with WidgetsBindingOb
 // import 'package:get/get.dart';
 // import 'package:google_fonts/google_fonts.dart';
 // import 'package:geolocator/geolocator.dart';
-// import 'package:kaistable_website/models/resaturant_model.dart';
+// import 'package:kaistable_website/models/restaurant_model.dart';
 // import 'package:shimmer/shimmer.dart';
 //
 // import '../../../constants/app_colors.dart';

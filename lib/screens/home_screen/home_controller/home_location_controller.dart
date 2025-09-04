@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
 import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/models/recent_view.dart';
-import 'package:kaistable_website/models/resaturant_model.dart';
+import 'package:kaistable_website/models/restaurant_model.dart';
 import 'package:kaistable_website/models/review_model.dart';
 import 'package:kaistable_website/utils/loading.dart';
 import 'package:kaistable_website/widgets/global_functions.dart';
@@ -77,6 +77,7 @@ class HomeLocationController extends GetxController {
     try {
       var snapshot = await FirebaseFirestore.instance
           .collection('videos')
+      .where('mediaType', isEqualTo: 'video')
           .orderBy('timestamp', descending: true)
           .get();
 

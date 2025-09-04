@@ -6,7 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:kaistable_website/custom_widget/app_bar.dart';
-import 'package:kaistable_website/models/resaturant_model.dart';
+import 'package:kaistable_website/models/restaurant_model.dart';
 import 'package:kaistable_website/screens/events/all_events_controller.dart';
 import 'package:kaistable_website/screens/events/event_screen.dart';
 import 'package:kaistable_website/utils/loading.dart';

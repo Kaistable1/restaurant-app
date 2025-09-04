@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:kaistable_website/models/resaturant_model.dart';
+import 'package:kaistable_website/models/restaurant_model.dart';
 import 'package:kaistable_website/screens/app_info/about_app/about_app.dart';
 import 'package:kaistable_website/screens/app_info/contact_us/contact_us.dart';
 import 'package:kaistable_website/screens/app_info/privacy_policy/privacy_policy.dart';

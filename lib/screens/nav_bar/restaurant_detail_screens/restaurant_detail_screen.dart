@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -12,14 +11,12 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:kaistable_website/models/resaturant_model.dart';
+import 'package:kaistable_website/models/restaurant_model.dart';
 import 'package:kaistable_website/screens/nav_bar/widgets/custom_button.dart';
-import 'package:map_launcher/map_launcher.dart' as ml;
 import 'package:maps_launcher/maps_launcher.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../custom_widget/app_bar.dart';
-import '../../../utils/firebase_datebase.dart';
 import '../../../utils/functions.dart';
 import '../../home_screen/home_controller/home_location_controller.dart';
 import '../full_screen_video/full_screen_video_screen.dart';
@@ -43,7 +40,7 @@ class RestaurantDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    vc.fetchVideos(restaurantModel!.resName, restaurantModel!.zipCode);
+    vc.fetchVideos(restaurantModel!.resName, restaurantModel!.zipCode, restaurantModel!.imagesList);
 
     return DefaultTabController(
       length: 4,
@@ -274,7 +271,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                           Tab(text: 'Info'),
                           Tab(text: 'Filter'),
                           Tab(text: 'Map'),
-                          Tab(text: 'Videos'),
+                          Tab(text: 'Gallery'),
                         ],
                         onTap: (index) {
                           tabIndex.value = index;
@@ -1224,11 +1221,9 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                 children: [
                                                   Obx(() {
                                                     if (vc.videos.isEmpty) {
-                                                      return const Center(
-                                                          child: Text(
-                                                              'No videos available'));
+                                                      return const Center(child: Text('No media available'));
                                                     }
-                
+
                                                     return GridView.builder(
                                                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                                         crossAxisCount: 3,
@@ -1240,22 +1235,17 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                       shrinkWrap: true,
                                                       primary: false,
                                                       itemBuilder: (context, index) {
-                                                        final video = vc.videos[index];
+                                                        final media = vc.videos[index];
 
-                                                        // Trigger thumbnail generation
-                                                        if (vc.thumbnailPaths[index] == null &&
-                                                            video.url != null &&
-                                                            video.url!.isNotEmpty) {
-                                                          vc.generateThumbnail(index, video.url!);
-                                                        }
+                                                        // Trigger thumbnail only for videos (already handled in controller)
 
                                                         return GestureDetector(
                                                           onTap: () async {
-                                                            Get.back();
+                                                            // Get.back();
                                                             await Navigator.push(
                                                               context,
                                                               MaterialPageRoute(
-                                                                builder: (context) => FullVideoScreen(video: video),
+                                                                builder: (context) => FullVideoScreen(video: media),  // Renamed screen and param
                                                               ),
                                                             );
                                                           },
@@ -1266,37 +1256,53 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                                 aspectRatio: 110 / 120,
                                                                 child: ClipRRect(
                                                                   borderRadius: BorderRadius.circular(10),
-                                                                  child: Obx(() {
-                                                                    return vc.thumbnailPaths[index] != null
-                                                                        ? Image.file(
-                                                                      File(vc.thumbnailPaths[index]!),
-                                                                      fit: BoxFit.cover,
-                                                                    )
-                                                                        : Image.network(
-                                                                      'https://via.placeholder.com/640x360',
-                                                                      fit: BoxFit.cover,
-                                                                      loadingBuilder: (context, child, loadingProgress) {
-                                                                        if (loadingProgress == null) return child;
-                                                                        return const Center(child: CircularProgressIndicator());
-                                                                      },
-                                                                      errorBuilder: (context, error, stackTrace) => Container(
-                                                                        color: Colors.grey[300],
-                                                                        child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
-                                                                      ),
-                                                                    );
-                                                                  }),
-                                                                ),
-                                                              ),
-                                                              Positioned.fill(
-                                                                child: Align(
-                                                                  alignment: Alignment.center,
-                                                                  child: Icon(
-                                                                    Icons.play_circle_fill_rounded,
-                                                                    size: 60,
-                                                                    color: Colors.white,
+                                                                  child: media.mediaType == 'video'
+                                                                      ? Obx(() => vc.thumbnailPaths[index] != null
+                                                                      ? Image.file(
+                                                                    File(vc.thumbnailPaths[index]!),
+                                                                    fit: BoxFit.cover,
+                                                                    errorBuilder: (context, error, stackTrace) => Container(
+                                                                      color: Colors.grey[300],
+                                                                      child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
+                                                                    ),
+                                                                  )
+                                                                      : Image.network(
+                                                                    'https://via.placeholder.com/640x360',
+                                                                    fit: BoxFit.cover,
+                                                                    loadingBuilder: (context, child, loadingProgress) {
+                                                                      if (loadingProgress == null) return child;
+                                                                      return const Center(child: CircularProgressIndicator());
+                                                                    },
+                                                                    errorBuilder: (context, error, stackTrace) => Container(
+                                                                      color: Colors.grey[300],
+                                                                      child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
+                                                                    ),
+                                                                  ))
+                                                                      : Image.network(
+                                                                    media.url!,
+                                                                    fit: BoxFit.cover,
+                                                                    loadingBuilder: (context, child, loadingProgress) {
+                                                                      if (loadingProgress == null) return child;
+                                                                      return const Center(child: CircularProgressIndicator());
+                                                                    },
+                                                                    errorBuilder: (context, error, stackTrace) => Container(
+                                                                      color: Colors.grey[300],
+                                                                      child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
+                                                                    ),
                                                                   ),
                                                                 ),
                                                               ),
+                                                              if (media.mediaType == 'video')  // Only show play icon for videos
+                                                                Positioned.fill(
+                                                                  child: Align(
+                                                                    alignment: Alignment.center,
+                                                                    child: Icon(
+                                                                      Icons.play_circle_fill_rounded,
+                                                                      size: 60,
+                                                                      color: Colors.white,
+                                                                    ),
+                                                                  ),
+                                                                ),
                                                             ],
                                                           ),
                                                         );
@@ -1329,7 +1335,7 @@ class RestaurantDetailScreen extends StatelessWidget {
 // import 'package:get/get.dart';
 // import 'package:google_maps_flutter/google_maps_flutter.dart';
 // import 'package:kaistable_website/main.dart';
-// import 'package:kaistable_website/models/resaturant_model.dart';
+// import 'package:kaistable_website/models/restaurant_model.dart';
 // import 'package:kaistable_website/screens/home_screen/events_screen/events_details_screen/event_details_gallary.dart';
 // import 'package:kaistable_website/screens/home_screen/home_controller/home_location_controller.dart';
 // import 'package:kaistable_website/screens/nav_bar/widgets/custom_button.dart';

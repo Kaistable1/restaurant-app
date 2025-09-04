@@ -18,7 +18,7 @@ import 'package:shimmer/shimmer.dart';
 import 'dart:io';
 
 import '../../../constants/app_colors.dart';
-import '../../../models/resaturant_model.dart';
+import '../../../models/restaurant_model.dart';
 import '../../../streams/model/streams_model.dart';
 import '../../home_screen/home_controller/home_location_controller.dart';
 import '../controller/search_controller.dart';
@@ -1127,7 +1127,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
           DraggableScrollableSheet(
             initialChildSize: 0.3,
             minChildSize: 0.1,
-            maxChildSize: (Get.height - (Platform.isAndroid ? 60 : 70) - 48 - 12 - 36 - 16 - 12) / Get.height, // 0.79,
+            maxChildSize: (Get.height - (Platform.isAndroid ? 60 : 70) - 56 - 12 - 44 - 16 - 20) / Get.height, // 12,
             snap: true,
             builder: (context, scrollCtrl) {
               return Container(
@@ -1320,16 +1320,17 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                         elevation: 0,
                         borderRadius: BorderRadius.circular(30),
                         child: Container(
-                          height: 48,
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          height: 56, // 48
+                          padding: const EdgeInsets.only(left: 16, right: 12),
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(30),
+                            border: Border.all(color: Colors.grey[300]!),
+                            // borderRadius: BorderRadius.circular(20), // 30
                           ),
                           child: Row(
                             children: [
-                              const Icon(Icons.search, size: 24),
+                              const Icon(Icons.search, size: 26),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: TextField(
@@ -1357,6 +1358,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                                   },
                                 ),
                               ),
+                              const SizedBox(width: 8),
                               DropdownButtonHideUnderline(
                                 child: Obx(
                                       () => DropdownButton2<String>(
@@ -1415,14 +1417,14 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                 const SizedBox(height: 12),
                 Obx(
                       () => SizedBox(
-                    height: showFilterDropdowns.values.contains(true) ? 250 : 36,
+                    height: showFilterDropdowns.values.contains(true) ? 250 : 44, // 36
                     child: Obx(() {
                       if (filterCtrl.filterOptions.isEmpty) {
                         return const SizedBox.shrink();
                       }
                       return ListView(
                         scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: const EdgeInsets.only(left: 16, right: 8),
                         children: filterCtrl.filterOptions.keys.map((category) {
                           return Stack(
                             clipBehavior: Clip.none,
@@ -1437,28 +1439,30 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                                   });
                                   showFilterDropdowns.refresh();
                                 },
-                                child: Container(
-                                  height: 36,
-                                  margin: const EdgeInsets.only(right: 8),
-                                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.grey.shade300),
-                                    borderRadius: BorderRadius.circular(30),
-                                    color: Colors.white,
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Obx(() => Text(
-                                        category +
-                                            (filterCtrl.selectedFilters[category]?.isNotEmpty ?? false
-                                                ? ' (${filterCtrl.selectedFilters[category]?.length ?? 0})'
-                                                : ''),
-                                        style: const TextStyle(color: Colors.black, fontSize: 18),
-                                      )),
-                                      const SizedBox(width: 4),
-                                      const Icon(Icons.arrow_drop_down, size: 20, color: Colors.black),
-                                    ],
+                                child: Obx(
+                                ()=> Container(
+                                    height: 44, // 36
+                                    margin: const EdgeInsets.only(right: 8),
+                                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.grey.shade300),
+                                      borderRadius: BorderRadius.circular(30),
+                                      color: filterCtrl.selectedFilters[category]?.isNotEmpty ?? false ? AppColors.primaryColor : Colors.white,
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          category +
+                                              (filterCtrl.selectedFilters[category]?.isNotEmpty ?? false
+                                                  ? ' (${filterCtrl.selectedFilters[category]?.length ?? 0})'
+                                                  : ''),
+                                          style: TextStyle(color: filterCtrl.selectedFilters[category]?.isNotEmpty ?? false ? Colors.white : Colors.black, fontSize: 18),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        const Icon(Icons.arrow_drop_down, size: 20, color: Colors.black),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -1467,7 +1471,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                                   final optionCount = filterCtrl.filterOptions[category]?.length ?? 0;
                                   final dropdownHeight = optionCount * 40.0;
                                   return Positioned(
-                                    top: 50,
+                                    top: 58,
                                     left: 0,
                                     child: Material(
                                       elevation: 5,

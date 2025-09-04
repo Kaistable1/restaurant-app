@@ -31,7 +31,7 @@ class VideoController extends GetxController {
       isLoading.value = true;
 
       var snapshot = await FirebaseFirestore.instance
-          .collection('videos')
+          .collection('videos').where('mediaType', isEqualTo: 'video')
           .orderBy('timestamp', descending: true)
           .get();
 

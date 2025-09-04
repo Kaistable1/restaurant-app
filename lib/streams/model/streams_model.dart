@@ -15,6 +15,7 @@ class VideoModel {
   final String? url;
   final String? vibes;
   final String? zipCode;
+  final String? mediaType;
 
   VideoModel({
     this.videoId,
@@ -31,6 +32,7 @@ class VideoModel {
     this.url,
     this.vibes,
     this.zipCode,
+    this.mediaType,
   });
 
   factory VideoModel.fromMap(Map<String, dynamic> map, String docId) {
@@ -51,6 +53,7 @@ class VideoModel {
       url: map['url'],
       vibes: map['vibes'],
       zipCode: map['zipCode'],
+      mediaType: map['mediaType'],
     );
   }
 }

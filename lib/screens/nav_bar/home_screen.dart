@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
 import 'package:kaistable_website/main.dart';
-import 'package:kaistable_website/models/resaturant_model.dart';
+import 'package:kaistable_website/models/restaurant_model.dart';
 import 'package:kaistable_website/screens/home_screen/cuisiness_viewall/cuisines_view_all.dart';
 import 'package:kaistable_website/screens/home_screen/entertainment/entertainments.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_location_controller.dart';

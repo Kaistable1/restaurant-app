@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:kaistable_website/models/resaturant_model.dart';
+import 'package:kaistable_website/models/restaurant_model.dart';
 
 class FilterSelectionController extends GetxController {
   final filterNames = [
