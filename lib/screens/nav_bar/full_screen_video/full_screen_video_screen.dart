@@ -23,9 +23,21 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
   // Explanation: Tracks whether the video is bookmarked, updated reactively.
   final RxBool _isBookmarked = false.obs;
 
+  // a late Future to hold the restaurant query result. This ensures the Firestore fetch happens only once in initState, rather than recreating the future on every build (which triggers refetches on setState calls like play/pause).
+  late Future<QuerySnapshot<Map<String, dynamic>>> _restaurantFuture;
+
   @override
   void initState() {
     super.initState();
+
+    // Initialize the restaurant future here in initState. This fetches the data only once when the screen is entered, and the FutureBuilder will use this cached future without recreating it on rebuilds.
+    _restaurantFuture = FirebaseFirestore.instance
+        .collection('restaurants')
+        .where('zipCode', isEqualTo: widget.video.zipCode)
+        .where('resName', isEqualTo: widget.video.restaurantName)
+        .limit(1)
+        .get();
+
     if (widget.video.mediaType == 'video') {  // Only initialize for videos
       _controller = VideoPlayerController.networkUrl(Uri.parse(widget.video.url!))
         ..initialize().then((_) {
@@ -245,12 +257,7 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
                     ),
                     const SizedBox(height: 8),
                     FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                      future: FirebaseFirestore.instance
-        .collection('restaurants')
-        .where('zipCode', isEqualTo: widget.video.zipCode)
-        .where('resName', isEqualTo: widget.video.restaurantName)
-        .limit(1)
-        .get(),
+                      future: _restaurantFuture,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.waiting) {
                           return Text(
