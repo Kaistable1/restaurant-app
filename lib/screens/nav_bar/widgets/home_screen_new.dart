@@ -1127,7 +1127,8 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
           DraggableScrollableSheet(
             initialChildSize: 0.3,
             minChildSize: 0.1,
-            maxChildSize: (Get.height - (Platform.isAndroid ? 60 : 70) - 56 - 12 - 44 - 16 - 20) / Get.height, // 12,
+            maxChildSize: (Get.height - (Platform.isAndroid ? 60 : 70) - 56 - 8 - 56 - 10 - 20
+            ) / Get.height, // 12,
             snap: true,
             builder: (context, scrollCtrl) {
               return Container(
@@ -1414,17 +1415,17 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
                 Obx(
                       () => SizedBox(
-                    height: showFilterDropdowns.values.contains(true) ? 250 : 44, // 36
+                    height: showFilterDropdowns.values.contains(true) ? 262 : 56, // 36
                     child: Obx(() {
                       if (filterCtrl.filterOptions.isEmpty) {
                         return const SizedBox.shrink();
                       }
                       return ListView(
                         scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.only(left: 16, right: 8),
+                        padding: const EdgeInsets.only(left: 16, right: 8, top: 4, bottom: 8),
                         children: filterCtrl.filterOptions.keys.map((category) {
                           return Stack(
                             clipBehavior: Clip.none,
@@ -1445,6 +1446,14 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                                     margin: const EdgeInsets.only(right: 8),
                                     padding: const EdgeInsets.symmetric(horizontal: 16),
                                     decoration: BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.2),
+                                          blurRadius: 4,
+                                          spreadRadius: 0,
+                                          offset: Offset(0, 4)
+                                        ),
+                                      ],
                                       border: Border.all(color: Colors.grey.shade300),
                                       borderRadius: BorderRadius.circular(30),
                                       color: filterCtrl.selectedFilters[category]?.isNotEmpty ?? false ? AppColors.primaryColor : Colors.white,
