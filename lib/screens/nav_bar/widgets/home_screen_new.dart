@@ -1455,7 +1455,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                                         ),
                                       ],
                                       border: Border.all(color: Colors.grey.shade300),
-                                      borderRadius: BorderRadius.circular(30),
+                                      // borderRadius: BorderRadius.circular(30),
                                       color: filterCtrl.selectedFilters[category]?.isNotEmpty ?? false ? AppColors.primaryColor : Colors.white,
                                     ),
                                     child: Row(
