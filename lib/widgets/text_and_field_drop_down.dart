@@ -16,6 +16,7 @@ class TextAndFieldsOrDropDown extends StatelessWidget {
     this.fieldController,
     this.fieldValidator,
     this.keyboardType = TextInputType.text,
+    this.onChangedTextfield,
     this.onChanged,
     required this.labelText,
     this.inputFormatters,
@@ -37,6 +38,7 @@ class TextAndFieldsOrDropDown extends StatelessWidget {
   final TextEditingController? fieldController;
   final String? Function(String?)? fieldValidator;
   final TextInputType keyboardType;
+  final String? Function(String?)? onChangedTextfield;
   final dynamic Function(String?)? onChanged;
   final List<TextInputFormatter>? inputFormatters;
   final Widget? fieldSuffixIcon;
@@ -70,6 +72,7 @@ class TextAndFieldsOrDropDown extends StatelessWidget {
                 inputFormatters: inputFormatters,
                 suffixIcon: fieldSuffixIcon,
                 isObscure: isObscure,
+                onChanged: onChangedTextfield,
               )
             : CustomDropDownWidget(
                 hint: dropHintText!,

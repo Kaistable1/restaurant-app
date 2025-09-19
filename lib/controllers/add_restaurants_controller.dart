@@ -5,12 +5,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:savrly/main.dart';
 import 'package:savrly/models/resaturant_model.dart';
 import 'dart:typed_data';
-import 'package:http/http.dart' as http;
 
 import 'package:savrly/widgets/global_functions.dart';
 
@@ -46,7 +48,12 @@ class AddRestaurantTabController extends GetxController {
     "Spanish",
   ].obs;
 
-  RxList<String> stateList = <String>["New York", "California"].obs;
+  // Changed stateList to be loaded dynamically from the package.
+  // Removed hardcoded states; they will be loaded in _loadLocationData.
+  RxList<String> stateList = <String>[].obs;
+  // Added RxMap for cities by state.
+  RxMap<String, List<String>> citiesByState = RxMap<String, List<String>>();
+
   final List<String> tabs = [
     'Basic Info',
     'Amenities',
@@ -54,6 +61,418 @@ class AddRestaurantTabController extends GetxController {
     'Operating Hours',
     'Menu',
   ];
+
+
+  // Helper method to generate password
+  String _generatePassword(String restaurantName) {
+    // Create a more secure password using restaurant name and some randomization
+    String cleanName = restaurantName
+        .toLowerCase()
+        .replaceAll(RegExp(r'[^\w\s]'), '')
+        .replaceAll(' ', '');
+
+    // Take first 3 letters of name + random numbers + special char
+    String namePart = cleanName.length > 3 ? cleanName.substring(0, 3) : cleanName;
+    String numberPart = (DateTime.now().millisecondsSinceEpoch % 10000).toString();
+    String specialChars = ['!', '@', '#', '\$', '%', '&', '*'][DateTime.now().second % 7];
+
+    return '${namePart}${numberPart.substring(0, 4)}$specialChars';
+  }
+
+  // Method to generate only email
+  void generateEmailOnly() {
+    String restaurantName = restaurantNameController.text.trim();
+
+    if (restaurantName.isEmpty) {
+      Get.snackbar('Error', 'Please enter restaurant name first',
+          backgroundColor: Colors.red, colorText: Colors.white);
+      return;
+    }
+
+    String cleanName = restaurantName
+        .toLowerCase()
+        .replaceAll(RegExp(r'[^\w\s]'), '')
+        .replaceAll(' ', '')
+        .substring(0, 15);
+
+    String generatedEmail = '$cleanName@savrly.com';
+    emailController.text = generatedEmail;
+
+    Get.snackbar(
+      'Email Generated',
+      'Email: $generatedEmail',
+      backgroundColor: Colors.green,
+      colorText: Colors.white,
+      duration: const Duration(seconds: 2),
+    );
+  }
+
+  // Method to generate only password
+  void generatePasswordOnly() {
+    String restaurantName = restaurantNameController.text.trim();
+
+    if (restaurantName.isEmpty) {
+      Get.snackbar('Error', 'Please enter restaurant name first',
+          backgroundColor: Colors.red, colorText: Colors.white);
+      return;
+    }
+
+    String generatedPassword = _generatePassword(restaurantName);
+    assignPasswordController.text = generatedPassword;
+
+    Get.snackbar(
+      'Password Generated',
+      'Password: $generatedPassword',
+      backgroundColor: Colors.green,
+      colorText: Colors.white,
+      duration: const Duration(seconds: 2),
+    );
+  }
+
+
+  @override
+  void onInit() {
+    super.onInit();
+    _loadLocationData();
+  }
+
+  // Add a loading state
+  var isLocationDataLoading = true.obs; // Tracks if data is still loading
+
+  // In AddRestaurantTabController.dart
+
+  Future<void> _loadLocationData() async {
+    try {
+      isLocationDataLoading.value = true;
+      print('Loading location data from country_picker_plus...');
+
+      // Load the JSON file
+      final stringData = await DefaultAssetBundle.of(Get.context!).loadString(
+          'assets/countries.json');
+      print('JSON data loaded: ${stringData.substring(0, 100)}...');
+
+      final List<dynamic> countries = json.decode(stringData);
+      final usData = countries.firstWhere(
+            (c) => c['name'] == 'United States',
+        orElse: () {
+          print('US data not found in JSON');
+          return null;
+        },
+      );
+
+      if (usData != null) {
+        final List<dynamic> stateData = usData['states'].where((s) => s['type'] == 'state').toList() ?? [];
+        List<String> tempStates = stateData.map((s) => s['name'] as String).toList();
+        tempStates.sort(); // Sort states alphabetically
+
+        Map<String, List<String>> tempCityMap = {};
+        for (var state in stateData) {
+          List<dynamic> citiesData = state['cities'] ?? [];
+          // START CHANGE: Extract 'name' from city maps
+          List<String> cities = citiesData.map((c) => c['name'] as String).toList();
+          // END CHANGE
+          cities.sort(); // Sort cities alphabetically
+          tempCityMap[state['name']] = cities;
+          print('Cities for ${state['name']}: ${cities.length} cities loaded'); // Debug
+        }
+
+        print('Loaded ${tempStates.length} states and ${tempCityMap.length} state-city mappings');
+        stateList.assignAll(tempStates);
+        citiesByState.assignAll(tempCityMap);
+      } else {
+        print('No US data found, using fallback states');
+        // ========== COMPLETE FALLBACK STATES LIST - REPLACE EXISTING ==========
+        List<String> fallbackStates = [
+          'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado',
+          'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho',
+          'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana',
+          'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota',
+          'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada',
+          'New Hampshire', 'New Jersey', 'New Mexico', 'New York',
+          'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon',
+          'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota',
+          'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington',
+          'West Virginia', 'Wisconsin', 'Wyoming'
+        ];
+
+        stateList.assignAll(fallbackStates);
+        citiesByState.assignAll({}); // Empty cities as fallback
+        // ========== END COMPLETE FALLBACK STATES LIST ==========
+      }
+    } catch (e, stackTrace) {
+      print('Error loading location data: $e');
+      print('Stack trace: $stackTrace');
+      Get.snackbar('Error', 'Failed to load location data: $e',
+          snackPosition: SnackPosition.TOP, backgroundColor: Colors.red, colorText: Colors.white);
+      stateList.assignAll([]);
+      citiesByState.assignAll({});
+    } finally {
+      isLocationDataLoading.value = false;
+    }
+  }
+
+
+  // ========== DROPDOWN_SEARCH INTEGRATION METHODS - ADD THIS BLOCK ==========
+
+  /// Get filtered states for dropdown_search (handles real-time search)
+  List<String> getFilteredStates(String? filter) {
+    if (filter == null || filter.isEmpty) {
+      return List<String>.from(stateList);
+    }
+
+    // Return filtered states based on search query
+    return stateList
+        .where((state) => state.toLowerCase().contains(filter.toLowerCase()))
+        .toList();
+  }
+
+  /// Get filtered cities for dropdown_search (handles real-time search)
+  List<String> getFilteredCities(String? filter) {
+    // If no state selected or no cities for that state, return empty list
+    if (selectedState.value.isEmpty ||
+        citiesByState[selectedState.value] == null ||
+        citiesByState[selectedState.value]!.isEmpty) {
+      return [];
+    }
+
+    List<String> allCities = citiesByState[selectedState.value]!;
+
+    if (filter == null || filter.isEmpty) {
+      return List<String>.from(allCities);
+    }
+
+    // Return filtered cities based on search query
+    return allCities
+        .where((city) => city.toLowerCase().contains(filter.toLowerCase()))
+        .toList();
+  }
+
+  /// Handle state selection (updated for dropdown_search)
+  void onStateSelected(String? value) {
+    String? previousState = selectedState.value;
+    selectedState.value = value ?? '';
+
+    // Only reset city if actually changing state
+    if (previousState != selectedState.value && selectedState.value.isNotEmpty) {
+      selectedCity.value = ''; // Reset city when state changes
+    }
+
+    update(); // Trigger UI update
+  }
+
+  /// Handle city selection (updated for dropdown_search)
+  void onCitySelected(String? value) {
+    selectedCity.value = value ?? '';
+    update(); // Trigger UI update
+  }
+
+  // ========== END DROPDOWN_SEARCH INTEGRATION METHODS ==========
+
+
+
+
+
+
+  // ========== ZIP CODE AUTO-POPULATION METHODS - ADD THIS BLOCK ==========
+
+  /// Perform ZIP code lookup and auto-populate state and city
+  Future<void> lookupZipCode(String zipCode) async {
+    if (zipCode.length != 5 || !RegExp(r'^\d{5}$').hasMatch(zipCode)) {
+      Get.snackbar(
+        'Invalid ZIP Code',
+        'Please enter a valid 5-digit ZIP code',
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 2),
+      );
+      return;
+    }
+
+    try {
+      // Show loading indicator
+      isLocationDataLoading.value = true;
+
+      // ========== WEB DEBUG LOG - ADD THIS ==========
+      if (kIsWeb) {
+        print('Running on web - using CORS proxy for ZIP lookup');
+      }
+      // ========== END WEB DEBUG LOG ==========
+
+      // Make API call to ZIP code lookup service
+      final locationData = await _fetchLocationFromZipCode(zipCode);
+
+      if (locationData != null) {
+        // Auto-populate state and city
+        await _autoPopulateLocation(locationData);
+
+        // Show success message
+        Get.snackbar(
+          'Location Found!',
+          'State: ${locationData['state']} | City: ${locationData['city']}',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
+      } else {
+        Get.snackbar(
+          'Location Not Found',
+          'No location data available for ZIP code $zipCode',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
+      }
+    } catch (e) {
+      // ========== ENHANCED ERROR LOG - REPLACE CATCH ==========
+      print('ZIP lookup error details: $e');
+      if (e.toString().contains('XMLHttpRequest')) {
+        print('Web CORS issue detected - ensure proxy is working');
+      } else if (e.toString().contains('SocketException')) {
+        print('Network connectivity issue');
+      }
+      Get.snackbar(
+        'Lookup Error',
+        'Failed to fetch location: ${e.toString().split(':')[0]}', // Shorten error message
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+      );
+      // ========== END ENHANCED ERROR LOG ==========
+    } finally {
+      isLocationDataLoading.value = false;
+    }
+  }
+
+  /// Fetch location data from ZIP code using external API
+  Future<Map<String, String>?> _fetchLocationFromZipCode(String zipCode) async {
+    try {
+      // Use CORS proxy for Flutter web (handles browser CORS restrictions)
+      final String proxyUrl = 'https://corsproxy.io/?';
+      final String targetUrl = 'http://api.zippopotam.us/us/$zipCode';
+
+      final response = await http.get(
+        Uri.parse(proxyUrl + Uri.encodeFull(targetUrl)),
+        headers: {
+          'Content-Type': 'application/json',
+          // Optional: Add user-agent to mimic browser if needed
+          'User-Agent': 'Mozilla/5.0 (compatible; Flutter)',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        // Extract state and city from response (handles multiple places, takes first)
+        if (data['places'] != null && data['places'].isNotEmpty) {
+          String state = data['places'][0]['state'] ?? '';
+          String city = data['places'][0]['place name'] ?? '';
+
+          if (state.isNotEmpty && city.isNotEmpty) {
+            return {
+              'state': state,
+              'city': city,
+              'zipCode': zipCode,
+            };
+          }
+        }
+      }
+
+      // Fallback to local database on API failure
+      print('API request failed with status: ${response.statusCode}');
+      return _lookupFromLocalDatabase(zipCode);
+
+    } catch (e) {
+      print('API error: $e');
+      // Fallback to local database on any error
+      return _lookupFromLocalDatabase(zipCode);
+    }
+  }
+
+  /// Fallback local ZIP code lookup (basic sample - expand as needed)
+  Map<String, String>? _lookupFromLocalDatabase(String zipCode) {
+    // Expanded sample database - add more as needed or load from assets
+    const Map<String, Map<String, String>> sampleZipCodes = {
+      // Original samples
+      '10001': {'state': 'New York', 'city': 'New York'},
+      '90210': {'state': 'California', 'city': 'Beverly Hills'},
+      '60601': {'state': 'Illinois', 'city': 'Chicago'},
+      '77002': {'state': 'Texas', 'city': 'Houston'},
+      '33101': {'state': 'Florida', 'city': 'Miami'},
+      '94102': {'state': 'California', 'city': 'San Francisco'},
+      '19103': {'state': 'Pennsylvania', 'city': 'Philadelphia'},
+      '20001': {'state': 'District of Columbia', 'city': 'Washington'},
+      '30303': {'state': 'Georgia', 'city': 'Atlanta'},
+      // New: ZIP 35004 example
+      '35004': {'state': 'Alabama', 'city': 'Moody'},
+      // Add more common ZIPs
+      '21201': {'state': 'Maryland', 'city': 'Baltimore'},
+      '37201': {'state': 'Tennessee', 'city': 'Nashville'},
+      '68101': {'state': 'Nebraska', 'city': 'Omaha'},
+    };
+
+    final result = sampleZipCodes[zipCode];
+    if (result != null) {
+      print('Using local fallback for ZIP $zipCode: ${result['state']}, ${result['city']}');
+    } else {
+      print('No local data for ZIP $zipCode');
+    }
+
+    return result;
+  }
+
+  /// Auto-populate state and city dropdowns with fetched data
+  Future<void> _autoPopulateLocation(Map<String, String> locationData) async {
+    String state = locationData['state'] ?? '';
+    String city = locationData['city'] ?? '';
+    String zipCode = locationData['zipCode'] ?? '';
+
+    // Update ZIP code field
+    zipCodeController.text = zipCode;
+
+    // Check if state exists in our list
+    if (stateList.contains(state)) {
+      // Select the state
+      selectedState.value = state;
+
+      // Wait a bit for the UI to update
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      // Check if city exists for this state
+      if (citiesByState[state]?.contains(city) == true) {
+        selectedCity.value = city;
+      } else {
+        // If city doesn't exist, just select state and let user choose city
+        selectedCity.value = '';
+        Get.snackbar(
+          'Partial Match',
+          'State found, but please select city from dropdown',
+          backgroundColor: Colors.blue,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 2),
+        );
+      }
+    } else {
+      // If state doesn't exist in our list, show error
+      Get.snackbar(
+        'State Not Found',
+        'State "$state" not available in our database. Please select manually.',
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+      );
+      selectedState.value = '';
+      selectedCity.value = '';
+    }
+
+    update(); // Trigger UI update
+  }
+
+// ========== END ZIP CODE AUTO-POPULATION METHODS ==========
+
+
+
+
+
 
   // Store uploaded images
   var uploadedImage = <UploadedImageModel>[].obs;
@@ -83,15 +502,29 @@ class AddRestaurantTabController extends GetxController {
     }
   }
 
+  // ========== UPDATED VALIDATION METHOD - REPLACE EXISTING METHOD ==========
   bool areBasicInfoFieldsFilled() {
-    return restaurantNameController.text.trim().isNotEmpty &&
-        emailController.text.trim().isNotEmpty &&
-        assignPasswordController.text.trim().isNotEmpty &&
+    bool basicFields = restaurantNameController.text.trim().isNotEmpty &&
+        // emailController.text.trim().isNotEmpty &&
+        // assignPasswordController.text.trim().isNotEmpty &&
         areaController.text.trim().isNotEmpty &&
-        selectedState.value.isNotEmpty &&
-        selectedCity.value.isNotEmpty && phoneNoController.text.trim().isNotEmpty && websiteUrlController.text.isNotEmpty;
-  }
+        phoneNoController.text.trim().isNotEmpty &&
+        websiteUrlController.text.isNotEmpty;
 
+    bool locationFields = selectedState.value.trim().isNotEmpty &&
+        selectedCity.value.trim().isNotEmpty;
+
+    // ========== DROPDOWN_SEARCH VALIDATION - ADD THIS BLOCK ==========
+    // Ensure location data is loaded before validating
+    bool locationDataReady = !isLocationDataLoading.value &&
+        stateList.isNotEmpty;
+
+    return basicFields && locationFields && locationDataReady;
+    // ========== END DROPDOWN_SEARCH VALIDATION ==========
+  }
+  // ========== END UPDATED VALIDATION METHOD ==========
+
+  // ========== UPDATED CLEARFIELDS METHOD - REPLACE EXISTING METHOD ==========
   void clearFields() {
     restaurantNameController.clear();
     emailController.clear();
@@ -106,8 +539,12 @@ class AddRestaurantTabController extends GetxController {
     selectedCity.value = '';
     selectedSpokenLanguage.value = '';
     isPasswordVisible.value = false; // Reset visibility
-    update();
+
+    // ========== DROPDOWN_SEARCH SPECIFIC - ADD THIS LINE ==========
+    update(); // Ensure UI updates with cleared selections
+    // ========== END DROPDOWN_SEARCH SPECIFIC ==========
   }
+  // ========== END UPDATED CLEARFIELDS METHOD ==========
 
   // Backend code
 
@@ -139,11 +576,12 @@ class AddRestaurantTabController extends GetxController {
         'about': 'Coming Soon!! Stay tuned for something exciting!',
         'address': areaController.text.trim(),
         'atmopshereList': [],
-        'vibesList': [] ,// Empty array as per your data
+        'vibesList': [], // Empty array as per your data
         'averageRating': 0,
         'reviewCount': 0,
         'city': selectedCity.value.trim(),
-        'country': selectedState.value.trim(),
+        'state': selectedState.value.trim(),
+        'country': 'United States',
         'createdAt': DateTime.now(),
         'dietaryList': [], // Empty array as per your data
         'docID': docID, // Will be set after adding the document
@@ -166,7 +604,7 @@ class AddRestaurantTabController extends GetxController {
         'socialMedia': tiktokLinkController.text.trim(),
         'specialConditions': 'Coming Soon!! Stay tuned for something exciting!',
         'spokenLanguage': selectedSpokenLanguage.value.trim(),
-        'zipcode': zipCodeController.text.trim(),
+        'zipCode': zipCodeController.text.trim(),
       };
 
       // Add the restaurant to Firestore
@@ -234,7 +672,8 @@ class AddRestaurantTabController extends GetxController {
       final restaurantData = {
         'address': areaController.text.trim(),
         'city': selectedCity.value.trim(),
-        'country': selectedState.value.trim(),
+        'state': selectedState.value.trim(),
+        'country': 'United States',
         'resImages': imagesList,
         'latitude':
             latitude.value, // Hardcoded for now; you can add a map picker later
@@ -247,8 +686,8 @@ class AddRestaurantTabController extends GetxController {
         'socialLink': instagramController.text.trim(),
         'socialMedia': tiktokLinkController.text.trim(),
         'spokenLanguage': selectedSpokenLanguage.value.trim(),
-        'phoneNo':phoneNoController.text.trim(),
-        'websiteUrl':websiteUrlController.text.trim()
+        'phoneNo': phoneNoController.text.trim(),
+        'websiteUrl': websiteUrlController.text.trim()
       };
 
       await FirebaseFirestore.instance

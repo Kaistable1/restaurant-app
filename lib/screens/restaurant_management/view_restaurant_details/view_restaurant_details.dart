@@ -71,7 +71,8 @@ class ViewRestaurantDetails extends StatelessWidget {
                     websiteUrl: restaurant.websiteUrl,
                     phoneNo: restaurant.phoneNo,
                     resEmail: restaurant.resEmail,
-                    location: restaurant.address,
+                    location:
+                        '${restaurant.address}, ${restaurant.city}${restaurant.state == '' ? '' : restaurant.state}, ${restaurant.country}${restaurant.zipCode == '' ? '' : ', ${restaurant.zipCode}'}',
                     tikTokeLink: restaurant.socialMedia,
                     instagramLink: restaurant.socialLink,
                   ),
@@ -91,8 +92,7 @@ class ViewRestaurantDetails extends StatelessWidget {
                     entries: restaurant.dietaryList.join(', '),
                     title: 'Dietary Preferences',
                   ),
-
-                   const SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   VibesContainer(
                     screenHeight: screenHeight,
                     mobileView: mobileView,
@@ -541,7 +541,6 @@ class DietaryPreferencesContainer extends StatelessWidget {
   }
 }
 
-
 //Vibes Container
 class VibesContainer extends StatelessWidget {
   const VibesContainer({
@@ -636,9 +635,6 @@ class VibesContainer extends StatelessWidget {
     );
   }
 }
-
-
-
 
 class AtmospherePriceRangeContainer extends StatelessWidget {
   const AtmospherePriceRangeContainer({

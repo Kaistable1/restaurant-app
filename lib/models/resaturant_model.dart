@@ -8,6 +8,7 @@ class RestaurantModel {
   String socialLink;
   String password;
   double averageRating;
+  String state;
   String city;
   String address;
   String zipCode;
@@ -38,6 +39,7 @@ class RestaurantModel {
       required this.docID,
       required this.entertainmentScheduleList,
       required this.menuList,
+      required this.state,
       required this.city,
       required this.averageRating,
       required this.longitude,
@@ -72,6 +74,7 @@ class RestaurantModel {
         socialLink: '',
         averageRating: 0.0,
         resEmail: '',
+        state: '',
         city: '',
         address: '',
         logoImage: '',
@@ -133,7 +136,7 @@ class RestaurantModel {
       'about': about,
       'createdAt': createdAt.toIso8601String(),
       'country': country,
-      'zipcode': zipCode,
+      'zipCode': zipCode,
       'phoneNo': phoneNo,
       'websiteUrl': websiteUrl
     };
@@ -145,9 +148,10 @@ class RestaurantModel {
         about: data['about'] ?? '',
         address: data['address'] ?? '',
         atmosphereList: List<String>.from(data['atmopshereList'] ?? []),
-        vibesList:  List<String>.from(data['vibesList'] ?? []),
+        vibesList: List<String>.from(data['vibesList'] ?? []),
         averageRating: (data['averageRating'] ?? 0).toDouble(),
         city: data['city'] ?? '',
+        state: data['state'] ?? '',
         country: data['country'] ?? '',
         createdAt: data['createdAt'] ?? Timestamp.now(),
         dietaryList: List<String>.from(data['dietaryList'] ?? []),
@@ -168,7 +172,7 @@ class RestaurantModel {
         spokenLanguage: data['spokenLanguage'] ?? '',
         socialLink: '',
         socialMedia: '',
-        zipCode: data['zipcode'] ?? '',
+        zipCode: data['zipCode'] != null ? data['zipCode'] : data['zipcode'] != null ? data['zipcode'] : '',
         phoneNo: data['phoneNo'] ?? "",
         websiteUrl: data['websiteUrl'] ?? " ");
   }
@@ -181,12 +185,13 @@ class RestaurantModel {
     return RestaurantModel(
       resName: data['resName'] ?? '',
       averageRating: (data['averageRating'] ?? 0).toDouble(),
-     docID: snapshot.id,
-      zipCode: data['zipcode'] ?? '',
+      docID: snapshot.id,
+      zipCode: data['zipCode'] != null ? data['zipCode'] : data['zipcode'] != null ? data['zipcode'] : '',
       phoneNo: data['phoneNo'] ?? '',
       websiteUrl: data['websiteUrl'] ?? '',
       imagesList: List<String>.from(data['resImages'] ?? []),
       city: data['city'] ?? '',
+      state: data['state'] ?? '',
       resEmail: data['resEmail'] ?? '',
       socialLink: data['socialLink'] ?? '',
       address: data['address'] ?? '',

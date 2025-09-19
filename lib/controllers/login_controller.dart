@@ -60,7 +60,7 @@ class LoginController extends GetxController {
       if (user != null) {
         DocumentSnapshot adminDoc =
             await _firestore.collection('admins').doc(user.uid).get();
-        print('uaser name ${adminDoc['name']}');
+        print('user email ${adminDoc['email']}');
         if (adminDoc.exists) {
           String role = adminDoc['role'];
           if (role == 'admin') {

@@ -69,7 +69,7 @@ class EditRestaurantController extends GetxController {
           restaurantDetailsModel!.phoneNo;
 
       addRestaurantController.selectedState.value =
-          restaurantDetailsModel!.country;
+          restaurantDetailsModel!.state;
 
       addRestaurantController.selectedCity.value = restaurantDetailsModel!.city;
       print('restuant city ------${restaurantDetailsModel?.city}');

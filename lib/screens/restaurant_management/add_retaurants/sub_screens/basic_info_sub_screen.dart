@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -202,6 +205,42 @@ class BasicInfoSubScreen extends StatelessWidget {
                   ),
                 ],
               ),
+              // Row(
+              //   children: [
+              //     Expanded(
+              //       child: TextAndFieldsOrDropDown(
+              //         labelText: 'Email',
+              //         fieldHintText: 'abc@dff.com',
+              //         fieldController: controller.emailController,
+              //         fieldValidator: (value) => isEmailValid(value!),
+              //         isDropDown: false,
+              //       ),
+              //     ),
+              //     const SizedBox(width: 24),
+              //     Expanded(
+              //       child: Obx(
+              //         () => TextAndFieldsOrDropDown(
+              //           labelText: 'Assign Password',
+              //           fieldHintText: '123@abc',
+              //           fieldController: controller.assignPasswordController,
+              //           fieldValidator: (value) => isPasswordValid(value!),
+              //           isObscure: !controller.isPasswordVisible.value,
+              //           fieldSuffixIcon: IconButton(
+              //             icon: Icon(
+              //               controller.isPasswordVisible.value
+              //                   ? Icons.visibility_off
+              //                   : Icons.visibility,
+              //               color: primaryColor,
+              //             ),
+              //             onPressed: controller.togglePasswordVisibility,
+              //           ),
+              //           isDropDown: false,
+              //         ),
+              //       ),
+              //     ),
+              //   ],
+              // ),
+              // Updated Row with suffix icons
               Row(
                 children: [
                   Expanded(
@@ -209,27 +248,65 @@ class BasicInfoSubScreen extends StatelessWidget {
                       labelText: 'Email',
                       fieldHintText: 'abc@dff.com',
                       fieldController: controller.emailController,
-                      fieldValidator: (value) => isEmailValid(value!),
+                      fieldValidator: (value) {
+
+                        if(value!.isEmpty){
+                          return null;
+                        }
+                        return isEmailValid(value);
+
+                        },
                       isDropDown: false,
+                      // Add this if your TextAndFieldsOrDropDown supports multiple suffix icons
+                      fieldSuffixIcon:
+                        // Password visibility icon (if needed for email)
+                        // ... existing suffix icon
+                        IconButton(
+                          icon: Icon(
+                            Icons.email_outlined,
+                            color: primaryColor,
+                          ),
+                          onPressed: controller.generateEmailOnly,
+                        ),
                     ),
                   ),
                   const SizedBox(width: 24),
                   Expanded(
                     child: Obx(
-                      () => TextAndFieldsOrDropDown(
+                          () => TextAndFieldsOrDropDown(
                         labelText: 'Assign Password',
                         fieldHintText: '123@abc',
                         fieldController: controller.assignPasswordController,
-                        fieldValidator: (value) => isPasswordValid(value!),
+                        fieldValidator: (value) {
+
+                          if(value!.isEmpty){
+                            return null;
+                          }
+                          return isPasswordValid(value);
+                          },
                         isObscure: !controller.isPasswordVisible.value,
-                        fieldSuffixIcon: IconButton(
-                          icon: Icon(
-                            controller.isPasswordVisible.value
-                                ? Icons.visibility_off
-                                : Icons.visibility,
-                            color: primaryColor,
-                          ),
-                          onPressed: controller.togglePasswordVisibility,
+                        fieldSuffixIcon: SizedBox(
+                          width: 80,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              IconButton(
+                                icon: Icon(
+                                  controller.isPasswordVisible.value
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                  color: primaryColor,
+                                ),
+                                onPressed: controller.togglePasswordVisibility,
+                              ),
+                              IconButton(
+                                icon: Icon(
+                                  Icons.password,
+                                  color: primaryColor,
+                                ),
+                                onPressed: controller.generatePasswordOnly,
+                              ),
+                            ]),
                         ),
                         isDropDown: false,
                       ),
@@ -237,48 +314,260 @@ class BasicInfoSubScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextAndFieldsOrDropDown(
-                      labelText: 'State',
-                      dropHintText: 'State',
-                      items: controller.stateList,
-                      currentValue: controller.selectedState.value,
-                      onChanged: (value) =>
-                          controller.selectedState.value = value!,
-                      dropDownValidator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Please select a state.';
-                        }
-                        return null;
-                      },
-                      isDropDown: true,
-                    ),
-                  ),
-                  const SizedBox(width: 24),
-                  Expanded(
-                    child: Obx(
-                      () => TextAndFieldsOrDropDown(
-                        labelText: 'City',
-                        dropHintText: 'City',
-                        currentValue: controller.selectedCity.value,
-                        items: controller.selectedState.value == 'California'
-                            ? globalVariables.losAngelesCities
-                            : globalVariables.newYorkCitiesList,
-                        onChanged: (value) =>
-                            controller.selectedCity.value = value!,
-                        dropDownValidator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Please select a city.';
-                          }
-                          return null;
-                        },
-                        isDropDown: true,
+              Obx(
+                    () => controller.isLocationDataLoading.value
+                    ? Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Text(
+                            'State',
+                            style: headingText.copyWith(fontSize: mobileView ? 16 : 20),
+                          ),
+                          SizedBox(height: 10),
+                          Container(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.grey[300]!),
+                            ),
+                            child: const Center(child: CircularProgressIndicator()),
+                          ),
+                          const SizedBox(height: 16),
+                        ],
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 24),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Text(
+                            'City',
+                            style: headingText.copyWith(fontSize: mobileView ? 16 : 20),
+                          ),
+                          SizedBox(height: 10),
+                          Container(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.grey[300]!),
+                            ),
+                            child: const Center(child: Text('Select State First')),
+                          ),
+                          const SizedBox(height: 24),
+                        ],
+                      ),
+                    ),
+                  ],
+                )
+                    : Row(
+                  children: [
+                    // State Searchable Dropdown
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'State',
+                            style: headingText.copyWith(fontSize: mobileView ? 16 : 20),
+                          ),
+                          SizedBox(height: 10),
+                          DropdownSearch<String>(
+                            key: const Key('state_dropdown'),
+                            selectedItem: controller.selectedState.value.isNotEmpty
+                                ? controller.selectedState.value
+                                : null,
+                            items: (String? filter, _) =>
+                                controller.getFilteredStates(filter),
+                            itemAsString: (String? item) => item ?? '',
+                            onChanged: controller.isLocationDataLoading.value
+                                ? null
+                                : controller.onStateSelected,
+                            validator: (String? value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'Please select a state.';
+                              }
+                              return null;
+                            },
+                            // Clear button (optional; remove if IDE error persists - it's not required)
+                            // clearButtonProps: const ClearButtonProps(isVisible: true),
+                            popupProps: PopupProps.menu(
+                              menuProps: MenuProps(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              showSearchBox: true,
+                              searchFieldProps: TextFieldProps(
+                                decoration: InputDecoration(
+                                  hintText: 'Type to search states...',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide(color: lightColor),
+                                  ),
+                                  prefixIcon: const Icon(Icons.search),
+                                ),
+                              ),
+                              showSelectedItems: true,
+                              fit: FlexFit.loose,
+                              constraints: const BoxConstraints(maxHeight: 300),
+                              itemBuilder: (context, item, isSelected, _) {
+                                return Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: isSelected ? primaryColor.withOpacity(0.1) : null,
+                                  ),
+                                  child: Text(
+                                    item,
+                                    style: TextStyle(
+                                      color: isSelected ? primaryColor : Colors.black87,
+                                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            decoratorProps: DropDownDecoratorProps(
+                              decoration: InputDecoration(
+                                hintText: 'Select or search state',
+                                hintStyle: TextStyle(color: lightColor),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(color: lightColor),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(color: lightColor),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(color: lightColor),
+                                ),
+                                suffixIcon: const Icon(Icons.arrow_drop_down, color: primaryColor),
+                              ),
+                            ),
+                            enabled: !controller.isLocationDataLoading.value,
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 24),
+                    // City Searchable Dropdown
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'City',
+                            style: headingText.copyWith(fontSize: mobileView ? 16 : 20),
+                          ),
+                          SizedBox(height: 10),
+                          DropdownSearch<String>(
+                            key: const Key('city_dropdown'),
+                            selectedItem: controller.selectedCity.value.isNotEmpty
+                                ? controller.selectedCity.value
+                                : null,
+                            items: (String? filter, _) =>
+                                controller.getFilteredCities(filter),
+                            itemAsString: (String? item) => item ?? '',
+                            onChanged: controller.selectedState.value.isNotEmpty &&
+                                !controller.isLocationDataLoading.value
+                                ? controller.onCitySelected
+                                : null,
+                            validator: (String? value) {
+                              if (controller.selectedState.value.isEmpty) {
+                                return 'Please select a state first.';
+                              }
+                              if (value == null || value.trim().isEmpty) {
+                                return 'Please select a city.';
+                              }
+                              return null;
+                            },
+                            // Clear button (optional; remove if IDE error persists - it's not required)
+                            // clearButtonProps: const ClearButtonProps(isVisible: true),
+                            popupProps: PopupProps.menu(
+                              menuProps: MenuProps(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              showSearchBox: true,
+                              searchFieldProps: TextFieldProps(
+                                decoration: InputDecoration(
+                                  hintText: 'Type to search cities...',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide(color: lightColor),
+                                  ),
+                                  prefixIcon: const Icon(Icons.search),
+                                ),
+                              ),
+                              // title: Container(
+                              //   height: 50,
+                              //   decoration: const BoxDecoration(
+                              //     color: primaryColor, // Use your app's primaryColor
+                              //     borderRadius: BorderRadius.only(
+                              //       topLeft: Radius.circular(8),
+                              //       topRight: Radius.circular(8),
+                              //     ),
+                              //   ),
+                              //   child: const Center(
+                              //     child: Text(
+                              //       'Select a City',
+                              //       style: TextStyle(
+                              //         color: Colors.white,
+                              //         fontWeight: FontWeight.bold,
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
+                              showSelectedItems: true,
+                              fit: FlexFit.loose,
+                              constraints: const BoxConstraints(maxHeight: 300),
+                              itemBuilder: (context, item, isSelected, _) {
+                                return Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: isSelected ? primaryColor.withOpacity(0.1) : null,
+                                  ),
+                                  child: Text(
+                                    item,
+                                    style: TextStyle(
+                                      color: isSelected ? primaryColor : Colors.black87,
+                                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            decoratorProps: DropDownDecoratorProps(
+                              decoration: InputDecoration(
+                                hintText: controller.selectedState.value.isNotEmpty
+                                    ? 'Select or search city'
+                                    : 'Select State First',
+                                hintStyle: TextStyle(color: lightColor),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(color: lightColor),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(color: lightColor),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(color: lightColor),
+                                ),
+                                suffixIcon: const Icon(Icons.arrow_drop_down, color: primaryColor),
+                              ),
+                            ),
+                            enabled: controller.selectedState.value.isNotEmpty &&
+                                !controller.isLocationDataLoading.value,
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
               Row(
                 children: [
@@ -300,14 +589,46 @@ class BasicInfoSubScreen extends StatelessWidget {
                   Expanded(
                     child: TextAndFieldsOrDropDown(
                       labelText: 'Zip Code',
-                      fieldHintText: '25235',
+                      fieldHintText: '90210',
                       fieldController: controller.zipCodeController,
                       fieldValidator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return null; // ZIP code is optional
+                        }
+                        if (!RegExp(r'^\d{5}$').hasMatch(value)) {
+                          return 'Please enter a valid 5-digit ZIP code';
+                        }
                         return null;
                       },
+                      // ========== ADD ZIP CODE LISTENER - NEW ==========
+                      onChangedTextfield: (value) {
+                        print('onChange val ' + value.toString());
+                        if (value != null && value.length == 5) {
+                          // Debounce for 500ms to avoid multiple API calls
+                          Timer(const Duration(milliseconds: 300), () {
+                            if (controller.zipCodeController.text == value) {
+                              print('Inside debounce');
+                              controller.lookupZipCode(value);
+                            }
+                          });
+                        }
+                        return null;
+                      },
+                      // ========== END ZIP CODE LISTENER ==========
                       isDropDown: false,
                     ),
                   ),
+                  // Expanded(
+                  //   child: TextAndFieldsOrDropDown(
+                  //     labelText: 'Zip Code',
+                  //     fieldHintText: '25235',
+                  //     fieldController: controller.zipCodeController,
+                  //     fieldValidator: (value) {
+                  //       return null;
+                  //     },
+                  //     isDropDown: false,
+                  //   ),
+                  // ),
                 ],
               ),
               //add extra fields phone number and website url
