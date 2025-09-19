@@ -40,7 +40,17 @@ class RestaurantDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    vc.fetchVideos(restaurantModel!.resName, restaurantModel!.zipCode, restaurantModel!.imagesList);
+    // Collect all menu food images
+    List<String> menuImages = [];
+    for (var menu in restaurantModel!.menuList) {
+      menuImages.addAll(menu.foodImages);
+    }
+
+    // Combine restaurant images and menu images
+    List<String> allImages = [...restaurantModel!.imagesList, ...menuImages];
+
+    // Added menuList to fetchVideos call
+    vc.fetchVideos(restaurantModel!.resName, restaurantModel!.zipCode, restaurantModel!.imagesList, restaurantModel!.menuList);
 
     return DefaultTabController(
       length: 4,
@@ -151,7 +161,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 28),
-                      restaurantModel!.imagesList.length == 0 ?
+                      allImages.length == 0 ?
                       Row(
                         children: [
                           ClipRRect(
@@ -191,24 +201,24 @@ class RestaurantDetailScreen extends StatelessWidget {
                             ],
                           ),
                         ],
-                      ) : restaurantModel!.imagesList.length == 1 ?
+                      ) : allImages.length == 1 ?
                       ClipRRect(
                         clipBehavior: Clip.hardEdge,
                         borderRadius: BorderRadius.circular(10),
                         child: Image.network(
-                          restaurantModel!.imagesList.first, // 'assets/images/restaurant_detail_img1.png',
+                          allImages.first, // 'assets/images/restaurant_detail_img1.png',
                           height: 246,
                           width: Get.width - 48,
                           fit: BoxFit.cover,
                         ),
-                      ) : restaurantModel!.imagesList.length ==2 ?
+                      ) : allImages.length == 2 ?
                       Row(
                         children: [
                         ClipRRect(
                         clipBehavior: Clip.hardEdge,
                         borderRadius: BorderRadius.circular(10),
                         child: Image.network(
-                          restaurantModel!.imagesList.first,
+                          allImages.first,
                           height: 246,
                           width: (Get.width - 24 - 24 - 8) / 2,
                           fit: BoxFit.cover,
@@ -219,7 +229,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                             clipBehavior: Clip.hardEdge,
                             borderRadius: BorderRadius.circular(10),
                             child: Image.network(
-                              restaurantModel!.imagesList.last,
+                              allImages.last,
                               height: 246,
                               width: (Get.width - 24 - 24 - 8) / 2,
                               fit: BoxFit.cover,
@@ -231,7 +241,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                             clipBehavior: Clip.hardEdge,
                             borderRadius: BorderRadius.circular(10),
                             child: Image.network(
-                              restaurantModel!.imagesList.first,
+                              allImages.first,
                               height: 246,
                               width: (Get.width - 24 - 24 - 8) / 2,
                               fit: BoxFit.cover,
@@ -244,7 +254,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                 clipBehavior: Clip.hardEdge,
                                 borderRadius: BorderRadius.circular(10),
                                 child: Image.network(
-                                  restaurantModel!.imagesList[1],
+                                  allImages[1],
                                   height: (246 - 8) / 2,
                                   width: (Get.width - 24 - 24 - 8) / 2,
                                   fit: BoxFit.cover,
@@ -255,7 +265,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                 clipBehavior: Clip.hardEdge,
                                 borderRadius: BorderRadius.circular(10),
                                 child: Image.network(
-                                  restaurantModel!.imagesList[2],
+                                  allImages[2],
                                   height: (246 - 8) / 2,
                                   width: (Get.width - 24 - 24 - 8) / 2,
                                   fit: BoxFit.cover,
@@ -324,7 +334,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                 width: 12)),
                                         const SizedBox(width: 8),
                                         Text(
-                                          '${restaurantModel?.address ?? ''}, ${restaurantModel?.city ?? ''}, ${restaurantModel?.country ?? ''}${restaurantModel == null || restaurantModel!.zipCode == '' ? '' : ', ${restaurantModel!.zipCode}' }', // '304 Liverpool Blvd, Portsmouth, CA 30103',
+                                          '${restaurantModel?.address ?? ''}, ${restaurantModel?.city ?? ''}, ${restaurantModel?.state ?? ''}, ${restaurantModel?.country ?? ''}${restaurantModel == null || restaurantModel!.zipCode == '' ? '' : ', ${restaurantModel!.zipCode}' }', // '304 Liverpool Blvd, Portsmouth, CA 30103',
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500,
@@ -983,7 +993,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                     const SizedBox(width: 8),
                                                     Expanded(
                                                       child: Text(
-                                                        '${restaurantModel?.address ?? ''}, ${restaurantModel?.city ?? ''}, ${restaurantModel?.country ?? ''}${restaurantModel == null || restaurantModel!.zipCode == '' ? '' : ', ${restaurantModel!.zipCode}' }', // '304 Liverpool Blvd, Portsmouth, CA 30103',
+                                                        '${restaurantModel?.address ?? ''}, ${restaurantModel?.city ?? ''}${restaurantModel == null ? '' : restaurantModel?.state == '' ? '' : ', ${restaurantModel!.state}'}, ${restaurantModel?.country ?? ''}${restaurantModel == null || restaurantModel!.zipCode == '' ? '' : ', ${restaurantModel!.zipCode}' }', // '304 Liverpool Blvd, Portsmouth, CA 30103',
                                                         style: TextStyle(
                                                           fontSize: 14,
                                                           fontWeight: FontWeight.w500,
@@ -1192,7 +1202,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                           GestureDetector(
                                             onTap: () async {
                                               // Copy text to clipboard
-                                              await Clipboard.setData(ClipboardData(text: restaurantModel!.address));
+                                              await Clipboard.setData(ClipboardData(text: '${restaurantModel?.address ?? ''}, ${restaurantModel?.city ?? ''}, ${restaurantModel?.state}, ${restaurantModel?.country ?? ''}${restaurantModel == null || restaurantModel!.zipCode == '' ? '' : ', ${restaurantModel!.zipCode}' }'));
                                               // Show a snackbar to confirm the action
                                               ScaffoldMessenger.of(context).showSnackBar(
                                                 SnackBar(content: Text('Text copied to clipboard!')),

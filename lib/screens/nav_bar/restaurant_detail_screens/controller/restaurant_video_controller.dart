@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
+import '../../../../models/restaurant_model.dart';
 import '../../../../streams/model/streams_model.dart';
 
 class RestaurantVideoController extends GetxController{
@@ -22,7 +23,8 @@ class RestaurantVideoController extends GetxController{
     super.onInit();
   }
 
-  Future<void> fetchVideos(String restaurantName, String zipCode, List<String> imagesList) async {
+  // Added List<MenuModel> menuList parameter
+  Future<void> fetchVideos(String restaurantName, String zipCode, List<String> imagesList, List<MenuModel> menuList) async {
     try {
       var snapshot = await FirebaseFirestore.instance
           .collection('videos').where('restaurantName', isEqualTo: restaurantName).where('zipCode', isEqualTo: zipCode)
@@ -33,14 +35,19 @@ class RestaurantVideoController extends GetxController{
           .map((doc) => VideoModel.fromMap(doc.data(), doc.id))
           .toList();
 
-      // Create VideoModel for each restaurant image
-      var imageMedias = imagesList.map((url) => VideoModel(url: url, mediaType: 'image')).toList();
+      // Create separate VideoModel lists for restaurant images and menu images
+      var restaurantImageMedias = imagesList.map((url) => VideoModel(url: url, mediaType: 'image')).toList();
 
-      // Combine lists (images first, then Firestore medias)
-      videos.value = [...imageMedias, ...firestoreMedias];
+      var menuImageMedias = <VideoModel>[];
+      for (var menu in menuList) {
+        menuImageMedias.addAll(menu.foodImages.map((url) => VideoModel(url: url, mediaType: 'image')));
+      }
+
+      // Combine in specified order: restaurant images first, then menu images, then videos
+      videos.value = [...restaurantImageMedias, ...menuImageMedias, ...firestoreMedias];
 
       for(int i=0; i<videos.length; i++) {
-        // rigger thumbnail only for videos
+        // Trigger thumbnail only for videos
         if (videos[i].mediaType == 'video' &&  // check for 'video' (skip images)
             thumbnailPaths[i] == null &&
             videos[i].url != null &&

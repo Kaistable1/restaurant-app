@@ -62,7 +62,7 @@ class _MainScreenState extends State<MainScreen> {
         inactiveColorPrimary: AppColors.blackColor,
       ),
       PersistentBottomNavBarItem(
-        icon: Image.asset('assets/images/icons8-car (2) (1).png', width: 34, height: 34),
+        icon: Image.asset('assets/images/streams_navbar.png', width: 36, height: 36, color: Colors.grey[300],),
         title: "Streams",
         activeColorPrimary: AppColors.primaryColor,
         inactiveColorPrimary: AppColors.blackColor,
@@ -98,7 +98,7 @@ class _MainScreenState extends State<MainScreen> {
         inactiveColorPrimary: AppColors.blackColor,
       ),
       PersistentBottomNavBarItem(
-        icon: Image.asset('assets/images/icons8-car (2) (1).png', width: 34, height: 34),
+        icon: Image.asset('assets/images/streams_navbar.png', width: 34, height: 34),
         title: "Streams",
         activeColorPrimary: AppColors.primaryColor,
         inactiveColorPrimary: AppColors.blackColor,

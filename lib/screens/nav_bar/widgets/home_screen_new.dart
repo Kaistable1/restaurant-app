@@ -942,7 +942,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                                         children: [
                                           Expanded(
                                             child: Text(
-                                              '${restaurant.address}, ${restaurant.city}, ${restaurant.country}${restaurant.zipCode == '' ? '' : ', ${restaurant.zipCode}' }',
+                                              '${restaurant.address}, ${restaurant.city}, ${restaurant.state}, ${restaurant.country}${restaurant.zipCode == '' ? '' : ', ${restaurant.zipCode}' }',
                                               style: TextStyle(
                                                 fontSize: 12,
                                                 color: const Color.fromRGBO(142, 142, 147, 1),
