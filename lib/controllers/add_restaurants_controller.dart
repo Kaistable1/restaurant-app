@@ -561,9 +561,12 @@ class AddRestaurantTabController extends GetxController {
 
       List<String> imagesList = await uploadImagesToFirebase(imageBytesList);
 
-      String docID = await assignedCredencialsLogin(
-          email: emailController.text.trim(),
-          userPassword: assignPasswordController.text.trim());
+      String docID = '';
+      if(emailController.text.isNotEmpty && assignPasswordController.text.isNotEmpty) {
+        docID = await assignedCredencialsLogin(
+            email: emailController.text.trim(),
+            userPassword: assignPasswordController.text.trim());
+      }
       if (docID == 'error') {
         Get.snackbar('Savrly', 'Restaurant not registered!');
         Get.back();
@@ -607,11 +610,24 @@ class AddRestaurantTabController extends GetxController {
         'zipCode': zipCodeController.text.trim(),
       };
 
-      // Add the restaurant to Firestore
-      await FirebaseFirestore.instance
-          .collection('restaurants')
-          .doc(docID)
-          .set(restaurantData);
+      if(docID == ''){
+        await FirebaseFirestore.instance
+            .collection('restaurants')
+            .add(restaurantData).then((val) async {
+              await val.update({'docID': val.id});
+              restaurantData['docID'] = val.id;
+              docID = val.id;
+        });
+
+      }else{
+        // Add the restaurant to Firestore
+        await FirebaseFirestore.instance
+            .collection('restaurants')
+            .doc(docID)
+            .set(restaurantData);
+        restaurantData['docID'] = docID;
+      }
+
       if (isNewRegistery == true) {
         print('is new registry true------------------');
         restaurantModel = RestaurantModel.fromMap(restaurantData);
@@ -634,6 +650,43 @@ class AddRestaurantTabController extends GetxController {
   updateBasicInfo() async {
     try {
       if (isNewRegistery == true) {
+        await FirebaseFirestore.instance
+            .collection('restaurants')
+            .doc(restaurantModel!.docID)
+            .collection('operatingHours')
+            .doc('Monday').delete();
+        await FirebaseFirestore.instance
+            .collection('restaurants')
+            .doc(restaurantModel!.docID)
+            .collection('operatingHours')
+            .doc('Tuesday').delete();
+        await FirebaseFirestore.instance
+            .collection('restaurants')
+            .doc(restaurantModel!.docID)
+            .collection('operatingHours')
+            .doc('Wednesday').delete();
+        await FirebaseFirestore.instance
+            .collection('restaurants')
+            .doc(restaurantModel!.docID)
+            .collection('operatingHours')
+            .doc('Thursday').delete();
+        await FirebaseFirestore.instance
+            .collection('restaurants')
+            .doc(restaurantModel!.docID)
+            .collection('operatingHours')
+            .doc('Friday').delete();
+        await FirebaseFirestore.instance
+            .collection('restaurants')
+            .doc(restaurantModel!.docID)
+            .collection('operatingHours')
+            .doc('Saturday').delete();
+        await FirebaseFirestore.instance
+            .collection('restaurants')
+            .doc(restaurantModel!.docID)
+            .collection('operatingHours')
+            .doc('Sunday').delete();
+
+
         await FirebaseFirestore.instance
             .collection('restaurants')
             .doc(restaurantModel!.docID)
@@ -708,9 +761,7 @@ class AddRestaurantTabController extends GetxController {
     }
   }
 
-  imagesUrl({
-    required List<UploadedImageModel> uploadedImageModels,
-  }) async {
+  imagesUrl({required List<UploadedImageModel> uploadedImageModels}) async {
     List<String> imagesList = [];
     List<String> existingImageUrls = [];
     List<Uint8List> newImagesToUpload = [];

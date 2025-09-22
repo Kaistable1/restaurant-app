@@ -9,7 +9,7 @@ import '../../../../widgets/text_and_field_drop_down.dart';
 class ExperiencesSubScreen extends StatelessWidget {
   ExperiencesSubScreen({super.key, required this.formKey});
 
-  final controller = Get.put(ExperiencesSubScreenController());
+  final controller = Get.find<ExperiencesSubScreenController>();
   final GlobalKey<FormState> formKey;
 
   @override

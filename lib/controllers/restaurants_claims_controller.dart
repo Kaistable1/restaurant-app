@@ -81,6 +81,42 @@ class RestaurantsClaimsController extends GetxController {
       await FirebaseFirestore.instance
           .collection('restaurants')
           .doc(restaurantModel.resID)
+          .collection('operatingHours')
+          .doc('Monday').delete();
+      await FirebaseFirestore.instance
+          .collection('restaurants')
+          .doc(restaurantModel.resID)
+          .collection('operatingHours')
+          .doc('Tuesday').delete();
+      await FirebaseFirestore.instance
+          .collection('restaurants')
+          .doc(restaurantModel.resID)
+          .collection('operatingHours')
+          .doc('Wednesday').delete();
+      await FirebaseFirestore.instance
+          .collection('restaurants')
+          .doc(restaurantModel.resID)
+          .collection('operatingHours')
+          .doc('Thursday').delete();
+      await FirebaseFirestore.instance
+          .collection('restaurants')
+          .doc(restaurantModel.resID)
+          .collection('operatingHours')
+          .doc('Friday').delete();
+      await FirebaseFirestore.instance
+          .collection('restaurants')
+          .doc(restaurantModel.resID)
+          .collection('operatingHours')
+          .doc('Saturday').delete();
+      await FirebaseFirestore.instance
+          .collection('restaurants')
+          .doc(restaurantModel.resID)
+          .collection('operatingHours')
+          .doc('Sunday').delete();
+
+      await FirebaseFirestore.instance
+          .collection('restaurants')
+          .doc(restaurantModel.resID)
           .delete();
 
       String docID = await assignedCredencialsLogin(

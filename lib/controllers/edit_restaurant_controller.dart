@@ -17,31 +17,31 @@ class EditRestaurantController extends GetxController {
   @override
   void onInit() {
     restaurantDetailsModel = restaurantController.restaurantModel;
-    fillAllVariable();
+    // fillAllVariable();
     super.onInit();
   }
 
-  fillAllVariable() async {
-    try {
-      if (restaurantDetailsModel != null) {
-        await fillAllVarsInRestManagmentController();
-        await Future.delayed(const Duration(seconds: 1));
-        await fillAllVarsforAmmenitiesController();
-        await Future.delayed(const Duration(seconds: 1));
-
-        await fillAllVarsforExperiencesController();
-        await Future.delayed(const Duration(seconds: 1));
-
-        await fillAllVarsforOperatingHoursController();
-        await Future.delayed(const Duration(seconds: 1));
-
-        await fillAllVarsforMenuController();
-        await Future.delayed(const Duration(seconds: 1));
-      }
-    } catch (e) {
-      print('Error $e');
-    }
-  }
+  // fillAllVariable() async {
+  //   try {
+  //     if (restaurantDetailsModel != null) {
+  //       await fillAllVarsInRestManagmentController();
+  //       await Future.delayed(const Duration(seconds: 1));
+  //       await fillAllVarsforAmmenitiesController();
+  //       await Future.delayed(const Duration(seconds: 1));
+  //
+  //       await fillAllVarsforExperiencesController();
+  //       await Future.delayed(const Duration(seconds: 1));
+  //
+  //       await fillAllVarsforOperatingHoursController();
+  //       await Future.delayed(const Duration(seconds: 1));
+  //
+  //       await fillAllVarsforMenuController();
+  //       await Future.delayed(const Duration(seconds: 1));
+  //     }
+  //   } catch (e) {
+  //     print('Error $e');
+  //   }
+  // }
 
   // Fill variables in AddRestaurantTabController (Basic Info)
   fillAllVarsInRestManagmentController() {

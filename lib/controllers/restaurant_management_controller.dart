@@ -446,6 +446,42 @@ void deleteRestaurantFromFiltered(RestaurantModel restaurant) async {
     await FirebaseFirestore.instance
         .collection('restaurants')
         .doc(docID)
+        .collection('operatingHours')
+        .doc('Monday').delete();
+    await FirebaseFirestore.instance
+        .collection('restaurants')
+        .doc(docID)
+        .collection('operatingHours')
+        .doc('Tuesday').delete();
+    await FirebaseFirestore.instance
+        .collection('restaurants')
+        .doc(docID)
+        .collection('operatingHours')
+        .doc('Wednesday').delete();
+    await FirebaseFirestore.instance
+        .collection('restaurants')
+        .doc(docID)
+        .collection('operatingHours')
+        .doc('Thursday').delete();
+    await FirebaseFirestore.instance
+        .collection('restaurants')
+        .doc(docID)
+        .collection('operatingHours')
+        .doc('Friday').delete();
+    await FirebaseFirestore.instance
+        .collection('restaurants')
+        .doc(docID)
+        .collection('operatingHours')
+        .doc('Saturday').delete();
+    await FirebaseFirestore.instance
+        .collection('restaurants')
+        .doc(docID)
+        .collection('operatingHours')
+        .doc('Sunday').delete();
+
+    await FirebaseFirestore.instance
+        .collection('restaurants')
+        .doc(docID)
         .delete();
 
     restaurants.removeWhere((r) => r.docID == docID);
