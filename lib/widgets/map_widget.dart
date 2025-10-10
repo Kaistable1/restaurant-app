@@ -29,7 +29,7 @@ class _MapWidgetState extends State<MapWidget> {
       Completer<GoogleMapController>();
 
   // Your valid Google Maps API key
-  final String _googleApiKey = 'AIzaSyAGSu_k6uEQT8siB78VTkI-u3_K05IeCOI';
+  final String _googleApiKey = 'AIzaSyDJjiynZugIjtXiZI4AIMU9srY1AkSmtto';
   Set<Polyline> _polylines = {};
   List<LatLng> _polylineCoordinates = [];
 

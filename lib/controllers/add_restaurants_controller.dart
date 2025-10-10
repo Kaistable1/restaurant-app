@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -16,6 +17,8 @@ import 'dart:typed_data';
 
 import 'package:savrly/widgets/global_functions.dart';
 
+import '../constants/app_colors.dart';
+
 class AddRestaurantTabController extends GetxController {
   final basicInfoFormKey = GlobalKey<FormState>();
   final restaurantNameController = TextEditingController();
@@ -25,6 +28,8 @@ class AddRestaurantTabController extends GetxController {
   final zipCodeController = TextEditingController();
   final phoneNoController = TextEditingController();
   final websiteUrlController = TextEditingController();
+
+  final cityController = TextEditingController();
 
   final tiktokLinkController = TextEditingController();
   final instagramController = TextEditingController();
@@ -134,6 +139,10 @@ class AddRestaurantTabController extends GetxController {
   void onInit() {
     super.onInit();
     _loadLocationData();
+    // Sync selectedCity with cityController for manual typing
+    cityController.addListener(() {
+      selectedCity.value = cityController.text.trim();
+    });
   }
 
   // Add a loading state
@@ -260,10 +269,89 @@ class AddRestaurantTabController extends GetxController {
     update(); // Trigger UI update
   }
 
-  /// Handle city selection (updated for dropdown_search)
-  void onCitySelected(String? value) {
-    selectedCity.value = value ?? '';
-    update(); // Trigger UI update
+  void showCityPicker(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Select a City'),
+          content: SizedBox(
+            width: 300, // Adjustable width for the dialog
+            child: DropdownSearch<String>(
+              items: (String? filter, _) => getFilteredCities(filter),
+              itemAsString: (String? item) => item ?? '',
+              popupProps: PopupProps.menu(
+                menuProps: MenuProps(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                showSearchBox: true,
+                searchFieldProps: TextFieldProps(
+                  decoration: InputDecoration(
+                    hintText: 'Type to search cities...',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: lightColor),
+                    ),
+                    prefixIcon: const Icon(Icons.search),
+                  ),
+                ),
+                showSelectedItems: true,
+                fit: FlexFit.loose,
+                constraints: const BoxConstraints(maxHeight: 300),
+                itemBuilder: (context, item, isSelected, _) {
+                  return Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: isSelected ? primaryColor.withOpacity(0.1) : null,
+                    ),
+                    child: Text(
+                      item,
+                      style: TextStyle(
+                        color: isSelected ? primaryColor : Colors.black87,
+                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                      ),
+                    ),
+                  );
+                },
+              ),
+              decoratorProps: DropDownDecoratorProps(
+                decoration: InputDecoration(
+                  hintText: 'Select or search city',
+                  hintStyle: TextStyle(color: lightColor),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: lightColor),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: lightColor),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: lightColor),
+                  ),
+                  suffixIcon: const Icon(Icons.arrow_drop_down, color: primaryColor),
+                ),
+              ),
+              onChanged: (String? value) async {
+                if (value != null && value.isNotEmpty) {
+                  cityController.text = value;
+                  selectedCity.value = value;
+                  await Future.delayed(Duration(milliseconds: 500));
+                  Navigator.of(dialogContext).pop(); // Close dialog after selection
+                }
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   // ========== END DROPDOWN_SEARCH INTEGRATION METHODS ==========
@@ -437,15 +525,14 @@ class AddRestaurantTabController extends GetxController {
       // Wait a bit for the UI to update
       await Future.delayed(const Duration(milliseconds: 100));
 
-      // Check if city exists for this state
-      if (citiesByState[state]?.contains(city) == true) {
-        selectedCity.value = city;
-      } else {
-        // If city doesn't exist, just select state and let user choose city
-        selectedCity.value = '';
+      // Always set city (allow manual even if not in list)
+      cityController.text = city;
+      selectedCity.value = city;
+
+      if (citiesByState[state]?.contains(city) != true) {
         Get.snackbar(
-          'Partial Match',
-          'State found, but please select city from dropdown',
+          'City Not in List',
+          'City "$city" not in predefined list, but manually entered.',
           backgroundColor: Colors.blue,
           colorText: Colors.white,
           duration: const Duration(seconds: 2),
@@ -461,6 +548,7 @@ class AddRestaurantTabController extends GetxController {
         duration: const Duration(seconds: 3),
       );
       selectedState.value = '';
+      cityController.text = '';
       selectedCity.value = '';
     }
 
@@ -534,6 +622,7 @@ class AddRestaurantTabController extends GetxController {
     tiktokLinkController.clear();
     phoneNoController.clear();
     websiteUrlController.clear();
+    cityController.clear();
     uploadedImage.clear();
     selectedState.value = '';
     selectedCity.value = '';

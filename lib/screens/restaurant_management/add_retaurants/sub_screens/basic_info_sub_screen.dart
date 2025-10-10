@@ -452,120 +452,153 @@ class BasicInfoSubScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 24),
-                    // City Searchable Dropdown
+
                     Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'City',
-                            style: headingText.copyWith(fontSize: mobileView ? 16 : 20),
-                          ),
-                          SizedBox(height: 10),
-                          DropdownSearch<String>(
-                            key: const Key('city_dropdown'),
-                            selectedItem: controller.selectedCity.value.isNotEmpty
-                                ? controller.selectedCity.value
-                                : null,
-                            items: (String? filter, _) =>
-                                controller.getFilteredCities(filter),
-                            itemAsString: (String? item) => item ?? '',
-                            onChanged: controller.selectedState.value.isNotEmpty &&
-                                !controller.isLocationDataLoading.value
-                                ? controller.onCitySelected
-                                : null,
-                            validator: (String? value) {
-                              if (controller.selectedState.value.isEmpty) {
-                                return 'Please select a state first.';
-                              }
-                              if (value == null || value.trim().isEmpty) {
-                                return 'Please select a city.';
-                              }
-                              return null;
-                            },
-                            // Clear button (optional; remove if IDE error persists - it's not required)
-                            // clearButtonProps: const ClearButtonProps(isVisible: true),
-                            popupProps: PopupProps.menu(
-                              menuProps: MenuProps(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              showSearchBox: true,
-                              searchFieldProps: TextFieldProps(
-                                decoration: InputDecoration(
-                                  hintText: 'Type to search cities...',
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: BorderSide(color: lightColor),
-                                  ),
-                                  prefixIcon: const Icon(Icons.search),
-                                ),
-                              ),
-                              // title: Container(
-                              //   height: 50,
-                              //   decoration: const BoxDecoration(
-                              //     color: primaryColor, // Use your app's primaryColor
-                              //     borderRadius: BorderRadius.only(
-                              //       topLeft: Radius.circular(8),
-                              //       topRight: Radius.circular(8),
-                              //     ),
-                              //   ),
-                              //   child: const Center(
-                              //     child: Text(
-                              //       'Select a City',
-                              //       style: TextStyle(
-                              //         color: Colors.white,
-                              //         fontWeight: FontWeight.bold,
-                              //       ),
-                              //     ),
-                              //   ),
-                              // ),
-                              showSelectedItems: true,
-                              fit: FlexFit.loose,
-                              constraints: const BoxConstraints(maxHeight: 300),
-                              itemBuilder: (context, item, isSelected, _) {
-                                return Container(
-                                  padding: const EdgeInsets.all(12),
-                                  decoration: BoxDecoration(
-                                    color: isSelected ? primaryColor.withOpacity(0.1) : null,
-                                  ),
-                                  child: Text(
-                                    item,
-                                    style: TextStyle(
-                                      color: isSelected ? primaryColor : Colors.black87,
-                                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                            decoratorProps: DropDownDecoratorProps(
-                              decoration: InputDecoration(
-                                hintText: controller.selectedState.value.isNotEmpty
-                                    ? 'Select or search city'
-                                    : 'Select State First',
-                                hintStyle: TextStyle(color: lightColor),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(color: lightColor),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(color: lightColor),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(color: lightColor),
-                                ),
-                                suffixIcon: const Icon(Icons.arrow_drop_down, color: primaryColor),
-                              ),
-                            ),
-                            enabled: controller.selectedState.value.isNotEmpty &&
-                                !controller.isLocationDataLoading.value,
-                          ),
-                          const SizedBox(height: 16),
-                        ],
+                      child: TextAndFieldsOrDropDown(
+                        labelText: 'City', // No separate label since we have Text above
+                        fieldHintText: controller.selectedState.value.isNotEmpty
+                            ? 'Enter or select city'
+                            : 'Select State First',
+                        fieldController: controller.cityController,
+                        isDropDown: false,
+                        readOnly: !controller.selectedState.value.isNotEmpty || // Add 'enabled' if your widget supports it; else, use readOnly
+                            controller.isLocationDataLoading.value,
+                        fieldSuffixIcon: IconButton(
+                          icon: const Icon(Icons.arrow_drop_down, color: primaryColor),
+                          onPressed: controller.selectedState.value.isNotEmpty &&
+                              !controller.isLocationDataLoading.value
+                              ? () => controller.showCityPicker(context)
+                              : null, // Disable if no state selected
+                        ),
+                        fieldValidator: (value) {
+                          if (controller.selectedState.value.isEmpty) {
+                            return 'Please select a state first.';
+                          }
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Please enter a city.';
+                          }
+                          return null;
+                        },
+                        onChangedTextfield: (value) {
+                          controller.selectedCity.value = value ?? '';
+                          return null; // Sync on change (redundant with listener but ensures)
+                        },
                       ),
                     ),
+                    // City Searchable Dropdown
+                    // Expanded(
+                    //   child: Column(
+                    //     crossAxisAlignment: CrossAxisAlignment.start,
+                    //     children: [
+                    //       Text(
+                    //         'City',
+                    //         style: headingText.copyWith(fontSize: mobileView ? 16 : 20),
+                    //       ),
+                    //       SizedBox(height: 10),
+                    //       DropdownSearch<String>(
+                    //         key: const Key('city_dropdown'),
+                    //         selectedItem: controller.selectedCity.value.isNotEmpty
+                    //             ? controller.selectedCity.value
+                    //             : null,
+                    //         items: (String? filter, _) =>
+                    //             controller.getFilteredCities(filter),
+                    //         itemAsString: (String? item) => item ?? '',
+                    //         onChanged: controller.selectedState.value.isNotEmpty &&
+                    //             !controller.isLocationDataLoading.value
+                    //             ? controller.onCitySelected
+                    //             : null,
+                    //         validator: (String? value) {
+                    //           if (controller.selectedState.value.isEmpty) {
+                    //             return 'Please select a state first.';
+                    //           }
+                    //           if (value == null || value.trim().isEmpty) {
+                    //             return 'Please select a city.';
+                    //           }
+                    //           return null;
+                    //         },
+                    //         // Clear button (optional; remove if IDE error persists - it's not required)
+                    //         // clearButtonProps: const ClearButtonProps(isVisible: true),
+                    //         popupProps: PopupProps.menu(
+                    //           menuProps: MenuProps(
+                    //             borderRadius: BorderRadius.circular(10),
+                    //           ),
+                    //           showSearchBox: true,
+                    //           searchFieldProps: TextFieldProps(
+                    //             decoration: InputDecoration(
+                    //               hintText: 'Type to search cities...',
+                    //               border: OutlineInputBorder(
+                    //                 borderRadius: BorderRadius.circular(10),
+                    //                 borderSide: BorderSide(color: lightColor),
+                    //               ),
+                    //               prefixIcon: const Icon(Icons.search),
+                    //             ),
+                    //           ),
+                    //           // title: Container(
+                    //           //   height: 50,
+                    //           //   decoration: const BoxDecoration(
+                    //           //     color: primaryColor, // Use your app's primaryColor
+                    //           //     borderRadius: BorderRadius.only(
+                    //           //       topLeft: Radius.circular(8),
+                    //           //       topRight: Radius.circular(8),
+                    //           //     ),
+                    //           //   ),
+                    //           //   child: const Center(
+                    //           //     child: Text(
+                    //           //       'Select a City',
+                    //           //       style: TextStyle(
+                    //           //         color: Colors.white,
+                    //           //         fontWeight: FontWeight.bold,
+                    //           //       ),
+                    //           //     ),
+                    //           //   ),
+                    //           // ),
+                    //           showSelectedItems: true,
+                    //           fit: FlexFit.loose,
+                    //           constraints: const BoxConstraints(maxHeight: 300),
+                    //           itemBuilder: (context, item, isSelected, _) {
+                    //             return Container(
+                    //               padding: const EdgeInsets.all(12),
+                    //               decoration: BoxDecoration(
+                    //                 color: isSelected ? primaryColor.withOpacity(0.1) : null,
+                    //               ),
+                    //               child: Text(
+                    //                 item,
+                    //                 style: TextStyle(
+                    //                   color: isSelected ? primaryColor : Colors.black87,
+                    //                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                    //                 ),
+                    //               ),
+                    //             );
+                    //           },
+                    //         ),
+                    //         decoratorProps: DropDownDecoratorProps(
+                    //           decoration: InputDecoration(
+                    //             hintText: controller.selectedState.value.isNotEmpty
+                    //                 ? 'Select or search city'
+                    //                 : 'Select State First',
+                    //             hintStyle: TextStyle(color: lightColor),
+                    //             border: OutlineInputBorder(
+                    //               borderRadius: BorderRadius.circular(8),
+                    //               borderSide: BorderSide(color: lightColor),
+                    //             ),
+                    //             focusedBorder: OutlineInputBorder(
+                    //               borderRadius: BorderRadius.circular(8),
+                    //               borderSide: BorderSide(color: lightColor),
+                    //             ),
+                    //             enabledBorder: OutlineInputBorder(
+                    //               borderRadius: BorderRadius.circular(8),
+                    //               borderSide: BorderSide(color: lightColor),
+                    //             ),
+                    //             suffixIcon: const Icon(Icons.arrow_drop_down, color: primaryColor),
+                    //           ),
+                    //         ),
+                    //         enabled: controller.selectedState.value.isNotEmpty &&
+                    //             !controller.isLocationDataLoading.value,
+                    //       ),
+                    //       const SizedBox(height: 16),
+                    //     ],
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
