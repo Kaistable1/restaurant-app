@@ -57,8 +57,40 @@ class FilterController extends GetxController {
   }
 
   var selectedFilters = <String, RxList<String>>{}.obs;
+  // var filterOptions = <String, List<String>>{
+  //   "Time": ['Breakfast', 'Brunch', 'Lunch', 'Dinner', 'Late Night'],
+  //   "Cuisines": [
+  //     "American", "Mexican", "Italian", "French", "Chinese", "Japanese",
+  //     "Thai", "Indian", "Korean", "Vietnamese", "Mediterranean", "Caribbean",
+  //     "African", "Middle Eastern", "Spanish", "Filipino", "Brazilian",
+  //     "Peruvian", "Russian", "German",
+  //   ],
+  //   "Dietary": [
+  //     "Vegan", "Vegetarian", "Plant Based", "Pescatarian",
+  //   ],
+  //   "Vibes": [
+  //     "Lively", "High-Energy", "LaidBack", "Intimate",
+  //     "Loud", "Lowkey", "UpBeat"
+  //   ],
+  //   "Experience": [
+  //     "Live Music", "Dj Night", "Ladies Night",
+  //     "Hookah", "Karaoke",
+  //   ],
+  // }.obs;
+
   var filterOptions = <String, List<String>>{
-    "Time": ['Breakfast', 'Brunch', 'Lunch', 'Dinner', 'Late Night'],
+    "Vibes": [
+      "Lively", "High-Energy", "LaidBack", "Intimate",
+      "Loud", "Lowkey", "UpBeat"
+    ],
+    "Experience": [
+      "Brunch", "Outdoor", "Happy Hour", "Rooftop", "Water/Beachside",
+      "Late Night", "Show"
+    ],
+    "Entertainment": [
+      "Live Music", "Dj Nights", "Comedy", "Karaoke"
+    ],
+    // "Time": ['Breakfast', 'Brunch', 'Lunch', 'Dinner', 'Late Night'],
     "Cuisines": [
       "American", "Mexican", "Italian", "French", "Chinese", "Japanese",
       "Thai", "Indian", "Korean", "Vietnamese", "Mediterranean", "Caribbean",
@@ -68,14 +100,7 @@ class FilterController extends GetxController {
     "Dietary": [
       "Vegan", "Vegetarian", "Plant Based", "Pescatarian",
     ],
-    "Vibes": [
-      "Lively", "High-Energy", "LaidBack", "Intimate",
-      "Loud", "Lowkey", "UpBeat"
-    ],
-    "Experience": [
-      "Live Music", "Dj Night", "Ladies Night",
-      "Hookah", "Karaoke",
-    ],
+
   }.obs;
 
   List<String> losAngelusCities = [
@@ -138,16 +163,13 @@ class FilterController extends GetxController {
       case 'Cuisines':
         filterSelectionController.selectedFilters.value = selectedFilters[category]?.toList() ?? [];
         break;
-      case 'Discount Type':
-        filterSelectionController.selectedDiscounts.value = selectedFilters[category]?.toList() ?? [];
-        break;
-      case 'Time':
-        filterSelectionController.selectedTimeOfDay.value = selectedFilters[category]?.toList() ?? [];
-        break;
       case 'Vibes':
         filterSelectionController.selectedAtmosphere.value = selectedFilters[category]?.toList() ?? [];
         break;
       case 'Experience':
+        filterSelectionController.selectedExperience.value = selectedFilters[category]?.toList() ?? [];
+        break;
+      case 'Entertainment':
         filterSelectionController.selectedEntertainment.value = selectedFilters[category]?.toList() ?? [];
         break;
       case 'Dietary':
@@ -177,9 +199,9 @@ class FilterController extends GetxController {
 
   void syncFiltersWithSelectionController() {
     filterSelectionController.selectedFilters.value = selectedFilters['Cuisines']?.toList() ?? [];
-    filterSelectionController.selectedTimeOfDay.value = selectedFilters['Time']?.toList() ?? [];
     filterSelectionController.selectedAtmosphere.value = selectedFilters['Vibes']?.toList() ?? [];
-    filterSelectionController.selectedEntertainment.value = selectedFilters['Experience']?.toList() ?? [];
+    filterSelectionController.selectedExperience.value = selectedFilters['Experience']?.toList() ?? [];
+    filterSelectionController.selectedEntertainment.value = selectedFilters['Entertainment']?.toList() ?? [];
     filterSelectionController.selectedDietary.value = selectedFilters['Dietary']?.toList() ?? [];
     // filterSelectionController.selectedCity.value = selectedFilters['City']?.isNotEmpty ?? false
     //     ? (selectedFilters['City']?.first ?? '')

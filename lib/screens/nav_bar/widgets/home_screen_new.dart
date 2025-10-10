@@ -1337,7 +1337,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                                 child: TextField(
                                   controller: homeLocationCtrl.searchController,
                                   decoration: InputDecoration(
-                                    hintText: 'Search for restaurants, events, live music...',
+                                    hintText: 'Find places by vibes...',
                                     border: InputBorder.none,
                                     hintStyle: TextStyle(fontSize: 16, color: Colors.grey[600]),
                                   ),

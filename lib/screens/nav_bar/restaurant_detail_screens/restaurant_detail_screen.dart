@@ -305,25 +305,25 @@ class RestaurantDetailScreen extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const SizedBox(height: 10),
-                                    Container(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 12),
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(5),
-                                          border: Border.all(
-                                              color: Colors.black.withOpacity(0.04))),
-                                      child: Text(
-                                        restaurantModel!.about, // 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          fontFamily: 'PlusJakartaSans',
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 16),
-                                    Divider(color: AppColors.dividerColor),
-                                    const SizedBox(height: 16),
+                                    // Container(
+                                    //   padding: EdgeInsets.symmetric(
+                                    //       horizontal: 16, vertical: 12),
+                                    //   decoration: BoxDecoration(
+                                    //       borderRadius: BorderRadius.circular(5),
+                                    //       border: Border.all(
+                                    //           color: Colors.black.withOpacity(0.04))),
+                                    //   child: Text(
+                                    //     restaurantModel!.about, // 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.',
+                                    //     style: TextStyle(
+                                    //       fontSize: 14,
+                                    //       fontWeight: FontWeight.w500,
+                                    //       fontFamily: 'PlusJakartaSans',
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                    // const SizedBox(height: 16),
+                                    // Divider(color: AppColors.dividerColor),
+                                    // const SizedBox(height: 16),
                                     Row(
                                       children: [
                                         Padding(
@@ -331,7 +331,8 @@ class RestaurantDetailScreen extends StatelessWidget {
                                             child: Image.asset(
                                                 'assets/icons/location.png',
                                                 height: 12,
-                                                width: 12)),
+                                                width: 12),
+                                        ),
                                         const SizedBox(width: 8),
                                         Text(
                                           '${restaurantModel?.address ?? ''}, ${restaurantModel?.city ?? ''}, ${restaurantModel?.state ?? ''}, ${restaurantModel?.country ?? ''}${restaurantModel == null || restaurantModel!.zipCode == '' ? '' : ', ${restaurantModel!.zipCode}' }', // '304 Liverpool Blvd, Portsmouth, CA 30103',

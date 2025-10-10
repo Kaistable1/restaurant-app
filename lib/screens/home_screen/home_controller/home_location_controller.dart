@@ -175,7 +175,7 @@ class HomeLocationController extends GetxController {
     }
   }
 
-  Widget buildImage(String url, {required double width, BoxFit fit = BoxFit.cover, double height = 0}) {
+  Widget buildImage(String url, {double? width, BoxFit fit = BoxFit.cover, double height = 0}) {
     return CachedNetworkImage(
       imageUrl: url,
       width: width,
@@ -281,15 +281,15 @@ class HomeLocationController extends GetxController {
               return selectedOptions.every((option) => restaurant.dietaryList.contains(option));
             } else if (category == 'Vibes') {
               return selectedOptions.every((option) => restaurant.vibesList.contains(option));
-            } else if (category == 'Time') {
-              final hours = operatingHoursCache[restaurant.docID];
-              if (hours == null || hours.isEmpty) {
-                getOperatingHours(restaurant.docID, triggerFilterUpdate: true);
-                return false;
-              }
-              return hours.values.any((dayHours) =>
-                  selectedOptions.every((timeOfDay) => !(dayHours[timeOfDay]?['isClosed'] ?? true))
-              );
+            // } else if (category == 'Time') {
+            //   final hours = operatingHoursCache[restaurant.docID];
+            //   if (hours == null || hours.isEmpty) {
+            //     getOperatingHours(restaurant.docID, triggerFilterUpdate: true);
+            //     return false;
+            //   }
+            //   return hours.values.any((dayHours) =>
+            //       selectedOptions.every((timeOfDay) => !(dayHours[timeOfDay]?['isClosed'] ?? true))
+            //   );
             } else if (category == 'Cuisines') {
               final menuList = restaurant.menuList;
               if (menuList.isEmpty) {
@@ -305,6 +305,14 @@ class HomeLocationController extends GetxController {
               }
               return selectedOptions.every((experience) =>
                   entertainmentList.any((event) => event.eventName == experience)
+              );
+            } else if (category == 'Entertainment') {
+              final entertainmentList = restaurant.entertainmentScheduleList;
+              if (entertainmentList.isEmpty) {
+                return false;
+              }
+              return selectedOptions.every((entertainment) =>
+                  entertainmentList.any((event) => event.eventName == entertainment)
               );
             }
             return true;
@@ -367,15 +375,15 @@ class HomeLocationController extends GetxController {
               return selectedOptions.every((option) => restaurant.dietaryList.contains(option));
             } else if (category == 'Vibes') {
               return selectedOptions.every((option) => restaurant.vibesList.contains(option));
-            } else if (category == 'Time') {
-              final hours = operatingHoursCache[restaurant.docID];
-              if (hours == null || hours.isEmpty) {
-                getOperatingHours(restaurant.docID, triggerFilterUpdate: true);
-                return false;
-              }
-              return hours.values.any((dayHours) =>
-                  selectedOptions.every((timeOfDay) => !(dayHours[timeOfDay]?['isClosed'] ?? true))
-              );
+            // } else if (category == 'Time') {
+            //   final hours = operatingHoursCache[restaurant.docID];
+            //   if (hours == null || hours.isEmpty) {
+            //     getOperatingHours(restaurant.docID, triggerFilterUpdate: true);
+            //     return false;
+            //   }
+            //   return hours.values.any((dayHours) =>
+            //       selectedOptions.every((timeOfDay) => !(dayHours[timeOfDay]?['isClosed'] ?? true))
+            //   );
             } else if (category == 'Cuisines') {
               final menuList = restaurant.menuList;
               if (menuList.isEmpty) {
@@ -391,6 +399,14 @@ class HomeLocationController extends GetxController {
               }
               return selectedOptions.every((experience) =>
                   entertainmentList.any((event) => event.eventName == experience)
+              );
+            }else if (category == 'Entertainment') {
+              final entertainmentList = restaurant.entertainmentScheduleList;
+              if (entertainmentList.isEmpty) {
+                return false;
+              }
+              return selectedOptions.every((entertainment) =>
+                  entertainmentList.any((event) => event.eventName == entertainment)
               );
             }
             return true;

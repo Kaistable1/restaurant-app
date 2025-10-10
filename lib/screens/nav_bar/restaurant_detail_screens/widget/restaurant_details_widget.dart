@@ -49,7 +49,7 @@ class MapDetailWidget extends StatelessWidget {
                       width: 290,
                       child: Text(
                         restaurantModel.address.isEmpty
-                            ? "comming Soon!"
+                            ? "coming Soon!"
                             : restaurantModel.address +
                                 ',${restaurantModel.city} ${restaurantModel.zipCode},${restaurantModel.country}',
                         style: TextStyle(

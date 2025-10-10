@@ -352,7 +352,7 @@ class _RestaurantsPageState extends State<RestaurantsPage> with WidgetsBindingOb
       appBar: AppBar(
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
-        title: Text('Restaurants in the area',
+        title: Text("Discover What's New" ,
           style: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
@@ -393,6 +393,7 @@ class _RestaurantsPageState extends State<RestaurantsPage> with WidgetsBindingOb
                           Get.to(() => RestaurantDetailScreen(restaurantModel: restaurant));
                         },
                         child: Container(
+                          height: 176, // 88,
                           margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
                           decoration: BoxDecoration(
                             color: Colors.white,
@@ -408,189 +409,196 @@ class _RestaurantsPageState extends State<RestaurantsPage> with WidgetsBindingOb
                                   offset: Offset(0, 4))
                             ],
                           ),
-                          child: SizedBox(
-                            height: 84,
-                            child: Row(
-                              children: [
-                                ClipRRect(
-                                  clipBehavior: Clip.hardEdge,
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(10),
-                                    topRight: Radius.circular(10),
-                                  ),
+                          child: Row(
+                            children: [
+                              ClipRRect(
+                                clipBehavior: Clip.hardEdge,
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(10),
+                                  topRight: Radius.circular(10),
+                                ),
+                                child: SizedBox(
+                                  height: 176,
+                                  width: 124,
                                   child: controller.buildImage(
                                     restaurant.logoImage.isNotEmpty
                                         ? restaurant.logoImage
                                         : 'assets/images/event_img5.png',
-                                    width: 124,
-                                    height: 84,
                                     fit: BoxFit.cover,
                                   ),
                                 ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Expanded(
-                                              child: Text(
-                                                restaurant.resName.isNotEmpty
-                                                    ? restaurant.resName
-                                                    : 'Unknown Restaurant',
-                                                style: TextStyle(
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.w700,
-                                                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                                ),
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              restaurant.resName.isNotEmpty
+                                                  ? restaurant.resName
+                                                  : 'Unknown Restaurant',
+                                              style: TextStyle(
+                                                fontSize: 28,
+                                                fontWeight: FontWeight.w700,
+                                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                                               ),
                                             ),
-                                            GestureDetector(
-                                              onTap: () {
-                                                toggleFavoriteRestaurant(restaurant.docID, isBookmarked.value);
-                                                isBookmarked.toggle();
-                                              },
-                                              child: Obx(
-                                                ()=> Icon(
-                                                  isBookmarked.value ? Icons.bookmark : Icons.bookmark_border,
-                                                  color: isBookmarked.value ? Colors.green : Colors.grey,
-                                                ),
+                                          ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              toggleFavoriteRestaurant(restaurant.docID, isBookmarked.value);
+                                              isBookmarked.toggle();
+                                            },
+                                            child: Obx(
+                                              ()=> Icon(
+                                                isBookmarked.value ? Icons.bookmark : Icons.bookmark_border,
+                                                color: isBookmarked.value ? Colors.green : Colors.grey,
                                               ),
                                             ),
-                                          ],
+                                          ),
+                                        ],
+                                      ),
+                                      Text(
+                                        restaurant.resName.isNotEmpty
+                                            ? restaurant.resName
+                                            : 'Unknown Restaurant',
+                                        style: TextStyle(
+                                          fontSize: 28,
+                                          fontWeight: FontWeight.w700,
+                                          fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                                         ),
-                                        Obx(() {
-                                          final operatingHours = controller.operatingHoursCache[restaurant.docID];
-                                          final isFetching = controller.fetchingOperatingHours.contains(restaurant.docID);
-                                          final currentDay = DateFormat('EEEE').format(DateTime.now());
-                                          final timeFilter = filterCtrl.selectedFilters['Time'];
-
-                                          if (operatingHours == null || operatingHours[currentDay] == null) {
-                                            if (!isFetching) {
-                                              controller.getOperatingHours(restaurant.docID, triggerFilterUpdate: false);
-                                            }
-                                            return Text(
-                                              isFetching ? 'Loading...' : 'Unavailable',
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500,
-                                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                                color: const Color.fromRGBO(142, 142, 147, 1),
-                                              ),
-                                            );
-                                          }
-
-                                          if (operatingHours.isEmpty) {
-                                            return Text(
-                                              'Unavailable',
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500,
-                                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                                color: const Color.fromRGBO(142, 142, 147, 1),
-                                              ),
-                                            );
-                                          }
-
-                                          final dayHours = operatingHours[currentDay]!;
-                                          // Check if no time filter is selected
-                                          if (timeFilter == null || timeFilter.isEmpty) {
-                                            return Text(
-                                              controller.getFullDayHours(dayHours),
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500,
-                                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                                color: const Color.fromRGBO(142, 142, 147, 1),
-                                              ),
-                                            );
-                                          }
-
-                                          // Use selected time slot
-                                          final timeOfDay = timeFilter.first;
-                                          final isClosed = dayHours[timeOfDay]?['isClosed'] ?? true;
-                                          final startTime = dayHours[timeOfDay]?['startTime'] ?? '6:00 PM';
-                                          final endTime = dayHours[timeOfDay]?['endTime'] ?? '9:00 PM';
-                                          return Text(
-                                            isClosed ? 'Closed' : '$startTime–$endTime',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500,
-                                              fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                              color: const Color.fromRGBO(142, 142, 147, 1),
-                                            ),
-                                          );
-                                        }),
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Image.asset(
-                                                  'assets/images/Icon (1).png',
-                                                  width: 15,
-                                                  height: 13,
-                                                ),
-                                                // Replace the per-restaurant getCurrentLocation call with a shared positionFuture. This calculates distance only if position is available, showing 'Unknown' if location is disabled or error occurred, preventing multiple dialogs.
-                                                Obx(() {
-                                                  final pos = controller.userPosition.value;
-                                                  if (pos == null) {
-                                                    return Text(
-                                                      controller.isFetchingInitialData.value ? 'Fetching...' : 'Location disabled',
-                                                      style: TextStyle(
-                                                        fontSize: 12,
-                                                        fontWeight: FontWeight.w500,
-                                                        fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                                        color: const Color.fromRGBO(142, 142, 147, 1),
-                                                      ),
-                                                    );
-                                                  } else {
-                                                    double distance = Geolocator.distanceBetween(
-                                                      pos.latitude,
-                                                      pos.longitude,
-                                                      restaurant.latitude,
-                                                      restaurant.longitude,
-                                                    ) / 1000;
-                                                    return Text(
-                                                      '${distance.toStringAsFixed(1)} km away',
-                                                      style: TextStyle(
-                                                        fontSize: 12,
-                                                        fontWeight: FontWeight.w500,
-                                                        fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                                        color: const Color.fromRGBO(142, 142, 147, 1),
-                                                      ),
-                                                    );
-                                                  }
-                                                }),
-                                                const SizedBox(width: 24),
-                                              ],
-                                            ),
-                                            Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Image.asset(
-                                                  'assets/images/Group (5).png',
-                                                  width: 15,
-                                                  height: 15,
-                                                ),
-                                                const SizedBox(width: 4),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
+                                      ),
+                                      // Obx(() {
+                                      //   final operatingHours = controller.operatingHoursCache[restaurant.docID];
+                                      //   final isFetching = controller.fetchingOperatingHours.contains(restaurant.docID);
+                                      //   final currentDay = DateFormat('EEEE').format(DateTime.now());
+                                      //   final timeFilter = filterCtrl.selectedFilters['Time'];
+                                      //
+                                      //   if (operatingHours == null || operatingHours[currentDay] == null) {
+                                      //     if (!isFetching) {
+                                      //       controller.getOperatingHours(restaurant.docID, triggerFilterUpdate: false);
+                                      //     }
+                                      //     return Text(
+                                      //       isFetching ? 'Loading...' : 'Unavailable',
+                                      //       style: TextStyle(
+                                      //         fontSize: 12,
+                                      //         fontWeight: FontWeight.w500,
+                                      //         fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                      //         color: const Color.fromRGBO(142, 142, 147, 1),
+                                      //       ),
+                                      //     );
+                                      //   }
+                                      //
+                                      //   if (operatingHours.isEmpty) {
+                                      //     return Text(
+                                      //       'Unavailable',
+                                      //       style: TextStyle(
+                                      //         fontSize: 12,
+                                      //         fontWeight: FontWeight.w500,
+                                      //         fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                      //         color: const Color.fromRGBO(142, 142, 147, 1),
+                                      //       ),
+                                      //     );
+                                      //   }
+                                      //
+                                      //   final dayHours = operatingHours[currentDay]!;
+                                      //   // Check if no time filter is selected
+                                      //   if (timeFilter == null || timeFilter.isEmpty) {
+                                      //     return Text(
+                                      //       controller.getFullDayHours(dayHours),
+                                      //       style: TextStyle(
+                                      //         fontSize: 12,
+                                      //         fontWeight: FontWeight.w500,
+                                      //         fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                      //         color: const Color.fromRGBO(142, 142, 147, 1),
+                                      //       ),
+                                      //     );
+                                      //   }
+                                      //
+                                      //   // Use selected time slot
+                                      //   final timeOfDay = timeFilter.first;
+                                      //   final isClosed = dayHours[timeOfDay]?['isClosed'] ?? true;
+                                      //   final startTime = dayHours[timeOfDay]?['startTime'] ?? '6:00 PM';
+                                      //   final endTime = dayHours[timeOfDay]?['endTime'] ?? '9:00 PM';
+                                      //   return Text(
+                                      //     isClosed ? 'Closed' : '$startTime–$endTime',
+                                      //     style: TextStyle(
+                                      //       fontSize: 12,
+                                      //       fontWeight: FontWeight.w500,
+                                      //       fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                      //       color: const Color.fromRGBO(142, 142, 147, 1),
+                                      //     ),
+                                      //   );
+                                      // }),
+                                      // Row(
+                                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      //   children: [
+                                      //     Row(
+                                      //       mainAxisSize: MainAxisSize.min,
+                                      //       children: [
+                                      //         Image.asset(
+                                      //           'assets/images/Icon (1).png',
+                                      //           width: 15,
+                                      //           height: 13,
+                                      //         ),
+                                      //         // Replace the per-restaurant getCurrentLocation call with a shared positionFuture. This calculates distance only if position is available, showing 'Unknown' if location is disabled or error occurred, preventing multiple dialogs.
+                                      //         Obx(() {
+                                      //           final pos = controller.userPosition.value;
+                                      //           if (pos == null) {
+                                      //             return Text(
+                                      //               controller.isFetchingInitialData.value ? 'Fetching...' : 'Location disabled',
+                                      //               style: TextStyle(
+                                      //                 fontSize: 12,
+                                      //                 fontWeight: FontWeight.w500,
+                                      //                 fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                      //                 color: const Color.fromRGBO(142, 142, 147, 1),
+                                      //               ),
+                                      //             );
+                                      //           } else {
+                                      //             double distance = Geolocator.distanceBetween(
+                                      //               pos.latitude,
+                                      //               pos.longitude,
+                                      //               restaurant.latitude,
+                                      //               restaurant.longitude,
+                                      //             ) / 1000;
+                                      //             return Text(
+                                      //               '${distance.toStringAsFixed(1)} km away',
+                                      //               style: TextStyle(
+                                      //                 fontSize: 12,
+                                      //                 fontWeight: FontWeight.w500,
+                                      //                 fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                      //                 color: const Color.fromRGBO(142, 142, 147, 1),
+                                      //               ),
+                                      //             );
+                                      //           }
+                                      //         }),
+                                      //         const SizedBox(width: 24),
+                                      //       ],
+                                      //     ),
+                                      //     Row(
+                                      //       mainAxisSize: MainAxisSize.min,
+                                      //       children: [
+                                      //         Image.asset(
+                                      //           'assets/images/Group (5).png',
+                                      //           width: 15,
+                                      //           height: 15,
+                                      //         ),
+                                      //         const SizedBox(width: 4),
+                                      //       ],
+                                      //     ),
+                                      //   ],
+                                      // ),
+                                    ],
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                       );},

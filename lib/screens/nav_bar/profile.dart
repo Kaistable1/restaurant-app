@@ -287,6 +287,12 @@ deleteAccountDialog(context) async {
               final userId = user?.uid; // Save the UID before deletion
 
               if (user != null) {
+
+                print(currentUserDataModel!.value.userEmail.text);
+                print(currentUserDataModel!.value.password.text);
+
+                await FirebaseAuth.instance.signInWithEmailAndPassword(email: currentUserDataModel!.value.userEmail.text, password: currentUserDataModel!.value.password.text);
+
                 // Delete the account from Firebase Auth
                 await user.delete();
                 print('User deleted from Auth: $userId');
@@ -297,6 +303,16 @@ deleteAccountDialog(context) async {
                       .collection('users')
                       .doc(userId)
                       .delete();
+                  await FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(userId)
+                      .collection('recentView').get().then((val) async {
+                     if(val.size != 0){
+                       for(var doc in val.docs){
+                         await doc.reference.delete();
+                       }
+                     }
+                  });
                   print('User document deleted from Firestore: $userId');
                 }
 
@@ -344,7 +360,8 @@ profileListTile(int adjustedIndex, BuildContext context, String iconPath, String
           Get.to(ContactUs());
           break;
         case 7:
-          Get.to(deleteAccountDialog(context));
+          deleteAccountDialog(context);
+          // Get.to(()=>deleteAccountDialog(context));
           break;
       }
     },

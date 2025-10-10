@@ -22,6 +22,7 @@ class FilterSelectionController extends GetxController {
   final selectedAtmosphere = <String>[].obs;
   final selectedFacilities = <String>[].obs;
   final selectedEntertainment = <String>[].obs;
+  final selectedExperience = <String>[].obs;
   final selectedDietary = <String>[].obs;
   final selectedPriceRange = <String>[].obs;
   final selectedTimeOfDay = <String>[].obs;
@@ -36,6 +37,7 @@ class FilterSelectionController extends GetxController {
     selectedAtmosphere.clear();
     selectedFacilities.clear();
     selectedEntertainment.clear();
+    selectedExperience.clear();
     selectedDietary.clear();
     selectedPriceRange.clear();
     selectedTrending.clear();
