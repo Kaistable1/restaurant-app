@@ -107,6 +107,8 @@ class EditRestaurantController extends GetxController {
     // ✅ Wait until all data is loaded
     while (amenitiesController.facilities.isEmpty ||
         amenitiesController.vibes.isEmpty ||
+        amenitiesController.experiences.isEmpty ||
+        amenitiesController.entertainment.isEmpty ||
         amenitiesController.dietaryPreferences.isEmpty ||
         amenitiesController.atmosphere.isEmpty ||
         amenitiesController.priceRange.isEmpty) {
@@ -129,6 +131,16 @@ class EditRestaurantController extends GetxController {
             restaurantDetailsModel!.vibesList.contains(vibe['name']);
       }
 
+      for (var experience in amenitiesController.experiences) {
+        experience['isChecked'] =
+            restaurantDetailsModel!.experiencesList.contains(experience['name']);
+      }
+
+      for (var entertainment in amenitiesController.entertainment) {
+        entertainment['isChecked'] =
+            restaurantDetailsModel!.entertainmentList.contains(entertainment['name']);
+      }
+
       for (var atm in amenitiesController.atmosphere) {
         atm['isChecked'] =
             restaurantDetailsModel!.atmosphereList.contains(atm['name']);
@@ -143,6 +155,8 @@ class EditRestaurantController extends GetxController {
       amenitiesController.facilities.refresh();
       amenitiesController.dietaryPreferences.refresh();
       amenitiesController.vibes.refresh();
+      amenitiesController.experiences.refresh();
+      amenitiesController.entertainment.refresh();
       amenitiesController.atmosphere.refresh();
       amenitiesController.priceRange.refresh();
 

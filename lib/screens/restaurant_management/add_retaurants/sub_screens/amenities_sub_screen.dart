@@ -66,7 +66,7 @@ class AmenitiesSubScreen extends StatelessWidget {
 
             const SizedBox(height: 24),
 
-            // 3. Atmosphere
+            // 4. Vibes
             _buildSection(
               context: context,
               title: 'Vibes',
@@ -81,7 +81,37 @@ class AmenitiesSubScreen extends StatelessWidget {
 
             const SizedBox(height: 24),
 
-            // 4. Price Range
+            // 5. Experiences
+            _buildSection(
+              context: context,
+              title: 'Experiences',
+              isExpanded: controller.isExperiencesExpanded,
+              toggleExpanded: controller.toggleExperiencesExpanded,
+              items: controller.experiences,
+              toggleCheckbox: controller.toggleExperiencesCheckbox,
+              addItem: controller.addExperiences,
+              mobileView: mobileView,
+              buttonTextSize: buttonTextSize,
+            ),
+
+            const SizedBox(height: 24),
+
+            // 6. Entertainment
+            _buildSection(
+              context: context,
+              title: 'Entertainment',
+              isExpanded: controller.isEntertainmentExpanded,
+              toggleExpanded: controller.toggleEntertainmentExpanded,
+              items: controller.entertainment,
+              toggleCheckbox: controller.toggleEntertainmentCheckbox,
+              addItem: controller.addEntertainment,
+              mobileView: mobileView,
+              buttonTextSize: buttonTextSize,
+            ),
+
+            const SizedBox(height: 24),
+
+            // 7. Price Range
             _buildSection(
               context: context,
               title: 'Price Range',

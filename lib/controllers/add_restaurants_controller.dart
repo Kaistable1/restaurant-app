@@ -62,7 +62,7 @@ class AddRestaurantTabController extends GetxController {
   final List<String> tabs = [
     'Basic Info',
     'Amenities',
-    'Experiences',
+    'Events',
     'Operating Hours',
     'Menu',
   ];

@@ -18,6 +18,8 @@ class RestaurantModel {
   String logoImage;
   List<String> facilityList;
   List<String> vibesList;
+  List<String> experiencesList;
+  List<String> entertainmentList;
 
   List<String> imagesList;
   List<String> dietaryList;
@@ -63,12 +65,17 @@ class RestaurantModel {
       required this.country,
       required this.websiteUrl,
       required this.phoneNo,
-      required this.vibesList});
+      required this.vibesList,
+      required this.experiencesList,
+      required this.entertainmentList,
+      });
 
   // Initialize the model with defaults
   static RestaurantModel initialize() {
     return RestaurantModel(
         vibesList: <String>[],
+        experiencesList: <String>[],
+        entertainmentList: <String>[],
         resName: '',
         docID: '',
         socialLink: '',
@@ -117,6 +124,8 @@ class RestaurantModel {
       'dietaryList': dietaryList,
       'atmopshereList': atmosphereList,
       'vibesList': vibesList,
+      'experiencesList': experiencesList,
+      'entertainmentList': entertainmentList,
       'resEmail': resEmail,
       'averageRating': averageRating,
       'socialLink': socialLink,
@@ -149,6 +158,8 @@ class RestaurantModel {
         address: data['address'] ?? '',
         atmosphereList: List<String>.from(data['atmopshereList'] ?? []),
         vibesList: List<String>.from(data['vibesList'] ?? []),
+        experiencesList: List<String>.from(data['experiencesList'] ?? []),
+        entertainmentList: List<String>.from(data['entertainmentList'] ?? []),
         averageRating: (data['averageRating'] ?? 0).toDouble(),
         city: data['city'] ?? '',
         state: data['state'] ?? '',
@@ -200,6 +211,8 @@ class RestaurantModel {
       facilityList: List<String>.from(data['facilityList'] ?? []),
       atmosphereList: List<String>.from(data['atmopshereList'] ?? []),
       vibesList: List<String>.from(data['vibesList'] ?? []),
+      experiencesList: List<String>.from(data['experiencesList'] ?? []),
+      entertainmentList: List<String>.from(data['entertainmentList'] ?? []),
       dietaryList: List<String>.from(data['dietaryList'] ?? []),
       specialConditions: data['specialConditions'] ?? '',
       password: data['password'] ?? '',
