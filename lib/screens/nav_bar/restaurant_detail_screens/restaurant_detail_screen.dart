@@ -583,60 +583,70 @@ class RestaurantDetailScreen extends StatelessWidget {
                                 ? Container(
                                     padding: const EdgeInsets.symmetric(vertical: 16),
                                     child: Column(children: [
-                                      // InkWell(
-                                      //   onTap: () => expExpand.toggle(),
-                                      //   child: Container(
-                                      //     padding: EdgeInsets.all(16),
-                                      //     child: Row(
-                                      //         mainAxisAlignment:
-                                      //             MainAxisAlignment.spaceBetween,
-                                      //         crossAxisAlignment:
-                                      //             CrossAxisAlignment.center,
-                                      //         children: [
-                                      //           Text(
-                                      //             'Experiences',
-                                      //             style: TextStyle(
-                                      //               fontSize: 14,
-                                      //               fontWeight: FontWeight.w500,
-                                      //               fontFamily: 'PlusJakartaSans',
-                                      //             ),
-                                      //           ),
-                                      //           Icon(Icons.chevron_right, size: 14)
-                                      //         ]),
+
+                                      // ExpansionTile(
+                                      //   title: Text(
+                                      //     'Experiences',
+                                      //     style: TextStyle(
+                                      //       fontSize: 14,
+                                      //       fontWeight: FontWeight.w500,
+                                      //       fontFamily: 'PlusJakartaSans',
+                                      //     ),
                                       //   ),
-                                      // ),
-                                      // Obx(()=>expExpand.value ?
+                                      //   tilePadding: EdgeInsets.symmetric(horizontal: 16),
+                                      //   shape: Border.all(width: 0, color: Colors.transparent),
+                                      //   iconColor: Colors.grey[800],
+                                      //   expandedAlignment: Alignment.centerLeft,
+                                      //   children: [
                                       //     Wrap(
-                                      //       children: restaurantModel!.entertainmentScheduleList.map((ele){
-                                      //         return Container(
-                                      //           child: Column(
-                                      //             crossAxisAlignment: CrossAxisAlignment.start,
-                                      //             mainAxisSize: MainAxisSize.min,
-                                      //             children: [
-                                      //               Row(
-                                      //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      //                 children: [
-                                      //                   Text(ele.eventName, style: TextStyle(
-                                      //                     fontSize: 12,
-                                      //                     fontFamily: 'PlusJakartaSans',
-                                      //                   ),),
-                                      //                   Text(ele.eventBy, style: TextStyle(
-                                      //                     fontSize: 12,
-                                      //                     fontFamily: 'PlusJakartaSans',
-                                      //                   ),),
-                                      //                 ],
-                                      //               ),
-                                      //               Text(ele.day + '    ' + ele.startTime + ' - ' + ele.endTime, style: TextStyle(
-                                      //                 fontSize: 12,
-                                      //                 fontFamily: 'PlusJakartaSans',
-                                      //               ),),
-                                      //             ],
-                                      //           ),
-                                      //         );
-                                      //       }).toList(),
-                                      //     )
-                                      //     : const SizedBox()),
-                                      // Divider(color: AppColors.dividerColor),
+                                      //       spacing: 8,
+                                      //       runSpacing: 8,
+                                      //       children: restaurantModel!.entertainmentScheduleList
+                                      //           .map((schedule) => Container(
+                                      //         width: Get.width - 32,
+                                      //             height: 40,
+                                      //             padding: EdgeInsets.symmetric(horizontal: 18),
+                                      //             decoration: BoxDecoration(
+                                      //               color: Colors.green,
+                                      //               borderRadius: BorderRadius.circular(20),
+                                      //             ),
+                                      //             child: Row(
+                                      //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      //               children: [
+                                      //                 Expanded(
+                                      //                   child: Text(
+                                      //                     schedule.eventName + '(${schedule.eventBy})',
+                                      //                     overflow: TextOverflow.ellipsis,
+                                      //                     maxLines: 2,
+                                      //                     style: TextStyle(
+                                      //                       fontSize: 12,
+                                      //                       fontFamily: 'PlusJakartaSans',
+                                      //                       fontWeight: FontWeight.bold,
+                                      //                       color: Colors.white
+                                      //                     ),
+                                      //                   ),
+                                      //                 ),
+                                      //                 const SizedBox(width: 4),
+                                      //                 Text(
+                                      //                   schedule.day + '    ' + schedule.startTime + ' - ' + schedule.endTime,
+                                      //                   style: TextStyle(
+                                      //                       fontSize: 12,
+                                      //                       fontFamily: 'PlusJakartaSans',
+                                      //                       fontWeight: FontWeight.bold,
+                                      //                       color: Colors.white
+                                      //                   ),
+                                      //                 ),
+                                      //               ],
+                                      //             ),
+                                      //
+                                      //
+                                      //
+                                      //
+                                      //           ))
+                                      //           .toList(),
+                                      //     ),
+                                      //   ],
+                                      // ),
                                       ExpansionTile(
                                         title: Text(
                                           'Experiences',
@@ -653,76 +663,66 @@ class RestaurantDetailScreen extends StatelessWidget {
                                         children: [
                                           Wrap(
                                             spacing: 8,
-                                            runSpacing: 8,
-                                            children: restaurantModel!.entertainmentScheduleList
-                                                .map((schedule) => Container(
-                                              width: Get.width - 32,
-                                                  height: 40,
-                                                  padding: EdgeInsets.symmetric(horizontal: 18),
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.green,
-                                                    borderRadius: BorderRadius.circular(20),
-                                                  ),
-                                                  child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      Expanded(
-                                                        child: Text(
-                                                          schedule.eventName + '(${schedule.eventBy})',
-                                                          overflow: TextOverflow.ellipsis,
-                                                          maxLines: 2,
-                                                          style: TextStyle(
-                                                            fontSize: 12,
-                                                            fontFamily: 'PlusJakartaSans',
-                                                            fontWeight: FontWeight.bold,
-                                                            color: Colors.white
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      const SizedBox(width: 4),
-                                                      Text(
-                                                        schedule.day + '    ' + schedule.startTime + ' - ' + schedule.endTime,
-                                                        style: TextStyle(
-                                                            fontSize: 12,
-                                                            fontFamily: 'PlusJakartaSans',
-                                                            fontWeight: FontWeight.bold,
-                                                            color: Colors.white
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-
-
-
-
-                                                ))
+                                            runSpacing: 0,
+                                            children: restaurantModel!.experiencesList
+                                                .map((experience) => Chip(
+                                              label: Text(
+                                                experience ?? '',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontFamily: 'PlusJakartaSans',
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                              side: BorderSide(color: Colors.transparent, width: 0),
+                                              backgroundColor: Colors.green,
+                                              labelPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                                            ))
                                                 .toList(),
                                           ),
                                         ],
                                       ),
                                       Divider(color: AppColors.dividerColor),
-                                      // InkWell(
-                                      //   onTap: () => vibExpand.toggle(),
-                                      //   child: Container(
-                                      //     padding: EdgeInsets.all(16),
-                                      //     child: Row(
-                                      //         mainAxisAlignment:
-                                      //             MainAxisAlignment.spaceBetween,
-                                      //         crossAxisAlignment:
-                                      //             CrossAxisAlignment.center,
-                                      //         children: [
-                                      //           Text(
-                                      //             'Vibes',
-                                      //             style: TextStyle(
-                                      //               fontSize: 14,
-                                      //               fontWeight: FontWeight.w500,
-                                      //               fontFamily: 'PlusJakartaSans',
-                                      //             ),
-                                      //           ),
-                                      //           Icon(Icons.chevron_right, size: 14)
-                                      //         ]),
-                                      //   ),
-                                      // ),
+                                      ExpansionTile(
+                                        title: Text(
+                                          'Entertainment',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            fontFamily: 'PlusJakartaSans',
+                                          ),
+                                        ),
+                                        tilePadding: EdgeInsets.symmetric(horizontal: 16),
+                                        shape: Border.all(width: 0, color: Colors.transparent),
+                                        iconColor: Colors.grey[800],
+                                        expandedAlignment: Alignment.centerLeft,
+                                        children: [
+                                          Wrap(
+                                            spacing: 8,
+                                            runSpacing: 0,
+                                            children: restaurantModel!.entertainmentList
+                                                .map((entertainment) => Chip(
+                                              label: Text(
+                                                entertainment ?? '',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontFamily: 'PlusJakartaSans',
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                              side: BorderSide(color: Colors.transparent, width: 0),
+                                              backgroundColor: Colors.green,
+                                              labelPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                                            ))
+                                                .toList(),
+                                          ),
+                                        ],
+                                      ),
+                                      Divider(color: AppColors.dividerColor),
                                       ExpansionTile(
                                         title: Text(
                                           'Vibes',

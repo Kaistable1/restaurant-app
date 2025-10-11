@@ -21,6 +21,8 @@ class RestaurantModel with ClusterItem{
   List<String> dietaryList;
   List<String> atmosphereList;
   List<String> vibesList;
+  List<String> experiencesList;
+  List<String> entertainmentList;
   String spokenLanguage;
   String socialMedia;
   String priceRange;
@@ -65,6 +67,8 @@ class RestaurantModel with ClusterItem{
     required this.priceRange,
     required this.atmosphereList,
     required this.vibesList,
+    required this.experiencesList,
+    required this.entertainmentList,
     required this.zipCode,
     required this.logoImage,
     required this.spokenLanguage,
@@ -93,6 +97,8 @@ class RestaurantModel with ClusterItem{
       atmosphereList: <String>[],
       imagesList: <String>[],
       vibesList: <String>[],
+      experiencesList: <String>[],
+      entertainmentList: <String>[],
       specialConditions: '',
       password: '',
       spokenLanguage: '',
@@ -128,6 +134,9 @@ class RestaurantModel with ClusterItem{
       'facilityList': facilityList,
       'dietaryList': dietaryList,
       'atmopshereList': atmosphereList,
+      'vibesList': vibesList,
+      'experiencesList': experiencesList,
+      'entertainmentList': entertainmentList,
       'resEmail': resEmail,
       'averageRating': averageRating,
       'socialLink': socialLink,
@@ -175,6 +184,8 @@ class RestaurantModel with ClusterItem{
       atmosphereList: List<String>.from(data['atmopshereList'] ?? []),
       dietaryList: List<String>.from(data['dietaryList'] ?? []),
       vibesList: List<String>.from(data['vibesList'] ?? []),
+      experiencesList: List<String>.from(data['experiencesList'] ?? []),
+      entertainmentList: List<String>.from(data['entertainmentList'] ?? []),
       specialConditions: data['specialConditions'] ?? '',
       password: data['password'] ?? '',
       spokenLanguage: data['spokenLanguage'] ?? '',
