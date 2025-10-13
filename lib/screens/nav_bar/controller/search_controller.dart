@@ -80,15 +80,15 @@ class FilterController extends GetxController {
 
   var filterOptions = <String, List<String>>{
     "Vibes": [
-      "Lively", "High-Energy", "LaidBack", "Intimate",
-      "Loud", "Lowkey", "UpBeat"
+      "Date Night", "Hidden Gems", "Trendy & Social", "High Vibe",
+      "Chill & Cozy",
+    ],
+    "Entertainment": [
+      "Live Music", "Dj Nights", "Comedy", "Karaoke"
     ],
     "Experience": [
       "Brunch", "Outdoor", "Happy Hour", "Rooftop", "Water/Beachside",
       "Late Night", "Show"
-    ],
-    "Entertainment": [
-      "Live Music", "Dj Nights", "Comedy", "Karaoke"
     ],
     // "Time": ['Breakfast', 'Brunch', 'Lunch', 'Dinner', 'Late Night'],
     "Cuisines": [

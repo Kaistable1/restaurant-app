@@ -24,6 +24,7 @@ import '../../home_screen/home_controller/home_location_controller.dart';
 import '../controller/search_controller.dart';
 import '../full_screen_video/full_screen_video_screen.dart';
 import '../restaurant_detail_screens/restaurant_detail_screen.dart';
+import '../see_all_restaurants/see_all_restaurants_screen.dart';
 import 'discover_page.dart';
 
 class HomeScreenNew extends StatefulWidget {
@@ -34,7 +35,6 @@ class HomeScreenNew extends StatefulWidget {
 
 class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserver {
   final FilterController filterCtrl = Get.put(FilterController());
-  // final VideoController videoCtrl = Get.put(VideoController());
   final HomeLocationController homeLocationCtrl = Get.put(HomeLocationController());
   final RxBool showDistanceOptions = false.obs;
   final RxMap<String, bool> showFilterDropdowns = <String, bool>{}.obs;
@@ -52,6 +52,29 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
 
   // StreamSubscription to manage the listener for filtered restaurants
   StreamSubscription<List<RestaurantModel>>? _filteredSub;
+
+  // Emoji mappings for filter options
+  final Map<String, String> emojiMap = {
+    // Vibes
+    'Date Night': '💕',
+    'Hidden Gems': '😶‍🌫️',
+    'Trendy & Social': '💃',
+    'High Vibe': '🔥',
+    'Chill & Cozy': '😌',
+    // Entertainment
+    'Live Music': '🎶',
+    'Dj Nights': '🎧',
+    'Comedy': '🎤',
+    'Karaoke': '🎙️',
+    // Experiences
+    'Brunch': '🍳',
+    'Outdoor': '🌿',
+    'Happy Hour': '🍸',
+    'Rooftop': '🌆',
+    'Water/Beachside': '🌊',
+    'Late Night': '🌃',
+    'Show': '🎭',
+  };
 
   @override
   void initState() {
@@ -76,9 +99,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
       homeLocationCtrl.applySearchAndFilters();
 
       // Use GetX 'ever' to reactively listen for changes to the filteredRestaurantsStream Rx variable.
-      // When the stream changes (e.g., due to filters/search/distance updates in applySearchAndFilters()),
-      // cancel the old subscription and attach a new listener to the updated stream.
-      // This ensures the map markers update with the latest filtered list.
       ever(homeLocationCtrl.filteredRestaurantsStream, (Stream<List<RestaurantModel>> newStream) {
         _filteredSub?.cancel();
         _filteredSub = newStream.listen((list) {
@@ -115,7 +135,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _mapController?.dispose();
-    // _manager.dispose();
     _filteredSub?.cancel(); // Cancel the subscription to prevent memory leaks
     _customInfoWindowController.dispose();
     super.dispose();
@@ -123,7 +142,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // Add this method
     if (state == AppLifecycleState.resumed) {
       Geolocator.isLocationServiceEnabled().then((enabled) {
         if (enabled && homeLocationCtrl.userPosition.value == null) {
@@ -139,22 +157,20 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
       const [], // Initial empty list
       _updateMarkers,
       markerBuilder: _markerBuilder,
-      levels: const [1, 4.25, 6.75, 8.25, 11.0, 12.0, 13.0, 14.0], // Optional: default levels
-      extraPercent: 0.2, // Optional: default
-      stopClusteringZoom: 15.0, // Optional: adjusted to 15.0
+      levels: const [1, 4.25, 6.75, 8.25, 11.0, 12.0, 13.0, 14.0],
+      extraPercent: 0.2,
+      stopClusteringZoom: 15.0,
     );
   }
 
-  // Update markers from cluster manager (uses Set<Marker>)
+  // Update markers from cluster manager
   void _updateMarkers(Set<Marker> markers) {
     setState(() {
-      _markers = markers; // Only use cluster markers
+      _markers = markers;
     });
   }
 
   // Custom marker builder for clusters/individuals
-  // Single restaurant clusters (isMultiple: false) show as individual markers even below zoom 15
-  // includes custom info window for single restaurants
   Future<Marker> _markerBuilder(dynamic cluster) async {
     final gmcluster.Cluster<RestaurantModel> typedCluster = cluster as gmcluster.Cluster<RestaurantModel>;
     return Marker(
@@ -163,7 +179,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
       icon: typedCluster.isMultiple
           ? await _getMarkerBitmap(125, text: typedCluster.count.toString())
           : BitmapDescriptor.defaultMarker,
-      // onTap to show custom info window for single restaurants
       onTap: typedCluster.isMultiple
           ? null
           : () {
@@ -172,27 +187,28 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
           typedCluster.location,
         );
       },
-      // infoWindow for default behavior (optional, as we use custom info window)
-      // infoWindow: typedCluster.isMultiple
-      //     ? InfoWindow.noText
-      //     : InfoWindow(
-      //   title: typedCluster.items.first.resName,
-      //   onTap: () {
-      //     Get.to(() => RestaurantDetailScreen(restaurantModel: typedCluster.items.first));
-      //   },
-      // ),
     );
   }
 
   // Method to build the custom info window widget
   Widget _buildCustomInfoWindow(RestaurantModel restaurant) {
+    // Combine all relevant filter lists and get corresponding emojis
+    final allFilters = [
+      ...restaurant.vibesList,
+      ...restaurant.entertainmentList,
+      ...restaurant.experiencesList,
+    ];
+    final emojiList = allFilters
+        .where((filter) => emojiMap.containsKey(filter))
+        .map((filter) => emojiMap[filter]!)
+        .toList();
+
     return GestureDetector(
       onTap: () {
         Get.to(() => RestaurantDetailScreen(restaurantModel: restaurant));
       },
       child: Container(
         width: 200,
-        // height: 80,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -220,6 +236,17 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
+            if (emojiList.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Wrap(
+                spacing: 4,
+                runSpacing: 4,
+                children: emojiList.map((emoji) => Text(
+                  emoji,
+                  style: const TextStyle(fontSize: 16),
+                )).toList(),
+              ),
+            ],
             const SizedBox(height: 4),
             Text(
               'Tap for details',
@@ -287,7 +314,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
     final screenWidth = MediaQuery.of(context).size.width;
     final cardWidth = (screenWidth * 0.3).clamp(120.0, 160.0);
     final imageHeight = (cardWidth * 0.55).clamp(66.0, 88.0);
-    // final textContainerHeight = (cardWidth * 0.35).clamp(50.0, 70.0);
 
     return GestureDetector(
       onTap: () {
@@ -295,7 +321,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
       },
       child: Container(
         width: cardWidth,
-        // height: cardWidth * 1.5,
         decoration: BoxDecoration(
           border: Border.all(color: AppColors.borderColor),
           borderRadius: BorderRadius.circular(5),
@@ -335,7 +360,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
-                // height: textContainerHeight,
                 width: cardWidth - 16,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -361,9 +385,8 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                       final timeFilter = filterCtrl.selectedFilters['Time'];
 
                       if (operatingHours == null) {
-                        // REMOVED: if (!isFetching) { homeLocationCtrl.getOperatingHours(restaurant.docID, triggerFilterUpdate: true); }
                         return Text(
-                          isFetching ? 'Loading...' : 'Unavailable',  // CHANGED: Show 'Unavailable' if not fetching
+                          isFetching ? 'Loading...' : 'Unavailable',
                           style: TextStyle(
                             fontSize: 12,
                             color: const Color.fromRGBO(142, 142, 147, 1),
@@ -386,7 +409,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                       }
 
                       final dayHours = operatingHours[currentDay]!;
-                      // Check if no time filter is selected
                       if (timeFilter == null || timeFilter.isEmpty) {
                         return Text(
                           homeLocationCtrl.getFullDayHours(dayHours),
@@ -399,7 +421,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                         );
                       }
 
-                      // Use selected time slot
                       final timeOfDay = timeFilter.first;
                       final isClosed = dayHours[timeOfDay]?['isClosed'] ?? true;
                       final startTime = dayHours[timeOfDay]?['startTime'] ?? '6:00 PM';
@@ -426,7 +447,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                         const SizedBox(width: 4),
                         Obx(() {
                           if (homeLocationCtrl.isFetchingInitialData.value && homeLocationCtrl.userPosition.value == null) {
-                            // REMOVE: homeLocationCtrl.fetchUserPosition(context);  // Removed to prevent multiple calls; handled by init and resume.
                             return Expanded(
                               child: Text(
                                 'Fetching location...',
@@ -457,7 +477,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                           }
 
                           double distance = Geolocator.distanceBetween(
-                            // CHANGE: homeLocationCtrl.userPosition!.latitude -> homeLocationCtrl.userPosition.value!.latitude
                             homeLocationCtrl.userPosition.value!.latitude,
                             homeLocationCtrl.userPosition.value!.longitude,
                             restaurant.latitude,
@@ -492,8 +511,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
       homeLocationCtrl.generateThumbnail(index, video.url!);
     }
 
-    final restaurant = homeLocationCtrl.findRestaurantForVideo(video);
-
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -510,37 +527,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Row(
-            //   children: [
-            //     const CircleAvatar(
-            //       radius: 17,
-            //       backgroundImage: AssetImage('assets/images/Ellipse 19.png'),
-            //     ),
-            //     const SizedBox(width: 8),
-            //     Column(
-            //       crossAxisAlignment: CrossAxisAlignment.start,
-            //       children: [
-            //         Text(
-            //           "Emmanuel Sanchez",
-            //           style: TextStyle(
-            //             fontSize: 14,
-            //             fontWeight: FontWeight.w400,
-            //             fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-            //           ),
-            //         ),
-            //         Text(
-            //           'Tourist',
-            //           style: TextStyle(
-            //             fontSize: 12,
-            //             color: const Color.fromRGBO(142, 142, 147, 1),
-            //             fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-            //           ),
-            //         ),
-            //       ],
-            //     ),
-            //   ],
-            // ),
-            // const SizedBox(height: 8),
             Stack(
               children: [
                 ClipRRect(
@@ -591,12 +577,13 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                   ),
                 ),
                 Positioned(
-                    top: 4,
-                    left: 4,
-                    child: const CircleAvatar(
-                            radius: 17,
-                            backgroundImage: AssetImage('assets/images/show_logo.png'),
-                          ),),
+                  top: 4,
+                  left: 4,
+                  child: const CircleAvatar(
+                    radius: 17,
+                    backgroundImage: AssetImage('assets/images/show_logo.png'),
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 8),
@@ -619,35 +606,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      // FutureBuilder<RestaurantModel?>(
-                      //   future: homeLocationCtrl.findRestaurantForVideo(video),
-                      //   builder: (context, snapshot) {
-                      //     if (snapshot.connectionState == ConnectionState.waiting) {
-                      //       return Text(
-                      //         'Loading...',
-                      //         style: TextStyle(
-                      //           fontSize: 12,
-                      //           fontWeight: FontWeight.w500,
-                      //           fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                      //           color: const Color.fromRGBO(142, 142, 147, 1),
-                      //         ),
-                      //       );
-                      //     }
-                      //     final restaurant = snapshot.data;
-                      //     return Text(
-                      //       restaurant != null && restaurant.averageRating > 0
-                      //           ? '${restaurant.averageRating.toStringAsFixed(1)} stars'
-                      //           : '0 stars',
-                      //       style: TextStyle(
-                      //         fontSize: 12,
-                      //         fontWeight: FontWeight.w500,
-                      //         fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                      //         color: const Color.fromRGBO(142, 142, 147, 1),
-                      //       ),
-                      //     );
-                      //   },
-                      // ),
-                      // const SizedBox(width: 8),
                       Image.asset(
                         'assets/images/Icon (1).png',
                         width: 15,
@@ -655,69 +613,35 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                       ),
                       const SizedBox(width: 4),
                       Expanded(
-                        child:
-                          homeLocationCtrl.userPosition == null ?
-                            Text(
-                              'Location disabled',
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                color: const Color.fromRGBO(142, 142, 147, 1),
-                              ),
-                            ) :
-
-                          Obx(() =>  // ADD: Wrap in Obx to react to userPosition changes
-                          homeLocationCtrl.userPosition.value == null ?
-                          Text(
-                            'Location disabled',
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                              color: const Color.fromRGBO(142, 142, 147, 1),
-                            ),
-                          ) :
-
-                          FutureBuilder<RestaurantModel?>(
-                            future: homeLocationCtrl.findRestaurantForVideo(video),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return Text(
-                                  'Calculating...',
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                    color: const Color.fromRGBO(142, 142, 147, 1),
-                                  ),
-                                );
-                              }
-                              final restaurant = snapshot.data;
-                              if (restaurant == null || (restaurant.latitude == 0.0 && restaurant.longitude == 0.0)) {
-                                return Text(
-                                  'Unknown distance',
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                    color: const Color.fromRGBO(142, 142, 147, 1),
-                                  ),
-                                );
-                              }
-                              double distance = Geolocator.distanceBetween(
-                                // CHANGE: homeLocationCtrl.userPosition!.latitude -> homeLocationCtrl.userPosition.value!.latitude
-                                homeLocationCtrl.userPosition.value!.latitude,
-                                homeLocationCtrl.userPosition.value!.longitude,
-                                restaurant.latitude,
-                                restaurant.longitude,
-                              ) / 1000;
+                        child: homeLocationCtrl.userPosition == null
+                            ? Text(
+                          'Location disabled',
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                            color: const Color.fromRGBO(142, 142, 147, 1),
+                          ),
+                        )
+                            : Obx(() =>
+                        homeLocationCtrl.userPosition.value == null
+                            ? Text(
+                          'Location disabled',
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                            color: const Color.fromRGBO(142, 142, 147, 1),
+                          ),
+                        )
+                            : FutureBuilder<RestaurantModel?>(
+                          future: homeLocationCtrl.findRestaurantForVideo(video),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
                               return Text(
-                                '${distance.toStringAsFixed(1)} km away',
+                                'Calculating...',
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   fontSize: 12,
@@ -726,10 +650,39 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                                   color: const Color.fromRGBO(142, 142, 147, 1),
                                 ),
                               );
-                            },
-                          ),
-                          ),
-
+                            }
+                            final restaurant = snapshot.data;
+                            if (restaurant == null || (restaurant.latitude == 0.0 && restaurant.longitude == 0.0)) {
+                              return Text(
+                                'Unknown distance',
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                  color: const Color.fromRGBO(142, 142, 147, 1),
+                                ),
+                              );
+                            }
+                            double distance = Geolocator.distanceBetween(
+                              homeLocationCtrl.userPosition.value!.latitude,
+                              homeLocationCtrl.userPosition.value!.longitude,
+                              restaurant.latitude,
+                              restaurant.longitude,
+                            ) / 1000;
+                            return Text(
+                              '${distance.toStringAsFixed(1)} km away',
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                color: const Color.fromRGBO(142, 142, 147, 1),
+                              ),
+                            );
+                          },
+                        ),
+                        ),
                       ),
                       const SizedBox(width: 10),
                       Image.asset(
@@ -752,52 +705,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Row(
-        //   children: [
-        //     CircleAvatar(
-        //       radius: 20,
-        //       backgroundImage: AssetImage('assets/images/Ellipse 19.png'),
-        //     ),
-        //     // const SizedBox(width: 8),
-        //     // Expanded(
-        //     //   child: Row(
-        //     //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //     //     children: [
-        //     //       Column(
-        //     //         crossAxisAlignment: CrossAxisAlignment.start,
-        //     //         children: [
-        //     //           Text(
-        //     //             "Emmanuel Sanchez",
-        //     //             style: TextStyle(
-        //     //               fontSize: 14,
-        //     //               fontWeight: FontWeight.w400,
-        //     //               fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-        //     //             ),
-        //     //           ),
-        //     //           Text(
-        //     //             'Tourist',
-        //     //             style: TextStyle(
-        //     //               fontSize: 12,
-        //     //               color: const Color.fromRGBO(142, 142, 147, 1),
-        //     //               fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-        //     //             ),
-        //     //           ),
-        //     //         ],
-        //     //       ),
-        //     //       Text(
-        //     //         'Follow',
-        //     //         style: TextStyle(
-        //     //           color: Colors.green,
-        //     //           fontSize: 12,
-        //     //           fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-        //     //         ),
-        //     //       ),
-        //     //     ],
-        //     //   ),
-        //     // ),
-        //   ],
-        // ),
-        // const SizedBox(height: 8),
         GestureDetector(
           onTap: () {
             Get.to(() => RestaurantDetailScreen(restaurantModel: restaurant));
@@ -860,16 +767,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    // Text(
-                                    //   '${restaurant.averageRating.toStringAsFixed(1)} stars',
-                                    //   style: TextStyle(
-                                    //     fontSize: 12,
-                                    //     color: const Color.fromRGBO(142, 142, 147, 1),
-                                    //     fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                    //     fontWeight: FontWeight.w500,
-                                    //   ),
-                                    // ),
-                                    // const SizedBox(width: 15),
                                     Obx(() {
                                       final operatingHours = homeLocationCtrl.operatingHoursCache[restaurant.docID];
                                       final isFetching = homeLocationCtrl.fetchingOperatingHours.contains(restaurant.docID);
@@ -877,9 +774,8 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                                       final timeFilter = filterCtrl.selectedFilters['Time'];
 
                                       if (operatingHours == null) {
-                                        // REMOVED: if (!isFetching) { homeLocationCtrl.getOperatingHours(restaurant.docID, triggerFilterUpdate: true); }
                                         return Text(
-                                          isFetching ? 'Loading...' : 'Unavailable',  // CHANGED: Show 'Unavailable' if not fetching
+                                          isFetching ? 'Loading...' : 'Unavailable',
                                           style: TextStyle(
                                             fontSize: 12,
                                             color: const Color.fromRGBO(142, 142, 147, 1),
@@ -902,7 +798,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                                       }
 
                                       final dayHours = operatingHours[currentDay]!;
-                                      // Check if no time filter is selected
                                       if (timeFilter == null || timeFilter.isEmpty) {
                                         return Text(
                                           homeLocationCtrl.getFullDayHours(dayHours),
@@ -915,7 +810,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                                         );
                                       }
 
-                                      // Use selected time slot
                                       final timeOfDay = timeFilter.first;
                                       final isClosed = dayHours[timeOfDay]?['isClosed'] ?? true;
                                       final startTime = dayHours[timeOfDay]?['startTime'] ?? '6:00 PM';
@@ -955,7 +849,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                                           const SizedBox(width: 4),
                                           Obx(() {
                                             if (homeLocationCtrl.isFetchingInitialData.value && homeLocationCtrl.userPosition.value == null) {
-                                              // REMOVE: homeLocationCtrl.fetchUserPosition(context);  // Removed
                                               return Text(
                                                 'Fetching ...',
                                                 style: TextStyle(
@@ -991,14 +884,13 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                                               );
                                             }
                                             double distance = Geolocator.distanceBetween(
-                                              // CHANGE: homeLocationCtrl.userPosition!.latitude -> homeLocationCtrl.userPosition.value!.latitude
                                               homeLocationCtrl.userPosition.value!.latitude,
                                               homeLocationCtrl.userPosition.value!.longitude,
                                               restaurant.latitude,
                                               restaurant.longitude,
                                             ) / 1000;
                                             return Text(
-                                              '', // '${distance.toStringAsFixed(1)} km away',
+                                              '',
                                               style: TextStyle(
                                                 fontSize: 12,
                                                 color: const Color.fromRGBO(142, 142, 147, 1),
@@ -1015,11 +907,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                               ],
                             ),
                           ),
-                          // Image.asset(
-                          //   'assets/images/Group (5).png',
-                          //   width: 20,
-                          //   height: 20,
-                          // ),
                         ],
                       ),
                     ),
@@ -1046,9 +933,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
     return Scaffold(
       body: Stack(
         children: [
-          // Initialize with fallback location, animate to userPosition when available
           Obx(() {
-            // Determine initial camera position
             LatLng initialPosition;
             if (homeLocationCtrl.userPosition.value != null) {
               initialPosition = LatLng(
@@ -1056,7 +941,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                 homeLocationCtrl.userPosition.value!.longitude,
               );
             } else {
-              // Fallback: Use selected city/country if available, else default to San Francisco
               String selectedCity = filterCtrl.selectedCity.value;
               String selectedCountry = filterCtrl.selectedCountry.value;
               if (selectedCity.isNotEmpty && selectedCountry == 'USA') {
@@ -1065,12 +949,12 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                 } else if (filterCtrl.losAngelusCities.contains(selectedCity)) {
                   initialPosition = LatLng(34.0522, -118.2437); // Los Angeles
                 } else {
-                  initialPosition = LatLng(37.7749, -122.4194); // San Francisco default
+                  initialPosition = LatLng(37.7749, -122.4194); // San Francisco
                 }
               } else if (selectedCountry == 'France') {
                 initialPosition = LatLng(48.8566, 2.3522); // Paris
               } else {
-                initialPosition = LatLng(37.7749, -122.4194); // San Francisco default
+                initialPosition = LatLng(37.7749, -122.4194); // San Francisco
               }
             }
 
@@ -1081,18 +965,16 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                 zoom: 14,
               ),
               zoomControlsEnabled: false,
-              myLocationEnabled: true, // Shows default blue dot for user location
-              myLocationButtonEnabled: true, // Allows centering map on user location
+              myLocationEnabled: true,
+              myLocationButtonEnabled: true,
               mapType: MapType.normal,
               gestureRecognizers: {
                 Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer()),
               },
               onMapCreated: (GoogleMapController controller) {
-                // Store controller for camera updates
                 _mapController = controller;
-                _manager.setMapId(controller.mapId);  // Set map ID for cluster manager
+                _manager.setMapId(controller.mapId);
                 _customInfoWindowController.googleMapController = controller;
-                // If userPosition is already available, move camera immediately
                 if (homeLocationCtrl.userPosition.value != null) {
                   controller.animateCamera(
                     CameraUpdate.newCameraPosition(
@@ -1110,25 +992,23 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
               onCameraMove: (position) {
                 print('camera position zoom ${position.zoom}');
                 _manager.onCameraMove(position);
-                // Update info window position during camera move
                 _customInfoWindowController.onCameraMove!();
-              },  // Handle camera move for clustering
+              },
               onTap: (position) => _customInfoWindowController.hideInfoWindow!(),
-              onCameraIdle: _manager.updateMap,  // Update clusters on idle
-              markers: _markers,  // Use clustered markers
+              onCameraIdle: _manager.updateMap,
+              markers: _markers,
             );
           }),
           CustomInfoWindow(
             controller: _customInfoWindowController,
-            height: 80,
+            height: 100,
             width: 200,
             offset: 50,
           ),
           DraggableScrollableSheet(
             initialChildSize: 0.3,
             minChildSize: 0.1,
-            maxChildSize: (Get.height - (Platform.isAndroid ? 60 : 70) - 56 - 8 - 56 - 10 - 20
-            ) / Get.height, // 12,
+            maxChildSize: (Get.height - (Platform.isAndroid ? 60 : 70) - 56 - 8 - 56 - 10 - 20) / Get.height,
             snap: true,
             builder: (context, scrollCtrl) {
               return Container(
@@ -1192,7 +1072,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                             alignment: Alignment.center,
                             child: TextButton(
                               onPressed: () {
-                                Get.to(() => RestaurantsPage(fromHome: true));
+                                Get.to(() => SeeAllRestaurantsScreen(fromHome: true));
                               },
                               child: Text(
                                 'See all',
@@ -1321,13 +1201,12 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                         elevation: 0,
                         borderRadius: BorderRadius.circular(30),
                         child: Container(
-                          height: 56, // 48
+                          height: 56,
                           padding: const EdgeInsets.only(left: 16, right: 12),
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: Colors.white,
                             border: Border.all(color: Colors.grey[300]!),
-                            // borderRadius: BorderRadius.circular(20), // 30
                           ),
                           child: Row(
                             children: [
@@ -1341,14 +1220,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                                     border: InputBorder.none,
                                     hintStyle: TextStyle(fontSize: 16, color: Colors.grey[600]),
                                   ),
-                                  // onChanged: (value) {
-                                  //   homeLocationCtrl.searchQuery.value = value;
-                                  //   isLoading.value = true;
-                                  //   Future.delayed(const Duration(milliseconds: 500), () {
-                                  //     homeLocationCtrl.applySearchAndFilters();
-                                  //     isLoading.value = false;
-                                  //   });
-                                  // },
                                   onSubmitted: (value) {
                                     homeLocationCtrl.searchQuery.value = value;
                                     homeLocationCtrl.applySearchAndFilters();
@@ -1418,7 +1289,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                 const SizedBox(height: 8),
                 Obx(
                       () => SizedBox(
-                    height: showFilterDropdowns.values.contains(true) ? 262 : 56, // 36
+                    height: showFilterDropdowns.values.contains(true) ? 262 : 56,
                     child: Obx(() {
                       if (filterCtrl.filterOptions.isEmpty) {
                         return const SizedBox.shrink();
@@ -1441,8 +1312,8 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                                   showFilterDropdowns.refresh();
                                 },
                                 child: Obx(
-                                ()=> Container(
-                                    height: 44, // 36
+                                      () => Container(
+                                    height: 44,
                                     margin: const EdgeInsets.only(right: 8),
                                     padding: const EdgeInsets.symmetric(horizontal: 16),
                                     decoration: BoxDecoration(
@@ -1451,12 +1322,13 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                                           color: Colors.black.withOpacity(0.2),
                                           blurRadius: 4,
                                           spreadRadius: 0,
-                                          offset: Offset(0, 4)
+                                          offset: Offset(0, 4),
                                         ),
                                       ],
                                       border: Border.all(color: Colors.grey.shade300),
-                                      // borderRadius: BorderRadius.circular(30),
-                                      color: filterCtrl.selectedFilters[category]?.isNotEmpty ?? false ? AppColors.primaryColor : Colors.white,
+                                      color: filterCtrl.selectedFilters[category]?.isNotEmpty ?? false
+                                          ? AppColors.primaryColor
+                                          : Colors.white,
                                     ),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
@@ -1466,7 +1338,12 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                                               (filterCtrl.selectedFilters[category]?.isNotEmpty ?? false
                                                   ? ' (${filterCtrl.selectedFilters[category]?.length ?? 0})'
                                                   : ''),
-                                          style: TextStyle(color: filterCtrl.selectedFilters[category]?.isNotEmpty ?? false ? Colors.white : Colors.black, fontSize: 18),
+                                          style: TextStyle(
+                                            color: filterCtrl.selectedFilters[category]?.isNotEmpty ?? false
+                                                ? Colors.white
+                                                : Colors.black,
+                                            fontSize: 18,
+                                          ),
                                         ),
                                         const SizedBox(width: 4),
                                         const Icon(Icons.arrow_drop_down, size: 20, color: Colors.black),
@@ -1519,9 +1396,18 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                                                 child: Row(
                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                   children: [
-                                                    Text(
-                                                      option,
-                                                      style: const TextStyle(fontSize: 16),
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          emojiMap[option] ?? '',
+                                                          style: const TextStyle(fontSize: 16),
+                                                        ),
+                                                        const SizedBox(width: 4),
+                                                        Text(
+                                                          option,
+                                                          style: const TextStyle(fontSize: 16),
+                                                        ),
+                                                      ],
                                                     ),
                                                     if (filterCtrl.selectedFilters[category]?.contains(option) ?? false)
                                                       const Icon(Icons.check, color: Colors.green, size: 16),
@@ -1556,6 +1442,29 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
 class FilterOptionsSheet extends StatelessWidget {
   final String category;
   const FilterOptionsSheet({super.key, required this.category});
+
+  // Emoji mappings for filter options
+  static const Map<String, String> emojiMap = {
+    // Vibes
+    'Date Night': '💕',
+    'Hidden Gems': '😶‍🌫️',
+    'Trendy & Social': '💃',
+    'High Vibe': '🔥',
+    'Chill & Cozy': '😌',
+    // Entertainment
+    'Live Music': '🎶',
+    'Dj Nights': '🎧',
+    'Comedy': '🎤',
+    'Karaoke': '🎙️',
+    // Experiences
+    'Brunch': '🍳',
+    'Outdoor': '🌿',
+    'Happy Hour': '🍸',
+    'Rooftop': '🌆',
+    'Water/Beachside': '🌊',
+    'Late Night': '🌃',
+    'Show': '🎭',
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -1599,9 +1508,18 @@ class FilterOptionsSheet extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          option,
-                          style: const TextStyle(fontSize: 16),
+                        Row(
+                          children: [
+                            Text(
+                              emojiMap[option] ?? '',
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              option,
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                          ],
                         ),
                         if (isSelected) const Icon(Icons.check, color: Colors.green, size: 16),
                       ],
