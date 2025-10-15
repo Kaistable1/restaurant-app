@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:savrly/screens/Videos/video_screen.dart';
 import 'package:savrly/screens/dashboard/notification_screen/notifications_screen/notification_screen.dart';
+import 'package:savrly/screens/discovery_list/discovery_list_screen.dart';
 import 'package:savrly/screens/events_managements/view_events/view_event.dart';
 
 import '../../constants/app_colors.dart';
@@ -14,6 +15,7 @@ import '../dashboard/dashboard_screen.dart';
 import '../../controllers/drawer_controller.dart';
 import '../dashboard/notification_screen/create_notification_screen.dart';
 import '../dashboard/profile_screen/profile_screen.dart';
+import '../discovery_list/add_discover_list_screen.dart';
 import '../drawer/drawer_screen.dart';
 import '../events_managements/add_event/add_events.dart';
 import '../events_managements/events_managements.dart';
@@ -80,6 +82,8 @@ class AdminPanel extends StatelessWidget {
       screen = ViewEvent();
     } else if (controller.viewEventsGallery.value) {
       screen = EventDetailsGallery();
+    } else if (controller.addDiscoveryLists.value) {
+      screen = AddDiscoverListScreen();
     } else if (controller.showNotifications.value) {
       screen = NotificationScreen();
     } else if (controller.viewClaimsDetails.value) {
@@ -98,18 +102,20 @@ class AdminPanel extends StatelessWidget {
       } else if (controller.selectedScreen.value == 3) {
         screen = EventsManagements();
       } else if (controller.selectedScreen.value == 4) {
-        screen = RestaurantsClaimsScreen();
+        screen = DiscoveryListScreen();
       } else if (controller.selectedScreen.value == 5) {
-        screen = BannerManagement();
+        screen = RestaurantsClaimsScreen();
       } else if (controller.selectedScreen.value == 6) {
-        screen = AdminVideoPanel();
+        screen = BannerManagement();
       } else if (controller.selectedScreen.value == 7) {
-        screen = SubAdminScreens();
+        screen = AdminVideoPanel();
       } else if (controller.selectedScreen.value == 8) {
-        screen = PrivacyPolicy();
+        screen = SubAdminScreens();
       } else if (controller.selectedScreen.value == 9) {
-        screen = AboutApp();
+        screen = PrivacyPolicy();
       } else if (controller.selectedScreen.value == 10) {
+        screen = AboutApp();
+      } else if (controller.selectedScreen.value == 11) {
         screen = TermsAndConditions();
       } else {
         screen = ContactUsScreen();
