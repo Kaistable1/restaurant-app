@@ -2,13 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DiscoverListModel {
 
+  String docId;
   String name;
   String by;
   String description;
   String image;
-  List<String> restaurantIdsList;
+  List<dynamic> restaurantIdsList;
 
   DiscoverListModel({
+    required this.docId,
     required this.name,
     required this.by,
     required this.description,
@@ -20,16 +22,18 @@ class DiscoverListModel {
     final data = snapshot.data()!;
 
     return DiscoverListModel(
-        name: data['name'],
-        by: data['by'],
-        description: data['description'],
-        image: data['image'],
-        restaurantIdsList: data['restaurantIdsList']
+      docId: snapshot.id,
+      name: data['name'],
+      by: data['by'],
+      description: data['description'],
+      image: data['image'],
+      restaurantIdsList: data['restaurantIdsList'],
     );
   }
 
   Map<String, dynamic> toMap(){
     return {
+      'docId': docId,
       'name': name,
       'by': by,
       'description': description,

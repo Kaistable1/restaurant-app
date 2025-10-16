@@ -28,7 +28,8 @@ class _MainScreenState extends State<MainScreen> {
   List<Widget> _buildScreens() {
     return [
       const HomeScreenNew(),
-      RestaurantsPage(fromHome: false),
+      DiscoverListsPage(fromHome: false),
+      // RestaurantsPage(fromHome: false),
       VideosListView(fromHome: false),
       // SavedRestaurantsPage(),
       ProfileScreen(),
@@ -39,7 +40,8 @@ class _MainScreenState extends State<MainScreen> {
   List<Widget> _buildSplashScreen() {
     return [
       const HomeScreenNew(),
-      RestaurantsPage(fromHome: false),
+      DiscoverListsPage(fromHome: false),
+      // RestaurantsPage(fromHome: false),
       VideosListView(fromHome: false),
       // SavedRestaurantsPage(),
       ProfileScreen(),

@@ -18,6 +18,7 @@ import 'package:maps_launcher/maps_launcher.dart';
 import '../../../constants/app_colors.dart';
 import '../../../custom_widget/app_bar.dart';
 import '../../../utils/functions.dart';
+import '../../../widgets/claim_dialog.dart';
 import '../../home_screen/home_controller/home_location_controller.dart';
 import '../full_screen_video/full_screen_video_screen.dart';
 import 'controller/restaurant_detail_controller.dart';
@@ -321,9 +322,23 @@ class RestaurantDetailScreen extends StatelessWidget {
                                     //     ),
                                     //   ),
                                     // ),
-                                    // const SizedBox(height: 16),
-                                    // Divider(color: AppColors.dividerColor),
-                                    // const SizedBox(height: 16),
+                                    CustomButton(
+                                      laBelText: 'Claim Your Restaurant',
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: 'PlusJakartaSans',
+                                      textColor: Colors.white,
+                                      containerColor: Colors.orange,
+                                      height: 32,
+                                      radius: BorderRadius.circular(15),
+                                      ontapp: (){
+                                        // showCustomDialog(context,
+                                        //     resaturant_model: restaurantModel!);
+                                      },
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Divider(color: AppColors.dividerColor),
+                                    const SizedBox(height: 16),
                                     Row(
                                       children: [
                                         Padding(
@@ -334,12 +349,14 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                 width: 12),
                                         ),
                                         const SizedBox(width: 8),
-                                        Text(
-                                          '${restaurantModel?.address ?? ''}, ${restaurantModel?.city ?? ''}, ${restaurantModel?.state ?? ''}, ${restaurantModel?.country ?? ''}${restaurantModel == null || restaurantModel!.zipCode == '' ? '' : ', ${restaurantModel!.zipCode}' }', // '304 Liverpool Blvd, Portsmouth, CA 30103',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                            fontFamily: 'PlusJakartaSans',
+                                        Expanded(
+                                          child: Text(
+                                            '${restaurantModel?.address ?? ''}, ${restaurantModel?.city ?? ''}, ${restaurantModel?.state ?? ''}, ${restaurantModel?.country ?? ''}${restaurantModel == null || restaurantModel!.zipCode == '' ? '' : ', ${restaurantModel!.zipCode}' }', // '304 Liverpool Blvd, Portsmouth, CA 30103',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                              fontFamily: 'PlusJakartaSans',
+                                            ),
                                           ),
                                         ),
                                       ],
