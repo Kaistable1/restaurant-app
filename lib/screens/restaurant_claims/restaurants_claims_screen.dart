@@ -220,9 +220,9 @@ class RestaurantsClaimsScreen extends StatelessWidget {
                                           decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(8),
-                                            image: DecorationImage(
+                                            image: user.restaurantData.imagesList.length == 0 ? null : DecorationImage(
                                               image:
-                                                  NetworkImage(user.photoUrl),
+                                                  NetworkImage(user.restaurantData.imagesList.first),
                                               fit: BoxFit.cover,
                                             ),
                                           ),
@@ -234,7 +234,7 @@ class RestaurantsClaimsScreen extends StatelessWidget {
                                       flex: 2,
                                       child: Center(
                                         child: Text(
-                                          user.restaurantsName,
+                                          user.restaurantData.resName,
                                           textAlign: TextAlign.center,
                                           style: simpleText.copyWith(
                                             fontSize: tableTextSize,

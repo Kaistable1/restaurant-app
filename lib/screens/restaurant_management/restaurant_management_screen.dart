@@ -97,20 +97,61 @@ class _RestaurantManagementScreenState
           CustomHeaderWidget(
             title: 'Restaurant Management',
             end: true,
-            endWidget: CustomButton(
-              laBelText: 'Add Restaurant',
-              isPrefixIcon: true,
-              iconWidget: Icon(Icons.add_circle_outline_sharp, color: white),
-              fontSize: buttonTextSize,
-              width: mobileView ? 150 : 200,
-              shadow: [],
-              containerColor: primaryColor,
-              ontapp: () {
-                addController.restaurantModel = null;
-                addController.clearFields();
-                drawerController.addRestaurants.value = true;
-              },
-            ),
+            endWidget:
+            // Row(
+            //   children: [
+                // CustomButton(
+                //   laBelText: 'add websiteUrl',
+                //   isPrefixIcon: true,
+                //   iconWidget: Icon(Icons.add_circle_outline_sharp, color: white),
+                //   fontSize: buttonTextSize,
+                //   width: mobileView ? 150 : 200,
+                //   shadow: [],
+                //   containerColor: primaryColor,
+                //   ontapp: () async {
+                //     try {
+                //       // Get reference to the restaurants collection
+                //       final collection = FirebaseFirestore.instance.collection('restaurants');
+                //
+                //       // Get all documents in the collection
+                //       final snapshot = await collection.get();
+                //
+                //       // Iterate through each document
+                //       int i=0;
+                //       for (var doc in snapshot.docs) {
+                //         // Check if websiteUrl field exists
+                //         if (!doc.data().containsKey('websiteUrl')) {
+                //           // Update document with websiteUrl field set to empty string
+                //           await doc.reference.update({
+                //             'websiteUrl': '',
+                //           });
+                //           print('$i Updated document ${doc.id} with websiteUrl field');
+                //         }else{
+                //           print('$i Document ${doc.id} already has websiteUrl field');
+                //         }
+                //       }
+                //       print('Finished checking and updating restaurants collection');
+                //     } catch (e) {
+                //       print('Error updating restaurants: $e');
+                //     }
+                //   },
+                // ),
+                CustomButton(
+                  laBelText: 'Add Restaurant',
+                  isPrefixIcon: true,
+                  iconWidget: Icon(Icons.add_circle_outline_sharp, color: white),
+                  fontSize: buttonTextSize,
+                  width: mobileView ? 150 : 200,
+                  shadow: [],
+                  containerColor: primaryColor,
+                  ontapp: () {
+                    addController.restaurantModel = null;
+                    addController.clearFields();
+                    drawerController.addRestaurants.value = true;
+                  },
+                ),
+            //   ],
+            // ),
           ),
           SizedBox(height: 30),
           mobileView

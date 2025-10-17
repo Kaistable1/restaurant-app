@@ -77,7 +77,7 @@ class RestaurantsClaimsDetails extends StatelessWidget {
                               borderRadius: BorderRadius.circular(
                                   isMobile ? 10 : (isTablet ? 10 : 10)),
                               image: DecorationImage(
-                                image: NetworkImage(claimsModel.photoUrl),
+                                image: NetworkImage(claimsModel.restaurantData.imagesList.first),
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -148,7 +148,7 @@ class RestaurantsClaimsDetails extends StatelessWidget {
                                             ),
                                           ),
                                           TextSpan(
-                                            text: claimsModel.restaurantsName,
+                                            text: claimsModel.restaurantData.resName,
                                             style: headingText.copyWith(
                                               fontWeight: FontWeight.w500,
                                               fontSize: isLargeScreen
@@ -460,7 +460,7 @@ class RestaurantsClaimsDetails extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(
                                     isMobile ? 10 : (isTablet ? 10 : 10)),
                                 image: DecorationImage(
-                                  image: NetworkImage(claimsModel.photoUrl),
+                                  image: NetworkImage(claimsModel.restaurantData.imagesList.first),
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -532,7 +532,7 @@ class RestaurantsClaimsDetails extends StatelessWidget {
                                               ),
                                             ),
                                             TextSpan(
-                                              text: claimsModel.restaurantsName,
+                                              text: claimsModel.restaurantData.resName,
                                               style: headingText.copyWith(
                                                 fontWeight: FontWeight.w500,
                                                 fontSize: isLargeScreen

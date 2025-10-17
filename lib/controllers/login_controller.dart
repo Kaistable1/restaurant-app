@@ -126,6 +126,14 @@ class LoginController extends GetxController {
           Get.back();
           Get.offAll(() => AdminPanel());
           clearAllFields();
+        // } else if (adminDoc.exists && adminDoc['role'] == 'sub-admin'){
+        //   Get.snackbar('Success', 'Sub-Admin login successful',
+        //       snackPosition: SnackPosition.TOP,
+        //       backgroundColor: Colors.green,
+        //       colorText: Colors.white);
+        //   Get.back();
+        //   Get.offAll(() => SubAdminPanel());
+        //   clearAllFields();
         } else {
           Get.back();
 

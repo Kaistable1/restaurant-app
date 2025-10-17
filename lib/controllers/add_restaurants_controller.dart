@@ -669,6 +669,8 @@ class AddRestaurantTabController extends GetxController {
         'address': areaController.text.trim(),
         'atmopshereList': [],
         'vibesList': [], // Empty array as per your data
+        'experiencesList': [],
+        'entertainmentList': [],
         'averageRating': 0,
         'reviewCount': 0,
         'city': selectedCity.value.trim(),
