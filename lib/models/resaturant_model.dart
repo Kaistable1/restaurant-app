@@ -143,7 +143,7 @@ class RestaurantModel {
       'socialMedia': socialMedia,
       'priceRange': priceRange,
       'about': about,
-      'createdAt': createdAt.toIso8601String(),
+      'createdAt': createdAt,
       'country': country,
       'zipCode': zipCode,
       'phoneNo': phoneNo,

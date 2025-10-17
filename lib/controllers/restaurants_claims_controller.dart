@@ -73,7 +73,7 @@ class RestaurantsClaimsController extends GetxController {
   }
 
   approvedResturnatsClaims() async {
-    try {
+    // try {
       RestaurantClaimsModel restaurantClaimModel = viewClaimsDetails!;
       // Show loading dialog
       loadingDialog();
@@ -159,7 +159,7 @@ class RestaurantsClaimsController extends GetxController {
 
       if(docID != 'error') {
         await FirebaseFirestore.instance
-            .collection('admins')
+            .collection('restaurantOwner')
             .doc(docID)
             .set({
           'docID': docID,
@@ -168,8 +168,7 @@ class RestaurantsClaimsController extends GetxController {
           'email': restaurantClaimModel.email,
           'img': restaurantClaimModel.restaurantData.imagesList.length == 0 ? '' : restaurantClaimModel.restaurantData.imagesList.first,
           'password': passwordController.text,
-          'role': 'sub-admin',
-          'status': 'Active',
+          'restaurantData': await restaurantClaimModel.restaurantData.toMap()
         });
 
         await FirebaseFirestore.instance
@@ -189,9 +188,9 @@ class RestaurantsClaimsController extends GetxController {
       }
 
 
-    } catch (e) {
-      print('Error $e');
-    }
+    // } catch (e) {
+    //   print('Error $e');
+    // }
   }
 
   Future<String> assignedCredencialsLogin(
