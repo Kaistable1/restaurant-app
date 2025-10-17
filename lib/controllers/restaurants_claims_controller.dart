@@ -73,7 +73,7 @@ class RestaurantsClaimsController extends GetxController {
   }
 
   approvedResturnatsClaims() async {
-    // try {
+    try {
       RestaurantClaimsModel restaurantClaimModel = viewClaimsDetails!;
       // Show loading dialog
       loadingDialog();
@@ -188,9 +188,9 @@ class RestaurantsClaimsController extends GetxController {
       }
 
 
-    // } catch (e) {
-    //   print('Error $e');
-    // }
+    } catch (e) {
+      print('Error $e');
+    }
   }
 
   Future<String> assignedCredencialsLogin(
