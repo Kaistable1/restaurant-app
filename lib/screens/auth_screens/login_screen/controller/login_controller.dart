@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:restaurant_web_app/controllers/filldata_restaurant_controller.dart';
 import 'package:restaurant_web_app/main.dart';
+import 'package:restaurant_web_app/models/claim_model.dart';
 import 'package:restaurant_web_app/screens/edit_restaurant_forms.dart';
 import 'package:restaurant_web_app/screens/main_screen/main_screen.dart';
 import 'package:restaurant_web_app/screens/main_screen/mainscreen_controller/main_controller.dart';
@@ -96,7 +97,15 @@ class LoginController extends GetxController {
             .get()
             .then((doc) async {
           if (doc.exists) {
-            // Restaurant owner found
+            // Restaurant owner found - convert to RestaurantClaimsModel and store globally
+            // The restaurantOwner collection structure matches RestaurantClaimsModel
+            final ownerModel = RestaurantClaimsModel.fromFirestore(doc);
+            currentRestaurantOwner.value = ownerModel;
+
+            print('✅ Restaurant owner data loaded: ${ownerModel.email}');
+            print('✅ Restaurant: ${ownerModel.restaurantData.resName.text}');
+            print('✅ Owner Name: ${ownerModel.ownerName}');
+
             final fillcontroller = Get.put(FillDataRestaurantController());
             fillcontroller.fetchRestaurantData();
             Get.back();

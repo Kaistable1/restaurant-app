@@ -40,10 +40,7 @@ class OperatingHoursSubScreenController extends GetxController {
         'Dinner': '',
       };
       daySwitchControllers[day] ??=
-          ValueNotifier<bool>(daySwitches[day] ?? false)
-            ..addListener(() {
-              toggleDaySwitch(day);
-            });
+          ValueNotifier<bool>(daySwitches[day] ?? false);
     }
 
     // Apply default values (optional)
@@ -64,10 +61,12 @@ class OperatingHoursSubScreenController extends GetxController {
   RxMap slotTimes = {}.obs;
 
   void toggleDaySwitch(String day) {
-    daySwitches[day] = !daySwitches[day]!;
-    daySwitchControllers[day]!.value = daySwitches[day]!; // Sync ValueNotifier
+    // Toggle the value
+    bool newValue = !daySwitches[day]!;
+    daySwitches[day] = newValue;
+    daySwitchControllers[day]!.value = newValue;
 
-    if (!daySwitches[day]!) {
+    if (!newValue) {
       // If day is disabled, set all slots to "Off" and clear times
       slotStates[day]!.updateAll((key, value) => false);
       slotTimes[day]!.updateAll((key, value) => '');

@@ -70,7 +70,7 @@ class _ViewRestaurantDetailsState extends State<ViewRestaurantDetails> {
         StreamBuilder(
             stream: FirebaseFirestore.instance
                 .collection('restaurants')
-                .doc(auth.currentUser?.uid)
+                .doc(currentRestaurantOwner.value!.restaurantData.docID)
                 .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
@@ -126,7 +126,7 @@ class _ViewRestaurantDetailsState extends State<ViewRestaurantDetails> {
                           social:
                               '${restaurant.socialLink}, ${restaurant.socialMedia}',
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         FacilitiesContainer(
                           screenHeight: screenHeight,
                           mobileView: mobileView,

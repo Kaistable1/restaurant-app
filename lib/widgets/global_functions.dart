@@ -11,26 +11,26 @@ import 'package:image_picker_web/image_picker_web.dart';
 import 'package:intl/intl.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:path/path.dart' as Path;
-import 'package:restaurant_web_app/universal_models/restaurant_model.dart';
 import 'dart:async';
 
 import '../main.dart';
+import '../models/claim_model.dart';
 
 Future<void> getCurrentUserData() async {
   print('Getting user data...');
 
   if (auth.currentUser != null) {
     DocumentSnapshot<Map<String, dynamic>> value = await FirebaseFirestore.instance
-        .collection('restaurants')
+        .collection('restaurantOwner')
         .doc(auth.currentUser!.uid.toString())
         .get();
 
     if (value.exists && value.data()!.isNotEmpty) {
       // ✅ Correct way to update observable
-      currentUserDataModel?.value = RestaurantModel.fromDocumentSnapshot(value);
+      currentRestaurantOwner.value = RestaurantClaimsModel.fromFirestore(value);
 
       // ✅ If currentRestaurant is also observable, update it correctly
-      currentRestaurant = value;
+      // currentRestaurant = value;
 
       print('User data found ✅');
     } else {

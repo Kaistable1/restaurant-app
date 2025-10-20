@@ -152,7 +152,7 @@ class RestaurantModel {
   }
 
   // Optional: Factory to create from map
-  factory RestaurantModel.fromMap(Map<String, dynamic> data) {
+  static RestaurantModel fromMap(Map<String, dynamic> data) {
     return RestaurantModel(
         about: data['about'] ?? '',
         address: data['address'] ?? '',
@@ -164,17 +164,26 @@ class RestaurantModel {
         city: data['city'] ?? '',
         state: data['state'] ?? '',
         country: data['country'] ?? '',
-        createdAt: data['createdAt'] == null ? DateTime.now() : (data['createdAt'] as Timestamp).toDate(),
+        createdAt: data['createdAt'] != null
+            ? (data['createdAt'] as Timestamp).toDate()
+            : DateTime.now(),
         dietaryList: List<String>.from(data['dietaryList'] ?? []),
         docID: data['docID'] ?? '',
         entertainmentScheduleList: List<EntertainmentScheduleModel>.from(
-            data['entertainmentScheduleList'] ?? []),
+          (data['entertainmentScheduleList'] as List<dynamic>? ?? []).map(
+                (e) => EntertainmentScheduleModel.fromMap(e as Map<String, dynamic>),
+          ),
+        ),
         facilityList: List<String>.from(data['facilityList'] ?? []),
         imagesList: List<String>.from(data['imagesList'] ?? []),
         latitude: (data['latitude'] ?? 0.0).toDouble(),
         logoImage: data['logoImage'] ?? '',
         longitude: (data['longitude'] ?? 0.0).toDouble(),
-        menuList: List<MenuModel>.from(data['menuList'] ?? []),
+        menuList: List<MenuModel>.from(
+          (data['menuList'] as List<dynamic>? ?? []).map(
+                (e) => MenuModel.fromMap(e as Map<String, dynamic>),
+          ),
+        ),
         password: data['password'] ?? '',
         priceRange: data['priceRange'] ?? '',
         resEmail: data['resEmail'] ?? '',

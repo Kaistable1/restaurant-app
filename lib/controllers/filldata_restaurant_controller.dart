@@ -7,6 +7,7 @@ import 'package:restaurant_web_app/controllers/amenities_sub_screen_controller.d
 import 'package:restaurant_web_app/controllers/experiences_sub_screen_controller.dart';
 import 'package:restaurant_web_app/controllers/menu_sub_screen_controller.dart';
 import 'package:restaurant_web_app/controllers/operating_hours_sub_screen_controller.dart';
+import 'package:restaurant_web_app/main.dart';
 import 'package:restaurant_web_app/models/resaturant_model.dart';
 
 class FillDataRestaurantController extends GetxController {
@@ -22,17 +23,21 @@ class FillDataRestaurantController extends GetxController {
   // Function to fetch restaurant data from Firestore
   Future<void> fetchRestaurantData() async {
     try {
-      // Get the current user's UID
-      String? uid = FirebaseAuth.instance.currentUser?.uid;
-      if (uid == null) {
-        print('No user is logged in');
+      // Get the restaurant docID from the currentRestaurantOwner claim model
+      String? restaurantDocID =
+          currentRestaurantOwner.value?.restaurantData.docID;
+
+      if (restaurantDocID == null || restaurantDocID.isEmpty) {
+        print('No restaurant docID found in currentRestaurantOwner');
         return;
       }
 
-      // Reference to the Firestore collection 'restaurants' and document with UID
+      print('📍 Fetching restaurant data for docID: $restaurantDocID');
+
+      // Reference to the Firestore collection 'restaurants' and document with restaurant docID
       DocumentSnapshot doc = await FirebaseFirestore.instance
           .collection('restaurants')
-          .doc(uid)
+          .doc(restaurantDocID)
           .get();
 
       // Check if document exists
@@ -40,16 +45,17 @@ class FillDataRestaurantController extends GetxController {
         // Convert Firestore data to RestaurantModel
         restaurantDetailsModel =
             RestaurantModel.fromMap(doc.data() as Map<String, dynamic>);
-        print('restaurantDetailsModel: ${restaurantDetailsModel!.imagesList}');
+        print('✅ Restaurant data loaded: ${restaurantDetailsModel!.resName}');
+        print('📸 Images: ${restaurantDetailsModel!.imagesList}');
         restaurantController.restaurantModel = restaurantDetailsModel;
         update();
         // Fill all variables after fetching data
         await fillAllVariable();
       } else {
-        print('No restaurant data found for UID: $uid');
+        print('❌ No restaurant data found for docID: $restaurantDocID');
       }
     } catch (e) {
-      print('Error fetching restaurant data: $e');
+      print('❌ Error fetching restaurant data: $e');
     }
   }
 

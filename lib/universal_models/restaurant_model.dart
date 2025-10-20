@@ -109,7 +109,6 @@ class RestaurantModel {
                 ? await uploadImageToFirebase('logo', logoImageMemory.value)
                 : '';
 
-
     List<String> imageUrls = [];
     for (var image in resImages) {
       imageUrls.add(image.value);
@@ -204,6 +203,73 @@ class RestaurantModel {
             (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
         latitude: snapshot.data()!['latitude'] ?? 33.602018,
         longitude: snapshot.data()!['longitude'] ?? 33.602018,
+        facilityList: RxList<String>.from(
+            (data['facilityList'] as List<dynamic>? ?? [])
+                .map((e) => e.toString())),
+        atmopshereList: RxList<String>.from(
+            (data['atmopshereList'] as List<dynamic>? ?? [])
+                .map((e) => e.toString())),
+        dietaryList: RxList<String>.from(
+            (data['dietaryList'] as List<dynamic>? ?? [])
+                .map((e) => e.toString())),
+        specialConditions:
+            TextEditingController(text: data['specialConditions'] ?? ''),
+        password: TextEditingController(text: data['password'] ?? ''),
+        spokenLanguage: RxString(data['spokenLanguage'] ?? 'English'),
+        socialMedia: RxString(data['socialMedia'] ?? ''),
+        priceRange: RxString(data['priceRange'] ?? ''),
+        docID: data['docID'] ?? '',
+        logoImage: RxString(data['logoImage'] ?? ''),
+        logoImageMemory: Uint8List(0).obs,
+        entertainmentScheduleList: RxList<EntertainmentScheduleModel>.from(
+          (data['entertainmentScheduleList'] as List<dynamic>? ?? [])
+              .map((e) => EntertainmentScheduleModel.fromMap(e)),
+        ),
+        resImageMemory: RxList<Uint8List>(),
+        resImages: resImages);
+  }
+
+  // Create a model instance from a Map
+  static RestaurantModel fromMap(Map<String, dynamic> data) {
+    List<String> images = List<String>.from(data['resImages'] ?? []);
+    List<RxString> resImages = [];
+
+    for (String image in images) {
+      resImages.add(RxString(image));
+    }
+
+    return RestaurantModel(
+        resName: TextEditingController(
+          text: data['resName'] ?? '',
+        ),
+        country: TextEditingController(
+          text: data['country'] ?? '',
+        ),
+        zipCode: TextEditingController(
+          text: data['zipCode'] ?? '',
+        ),
+        about: TextEditingController(
+          text: data['about'] ?? '',
+        ),
+        phoneNumber: TextEditingController(
+          text: data['phoneNumber'] ?? '',
+        ),
+        city: TextEditingController(
+          text: data['city'] ?? '',
+        ),
+        resEmail: TextEditingController(
+          text: data['resEmail'] ?? '',
+        ),
+        socialLink: TextEditingController(
+          text: data['socialLink'] ?? '',
+        ),
+        address: TextEditingController(
+          text: data['address'] ?? '',
+        ),
+        createdAt:
+            (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+        latitude: (data['latitude'] ?? 33.602018).toDouble(),
+        longitude: (data['longitude'] ?? 33.602018).toDouble(),
         facilityList: RxList<String>.from(
             (data['facilityList'] as List<dynamic>? ?? [])
                 .map((e) => e.toString())),
