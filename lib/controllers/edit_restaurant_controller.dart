@@ -1,5 +1,3 @@
-import 'dart:js_interop';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -90,12 +88,16 @@ class EditRestaurantController extends GetxController {
         );
       }
 
-      addRestaurantController.latitude.value =
-          restaurantController.latitude.value;
+      addRestaurantController.latitude.value = restaurantDetailsModel!.latitude;
       addRestaurantController.longitude.value =
-          restaurantController.longitude.value;
+          restaurantDetailsModel!.longitude;
       addRestaurantController.zipCodeController.text =
-          restaurantDetailsModel?.zipCode ?? '';
+          restaurantDetailsModel!.zipCode;
+
+      // Set cityController text for manual typing support
+      addRestaurantController.cityController.text =
+          restaurantDetailsModel!.city;
+
       addRestaurantController.update();
     }
   }
@@ -132,13 +134,13 @@ class EditRestaurantController extends GetxController {
       }
 
       for (var experience in amenitiesController.experiences) {
-        experience['isChecked'] =
-            restaurantDetailsModel!.experiencesList.contains(experience['name']);
+        experience['isChecked'] = restaurantDetailsModel!.experiencesList
+            .contains(experience['name']);
       }
 
       for (var entertainment in amenitiesController.entertainment) {
-        entertainment['isChecked'] =
-            restaurantDetailsModel!.entertainmentList.contains(entertainment['name']);
+        entertainment['isChecked'] = restaurantDetailsModel!.entertainmentList
+            .contains(entertainment['name']);
       }
 
       for (var atm in amenitiesController.atmosphere) {
@@ -302,7 +304,7 @@ class EditRestaurantController extends GetxController {
           restaurantDetailsModel!.specialConditions;
       if (restaurantDetailsModel!.menuList.isNotEmpty) {
         final menu = restaurantDetailsModel!.menuList.first;
-        menuController.selectedCuisine.value = menu.cuisineType ?? '';
+        menuController.selectedCuisine.value = menu.cuisineType;
         menuController.isFoodMenuSelected.value = menu.menuType == 'food';
         menuController.isDrinkMenuSelected.value = menu.menuType == 'drink';
         menuController.uploadedImages.clear();

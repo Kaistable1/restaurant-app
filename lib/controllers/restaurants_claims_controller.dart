@@ -26,14 +26,14 @@ class RestaurantsClaimsController extends GetxController {
 // Fetch all business claims from Firestore and update restaurantsClaims
   Future<void> getAllBusinessClaims() async {
     // try {
-      final querySnapshot =
-          await FirebaseFirestore.instance.collection('businessClaims').get();
-      final claims = querySnapshot.docs
-          .map((doc) => RestaurantClaimsModel.fromFirestore(doc))
-          .toList();
-      restaurantsClaims.assignAll(claims); // Update observable list
-      print('Fetched ${claims.length} business claims');
-      update();
+    final querySnapshot =
+        await FirebaseFirestore.instance.collection('businessClaims').get();
+    final claims = querySnapshot.docs
+        .map((doc) => RestaurantClaimsModel.fromFirestore(doc))
+        .toList();
+    restaurantsClaims.assignAll(claims); // Update observable list
+    print('Fetched ${claims.length} business claims');
+    update();
     // } catch (e) {
     //   print('Error fetching all business claims: $e');
     //   Get.snackbar('Error', 'Failed to fetch business claims: $e');
@@ -121,56 +121,66 @@ class RestaurantsClaimsController extends GetxController {
 
       String docID = await assignedCredencialsLogin(
           email: restaurantClaimModel.email,
-          userPassword: passwordController.text.trim());
+          userPassword: passwordController.text);
 
-      // final restaurantData = {
-      //   'vibesList':[],
-      //   'about': 'Coming Soon!! Stay tuned for something exciting!',
-      //   'address': restaurantModel.address,
-      //   'atmopshereList': [], // Empty array as per your data
-      //   'averageRating': 0,
-      //   'city': restaurantModel.city,
-      //   'country': restaurantModel.country,
-      //   'createdAt': Timestamp.fromDate(DateTime.now()),
-      //   'dietaryList': [], // Empty array as per your data
-      //   'docID': docID, // Will be set after adding the document
-      //   'entertainmentScheduleList': [],
-      //   'facilityList': [],
-      //   'resImages': restaurantModel.resImages,
-      //   'latitude': restaurantModel.latitude,
-      //   'logoImage': restaurantModel.photoUrl,
-      //   'longitude': restaurantModel.longitude,
-      //   'menuList': [], // Empty array as per your data
-      //   'password': passwordController.text.trim(),
-      //   'priceRange': '', // Hardcoded for now; you can add a field for this
-      //   'resEmail': restaurantModel.email,
-      //   'resName': restaurantModel.restaurantsName,
-      //   'socialLink': '',
-      //   'socialMedia': '',
-      //   'specialConditions': 'Coming Soon!! Stay tuned for something exciting!',
-      //   'spokenLanguage': '',
-      // };
-
-      // Add the restaurant to Firestore
-      // await FirebaseFirestore.instance
-      //     .collection('restaurants')
-      //     .doc(docID)
-      //     .set(restaurantData);
-
-      if(docID != 'error') {
+      if (docID != 'error') {
+        // Restaurant already exists, just update email and password
         await FirebaseFirestore.instance
-            .collection('restaurantOwner')
-            .doc(docID)
-            .set({
-          'docID': docID,
-          'contact': restaurantClaimModel.contact,
-          'createdAt': DateTime.now(),
-          'email': restaurantClaimModel.email,
-          'img': restaurantClaimModel.restaurantData.imagesList.length == 0 ? '' : restaurantClaimModel.restaurantData.imagesList.first,
+            .collection('restaurants')
+            .doc(restaurantClaimModel.restaurantData.docID)
+            .update({
+          'resEmail': restaurantClaimModel.email,
           'password': passwordController.text,
-          'restaurantData': await restaurantClaimModel.restaurantData.toMap()
+          'docID': docID, // Update with Auth UID
         });
 
+        print(
+            '✅ Restaurant updated with credentials: ${restaurantClaimModel.restaurantData.docID}');
+
+        // Check if restaurant owner document already exists
+        final ownerDoc = await FirebaseFirestore.instance
+            .collection('restaurantOwner')
+            .doc(docID)
+            .get();
+
+        // Prepare restaurant data map
+        final restaurantDataMap =
+            await restaurantClaimModel.restaurantData.toMap();
+        restaurantDataMap['docID'] = docID;
+        restaurantDataMap['resEmail'] = restaurantClaimModel.email;
+        restaurantDataMap['password'] = passwordController.text;
+
+        final ownerData = {
+          'docID': docID,
+          'contact': restaurantClaimModel.contact,
+          'email': restaurantClaimModel.email,
+          'img': restaurantClaimModel.restaurantData.imagesList.isEmpty
+              ? ''
+              : restaurantClaimModel.restaurantData.imagesList.first,
+          'password': passwordController.text,
+          'restaurantData': restaurantDataMap,
+        };
+
+        if (ownerDoc.exists) {
+          // Update existing owner document
+          await FirebaseFirestore.instance
+              .collection('restaurantOwner')
+              .doc(docID)
+              .update(ownerData);
+
+          print('✅ Restaurant owner document updated: $docID');
+        } else {
+          // Create new owner document
+          ownerData['createdAt'] = DateTime.now();
+          await FirebaseFirestore.instance
+              .collection('restaurantOwner')
+              .doc(docID)
+              .set(ownerData);
+
+          print('✅ Restaurant owner document created: $docID');
+        }
+
+        // Update the claim status
         await FirebaseFirestore.instance
             .collection('businessClaims')
             .doc(restaurantClaimModel.id)
@@ -179,23 +189,31 @@ class RestaurantsClaimsController extends GetxController {
           'password': passwordController.text,
         });
 
+        print('✅ Business claim approved: ${restaurantClaimModel.id}');
+
         await getAllBusinessClaims();
         Get.back();
-        Get.snackbar('Success!', "Restaurant approved successfully",
+        Get.snackbar('Success!', "Restaurant claim approved successfully",
             maxWidth: 400,
             backgroundColor: primaryColor,
             colorText: Colors.white);
+      } else {
+        Get.back();
+        Get.snackbar('Error', "Failed to create restaurant account",
+            maxWidth: 400,
+            backgroundColor: Colors.red,
+            colorText: Colors.white);
       }
-
-
     } catch (e) {
-      print('Error $e');
+      Get.back(); // Close loading dialog
+      Get.snackbar('Error', "Failed to approve restaurant claim: $e",
+          maxWidth: 400, backgroundColor: Colors.red, colorText: Colors.white);
+      print('❌ Error approving restaurant claim: $e');
     }
   }
 
   Future<String> assignedCredencialsLogin(
       {required String email, required String userPassword}) async {
-
     // Get admin credentials from SharedPreferences
     String? adminEmail = preferences?.getString('adminEmail');
     String? adminPassword = preferences?.getString('adminPassword');
@@ -232,7 +250,6 @@ class RestaurantsClaimsController extends GetxController {
         print('failed to create restaurant');
       }
       return newUser!.uid;
-
     } catch (e) {
       // Sign out restaurant
       await FirebaseAuth.instance.signOut();

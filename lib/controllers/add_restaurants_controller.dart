@@ -67,7 +67,6 @@ class AddRestaurantTabController extends GetxController {
     'Menu',
   ];
 
-
   // Helper method to generate password
   String _generatePassword(String restaurantName) {
     // Create a more secure password using restaurant name and some randomization
@@ -77,9 +76,12 @@ class AddRestaurantTabController extends GetxController {
         .replaceAll(' ', '');
 
     // Take first 3 letters of name + random numbers + special char
-    String namePart = cleanName.length > 3 ? cleanName.substring(0, 3) : cleanName;
-    String numberPart = (DateTime.now().millisecondsSinceEpoch % 10000).toString();
-    String specialChars = ['!', '@', '#', '\$', '%', '&', '*'][DateTime.now().second % 7];
+    String namePart =
+        cleanName.length > 3 ? cleanName.substring(0, 3) : cleanName;
+    String numberPart =
+        (DateTime.now().millisecondsSinceEpoch % 10000).toString();
+    String specialChars =
+        ['!', '@', '#', '\$', '%', '&', '*'][DateTime.now().second % 7];
 
     return '${namePart}${numberPart.substring(0, 4)}$specialChars';
   }
@@ -134,7 +136,6 @@ class AddRestaurantTabController extends GetxController {
     );
   }
 
-
   @override
   void onInit() {
     super.onInit();
@@ -156,13 +157,13 @@ class AddRestaurantTabController extends GetxController {
       print('Loading location data from country_picker_plus...');
 
       // Load the JSON file
-      final stringData = await DefaultAssetBundle.of(Get.context!).loadString(
-          'assets/countries.json');
+      final stringData = await DefaultAssetBundle.of(Get.context!)
+          .loadString('assets/countries.json');
       print('JSON data loaded: ${stringData.substring(0, 100)}...');
 
       final List<dynamic> countries = json.decode(stringData);
       final usData = countries.firstWhere(
-            (c) => c['name'] == 'United States',
+        (c) => c['name'] == 'United States',
         orElse: () {
           print('US data not found in JSON');
           return null;
@@ -170,38 +171,83 @@ class AddRestaurantTabController extends GetxController {
       );
 
       if (usData != null) {
-        final List<dynamic> stateData = usData['states'].where((s) => s['type'] == 'state').toList() ?? [];
-        List<String> tempStates = stateData.map((s) => s['name'] as String).toList();
+        final List<dynamic> stateData =
+            usData['states'].where((s) => s['type'] == 'state').toList() ?? [];
+        List<String> tempStates =
+            stateData.map((s) => s['name'] as String).toList();
         tempStates.sort(); // Sort states alphabetically
 
         Map<String, List<String>> tempCityMap = {};
         for (var state in stateData) {
           List<dynamic> citiesData = state['cities'] ?? [];
           // START CHANGE: Extract 'name' from city maps
-          List<String> cities = citiesData.map((c) => c['name'] as String).toList();
+          List<String> cities =
+              citiesData.map((c) => c['name'] as String).toList();
           // END CHANGE
           cities.sort(); // Sort cities alphabetically
           tempCityMap[state['name']] = cities;
-          print('Cities for ${state['name']}: ${cities.length} cities loaded'); // Debug
+          print(
+              'Cities for ${state['name']}: ${cities.length} cities loaded'); // Debug
         }
 
-        print('Loaded ${tempStates.length} states and ${tempCityMap.length} state-city mappings');
+        print(
+            'Loaded ${tempStates.length} states and ${tempCityMap.length} state-city mappings');
         stateList.assignAll(tempStates);
         citiesByState.assignAll(tempCityMap);
       } else {
         print('No US data found, using fallback states');
         // ========== COMPLETE FALLBACK STATES LIST - REPLACE EXISTING ==========
         List<String> fallbackStates = [
-          'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado',
-          'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho',
-          'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana',
-          'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota',
-          'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada',
-          'New Hampshire', 'New Jersey', 'New Mexico', 'New York',
-          'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon',
-          'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota',
-          'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington',
-          'West Virginia', 'Wisconsin', 'Wyoming'
+          'Alabama',
+          'Alaska',
+          'Arizona',
+          'Arkansas',
+          'California',
+          'Colorado',
+          'Connecticut',
+          'Delaware',
+          'Florida',
+          'Georgia',
+          'Hawaii',
+          'Idaho',
+          'Illinois',
+          'Indiana',
+          'Iowa',
+          'Kansas',
+          'Kentucky',
+          'Louisiana',
+          'Maine',
+          'Maryland',
+          'Massachusetts',
+          'Michigan',
+          'Minnesota',
+          'Mississippi',
+          'Missouri',
+          'Montana',
+          'Nebraska',
+          'Nevada',
+          'New Hampshire',
+          'New Jersey',
+          'New Mexico',
+          'New York',
+          'North Carolina',
+          'North Dakota',
+          'Ohio',
+          'Oklahoma',
+          'Oregon',
+          'Pennsylvania',
+          'Rhode Island',
+          'South Carolina',
+          'South Dakota',
+          'Tennessee',
+          'Texas',
+          'Utah',
+          'Vermont',
+          'Virginia',
+          'Washington',
+          'West Virginia',
+          'Wisconsin',
+          'Wyoming'
         ];
 
         stateList.assignAll(fallbackStates);
@@ -212,14 +258,15 @@ class AddRestaurantTabController extends GetxController {
       print('Error loading location data: $e');
       print('Stack trace: $stackTrace');
       Get.snackbar('Error', 'Failed to load location data: $e',
-          snackPosition: SnackPosition.TOP, backgroundColor: Colors.red, colorText: Colors.white);
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white);
       stateList.assignAll([]);
       citiesByState.assignAll({});
     } finally {
       isLocationDataLoading.value = false;
     }
   }
-
 
   // ========== DROPDOWN_SEARCH INTEGRATION METHODS - ADD THIS BLOCK ==========
 
@@ -262,7 +309,8 @@ class AddRestaurantTabController extends GetxController {
     selectedState.value = value ?? '';
 
     // Only reset city if actually changing state
-    if (previousState != selectedState.value && selectedState.value.isNotEmpty) {
+    if (previousState != selectedState.value &&
+        selectedState.value.isNotEmpty) {
       selectedCity.value = ''; // Reset city when state changes
     }
 
@@ -308,7 +356,8 @@ class AddRestaurantTabController extends GetxController {
                       item,
                       style: TextStyle(
                         color: isSelected ? primaryColor : Colors.black87,
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                        fontWeight:
+                            isSelected ? FontWeight.w600 : FontWeight.normal,
                       ),
                     ),
                   );
@@ -330,7 +379,8 @@ class AddRestaurantTabController extends GetxController {
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide(color: lightColor),
                   ),
-                  suffixIcon: const Icon(Icons.arrow_drop_down, color: primaryColor),
+                  suffixIcon:
+                      const Icon(Icons.arrow_drop_down, color: primaryColor),
                 ),
               ),
               onChanged: (String? value) async {
@@ -338,7 +388,8 @@ class AddRestaurantTabController extends GetxController {
                   cityController.text = value;
                   selectedCity.value = value;
                   await Future.delayed(Duration(milliseconds: 500));
-                  Navigator.of(dialogContext).pop(); // Close dialog after selection
+                  Navigator.of(dialogContext)
+                      .pop(); // Close dialog after selection
                 }
               },
             ),
@@ -355,11 +406,6 @@ class AddRestaurantTabController extends GetxController {
   }
 
   // ========== END DROPDOWN_SEARCH INTEGRATION METHODS ==========
-
-
-
-
-
 
   // ========== ZIP CODE AUTO-POPULATION METHODS - ADD THIS BLOCK ==========
 
@@ -468,7 +514,6 @@ class AddRestaurantTabController extends GetxController {
       // Fallback to local database on API failure
       print('API request failed with status: ${response.statusCode}');
       return _lookupFromLocalDatabase(zipCode);
-
     } catch (e) {
       print('API error: $e');
       // Fallback to local database on any error
@@ -500,7 +545,8 @@ class AddRestaurantTabController extends GetxController {
 
     final result = sampleZipCodes[zipCode];
     if (result != null) {
-      print('Using local fallback for ZIP $zipCode: ${result['state']}, ${result['city']}');
+      print(
+          'Using local fallback for ZIP $zipCode: ${result['state']}, ${result['city']}');
     } else {
       print('No local data for ZIP $zipCode');
     }
@@ -557,11 +603,6 @@ class AddRestaurantTabController extends GetxController {
 
 // ========== END ZIP CODE AUTO-POPULATION METHODS ==========
 
-
-
-
-
-
   // Store uploaded images
   var uploadedImage = <UploadedImageModel>[].obs;
   void pickImageWeb() async {
@@ -604,8 +645,8 @@ class AddRestaurantTabController extends GetxController {
 
     // ========== DROPDOWN_SEARCH VALIDATION - ADD THIS BLOCK ==========
     // Ensure location data is loaded before validating
-    bool locationDataReady = !isLocationDataLoading.value &&
-        stateList.isNotEmpty;
+    bool locationDataReady =
+        !isLocationDataLoading.value && stateList.isNotEmpty;
 
     return basicFields && locationFields && locationDataReady;
     // ========== END DROPDOWN_SEARCH VALIDATION ==========
@@ -651,10 +692,11 @@ class AddRestaurantTabController extends GetxController {
       List<String> imagesList = await uploadImagesToFirebase(imageBytesList);
 
       String docID = '';
-      if(emailController.text.isNotEmpty && assignPasswordController.text.isNotEmpty) {
+      if (emailController.text.isNotEmpty &&
+          assignPasswordController.text.isNotEmpty) {
         docID = await assignedCredencialsLogin(
             email: emailController.text.trim(),
-            userPassword: assignPasswordController.text.trim());
+            userPassword: assignPasswordController.text);
       }
       if (docID == 'error') {
         Get.snackbar('Savrly', 'Restaurant not registered!');
@@ -690,7 +732,7 @@ class AddRestaurantTabController extends GetxController {
         'longitude': longitude
             .value, // Hardcoded for now; you can add a map picker later
         'menuList': [], // Empty array as per your data
-        'password': assignPasswordController.text.trim(),
+        'password': assignPasswordController.text,
         'priceRange': '', // Hardcoded for now; you can add a field for this
         'resEmail': emailController.text.trim(),
         'resName': restaurantNameController.text.trim(),
@@ -701,22 +743,61 @@ class AddRestaurantTabController extends GetxController {
         'zipCode': zipCodeController.text.trim(),
       };
 
-      if(docID == ''){
+      if (docID == '') {
         await FirebaseFirestore.instance
             .collection('restaurants')
-            .add(restaurantData).then((val) async {
-              await val.update({'docID': val.id});
-              restaurantData['docID'] = val.id;
-              docID = val.id;
+            .add(restaurantData)
+            .then((val) async {
+          await val.update({'docID': val.id});
+          restaurantData['docID'] = val.id;
+          docID = val.id;
         });
-
-      }else{
+      } else {
         // Add the restaurant to Firestore
         await FirebaseFirestore.instance
             .collection('restaurants')
             .doc(docID)
             .set(restaurantData);
         restaurantData['docID'] = docID;
+      }
+
+      // Create restaurant owner if email/password were provided
+      if (emailController.text.isNotEmpty &&
+          assignPasswordController.text.isNotEmpty &&
+          docID.isNotEmpty &&
+          docID != 'error') {
+        try {
+          // Prepare owner data
+          final ownerData = {
+            'docID': docID,
+            'contact': '', // Empty contact field as requested
+            'createdAt': DateTime.now(),
+            'email': emailController.text.trim(),
+            'img': imagesList.isEmpty
+                ? 'https://s3-media2.fl.yelpcdn.com/bphoto/iCP4QYCjWf9i-qDIBQrsnQ/o.jpg'
+                : imagesList.first,
+            'password': assignPasswordController.text,
+            'restaurantData': restaurantData,
+          };
+
+          // Create restaurant owner document
+          await FirebaseFirestore.instance
+              .collection('restaurantOwner')
+              .doc(docID)
+              .set(ownerData);
+
+          print('✅ Restaurant owner created with docID: $docID');
+        } catch (e) {
+          print('❌ Error creating restaurant owner: $e');
+          // Note: Restaurant is already created, so we just log the error
+          Get.snackbar(
+            'Warning',
+            'Restaurant created but owner profile failed: $e',
+            backgroundColor: Colors.orange,
+            colorText: Colors.white,
+            duration: const Duration(seconds: 4),
+          );
+        }
       }
 
       if (isNewRegistery == true) {
@@ -745,38 +826,44 @@ class AddRestaurantTabController extends GetxController {
             .collection('restaurants')
             .doc(restaurantModel!.docID)
             .collection('operatingHours')
-            .doc('Monday').delete();
+            .doc('Monday')
+            .delete();
         await FirebaseFirestore.instance
             .collection('restaurants')
             .doc(restaurantModel!.docID)
             .collection('operatingHours')
-            .doc('Tuesday').delete();
+            .doc('Tuesday')
+            .delete();
         await FirebaseFirestore.instance
             .collection('restaurants')
             .doc(restaurantModel!.docID)
             .collection('operatingHours')
-            .doc('Wednesday').delete();
+            .doc('Wednesday')
+            .delete();
         await FirebaseFirestore.instance
             .collection('restaurants')
             .doc(restaurantModel!.docID)
             .collection('operatingHours')
-            .doc('Thursday').delete();
+            .doc('Thursday')
+            .delete();
         await FirebaseFirestore.instance
             .collection('restaurants')
             .doc(restaurantModel!.docID)
             .collection('operatingHours')
-            .doc('Friday').delete();
+            .doc('Friday')
+            .delete();
         await FirebaseFirestore.instance
             .collection('restaurants')
             .doc(restaurantModel!.docID)
             .collection('operatingHours')
-            .doc('Saturday').delete();
+            .doc('Saturday')
+            .delete();
         await FirebaseFirestore.instance
             .collection('restaurants')
             .doc(restaurantModel!.docID)
             .collection('operatingHours')
-            .doc('Sunday').delete();
-
+            .doc('Sunday')
+            .delete();
 
         await FirebaseFirestore.instance
             .collection('restaurants')
@@ -792,7 +879,7 @@ class AddRestaurantTabController extends GetxController {
       if (restaurantModel!.resEmail != emailController.text.trim()) {
         // Get new email and password from controllers
         String newEmail = emailController.text.trim();
-        String newPassword = assignPasswordController.text.trim();
+        String newPassword = assignPasswordController.text;
         String uid = await updateCredentials(
             currentEmail: restaurantModel!.resEmail,
             currentPassword: restaurantModel!.password,
@@ -803,7 +890,7 @@ class AddRestaurantTabController extends GetxController {
               .collection('restaurants')
               .doc(restaurantModel?.docID)
               .update({
-            'password': assignPasswordController.text.trim(),
+            'password': assignPasswordController.text,
             'resEmail': emailController.text.trim(),
           });
         }
@@ -819,25 +906,27 @@ class AddRestaurantTabController extends GetxController {
         'state': selectedState.value.trim(),
         'country': 'United States',
         'resImages': imagesList,
-        'latitude':
-            latitude.value, // Hardcoded for now; you can add a map picker later
+        'latitude': latitude.value,
         'logoImage': imagesList.isEmpty
             ? 'https://s3-media2.fl.yelpcdn.com/bphoto/iCP4QYCjWf9i-qDIBQrsnQ/o.jpg'
             : imagesList.first,
-        'longitude': longitude
-            .value, // Hardcoded for now; you can add a map picker later
+        'longitude': longitude.value,
         'resName': restaurantNameController.text.trim(),
         'socialLink': instagramController.text.trim(),
         'socialMedia': tiktokLinkController.text.trim(),
         'spokenLanguage': selectedSpokenLanguage.value.trim(),
         'phoneNo': phoneNoController.text.trim(),
-        'websiteUrl': websiteUrlController.text.trim()
+        'websiteUrl': websiteUrlController.text.trim(),
+        'zipCode': zipCodeController.text.trim(),
       };
 
       await FirebaseFirestore.instance
           .collection('restaurants')
           .doc(restaurantModel?.docID)
           .update(restaurantData);
+
+      // Handle restaurant owner creation/update
+      await handleRestaurantOwnerOnUpdate(imagesList, restaurantData);
 
       // Dismiss the loading dialog
       Get.back();
@@ -849,6 +938,104 @@ class AddRestaurantTabController extends GetxController {
       Get.back();
       Get.snackbar('Error', 'Failed to updated restaurant: $e');
       print('Error $e');
+    }
+  }
+
+  // Handle restaurant owner creation or update when updating restaurant
+  Future<void> handleRestaurantOwnerOnUpdate(
+      List<String> imagesList, Map<String, dynamic> restaurantData) async {
+    try {
+      // Check if email and password are now provided
+      bool hasEmailPassword = emailController.text.trim().isNotEmpty &&
+          assignPasswordController.text.isNotEmpty;
+
+      // Check if restaurant previously had no email (was created without owner)
+      bool previouslyNoEmail = restaurantModel?.resEmail == null ||
+          restaurantModel!.resEmail.isEmpty;
+
+      if (hasEmailPassword && restaurantModel?.docID != null) {
+        // Check if owner document exists
+        final ownerDoc = await FirebaseFirestore.instance
+            .collection('restaurantOwner')
+            .doc(restaurantModel!.docID)
+            .get();
+
+        if (!ownerDoc.exists && previouslyNoEmail) {
+          // Case: Email/password added during update, create new owner
+          print(
+              '📝 Creating new restaurant owner (email/password added during update)');
+
+          // Note: Auth account creation is already handled by updateCredentials above
+          // We just need to create the restaurantOwner document
+
+          // Get the complete restaurant data including the new email/password
+          final completeRestaurantData = {
+            ...restaurantData,
+            'docID': restaurantModel!.docID,
+            'resEmail': emailController.text.trim(),
+            'password': assignPasswordController.text,
+          };
+
+          // Create owner data
+          final ownerData = {
+            'docID': restaurantModel!.docID,
+            'contact': '', // Empty contact field as requested
+            'createdAt': DateTime.now(),
+            'email': emailController.text.trim(),
+            'img': imagesList.isEmpty
+                ? 'https://s3-media2.fl.yelpcdn.com/bphoto/iCP4QYCjWf9i-qDIBQrsnQ/o.jpg'
+                : imagesList.first,
+            'password': assignPasswordController.text,
+            'restaurantData': completeRestaurantData,
+          };
+
+          // Create restaurant owner document
+          await FirebaseFirestore.instance
+              .collection('restaurantOwner')
+              .doc(restaurantModel!.docID)
+              .set(ownerData);
+
+          print('✅ Restaurant owner created successfully during update');
+        } else if (ownerDoc.exists) {
+          // Case: Owner exists, update it
+          print('🔄 Updating existing restaurant owner');
+
+          final updatedOwnerData = {
+            'email': emailController.text.trim(),
+            'img': imagesList.isEmpty
+                ? 'https://s3-media2.fl.yelpcdn.com/bphoto/iCP4QYCjWf9i-qDIBQrsnQ/o.jpg'
+                : imagesList.first,
+            'restaurantData': {
+              ...restaurantData,
+              'docID': restaurantModel!.docID,
+              'resEmail': emailController.text.trim(),
+              'password': assignPasswordController.text,
+            },
+          };
+
+          // Update password only if it changed
+          if (restaurantModel!.password != assignPasswordController.text) {
+            updatedOwnerData['password'] = assignPasswordController.text;
+          }
+
+          await FirebaseFirestore.instance
+              .collection('restaurantOwner')
+              .doc(restaurantModel!.docID)
+              .update(updatedOwnerData);
+
+          print('✅ Restaurant owner updated successfully');
+        }
+      }
+    } catch (e) {
+      print('❌ Error handling restaurant owner: $e');
+      // Don't throw error, just log it since restaurant update already succeeded
+      Get.snackbar(
+        'Warning',
+        'Restaurant updated but owner profile operation failed: $e',
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 4),
+      );
     }
   }
 
@@ -895,7 +1082,7 @@ class AddRestaurantTabController extends GetxController {
       UserCredential userCredential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailController.text.trim(),
-        password: assignPasswordController.text.trim(),
+        password: assignPasswordController.text,
       );
       print(
           'restaurant user regiester successfully with id ${userCredential.user?.uid}');
