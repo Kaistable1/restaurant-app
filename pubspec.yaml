@@ -48,6 +48,7 @@ dependencies:
 
   file_picker: ^8.1.4
   dropdown_button2: ^2.3.9
+  dropdown_search: ^5.0.6
   flutter_switch:
   flutter_time_picker_spinner:
   intl:
@@ -93,6 +94,7 @@ flutter:
   # To edit_resturant assets to your application, edit_resturant an assets section, like this:
   assets:
     - assets/images/
+    - assets/countries.json
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

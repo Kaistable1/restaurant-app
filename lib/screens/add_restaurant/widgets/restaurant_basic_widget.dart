@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:dotted_border/dotted_border.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:restaurant_web_app/constants/colors.dart';
@@ -36,7 +36,6 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
     'Spain',
   ];
   String? selectedValue;
-
 
   @override
   Widget build(BuildContext context) {
@@ -213,7 +212,6 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
 
                                           child: Image.memory(
                                             image,
-
                                             fit: BoxFit.cover,
                                           ),
                                         ),
@@ -280,8 +278,8 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
                                                   : 100,
                                           decoration: BoxDecoration(
                                             border: Border.all(
-                                                color:
-                                                    Colors.grey.withOpacity(.2)),
+                                                color: Colors.grey
+                                                    .withOpacity(.2)),
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                           ),
@@ -635,7 +633,6 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
                               ? Get.width * 0.1
                               : Get.width * 0.2,
                           onPressed: () {
-
                             restaurantController.saveNextScreen();
                             // restaurantController.saveNextScreenTemporary();
                           },
@@ -770,17 +767,100 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    CustomTextField(
-                      controller: restaurantController.restaurantModel.city,
-                      borderColor: AppColors.darkGrey.withOpacity(.1),
-                      width: 516,
-                      borderRadius: 8,
-                      hintText: "City",
-                      fillColor: AppColors.whiteColor,
-                      cursorColor: AppColors.primaryColor,
-                      inputStyle: const TextStyle(color: AppColors.blackColor),
-                      hintStyle: const TextStyle(color: AppColors.blackColor),
-                    ),
+                    Obx(() {
+                      return DropdownSearch<String>(
+                        items: restaurantController.citiesByState[
+                                restaurantController.selectedState.value] ??
+                            [],
+                        selectedItem:
+                            restaurantController.selectedCity.value.isEmpty
+                                ? null
+                                : restaurantController.selectedCity.value,
+                        popupProps: PopupPropsMultiSelection.menu(
+                          showSearchBox: true,
+                          searchDelay: const Duration(milliseconds: 300),
+                          searchFieldProps: TextFieldProps(
+                            decoration: InputDecoration(
+                              hintText: "Search city...",
+                              prefixIcon: const Icon(Icons.search,
+                                  color: AppColors.primaryColor),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(
+                                    color: AppColors.darkGrey.withOpacity(.1)),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: const BorderSide(
+                                    color: AppColors.primaryColor),
+                              ),
+                            ),
+                          ),
+                          menuProps: MenuProps(
+                            backgroundColor: AppColors.whiteColor,
+                            elevation: 8,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          itemBuilder: (context, item, isSelected) {
+                            return ListTile(
+                              title: Text(item),
+                              selected: isSelected,
+                              selectedTileColor:
+                                  AppColors.primaryColor.withOpacity(0.1),
+                            );
+                          },
+                          emptyBuilder: (context, searchEntry) {
+                            return Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Text(
+                                  restaurantController
+                                          .selectedState.value.isEmpty
+                                      ? 'Please select a state first'
+                                      : 'No cities found',
+                                  style: const TextStyle(color: Colors.grey),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        dropdownDecoratorProps: DropDownDecoratorProps(
+                          dropdownSearchDecoration: InputDecoration(
+                            hintText:
+                                restaurantController.selectedState.value.isEmpty
+                                    ? "Select state first"
+                                    : "Select city",
+                            hintStyle:
+                                const TextStyle(color: AppColors.blackColor),
+                            filled: true,
+                            fillColor: AppColors.whiteColor,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                  color: AppColors.darkGrey.withOpacity(.1)),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                  color: AppColors.darkGrey.withOpacity(.1)),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(
+                                  color: AppColors.primaryColor),
+                            ),
+                            suffixIcon: const Icon(Icons.arrow_drop_down,
+                                color: AppColors.primaryColor),
+                          ),
+                        ),
+                        enabled: restaurantController
+                                .selectedState.value.isNotEmpty &&
+                            !restaurantController.isLocationDataLoading.value,
+                        onChanged: (String? newValue) {
+                          restaurantController.onCitySelected(newValue);
+                        },
+                      );
+                    }),
                     const SizedBox(height: 5),
                     Obx(() => restaurantController.cityError.value.isNotEmpty
                         ? Text(
@@ -792,25 +872,24 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
                     const SizedBox(height: 8),
                     RichText(
                       text: TextSpan(
-                        text: 'Country ',
+                        text: 'State ',
                         style: TextStyle(
                           fontSize: Responsive.isMobile(context)
                               ? 16
                               : Responsive.isTablet(context)
-                              ? 18
-                              : 24,
+                                  ? 18
+                                  : 24,
                           fontWeight: FontWeight.w700,
                         ),
                         children: [
                           TextSpan(
                             text: '*', // Add the red asterisk
                             style: TextStyle(
-                              fontSize: Responsive.isMobile(
-                                  context)
+                              fontSize: Responsive.isMobile(context)
                                   ? 16
                                   : Responsive.isTablet(context)
-                                  ? 18
-                                  : 24,
+                                      ? 18
+                                      : 24,
                               fontWeight: FontWeight.w700,
                               color: AppColors.red,
                             ),
@@ -819,31 +898,98 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    CustomTextField(
-                      controller: restaurantController
-                          .restaurantModel.country,
-                      borderColor:
-                      AppColors.darkGrey.withOpacity(.1),
-                      width: 516,
-                      borderRadius: 8,
-                      hintText: "Country",
-                      fillColor: AppColors.whiteColor,
-                      cursorColor: AppColors.primaryColor,
-                      inputStyle: const TextStyle(
-                          color: AppColors.blackColor),
-                      hintStyle: const TextStyle(
-                          color: AppColors.blackColor),
-                    ),
+                    Obx(() {
+                      return DropdownSearch<String>(
+                        items: restaurantController.stateList,
+                        selectedItem:
+                            restaurantController.selectedState.value.isEmpty
+                                ? null
+                                : restaurantController.selectedState.value,
+                        popupProps: PopupPropsMultiSelection.menu(
+                          showSearchBox: true,
+                          searchDelay: const Duration(milliseconds: 300),
+                          searchFieldProps: TextFieldProps(
+                            decoration: InputDecoration(
+                              hintText: "Search state...",
+                              prefixIcon: const Icon(Icons.search,
+                                  color: AppColors.primaryColor),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(
+                                    color: AppColors.darkGrey.withOpacity(.1)),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: const BorderSide(
+                                    color: AppColors.primaryColor),
+                              ),
+                            ),
+                          ),
+                          menuProps: MenuProps(
+                            backgroundColor: AppColors.whiteColor,
+                            elevation: 8,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          itemBuilder: (context, item, isSelected) {
+                            return ListTile(
+                              title: Text(item),
+                              selected: isSelected,
+                              selectedTileColor:
+                                  AppColors.primaryColor.withOpacity(0.1),
+                            );
+                          },
+                          emptyBuilder: (context, searchEntry) {
+                            return const Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(16.0),
+                                child: Text(
+                                  'No states found',
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        dropdownDecoratorProps: DropDownDecoratorProps(
+                          dropdownSearchDecoration: InputDecoration(
+                            hintText: "Select state",
+                            hintStyle:
+                                const TextStyle(color: AppColors.blackColor),
+                            filled: true,
+                            fillColor: AppColors.whiteColor,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                  color: AppColors.darkGrey.withOpacity(.1)),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                  color: AppColors.darkGrey.withOpacity(.1)),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(
+                                  color: AppColors.primaryColor),
+                            ),
+                            suffixIcon: const Icon(Icons.arrow_drop_down,
+                                color: AppColors.primaryColor),
+                          ),
+                        ),
+                        enabled:
+                            !restaurantController.isLocationDataLoading.value,
+                        onChanged: (String? newValue) {
+                          restaurantController.onStateSelected(newValue);
+                        },
+                      );
+                    }),
                     const SizedBox(height: 5),
-                    Obx(() => restaurantController
-                        .countryError.value.isNotEmpty
+                    Obx(() => restaurantController.countryError.value.isNotEmpty
                         ? Text(
-                      restaurantController
-                          .countryError.value,
-                      style: const TextStyle(
-                          color: Colors.red,
-                          fontSize: 12),
-                    )
+                            restaurantController.countryError.value,
+                            style: const TextStyle(
+                                color: Colors.red, fontSize: 12),
+                          )
                         : const SizedBox.shrink()),
                     const SizedBox(height: 8),
                     RichText(
@@ -874,16 +1020,60 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    CustomTextField(
-                      controller: restaurantController.restaurantModel.zipCode,
-                      borderColor: AppColors.darkGrey.withOpacity(.1),
-                      width: 516,
-                      borderRadius: 8,
-                      hintText: "45626",
-                      fillColor: AppColors.whiteColor,
-                      cursorColor: AppColors.primaryColor,
-                      inputStyle: const TextStyle(color: AppColors.blackColor),
-                      hintStyle: const TextStyle(color: AppColors.blackColor),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomTextField(
+                            controller:
+                                restaurantController.restaurantModel.zipCode,
+                            borderColor: AppColors.darkGrey.withOpacity(.1),
+                            borderRadius: 8,
+                            hintText: "45626",
+                            fillColor: AppColors.whiteColor,
+                            cursorColor: AppColors.primaryColor,
+                            inputStyle:
+                                const TextStyle(color: AppColors.blackColor),
+                            hintStyle:
+                                const TextStyle(color: AppColors.blackColor),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Obx(() => ElevatedButton.icon(
+                              onPressed: restaurantController
+                                      .isLocationDataLoading.value
+                                  ? null
+                                  : () {
+                                      final zipCode = restaurantController
+                                          .restaurantModel.zipCode.text
+                                          .trim();
+                                      if (zipCode.isNotEmpty) {
+                                        restaurantController
+                                            .lookupZipCode(zipCode);
+                                      }
+                                    },
+                              icon: restaurantController
+                                      .isLocationDataLoading.value
+                                  ? const SizedBox(
+                                      width: 16,
+                                      height: 16,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : const Icon(Icons.search, size: 18),
+                              label: const Text('Lookup'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primaryColor,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            )),
+                      ],
                     ),
                     const SizedBox(height: 5),
                     Obx(() => restaurantController.zipCodeError.value.isNotEmpty

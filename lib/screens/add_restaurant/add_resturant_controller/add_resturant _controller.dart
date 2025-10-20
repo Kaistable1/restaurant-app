@@ -1,27 +1,22 @@
 import 'dart:async';
-import 'dart:io';
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:restaurant_web_app/main.dart';
 import 'package:restaurant_web_app/screens/add_restaurant/edit_restaurant/edit_resturant.dart';
-import 'package:restaurant_web_app/screens/restaurant_detail_screen/restaurant_detail_screen.dart';
-import 'package:restaurant_web_app/universal_models/operating_hours.dart';
 import 'package:restaurant_web_app/universal_models/restaurant_model.dart';
 import 'package:restaurant_web_app/widgets/loading_dialog.dart';
 import 'package:restaurant_web_app/widgets/no_internet_dialog.dart';
 
 import '../../../../constants/colors.dart';
-import '../../../testing.dart';
 import '../../../universal_models/discount_model.dart';
 
 import '../../../widgets/global_functions.dart';
@@ -33,6 +28,393 @@ class AddRestaurantController extends GetxController {
   ///backend
 
   RestaurantModel restaurantModel = RestaurantModel.initialize();
+
+  // Location data properties
+  RxList<String> stateList = <String>[].obs;
+  RxMap<String, List<String>> citiesByState = RxMap<String, List<String>>();
+  var isLocationDataLoading = true.obs;
+  RxString selectedState = ''.obs;
+  RxString selectedCity = ''.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _loadLocationData();
+
+    // Initialize dropdowns with existing restaurant data
+    _initializeLocationFromModel();
+
+    // Sync selectedCity with cityController for manual typing
+    cityController.addListener(() {
+      selectedCity.value = cityController.text.trim();
+    });
+  }
+
+  /// Initialize state and city dropdowns from existing restaurant model data
+  void _initializeLocationFromModel() {
+    // Wait for location data to load first
+    ever(isLocationDataLoading, (loading) {
+      if (!loading) {
+        // Once location data is loaded, populate the dropdowns
+        if (restaurantModel.country.text.isNotEmpty) {
+          selectedState.value = restaurantModel.country.text;
+          print('Initialized state from model: ${selectedState.value}');
+        }
+
+        if (restaurantModel.city.text.isNotEmpty) {
+          selectedCity.value = restaurantModel.city.text;
+          cityController.text = restaurantModel.city.text;
+          print('Initialized city from model: ${selectedCity.value}');
+        }
+
+        update();
+      }
+    });
+  }
+
+  // Load location data from countries.json
+  Future<void> _loadLocationData() async {
+    try {
+      isLocationDataLoading.value = true;
+      print('Loading location data from countries.json...');
+
+      // Load the JSON file
+      final stringData = await DefaultAssetBundle.of(Get.context!)
+          .loadString('assets/countries.json');
+      print('JSON data loaded: ${stringData.substring(0, 100)}...');
+
+      final List<dynamic> countries = json.decode(stringData);
+      final usData = countries.firstWhere(
+        (c) => c['name'] == 'United States',
+        orElse: () {
+          print('US data not found in JSON');
+          return null;
+        },
+      );
+
+      if (usData != null) {
+        final List<dynamic> stateData =
+            usData['states'].where((s) => s['type'] == 'state').toList() ?? [];
+        List<String> tempStates =
+            stateData.map((s) => s['name'] as String).toList();
+        tempStates.sort();
+
+        Map<String, List<String>> tempCityMap = {};
+        for (var state in stateData) {
+          List<dynamic> citiesData = state['cities'] ?? [];
+          List<String> cities =
+              citiesData.map((c) => c['name'] as String).toList();
+          cities.sort();
+          tempCityMap[state['name']] = cities;
+          print('Cities for ${state['name']}: ${cities.length} cities loaded');
+        }
+
+        print(
+            'Loaded ${tempStates.length} states and ${tempCityMap.length} state-city mappings');
+        stateList.assignAll(tempStates);
+        citiesByState.assignAll(tempCityMap);
+      } else {
+        print('No US data found, using fallback states');
+        List<String> fallbackStates = [
+          'Alabama',
+          'Alaska',
+          'Arizona',
+          'Arkansas',
+          'California',
+          'Colorado',
+          'Connecticut',
+          'Delaware',
+          'Florida',
+          'Georgia',
+          'Hawaii',
+          'Idaho',
+          'Illinois',
+          'Indiana',
+          'Iowa',
+          'Kansas',
+          'Kentucky',
+          'Louisiana',
+          'Maine',
+          'Maryland',
+          'Massachusetts',
+          'Michigan',
+          'Minnesota',
+          'Mississippi',
+          'Missouri',
+          'Montana',
+          'Nebraska',
+          'Nevada',
+          'New Hampshire',
+          'New Jersey',
+          'New Mexico',
+          'New York',
+          'North Carolina',
+          'North Dakota',
+          'Ohio',
+          'Oklahoma',
+          'Oregon',
+          'Pennsylvania',
+          'Rhode Island',
+          'South Carolina',
+          'South Dakota',
+          'Tennessee',
+          'Texas',
+          'Utah',
+          'Vermont',
+          'Virginia',
+          'Washington',
+          'West Virginia',
+          'Wisconsin',
+          'Wyoming'
+        ];
+
+        stateList.assignAll(fallbackStates);
+        citiesByState.assignAll({});
+      }
+    } catch (e, stackTrace) {
+      print('Error loading location data: $e');
+      print('Stack trace: $stackTrace');
+      Get.snackbar('Error', 'Failed to load location data: $e',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white);
+      stateList.assignAll([]);
+      citiesByState.assignAll({});
+    } finally {
+      isLocationDataLoading.value = false;
+    }
+  }
+
+  /// Get filtered states for dropdown_search (handles real-time search)
+  List<String> getFilteredStates(String? filter) {
+    if (filter == null || filter.isEmpty) {
+      return List<String>.from(stateList);
+    }
+    return stateList
+        .where((state) => state.toLowerCase().contains(filter.toLowerCase()))
+        .toList();
+  }
+
+  /// Get filtered cities for dropdown_search (handles real-time search)
+  List<String> getFilteredCities(String? filter) {
+    if (selectedState.value.isEmpty ||
+        citiesByState[selectedState.value] == null ||
+        citiesByState[selectedState.value]!.isEmpty) {
+      return [];
+    }
+
+    List<String> allCities = citiesByState[selectedState.value]!;
+
+    if (filter == null || filter.isEmpty) {
+      return List<String>.from(allCities);
+    }
+    return allCities
+        .where((city) => city.toLowerCase().contains(filter.toLowerCase()))
+        .toList();
+  }
+
+  /// Handle state selection (updated for dropdown_search)
+  void onStateSelected(String? value) {
+    String? previousState = selectedState.value;
+    selectedState.value = value ?? '';
+
+    // Update the country controller
+    if (selectedState.value.isNotEmpty) {
+      restaurantModel.country.text = selectedState.value;
+    }
+
+    // Only reset city if actually changing state
+    if (previousState != selectedState.value &&
+        selectedState.value.isNotEmpty) {
+      selectedCity.value = '';
+      cityController.clear();
+      restaurantModel.city.clear();
+    }
+
+    update();
+  }
+
+  /// Handle city selection (updated for dropdown_search)
+  void onCitySelected(String? value) {
+    selectedCity.value = value ?? '';
+    cityController.text = value ?? '';
+    restaurantModel.city.text = value ?? '';
+    update();
+  }
+
+  /// Perform ZIP code lookup and auto-populate state and city
+  Future<void> lookupZipCode(String zipCode) async {
+    if (zipCode.length != 5 || !RegExp(r'^\d{5}$').hasMatch(zipCode)) {
+      Get.snackbar(
+        'Invalid ZIP Code',
+        'Please enter a valid 5-digit ZIP code',
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 2),
+      );
+      return;
+    }
+
+    try {
+      isLocationDataLoading.value = true;
+
+      if (kIsWeb) {
+        print('Running on web - using CORS proxy for ZIP lookup');
+      }
+
+      final locationData = await _fetchLocationFromZipCode(zipCode);
+
+      if (locationData != null) {
+        await _autoPopulateLocation(locationData);
+
+        Get.snackbar(
+          'Location Found!',
+          'State: ${locationData['state']} | City: ${locationData['city']}',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
+      } else {
+        Get.snackbar(
+          'Location Not Found',
+          'No location data available for ZIP code $zipCode',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
+      }
+    } catch (e) {
+      print('ZIP lookup error details: $e');
+      if (e.toString().contains('XMLHttpRequest')) {
+        print('Web CORS issue detected - ensure proxy is working');
+      } else if (e.toString().contains('SocketException')) {
+        print('Network connectivity issue');
+      }
+      Get.snackbar(
+        'Lookup Error',
+        'Failed to fetch location: ${e.toString().split(':')[0]}',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+      );
+    } finally {
+      isLocationDataLoading.value = false;
+    }
+  }
+
+  /// Fetch location data from ZIP code using external API
+  Future<Map<String, String>?> _fetchLocationFromZipCode(String zipCode) async {
+    try {
+      final String proxyUrl = 'https://corsproxy.io/?';
+      final String targetUrl = 'http://api.zippopotam.us/us/$zipCode';
+
+      final response = await http.get(
+        Uri.parse(proxyUrl + Uri.encodeFull(targetUrl)),
+        headers: {
+          'Content-Type': 'application/json',
+          'User-Agent': 'Mozilla/5.0 (compatible; Flutter)',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        if (data['places'] != null && data['places'].isNotEmpty) {
+          String state = data['places'][0]['state'] ?? '';
+          String city = data['places'][0]['place name'] ?? '';
+
+          if (state.isNotEmpty && city.isNotEmpty) {
+            return {
+              'state': state,
+              'city': city,
+              'zipCode': zipCode,
+            };
+          }
+        }
+      }
+
+      print('API request failed with status: ${response.statusCode}');
+      return _lookupFromLocalDatabase(zipCode);
+    } catch (e) {
+      print('API error: $e');
+      return _lookupFromLocalDatabase(zipCode);
+    }
+  }
+
+  /// Fallback local ZIP code lookup
+  Map<String, String>? _lookupFromLocalDatabase(String zipCode) {
+    const Map<String, Map<String, String>> sampleZipCodes = {
+      '10001': {'state': 'New York', 'city': 'New York'},
+      '90210': {'state': 'California', 'city': 'Beverly Hills'},
+      '60601': {'state': 'Illinois', 'city': 'Chicago'},
+      '77002': {'state': 'Texas', 'city': 'Houston'},
+      '33101': {'state': 'Florida', 'city': 'Miami'},
+      '94102': {'state': 'California', 'city': 'San Francisco'},
+      '19103': {'state': 'Pennsylvania', 'city': 'Philadelphia'},
+      '20001': {'state': 'District of Columbia', 'city': 'Washington'},
+      '30303': {'state': 'Georgia', 'city': 'Atlanta'},
+      '35004': {'state': 'Alabama', 'city': 'Moody'},
+      '21201': {'state': 'Maryland', 'city': 'Baltimore'},
+      '37201': {'state': 'Tennessee', 'city': 'Nashville'},
+      '68101': {'state': 'Nebraska', 'city': 'Omaha'},
+    };
+
+    final result = sampleZipCodes[zipCode];
+    if (result != null) {
+      print(
+          'Using local fallback for ZIP $zipCode: ${result['state']}, ${result['city']}');
+    } else {
+      print('No local data for ZIP $zipCode');
+    }
+
+    return result;
+  }
+
+  /// Auto-populate state and city dropdowns with fetched data
+  Future<void> _autoPopulateLocation(Map<String, String> locationData) async {
+    String state = locationData['state'] ?? '';
+    String city = locationData['city'] ?? '';
+    String zipCode = locationData['zipCode'] ?? '';
+
+    zipCodeController.text = zipCode;
+    restaurantModel.zipCode.text = zipCode;
+
+    if (stateList.contains(state)) {
+      selectedState.value = state;
+      restaurantModel.country.text = state;
+
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      cityController.text = city;
+      selectedCity.value = city;
+      restaurantModel.city.text = city;
+
+      if (citiesByState[state]?.contains(city) != true) {
+        Get.snackbar(
+          'City Not in List',
+          'City "$city" not in predefined list, but manually entered.',
+          backgroundColor: Colors.blue,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 2),
+        );
+      }
+    } else {
+      Get.snackbar(
+        'State Not Found',
+        'State "$state" not available in our database. Please select manually.',
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+      );
+      selectedState.value = '';
+      cityController.text = '';
+      selectedCity.value = '';
+      restaurantModel.country.clear();
+      restaurantModel.city.clear();
+    }
+
+    update();
+  }
 
   Map<String, dynamic> generateOperatingHours() {
     return mealTimes.map((day, meals) {
@@ -106,8 +488,6 @@ class AddRestaurantController extends GetxController {
 
       // Update Firestore
       await restaurantRef.update(updatedFields).then((_) {
-
-
         // Get.offAll(RestaurantDetailScreen());
         // Get.snackbar("Success", "Data updated successfully!");
       }).catchError((error) {
@@ -225,7 +605,7 @@ class AddRestaurantController extends GetxController {
         }
 
         String formattedDate =
-        DateFormat('dd MMM, yyyy').format(selectedDates[i]!);
+            DateFormat('dd MMM, yyyy').format(selectedDates[i]!);
 
         Map<String, dynamic> schedule = {
           "eventName": eventNames[i],
@@ -235,10 +615,11 @@ class AddRestaurantController extends GetxController {
           'startTime': selectedTimes[i]["from"]?.format(context) ?? '',
           'endTime': selectedTimes[i]["to"]?.format(context) ?? '',
           'isSelected':
-          checkBoxValues.length > i ? checkBoxValues[i] ?? false : false,
+              checkBoxValues.length > i ? checkBoxValues[i] ?? false : false,
         };
 
-        entertainmentSchedules.add(EntertainmentScheduleModel.fromMap(schedule));
+        entertainmentSchedules
+            .add(EntertainmentScheduleModel.fromMap(schedule));
       }
     }
 
@@ -410,7 +791,6 @@ class AddRestaurantController extends GetxController {
       fromTimeMintController.clear();
       toTimeMintController.clear();
       toTimeHourController.clear();
-
     }
   }
 
