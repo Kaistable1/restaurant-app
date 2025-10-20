@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 
 class RestaurantModel {
   String resName;
@@ -9,11 +8,19 @@ class RestaurantModel {
   String socialLink;
   String password;
   double averageRating;
+  String state;
   String city;
   String address;
   String zipCode;
+  String websiteUrl;
+  String phoneNo;
+
   String logoImage;
   List<String> facilityList;
+  List<String> vibesList;
+  List<String> experiencesList;
+  List<String> entertainmentList;
+
   List<String> imagesList;
   List<String> dietaryList;
   List<String> atmosphereList;
@@ -22,67 +29,81 @@ class RestaurantModel {
   String priceRange;
   double latitude;
   double longitude;
+  DateTime createdAt;
   List<EntertainmentScheduleModel> entertainmentScheduleList;
   List<MenuModel> menuList;
   String about;
   String country;
 
   // Constructor
-  RestaurantModel({
-    required this.facilityList,
-    required this.docID,
-    required this.entertainmentScheduleList,
-    required this.menuList,
-    required this.city,
-    required this.averageRating,
-    required this.longitude,
-    required this.latitude,
-    required this.imagesList,
-    required this.resName,
-    required this.resEmail,
-    required this.dietaryList,
-    required this.specialConditions,
-    required this.socialLink,
-    required this.password,
-    required this.address,
-    required this.socialMedia,
-    required this.priceRange,
-    required this.atmosphereList,
-    required this.zipCode,
-    required this.logoImage,
-    required this.spokenLanguage,
-    required this.about,
-    required this.country,
-  });
+  RestaurantModel(
+      {required this.facilityList,
+        required this.docID,
+        required this.entertainmentScheduleList,
+        required this.menuList,
+        required this.state,
+        required this.city,
+        required this.averageRating,
+        required this.longitude,
+        required this.latitude,
+        required this.imagesList,
+        required this.resName,
+        required this.resEmail,
+        required this.dietaryList,
+        required this.specialConditions,
+        required this.socialLink,
+        required this.password,
+        required this.address,
+        required this.socialMedia,
+        required this.priceRange,
+        required this.atmosphereList,
+        required this.zipCode,
+        required this.logoImage,
+        required this.spokenLanguage,
+        required this.about,
+        required this.createdAt,
+        required this.country,
+        required this.websiteUrl,
+        required this.phoneNo,
+        required this.vibesList,
+        required this.experiencesList,
+        required this.entertainmentList,
+      });
 
   // Initialize the model with defaults
   static RestaurantModel initialize() {
     return RestaurantModel(
-      resName: '',
-      docID: '',
-      socialLink: '',
-      averageRating: 0.0,
-      resEmail: '',
-      city: '',
-      address: '',
-      logoImage: '',
-      facilityList: <String>[],
-      dietaryList: <String>[],
-      atmosphereList: <String>[],
-      imagesList: <String>[],
-      specialConditions: '',
-      password: '',
-      spokenLanguage: '',
-      latitude: 0.0,
-      longitude: 0.0,
-      socialMedia: 'Tiktok',
-      priceRange: '',
-      zipCode: '',
-      entertainmentScheduleList: [],
-      menuList: [],
-      about: '',
-      country: '',
-    );
+        vibesList: <String>[],
+        experiencesList: <String>[],
+        entertainmentList: <String>[],
+        resName: '',
+        docID: '',
+        socialLink: '',
+        averageRating: 0.0,
+        resEmail: '',
+        state: '',
+        city: '',
+        address: '',
+        logoImage: '',
+        facilityList: <String>[],
+        dietaryList: <String>[],
+        atmosphereList: <String>[],
+        imagesList: <String>[],
+        specialConditions: '',
+        password: '',
+        spokenLanguage: '',
+        latitude: 0.0,
+        longitude: 0.0,
+        socialMedia: 'Tiktok',
+        priceRange: '',
+        zipCode: '',
+        entertainmentScheduleList: [],
+        menuList: [],
+        about: '',
+        createdAt: DateTime.now(),
+        country: '',
+        websiteUrl: '',
+        phoneNo: '');
   }
 
   // Convert to Map
@@ -102,6 +123,9 @@ class RestaurantModel {
       'facilityList': facilityList,
       'dietaryList': dietaryList,
       'atmopshereList': atmosphereList,
+      'vibesList': vibesList,
+      'experiencesList': experiencesList,
+      'entertainmentList': entertainmentList,
       'resEmail': resEmail,
       'averageRating': averageRating,
       'socialLink': socialLink,
@@ -119,69 +143,98 @@ class RestaurantModel {
       'socialMedia': socialMedia,
       'priceRange': priceRange,
       'about': about,
+      'createdAt': createdAt,
       'country': country,
+      'zipCode': zipCode,
+      'phoneNo': phoneNo,
+      'websiteUrl': websiteUrl
     };
   }
 
+  // Optional: Factory to create from map
   factory RestaurantModel.fromMap(Map<String, dynamic> data) {
-    List<EntertainmentScheduleModel> entertainmentList = [];
-    if (data['entertainmentScheduleList'] != null) {
-      try {
-        entertainmentList =
-            (data['entertainmentScheduleList'] as List<dynamic>).map((e) {
-          if (e is Map<String, dynamic>) {
-            return EntertainmentScheduleModel.fromMap(e);
-          } else {
-            print('Invalid entertainmentScheduleList item in fromMap: $e');
-            return EntertainmentScheduleModel.initialize();
-          }
-        }).toList();
-      } catch (e) {
-        print('Error parsing entertainmentScheduleList in fromMap: $e');
-      }
-    }
+    return RestaurantModel(
+        about: data['about'] ?? '',
+        address: data['address'] ?? '',
+        atmosphereList: List<String>.from(data['atmopshereList'] ?? []),
+        vibesList: List<String>.from(data['vibesList'] ?? []),
+        experiencesList: List<String>.from(data['experiencesList'] ?? []),
+        entertainmentList: List<String>.from(data['entertainmentList'] ?? []),
+        averageRating: (data['averageRating'] ?? 0).toDouble(),
+        city: data['city'] ?? '',
+        state: data['state'] ?? '',
+        country: data['country'] ?? '',
+        createdAt: data['createdAt'] == null ? DateTime.now() : (data['createdAt'] as Timestamp).toDate(),
+        dietaryList: List<String>.from(data['dietaryList'] ?? []),
+        docID: data['docID'] ?? '',
+        entertainmentScheduleList: List<EntertainmentScheduleModel>.from(
+            data['entertainmentScheduleList'] ?? []),
+        facilityList: List<String>.from(data['facilityList'] ?? []),
+        imagesList: List<String>.from(data['imagesList'] ?? []),
+        latitude: (data['latitude'] ?? 0.0).toDouble(),
+        logoImage: data['logoImage'] ?? '',
+        longitude: (data['longitude'] ?? 0.0).toDouble(),
+        menuList: List<MenuModel>.from(data['menuList'] ?? []),
+        password: data['password'] ?? '',
+        priceRange: data['priceRange'] ?? '',
+        resEmail: data['resEmail'] ?? '',
+        resName: data['resName'] ?? '',
+        specialConditions: data['specialConditions'] ?? '',
+        spokenLanguage: data['spokenLanguage'] ?? '',
+        socialLink: '',
+        socialMedia: '',
+        zipCode: data['zipCode'] != null ? data['zipCode'] : data['zipcode'] != null ? data['zipcode'] : '',
+        phoneNo: data['phoneNo'] ?? "",
+        websiteUrl: data['websiteUrl'] ?? " ");
+  }
 
-    List<MenuModel> menuList = [];
-    if (data['menuList'] != null) {
-      try {
-        menuList = (data['menuList'] as List<dynamic>).map((e) {
-          if (e is Map<String, dynamic>) {
-            return MenuModel.fromMap(e);
-          } else {
-            print('Invalid menuList item in fromMap: $e');
-            return MenuModel.initialize();
-          }
-        }).toList();
-      } catch (e) {
-        print('Error parsing menuList in fromMap: $e');
-      }
-    }
+  // From Firestore Document
+  static RestaurantModel fromDocumentSnapshot(
+      DocumentSnapshot<Map<String, dynamic>> snapshot) {
+    final data = snapshot.data()!;
 
     return RestaurantModel(
-      about: data['about'] ?? '',
-      address: data['address'] ?? '',
-      atmosphereList: List<String>.from(data['atmopshereList'] ?? []),
-      averageRating: (data['averageRating'] ?? 0).toDouble(),
-      city: data['city'] ?? '',
-      country: data['country'] ?? '',
-      dietaryList: List<String>.from(data['dietaryList'] ?? []),
-      docID: data['docID'] ?? '',
-      entertainmentScheduleList: entertainmentList,
-      facilityList: List<String>.from(data['facilityList'] ?? []),
-      imagesList: List<String>.from(data['resImages'] ?? []),
-      latitude: (data['latitude'] ?? 0.0).toDouble(),
-      logoImage: data['logoImage'] ?? '',
-      longitude: (data['longitude'] ?? 0.0).toDouble(),
-      menuList: menuList,
-      password: data['password'] ?? '',
-      priceRange: data['priceRange'] ?? '',
-      resEmail: data['resEmail'] ?? '',
       resName: data['resName'] ?? '',
-      specialConditions: data['specialConditions'] ?? '',
-      spokenLanguage: data['spokenLanguage'] ?? '',
-      socialLink: data['socialLink'] ?? '',
-      socialMedia: data['socialMedia'] ?? '',
+      averageRating: (data['averageRating'] ?? 0).toDouble(),
+      docID: snapshot.id,
       zipCode: data['zipCode'] ?? '',
+      phoneNo: data['phoneNo'] ?? '',
+      websiteUrl: data['websiteUrl'] ?? '',
+      imagesList: List<String>.from(data['imagesList'] ?? []),
+      city: data['city'] ?? '',
+      state: data['state'] ?? '',
+      resEmail: data['resEmail'] ?? '',
+      socialLink: data['socialLink'] ?? '',
+      address: data['address'] ?? '',
+      latitude: (data['latitude'] ?? 0).toDouble(),
+      longitude: (data['longitude'] ?? 0).toDouble(),
+      facilityList: List<String>.from(data['facilityList'] ?? []),
+      atmosphereList: List<String>.from(data['atmopshereList'] ?? []),
+      vibesList: List<String>.from(data['vibesList'] ?? []),
+      experiencesList: List<String>.from(data['experiencesList'] ?? []),
+      entertainmentList: List<String>.from(data['entertainmentList'] ?? []),
+      dietaryList: List<String>.from(data['dietaryList'] ?? []),
+      specialConditions: data['specialConditions'] ?? '',
+      password: data['password'] ?? '',
+      spokenLanguage: data['spokenLanguage'] ?? '',
+      socialMedia: data['socialMedia'] ?? '',
+      priceRange: data['priceRange'] ?? '',
+      logoImage: data['logoImage'] ?? '',
+      about: data['about'] ?? '',
+      createdAt: data['createdAt'] != null
+          ? (data['createdAt'] as Timestamp).toDate()
+          : DateTime.now(),
+      entertainmentScheduleList: List<EntertainmentScheduleModel>.from(
+        (data['entertainmentScheduleList'] as List<dynamic>? ?? []).map(
+              (e) => EntertainmentScheduleModel.fromMap(e as Map<String, dynamic>),
+        ),
+      ),
+      menuList: List<MenuModel>.from(
+        (data['menuList'] as List<dynamic>? ?? []).map(
+              (e) => MenuModel.fromMap(e as Map<String, dynamic>),
+        ),
+      ),
+      country: data['country'] ?? '',
     );
   }
 }
