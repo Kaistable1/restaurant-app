@@ -87,15 +87,17 @@ class LoginController extends GetxController {
         password: passwordController.text,
       )
           .then((value) async {
-        print('restaurants');
+        print('Checking restaurant owner authentication...');
 
+        // Check restaurantOwner collection instead of restaurants
         await FirebaseFirestore.instance
-            .collection('restaurants')
+            .collection('restaurantOwner')
             .doc(value.user!.uid)
             .get()
             .then((doc) async {
           if (doc.exists) {
-           final fillcontroller=Get.put(FillDataRestaurantController());
+            // Restaurant owner found
+            final fillcontroller = Get.put(FillDataRestaurantController());
             fillcontroller.fetchRestaurantData();
             Get.back();
             Get.offAll(() => AdminPanel());
@@ -104,16 +106,24 @@ class LoginController extends GetxController {
             Get.snackbar("Login", "Logged in successfully",
                 maxWidth: 400, backgroundColor: AppColors.primaryColor);
             await auth.currentUser!.reload();
+
+            print(
+                '✅ Restaurant owner logged in successfully: ${value.user!.uid}');
           } else {
+            // Not a restaurant owner
+            Get.back();
+            await auth.signOut(); // Sign out the user
             customAlertDialog2(
               "We Couldn't Find Your Account",
-              "This email address is not associated with a Admin account. If you believe you should have access, please contact Support Team.",
+              "This email address is not associated with a restaurant owner account. If you believe you should have access, please contact the Support Team.",
             );
+            print(
+                '❌ No restaurant owner account found for UID: ${value.user!.uid}');
           }
         });
       });
     } on FirebaseAuthException catch (error) {
-      print(error.toString());
+      print('❌ Firebase Auth Error: ${error.code} - ${error.message}');
       Get.back();
       switch (error.code) {
         case "invalid-credential":
@@ -122,13 +132,49 @@ class LoginController extends GetxController {
             "The username or password you entered is incorrect. Please check your login information and try again.",
           );
           break;
+        case "user-not-found":
+          customAlertDialog2(
+            'USER NOT FOUND',
+            "No account exists with this email address. Please check your email or contact support.",
+          );
+          break;
+        case "wrong-password":
+          customAlertDialog2(
+            'INCORRECT PASSWORD',
+            "The password you entered is incorrect. Please try again.",
+          );
+          break;
+        case "user-disabled":
+          customAlertDialog2(
+            'ACCOUNT DISABLED',
+            "This account has been disabled. Please contact support for assistance.",
+          );
+          break;
+        case "too-many-requests":
+          customAlertDialog2(
+            'TOO MANY ATTEMPTS',
+            "Too many failed login attempts. Please try again later or reset your password.",
+          );
+          break;
         case "unknown":
           customAlertDialog2(
             'INVALID LOGIN CREDENTIALS',
             "The username or password you entered is incorrect. Please check your login information and try again.",
           );
           break;
+        default:
+          customAlertDialog2(
+            'LOGIN ERROR',
+            "An error occurred during login: ${error.message ?? 'Unknown error'}. Please try again.",
+          );
       }
+    } catch (e) {
+      print('❌ Unexpected error during login: $e');
+      Get.back();
+      customAlertDialog2(
+        'UNEXPECTED ERROR',
+        "An unexpected error occurred. Please try again later.",
+      );
     }
   }
 }

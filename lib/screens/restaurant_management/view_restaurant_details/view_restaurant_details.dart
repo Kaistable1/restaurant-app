@@ -80,7 +80,7 @@ class _ViewRestaurantDetailsState extends State<ViewRestaurantDetails> {
               }
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(color: primaryColor,),
                 );
               }
               if (!snapshot.hasData || !snapshot.data!.exists) {
