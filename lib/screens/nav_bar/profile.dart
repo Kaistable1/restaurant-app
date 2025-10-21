@@ -54,9 +54,10 @@ class ProfileScreen extends StatelessWidget {
         title: Text(
           'Profile',
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 24,
             fontWeight: FontWeight.bold,
-          ),),
+          ),
+        ),
         centerTitle: true,
         leading: BackButton(
           onPressed: () => navbarController.jumpToTab(0),
@@ -74,7 +75,7 @@ class ProfileScreen extends StatelessWidget {
                     children: [
                       CustomButton(
                         laBelText: 'Log in',
-                        fontSize: 17,
+                        fontSize: 20,
                         textColor: Colors.white,
                         fontWeight: FontWeight.w600,
                         height: 43,
@@ -86,7 +87,7 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       CustomButton(
                         laBelText: 'Register',
-                        fontSize: 17,
+                        fontSize: 20,
                         textColor: Colors.white,
                         fontWeight: FontWeight.w600,
                         height: 43,
@@ -159,7 +160,7 @@ class ProfileScreen extends StatelessWidget {
                             Text(
                               currentUserDataModel?.value.username.text ?? '',
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: 16,
                                 color: AppColors.bottomSheetColor,
                                 fontWeight: FontWeight.w400,
                                 fontFamily: 'Nunito-Bold',
@@ -169,7 +170,7 @@ class ProfileScreen extends StatelessWidget {
                             Text(
                               currentUserDataModel?.value.userEmail.text ?? '',
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: 16,
                                 color: AppColors.bottomSheetColor,
                                 fontWeight: FontWeight.w400,
                                 fontFamily: 'Nunito-Bold',
@@ -195,7 +196,7 @@ class ProfileScreen extends StatelessWidget {
                                 child: Text(
                                   'Edit Profile',
                                   style: TextStyle(
-                                    fontSize: 12,
+                                    fontSize: 16,
                                     color: AppColors.whiteColor,
                                     fontWeight: FontWeight.w400,
                                     fontFamily: 'Nunito-Bold',
@@ -213,14 +214,52 @@ class ProfileScreen extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  profileListTile(0, context, 'assets/images/oui_app-saved-objects.png', 'Saved'),
-                  auth.currentUser == null || currentUserDataModel == null ? const SizedBox() : profileListTile(1, context, 'assets/images/change_pass.png', 'Change Password',),
-                  auth.currentUser == null || currentUserDataModel == null ? const SizedBox() : profileListTile(2, context, 'assets/images/terms_condition-icon.png', 'Change preferences',),
-                  profileListTile(3, context, 'assets/images/terms_condition-icon.png', 'Terms and conditions',),
-                  profileListTile(4, context, 'assets/images/privacy_img.png', 'Privacy policy',),
-                  profileListTile(5, context, 'assets/images/about_img.png', 'About app',),
-                  profileListTile(6, context, 'assets/images/contact_us_img.png', 'Contact us',),
-                  auth.currentUser == null || currentUserDataModel == null ? const SizedBox() : profileListTile(7, context, 'assets/images/privacy_img.png', 'Delete Account'),
+                  profileListTile(0, context,
+                      'assets/images/oui_app-saved-objects.png', 'Saved'),
+                  auth.currentUser == null || currentUserDataModel == null
+                      ? const SizedBox()
+                      : profileListTile(
+                          1,
+                          context,
+                          'assets/images/change_pass.png',
+                          'Change Password',
+                        ),
+                  auth.currentUser == null || currentUserDataModel == null
+                      ? const SizedBox()
+                      : profileListTile(
+                          2,
+                          context,
+                          'assets/images/terms_condition-icon.png',
+                          'Change preferences',
+                        ),
+                  profileListTile(
+                    3,
+                    context,
+                    'assets/images/terms_condition-icon.png',
+                    'Terms and conditions',
+                  ),
+                  profileListTile(
+                    4,
+                    context,
+                    'assets/images/privacy_img.png',
+                    'Privacy policy',
+                  ),
+                  profileListTile(
+                    5,
+                    context,
+                    'assets/images/about_img.png',
+                    'About app',
+                  ),
+                  profileListTile(
+                    6,
+                    context,
+                    'assets/images/contact_us_img.png',
+                    'Contact us',
+                  ),
+                  auth.currentUser == null || currentUserDataModel == null
+                      ? const SizedBox()
+                      : profileListTile(7, context,
+                          'assets/images/privacy_img.png', 'Delete Account'),
                 ],
               ),
             ),
@@ -248,7 +287,7 @@ class ProfileScreen extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 75, right: 75, top: 4),
                   child: CustomButton(
                     laBelText: 'Logout',
-                    fontSize: 15,
+                    fontSize: 20,
                     textColor: Colors.white,
                     fontWeight: FontWeight.w600,
                     height: 43,
@@ -287,11 +326,12 @@ deleteAccountDialog(context) async {
               final userId = user?.uid; // Save the UID before deletion
 
               if (user != null) {
-
                 print(currentUserDataModel!.value.userEmail.text);
                 print(currentUserDataModel!.value.password.text);
 
-                await FirebaseAuth.instance.signInWithEmailAndPassword(email: currentUserDataModel!.value.userEmail.text, password: currentUserDataModel!.value.password.text);
+                await FirebaseAuth.instance.signInWithEmailAndPassword(
+                    email: currentUserDataModel!.value.userEmail.text,
+                    password: currentUserDataModel!.value.password.text);
 
                 // Delete the account from Firebase Auth
                 await user.delete();
@@ -306,12 +346,14 @@ deleteAccountDialog(context) async {
                   await FirebaseFirestore.instance
                       .collection('users')
                       .doc(userId)
-                      .collection('recentView').get().then((val) async {
-                     if(val.size != 0){
-                       for(var doc in val.docs){
-                         await doc.reference.delete();
-                       }
-                     }
+                      .collection('recentView')
+                      .get()
+                      .then((val) async {
+                    if (val.size != 0) {
+                      for (var doc in val.docs) {
+                        await doc.reference.delete();
+                      }
+                    }
                   });
                   print('User document deleted from Firestore: $userId');
                 }
@@ -332,12 +374,13 @@ deleteAccountDialog(context) async {
   );
 }
 
-profileListTile(int adjustedIndex, BuildContext context, String iconPath, String tileName){
+profileListTile(
+    int adjustedIndex, BuildContext context, String iconPath, String tileName) {
   return GestureDetector(
     onTap: () {
       switch (adjustedIndex) {
         case 0:
-          Get.to(()=>SavedRestaurantsPage());
+          Get.to(() => SavedRestaurantsPage());
           break;
         case 1:
           changePasswordDialogBox();
@@ -383,7 +426,7 @@ profileListTile(int adjustedIndex, BuildContext context, String iconPath, String
           title: Text(
             tileName,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 18,
               color: AppColors.bottomSheetColor,
               fontWeight: FontWeight.w400,
               fontFamily: 'Nunito-Bold',

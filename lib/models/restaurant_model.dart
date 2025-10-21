@@ -36,6 +36,7 @@ class RestaurantModel with ClusterItem{
   // New Fields
   String instaLink; //https://instagram.com/
   String tiktokLink; //https://tiktok.com
+  String websiteUrl;
 
   // @override
   // // TODO: implement geohash
@@ -78,6 +79,7 @@ class RestaurantModel with ClusterItem{
     // New Fields
     required this.instaLink,
     required this.tiktokLink,
+    required this.websiteUrl,
   });
 
   // Initialize the model with defaults
@@ -114,6 +116,7 @@ class RestaurantModel with ClusterItem{
       country: '',
       instaLink: '',
       tiktokLink: '',
+      websiteUrl: '',
     );
   }
 
@@ -154,11 +157,12 @@ class RestaurantModel with ClusterItem{
       'socialMedia': socialMedia,
       'priceRange': priceRange,
       'about': about,
-      'createdAt': createdAt.toIso8601String(),
+      'createdAt': createdAt,
       'country': country,
       'instaLink': instaLink,
       'xLink': tiktokLink,
       'zipCode': zipCode,
+      'websiteUrl': websiteUrl,
     };
   }
 
@@ -210,6 +214,7 @@ class RestaurantModel with ClusterItem{
       // New Fields
       instaLink: data['socialLink'] ?? '',
       tiktokLink: data['socialMedia'] ?? '',
+      websiteUrl: data['websiteUrl'] ?? '',
     );
   }
 

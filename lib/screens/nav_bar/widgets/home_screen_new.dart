@@ -10,7 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_maps_cluster_manager/google_maps_cluster_manager.dart' as gmcluster;
+import 'package:google_maps_cluster_manager/google_maps_cluster_manager.dart'
+    as gmcluster;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:kaistable_website/streams/views/streams_view.dart';
@@ -33,9 +34,11 @@ class HomeScreenNew extends StatefulWidget {
   _HomeScreenNewState createState() => _HomeScreenNewState();
 }
 
-class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserver {
+class _HomeScreenNewState extends State<HomeScreenNew>
+    with WidgetsBindingObserver {
   final FilterController filterCtrl = Get.put(FilterController());
-  final HomeLocationController homeLocationCtrl = Get.put(HomeLocationController());
+  final HomeLocationController homeLocationCtrl =
+      Get.put(HomeLocationController());
   final RxBool showDistanceOptions = false.obs;
   final RxMap<String, bool> showFilterDropdowns = <String, bool>{}.obs;
   final RxBool isLoading = true.obs;
@@ -43,12 +46,13 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
   // Cache for the restaurant list to prevent reloading
   final RxList<RestaurantModel> cachedRestaurants = <RestaurantModel>[].obs;
 
-  late gmcluster.ClusterManager _manager;  // Cluster manager
+  late gmcluster.ClusterManager _manager; // Cluster manager
   Set<Marker> _markers = {};
 
   GoogleMapController? _mapController;
 
-  final CustomInfoWindowController _customInfoWindowController = CustomInfoWindowController();
+  final CustomInfoWindowController _customInfoWindowController =
+      CustomInfoWindowController();
 
   // StreamSubscription to manage the listener for filtered restaurants
   StreamSubscription<List<RestaurantModel>>? _filteredSub;
@@ -87,10 +91,11 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
       }
     }
 
-    _manager = _initClusterManager();  // Initialize cluster manager
+    _manager = _initClusterManager(); // Initialize cluster manager
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      homeLocationCtrl.fetchUserPosition(context);  // ADD THIS: Fallback call with context to prompt dialog if needed
+      homeLocationCtrl.fetchUserPosition(
+          context); // ADD THIS: Fallback call with context to prompt dialog if needed
       showFilterDropdowns.refresh();
       Future.delayed(const Duration(seconds: 1), () {
         isLoading.value = false;
@@ -99,7 +104,8 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
       homeLocationCtrl.applySearchAndFilters();
 
       // Use GetX 'ever' to reactively listen for changes to the filteredRestaurantsStream Rx variable.
-      ever(homeLocationCtrl.filteredRestaurantsStream, (Stream<List<RestaurantModel>> newStream) {
+      ever(homeLocationCtrl.filteredRestaurantsStream,
+          (Stream<List<RestaurantModel>> newStream) {
         _filteredSub?.cancel();
         _filteredSub = newStream.listen((list) {
           final items = list
@@ -110,7 +116,9 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
           cachedRestaurants.assignAll(items);
 
           // Prefetch operating hours for the first 4 visible restaurants
-          Future.wait(items.take(4).map((restaurant) => homeLocationCtrl.getOperatingHours(restaurant.docID, triggerFilterUpdate: false)));
+          Future.wait(items.take(4).map((restaurant) =>
+              homeLocationCtrl.getOperatingHours(restaurant.docID,
+                  triggerFilterUpdate: false)));
         });
       });
 
@@ -125,7 +133,8 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
               ),
             ),
           );
-          homeLocationCtrl.applySearchAndFilters();  // Re-apply filters to re-sort by new distance
+          homeLocationCtrl
+              .applySearchAndFilters(); // Re-apply filters to re-sort by new distance
         }
       });
     });
@@ -172,7 +181,8 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
 
   // Custom marker builder for clusters/individuals
   Future<Marker> _markerBuilder(dynamic cluster) async {
-    final gmcluster.Cluster<RestaurantModel> typedCluster = cluster as gmcluster.Cluster<RestaurantModel>;
+    final gmcluster.Cluster<RestaurantModel> typedCluster =
+        cluster as gmcluster.Cluster<RestaurantModel>;
     return Marker(
       markerId: MarkerId(typedCluster.getId()),
       position: typedCluster.location,
@@ -182,11 +192,11 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
       onTap: typedCluster.isMultiple
           ? null
           : () {
-        _customInfoWindowController.addInfoWindow!(
-          _buildCustomInfoWindow(typedCluster.items.first),
-          typedCluster.location,
-        );
-      },
+              _customInfoWindowController.addInfoWindow!(
+                _buildCustomInfoWindow(typedCluster.items.first),
+                typedCluster.location,
+              );
+            },
     );
   }
 
@@ -226,9 +236,11 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              restaurant.resName.isNotEmpty ? restaurant.resName : 'Unknown Restaurant',
+              restaurant.resName.isNotEmpty
+                  ? restaurant.resName
+                  : 'Unknown Restaurant',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 17,
                 fontWeight: FontWeight.bold,
                 fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                 color: Colors.black,
@@ -241,17 +253,19 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
               Wrap(
                 spacing: 4,
                 runSpacing: 4,
-                children: emojiList.map((emoji) => Text(
-                  emoji,
-                  style: const TextStyle(fontSize: 16),
-                )).toList(),
+                children: emojiList
+                    .map((emoji) => Text(
+                          emoji,
+                          style: const TextStyle(fontSize: 17),
+                        ))
+                    .toList(),
               ),
             ],
             const SizedBox(height: 4),
             Text(
               'Tap for details',
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 13,
                 color: Colors.grey[600],
                 fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
               ),
@@ -273,7 +287,10 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
       TextPainter painter = TextPainter(textDirection: ui.TextDirection.ltr);
       painter.text = TextSpan(
         text: text,
-        style: TextStyle(fontSize: size / 3, color: Colors.white, fontWeight: FontWeight.bold),
+        style: TextStyle(
+            fontSize: size / 3 + 1,
+            color: Colors.white,
+            fontWeight: FontWeight.bold),
       );
       painter.layout();
       painter.paint(
@@ -296,14 +313,15 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
         child: ListView(
           scrollDirection: Axis.horizontal,
           children: List.generate(
-            3, (_) => Container(
-            width: 200,
-            margin: const EdgeInsets.only(right: 12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
+            3,
+            (_) => Container(
+              width: 200,
+              margin: const EdgeInsets.only(right: 12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
-          ),
           ),
         ),
       ),
@@ -335,7 +353,9 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                 topRight: Radius.circular(5),
               ),
               child: CachedNetworkImage(
-                imageUrl: restaurant.logoImage.isNotEmpty ? restaurant.logoImage : 'assets/images/event_img8.png',
+                imageUrl: restaurant.logoImage.isNotEmpty
+                    ? restaurant.logoImage
+                    : 'assets/images/event_img8.png',
                 height: imageHeight,
                 width: cardWidth,
                 fit: BoxFit.cover,
@@ -366,9 +386,11 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      restaurant.resName.isNotEmpty ? restaurant.resName : 'Unknown Restaurant',
+                      restaurant.resName.isNotEmpty
+                          ? restaurant.resName
+                          : 'Unknown Restaurant',
                       style: TextStyle(
-                        fontSize: (cardWidth * 0.1).clamp(12.0, 14.0),
+                        fontSize: (cardWidth * 0.1).clamp(13.0, 15.0),
                         fontWeight: FontWeight.w700,
                         fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                         color: Colors.black,
@@ -379,31 +401,37 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                     ),
                     const SizedBox(height: 2),
                     Obx(() {
-                      final operatingHours = homeLocationCtrl.operatingHoursCache[restaurant.docID];
-                      final isFetching = homeLocationCtrl.fetchingOperatingHours.contains(restaurant.docID);
-                      final currentDay = DateFormat('EEEE').format(DateTime.now());
+                      final operatingHours = homeLocationCtrl
+                          .operatingHoursCache[restaurant.docID];
+                      final isFetching = homeLocationCtrl.fetchingOperatingHours
+                          .contains(restaurant.docID);
+                      final currentDay =
+                          DateFormat('EEEE').format(DateTime.now());
                       final timeFilter = filterCtrl.selectedFilters['Time'];
 
                       if (operatingHours == null) {
                         return Text(
                           isFetching ? 'Loading...' : 'Unavailable',
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 13,
                             color: const Color.fromRGBO(142, 142, 147, 1),
                             fontWeight: FontWeight.w500,
-                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                            fontFamily:
+                                GoogleFonts.plusJakartaSans().fontFamily,
                           ),
                         );
                       }
 
-                      if (operatingHours.isEmpty || operatingHours[currentDay] == null) {
+                      if (operatingHours.isEmpty ||
+                          operatingHours[currentDay] == null) {
                         return Text(
                           'Unavailable',
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 13,
                             color: const Color.fromRGBO(142, 142, 147, 1),
                             fontWeight: FontWeight.w500,
-                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                            fontFamily:
+                                GoogleFonts.plusJakartaSans().fontFamily,
                           ),
                         );
                       }
@@ -413,22 +441,25 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                         return Text(
                           homeLocationCtrl.getFullDayHours(dayHours),
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 13,
                             color: const Color.fromRGBO(142, 142, 147, 1),
                             fontWeight: FontWeight.w500,
-                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                            fontFamily:
+                                GoogleFonts.plusJakartaSans().fontFamily,
                           ),
                         );
                       }
 
                       final timeOfDay = timeFilter.first;
                       final isClosed = dayHours[timeOfDay]?['isClosed'] ?? true;
-                      final startTime = dayHours[timeOfDay]?['startTime'] ?? '6:00 PM';
-                      final endTime = dayHours[timeOfDay]?['endTime'] ?? '9:00 PM';
+                      final startTime =
+                          dayHours[timeOfDay]?['startTime'] ?? '6:00 PM';
+                      final endTime =
+                          dayHours[timeOfDay]?['endTime'] ?? '9:00 PM';
                       return Text(
                         isClosed ? 'Closed' : '$startTime–$endTime',
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 13,
                           color: const Color.fromRGBO(142, 142, 147, 1),
                           fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                           fontWeight: FontWeight.w500,
@@ -446,30 +477,34 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                         ),
                         const SizedBox(width: 4),
                         Obx(() {
-                          if (homeLocationCtrl.isFetchingInitialData.value && homeLocationCtrl.userPosition.value == null) {
+                          if (homeLocationCtrl.isFetchingInitialData.value &&
+                              homeLocationCtrl.userPosition.value == null) {
                             return Expanded(
                               child: Text(
                                 'Fetching location...',
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 13,
                                   fontWeight: FontWeight.w500,
-                                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                  fontFamily:
+                                      GoogleFonts.plusJakartaSans().fontFamily,
                                   color: const Color.fromRGBO(142, 142, 147, 1),
                                 ),
                               ),
                             );
                           }
 
-                          if (!homeLocationCtrl.isFetchingInitialData.value && homeLocationCtrl.userPosition.value == null) {
+                          if (!homeLocationCtrl.isFetchingInitialData.value &&
+                              homeLocationCtrl.userPosition.value == null) {
                             return Expanded(
                               child: Text(
                                 'Location disabled',
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 13,
                                   fontWeight: FontWeight.w500,
-                                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                  fontFamily:
+                                      GoogleFonts.plusJakartaSans().fontFamily,
                                   color: const Color.fromRGBO(142, 142, 147, 1),
                                 ),
                               ),
@@ -477,18 +512,20 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                           }
 
                           double distance = Geolocator.distanceBetween(
-                            homeLocationCtrl.userPosition.value!.latitude,
-                            homeLocationCtrl.userPosition.value!.longitude,
-                            restaurant.latitude,
-                            restaurant.longitude,
-                          ) / 1000;
+                                homeLocationCtrl.userPosition.value!.latitude,
+                                homeLocationCtrl.userPosition.value!.longitude,
+                                restaurant.latitude,
+                                restaurant.longitude,
+                              ) /
+                              1000;
                           return Expanded(
                             child: Text(
                               '${distance.toStringAsFixed(2)} km away',
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: 13,
                                 fontWeight: FontWeight.w500,
-                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                fontFamily:
+                                    GoogleFonts.plusJakartaSans().fontFamily,
                                 color: const Color.fromRGBO(142, 142, 147, 1),
                               ),
                             ),
@@ -507,7 +544,9 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
   }
 
   Widget buildStreamCard(VideoModel video, int index) {
-    if (homeLocationCtrl.thumbnailPaths[index] == null && video.url != null && video.url!.isNotEmpty) {
+    if (homeLocationCtrl.thumbnailPaths[index] == null &&
+        video.url != null &&
+        video.url!.isNotEmpty) {
       homeLocationCtrl.generateThumbnail(index, video.url!);
     }
 
@@ -537,33 +576,41 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                     color: Colors.black,
                     child: homeLocationCtrl.thumbnailPaths[index] != null
                         ? Image.file(
-                      File(homeLocationCtrl.thumbnailPaths[index]!),
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Image.network(
-                        'https://via.placeholder.com/163x191',
-                        fit: BoxFit.cover,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return const Center(child: CircularProgressIndicator());
-                        },
-                        errorBuilder: (context, error, stackTrace) => Container(
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
-                        ),
-                      ),
-                    )
+                            File(homeLocationCtrl.thumbnailPaths[index]!),
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                Image.network(
+                              'https://via.placeholder.com/163x191',
+                              fit: BoxFit.cover,
+                              loadingBuilder:
+                                  (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return const Center(
+                                    child: CircularProgressIndicator());
+                              },
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Container(
+                                color: Colors.grey[300],
+                                child: const Icon(Icons.broken_image,
+                                    size: 50, color: Colors.grey),
+                              ),
+                            ),
+                          )
                         : Image.network(
-                      'https://via.placeholder.com/163x191',
-                      fit: BoxFit.cover,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return const Center(child: CircularProgressIndicator());
-                      },
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        color: Colors.grey[300],
-                        child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
-                      ),
-                    ),
+                            'https://via.placeholder.com/163x191',
+                            fit: BoxFit.cover,
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            },
+                            errorBuilder: (context, error, stackTrace) =>
+                                Container(
+                              color: Colors.grey[300],
+                              child: const Icon(Icons.broken_image,
+                                  size: 50, color: Colors.grey),
+                            ),
+                          ),
                   ),
                 ),
                 Positioned.fill(
@@ -596,7 +643,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                   Text(
                     video.restaurantName ?? 'Kaistable at Drews',
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 16,
                       fontWeight: FontWeight.w700,
                       fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                     ),
@@ -615,74 +662,101 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                       Expanded(
                         child: homeLocationCtrl.userPosition == null
                             ? Text(
-                          'Location disabled',
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                            color: const Color.fromRGBO(142, 142, 147, 1),
-                          ),
-                        )
-                            : Obx(() =>
-                        homeLocationCtrl.userPosition.value == null
-                            ? Text(
-                          'Location disabled',
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                            color: const Color.fromRGBO(142, 142, 147, 1),
-                          ),
-                        )
-                            : FutureBuilder<RestaurantModel?>(
-                          future: homeLocationCtrl.findRestaurantForVideo(video),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
-                              return Text(
-                                'Calculating...',
+                                'Location disabled',
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 13,
                                   fontWeight: FontWeight.w500,
-                                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                  fontFamily:
+                                      GoogleFonts.plusJakartaSans().fontFamily,
                                   color: const Color.fromRGBO(142, 142, 147, 1),
                                 ),
-                              );
-                            }
-                            final restaurant = snapshot.data;
-                            if (restaurant == null || (restaurant.latitude == 0.0 && restaurant.longitude == 0.0)) {
-                              return Text(
-                                'Unknown distance',
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                  color: const Color.fromRGBO(142, 142, 147, 1),
-                                ),
-                              );
-                            }
-                            double distance = Geolocator.distanceBetween(
-                              homeLocationCtrl.userPosition.value!.latitude,
-                              homeLocationCtrl.userPosition.value!.longitude,
-                              restaurant.latitude,
-                              restaurant.longitude,
-                            ) / 1000;
-                            return Text(
-                              '${distance.toStringAsFixed(1)} km away',
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                color: const Color.fromRGBO(142, 142, 147, 1),
+                              )
+                            : Obx(
+                                () => homeLocationCtrl.userPosition.value ==
+                                        null
+                                    ? Text(
+                                        'Location disabled',
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w500,
+                                          fontFamily:
+                                              GoogleFonts.plusJakartaSans()
+                                                  .fontFamily,
+                                          color: const Color.fromRGBO(
+                                              142, 142, 147, 1),
+                                        ),
+                                      )
+                                    : FutureBuilder<RestaurantModel?>(
+                                        future: homeLocationCtrl
+                                            .findRestaurantForVideo(video),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return Text(
+                                              'Calculating...',
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w500,
+                                                fontFamily: GoogleFonts
+                                                        .plusJakartaSans()
+                                                    .fontFamily,
+                                                color: const Color.fromRGBO(
+                                                    142, 142, 147, 1),
+                                              ),
+                                            );
+                                          }
+                                          final restaurant = snapshot.data;
+                                          if (restaurant == null ||
+                                              (restaurant.latitude == 0.0 &&
+                                                  restaurant.longitude ==
+                                                      0.0)) {
+                                            return Text(
+                                              'Unknown distance',
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w500,
+                                                fontFamily: GoogleFonts
+                                                        .plusJakartaSans()
+                                                    .fontFamily,
+                                                color: const Color.fromRGBO(
+                                                    142, 142, 147, 1),
+                                              ),
+                                            );
+                                          }
+                                          double distance =
+                                              Geolocator.distanceBetween(
+                                                    homeLocationCtrl
+                                                        .userPosition
+                                                        .value!
+                                                        .latitude,
+                                                    homeLocationCtrl
+                                                        .userPosition
+                                                        .value!
+                                                        .longitude,
+                                                    restaurant.latitude,
+                                                    restaurant.longitude,
+                                                  ) /
+                                                  1000;
+                                          return Text(
+                                            '${distance.toStringAsFixed(1)} km away',
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w500,
+                                              fontFamily:
+                                                  GoogleFonts.plusJakartaSans()
+                                                      .fontFamily,
+                                              color: const Color.fromRGBO(
+                                                  142, 142, 147, 1),
+                                            ),
+                                          );
+                                        },
+                                      ),
                               ),
-                            );
-                          },
-                        ),
-                        ),
                       ),
                       const SizedBox(width: 10),
                       Image.asset(
@@ -725,8 +799,8 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                           restaurant.imagesList.isNotEmpty
                               ? restaurant.imagesList.first
                               : restaurant.logoImage.isNotEmpty
-                              ? restaurant.logoImage
-                              : 'assets/images/event_img3.png',
+                                  ? restaurant.logoImage
+                                  : 'assets/images/event_img3.png',
                           width: Get.width - 32,
                           fit: BoxFit.cover,
                         ),
@@ -756,70 +830,105 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  restaurant.resName.isNotEmpty ? restaurant.resName : 'Unknown Restaurant',
+                                  restaurant.resName.isNotEmpty
+                                      ? restaurant.resName
+                                      : 'Unknown Restaurant',
                                   style: const TextStyle(
                                     fontWeight: FontWeight.w600,
-                                    fontSize: 16,
+                                    fontSize: 17,
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 const SizedBox(height: 4),
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Obx(() {
-                                      final operatingHours = homeLocationCtrl.operatingHoursCache[restaurant.docID];
-                                      final isFetching = homeLocationCtrl.fetchingOperatingHours.contains(restaurant.docID);
-                                      final currentDay = DateFormat('EEEE').format(DateTime.now());
-                                      final timeFilter = filterCtrl.selectedFilters['Time'];
+                                      final operatingHours =
+                                          homeLocationCtrl.operatingHoursCache[
+                                              restaurant.docID];
+                                      final isFetching = homeLocationCtrl
+                                          .fetchingOperatingHours
+                                          .contains(restaurant.docID);
+                                      final currentDay = DateFormat('EEEE')
+                                          .format(DateTime.now());
+                                      final timeFilter =
+                                          filterCtrl.selectedFilters['Time'];
 
                                       if (operatingHours == null) {
                                         return Text(
-                                          isFetching ? 'Loading...' : 'Unavailable',
+                                          isFetching
+                                              ? 'Loading...'
+                                              : 'Unavailable',
                                           style: TextStyle(
-                                            fontSize: 12,
-                                            color: const Color.fromRGBO(142, 142, 147, 1),
+                                            fontSize: 13,
+                                            color: const Color.fromRGBO(
+                                                142, 142, 147, 1),
                                             fontWeight: FontWeight.w500,
-                                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                            fontFamily:
+                                                GoogleFonts.plusJakartaSans()
+                                                    .fontFamily,
                                           ),
                                         );
                                       }
 
-                                      if (operatingHours.isEmpty || operatingHours[currentDay] == null) {
+                                      if (operatingHours.isEmpty ||
+                                          operatingHours[currentDay] == null) {
                                         return Text(
                                           'Unavailable',
                                           style: TextStyle(
-                                            fontSize: 12,
-                                            color: const Color.fromRGBO(142, 142, 147, 1),
+                                            fontSize: 13,
+                                            color: const Color.fromRGBO(
+                                                142, 142, 147, 1),
                                             fontWeight: FontWeight.w500,
-                                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                            fontFamily:
+                                                GoogleFonts.plusJakartaSans()
+                                                    .fontFamily,
                                           ),
                                         );
                                       }
 
-                                      final dayHours = operatingHours[currentDay]!;
-                                      if (timeFilter == null || timeFilter.isEmpty) {
+                                      final dayHours =
+                                          operatingHours[currentDay]!;
+                                      if (timeFilter == null ||
+                                          timeFilter.isEmpty) {
                                         return Text(
-                                          homeLocationCtrl.getFullDayHours(dayHours),
+                                          homeLocationCtrl
+                                              .getFullDayHours(dayHours),
                                           style: TextStyle(
-                                            fontSize: 12,
-                                            color: const Color.fromRGBO(142, 142, 147, 1),
+                                            fontSize: 13,
+                                            color: const Color.fromRGBO(
+                                                142, 142, 147, 1),
                                             fontWeight: FontWeight.w500,
-                                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                            fontFamily:
+                                                GoogleFonts.plusJakartaSans()
+                                                    .fontFamily,
                                           ),
                                         );
                                       }
 
                                       final timeOfDay = timeFilter.first;
-                                      final isClosed = dayHours[timeOfDay]?['isClosed'] ?? true;
-                                      final startTime = dayHours[timeOfDay]?['startTime'] ?? '6:00 PM';
-                                      final endTime = dayHours[timeOfDay]?['endTime'] ?? '9:00 PM';
+                                      final isClosed = dayHours[timeOfDay]
+                                              ?['isClosed'] ??
+                                          true;
+                                      final startTime = dayHours[timeOfDay]
+                                              ?['startTime'] ??
+                                          '6:00 PM';
+                                      final endTime = dayHours[timeOfDay]
+                                              ?['endTime'] ??
+                                          '9:00 PM';
                                       return Text(
-                                        isClosed ? 'Closed' : '$startTime–$endTime',
+                                        isClosed
+                                            ? 'Closed'
+                                            : '$startTime–$endTime',
                                         style: TextStyle(
-                                          fontSize: 12,
-                                          color: const Color.fromRGBO(142, 142, 147, 1),
-                                          fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                          fontSize: 13,
+                                          color: const Color.fromRGBO(
+                                              142, 142, 147, 1),
+                                          fontFamily:
+                                              GoogleFonts.plusJakartaSans()
+                                                  .fontFamily,
                                           fontWeight: FontWeight.w500,
                                         ),
                                       );
@@ -836,11 +945,14 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                                         children: [
                                           Expanded(
                                             child: Text(
-                                              '${restaurant.address}, ${restaurant.city}, ${restaurant.state}, ${restaurant.country}${restaurant.zipCode == '' ? '' : ', ${restaurant.zipCode}' }',
+                                              '${restaurant.address}, ${restaurant.city}, ${restaurant.state}, ${restaurant.country}${restaurant.zipCode == '' ? '' : ', ${restaurant.zipCode}'}',
                                               style: TextStyle(
-                                                fontSize: 12,
-                                                color: const Color.fromRGBO(142, 142, 147, 1),
-                                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                                fontSize: 13,
+                                                color: const Color.fromRGBO(
+                                                    142, 142, 147, 1),
+                                                fontFamily: GoogleFonts
+                                                        .plusJakartaSans()
+                                                    .fontFamily,
                                                 fontWeight: FontWeight.w500,
                                               ),
                                               overflow: TextOverflow.ellipsis,
@@ -848,54 +960,85 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                                           ),
                                           const SizedBox(width: 4),
                                           Obx(() {
-                                            if (homeLocationCtrl.isFetchingInitialData.value && homeLocationCtrl.userPosition.value == null) {
+                                            if (homeLocationCtrl
+                                                    .isFetchingInitialData
+                                                    .value &&
+                                                homeLocationCtrl
+                                                        .userPosition.value ==
+                                                    null) {
                                               return Text(
                                                 'Fetching ...',
                                                 style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: const Color.fromRGBO(142, 142, 147, 1),
+                                                  fontSize: 13,
+                                                  color: const Color.fromRGBO(
+                                                      142, 142, 147, 1),
                                                   fontWeight: FontWeight.w500,
-                                                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                                  fontFamily: GoogleFonts
+                                                          .plusJakartaSans()
+                                                      .fontFamily,
                                                 ),
                                               );
                                             }
 
-                                            if (!homeLocationCtrl.isFetchingInitialData.value && homeLocationCtrl.userPosition.value == null) {
+                                            if (!homeLocationCtrl
+                                                    .isFetchingInitialData
+                                                    .value &&
+                                                homeLocationCtrl
+                                                        .userPosition.value ==
+                                                    null) {
                                               return Text(
                                                 'Location disabled',
                                                 style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: const Color.fromRGBO(142, 142, 147, 1),
+                                                  fontSize: 13,
+                                                  color: const Color.fromRGBO(
+                                                      142, 142, 147, 1),
                                                   fontWeight: FontWeight.w500,
-                                                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                                  fontFamily: GoogleFonts
+                                                          .plusJakartaSans()
+                                                      .fontFamily,
                                                 ),
                                               );
                                             }
 
-                                            if (restaurant.latitude == 0.0 && restaurant.longitude == 0.0) {
+                                            if (restaurant.latitude == 0.0 &&
+                                                restaurant.longitude == 0.0) {
                                               return Text(
                                                 'Unknown distance',
                                                 style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: const Color.fromRGBO(142, 142, 147, 1),
+                                                  fontSize: 13,
+                                                  color: const Color.fromRGBO(
+                                                      142, 142, 147, 1),
                                                   fontWeight: FontWeight.w500,
-                                                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                                  fontFamily: GoogleFonts
+                                                          .plusJakartaSans()
+                                                      .fontFamily,
                                                 ),
                                               );
                                             }
-                                            double distance = Geolocator.distanceBetween(
-                                              homeLocationCtrl.userPosition.value!.latitude,
-                                              homeLocationCtrl.userPosition.value!.longitude,
-                                              restaurant.latitude,
-                                              restaurant.longitude,
-                                            ) / 1000;
+                                            double distance =
+                                                Geolocator.distanceBetween(
+                                                      homeLocationCtrl
+                                                          .userPosition
+                                                          .value!
+                                                          .latitude,
+                                                      homeLocationCtrl
+                                                          .userPosition
+                                                          .value!
+                                                          .longitude,
+                                                      restaurant.latitude,
+                                                      restaurant.longitude,
+                                                    ) /
+                                                    1000;
                                             return Text(
                                               '',
                                               style: TextStyle(
-                                                fontSize: 12,
-                                                color: const Color.fromRGBO(142, 142, 147, 1),
+                                                fontSize: 13,
+                                                color: const Color.fromRGBO(
+                                                    142, 142, 147, 1),
                                                 fontWeight: FontWeight.w500,
-                                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                                fontFamily: GoogleFonts
+                                                        .plusJakartaSans()
+                                                    .fontFamily,
                                               ),
                                             );
                                           }),
@@ -959,7 +1102,8 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
             }
 
             return GoogleMap(
-              padding: EdgeInsets.only(top: (Platform.isAndroid ? 60 : 70) + 48 + 12 + 36 + 16 + 12),
+              padding: EdgeInsets.only(
+                  top: (Platform.isAndroid ? 60 : 70) + 48 + 12 + 36 + 16 + 12),
               initialCameraPosition: CameraPosition(
                 target: initialPosition,
                 zoom: 14,
@@ -969,7 +1113,8 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
               myLocationButtonEnabled: true,
               mapType: MapType.normal,
               gestureRecognizers: {
-                Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer()),
+                Factory<OneSequenceGestureRecognizer>(
+                    () => EagerGestureRecognizer()),
               },
               onMapCreated: (GoogleMapController controller) {
                 _mapController = controller;
@@ -994,7 +1139,8 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                 _manager.onCameraMove(position);
                 _customInfoWindowController.onCameraMove!();
               },
-              onTap: (position) => _customInfoWindowController.hideInfoWindow!(),
+              onTap: (position) =>
+                  _customInfoWindowController.hideInfoWindow!(),
               onCameraIdle: _manager.updateMap,
               markers: _markers,
             );
@@ -1008,7 +1154,14 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
           DraggableScrollableSheet(
             initialChildSize: 0.3,
             minChildSize: 0.1,
-            maxChildSize: (Get.height - (Platform.isAndroid ? 60 : 70) - 56 - 8 - 56 - 10 - 20) / Get.height,
+            maxChildSize: (Get.height -
+                    (Platform.isAndroid ? 60 : 70) -
+                    56 -
+                    8 -
+                    56 -
+                    10 -
+                    20) /
+                Get.height,
             snap: true,
             builder: (context, scrollCtrl) {
               return Container(
@@ -1021,7 +1174,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                   clipBehavior: Clip.hardEdge,
                   borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                   child: Obx(
-                        () {
+                    () {
                       if (homeLocationCtrl.isFetchingInitialData.value) {
                         return _buildShimmer();
                       }
@@ -1046,9 +1199,10 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                             child: Text(
                               'Restaurants in the area',
                               style: TextStyle(
-                                fontSize: 15,
+                                fontSize: 16,
                                 fontWeight: FontWeight.w900,
-                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                fontFamily:
+                                    GoogleFonts.plusJakartaSans().fontFamily,
                               ),
                             ),
                           ),
@@ -1056,30 +1210,35 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                           Obx(() {
                             return SizedBox(
                               height: 156,
-                              child: isLoading.value || cachedRestaurants.isEmpty
+                              child: isLoading.value ||
+                                      cachedRestaurants.isEmpty
                                   ? _buildShimmer()
                                   : ListView(
-                                scrollDirection: Axis.horizontal,
-                                padding: const EdgeInsets.only(left: 16, right: 4),
-                                children: cachedRestaurants
-                                    .take(4)
-                                    .map((restaurant) => buildRestaurantCard(restaurant))
-                                    .toList(),
-                              ),
+                                      scrollDirection: Axis.horizontal,
+                                      padding: const EdgeInsets.only(
+                                          left: 16, right: 4),
+                                      children: cachedRestaurants
+                                          .take(4)
+                                          .map((restaurant) =>
+                                              buildRestaurantCard(restaurant))
+                                          .toList(),
+                                    ),
                             );
                           }),
                           Align(
                             alignment: Alignment.center,
                             child: TextButton(
                               onPressed: () {
-                                Get.to(() => SeeAllRestaurantsScreen(fromHome: true));
+                                Get.to(() =>
+                                    SeeAllRestaurantsScreen(fromHome: true));
                               },
                               child: Text(
                                 'See all',
                                 style: TextStyle(
                                   color: Colors.green,
-                                  fontSize: 16,
-                                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                  fontSize: 17,
+                                  fontFamily:
+                                      GoogleFonts.plusJakartaSans().fontFamily,
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),
@@ -1091,9 +1250,10 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                             child: Text(
                               'Streams',
                               style: TextStyle(
-                                fontSize: 15,
+                                fontSize: 16,
                                 fontWeight: FontWeight.w900,
-                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                fontFamily:
+                                    GoogleFonts.plusJakartaSans().fontFamily,
                               ),
                             ),
                           ),
@@ -1102,16 +1262,22 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                             return SizedBox(
                               height: 252,
                               child: homeLocationCtrl.filteredVideos.isEmpty
-                                  ? const Center(child: Text('No videos available'))
+                                  ? const Center(
+                                      child: Text('No videos available'))
                                   : ListView(
-                                scrollDirection: Axis.horizontal,
-                                padding: const EdgeInsets.only(left: 16, right: 4),
-                                children: homeLocationCtrl.filteredVideos.asMap().entries.take(4).map((entry) {
-                                  final index = entry.key;
-                                  final video = entry.value;
-                                  return buildStreamCard(video, index);
-                                }).toList(),
-                              ),
+                                      scrollDirection: Axis.horizontal,
+                                      padding: const EdgeInsets.only(
+                                          left: 16, right: 4),
+                                      children: homeLocationCtrl.filteredVideos
+                                          .asMap()
+                                          .entries
+                                          .take(4)
+                                          .map((entry) {
+                                        final index = entry.key;
+                                        final video = entry.value;
+                                        return buildStreamCard(video, index);
+                                      }).toList(),
+                                    ),
                             );
                           }),
                           Align(
@@ -1124,8 +1290,9 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                                 'See all',
                                 style: TextStyle(
                                   color: Colors.green,
-                                  fontSize: 16,
-                                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                  fontSize: 17,
+                                  fontFamily:
+                                      GoogleFonts.plusJakartaSans().fontFamily,
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),
@@ -1137,38 +1304,51 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                             child: Text(
                               'Curated for you',
                               style: TextStyle(
-                                fontSize: 15,
+                                fontSize: 16,
                                 fontWeight: FontWeight.w900,
-                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                fontFamily:
+                                    GoogleFonts.plusJakartaSans().fontFamily,
                               ),
                             ),
                           ),
                           const SizedBox(height: 10),
                           StreamBuilder<List<RestaurantModel>>(
-                            stream: filterCtrl.selectedFilters.values.any((list) => list.isNotEmpty)
+                            stream: filterCtrl.selectedFilters.values
+                                    .any((list) => list.isNotEmpty)
                                 ? homeLocationCtrl.getFilteredRestaurants()
                                 : homeLocationCtrl.getAllRestaurants(),
                             builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting || isLoading.value) {
+                              if (snapshot.connectionState ==
+                                      ConnectionState.waiting ||
+                                  isLoading.value) {
                                 return _buildShimmer();
                               }
                               if (snapshot.hasError) {
-                                return const Center(child: Text('Error loading restaurants'));
+                                return const Center(
+                                    child: Text('Error loading restaurants'));
                               }
                               if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                return const Center(child: Text('No restaurants available'));
+                                return const Center(
+                                    child: Text('No restaurants available'));
                               }
-                              final restaurants = snapshot.data!.take(4).toList();
-                              Future.wait(restaurants.map((restaurant) => homeLocationCtrl.getOperatingHours(restaurant.docID, triggerFilterUpdate: false)));
+                              final restaurants =
+                                  snapshot.data!.take(4).toList();
+                              Future.wait(restaurants.map((restaurant) =>
+                                  homeLocationCtrl.getOperatingHours(
+                                      restaurant.docID,
+                                      triggerFilterUpdate: false)));
                               return Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: restaurants
                                       .map((restaurant) => Padding(
-                                    padding: const EdgeInsets.only(bottom: 12),
-                                    child: buildExperienceVibeCard(restaurant),
-                                  ))
+                                            padding: const EdgeInsets.only(
+                                                bottom: 12),
+                                            child: buildExperienceVibeCard(
+                                                restaurant),
+                                          ))
                                       .toList(),
                                 ),
                               );
@@ -1183,7 +1363,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
               );
             },
           ),
-
           Positioned(
             top: Platform.isAndroid ? 60 : 70,
             left: 0,
@@ -1218,13 +1397,15 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                                   decoration: InputDecoration(
                                     hintText: 'Find places by vibes...',
                                     border: InputBorder.none,
-                                    hintStyle: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                                    hintStyle: TextStyle(
+                                        fontSize: 17, color: Colors.grey[600]),
                                   ),
                                   onSubmitted: (value) {
                                     homeLocationCtrl.searchQuery.value = value;
                                     homeLocationCtrl.applySearchAndFilters();
                                     isLoading.value = true;
-                                    Future.delayed(const Duration(milliseconds: 500), () {
+                                    Future.delayed(
+                                        const Duration(milliseconds: 500), () {
                                       isLoading.value = false;
                                     });
                                   },
@@ -1233,7 +1414,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                               const SizedBox(width: 8),
                               DropdownButtonHideUnderline(
                                 child: Obx(
-                                      () => DropdownButton2<String>(
+                                  () => DropdownButton2<String>(
                                     buttonStyleData: ButtonStyleData(
                                       width: 55,
                                     ),
@@ -1246,33 +1427,47 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                                     ),
                                     hint: Text(
                                       'miles',
-                                      style: const TextStyle(fontSize: 14),
+                                      style: const TextStyle(fontSize: 15),
                                     ),
-                                    value: homeLocationCtrl.selectedDistance.value == 0
+                                    value: homeLocationCtrl
+                                                .selectedDistance.value ==
+                                            0
                                         ? 'All'
-                                        : homeLocationCtrl.selectedDistance.value.toString() + ' mi',
+                                        : homeLocationCtrl
+                                                .selectedDistance.value
+                                                .toString() +
+                                            ' mi',
                                     items: homeLocationCtrl.distanceOptions
                                         .map((ele) => DropdownMenuItem(
-                                      value: ele,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 8),
-                                        child: Text(
-                                          ele,
-                                          style: const TextStyle(fontSize: 14),
-                                        ),
-                                      ),
-                                    ))
+                                              value: ele,
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 8),
+                                                child: Text(
+                                                  ele,
+                                                  style: const TextStyle(
+                                                      fontSize: 15),
+                                                ),
+                                              ),
+                                            ))
                                         .toList(),
                                     onChanged: (val) {
                                       if (val == 'All') {
-                                        homeLocationCtrl.selectedDistance.value = 0;
+                                        homeLocationCtrl
+                                            .selectedDistance.value = 0;
                                       } else {
-                                        homeLocationCtrl.selectedDistance.value =
-                                            int.parse(val!.replaceAll(' mi', ''));
+                                        homeLocationCtrl
+                                                .selectedDistance.value =
+                                            int.parse(
+                                                val!.replaceAll(' mi', ''));
                                       }
                                       isLoading.value = true;
-                                      Future.delayed(const Duration(milliseconds: 500), () {
-                                        homeLocationCtrl.applySearchAndFilters();
+                                      Future.delayed(
+                                          const Duration(milliseconds: 500),
+                                          () {
+                                        homeLocationCtrl
+                                            .applySearchAndFilters();
                                         isLoading.value = false;
                                       });
                                     },
@@ -1288,22 +1483,25 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                 ),
                 const SizedBox(height: 8),
                 Obx(
-                      () => SizedBox(
-                    height: showFilterDropdowns.values.contains(true) ? 262 : 56,
+                  () => SizedBox(
+                    height:
+                        showFilterDropdowns.values.contains(true) ? 262 : 56,
                     child: Obx(() {
                       if (filterCtrl.filterOptions.isEmpty) {
                         return const SizedBox.shrink();
                       }
                       return ListView(
                         scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.only(left: 16, right: 8, top: 4, bottom: 8),
+                        padding: const EdgeInsets.only(
+                            left: 16, right: 8, top: 4, bottom: 8),
                         children: filterCtrl.filterOptions.keys.map((category) {
                           return Stack(
                             clipBehavior: Clip.none,
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  showFilterDropdowns[category] = !showFilterDropdowns[category]!;
+                                  showFilterDropdowns[category] =
+                                      !showFilterDropdowns[category]!;
                                   showFilterDropdowns.forEach((key, value) {
                                     if (key != category) {
                                       showFilterDropdowns[key] = false;
@@ -1312,10 +1510,11 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                                   showFilterDropdowns.refresh();
                                 },
                                 child: Obx(
-                                      () => Container(
+                                  () => Container(
                                     height: 44,
                                     margin: const EdgeInsets.only(right: 8),
-                                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16),
                                     decoration: BoxDecoration(
                                       boxShadow: [
                                         BoxShadow(
@@ -1325,8 +1524,12 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                                           offset: Offset(0, 4),
                                         ),
                                       ],
-                                      border: Border.all(color: Colors.grey.shade300),
-                                      color: filterCtrl.selectedFilters[category]?.isNotEmpty ?? false
+                                      border: Border.all(
+                                          color: Colors.grey.shade300),
+                                      color: filterCtrl
+                                                  .selectedFilters[category]
+                                                  ?.isNotEmpty ??
+                                              false
                                           ? AppColors.primaryColor
                                           : Colors.white,
                                     ),
@@ -1335,18 +1538,27 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                                       children: [
                                         Text(
                                           category +
-                                              (filterCtrl.selectedFilters[category]?.isNotEmpty ?? false
+                                              (filterCtrl
+                                                          .selectedFilters[
+                                                              category]
+                                                          ?.isNotEmpty ??
+                                                      false
                                                   ? ' (${filterCtrl.selectedFilters[category]?.length ?? 0})'
                                                   : ''),
                                           style: TextStyle(
-                                            color: filterCtrl.selectedFilters[category]?.isNotEmpty ?? false
+                                            color: filterCtrl
+                                                        .selectedFilters[
+                                                            category]
+                                                        ?.isNotEmpty ??
+                                                    false
                                                 ? Colors.white
                                                 : Colors.black,
-                                            fontSize: 18,
+                                            fontSize: 19,
                                           ),
                                         ),
                                         const SizedBox(width: 4),
-                                        const Icon(Icons.arrow_drop_down, size: 20, color: Colors.black),
+                                        const Icon(Icons.arrow_drop_down,
+                                            size: 20, color: Colors.black),
                                       ],
                                     ),
                                   ),
@@ -1354,7 +1566,9 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                               ),
                               Obx(() {
                                 if (showFilterDropdowns[category] ?? false) {
-                                  final optionCount = filterCtrl.filterOptions[category]?.length ?? 0;
+                                  final optionCount = filterCtrl
+                                          .filterOptions[category]?.length ??
+                                      0;
                                   final dropdownHeight = optionCount * 40.0;
                                   return Positioned(
                                     top: 58,
@@ -1364,57 +1578,104 @@ class _HomeScreenNewState extends State<HomeScreenNew> with WidgetsBindingObserv
                                       borderRadius: BorderRadius.circular(12),
                                       child: Container(
                                         width: 150,
-                                        height: dropdownHeight < 190 ? dropdownHeight : 190,
-                                        padding: const EdgeInsets.fromLTRB(8, 8, 8, 16),
+                                        height: dropdownHeight < 190
+                                            ? dropdownHeight
+                                            : 190,
+                                        padding: const EdgeInsets.fromLTRB(
+                                            8, 8, 8, 16),
                                         decoration: BoxDecoration(
                                           color: Colors.white,
-                                          borderRadius: BorderRadius.circular(12),
+                                          borderRadius:
+                                              BorderRadius.circular(12),
                                         ),
                                         child: SingleChildScrollView(
                                           child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: (filterCtrl.filterOptions[category] ?? []).map((option) => InkWell(
-                                              onTap: () {
-                                                final selectedList = filterCtrl.selectedFilters[category] ?? <String>[].obs;
-                                                if (selectedList.contains(option)) {
-                                                  selectedList.remove(option);
-                                                } else {
-                                                  selectedList.add(option);
-                                                }
-                                                filterCtrl.selectedFilters[category] = selectedList;
-                                                filterCtrl.selectedFilters.refresh();
-                                                showFilterDropdowns[category] = false;
-                                                showFilterDropdowns.refresh();
-                                                isLoading.value = true;
-                                                Future.delayed(const Duration(milliseconds: 500), () {
-                                                  homeLocationCtrl.applySearchAndFilters();
-                                                  isLoading.value = false;
-                                                });
-                                              },
-                                              child: Padding(
-                                                padding: const EdgeInsets.symmetric(vertical: 8),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Row(
-                                                      children: [
-                                                        Text(
-                                                          emojiMap[option] ?? '',
-                                                          style: const TextStyle(fontSize: 16),
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: (filterCtrl.filterOptions[
+                                                        category] ??
+                                                    [])
+                                                .map((option) => InkWell(
+                                                      onTap: () {
+                                                        final selectedList =
+                                                            filterCtrl.selectedFilters[
+                                                                    category] ??
+                                                                <String>[].obs;
+                                                        if (selectedList
+                                                            .contains(option)) {
+                                                          selectedList
+                                                              .remove(option);
+                                                        } else {
+                                                          selectedList
+                                                              .add(option);
+                                                        }
+                                                        filterCtrl.selectedFilters[
+                                                                category] =
+                                                            selectedList;
+                                                        filterCtrl
+                                                            .selectedFilters
+                                                            .refresh();
+                                                        showFilterDropdowns[
+                                                            category] = false;
+                                                        showFilterDropdowns
+                                                            .refresh();
+                                                        isLoading.value = true;
+                                                        Future.delayed(
+                                                            const Duration(
+                                                                milliseconds:
+                                                                    500), () {
+                                                          homeLocationCtrl
+                                                              .applySearchAndFilters();
+                                                          isLoading.value =
+                                                              false;
+                                                        });
+                                                      },
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                vertical: 8),
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Row(
+                                                              children: [
+                                                                Text(
+                                                                  emojiMap[
+                                                                          option] ??
+                                                                      '',
+                                                                  style: const TextStyle(
+                                                                      fontSize:
+                                                                          17),
+                                                                ),
+                                                                const SizedBox(
+                                                                    width: 4),
+                                                                Text(
+                                                                  option,
+                                                                  style: const TextStyle(
+                                                                      fontSize:
+                                                                          17),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            if (filterCtrl
+                                                                    .selectedFilters[
+                                                                        category]
+                                                                    ?.contains(
+                                                                        option) ??
+                                                                false)
+                                                              const Icon(
+                                                                  Icons.check,
+                                                                  color: Colors
+                                                                      .green,
+                                                                  size: 16),
+                                                          ],
                                                         ),
-                                                        const SizedBox(width: 4),
-                                                        Text(
-                                                          option,
-                                                          style: const TextStyle(fontSize: 16),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    if (filterCtrl.selectedFilters[category]?.contains(option) ?? false)
-                                                      const Icon(Icons.check, color: Colors.green, size: 16),
-                                                  ],
-                                                ),
-                                              ),
-                                            )).toList(),
+                                                      ),
+                                                    ))
+                                                .toList(),
                                           ),
                                         ),
                                       ),
@@ -1480,54 +1741,59 @@ class FilterOptionsSheet extends StatelessWidget {
           children: [
             Text(
               category,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             Obx(() => Column(
-              children: (ctrl.filterOptions[category] ?? []).map((option) {
-                final isSelected = ctrl.selectedFilters[category]?.contains(option) ?? false;
-                return InkWell(
-                  onTap: () {
-                    final selectedList = ctrl.selectedFilters[category] ?? <String>[].obs;
-                    if (isSelected) {
-                      selectedList.remove(option);
-                    } else {
-                      selectedList.add(option);
-                    }
-                    ctrl.selectedFilters[category] = selectedList;
-                    ctrl.selectedFilters.refresh();
-                    Navigator.pop(context);
-                    homeScreenState.isLoading.value = true;
-                    Future.delayed(const Duration(milliseconds: 1500), () {
-                      homeScreenState.isLoading.value = false;
-                      homeScreenState.setState(() {});
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
+                  children: (ctrl.filterOptions[category] ?? []).map((option) {
+                    final isSelected =
+                        ctrl.selectedFilters[category]?.contains(option) ??
+                            false;
+                    return InkWell(
+                      onTap: () {
+                        final selectedList =
+                            ctrl.selectedFilters[category] ?? <String>[].obs;
+                        if (isSelected) {
+                          selectedList.remove(option);
+                        } else {
+                          selectedList.add(option);
+                        }
+                        ctrl.selectedFilters[category] = selectedList;
+                        ctrl.selectedFilters.refresh();
+                        Navigator.pop(context);
+                        homeScreenState.isLoading.value = true;
+                        Future.delayed(const Duration(milliseconds: 1500), () {
+                          homeScreenState.isLoading.value = false;
+                          homeScreenState.setState(() {});
+                        });
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              emojiMap[option] ?? '',
-                              style: const TextStyle(fontSize: 16),
+                            Row(
+                              children: [
+                                Text(
+                                  emojiMap[option] ?? '',
+                                  style: const TextStyle(fontSize: 17),
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  option,
+                                  style: const TextStyle(fontSize: 17),
+                                ),
+                              ],
                             ),
-                            const SizedBox(width: 4),
-                            Text(
-                              option,
-                              style: const TextStyle(fontSize: 16),
-                            ),
+                            if (isSelected)
+                              const Icon(Icons.check,
+                                  color: Colors.green, size: 16),
                           ],
                         ),
-                        if (isSelected) const Icon(Icons.check, color: Colors.green, size: 16),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(),
-            )),
+                      ),
+                    );
+                  }).toList(),
+                )),
           ],
         ),
       ),

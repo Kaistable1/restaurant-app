@@ -332,8 +332,8 @@ class RestaurantDetailScreen extends StatelessWidget {
                                       height: 32,
                                       radius: BorderRadius.circular(15),
                                       ontapp: (){
-                                        // showCustomDialog(context,
-                                        //     resaturant_model: restaurantModel!);
+                                        showCustomDialog(context,
+                                            resaturant_model: restaurantModel!);
                                       },
                                     ),
                                     const SizedBox(height: 16),
@@ -559,7 +559,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                         ),
                                         const SizedBox(width: 8),
                                         Text(
-                                          restaurantModel == null || restaurantModel!.resEmail == '' ? 'No website' : restaurantModel!.resEmail, // 'www.website.com',
+                                          restaurantModel == null || restaurantModel!.websiteUrl == '' ? 'No website' : restaurantModel!.websiteUrl, // 'www.website.com',
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500,

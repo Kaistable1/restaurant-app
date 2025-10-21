@@ -48,7 +48,7 @@ class VideosListView extends StatelessWidget {
         title: const Text(
           'Streams',
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 24,
             fontWeight: FontWeight.bold,
           ),
         ),

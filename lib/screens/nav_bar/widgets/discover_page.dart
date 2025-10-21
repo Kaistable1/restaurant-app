@@ -67,7 +67,7 @@ class _DiscoverListsPageState extends State<DiscoverListsPage> {
         title: Text(
           "Discover What's New",
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 24,
             fontWeight: FontWeight.bold,
           ),
         ),
