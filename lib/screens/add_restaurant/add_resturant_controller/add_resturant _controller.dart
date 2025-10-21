@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -240,6 +241,88 @@ class AddRestaurantController extends GetxController {
     cityController.text = value ?? '';
     restaurantModel.city.text = value ?? '';
     update();
+  }
+
+  void showCityPicker(BuildContext context) {
+    List<String> cities = citiesByState[selectedState.value] ?? [];
+    if (cities.isEmpty) {
+      Get.snackbar('No Cities', 'Please select a state first');
+      return;
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Select a City'),
+          content: SizedBox(
+            width: 300,
+            child: DropdownSearch<String>(
+              items: cities,
+              popupProps: PopupPropsMultiSelection.menu(
+                showSearchBox: true,
+                searchDelay: const Duration(milliseconds: 300),
+                searchFieldProps: TextFieldProps(
+                  decoration: InputDecoration(
+                    hintText: 'Type to search cities...',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(color: Colors.grey),
+                    ),
+                    prefixIcon: const Icon(Icons.search),
+                  ),
+                ),
+                menuProps: MenuProps(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                itemBuilder: (context, item, isSelected) {
+                  return ListTile(
+                    title: Text(item),
+                    selected: isSelected,
+                    selectedTileColor: Colors.blue.withOpacity(0.1),
+                  );
+                },
+              ),
+              dropdownDecoratorProps: DropDownDecoratorProps(
+                dropdownSearchDecoration: InputDecoration(
+                  hintText: 'Select or search city',
+                  hintStyle: const TextStyle(color: Colors.grey),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: Colors.grey),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: Colors.blue),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: Colors.grey),
+                  ),
+                  suffixIcon:
+                      const Icon(Icons.arrow_drop_down, color: Colors.blue),
+                ),
+              ),
+              onChanged: (String? value) async {
+                if (value != null && value.isNotEmpty) {
+                  cityController.text = value;
+                  selectedCity.value = value;
+                  restaurantModel.city.text = value;
+                  await Future.delayed(const Duration(milliseconds: 300));
+                  Navigator.of(dialogContext).pop();
+                }
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   /// Perform ZIP code lookup and auto-populate state and city

@@ -24,6 +24,7 @@ class TextAndFieldsOrDropDown extends StatelessWidget {
     this.maxLines = 1,
     this.readOnly = false,
     this.ontap,
+    this.onChangedTextfield,
   });
 
   final bool isDropDown;
@@ -43,6 +44,7 @@ class TextAndFieldsOrDropDown extends StatelessWidget {
   final int maxLines;
   final bool readOnly;
   final VoidCallback? ontap;
+  final String? Function(String?)? onChangedTextfield;
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +70,7 @@ class TextAndFieldsOrDropDown extends StatelessWidget {
                 inputFormatters: inputFormatters,
                 suffixIcon: fieldSuffixIcon,
                 isObscure: isObscure,
+                onChanged: onChangedTextfield,
               )
             : CustomDropDownWidget(
                 hint: dropHintText!,

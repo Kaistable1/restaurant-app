@@ -4,9 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:restaurant_web_app/constants/globalVars.dart';
 import 'package:restaurant_web_app/constants/text_styles.dart';
-import 'package:restaurant_web_app/screens/restaurant_detail_screen/widget/map_widget.dart';
 import 'package:restaurant_web_app/screens/restaurant_management/widgets/my_map.dart';
 import 'package:restaurant_web_app/widgets/text_fields.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import '../../../../constants/app_colors.dart';
 import '../../../../controllers/add_restaurants_controller.dart';
 
@@ -202,48 +202,189 @@ class BasicInfoSubScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextAndFieldsOrDropDown(
-                      labelText: 'State',
-                      dropHintText: 'State',
-                      items: controller.stateList,
-                      currentValue: controller.selectedState.value,
-                      onChanged: (value) =>
-                          controller.selectedState.value = value!,
-                      dropDownValidator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Please select a state.';
-                        }
-                        return null;
-                      },
-                      isDropDown: true,
-                    ),
-                  ),
-                  const SizedBox(width: 24),
-                  Expanded(
-                    child: Obx(
-                      () => TextAndFieldsOrDropDown(
-                        labelText: 'City',
-                        dropHintText: 'City',
-                        currentValue: controller.selectedCity.value,
-                        items: controller.selectedState.value == 'Los Angeles'
-                            ? globalVariables.losAngelesCities
-                            : globalVariables.newYorkCitiesList,
-                        onChanged: (value) =>
-                            controller.selectedCity.value = value!,
-                        dropDownValidator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Please select a city.';
-                          }
-                          return null;
-                        },
-                        isDropDown: true,
+              Obx(
+                () => controller.isLocationDataLoading.value
+                    ? Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Text(
+                                  'State',
+                                  style: headingText.copyWith(
+                                      fontSize: mobileView ? 16 : 20),
+                                ),
+                                const SizedBox(height: 10),
+                                Container(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 12),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: Colors.grey),
+                                  ),
+                                  child: const Center(
+                                      child: CircularProgressIndicator()),
+                                ),
+                                const SizedBox(height: 16),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 24),
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Text(
+                                  'City',
+                                  style: headingText.copyWith(
+                                      fontSize: mobileView ? 16 : 20),
+                                ),
+                                const SizedBox(height: 10),
+                                Container(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 12),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: Colors.grey),
+                                  ),
+                                  child: const Center(
+                                      child: Text('Select State First')),
+                                ),
+                                const SizedBox(height: 24),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
+                    : Row(
+                        children: [
+                          // State Searchable Dropdown
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'State',
+                                  style: headingText.copyWith(
+                                      fontSize: mobileView ? 16 : 20),
+                                ),
+                                const SizedBox(height: 10),
+                                DropdownSearch<String>(
+                                  key: const Key('state_dropdown'),
+                                  selectedItem:
+                                      controller.selectedState.value.isNotEmpty
+                                          ? controller.selectedState.value
+                                          : null,
+                                  items: controller.stateList,
+                                  onChanged:
+                                      controller.isLocationDataLoading.value
+                                          ? null
+                                          : controller.onStateSelected,
+                                  popupProps: PopupPropsMultiSelection.menu(
+                                    showSearchBox: true,
+                                    searchDelay:
+                                        const Duration(milliseconds: 300),
+                                    searchFieldProps: TextFieldProps(
+                                      decoration: InputDecoration(
+                                        hintText: 'Type to search states...',
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          borderSide: const BorderSide(
+                                              color: Colors.grey),
+                                        ),
+                                        prefixIcon: const Icon(Icons.search,
+                                            color: primaryColor),
+                                      ),
+                                    ),
+                                    menuProps: MenuProps(
+                                      backgroundColor: Colors.white,
+                                      elevation: 8,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    itemBuilder: (context, item, isSelected) {
+                                      return ListTile(
+                                        title: Text(item),
+                                        selected: isSelected,
+                                        selectedTileColor:
+                                            primaryColor.withOpacity(0.1),
+                                      );
+                                    },
+                                  ),
+                                  dropdownDecoratorProps:
+                                      DropDownDecoratorProps(
+                                    dropdownSearchDecoration: InputDecoration(
+                                      hintText: 'Select or search state',
+                                      hintStyle:
+                                          const TextStyle(color: Colors.grey),
+                                      filled: true,
+                                      fillColor: Colors.white,
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: const BorderSide(
+                                            color: Colors.grey),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: const BorderSide(
+                                            color: primaryColor),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: const BorderSide(
+                                            color: Colors.grey),
+                                      ),
+                                      suffixIcon: const Icon(
+                                          Icons.arrow_drop_down,
+                                          color: primaryColor),
+                                    ),
+                                  ),
+                                  enabled:
+                                      !controller.isLocationDataLoading.value,
+                                ),
+                                const SizedBox(height: 16),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 24),
+
+                          Expanded(
+                            child: TextAndFieldsOrDropDown(
+                              labelText: 'City',
+                              fieldHintText:
+                                  controller.selectedState.value.isNotEmpty
+                                      ? 'Enter or select city'
+                                      : 'Select State First',
+                              fieldController: controller.cityController,
+                              isDropDown: false,
+                              readOnly:
+                                  !controller.selectedState.value.isNotEmpty ||
+                                      controller.isLocationDataLoading.value,
+                              fieldSuffixIcon: IconButton(
+                                icon: const Icon(Icons.arrow_drop_down,
+                                    color: primaryColor),
+                                onPressed: controller
+                                            .selectedState.value.isNotEmpty &&
+                                        !controller.isLocationDataLoading.value
+                                    ? () => controller.showCityPicker(context)
+                                    : null,
+                              ),
+                              fieldValidator: (value) {
+                                if (controller.selectedState.value.isEmpty) {
+                                  return 'Please select a state first.';
+                                }
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'Please enter a city.';
+                                }
+                                return null;
+                              },
+                              onChangedTextfield: (value) {
+                                controller.selectedCity.value = value ?? '';
+                                return null;
+                              },
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ),
-                ],
               ),
               Row(
                 children: [
