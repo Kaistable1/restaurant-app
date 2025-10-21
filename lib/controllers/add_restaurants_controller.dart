@@ -562,7 +562,8 @@ class AddRestaurantTabController extends GetxController {
         'city': selectedCity.value.trim(),
         'state': selectedState.value.trim(),
         'country': 'United States',
-        'resImages': imagesList,
+        'imagesList':
+            imagesList, // Changed from 'resImages' to 'imagesList' for consistency
         'latitude': latitude.value,
         'logoImage': imagesList.isEmpty
             ? 'https://s3-media2.fl.yelpcdn.com/bphoto/iCP4QYCjWf9i-qDIBQrsnQ/o.jpg'

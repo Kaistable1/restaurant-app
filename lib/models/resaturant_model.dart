@@ -36,39 +36,39 @@ class RestaurantModel {
   String country;
 
   // Constructor
-  RestaurantModel(
-      {required this.facilityList,
-        required this.docID,
-        required this.entertainmentScheduleList,
-        required this.menuList,
-        required this.state,
-        required this.city,
-        required this.averageRating,
-        required this.longitude,
-        required this.latitude,
-        required this.imagesList,
-        required this.resName,
-        required this.resEmail,
-        required this.dietaryList,
-        required this.specialConditions,
-        required this.socialLink,
-        required this.password,
-        required this.address,
-        required this.socialMedia,
-        required this.priceRange,
-        required this.atmosphereList,
-        required this.zipCode,
-        required this.logoImage,
-        required this.spokenLanguage,
-        required this.about,
-        required this.createdAt,
-        required this.country,
-        required this.websiteUrl,
-        required this.phoneNo,
-        required this.vibesList,
-        required this.experiencesList,
-        required this.entertainmentList,
-      });
+  RestaurantModel({
+    required this.facilityList,
+    required this.docID,
+    required this.entertainmentScheduleList,
+    required this.menuList,
+    required this.state,
+    required this.city,
+    required this.averageRating,
+    required this.longitude,
+    required this.latitude,
+    required this.imagesList,
+    required this.resName,
+    required this.resEmail,
+    required this.dietaryList,
+    required this.specialConditions,
+    required this.socialLink,
+    required this.password,
+    required this.address,
+    required this.socialMedia,
+    required this.priceRange,
+    required this.atmosphereList,
+    required this.zipCode,
+    required this.logoImage,
+    required this.spokenLanguage,
+    required this.about,
+    required this.createdAt,
+    required this.country,
+    required this.websiteUrl,
+    required this.phoneNo,
+    required this.vibesList,
+    required this.experiencesList,
+    required this.entertainmentList,
+  });
 
   // Initialize the model with defaults
   static RestaurantModel initialize() {
@@ -171,17 +171,19 @@ class RestaurantModel {
         docID: data['docID'] ?? '',
         entertainmentScheduleList: List<EntertainmentScheduleModel>.from(
           (data['entertainmentScheduleList'] as List<dynamic>? ?? []).map(
-                (e) => EntertainmentScheduleModel.fromMap(e as Map<String, dynamic>),
+            (e) =>
+                EntertainmentScheduleModel.fromMap(e as Map<String, dynamic>),
           ),
         ),
         facilityList: List<String>.from(data['facilityList'] ?? []),
-        imagesList: List<String>.from(data['imagesList'] ?? []),
+        imagesList:
+            List<String>.from(data['imagesList'] ?? data['resImages'] ?? []),
         latitude: (data['latitude'] ?? 0.0).toDouble(),
         logoImage: data['logoImage'] ?? '',
         longitude: (data['longitude'] ?? 0.0).toDouble(),
         menuList: List<MenuModel>.from(
           (data['menuList'] as List<dynamic>? ?? []).map(
-                (e) => MenuModel.fromMap(e as Map<String, dynamic>),
+            (e) => MenuModel.fromMap(e as Map<String, dynamic>),
           ),
         ),
         password: data['password'] ?? '',
@@ -192,7 +194,11 @@ class RestaurantModel {
         spokenLanguage: data['spokenLanguage'] ?? '',
         socialLink: '',
         socialMedia: '',
-        zipCode: data['zipCode'] != null ? data['zipCode'] : data['zipcode'] != null ? data['zipcode'] : '',
+        zipCode: data['zipCode'] != null
+            ? data['zipCode']
+            : data['zipcode'] != null
+                ? data['zipcode']
+                : '',
         phoneNo: data['phoneNo'] ?? "",
         websiteUrl: data['websiteUrl'] ?? " ");
   }
@@ -209,7 +215,8 @@ class RestaurantModel {
       zipCode: data['zipCode'] ?? '',
       phoneNo: data['phoneNo'] ?? '',
       websiteUrl: data['websiteUrl'] ?? '',
-      imagesList: List<String>.from(data['imagesList'] ?? []),
+      imagesList:
+          List<String>.from(data['imagesList'] ?? data['resImages'] ?? []),
       city: data['city'] ?? '',
       state: data['state'] ?? '',
       resEmail: data['resEmail'] ?? '',
@@ -235,12 +242,12 @@ class RestaurantModel {
           : DateTime.now(),
       entertainmentScheduleList: List<EntertainmentScheduleModel>.from(
         (data['entertainmentScheduleList'] as List<dynamic>? ?? []).map(
-              (e) => EntertainmentScheduleModel.fromMap(e as Map<String, dynamic>),
+          (e) => EntertainmentScheduleModel.fromMap(e as Map<String, dynamic>),
         ),
       ),
       menuList: List<MenuModel>.from(
         (data['menuList'] as List<dynamic>? ?? []).map(
-              (e) => MenuModel.fromMap(e as Map<String, dynamic>),
+          (e) => MenuModel.fromMap(e as Map<String, dynamic>),
         ),
       ),
       country: data['country'] ?? '',

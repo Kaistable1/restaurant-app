@@ -192,59 +192,138 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
                             Obx(
                               () => Wrap(
                                 spacing: 8,
-                                children: restaurantController
-                                    .restaurantModel.resImageMemory
-                                    .map((image) {
-                                  return Stack(
-                                    clipBehavior: Clip
-                                        .none, // Allows the cross icon to overflow if needed
-                                    children: [
-                                      // Circular Image with Border
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: Container(
-                                          width: Responsive.isDesktop(context)
-                                              ? 160
-                                              : 150, // Adjust the size as needed
-                                          height: Responsive.isDesktop(context)
-                                              ? 160
-                                              : 110,
-
-                                          child: Image.memory(
-                                            image,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      ),
-
-                                      // Close Icon in Top Right
-                                      Positioned(
-                                        top: 8, // Adjust position as needed
-                                        right: 10,
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            restaurantController
-                                                .restaurantModel.resImageMemory
-                                                .remove(image);
-                                          },
+                                children: [
+                                  // Display existing images from URLs (resImages)
+                                  ...restaurantController
+                                      .restaurantModel.resImages
+                                      .map((imageUrl) {
+                                    return Stack(
+                                      clipBehavior: Clip.none,
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
                                           child: Container(
-                                            width: 19,
-                                            height: 19,
-                                            decoration: const BoxDecoration(
-                                              color: AppColors.darkGrey,
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: const Icon(
-                                              Icons.close,
-                                              size: 10,
-                                              color: Colors.white,
+                                            width: Responsive.isDesktop(context)
+                                                ? 160
+                                                : 150,
+                                            height:
+                                                Responsive.isDesktop(context)
+                                                    ? 160
+                                                    : 110,
+                                            child: Image.network(
+                                              imageUrl.value,
+                                              fit: BoxFit.cover,
+                                              errorBuilder:
+                                                  (context, error, stackTrace) {
+                                                return Container(
+                                                  color: Colors.grey[300],
+                                                  child:
+                                                      const Icon(Icons.error),
+                                                );
+                                              },
+                                              loadingBuilder: (context, child,
+                                                  loadingProgress) {
+                                                if (loadingProgress == null)
+                                                  return child;
+                                                return Center(
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    value: loadingProgress
+                                                                .expectedTotalBytes !=
+                                                            null
+                                                        ? loadingProgress
+                                                                .cumulativeBytesLoaded /
+                                                            loadingProgress
+                                                                .expectedTotalBytes!
+                                                        : null,
+                                                  ),
+                                                );
+                                              },
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  );
-                                }).toList(),
+                                        Positioned(
+                                          top: 8,
+                                          right: 10,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              restaurantController
+                                                  .restaurantModel.resImages
+                                                  .remove(imageUrl);
+                                            },
+                                            child: Container(
+                                              width: 19,
+                                              height: 19,
+                                              decoration: const BoxDecoration(
+                                                color: AppColors.darkGrey,
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: const Icon(
+                                                Icons.close,
+                                                size: 10,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  }).toList(),
+
+                                  // Display newly uploaded images from memory (resImageMemory)
+                                  ...restaurantController
+                                      .restaurantModel.resImageMemory
+                                      .map((image) {
+                                    return Stack(
+                                      clipBehavior: Clip.none,
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          child: Container(
+                                            width: Responsive.isDesktop(context)
+                                                ? 160
+                                                : 150,
+                                            height:
+                                                Responsive.isDesktop(context)
+                                                    ? 160
+                                                    : 110,
+                                            child: Image.memory(
+                                              image,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          top: 8,
+                                          right: 10,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              restaurantController
+                                                  .restaurantModel
+                                                  .resImageMemory
+                                                  .remove(image);
+                                            },
+                                            child: Container(
+                                              width: 19,
+                                              height: 19,
+                                              decoration: const BoxDecoration(
+                                                color: AppColors.darkGrey,
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: const Icon(
+                                                Icons.close,
+                                                size: 10,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  }).toList(),
+                                ],
                               ),
                             ),
                             Row(

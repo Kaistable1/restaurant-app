@@ -84,7 +84,14 @@ class FillDataRestaurantController extends GetxController {
   Future<void> fillAllVarsInRestManagmentController() async {
     final addRestaurantController = Get.put(AddRestaurantTabController());
 
+    print('🔍 Starting fillAllVarsInRestManagmentController');
+    print(
+        '🔍 restaurantDetailsModel is null: ${restaurantDetailsModel == null}');
     if (restaurantDetailsModel != null) {
+      print(
+          '🔍 restaurantDetailsModel.imagesList length: ${restaurantDetailsModel!.imagesList.length}');
+      print(
+          '🔍 restaurantDetailsModel.imagesList: ${restaurantDetailsModel!.imagesList}');
       addRestaurantController.restaurantNameController.text =
           restaurantDetailsModel!.resName;
       addRestaurantController.emailController.text =
@@ -118,18 +125,45 @@ class FillDataRestaurantController extends GetxController {
           restaurantDetailsModel!.spokenLanguage;
       addRestaurantController.currentRestaurantID =
           restaurantDetailsModel!.docID;
+
+      print(
+          '🧹 Clearing existing uploadedImage list (current size: ${addRestaurantController.uploadedImage.length})');
       addRestaurantController.uploadedImage.clear();
-      for (var url in restaurantDetailsModel!.imagesList) {
+      print(
+          '🧹 After clear, uploadedImage length: ${addRestaurantController.uploadedImage.length}');
+
+      print(
+          '📸 Loading ${restaurantDetailsModel!.imagesList.length} images from restaurant data');
+      print('📸 Image URLs from restaurantDetailsModel:');
+      for (int i = 0; i < restaurantDetailsModel!.imagesList.length; i++) {
+        String url = restaurantDetailsModel!.imagesList[i];
+        print('  [$i] Adding image URL: $url');
         addRestaurantController.uploadedImage.add(
           UploadedImageModel(url: url),
         );
+        print(
+            '  [$i] uploadedImage length after add: ${addRestaurantController.uploadedImage.length}');
+      }
+      print(
+          '✅ Total images in uploadedImage list: ${addRestaurantController.uploadedImage.length}');
+      print('✅ uploadedImage contents:');
+      for (int i = 0; i < addRestaurantController.uploadedImage.length; i++) {
+        final img = addRestaurantController.uploadedImage[i];
+        print(
+            '  [$i] url: ${img.url}, bytes: ${img.bytes != null ? "has bytes" : "null"}');
       }
 
       addRestaurantController.latitude.value =
           restaurantController.latitude.value;
       addRestaurantController.longitude.value =
           restaurantController.longitude.value;
+
+      // Force update to ensure UI rebuilds
+      addRestaurantController.uploadedImage.refresh();
       addRestaurantController.update();
+
+      print(
+          '🔄 Controller updated. Final image count: ${addRestaurantController.uploadedImage.length}');
     }
   }
 

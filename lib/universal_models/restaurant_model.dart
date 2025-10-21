@@ -131,7 +131,8 @@ class RestaurantModel {
       dataHours.add(d);
     }
     return {
-      'resImages': imageUrls,
+      'imagesList':
+          imageUrls, // Changed from 'resImages' to 'imagesList' for consistency
       'createdAt': createdAt,
       'resName': resName.text,
       'phoneNumber': phoneNumber.text,
@@ -165,7 +166,8 @@ class RestaurantModel {
     ///images
 //     List<String> images = List<String>.from(snapshot.data()!['resImages']);
 
-    List<String> images = List<String>.from(data['resImages'] ?? []);
+    List<String> images =
+        List<String>.from(data['imagesList'] ?? data['resImages'] ?? []);
     List<RxString> resImages = [];
 
     for (String image in images) {
@@ -231,7 +233,8 @@ class RestaurantModel {
 
   // Create a model instance from a Map
   static RestaurantModel fromMap(Map<String, dynamic> data) {
-    List<String> images = List<String>.from(data['resImages'] ?? []);
+    List<String> images =
+        List<String>.from(data['imagesList'] ?? data['resImages'] ?? []);
     List<RxString> resImages = [];
 
     for (String image in images) {
