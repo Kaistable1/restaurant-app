@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:restaurant_web_app/constants/app_colors.dart';
 import 'package:restaurant_web_app/constants/text_styles.dart';
 import 'package:restaurant_web_app/controllers/amenities_sub_screen_controller.dart';
-import 'package:restaurant_web_app/widgets/round_button.dart';
+import 'package:restaurant_web_app/widgets/button1.dart';
 
 class AmenitiesSubScreen extends StatelessWidget {
   AmenitiesSubScreen({super.key});
@@ -15,6 +15,17 @@ class AmenitiesSubScreen extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     bool mobileView = screenWidth < 1000;
     double buttonTextSize = mobileView ? 11 : 16;
+
+    // Debug: Log when UI builds with data
+    print('🎨 Amenities UI building with:');
+    print(
+        '  - Facilities: ${controller.facilities.where((f) => f['isChecked']).length} checked');
+    print(
+        '  - Vibes: ${controller.vibes.where((v) => v['isChecked']).length} checked');
+    print(
+        '  - Experiences: ${controller.experiences.where((e) => e['isChecked']).length} checked');
+    print(
+        '  - Entertainment: ${controller.entertainment.where((e) => e['isChecked']).length} checked');
 
     return Expanded(
       child: SingleChildScrollView(
@@ -33,6 +44,7 @@ class AmenitiesSubScreen extends StatelessWidget {
               mobileView: mobileView,
               buttonTextSize: buttonTextSize,
             ),
+
             const SizedBox(height: 24),
 
             // 2. Dietary Preferences
@@ -61,9 +73,55 @@ class AmenitiesSubScreen extends StatelessWidget {
               mobileView: mobileView,
               buttonTextSize: buttonTextSize,
             ),
+
             const SizedBox(height: 24),
 
-            // 4. Price Range
+            // 4. Vibes
+            _buildSection(
+              context: context,
+              title: 'Vibes',
+              isExpanded: controller.isVibesExpanded,
+              toggleExpanded: controller.toggleVibesExpanded,
+              items: controller.vibes,
+              toggleCheckbox: controller.toggleVibesCheckbox,
+              addItem: controller.addVibes,
+              mobileView: mobileView,
+              buttonTextSize: buttonTextSize,
+            ),
+
+            const SizedBox(height: 24),
+
+            // 5. Experiences
+            _buildSection(
+              context: context,
+              title: 'Experiences',
+              isExpanded: controller.isExperiencesExpanded,
+              toggleExpanded: controller.toggleExperiencesExpanded,
+              items: controller.experiences,
+              toggleCheckbox: controller.toggleExperiencesCheckbox,
+              addItem: controller.addExperiences,
+              mobileView: mobileView,
+              buttonTextSize: buttonTextSize,
+            ),
+
+            const SizedBox(height: 24),
+
+            // 6. Entertainment
+            _buildSection(
+              context: context,
+              title: 'Entertainment',
+              isExpanded: controller.isEntertainmentExpanded,
+              toggleExpanded: controller.toggleEntertainmentExpanded,
+              items: controller.entertainment,
+              toggleCheckbox: controller.toggleEntertainmentCheckbox,
+              addItem: controller.addEntertainment,
+              mobileView: mobileView,
+              buttonTextSize: buttonTextSize,
+            ),
+
+            const SizedBox(height: 24),
+
+            // 7. Price Range
             _buildSection(
               context: context,
               title: 'Price Range',
@@ -174,12 +232,16 @@ class AmenitiesSubScreen extends StatelessWidget {
                   ),
                   const SizedBox(width: 16),
                   CustomButton(
-                    title: 'Add More',
+                    laBelText: 'Add More',
                     fontSize: buttonTextSize,
+                    isBorder: true,
                     height: mobileView ? 40 : 45,
                     width: mobileView ? Get.width * 0.65 : Get.width * 0.24,
+                    shadow: [],
+                    containerColor: white,
+                    borderColor: primaryColor.withOpacity(0.3),
                     textColor: secondaryColor,
-                    onPressed: addItem,
+                    ontapp: addItem,
                   ),
                 ],
               ),

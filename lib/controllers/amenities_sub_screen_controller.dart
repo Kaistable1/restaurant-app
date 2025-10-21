@@ -12,6 +12,9 @@ class AmenitiesSubScreenController extends GetxController {
   var isDietaryExpanded = false.obs;
   var isAtmosphereExpanded = false.obs;
   var isPriceRangeExpanded = false.obs;
+  var isVibesExpanded = false.obs;
+  var isExperiencesExpanded = false.obs;
+  var isEntertainmentExpanded = false.obs;
 
   // Lists for each section
   var facilities = <Map<String, dynamic>>[
@@ -47,6 +50,33 @@ class AmenitiesSubScreenController extends GetxController {
     {'name': 'Date Night', 'isChecked': false},
     {'name': 'Candlelit', 'isChecked': false},
     {'name': 'Outdoor', 'isChecked': false},
+    {'name': 'Rooftop', 'isChecked': false},
+    {'name': 'Ocean View', 'isChecked': false},
+  ].obs;
+
+  var vibes = <Map<String, dynamic>>[
+    {'name': 'Date Night', 'isChecked': false},
+    {'name': 'Hidden Gems', 'isChecked': false},
+    {'name': 'Trendy & Social', 'isChecked': false},
+    {'name': 'High Vibe', 'isChecked': false},
+    {'name': 'Chill & Cozy', 'isChecked': false},
+  ].obs;
+
+  var experiences = <Map<String, dynamic>>[
+    {'name': 'Brunch', 'isChecked': false},
+    {'name': 'Outdoor', 'isChecked': false},
+    {'name': 'Happy Hour', 'isChecked': false},
+    {'name': 'Rooftop', 'isChecked': false},
+    {'name': 'Water/Beachside', 'isChecked': false},
+    {'name': 'Late Night', 'isChecked': false},
+    {'name': 'Show', 'isChecked': false},
+  ].obs;
+
+  var entertainment = <Map<String, dynamic>>[
+    {'name': 'Live Music', 'isChecked': false},
+    {'name': 'DJ Nights', 'isChecked': false},
+    {'name': 'Comedy', 'isChecked': false},
+    {'name': 'Karaoke', 'isChecked': false},
   ].obs;
 
   var priceRange = <Map<String, dynamic>>[
@@ -63,6 +93,15 @@ class AmenitiesSubScreenController extends GetxController {
       isDietaryExpanded.value = !isDietaryExpanded.value;
   void toggleAtmosphereExpanded() =>
       isAtmosphereExpanded.value = !isAtmosphereExpanded.value;
+
+  void toggleVibesExpanded() => isVibesExpanded.value = !isVibesExpanded.value;
+
+  void toggleExperiencesExpanded() =>
+      isExperiencesExpanded.value = !isExperiencesExpanded.value;
+
+  void toggleEntertainmentExpanded() =>
+      isEntertainmentExpanded.value = !isEntertainmentExpanded.value;
+
   void togglePriceRangeExpanded() =>
       isPriceRangeExpanded.value = !isPriceRangeExpanded.value;
 
@@ -83,6 +122,21 @@ class AmenitiesSubScreenController extends GetxController {
     atmosphere.refresh();
   }
 
+  void toggleVibesCheckbox(int index) {
+    vibes[index]['isChecked'] = !vibes[index]['isChecked'];
+    vibes.refresh();
+  }
+
+  void toggleExperiencesCheckbox(int index) {
+    experiences[index]['isChecked'] = !experiences[index]['isChecked'];
+    experiences.refresh();
+  }
+
+  void toggleEntertainmentCheckbox(int index) {
+    entertainment[index]['isChecked'] = !entertainment[index]['isChecked'];
+    entertainment.refresh();
+  }
+
   void togglePriceRangeCheckbox(int index) {
     for (int i = 0; i < priceRange.length; i++) {
       priceRange[i]['isChecked'] = i == index;
@@ -91,10 +145,10 @@ class AmenitiesSubScreenController extends GetxController {
   }
 
   Future<void> addFacilities() async {
-    // Example: Add a new facility (could be from user input via dialog)
-    String newFacility = await _showAddFacilityDialog(); // Hypothetical method
-    if (newFacility.isNotEmpty) {
-      facilities.add({'name': newFacility, 'isChecked': false});
+    final result = await _showAddDialog('Add Facility');
+    if (result != null) {
+      facilities.add({'name': result, 'isChecked': false});
+      facilities.refresh();
     }
   }
 
@@ -111,6 +165,30 @@ class AmenitiesSubScreenController extends GetxController {
     if (result != null) {
       atmosphere.add({'name': result, 'isChecked': false});
       atmosphere.refresh();
+    }
+  }
+
+  Future<void> addVibes() async {
+    final result = await _showAddDialog('Add Vibes');
+    if (result != null) {
+      vibes.add({'name': result, 'isChecked': false});
+      vibes.refresh();
+    }
+  }
+
+  Future<void> addExperiences() async {
+    final result = await _showAddDialog('Add Experiences');
+    if (result != null) {
+      experiences.add({'name': result, 'isChecked': false});
+      experiences.refresh();
+    }
+  }
+
+  Future<void> addEntertainment() async {
+    final result = await _showAddDialog('Add Entertainment');
+    if (result != null) {
+      entertainment.add({'name': result, 'isChecked': false});
+      entertainment.refresh();
     }
   }
 
@@ -163,12 +241,20 @@ class AmenitiesSubScreenController extends GetxController {
         dietaryPreferences.any((item) => item['isChecked'] == true);
     bool atmosphereValid = atmosphere.any((item) => item['isChecked'] == true);
     bool priceRangeValid = priceRange.any((item) => item['isChecked'] == true);
+    bool vibesValid = vibes.any((item) => item['isChecked'] == true);
+    bool experiencesValid =
+        experiences.any((item) => item['isChecked'] == true);
+    bool entertainmentValid =
+        entertainment.any((item) => item['isChecked'] == true);
 
     return {
       'facilities': facilitiesValid,
       'dietary': dietaryValid,
       'atmosphere': atmosphereValid,
       'priceRange': priceRangeValid,
+      'vibes': vibesValid,
+      'experiences': experiencesValid,
+      'entertainment': entertainmentValid,
     };
   }
 
@@ -186,10 +272,23 @@ class AmenitiesSubScreenController extends GetxController {
     for (var item in priceRange) {
       item['isChecked'] = false;
     }
+    for (var item in vibes) {
+      item['isChecked'] = false;
+    }
+    for (var item in experiences) {
+      item['isChecked'] = false;
+    }
+    for (var item in entertainment) {
+      item['isChecked'] = false;
+    }
+
     facilities.refresh();
     dietaryPreferences.refresh();
     atmosphere.refresh();
     priceRange.refresh();
+    vibes.refresh();
+    experiences.refresh();
+    entertainment.refresh();
   }
 
   List<String> getSelectedDietaryPreferences() {
@@ -214,17 +313,32 @@ class AmenitiesSubScreenController extends GetxController {
         .toList();
   }
 
-  List<String> getSelectedPriceRange() {
-    return priceRange
+  List<String> getSelectedVibes() {
+    return vibes
         .where((item) => item['isChecked'] == true)
         .map((item) => item['name'] as String)
         .toList();
   }
 
-  // Placeholder for adding a new facility (implement as needed)
-  Future<String> _showAddFacilityDialog() async {
-    // Add your dialog logic here to get user input
-    return 'New Facility'; // Example return
+  List<String> getSelectedExperiences() {
+    return experiences
+        .where((item) => item['isChecked'] == true)
+        .map((item) => item['name'] as String)
+        .toList();
+  }
+
+  List<String> getSelectedEntertainment() {
+    return entertainment
+        .where((item) => item['isChecked'] == true)
+        .map((item) => item['name'] as String)
+        .toList();
+  }
+
+  List<String> getSelectedPriceRange() {
+    return priceRange
+        .where((item) => item['isChecked'] == true)
+        .map((item) => item['name'] as String)
+        .toList();
   }
 
   //backend
@@ -235,24 +349,31 @@ class AmenitiesSubScreenController extends GetxController {
 
       final addRestaurantTabController = Get.find<AddRestaurantTabController>();
       final restaurantID = addRestaurantTabController.currentRestaurantID;
-      print('restaurantID ${restaurantID}');
-      if (restaurantID == null || restaurantID.isEmpty) {
+
+      print('restaurantID $restaurantID');
+      if (restaurantID.isEmpty) {
         throw Exception("Restaurant ID is missing");
       }
       print(' setp 1');
       // 👇 Step 1: Get selected lists separately
       final atmosphereList = getSelectedAtmosphere();
+      final vibesList = getSelectedVibes();
+      final experiencesList = getSelectedExperiences();
+      final entertainmentList = getSelectedEntertainment();
       final dietaryList = getSelectedDietaryPreferences();
       final facilityList = getSelectedFacilities();
-      final priceRange = getSelectedPriceRange();
+      final priceRangeList = getSelectedPriceRange();
       print(' setp 2');
 
       // 👇 Step 2: Prepare the data map
       final restaurantData = {
+        'vibesList': vibesList,
+        'experiencesList': experiencesList,
+        'entertainmentList': entertainmentList,
         'atmopshereList': atmosphereList,
         'dietaryList': dietaryList,
         'facilityList': facilityList,
-        'priceRange': priceRange.isEmpty ? '' : priceRange.first,
+        'priceRange': priceRangeList.isEmpty ? '' : priceRangeList.first,
       };
       print(' setp 3');
 
@@ -263,10 +384,32 @@ class AmenitiesSubScreenController extends GetxController {
           .update(restaurantData);
       print(' setp 4');
 
-      // 👇 Step 4: UI updates
+      // 👇 Step 4: Update local restaurant model with new data
+      if (addRestaurantTabController.restaurantModel != null) {
+        addRestaurantTabController.restaurantModel!.facilityList = facilityList;
+        addRestaurantTabController.restaurantModel!.dietaryList = dietaryList;
+        addRestaurantTabController.restaurantModel!.atmosphereList =
+            atmosphereList;
+        addRestaurantTabController.restaurantModel!.vibesList = vibesList;
+        addRestaurantTabController.restaurantModel!.experiencesList =
+            experiencesList;
+        addRestaurantTabController.restaurantModel!.entertainmentList =
+            entertainmentList;
+        addRestaurantTabController.restaurantModel!.priceRange =
+            priceRangeList.isEmpty ? '' : priceRangeList.first;
+      }
+
+      // 👇 Step 5: UI updates
       Get.back();
       clearFields();
       addRestaurantTabController.selectedIndex.value++;
+
+      Get.snackbar(
+        'Success',
+        'Amenities added successfully',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
     } catch (e) {
       Get.back();
       print('error $e');

@@ -172,10 +172,27 @@ class FillDataRestaurantController extends GetxController {
     final amenitiesController = Get.put(AmenitiesSubScreenController());
 
     if (restaurantDetailsModel != null) {
+      print('🎯 Populating amenities data from restaurant model:');
+      print('  - Facilities: ${restaurantDetailsModel!.facilityList}');
+      print('  - Dietary: ${restaurantDetailsModel!.dietaryList}');
+      print('  - Atmosphere: ${restaurantDetailsModel!.atmosphereList}');
+      print('  - Vibes: ${restaurantDetailsModel!.vibesList}');
+      print('  - Experiences: ${restaurantDetailsModel!.experiencesList}');
+      print('  - Entertainment: ${restaurantDetailsModel!.entertainmentList}');
+      print('  - Price Range: ${restaurantDetailsModel!.priceRange}');
+
       // Update facilities
       for (var facility in amenitiesController.facilities) {
         facility['isChecked'] =
             restaurantDetailsModel!.facilityList.contains(facility['name']);
+      }
+      // Add custom facilities not in default list
+      for (var facilityName in restaurantDetailsModel!.facilityList) {
+        if (!amenitiesController.facilities
+            .any((f) => f['name'] == facilityName)) {
+          amenitiesController.facilities
+              .add({'name': facilityName, 'isChecked': true});
+        }
       }
 
       // Update dietary preferences
@@ -183,11 +200,65 @@ class FillDataRestaurantController extends GetxController {
         dietary['isChecked'] =
             restaurantDetailsModel!.dietaryList.contains(dietary['name']);
       }
+      // Add custom dietary preferences not in default list
+      for (var dietaryName in restaurantDetailsModel!.dietaryList) {
+        if (!amenitiesController.dietaryPreferences
+            .any((d) => d['name'] == dietaryName)) {
+          amenitiesController.dietaryPreferences
+              .add({'name': dietaryName, 'isChecked': true});
+        }
+      }
 
       // Update atmosphere
       for (var atm in amenitiesController.atmosphere) {
         atm['isChecked'] =
             restaurantDetailsModel!.atmosphereList.contains(atm['name']);
+      }
+      // Add custom atmosphere not in default list
+      for (var atmName in restaurantDetailsModel!.atmosphereList) {
+        if (!amenitiesController.atmosphere.any((a) => a['name'] == atmName)) {
+          amenitiesController.atmosphere
+              .add({'name': atmName, 'isChecked': true});
+        }
+      }
+
+      // Update vibes
+      for (var vibe in amenitiesController.vibes) {
+        vibe['isChecked'] =
+            restaurantDetailsModel!.vibesList.contains(vibe['name']);
+      }
+      // Add custom vibes not in default list
+      for (var vibeName in restaurantDetailsModel!.vibesList) {
+        if (!amenitiesController.vibes.any((v) => v['name'] == vibeName)) {
+          amenitiesController.vibes.add({'name': vibeName, 'isChecked': true});
+        }
+      }
+
+      // Update experiences
+      for (var exp in amenitiesController.experiences) {
+        exp['isChecked'] =
+            restaurantDetailsModel!.experiencesList.contains(exp['name']);
+      }
+      // Add custom experiences not in default list
+      for (var expName in restaurantDetailsModel!.experiencesList) {
+        if (!amenitiesController.experiences.any((e) => e['name'] == expName)) {
+          amenitiesController.experiences
+              .add({'name': expName, 'isChecked': true});
+        }
+      }
+
+      // Update entertainment
+      for (var ent in amenitiesController.entertainment) {
+        ent['isChecked'] =
+            restaurantDetailsModel!.entertainmentList.contains(ent['name']);
+      }
+      // Add custom entertainment not in default list
+      for (var entName in restaurantDetailsModel!.entertainmentList) {
+        if (!amenitiesController.entertainment
+            .any((e) => e['name'] == entName)) {
+          amenitiesController.entertainment
+              .add({'name': entName, 'isChecked': true});
+        }
       }
 
       // Update price range
@@ -195,12 +266,32 @@ class FillDataRestaurantController extends GetxController {
         price['isChecked'] =
             restaurantDetailsModel!.priceRange == price['name'];
       }
+      // Add custom price range not in default list (if any)
+      if (restaurantDetailsModel!.priceRange.isNotEmpty &&
+          !amenitiesController.priceRange
+              .any((p) => p['name'] == restaurantDetailsModel!.priceRange)) {
+        amenitiesController.priceRange.add(
+            {'name': restaurantDetailsModel!.priceRange, 'isChecked': true});
+      }
 
       amenitiesController.facilities.refresh();
       amenitiesController.dietaryPreferences.refresh();
       amenitiesController.atmosphere.refresh();
+      amenitiesController.vibes.refresh();
+      amenitiesController.experiences.refresh();
+      amenitiesController.entertainment.refresh();
       amenitiesController.priceRange.refresh();
       amenitiesController.update();
+
+      print('✅ Amenities populated successfully!');
+      print(
+          '  - Facilities checked: ${amenitiesController.facilities.where((f) => f['isChecked']).map((f) => f['name']).toList()}');
+      print(
+          '  - Vibes checked: ${amenitiesController.vibes.where((v) => v['isChecked']).map((v) => v['name']).toList()}');
+      print(
+          '  - Experiences checked: ${amenitiesController.experiences.where((e) => e['isChecked']).map((e) => e['name']).toList()}');
+      print(
+          '  - Entertainment checked: ${amenitiesController.entertainment.where((e) => e['isChecked']).map((e) => e['name']).toList()}');
     }
   }
 
