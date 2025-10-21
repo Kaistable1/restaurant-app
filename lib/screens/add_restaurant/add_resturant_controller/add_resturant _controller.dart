@@ -41,6 +41,7 @@ class AddRestaurantController extends GetxController {
   void onInit() {
     super.onInit();
     _loadLocationData();
+    _fetchAndPopulateRestaurantData();
 
     // Initialize dropdowns with existing restaurant data
     _initializeLocationFromModel();
@@ -49,6 +50,40 @@ class AddRestaurantController extends GetxController {
     cityController.addListener(() {
       selectedCity.value = cityController.text.trim();
     });
+  }
+
+  /// Fetch restaurant data from Firestore and populate the form
+  Future<void> _fetchAndPopulateRestaurantData() async {
+    try {
+      if (auth.currentUser == null) {
+        print('No user logged in');
+        return;
+      }
+
+      print('📍 Fetching restaurant data for user: ${auth.currentUser!.uid}');
+
+      DocumentSnapshot<Map<String, dynamic>> doc = await FirebaseFirestore
+          .instance
+          .collection('restaurants')
+          .doc(auth.currentUser!.uid)
+          .get();
+
+      if (doc.exists) {
+        // Populate restaurantModel from Firestore data
+        restaurantModel = RestaurantModel.fromDocumentSnapshot(doc);
+
+        print('✅ Restaurant data loaded: ${restaurantModel.resName.text}');
+
+        // Wait for location data to finish loading before populating form
+        await Future.delayed(const Duration(milliseconds: 500));
+
+        update();
+      } else {
+        print('❌ No restaurant data found for user');
+      }
+    } catch (e) {
+      print('❌ Error fetching restaurant data: $e');
+    }
   }
 
   /// Initialize state and city dropdowns from existing restaurant model data

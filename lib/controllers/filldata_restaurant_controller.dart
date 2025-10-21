@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:restaurant_web_app/controllers/add_restaurants_controller.dart';
@@ -98,9 +97,23 @@ class FillDataRestaurantController extends GetxController {
           restaurantDetailsModel!.socialLink;
       addRestaurantController.tiktokLinkController.text =
           restaurantDetailsModel!.socialMedia;
+
+      // Set state and city
       addRestaurantController.selectedState.value =
           restaurantDetailsModel!.country;
       addRestaurantController.selectedCity.value = restaurantDetailsModel!.city;
+      // IMPORTANT: Also set the cityController text for the new TextField implementation
+      addRestaurantController.cityController.text =
+          restaurantDetailsModel!.city;
+
+      // Set phone, website, and zip code
+      addRestaurantController.phoneNoController.text =
+          restaurantDetailsModel!.phoneNo;
+      addRestaurantController.websiteUrlController.text =
+          restaurantDetailsModel!.websiteUrl;
+      addRestaurantController.zipCodeController.text =
+          restaurantDetailsModel!.zipCode;
+
       addRestaurantController.selectedSpokenLanguage.value =
           restaurantDetailsModel!.spokenLanguage;
       addRestaurantController.currentRestaurantID =
