@@ -723,7 +723,7 @@ class AddRestaurantTabController extends GetxController {
         'docID': docID, // Will be set after adding the document
         'entertainmentScheduleList': [], // Empty array as per your data
         'facilityList': [], // Empty array as per your data
-        'resImages': imagesList,
+        'imagesList': imagesList,
         'latitude':
             latitude.value, // Hardcoded for now; you can add a map picker later
         'logoImage': imagesList.isEmpty
@@ -905,7 +905,7 @@ class AddRestaurantTabController extends GetxController {
         'city': selectedCity.value.trim(),
         'state': selectedState.value.trim(),
         'country': 'United States',
-        'resImages': imagesList,
+        'imagesList': imagesList,
         'latitude': latitude.value,
         'logoImage': imagesList.isEmpty
             ? 'https://s3-media2.fl.yelpcdn.com/bphoto/iCP4QYCjWf9i-qDIBQrsnQ/o.jpg'
