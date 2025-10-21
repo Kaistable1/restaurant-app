@@ -9,7 +9,7 @@ import 'package:restaurant_web_app/models/claim_model.dart';
 import 'package:restaurant_web_app/screens/auth_screens/login_screen/login_screen.dart';
 import 'package:restaurant_web_app/screens/edit_restaurant_forms.dart';
 import 'package:restaurant_web_app/screens/main_screen/main_screen.dart';
-import 'package:restaurant_web_app/universal_models/restaurant_model.dart';
+import 'package:restaurant_web_app/models/resaturant_model.dart';
 import 'package:restaurant_web_app/widgets/global_functions.dart';
 
 void main() async {

@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../universal_models/restaurant_model.dart';
+import './resaturant_model.dart';
 
 class RestaurantClaimsModel {
   final String id;

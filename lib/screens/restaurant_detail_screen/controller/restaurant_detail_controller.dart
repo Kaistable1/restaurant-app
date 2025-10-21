@@ -9,10 +9,11 @@ import 'package:mime_type/mime_type.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:path/path.dart' as Path;
-import 'package:restaurant_web_app/universal_models/restaurant_model.dart';
+import 'package:restaurant_web_app/models/resaturant_model.dart';
 import 'package:restaurant_web_app/widgets/loading_dialog.dart';
 import '../../../main.dart';
 import '../../../universal_models/discount_model.dart';
+import '../../../universal_models/operating_hours.dart';
 
 class RestaurantDetailController extends GetxController {
   ///backend
@@ -40,13 +41,11 @@ class RestaurantDetailController extends GetxController {
     fetchOperatingHours();
     await fetchMenuData();
     await fetchMenuDataSpecial();
-    if(menuItems.isNotEmpty){
+    if (menuItems.isNotEmpty) {
       selectCategory(0, menuItems[0]);
-
     }
-    if(menuItemsSpecial.isNotEmpty){
+    if (menuItemsSpecial.isNotEmpty) {
       selectCategory2(0, menuItemsSpecial[0]);
-
     }
   }
 
@@ -77,8 +76,7 @@ class RestaurantDetailController extends GetxController {
       }
     } catch (e) {
       print("Error fetching menu data: $e");
-    }
-    finally{
+    } finally {
       isLoading.value = false;
     }
   }

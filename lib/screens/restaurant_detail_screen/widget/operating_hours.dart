@@ -3,7 +3,8 @@ import 'package:get/get.dart';
 
 import '../../../../constants/colors.dart';
 import '../../../../utils/responsive.dart';
-import '../../../universal_models/restaurant_model.dart';
+import '../../../models/resaturant_model.dart';
+import '../../../universal_models/operating_hours.dart';
 import '../controller/restaurant_detail_controller.dart';
 
 class OperatingHoursClass extends StatelessWidget {
@@ -51,14 +52,17 @@ class OperatingHoursClass extends StatelessWidget {
                     children: _buildHeadingRow(baseFontSize),
                   ),
                   const Divider(thickness: 1),
-                Obx((){
-                  controller.fetchOperatingHours();
-                  controller.isLoading.value = false;
-                  return controller.isLoading.value ==false?Column(
-                  children: _buildDataRows(baseFontSize),
-                ):Column(
-                    children: _buildDataRows(baseFontSize),
-                  );})
+                  Obx(() {
+                    controller.fetchOperatingHours();
+                    controller.isLoading.value = false;
+                    return controller.isLoading.value == false
+                        ? Column(
+                            children: _buildDataRows(baseFontSize),
+                          )
+                        : Column(
+                            children: _buildDataRows(baseFontSize),
+                          );
+                  })
                 ],
               ),
             ),
@@ -79,7 +83,8 @@ class OperatingHoursClass extends StatelessWidget {
       SizedBox(width: 8), // Space between columns
       _buildHeaderCell('Lunch', fontSize),
       SizedBox(width: 8), // Space between columns
-      _buildHeaderCell('Dinner', fontSize),      SizedBox(width: 8), // Space between columns
+      _buildHeaderCell('Dinner', fontSize),
+      SizedBox(width: 8), // Space between columns
       _buildHeaderCell('Late Night', fontSize),
     ];
   }

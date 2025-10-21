@@ -103,7 +103,7 @@ class LoginController extends GetxController {
             currentRestaurantOwner.value = ownerModel;
 
             print('✅ Restaurant owner data loaded: ${ownerModel.email}');
-            print('✅ Restaurant: ${ownerModel.restaurantData.resName.text}');
+            print('✅ Restaurant: ${ownerModel.restaurantData.resName}');
             print('✅ Owner Name: ${ownerModel.ownerName}');
 
             final fillcontroller = Get.put(FillDataRestaurantController());

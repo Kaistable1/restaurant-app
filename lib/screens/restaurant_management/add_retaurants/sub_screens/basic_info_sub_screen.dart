@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,7 +17,7 @@ class BasicInfoSubScreen extends StatelessWidget {
 
   final controller = Get.find<AddRestaurantTabController>();
   final GlobalKey<FormState> formKey;
-  GlobalVariables globalVariables = GlobalVariables();
+  final GlobalVariables globalVariables = GlobalVariables();
 
   @override
   Widget build(BuildContext context) {
@@ -433,12 +435,12 @@ class BasicInfoSubScreen extends StatelessWidget {
                 children: [
                   Expanded(
                     child: TextAndFieldsOrDropDown(
-                      labelText: 'Area',
+                      labelText: 'Street',
                       fieldHintText: 'Gujarat,Street 1,house 1',
                       fieldController: controller.areaController,
                       fieldValidator: (value) {
                         if (value!.isEmpty) {
-                          return 'Please enter area.';
+                          return 'Please enter street address.';
                         }
                         return null;
                       },
@@ -448,19 +450,63 @@ class BasicInfoSubScreen extends StatelessWidget {
                   const SizedBox(width: 24),
                   Expanded(
                     child: TextAndFieldsOrDropDown(
-                      labelText: 'Spoken Language',
-                      currentValue: controller.selectedSpokenLanguage.value,
-                      dropHintText: 'Language',
-                      items: controller.spokenLanguageList,
-                      onChanged: (value) =>
-                          controller.selectedSpokenLanguage.value = value!,
-                      dropDownValidator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Please select a spoken language.';
+                      labelText: 'Zip Code',
+                      fieldHintText: '90210',
+                      fieldController: controller.zipCodeController,
+                      fieldValidator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return null; // ZIP code is optional
+                        }
+                        if (!RegExp(r'^\d{5}$').hasMatch(value)) {
+                          return 'Please enter a valid 5-digit ZIP code';
                         }
                         return null;
                       },
-                      isDropDown: true,
+                      onChangedTextfield: (value) {
+                        if (value != null && value.length == 5) {
+                          // Debounce for 300ms to avoid multiple API calls
+                          Timer(const Duration(milliseconds: 300), () {
+                            if (controller.zipCodeController.text == value) {
+                              controller.lookupZipCode(value);
+                            }
+                          });
+                        }
+                        return null;
+                      },
+                      isDropDown: false,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextAndFieldsOrDropDown(
+                      labelText: 'Phone No',
+                      fieldHintText: '(123) 456-7890',
+                      fieldController: controller.phoneNoController,
+                      fieldValidator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter phone number.';
+                        }
+                        return null;
+                      },
+                      isDropDown: false,
+                    ),
+                  ),
+                  const SizedBox(width: 24),
+                  Expanded(
+                    child: TextAndFieldsOrDropDown(
+                      labelText: 'Website Url',
+                      fieldHintText: 'https://example.com',
+                      fieldController: controller.websiteUrlController,
+                      fieldValidator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter website url.';
+                        }
+                        return null;
+                      },
+                      isDropDown: false,
                     ),
                   ),
                 ],
@@ -473,9 +519,6 @@ class BasicInfoSubScreen extends StatelessWidget {
                       fieldHintText: 'instagram.com',
                       fieldController: controller.instagramController,
                       fieldValidator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter instagram link.';
-                        }
                         return null;
                       },
                       isDropDown: false,
@@ -488,9 +531,6 @@ class BasicInfoSubScreen extends StatelessWidget {
                       fieldHintText: 'tiktok.com',
                       fieldController: controller.tiktokLinkController,
                       fieldValidator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter tiktok link.';
-                        }
                         return null;
                       },
                       isDropDown: false,

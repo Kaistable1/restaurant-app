@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:restaurant_web_app/constants/colors.dart';
 import 'package:restaurant_web_app/main.dart';
 import 'package:restaurant_web_app/screens/auth_screens/login_screen/login_screen.dart';
-import 'package:restaurant_web_app/universal_models/restaurant_model.dart';
+import 'package:restaurant_web_app/models/resaturant_model.dart';
 import 'package:restaurant_web_app/utils/responsive.dart';
 import 'package:restaurant_web_app/widgets/round_button.dart';
 

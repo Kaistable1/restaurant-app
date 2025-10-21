@@ -65,7 +65,7 @@ class AddEditRestaurantScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(4.0),
                       child: Obx(() {
                         final resModel = currentUserDataModel.value;
-                        if (resModel == null || resModel.zipCode.text.isEmpty) {
+                        if (resModel == null || resModel.zipCode.isEmpty) {
                           return AccountNoAuthPopupWidget();
                         }
                         return AccountSettingsPopupWidget();
@@ -318,7 +318,7 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                             children: [
                                               // Display existing images from URLs (resImages)
                                               ...restaurantController
-                                                  .restaurantModel.resImages
+                                                  .restaurantModel.imagesList
                                                   .map((imageUrl) {
                                                 return Stack(
                                                   clipBehavior: Clip.none,
@@ -344,7 +344,7 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                                             BorderRadius
                                                                 .circular(10),
                                                         child: Image.network(
-                                                          imageUrl.value,
+                                                          imageUrl,
                                                           fit: BoxFit.cover,
                                                           errorBuilder:
                                                               (context, error,
@@ -386,7 +386,7 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                                         onTap: () {
                                                           restaurantController
                                                               .restaurantModel
-                                                              .resImages
+                                                              .imagesList
                                                               .remove(imageUrl);
                                                         },
                                                         child: Container(
@@ -413,7 +413,6 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
 
                                               // Display newly uploaded images from memory (resImageMemory)
                                               ...restaurantController
-                                                  .restaurantModel
                                                   .resImageMemory
                                                   .map((image) {
                                                 return Stack(
@@ -446,7 +445,6 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                                       child: GestureDetector(
                                                         onTap: () {
                                                           restaurantController
-                                                              .restaurantModel
                                                               .resImageMemory
                                                               .remove(image);
                                                         },
@@ -484,7 +482,6 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                                 if (selectedImage != null &&
                                                     selectedImage.isNotEmpty) {
                                                   restaurantController
-                                                      .restaurantModel
                                                       .resImageMemory
                                                       .add(selectedImage);
                                                   // print(
@@ -744,27 +741,23 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
 
                                       if (selectedImage != null &&
                                           selectedImage.isNotEmpty) {
-                                        restaurantController
-                                            .restaurantModel
-                                            .logoImageMemory
+                                        restaurantController.logoImageMemory
                                             .value = selectedImage;
                                       }
                                     } /*=> _pickImage(isLogo: true)*/,
-                                    child: restaurantController.restaurantModel
+                                    child: restaurantController
                                             .logoImageMemory.value.isNotEmpty
                                         ? Image.memory(
-                                            restaurantController.restaurantModel
+                                            restaurantController
                                                 .logoImageMemory.value,
                                             fit: BoxFit.cover,
                                           )
                                         : restaurantController.restaurantModel
-                                                    .logoImage.value !=
+                                                    .logoImage !=
                                                 ''
                                             ? Image.network(
                                                 restaurantController
-                                                    .restaurantModel
-                                                    .logoImage
-                                                    .value,
+                                                    .restaurantModel.logoImage,
                                                 fit: BoxFit.cover)
                                             : Container(
                                                 height: isDesktop
@@ -901,8 +894,8 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                 ),
                                 const SizedBox(height: 8),
                                 CustomTextField(
-                                  controller: restaurantController
-                                      .restaurantModel.address,
+                                  controller:
+                                      restaurantController.addressController,
                                   borderColor:
                                       AppColors.darkGrey.withOpacity(.1),
                                   width: 516,
@@ -963,8 +956,8 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                     ),
                                     const SizedBox(height: 8),
                                     CustomTextField(
-                                      controller: restaurantController
-                                          .restaurantModel.phoneNumber,
+                                      controller:
+                                          restaurantController.phoneController,
                                       // prefixIcon: Padding(
                                       //   padding: const EdgeInsets.all(2.0),
                                       //   child: Container(
@@ -1038,8 +1031,8 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                     ),
                                     const SizedBox(height: 8),
                                     CustomTextField(
-                                      controller: restaurantController
-                                          .restaurantModel.city,
+                                      controller:
+                                          restaurantController.cityController,
                                       borderColor:
                                           AppColors.darkGrey.withOpacity(.1),
                                       width: 516,
@@ -1097,7 +1090,7 @@ class _AddEditRestaurantContentState extends State<AddEditRestaurantContent> {
                                     const SizedBox(height: 8),
                                     CustomTextField(
                                       controller: restaurantController
-                                          .restaurantModel.country,
+                                          .countryController,
                                       borderColor:
                                           AppColors.darkGrey.withOpacity(.1),
                                       width: 516,

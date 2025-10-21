@@ -15,7 +15,7 @@ import 'package:restaurant_web_app/screens/restaurant_detail_screen/widget/opera
 import 'package:restaurant_web_app/screens/restaurant_detail_screen/widget/review_widget.dart';
 import 'package:restaurant_web_app/screens/restaurant_detail_screen/widget/star_widget.dart';
 import 'package:restaurant_web_app/screens/restaurant_detail_screen/widget/star_widget_gen_discount.dart';
-import 'package:restaurant_web_app/universal_models/restaurant_model.dart';
+import 'package:restaurant_web_app/models/resaturant_model.dart';
 import 'package:restaurant_web_app/widgets/account_settings_popup_widget.dart';
 
 import '../../../constants/colors.dart';
@@ -38,8 +38,6 @@ class RestaurantDetailScreen extends StatelessWidget {
   bool? isFromButtonClick;
   @override
   Widget build(BuildContext context) {
-
-
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     bool isLargeScreen = screenWidth > 1400;
@@ -81,8 +79,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                         padding: const EdgeInsets.all(4.0),
                         child: Obx(() {
                           final resModel = currentUserDataModel.value;
-                          if (resModel == null ||
-                              resModel.zipCode.text.isEmpty) {
+                          if (resModel == null || resModel.zipCode.isEmpty) {
                             return AccountNoAuthPopupWidget();
                           }
                           return AccountSettingsPopupWidget();
@@ -192,7 +189,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                 ? 20
                                                 : 24),
                                     Image.network(
-                                      restaurantModel.logoImage.value,
+                                      restaurantModel.logoImage,
                                       height: 40,
                                       width: 40,
                                     ),
@@ -203,7 +200,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                 ? 4
                                                 : 16),
                                     Text(
-                                      restaurantModel.resName.text,
+                                      restaurantModel.resName,
                                       // 'Paradise Dynasity @ Tseug Kwan O',
                                       style: TextStyle(
                                         color: AppColors.blackColor,
@@ -220,7 +217,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                     Row(
                                       children: [
                                         Text(
-                                          restaurantModel.spokenLanguage.value,
+                                          restaurantModel.spokenLanguage,
                                           style: TextStyle(
                                             color: AppColors.blackColor,
                                             fontFamily: 'Nunito-Regular',
@@ -323,17 +320,19 @@ class RestaurantDetailScreen extends StatelessWidget {
                                   children: [
                                     const SizedBox(height: 20),
                                     Obx(() {
-
                                       // Dynamically create tab labels based on available data
                                       List<String> tabs = [];
 
                                       if (controller.menuItems.isNotEmpty) {
                                         tabs.add('Percentage Off');
                                       }
-                                      if (controller.menuItemsSpecial.isNotEmpty) {
+                                      if (controller
+                                          .menuItemsSpecial.isNotEmpty) {
                                         tabs.add('Happy Hours Specials');
                                       }
-                                      if (restaurantModel.entertainmentScheduleList.isNotEmpty) {
+                                      if (restaurantModel
+                                          .entertainmentScheduleList
+                                          .isNotEmpty) {
                                         tabs.add('Entertainment');
                                       }
 
@@ -343,93 +342,98 @@ class RestaurantDetailScreen extends StatelessWidget {
                                       }
 
                                       // Set first tab as default if no tab is selected
-                                      if (!tabs.contains(controller.selectedIndexTab.value)) {
-                                        controller.selectedIndexTab.value = tabs[0];
+                                      if (!tabs.contains(
+                                          controller.selectedIndexTab.value)) {
+                                        controller.selectedIndexTab.value =
+                                            tabs[0];
                                       }
                                       return Center(
-                                      child: Container(
-                                        height: 40,
-                                        width:tabs.isEmpty? 0:tabs.length ==1?400:tabs.length ==2?600: 800,
-                                        decoration: BoxDecoration(
-                                          color: AppColors.darkGrey
-                                              .withOpacity(.1),
-                                          borderRadius:
-                                          BorderRadius.circular(10),
-                                        ),
-                                        padding: const EdgeInsets.all(6),
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 10),
-                                        child: Row(
-                                          children:
-                                          List.generate(tabs.length, (index) {
-                                            return Expanded(
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  controller
-                                                      .selectedIndexTab
-                                                      .value = tabs[index];
-                                                },
-                                                child: AnimatedContainer(
-                                                  duration: const Duration(
-                                                      milliseconds: 200),
-                                                  decoration: BoxDecoration(
-                                                    boxShadow: controller
-                                                        .selectedIndexTab
-                                                        .value !=
-                                                        tabs[index]
-                                                        ? null
-                                                        : [
-                                                      BoxShadow(
-                                                        color: Colors
-                                                            .grey
-                                                            .withOpacity(
-                                                            0.2),
-                                                        spreadRadius:
-                                                        1,
-                                                        blurRadius: 4,
-                                                      )
-                                                    ],
-                                                    color: controller
-                                                        .selectedIndexTab
-                                                        .value ==
-                                                        tabs[index]
-                                                        ? Colors.white
-                                                        : Colors
-                                                        .transparent,
-                                                    borderRadius:
-                                                    BorderRadius
-                                                        .circular(5),
-                                                  ),
-                                                  alignment:
-                                                  Alignment.center,
-                                                  child: Text(
-                                                    tabs[index],
-                                                    style: TextStyle(
-                                                        color: controller
-                                                            .selectedIndexTab
-                                                            .value ==
-                                                            index
-                                                            ? AppColors
-                                                            .primaryColor
-                                                            : Colors.grey,
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .w600),
+                                        child: Container(
+                                          height: 40,
+                                          width: tabs.isEmpty
+                                              ? 0
+                                              : tabs.length == 1
+                                                  ? 400
+                                                  : tabs.length == 2
+                                                      ? 600
+                                                      : 800,
+                                          decoration: BoxDecoration(
+                                            color: AppColors.darkGrey
+                                                .withOpacity(.1),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          padding: const EdgeInsets.all(6),
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          child: Row(
+                                            children: List.generate(tabs.length,
+                                                (index) {
+                                              return Expanded(
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    controller.selectedIndexTab
+                                                        .value = tabs[index];
+                                                  },
+                                                  child: AnimatedContainer(
+                                                    duration: const Duration(
+                                                        milliseconds: 200),
+                                                    decoration: BoxDecoration(
+                                                      boxShadow: controller
+                                                                  .selectedIndexTab
+                                                                  .value !=
+                                                              tabs[index]
+                                                          ? null
+                                                          : [
+                                                              BoxShadow(
+                                                                color: Colors
+                                                                    .grey
+                                                                    .withOpacity(
+                                                                        0.2),
+                                                                spreadRadius: 1,
+                                                                blurRadius: 4,
+                                                              )
+                                                            ],
+                                                      color: controller
+                                                                  .selectedIndexTab
+                                                                  .value ==
+                                                              tabs[index]
+                                                          ? Colors.white
+                                                          : Colors.transparent,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5),
+                                                    ),
+                                                    alignment: Alignment.center,
+                                                    child: Text(
+                                                      tabs[index],
+                                                      style: TextStyle(
+                                                          color: controller
+                                                                      .selectedIndexTab
+                                                                      .value ==
+                                                                  index
+                                                              ? AppColors
+                                                                  .primaryColor
+                                                              : Colors.grey,
+                                                          fontWeight:
+                                                              FontWeight.w600),
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            );
-                                          }),
+                                              );
+                                            }),
+                                          ),
                                         ),
-                                      ),
-                                    );}),
+                                      );
+                                    }),
                                     const SizedBox(height: 20),
                                   ],
                                 ),
 
                                 // Dynamic Content Based on Selected Tab
                                 Obx(() {
-                                  if (controller.selectedIndexTab.value == 'Happy Hours Specials') {
+                                  if (controller.selectedIndexTab.value ==
+                                      'Happy Hours Specials') {
                                     return Column(
                                       children: [
                                         Row(
@@ -446,179 +450,174 @@ class RestaurantDetailScreen extends StatelessWidget {
                                               'choose time & discount',
                                               style: TextStyle(
                                                 color: AppColors.blackColor,
-                                                fontFamily:
-                                                'Nunito-Regular',
-                                                fontSize: Responsive
-                                                    .isMobile(context)
-                                                    ? 16
-                                                    : Responsive.isTablet(
-                                                    context)
-                                                    ? 18
-                                                    : 20,
+                                                fontFamily: 'Nunito-Regular',
+                                                fontSize:
+                                                    Responsive.isMobile(context)
+                                                        ? 16
+                                                        : Responsive.isTablet(
+                                                                context)
+                                                            ? 18
+                                                            : 20,
                                               ),
                                             ),
                                           ],
                                         ),
-                                        controller.menuItemsSpecial
-                                            .length !=
-                                            0
+                                        controller.menuItemsSpecial.length != 0
                                             ? Stack(
-                                          children: [
-                                            Padding(
-                                              padding: EdgeInsets.only(
-                                                  left: Responsive
-                                                      .isMobile(
-                                                      context)
-                                                      ? 20
-                                                      : 45,
-                                                  right: Responsive
-                                                      .isMobile(
-                                                      context)
-                                                      ? 2
-                                                      : 30),
-                                              child: SizedBox(
-                                                height: Responsive
-                                                    .isMobile(
-                                                    context)
-                                                    ? 140
-                                                    : isLargeScreen
-                                                    ? 200
-                                                    : 140,
-                                                child:
-                                                ListView.builder(
-                                                  controller: controller
-                                                      .scrollController,
-                                                  scrollDirection:
-                                                  Axis.horizontal,
-                                                  itemCount: controller
-                                                      .menuItemsSpecial
-                                                      .length, // Number of items
-                                                  itemBuilder:
-                                                      (context,
-                                                      index) {
-                                                    final item2 = controller
-                                                        .menuItemsSpecial[
-                                                    index]; // Get item from model list
+                                                children: [
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left:
+                                                            Responsive.isMobile(
+                                                                    context)
+                                                                ? 20
+                                                                : 45,
+                                                        right:
+                                                            Responsive.isMobile(
+                                                                    context)
+                                                                ? 2
+                                                                : 30),
+                                                    child: SizedBox(
+                                                      height:
+                                                          Responsive.isMobile(
+                                                                  context)
+                                                              ? 140
+                                                              : isLargeScreen
+                                                                  ? 200
+                                                                  : 140,
+                                                      child: ListView.builder(
+                                                        controller: controller
+                                                            .scrollController,
+                                                        scrollDirection:
+                                                            Axis.horizontal,
+                                                        itemCount: controller
+                                                            .menuItemsSpecial
+                                                            .length, // Number of items
+                                                        itemBuilder:
+                                                            (context, index) {
+                                                          final item2 = controller
+                                                                  .menuItemsSpecial[
+                                                              index]; // Get item from model list
 
-                                                    return Padding(
-                                                        padding: EdgeInsets.symmetric(
-                                                            horizontal: Responsive.isMobile(context)
-                                                                ? 10
-                                                                : isLargeScreen
-                                                                ? 48
-                                                                : 18.0,
-                                                            vertical: Responsive.isMobile(context) ? 6 : 6),
-                                                        child: Obx(
-                                                              () =>
-                                                              StarWidget(
-                                                                // isLocation: true,
-                                                                onTap:
-                                                                    () {
-                                                                  print(
-                                                                      'jskn');
-                                                                  controller.selectCategory2(
+                                                          return Padding(
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal: Responsive.isMobile(
+                                                                              context)
+                                                                          ? 10
+                                                                          : isLargeScreen
+                                                                              ? 48
+                                                                              : 18.0,
+                                                                      vertical:
+                                                                          Responsive.isMobile(context)
+                                                                              ? 6
+                                                                              : 6),
+                                                              child: Obx(
+                                                                () =>
+                                                                    StarWidget(
+                                                                  // isLocation: true,
+                                                                  onTap: () {
+                                                                    print(
+                                                                        'jskn');
+                                                                    controller
+                                                                        .selectCategory2(
+                                                                            index,
+                                                                            item2);
+                                                                  },
+
+                                                                  timeText:
+                                                                      '${item2.fromTime} to ${item2.toTime}',
+
+                                                                  persentText: item2
+                                                                      .percentageValue,
+                                                                  isSelected: controller
+                                                                          .selectedIndexSpecial
+                                                                          .value ==
                                                                       index,
-                                                                      item2);
-                                                                },
+                                                                ),
+                                                              ));
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  // Left Arrow button with padding for spacing
 
-                                                                timeText:
-                                                                '${item2.fromTime} to ${item2.toTime}',
-
-                                                                persentText:
-                                                                item2
-                                                                    .percentageValue,
-                                                                isSelected: controller
-                                                                    .selectedIndexSpecial
-                                                                    .value ==
-                                                                    index,
-                                                              ),
-                                                        ));
-                                                  },
-                                                ),
-                                              ),
-                                            ),
-                                            // Left Arrow button with padding for spacing
-
-                                            Positioned(
-                                              left:
-                                              0, // Adjust the value to add space from the list
-                                              top: 0,
-                                              bottom: 0,
-                                              child: InkWell(
-                                                onTap: () =>
-                                                    controller
-                                                        .scrollLeft(),
-                                                child: Image.asset(
-                                                  'assets/images/arrow_back.png',
-                                                  height: Responsive
-                                                      .isMobile(
-                                                      context)
-                                                      ? 32
-                                                      : 52,
-                                                  width: Responsive
-                                                      .isMobile(
-                                                      context)
-                                                      ? 32
-                                                      : 52,
-                                                ),
-                                              ),
-                                            ),
-                                            // Right Arrow button with padding for spacing
-                                            Positioned(
-                                              right:
-                                              0, // Adjust the value to add space from the list
-                                              top: 0,
-                                              bottom: 0,
-                                              child: InkWell(
-                                                onTap: () => controller
-                                                    .scrollRight(),
-                                                child: Image.asset(
-                                                  'assets/images/arrow_forward.png',
-                                                  height: Responsive
-                                                      .isMobile(
-                                                      context)
-                                                      ? 32
-                                                      : 52,
-                                                  width: Responsive
-                                                      .isMobile(
-                                                      context)
-                                                      ? 32
-                                                      : 52,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        )
+                                                  Positioned(
+                                                    left:
+                                                        0, // Adjust the value to add space from the list
+                                                    top: 0,
+                                                    bottom: 0,
+                                                    child: InkWell(
+                                                      onTap: () => controller
+                                                          .scrollLeft(),
+                                                      child: Image.asset(
+                                                        'assets/images/arrow_back.png',
+                                                        height:
+                                                            Responsive.isMobile(
+                                                                    context)
+                                                                ? 32
+                                                                : 52,
+                                                        width:
+                                                            Responsive.isMobile(
+                                                                    context)
+                                                                ? 32
+                                                                : 52,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  // Right Arrow button with padding for spacing
+                                                  Positioned(
+                                                    right:
+                                                        0, // Adjust the value to add space from the list
+                                                    top: 0,
+                                                    bottom: 0,
+                                                    child: InkWell(
+                                                      onTap: () => controller
+                                                          .scrollRight(),
+                                                      child: Image.asset(
+                                                        'assets/images/arrow_forward.png',
+                                                        height:
+                                                            Responsive.isMobile(
+                                                                    context)
+                                                                ? 32
+                                                                : 52,
+                                                        width:
+                                                            Responsive.isMobile(
+                                                                    context)
+                                                                ? 32
+                                                                : 52,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
                                             : const Text(
-                                            'No Discount for today.'),
+                                                'No Discount for today.'),
                                         SizedBox(
-                                            height:
-                                            Responsive.isMobile(context)
+                                            height: Responsive.isMobile(context)
                                                 ? 2
                                                 : 22),
                                         Row(
                                           mainAxisAlignment:
-                                          MainAxisAlignment
-                                              .spaceBetween,
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
                                               'Meals',
                                               style: TextStyle(
                                                 color: AppColors.blackColor,
-                                                fontFamily:
-                                                'Nunito-Regular',
-                                                fontSize: Responsive
-                                                    .isMobile(context)
-                                                    ? 16
-                                                    : Responsive.isTablet(
-                                                    context)
-                                                    ? 18
-                                                    : 20,
+                                                fontFamily: 'Nunito-Regular',
+                                                fontSize:
+                                                    Responsive.isMobile(context)
+                                                        ? 16
+                                                        : Responsive.isTablet(
+                                                                context)
+                                                            ? 18
+                                                            : 20,
                                                 // fontWeight: FontWeight.w700,
                                               ),
                                             ),
                                             Obx(
-                                                  () => RichText(
+                                              () => RichText(
                                                 text: TextSpan(
                                                   text: controller
                                                       .selectedCategorySpecial
@@ -627,14 +626,12 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                       .cuisineName,
                                                   style: TextStyle(
                                                     fontSize: Responsive
-                                                        .isMobile(
-                                                        context)
+                                                            .isMobile(context)
                                                         ? 16
-                                                        : Responsive
-                                                        .isTablet(
-                                                        context)
-                                                        ? 18
-                                                        : 20,
+                                                        : Responsive.isTablet(
+                                                                context)
+                                                            ? 18
+                                                            : 20,
                                                     // fontWeight: FontWeight.w700,
                                                   ),
                                                   children: [
@@ -642,15 +639,15 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                       child: Image.asset(
                                                         'assets/images/dish.png', // Replace with your image path
                                                         width:
-                                                        30, // Adjust image width
+                                                            30, // Adjust image width
                                                         height:
-                                                        30, // Adjust image height
+                                                            30, // Adjust image height
                                                         color: Colors
                                                             .teal, // Optional: Apply a color overlay
                                                       ),
                                                       alignment:
-                                                      PlaceholderAlignment
-                                                          .middle, // Align the image with the text
+                                                          PlaceholderAlignment
+                                                              .middle, // Align the image with the text
                                                     ),
                                                   ],
                                                 ),
@@ -659,27 +656,25 @@ class RestaurantDetailScreen extends StatelessWidget {
                                           ],
                                         ),
                                         SizedBox(
-                                            height:
-                                            Responsive.isMobile(context)
+                                            height: Responsive.isMobile(context)
                                                 ? 2
                                                 : 22),
                                         Center(
                                           child: SizedBox(
                                             width: Responsive.isMobile(
-                                                context) ||
-                                                Responsive.isTablet(
-                                                    context)
+                                                        context) ||
+                                                    Responsive.isTablet(context)
                                                 ? Get.width
                                                 : Get.width * 0.7,
                                             child: Row(
                                               mainAxisAlignment:
-                                              MainAxisAlignment.center,
+                                                  MainAxisAlignment.center,
                                               crossAxisAlignment:
-                                              CrossAxisAlignment.center,
+                                                  CrossAxisAlignment.center,
                                               children: [
                                                 // First part: Menu items and before discount columns
                                                 Obx(
-                                                      () {
+                                                  () {
                                                     final selectedCategory =
                                                         controller
                                                             .selectedCategorySpecial
@@ -694,37 +689,40 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                       flex: 2,
                                                       child: Container(
                                                           decoration:
-                                                          BoxDecoration(
-                                                              color: Colors
-                                                                  .white,
-                                                              boxShadow: [
-                                                                BoxShadow(
+                                                              BoxDecoration(
                                                                   color: Colors
-                                                                      .grey
-                                                                      .withOpacity(0.5), // Shadow color with opacity
-                                                                  spreadRadius:
-                                                                  2, // How wide the shadow spreads
-                                                                  blurRadius:
-                                                                  5, // How much the shadow blurs
-                                                                  offset: const Offset(
-                                                                      2,
-                                                                      3), // Horizontal and vertical offset
-                                                                ),
-                                                              ],
-                                                              borderRadius: const BorderRadius
-                                                                  .only(
-                                                                  topLeft: Radius.circular(
-                                                                      10),
-                                                                  bottomLeft:
-                                                                  Radius.circular(10))),
+                                                                      .white,
+                                                                  boxShadow: [
+                                                                    BoxShadow(
+                                                                      color: Colors
+                                                                          .grey
+                                                                          .withOpacity(
+                                                                              0.5), // Shadow color with opacity
+                                                                      spreadRadius:
+                                                                          2, // How wide the shadow spreads
+                                                                      blurRadius:
+                                                                          5, // How much the shadow blurs
+                                                                      offset: const Offset(
+                                                                          2,
+                                                                          3), // Horizontal and vertical offset
+                                                                    ),
+                                                                  ],
+                                                                  borderRadius: const BorderRadius
+                                                                      .only(
+                                                                      topLeft: Radius
+                                                                          .circular(
+                                                                              10),
+                                                                      bottomLeft:
+                                                                          Radius.circular(
+                                                                              10))),
                                                           child: Table(
                                                             border: TableBorder.symmetric(
                                                                 inside: BorderSide(
-                                                                    width:
-                                                                    1,
+                                                                    width: 1,
                                                                     color: Colors
                                                                         .grey
-                                                                        .withOpacity(0.5))),
+                                                                        .withOpacity(
+                                                                            0.5))),
                                                             children: [
                                                               _buildTableHeader(
                                                                   context,
@@ -733,13 +731,13 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                               ...selectedCategory
                                                                   .items
                                                                   .map((item) =>
-                                                                  _buildTableRow(
-                                                                    context,
-                                                                    image:
-                                                                    item.itemImages,
-                                                                    menuItem:
-                                                                    item.cuisineMenu,
-                                                                  )),
+                                                                      _buildTableRow(
+                                                                        context,
+                                                                        image: item
+                                                                            .itemImages,
+                                                                        menuItem:
+                                                                            item.cuisineMenu,
+                                                                      )),
                                                             ],
                                                           )),
                                                     );
@@ -748,7 +746,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                 // Second part: After discount (green column)
 
                                                 Obx(
-                                                      () {
+                                                  () {
                                                     final selectedCategory =
                                                         controller
                                                             .selectedCategorySpecial
@@ -757,36 +755,34 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                     if (selectedCategory ==
                                                         null) {
                                                       return const Center(
-                                                          child:
-                                                          SizedBox());
+                                                          child: SizedBox());
                                                     }
                                                     return Expanded(
                                                       child: Container(
                                                         height: 482,
                                                         decoration:
-                                                        BoxDecoration(
+                                                            BoxDecoration(
                                                           color: AppColors
                                                               .primaryColor,
                                                           borderRadius:
-                                                          BorderRadius
-                                                              .circular(
-                                                              10),
+                                                              BorderRadius
+                                                                  .circular(10),
                                                         ),
                                                         child: Padding(
                                                           padding: EdgeInsets.symmetric(
                                                               vertical: Responsive
-                                                                  .isMobile(
-                                                                  context)
+                                                                      .isMobile(
+                                                                          context)
                                                                   ? 41
                                                                   : 71.0),
                                                           child: Table(
                                                             border: TableBorder.symmetric(
                                                                 inside: BorderSide(
-                                                                    width:
-                                                                    1,
+                                                                    width: 1,
                                                                     color: Colors
                                                                         .grey
-                                                                        .withOpacity(0.5))),
+                                                                        .withOpacity(
+                                                                            0.5))),
                                                             // columnWidths: {
                                                             //   0: const FlexColumnWidth(),
                                                             // },
@@ -797,10 +793,10 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                               ...selectedCategory
                                                                   .items
                                                                   .map(
-                                                                    (item) => _buildGreenRow(
+                                                                (item) => _buildGreenRow(
                                                                     context,
                                                                     afterPrice:
-                                                                    item.offer),
+                                                                        item.offer),
                                                               ),
                                                               // _buildGreenRow(
                                                               //     context,
@@ -823,10 +819,12 @@ class RestaurantDetailScreen extends StatelessWidget {
                                         ),
                                       ],
                                     );
-                                  } else if (controller.selectedIndexTab.value == 'Entertainment') {
+                                  } else if (controller
+                                          .selectedIndexTab.value ==
+                                      'Entertainment') {
                                     return Column(
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                       children: [
                                         const SizedBox(
                                           height: 30,
@@ -834,12 +832,11 @@ class RestaurantDetailScreen extends StatelessWidget {
                                         Text(
                                           'Entertainment',
                                           style: TextStyle(
-                                            color:
-                                            AppColors.headingTextColor,
+                                            color: AppColors.headingTextColor,
                                             fontSize:
-                                            Responsive.isMobile(context)
-                                                ? 16
-                                                : 24,
+                                                Responsive.isMobile(context)
+                                                    ? 16
+                                                    : 24,
                                             fontFamily: 'aftika-regular',
                                             fontWeight: FontWeight.w700,
                                           ),
@@ -852,41 +849,36 @@ class RestaurantDetailScreen extends StatelessWidget {
                                         LayoutBuilder(
                                           builder: (context, constraints) {
                                             return SingleChildScrollView(
-                                              scrollDirection:
-                                              Axis.horizontal,
+                                              scrollDirection: Axis.horizontal,
                                               child: ConstrainedBox(
                                                 constraints: BoxConstraints(
                                                   minWidth:
-                                                  constraints.maxWidth,
+                                                      constraints.maxWidth,
                                                 ),
-                                                child:
-                                                SingleChildScrollView(
+                                                child: SingleChildScrollView(
                                                   scrollDirection:
-                                                  Axis.vertical,
+                                                      Axis.vertical,
                                                   child: DataTable(
                                                     border: TableBorder.all(
                                                       color: Colors.grey,
                                                       width: 1,
                                                     ),
                                                     headingRowColor:
-                                                    MaterialStateProperty
-                                                        .resolveWith(
-                                                            (states) =>
-                                                        AppColors
-                                                            .lightbgColor),
+                                                        MaterialStateProperty
+                                                            .resolveWith((states) =>
+                                                                AppColors
+                                                                    .lightbgColor),
                                                     columns: const [
                                                       DataColumn(
                                                         label: Expanded(
                                                           child: Center(
                                                             child: Text(
                                                               'Name',
-                                                              style:
-                                                              TextStyle(
+                                                              style: TextStyle(
                                                                 fontWeight:
-                                                                FontWeight
-                                                                    .w700,
-                                                                fontSize:
-                                                                20,
+                                                                    FontWeight
+                                                                        .w700,
+                                                                fontSize: 20,
                                                               ),
                                                             ),
                                                           ),
@@ -897,13 +889,11 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                           child: Center(
                                                             child: Text(
                                                               'By',
-                                                              style:
-                                                              TextStyle(
+                                                              style: TextStyle(
                                                                 fontWeight:
-                                                                FontWeight
-                                                                    .w700,
-                                                                fontSize:
-                                                                20,
+                                                                    FontWeight
+                                                                        .w700,
+                                                                fontSize: 20,
                                                               ),
                                                             ),
                                                           ),
@@ -914,13 +904,11 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                           child: Center(
                                                             child: Text(
                                                               'Day',
-                                                              style:
-                                                              TextStyle(
+                                                              style: TextStyle(
                                                                 fontWeight:
-                                                                FontWeight
-                                                                    .w700,
-                                                                fontSize:
-                                                                20,
+                                                                    FontWeight
+                                                                        .w700,
+                                                                fontSize: 20,
                                                               ),
                                                             ),
                                                           ),
@@ -931,13 +919,11 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                           child: Center(
                                                             child: Text(
                                                               'Date',
-                                                              style:
-                                                              TextStyle(
+                                                              style: TextStyle(
                                                                 fontWeight:
-                                                                FontWeight
-                                                                    .w700,
-                                                                fontSize:
-                                                                20,
+                                                                    FontWeight
+                                                                        .w700,
+                                                                fontSize: 20,
                                                               ),
                                                             ),
                                                           ),
@@ -948,13 +934,11 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                           child: Center(
                                                             child: Text(
                                                               'Time',
-                                                              style:
-                                                              TextStyle(
+                                                              style: TextStyle(
                                                                 fontWeight:
-                                                                FontWeight
-                                                                    .w700,
-                                                                fontSize:
-                                                                20,
+                                                                    FontWeight
+                                                                        .w700,
+                                                                fontSize: 20,
                                                               ),
                                                             ),
                                                           ),
@@ -964,25 +948,18 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                     rows: restaurantModel
                                                         .entertainmentScheduleList
                                                         .map((schedule) {
-                                                      return DataRow(
-                                                          cells: [
-                                                            DataCell(Text(
-                                                                schedule
-                                                                    .eventName
-                                                                    .text)),
-                                                            DataCell(Text(
-                                                                schedule
-                                                                    .eventBy
-                                                                    .text)),
-                                                            DataCell(Text(
-                                                                schedule
-                                                                    .day)),
-                                                            DataCell(Text(
-                                                                schedule
-                                                                    .date)),
-                                                            DataCell(Text(
-                                                                '${schedule.startTime} - ${schedule.endTime}')),
-                                                          ]);
+                                                      return DataRow(cells: [
+                                                        DataCell(Text(schedule
+                                                            .eventName)),
+                                                        DataCell(Text(
+                                                            schedule.eventBy)),
+                                                        DataCell(
+                                                            Text(schedule.day)),
+                                                        DataCell(Text(
+                                                            schedule.date)),
+                                                        DataCell(Text(
+                                                            '${schedule.startTime} - ${schedule.endTime}')),
+                                                      ]);
                                                     }).toList(),
                                                   ),
                                                 ),
@@ -992,7 +969,9 @@ class RestaurantDetailScreen extends StatelessWidget {
                                         ),
                                       ],
                                     );
-                                  } else if (controller.selectedIndexTab.value =='Percentage Off') {
+                                  } else if (controller
+                                          .selectedIndexTab.value ==
+                                      'Percentage Off') {
                                     return Column(
                                       children: [
                                         Row(
@@ -1009,15 +988,14 @@ class RestaurantDetailScreen extends StatelessWidget {
                                               'choose time & discount',
                                               style: TextStyle(
                                                 color: AppColors.blackColor,
-                                                fontFamily:
-                                                'Nunito-Regular',
-                                                fontSize: Responsive
-                                                    .isMobile(context)
-                                                    ? 16
-                                                    : Responsive.isTablet(
-                                                    context)
-                                                    ? 18
-                                                    : 20,
+                                                fontFamily: 'Nunito-Regular',
+                                                fontSize:
+                                                    Responsive.isMobile(context)
+                                                        ? 16
+                                                        : Responsive.isTablet(
+                                                                context)
+                                                            ? 18
+                                                            : 20,
                                               ),
                                             ),
                                           ],
@@ -1027,34 +1005,33 @@ class RestaurantDetailScreen extends StatelessWidget {
                                             Padding(
                                               padding: EdgeInsets.only(
                                                   left: Responsive.isMobile(
-                                                      context)
+                                                          context)
                                                       ? 20
                                                       : 45,
-                                                  right:
-                                                  Responsive.isMobile(
-                                                      context)
+                                                  right: Responsive.isMobile(
+                                                          context)
                                                       ? 2
                                                       : 30),
                                               child: SizedBox(
-                                                height: Responsive.isMobile(
-                                                    context)
-                                                    ? 140
-                                                    : isLargeScreen
-                                                    ? 200
-                                                    : 140,
+                                                height:
+                                                    Responsive.isMobile(context)
+                                                        ? 140
+                                                        : isLargeScreen
+                                                            ? 200
+                                                            : 140,
                                                 child: ListView.builder(
                                                   controller: controller
                                                       .scrollController,
                                                   scrollDirection:
-                                                  Axis.horizontal,
+                                                      Axis.horizontal,
                                                   itemCount: controller
                                                       .menuItems
                                                       .length, // Number of items
                                                   itemBuilder:
                                                       (context, index) {
                                                     final item = controller
-                                                        .menuItems[
-                                                    index]; // Get item from model list
+                                                            .menuItems[
+                                                        index]; // Get item from model list
                                                     // controller
                                                     //     .selectCategory(
                                                     //     index,
@@ -1063,35 +1040,37 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                     return Padding(
                                                         padding: EdgeInsets
                                                             .symmetric(
-                                                            horizontal: Responsive.isMobile(
-                                                                context)
-                                                                ? 10
-                                                                : isLargeScreen
-                                                                ? 48
-                                                                : 18.0,
-                                                            vertical:
-                                                            Responsive.isMobile(context)
-                                                                ? 6
-                                                                : 6),
+                                                                horizontal: Responsive
+                                                                        .isMobile(
+                                                                            context)
+                                                                    ? 10
+                                                                    : isLargeScreen
+                                                                        ? 48
+                                                                        : 18.0,
+                                                                vertical: Responsive
+                                                                        .isMobile(
+                                                                            context)
+                                                                    ? 6
+                                                                    : 6),
                                                         child: Obx(
-                                                              () => StarWidget(
+                                                          () => StarWidget(
                                                             // isLocation: true,
                                                             onTap: () {
                                                               print('jskn');
                                                               controller
                                                                   .selectCategory(
-                                                                  index,
-                                                                  item);
+                                                                      index,
+                                                                      item);
                                                             },
 
                                                             timeText:
-                                                            '${item.fromTime} to ${item.toTime}',
+                                                                '${item.fromTime} to ${item.toTime}',
 
                                                             persentText: item
                                                                 .percentageValue,
                                                             isSelected: controller
-                                                                .selectedIndex
-                                                                .value ==
+                                                                    .selectedIndex
+                                                                    .value ==
                                                                 index,
                                                           ),
                                                         ));
@@ -1103,7 +1082,7 @@ class RestaurantDetailScreen extends StatelessWidget {
 
                                             Positioned(
                                               left:
-                                              0, // Adjust the value to add space from the list
+                                                  0, // Adjust the value to add space from the list
                                               top: 0,
                                               bottom: 0,
                                               child: InkWell(
@@ -1111,14 +1090,12 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                     controller.scrollLeft(),
                                                 child: Image.asset(
                                                   'assets/images/arrow_back.png',
-                                                  height:
-                                                  Responsive.isMobile(
-                                                      context)
+                                                  height: Responsive.isMobile(
+                                                          context)
                                                       ? 32
                                                       : 52,
-                                                  width:
-                                                  Responsive.isMobile(
-                                                      context)
+                                                  width: Responsive.isMobile(
+                                                          context)
                                                       ? 32
                                                       : 52,
                                                 ),
@@ -1127,22 +1104,20 @@ class RestaurantDetailScreen extends StatelessWidget {
                                             // Right Arrow button with padding for spacing
                                             Positioned(
                                               right:
-                                              0, // Adjust the value to add space from the list
+                                                  0, // Adjust the value to add space from the list
                                               top: 0,
                                               bottom: 0,
                                               child: InkWell(
-                                                onTap: () => controller
-                                                    .scrollRight(),
+                                                onTap: () =>
+                                                    controller.scrollRight(),
                                                 child: Image.asset(
                                                   'assets/images/arrow_forward.png',
-                                                  height:
-                                                  Responsive.isMobile(
-                                                      context)
+                                                  height: Responsive.isMobile(
+                                                          context)
                                                       ? 32
                                                       : 52,
-                                                  width:
-                                                  Responsive.isMobile(
-                                                      context)
+                                                  width: Responsive.isMobile(
+                                                          context)
                                                       ? 32
                                                       : 52,
                                                 ),
@@ -1151,33 +1126,30 @@ class RestaurantDetailScreen extends StatelessWidget {
                                           ],
                                         ),
                                         SizedBox(
-                                            height:
-                                            Responsive.isMobile(context)
+                                            height: Responsive.isMobile(context)
                                                 ? 2
                                                 : 22),
                                         Row(
                                           mainAxisAlignment:
-                                          MainAxisAlignment
-                                              .spaceBetween,
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
                                               'Meals',
                                               style: TextStyle(
                                                 color: AppColors.blackColor,
-                                                fontFamily:
-                                                'Nunito-Regular',
-                                                fontSize: Responsive
-                                                    .isMobile(context)
-                                                    ? 16
-                                                    : Responsive.isTablet(
-                                                    context)
-                                                    ? 18
-                                                    : 20,
+                                                fontFamily: 'Nunito-Regular',
+                                                fontSize:
+                                                    Responsive.isMobile(context)
+                                                        ? 16
+                                                        : Responsive.isTablet(
+                                                                context)
+                                                            ? 18
+                                                            : 20,
                                                 // fontWeight: FontWeight.w700,
                                               ),
                                             ),
                                             Obx(
-                                                  () => RichText(
+                                              () => RichText(
                                                 text: TextSpan(
                                                   text: controller
                                                       .selectedCategory
@@ -1186,14 +1158,12 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                       .cuisineName,
                                                   style: TextStyle(
                                                     fontSize: Responsive
-                                                        .isMobile(
-                                                        context)
+                                                            .isMobile(context)
                                                         ? 16
-                                                        : Responsive
-                                                        .isTablet(
-                                                        context)
-                                                        ? 18
-                                                        : 20,
+                                                        : Responsive.isTablet(
+                                                                context)
+                                                            ? 18
+                                                            : 20,
                                                     // fontWeight: FontWeight.w700,
                                                   ),
                                                   children: [
@@ -1201,15 +1171,15 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                       child: Image.asset(
                                                         'assets/images/dish.png', // Replace with your image path
                                                         width:
-                                                        30, // Adjust image width
+                                                            30, // Adjust image width
                                                         height:
-                                                        30, // Adjust image height
+                                                            30, // Adjust image height
                                                         color: Colors
                                                             .teal, // Optional: Apply a color overlay
                                                       ),
                                                       alignment:
-                                                      PlaceholderAlignment
-                                                          .middle, // Align the image with the text
+                                                          PlaceholderAlignment
+                                                              .middle, // Align the image with the text
                                                     ),
                                                   ],
                                                 ),
@@ -1218,76 +1188,76 @@ class RestaurantDetailScreen extends StatelessWidget {
                                           ],
                                         ),
                                         SizedBox(
-                                            height:
-                                            Responsive.isMobile(context)
+                                            height: Responsive.isMobile(context)
                                                 ? 2
                                                 : 22),
                                         Center(
                                           child: SizedBox(
                                             width: Responsive.isMobile(
-                                                context) ||
-                                                Responsive.isTablet(
-                                                    context)
+                                                        context) ||
+                                                    Responsive.isTablet(context)
                                                 ? Get.width
                                                 : Get.width * 0.7,
                                             child: Row(
                                               mainAxisAlignment:
-                                              MainAxisAlignment.center,
+                                                  MainAxisAlignment.center,
                                               crossAxisAlignment:
-                                              CrossAxisAlignment.center,
+                                                  CrossAxisAlignment.center,
                                               children: [
                                                 // First part: Menu items and before discount columns
                                                 Obx(
-                                                      () {
+                                                  () {
                                                     final selectedCategory =
                                                         controller
                                                             .selectedCategory
                                                             .value;
 
                                                     if (selectedCategory ==
-                                                        null ||
+                                                            null ||
                                                         selectedCategory
-                                                            .items
-                                                            .isEmpty) {
+                                                            .items.isEmpty) {
                                                       return const SizedBox(); // Hide table if no data exists
                                                     }
                                                     return Expanded(
                                                       flex: 2,
                                                       child: Container(
-                                                        // height: 420,
+                                                          // height: 420,
 
                                                           decoration:
-                                                          BoxDecoration(
-                                                              color: Colors
-                                                                  .white,
-                                                              boxShadow: [
-                                                                BoxShadow(
+                                                              BoxDecoration(
                                                                   color: Colors
-                                                                      .grey
-                                                                      .withOpacity(0.5), // Shadow color with opacity
-                                                                  spreadRadius:
-                                                                  2, // How wide the shadow spreads
-                                                                  blurRadius:
-                                                                  5, // How much the shadow blurs
-                                                                  offset: const Offset(
-                                                                      2,
-                                                                      3), // Horizontal and vertical offset
-                                                                ),
-                                                              ],
-                                                              borderRadius: const BorderRadius
-                                                                  .only(
-                                                                  topLeft: Radius.circular(
-                                                                      10),
-                                                                  bottomLeft:
-                                                                  Radius.circular(10))),
+                                                                      .white,
+                                                                  boxShadow: [
+                                                                    BoxShadow(
+                                                                      color: Colors
+                                                                          .grey
+                                                                          .withOpacity(
+                                                                              0.5), // Shadow color with opacity
+                                                                      spreadRadius:
+                                                                          2, // How wide the shadow spreads
+                                                                      blurRadius:
+                                                                          5, // How much the shadow blurs
+                                                                      offset: const Offset(
+                                                                          2,
+                                                                          3), // Horizontal and vertical offset
+                                                                    ),
+                                                                  ],
+                                                                  borderRadius: const BorderRadius
+                                                                      .only(
+                                                                      topLeft: Radius
+                                                                          .circular(
+                                                                              10),
+                                                                      bottomLeft:
+                                                                          Radius.circular(
+                                                                              10))),
                                                           child: Table(
                                                             border: TableBorder.symmetric(
                                                                 inside: BorderSide(
-                                                                    width:
-                                                                    1,
+                                                                    width: 1,
                                                                     color: Colors
                                                                         .grey
-                                                                        .withOpacity(0.5))),
+                                                                        .withOpacity(
+                                                                            0.5))),
                                                             children: [
                                                               _buildTableHeader(
                                                                   context,
@@ -1296,13 +1266,13 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                               ...selectedCategory
                                                                   .items
                                                                   .map((item) =>
-                                                                  _buildTableRow(
-                                                                    context,
-                                                                    image:
-                                                                    item.itemImages,
-                                                                    menuItem:
-                                                                    item.cuisineMenu,
-                                                                  )),
+                                                                      _buildTableRow(
+                                                                        context,
+                                                                        image: item
+                                                                            .itemImages,
+                                                                        menuItem:
+                                                                            item.cuisineMenu,
+                                                                      )),
                                                             ],
                                                           )),
                                                     );
@@ -1310,46 +1280,44 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                 ),
                                                 // Second part: After discount (green column)
                                                 Obx(
-                                                      () {
+                                                  () {
                                                     final selectedCategory =
                                                         controller
                                                             .selectedCategory
                                                             .value;
 
                                                     if (selectedCategory ==
-                                                        null ||
+                                                            null ||
                                                         selectedCategory
-                                                            .items
-                                                            .isEmpty) {
+                                                            .items.isEmpty) {
                                                       return const SizedBox(); // Hide table if no data exists
                                                     }
                                                     return Expanded(
                                                       child: Container(
                                                         height: 482,
                                                         decoration:
-                                                        BoxDecoration(
+                                                            BoxDecoration(
                                                           color: AppColors
                                                               .primaryColor,
                                                           borderRadius:
-                                                          BorderRadius
-                                                              .circular(
-                                                              10),
+                                                              BorderRadius
+                                                                  .circular(10),
                                                         ),
                                                         child: Padding(
                                                           padding: EdgeInsets.symmetric(
                                                               vertical: Responsive
-                                                                  .isMobile(
-                                                                  context)
+                                                                      .isMobile(
+                                                                          context)
                                                                   ? 41
                                                                   : 71.0),
                                                           child: Table(
                                                             border: TableBorder.symmetric(
                                                                 inside: BorderSide(
-                                                                    width:
-                                                                    1,
+                                                                    width: 1,
                                                                     color: Colors
                                                                         .grey
-                                                                        .withOpacity(0.5))),
+                                                                        .withOpacity(
+                                                                            0.5))),
                                                             // columnWidths: {
                                                             //   0: const FlexColumnWidth(),
                                                             // },
@@ -1360,10 +1328,10 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                               ...selectedCategory
                                                                   .items
                                                                   .map(
-                                                                    (item) => _buildGreenRow(
+                                                                (item) => _buildGreenRow(
                                                                     context,
                                                                     afterPrice:
-                                                                    item.offer),
+                                                                        item.offer),
                                                               ),
                                                               // _buildGreenRow(
                                                               //     context,
@@ -1387,7 +1355,8 @@ class RestaurantDetailScreen extends StatelessWidget {
                                       ],
                                     );
                                   } else {
-                                    return SizedBox.shrink(); // Default empty widget
+                                    return SizedBox
+                                        .shrink(); // Default empty widget
                                   }
                                 }),
 // //                                         Column(
@@ -1731,7 +1700,6 @@ class RestaurantDetailScreen extends StatelessWidget {
 // //                                             ),
 // //                                           ],
 // //                                         ),
-
                               ],
                             ),
                           ),
@@ -1747,7 +1715,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 20),
                           Text(
-                            restaurantModel.specialConditions.text,
+                            restaurantModel.specialConditions,
                             style: TextStyle(
                               color: const Color(0xFF555555),
                               fontSize: Responsive.isMobile(context) ? 14 : 16,
@@ -1792,7 +1760,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(right: 28.0),
                             child: Text(
-                              restaurantModel.about.text,
+                              restaurantModel.about,
                               // 'The modern and elegant Flava Lite Rooftop Pool Bar & Cafe, located on the 11th floor, offers stunning views of the city skyline. Guests can unwind and enjoy a drink or a meal in a serene and relaxing atmosphere from morning until late at night. Whether you choose to sit outdoors and soak in the panoramic views or dine indoors surrounded by chic and minimalistic decor, this rooftop pool bar provides a comfortable environment. Thai-style marinated beef skewers with coriander seed are great to pair with any of your favorite drinks, while salt and pepper kurobuta crispy pork with steamed jasmine rice and Thai-style fried eggs may be more suitable for the hungrier patrons.',
                               textAlign: TextAlign.justify,
                               style: TextStyle(

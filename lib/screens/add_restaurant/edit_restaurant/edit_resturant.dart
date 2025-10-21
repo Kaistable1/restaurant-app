@@ -72,7 +72,7 @@ class EditRestaurantScreen extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(4.0),
                       child: Obx(
-                        () => currentUserDataModel.value!.address.text != ''
+                        () => currentUserDataModel.value!.address != ''
                             ? AccountSettingsPopupWidget()
                             : AccountNoAuthPopupWidget(),
                       ),

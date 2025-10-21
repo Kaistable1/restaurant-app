@@ -9,7 +9,7 @@ import 'package:restaurant_web_app/widgets/global_functions.dart';
 import 'package:restaurant_web_app/widgets/loading_dialog.dart';
 
 import '../../../constants/colors.dart';
-import '../../../universal_models/restaurant_model.dart';
+import '../../../models/resaturant_model.dart';
 import '../../../utils/responsive.dart';
 import '../../../widgets/round_button.dart';
 import '../../../widgets/text_field.dart';
@@ -17,11 +17,9 @@ import '../../main_screen/mainscreen_controller/main_controller.dart';
 import '../../operating_hour_screen/operating_hour_screen.dart';
 import '../../restaurant_detail_screen/restaurant_detail_screen.dart';
 
-
-
 class EditEntertainmentScreen extends StatelessWidget {
   // final EventTableController controller = Get.put(EventTableController());
-  final  controller = Get.put(EditScreenController());
+  final controller = Get.put(EditScreenController());
 
   bool? isFromButtonClick;
   final Function(int)? onNavigate;
@@ -183,8 +181,8 @@ class EditEntertainmentScreen extends StatelessWidget {
                       iconSize: Responsive.isMobile(context)
                           ? 14
                           : (Responsive.isTablet(context) ? 16 : 18),
-                      icon:
-                          const Icon(Icons.arrow_back, color: AppColors.primaryColor),
+                      icon: const Icon(Icons.arrow_back,
+                          color: AppColors.primaryColor),
                       onPressed: () {
                         Get.back();
                       },
@@ -224,9 +222,8 @@ class EditEntertainmentScreen extends StatelessWidget {
                   }
                   RestaurantModel resModel;
                   if (snapshot.data != null) {
-                    resModel =
-                        RestaurantModel.fromDocumentSnapshot(snapshot.data
-                            as DocumentSnapshot<Map<String, dynamic>>);
+                    resModel = RestaurantModel.fromDocumentSnapshot(snapshot
+                        .data as DocumentSnapshot<Map<String, dynamic>>);
 
                     // Access the entertainmentScheduleList
                     List<EntertainmentScheduleModel> entertainmentList =
@@ -237,11 +234,11 @@ class EditEntertainmentScreen extends StatelessWidget {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         // Extract data from entertainmentList
                         controller.eventNames.assignAll(entertainmentList
-                            .map((event) => event.eventName.text)
+                            .map((event) => event.eventName)
                             .toList());
 
                         controller.byValues.assignAll(entertainmentList
-                            .map((event) => event.eventBy.text)
+                            .map((event) => event.eventBy)
                             .toList());
 
                         controller.selectedDays.assignAll(entertainmentList
@@ -252,18 +249,19 @@ class EditEntertainmentScreen extends StatelessWidget {
                           entertainmentList.map((event) {
                             return event.date.isNotEmpty
                                 ? DateFormat('dd MMM, yyyy').parse(event.date)
-                                : null;  // Ensure null safety
+                                : null; // Ensure null safety
                           }).toList(),
                         );
 
                         // Parse startTime and endTime to TimeOfDay
                         controller.selectedTimes.assignAll(
-                            entertainmentList.map((event) {
-                              return {
-                                'from': parseTime(event.startTime),
-                                'to': parseTime(event.endTime),
-                              };
-                            }).toList(),   );
+                          entertainmentList.map((event) {
+                            return {
+                              'from': parseTime(event.startTime),
+                              'to': parseTime(event.endTime),
+                            };
+                          }).toList(),
+                        );
 
                         controller.checkBoxValues.assignAll(List.generate(
                             entertainmentList.length, (index) => false));
@@ -697,7 +695,8 @@ class EditEntertainmentScreen extends StatelessWidget {
                                   ? Get.width * 0.4
                                   : Get.width * 0.2,
                               onPressed: () {
-                                controller.onTapEntertainment(context, resModel);
+                                controller.onTapEntertainment(
+                                    context, resModel);
 
                                 // Get.snackbar('Update',
                                 //     'Your data is successfully updated.');

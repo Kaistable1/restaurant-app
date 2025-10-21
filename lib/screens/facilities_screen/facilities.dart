@@ -89,7 +89,7 @@ class FacilitiesScreen extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(4.0),
                       child: Obx(
-                        () => currentUserDataModel.value!.address.text != ''
+                        () => currentUserDataModel.value!.address != ''
                             ? AccountSettingsPopupWidget()
                             : AccountNoAuthPopupWidget(),
                       ),
@@ -893,24 +893,25 @@ class FacilitiesScreen extends StatelessWidget {
                                             text: 'Special Conditions ',
                                             style: TextStyle(
                                               fontSize: Responsive.isMobile(
-                                                  context)
+                                                      context)
                                                   ? 16
                                                   : Responsive.isTablet(context)
-                                                  ? 18
-                                                  : 24,
+                                                      ? 18
+                                                      : 24,
                                               fontWeight: FontWeight.w700,
                                             ),
                                             children: [
                                               TextSpan(
-                                                text: '*', // Add the red asterisk
+                                                text:
+                                                    '*', // Add the red asterisk
                                                 style: TextStyle(
-                                                  fontSize:
-                                                  Responsive.isMobile(context)
+                                                  fontSize: Responsive.isMobile(
+                                                          context)
                                                       ? 16
                                                       : Responsive.isTablet(
-                                                      context)
-                                                      ? 18
-                                                      : 24,
+                                                              context)
+                                                          ? 18
+                                                          : 24,
                                                   fontWeight: FontWeight.w700,
                                                   color: AppColors.red,
                                                 ),
@@ -919,50 +920,51 @@ class FacilitiesScreen extends StatelessWidget {
                                           ),
                                         ),
                                         const SizedBox(height: 10),
-                                        CustomTextField(
-                                          contentPadding: const EdgeInsets.only(
-                                              left: 18, top: 22),
-                                          controller: facilitiesController
-                                              .restaurantModel
-                                              .specialConditions,
-                                          maxLine: 5,
-                                          borderColor: AppColors.darkGrey
-                                              .withOpacity(.1),
-                                          borderRadius: 8,
-                                          hintText: "Add text",
-                                          fillColor: AppColors.whiteColor,
-                                          cursorColor: AppColors.primaryColor,
-                                          inputStyle: const TextStyle(
-                                              fontSize: 14,
-                                              color: AppColors.blackColor),
-                                          hintStyle: const TextStyle(
-                                              fontSize: 14,
-                                              color: AppColors.blackColor),
-                                        ),
+                                        // CustomTextField(
+                                        //   contentPadding: const EdgeInsets.only(
+                                        //       left: 18, top: 22),
+                                        //   controller: facilitiesController
+                                        //       .restaurantModel
+                                        //       .specialConditions,
+                                        //   maxLine: 5,
+                                        //   borderColor: AppColors.darkGrey
+                                        //       .withOpacity(.1),
+                                        //   borderRadius: 8,
+                                        //   hintText: "Add text",
+                                        //   fillColor: AppColors.whiteColor,
+                                        //   cursorColor: AppColors.primaryColor,
+                                        //   inputStyle: const TextStyle(
+                                        //       fontSize: 14,
+                                        //       color: AppColors.blackColor),
+                                        //   hintStyle: const TextStyle(
+                                        //       fontSize: 14,
+                                        //       color: AppColors.blackColor),
+                                        // ),
                                         const SizedBox(height: 10),
                                         RichText(
                                           text: TextSpan(
                                             text: 'Social media ',
                                             style: TextStyle(
                                               fontSize: Responsive.isMobile(
-                                                  context)
+                                                      context)
                                                   ? 16
                                                   : Responsive.isTablet(context)
-                                                  ? 18
-                                                  : 24,
+                                                      ? 18
+                                                      : 24,
                                               fontWeight: FontWeight.w700,
                                             ),
                                             children: [
                                               TextSpan(
-                                                text: '', // Add the red asterisk
+                                                text:
+                                                    '', // Add the red asterisk
                                                 style: TextStyle(
-                                                  fontSize:
-                                                  Responsive.isMobile(context)
+                                                  fontSize: Responsive.isMobile(
+                                                          context)
                                                       ? 16
                                                       : Responsive.isTablet(
-                                                      context)
-                                                      ? 18
-                                                      : 24,
+                                                              context)
+                                                          ? 18
+                                                          : 24,
                                                   fontWeight: FontWeight.w700,
                                                   color: AppColors.red,
                                                 ),
@@ -1038,24 +1040,25 @@ class FacilitiesScreen extends StatelessWidget {
                                             text: 'Link ',
                                             style: TextStyle(
                                               fontSize: Responsive.isMobile(
-                                                  context)
+                                                      context)
                                                   ? 16
                                                   : Responsive.isTablet(context)
-                                                  ? 18
-                                                  : 24,
+                                                      ? 18
+                                                      : 24,
                                               fontWeight: FontWeight.w700,
                                             ),
                                             children: [
                                               TextSpan(
-                                                text: '*', // Add the red asterisk
+                                                text:
+                                                    '*', // Add the red asterisk
                                                 style: TextStyle(
-                                                  fontSize:
-                                                  Responsive.isMobile(context)
+                                                  fontSize: Responsive.isMobile(
+                                                          context)
                                                       ? 16
                                                       : Responsive.isTablet(
-                                                      context)
-                                                      ? 18
-                                                      : 24,
+                                                              context)
+                                                          ? 18
+                                                          : 24,
                                                   fontWeight: FontWeight.w700,
                                                   color: AppColors.red,
                                                 ),
@@ -1064,24 +1067,24 @@ class FacilitiesScreen extends StatelessWidget {
                                           ),
                                         ),
                                         const SizedBox(height: 10),
-                                        CustomTextField(
-                                          contentPadding:
-                                              const EdgeInsets.only(left: 18),
-                                          controller: facilitiesController
-                                              .restaurantModel.socialLink,
-                                          borderColor: AppColors.darkGrey
-                                              .withOpacity(.1),
-                                          borderRadius: 8,
-                                          hintText: "Tiktok.com",
-                                          fillColor: AppColors.whiteColor,
-                                          cursorColor: AppColors.primaryColor,
-                                          inputStyle: const TextStyle(
-                                              fontSize: 14,
-                                              color: AppColors.blackColor),
-                                          hintStyle: const TextStyle(
-                                              fontSize: 14,
-                                              color: AppColors.blackColor),
-                                        ),
+                                        // CustomTextField(
+                                        //   contentPadding:
+                                        //       const EdgeInsets.only(left: 18),
+                                        //   controller: facilitiesController
+                                        //       .restaurantModel.socialLink,
+                                        //   borderColor: AppColors.darkGrey
+                                        //       .withOpacity(.1),
+                                        //   borderRadius: 8,
+                                        //   hintText: "Tiktok.com",
+                                        //   fillColor: AppColors.whiteColor,
+                                        //   cursorColor: AppColors.primaryColor,
+                                        //   inputStyle: const TextStyle(
+                                        //       fontSize: 14,
+                                        //       color: AppColors.blackColor),
+                                        //   hintStyle: const TextStyle(
+                                        //       fontSize: 14,
+                                        //       color: AppColors.blackColor),
+                                        // ),
                                       ],
                                     ),
                                   ),

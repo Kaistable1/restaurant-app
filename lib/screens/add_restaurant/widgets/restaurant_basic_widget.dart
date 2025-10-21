@@ -133,7 +133,7 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
                     ),
                     const SizedBox(height: 8),
                     CustomTextField(
-                      controller: restaurantController.restaurantModel.resName,
+                      controller: restaurantController.restaurantNameController,
                       borderColor: AppColors.darkGrey.withOpacity(.1),
                       width: 516,
                       borderRadius: 8,
@@ -193,9 +193,9 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
                               () => Wrap(
                                 spacing: 8,
                                 children: [
-                                  // Display existing images from URLs (resImages)
+                                  // Display existing images from URLs (imagesList)
                                   ...restaurantController
-                                      .restaurantModel.resImages
+                                      .restaurantModel.imagesList
                                       .map((imageUrl) {
                                     return Stack(
                                       clipBehavior: Clip.none,
@@ -203,7 +203,7 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
                                         ClipRRect(
                                           borderRadius:
                                               BorderRadius.circular(10),
-                                          child: Container(
+                                          child: SizedBox(
                                             width: Responsive.isDesktop(context)
                                                 ? 160
                                                 : 150,
@@ -212,7 +212,7 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
                                                     ? 160
                                                     : 110,
                                             child: Image.network(
-                                              imageUrl.value,
+                                              imageUrl,
                                               fit: BoxFit.cover,
                                               errorBuilder:
                                                   (context, error, stackTrace) {
@@ -249,7 +249,7 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
                                           child: GestureDetector(
                                             onTap: () {
                                               restaurantController
-                                                  .restaurantModel.resImages
+                                                  .restaurantModel.imagesList
                                                   .remove(imageUrl);
                                             },
                                             child: Container(
@@ -272,8 +272,7 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
                                   }).toList(),
 
                                   // Display newly uploaded images from memory (resImageMemory)
-                                  ...restaurantController
-                                      .restaurantModel.resImageMemory
+                                  ...restaurantController.resImageMemory
                                       .map((image) {
                                     return Stack(
                                       clipBehavior: Clip.none,
@@ -301,7 +300,6 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
                                           child: GestureDetector(
                                             onTap: () {
                                               restaurantController
-                                                  .restaurantModel
                                                   .resImageMemory
                                                   .remove(image);
                                             },
@@ -335,8 +333,7 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
 
                                       if (selectedImage != null &&
                                           selectedImage.isNotEmpty) {
-                                        restaurantController
-                                            .restaurantModel.resImageMemory
+                                        restaurantController.resImageMemory
                                             .add(selectedImage);
                                         // print(
                                         //     '${controller.listingModel!.listingImageMemories.length}++++++++++++++++++ gallery');
@@ -419,11 +416,11 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
 
                             if (selectedImage != null &&
                                 selectedImage.isNotEmpty) {
-                              restaurantController.restaurantModel
-                                  .logoImageMemory.value = selectedImage;
+                              restaurantController.logoImageMemory.value =
+                                  selectedImage;
                             }
                           },
-                          child: restaurantController.restaurantModel
+                          child: restaurantController
                                   .logoImageMemory.value.isNotEmpty
                               ? ClipRRect(
                                   borderRadius: BorderRadius.circular(12),
@@ -434,17 +431,16 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
                                             ? 120
                                             : 110,
                                     width: 516,
-                                    restaurantController
-                                        .restaurantModel.logoImageMemory.value,
+                                    restaurantController.logoImageMemory.value,
                                     fit: BoxFit.cover,
                                   ),
                                 )
                               : restaurantController
-                                          .restaurantModel.logoImage.value !=
+                                          .restaurantModel.logoImage !=
                                       ''
                                   ? Image.network(
                                       restaurantController
-                                          .restaurantModel.logoImage.value,
+                                          .restaurantModel.logoImage,
                                       fit: BoxFit.cover)
                                   : Container(
                                       height: widget.isDesktop
@@ -569,7 +565,7 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
                     ),
                     const SizedBox(height: 8),
                     CustomTextField(
-                      controller: restaurantController.restaurantModel.address,
+                      controller: restaurantController.addressController,
                       borderColor: AppColors.darkGrey.withOpacity(.1),
                       width: 516,
                       borderRadius: 8,
@@ -666,7 +662,7 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
                           setState(() {
                             selectedValue = value;
                             restaurantController
-                                .restaurantModel.spokenLanguage.value = value!;
+                                .restaurantModel.spokenLanguage = value!;
                           });
                         },
                         buttonStyleData: ButtonStyleData(
@@ -781,8 +777,7 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
                     ),
                     const SizedBox(height: 8),
                     CustomTextField(
-                      controller:
-                          restaurantController.restaurantModel.phoneNumber,
+                      controller: restaurantController.phoneController,
                       borderColor: AppColors.darkGrey.withOpacity(.1),
                       width: 516,
                       borderRadius: 8,
@@ -1136,8 +1131,7 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
                       children: [
                         Expanded(
                           child: CustomTextField(
-                            controller:
-                                restaurantController.restaurantModel.zipCode,
+                            controller: restaurantController.zipCodeController,
                             borderColor: AppColors.darkGrey.withOpacity(.1),
                             borderRadius: 8,
                             hintText: "45626",
@@ -1156,7 +1150,7 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
                                   ? null
                                   : () {
                                       final zipCode = restaurantController
-                                          .restaurantModel.zipCode.text
+                                          .zipCodeController.text
                                           .trim();
                                       if (zipCode.isNotEmpty) {
                                         restaurantController
@@ -1225,7 +1219,7 @@ class _RestaurantbasicwidgetState extends State<Restaurantbasicwidget> {
                     ),
                     const SizedBox(height: 8),
                     CustomTextField(
-                      controller: restaurantController.restaurantModel.about,
+                      controller: restaurantController.aboutController,
                       borderColor: AppColors.darkGrey.withOpacity(.1),
                       width: 516,
                       borderRadius: 8,

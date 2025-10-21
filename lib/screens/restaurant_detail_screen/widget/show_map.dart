@@ -3,16 +3,17 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:restaurant_web_app/screens/add_restaurant/add_resturant_controller/add_resturant%20_controller.dart';
 import 'package:restaurant_web_app/screens/restaurant_detail_screen/controller/restaurant_detail_controller.dart';
-import 'package:restaurant_web_app/universal_models/restaurant_model.dart';
+import 'package:restaurant_web_app/models/resaturant_model.dart';
 
 class ShowMapWidget extends StatelessWidget {
   const ShowMapWidget({
     super.key,
-    required this.controller, required this.resModel,
+    required this.controller,
+    required this.resModel,
   });
 
   final RestaurantDetailController controller;
-  final RestaurantModel resModel ;
+  final RestaurantModel resModel;
 
   @override
   Widget build(BuildContext context) {
@@ -30,13 +31,13 @@ class ShowMapWidget extends StatelessWidget {
             height: mapHeight,
             child: GoogleMap(
               markers: {
-                  Marker(
+                Marker(
                   markerId: MarkerId('Property location'),
                   position: LatLng(resModel.latitude, resModel.longitude),
                 ),
               },
               mapType: MapType.normal,
-              initialCameraPosition:    CameraPosition(
+              initialCameraPosition: CameraPosition(
                 target: LatLng(resModel.latitude, resModel.longitude),
                 zoom: 14.4746,
               ),

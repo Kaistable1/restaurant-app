@@ -60,7 +60,7 @@ class OperatingHourScreen1 extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(4.0),
                       child: Obx(
-                        () => currentUserDataModel.value?.phoneNumber.text != ''
+                        () => currentUserDataModel.value?.phoneNo != ''
                             ? AccountSettingsPopupWidget()
                             : AccountNoAuthPopupWidget(),
                       ),

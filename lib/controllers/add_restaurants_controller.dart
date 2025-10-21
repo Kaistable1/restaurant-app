@@ -18,8 +18,6 @@ import 'package:restaurant_web_app/widgets/loading_dialog.dart';
 class AddRestaurantTabController extends GetxController {
   final basicInfoFormKey = GlobalKey<FormState>();
   final restaurantNameController = TextEditingController();
-  final emailController = TextEditingController();
-  final assignPasswordController = TextEditingController();
   final areaController = TextEditingController();
   final zipCodeController = TextEditingController();
   final phoneNoController = TextEditingController();
@@ -29,16 +27,12 @@ class AddRestaurantTabController extends GetxController {
   final instagramController = TextEditingController();
   RestaurantModel? restaurantModel;
   String currentRestaurantID = '';
-  var isPasswordVisible = false.obs;
   RxInt selectedIndex = 0.obs;
   RxString selectedState = ''.obs;
   RxString selectedCity = ''.obs;
   RxString selectedSpokenLanguage = ''.obs;
   RxDouble latitude = 0.0.obs;
   RxDouble longitude = 0.0.obs;
-  void togglePasswordVisibility() {
-    isPasswordVisible.value = !isPasswordVisible.value;
-  }
 
   RxList<String> spokenLanguageList = <String>[
     "English",
@@ -531,8 +525,6 @@ class AddRestaurantTabController extends GetxController {
 
   void clearFields() {
     restaurantNameController.clear();
-    emailController.clear();
-    assignPasswordController.clear();
     areaController.clear();
     instagramController.clear();
     tiktokLinkController.clear();
@@ -544,7 +536,6 @@ class AddRestaurantTabController extends GetxController {
     selectedState.value = '';
     selectedCity.value = '';
     selectedSpokenLanguage.value = '';
-    isPasswordVisible.value = false;
     update();
   }
 
@@ -569,8 +560,6 @@ class AddRestaurantTabController extends GetxController {
             ? 'https://s3-media2.fl.yelpcdn.com/bphoto/iCP4QYCjWf9i-qDIBQrsnQ/o.jpg'
             : imagesList.first,
         'longitude': longitude.value,
-        'password': assignPasswordController.text,
-        'resEmail': emailController.text.trim(),
         'resName': restaurantNameController.text.trim(),
         'socialLink': instagramController.text.trim(),
         'socialMedia': tiktokLinkController.text.trim(),

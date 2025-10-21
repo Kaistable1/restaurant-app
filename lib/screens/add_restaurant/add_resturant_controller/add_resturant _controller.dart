@@ -13,7 +13,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:restaurant_web_app/main.dart';
 import 'package:restaurant_web_app/screens/add_restaurant/edit_restaurant/edit_resturant.dart';
-import 'package:restaurant_web_app/universal_models/restaurant_model.dart';
+import 'package:restaurant_web_app/models/resaturant_model.dart';
 import 'package:restaurant_web_app/widgets/loading_dialog.dart';
 import 'package:restaurant_web_app/widgets/no_internet_dialog.dart';
 
@@ -29,6 +29,10 @@ class AddRestaurantController extends GetxController {
   ///backend
 
   RestaurantModel restaurantModel = RestaurantModel.initialize();
+
+  // Temporary image storage for legacy UI (not persisted to model)
+  RxList<Uint8List> resImageMemory = <Uint8List>[].obs;
+  Rx<Uint8List> logoImageMemory = Uint8List(0).obs;
 
   // Location data properties
   RxList<String> stateList = <String>[].obs;
@@ -72,7 +76,7 @@ class AddRestaurantController extends GetxController {
         // Populate restaurantModel from Firestore data
         restaurantModel = RestaurantModel.fromDocumentSnapshot(doc);
 
-        print('✅ Restaurant data loaded: ${restaurantModel.resName.text}');
+        print('✅ Restaurant data loaded: ${restaurantModel.resName}');
 
         // Wait for location data to finish loading before populating form
         await Future.delayed(const Duration(milliseconds: 500));
@@ -92,14 +96,14 @@ class AddRestaurantController extends GetxController {
     ever(isLocationDataLoading, (loading) {
       if (!loading) {
         // Once location data is loaded, populate the dropdowns
-        if (restaurantModel.country.text.isNotEmpty) {
-          selectedState.value = restaurantModel.country.text;
+        if (restaurantModel.country.isNotEmpty) {
+          selectedState.value = restaurantModel.country;
           print('Initialized state from model: ${selectedState.value}');
         }
 
-        if (restaurantModel.city.text.isNotEmpty) {
-          selectedCity.value = restaurantModel.city.text;
-          cityController.text = restaurantModel.city.text;
+        if (restaurantModel.city.isNotEmpty) {
+          selectedCity.value = restaurantModel.city;
+          cityController.text = restaurantModel.city;
           print('Initialized city from model: ${selectedCity.value}');
         }
 
@@ -256,7 +260,7 @@ class AddRestaurantController extends GetxController {
 
     // Update the country controller
     if (selectedState.value.isNotEmpty) {
-      restaurantModel.country.text = selectedState.value;
+      restaurantModel.country = selectedState.value;
     }
 
     // Only reset city if actually changing state
@@ -264,7 +268,7 @@ class AddRestaurantController extends GetxController {
         selectedState.value.isNotEmpty) {
       selectedCity.value = '';
       cityController.clear();
-      restaurantModel.city.clear();
+      restaurantModel.city = '';
     }
 
     update();
@@ -274,7 +278,7 @@ class AddRestaurantController extends GetxController {
   void onCitySelected(String? value) {
     selectedCity.value = value ?? '';
     cityController.text = value ?? '';
-    restaurantModel.city.text = value ?? '';
+    restaurantModel.city = value ?? '';
     update();
   }
 
@@ -342,7 +346,7 @@ class AddRestaurantController extends GetxController {
                 if (value != null && value.isNotEmpty) {
                   cityController.text = value;
                   selectedCity.value = value;
-                  restaurantModel.city.text = value;
+                  restaurantModel.city = value;
                   await Future.delayed(const Duration(milliseconds: 300));
                   Navigator.of(dialogContext).pop();
                 }
@@ -495,17 +499,17 @@ class AddRestaurantController extends GetxController {
     String zipCode = locationData['zipCode'] ?? '';
 
     zipCodeController.text = zipCode;
-    restaurantModel.zipCode.text = zipCode;
+    restaurantModel.zipCode = zipCode;
 
     if (stateList.contains(state)) {
       selectedState.value = state;
-      restaurantModel.country.text = state;
+      restaurantModel.country = state;
 
       await Future.delayed(const Duration(milliseconds: 100));
 
       cityController.text = city;
       selectedCity.value = city;
-      restaurantModel.city.text = city;
+      restaurantModel.city = city;
 
       if (citiesByState[state]?.contains(city) != true) {
         Get.snackbar(
@@ -527,8 +531,8 @@ class AddRestaurantController extends GetxController {
       selectedState.value = '';
       cityController.text = '';
       selectedCity.value = '';
-      restaurantModel.country.clear();
-      restaurantModel.city.clear();
+      restaurantModel.country = '';
+      restaurantModel.city = '';
     }
 
     update();
@@ -1097,7 +1101,8 @@ class AddRestaurantController extends GetxController {
   TextEditingController phoneController = TextEditingController();
   TextEditingController cityController = TextEditingController();
   TextEditingController zipCodeController = TextEditingController();
-  // TextEditingController cuisineController = TextEditingController();
+  TextEditingController countryController = TextEditingController();
+// TextEditingController cuisineController = TextEditingController();
 
   final List<String> days = [
     'Monday',
@@ -1120,19 +1125,19 @@ class AddRestaurantController extends GetxController {
     bool isValid = true;
 
     // Log all values before validation
-    print("Restaurant Name: ${restaurantModel.resName.text}");
-    print("About: ${restaurantModel.about.text}");
-    print("Address: ${restaurantModel.address.text}");
-    print("Phone: ${restaurantModel.phoneNumber.text}");
-    print("City: ${restaurantModel.city.text}");
-    print("Country: ${restaurantModel.country.text}");
-    print("Zip Code: ${restaurantModel.zipCode.text}");
+    print("Restaurant Name: ${restaurantModel.resName}");
+    print("About: ${restaurantModel.about}");
+    print("Address: ${restaurantModel.address}");
+    print("Phone: ${restaurantModel.phoneNo}");
+    print("City: ${restaurantModel.city}");
+    print("Country: ${restaurantModel.country}");
+    print("Zip Code: ${restaurantModel.zipCode}");
 
     // ✅ Validate Restaurant Name
-    if (restaurantModel.resName.text.isEmpty) {
+    if (restaurantModel.resName.isEmpty) {
       restaurantsNameError.value = "Enter Restaurant Name";
       isValid = false;
-    } else if (restaurantModel.resName.text.length < 3) {
+    } else if (restaurantModel.resName.length < 3) {
       restaurantsNameError.value =
           "Restaurant Name must be at least 3 characters";
       isValid = false;
@@ -1141,10 +1146,10 @@ class AddRestaurantController extends GetxController {
     }
 
     // ✅ Validate About
-    if (restaurantModel.about.text.isEmpty) {
+    if (restaurantModel.about.isEmpty) {
       aboutError.value = "Enter about restaurant.";
       isValid = false;
-    } else if (restaurantModel.about.text.length < 3) {
+    } else if (restaurantModel.about.length < 3) {
       aboutError.value = "About restaurant must be at least 3 characters";
       isValid = false;
     } else {
@@ -1152,10 +1157,10 @@ class AddRestaurantController extends GetxController {
     }
 
     // ✅ Validate Address
-    if (restaurantModel.address.text.isEmpty) {
+    if (restaurantModel.address.isEmpty) {
       addressError.value = "Enter your address";
       isValid = false;
-    } else if (restaurantModel.address.text.length < 5) {
+    } else if (restaurantModel.address.length < 5) {
       addressError.value =
           "Address is too short. It must be at least 5 characters.";
       isValid = false;
@@ -1164,11 +1169,10 @@ class AddRestaurantController extends GetxController {
     }
 
     // ✅ Validate Phone Number
-    if (restaurantModel.phoneNumber.text.isEmpty) {
+    if (restaurantModel.phoneNo.isEmpty) {
       phoneError.value = "Please enter your phone number";
       isValid = false;
-    } else if (!RegExp(r'^\d{7,15}$')
-        .hasMatch(restaurantModel.phoneNumber.text)) {
+    } else if (!RegExp(r'^\d{7,15}$').hasMatch(restaurantModel.phoneNo)) {
       phoneError.value = "Phone number must be 7 to 15 digits long.";
       isValid = false;
     } else {
@@ -1176,14 +1180,14 @@ class AddRestaurantController extends GetxController {
     }
 
     // ✅ Validate City
-    if (restaurantModel.city.text.isEmpty) {
+    if (restaurantModel.city.isEmpty) {
       cityError.value = "Enter your city name";
       isValid = false;
-    } else if (restaurantModel.city.text.length < 2) {
+    } else if (restaurantModel.city.length < 2) {
       cityError.value =
           "City name is too short. It must be at least 2 characters.";
       isValid = false;
-    } else if (!RegExp(r'^[a-zA-Z\s-]+$').hasMatch(restaurantModel.city.text)) {
+    } else if (!RegExp(r'^[a-zA-Z\s-]+$').hasMatch(restaurantModel.city)) {
       cityError.value =
           "City name can only contain letters, spaces, or hyphens.";
       isValid = false;
@@ -1192,10 +1196,10 @@ class AddRestaurantController extends GetxController {
     }
 
     // ✅ Validate Country
-    if (restaurantModel.country.text.isEmpty) {
+    if (restaurantModel.country.isEmpty) {
       countryError.value = "Enter your country name";
       isValid = false;
-    } else if (restaurantModel.country.text.length < 2) {
+    } else if (restaurantModel.country.length < 2) {
       countryError.value =
           "Country name is too short. It must be at least 2 characters.";
       isValid = false;
@@ -1204,10 +1208,10 @@ class AddRestaurantController extends GetxController {
     }
 
     // ✅ Validate Zip Code
-    if (restaurantModel.zipCode.text.isEmpty) {
+    if (restaurantModel.zipCode.isEmpty) {
       zipCodeError.value = "Enter your zip code";
       isValid = false;
-    } else if (!RegExp(r'^\d{5}$').hasMatch(restaurantModel.zipCode.text)) {
+    } else if (!RegExp(r'^\d{5}$').hasMatch(restaurantModel.zipCode)) {
       zipCodeError.value =
           "Zip code must be exactly 5 digits and only contain numbers.";
       isValid = false;
@@ -1219,12 +1223,12 @@ class AddRestaurantController extends GetxController {
     print("Validation Status: $isValid");
 
     if (isValid) {
-      if (restaurantModel.logoImageMemory.value.isEmpty) {
+      if (restaurantModel.logoImage.isEmpty) {
         Get.snackbar("Please wait !!!", "Please add a logo!",
             backgroundColor: AppColors.primaryColor,
             colorText: Colors.white,
             maxWidth: 400);
-      } else if (restaurantModel.resImageMemory.isEmpty) {
+      } else if (restaurantModel.imagesList.isEmpty) {
         Get.snackbar("Please wait !!!", "Please add restaurant images!",
             backgroundColor: AppColors.primaryColor,
             colorText: Colors.white,
@@ -1280,7 +1284,7 @@ class AddRestaurantController extends GetxController {
       isValid = false;
     }
 
-    if (restaurantModel.specialConditions.text == '') {
+    if (restaurantModel.specialConditions == '') {
       Get.snackbar(
         "Special Conditions Required",
         "Please enter special conditions before saving.",
@@ -1293,7 +1297,7 @@ class AddRestaurantController extends GetxController {
       isValid = false;
     }
 
-    if (restaurantModel.socialLink.text == '') {
+    if (restaurantModel.socialLink == '') {
       Get.snackbar(
         "Link Required",
         "Please enter Link before saving.",
@@ -1309,11 +1313,11 @@ class AddRestaurantController extends GetxController {
     if (isValid) {
       ///assigning things
 
-      restaurantModel.dietaryList.value = dietarySelection;
-      restaurantModel.socialMedia = selectedSocialMedia;
-      restaurantModel.priceRange = selectedPriceRange;
-      restaurantModel.atmopshereList.value = atmosphereSelection;
-      restaurantModel.facilityList.value = facilitySelection;
+      restaurantModel.dietaryList = dietarySelection;
+      restaurantModel.socialMedia = selectedSocialMedia.value;
+      restaurantModel.priceRange = selectedPriceRange.value;
+      restaurantModel.atmosphereList = atmosphereSelection;
+      restaurantModel.facilityList = facilitySelection;
       Get.snackbar('Success',
           'All fields selected and validated. Proceeding to next step.',
           snackPosition: SnackPosition.TOP,
@@ -1456,6 +1460,8 @@ class AddRestaurantController extends GetxController {
   ///operating hours
 
   final TextEditingController aboutTextController = TextEditingController();
+  final TextEditingController aboutController = TextEditingController();
+  final TextEditingController websiteUrlController = TextEditingController();
 
   ///going to meal screen from
   void nextSave() async {

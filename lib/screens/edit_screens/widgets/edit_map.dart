@@ -3,13 +3,14 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:restaurant_web_app/screens/add_restaurant/add_resturant_controller/add_resturant%20_controller.dart';
 import 'package:restaurant_web_app/screens/restaurant_detail_screen/controller/restaurant_detail_controller.dart';
-import 'package:restaurant_web_app/universal_models/restaurant_model.dart';
+import 'package:restaurant_web_app/models/resaturant_model.dart';
 
 import '../../../widgets/global_functions.dart';
 
 class EditMapWidget extends StatelessWidget {
   EditMapWidget({
-    super.key, required this.restaurantModel,
+    super.key,
+    required this.restaurantModel,
   });
   final RestaurantModel restaurantModel;
 
@@ -29,7 +30,8 @@ class EditMapWidget extends StatelessWidget {
             child: GoogleMap(
               mapType: MapType.normal,
               initialCameraPosition: CameraPosition(
-                target: LatLng(restaurantModel.latitude,restaurantModel.longitude),
+                target:
+                    LatLng(restaurantModel.latitude, restaurantModel.longitude),
                 zoom: 14,
               ),
               onMapCreated: (mapController) {
@@ -38,7 +40,8 @@ class EditMapWidget extends StatelessWidget {
               markers: {
                 Marker(
                   markerId: const MarkerId('currentLocation'),
-                  position: LatLng(restaurantModel.latitude,restaurantModel.longitude),
+                  position: LatLng(
+                      restaurantModel.latitude, restaurantModel.longitude),
                 ),
               },
               onCameraIdle: () async {

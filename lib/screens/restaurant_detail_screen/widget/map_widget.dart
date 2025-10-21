@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:restaurant_web_app/screens/add_restaurant/add_resturant_controller/add_resturant%20_controller.dart';
-import 'package:restaurant_web_app/universal_models/restaurant_model.dart';
+import 'package:restaurant_web_app/models/resaturant_model.dart';
 import 'package:restaurant_web_app/widgets/global_functions.dart';
 
 import '../../../../constants/colors.dart';
@@ -113,7 +113,7 @@ class MapDetailWidget extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                restaurantModel.address.text,
+                restaurantModel.address,
                 style: TextStyle(
                   color: AppColors.darkGrey,
                   fontSize: Responsive.isMobile(context) ? 6 : 14,
@@ -142,7 +142,7 @@ class MapDetailWidget extends StatelessWidget {
               Wrap(
                   spacing: Responsive.isMobile(context) ? 6 : 10,
                   runSpacing: Responsive.isMobile(context) ? 6 : 10,
-                  children: restaurantModel.atmopshereList.map((atmosphere) {
+                  children: restaurantModel.atmosphereList.map((atmosphere) {
                     return _buildAtmosphere(context, atmosphere);
                   }).toList()),
               const SizedBox(height: 16),
@@ -227,7 +227,7 @@ class MapDetailWidget extends StatelessWidget {
                   spacing: Responsive.isMobile(context) ? 6 : 10,
                   runSpacing: Responsive.isMobile(context) ? 6 : 10,
                   children: [
-                    _buildPriceRange(context, restaurantModel.priceRange.value),
+                    _buildPriceRange(context, restaurantModel.priceRange),
                   ]),
               // Wrap(
               //   spacing: Responsive.isMobile(context) ? 4 : 10,
@@ -255,7 +255,7 @@ class MapDetailWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  restaurantModel.spokenLanguage.value,
+                  restaurantModel.spokenLanguage,
                   style: TextStyle(
                     color: AppColors.blackColor,
                     fontSize: Responsive.isMobile(context) ? 6 : 12,

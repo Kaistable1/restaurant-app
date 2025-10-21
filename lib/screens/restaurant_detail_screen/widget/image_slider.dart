@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:restaurant_web_app/universal_models/restaurant_model.dart';
+import 'package:restaurant_web_app/models/resaturant_model.dart';
 
 import '../../../../utils/responsive.dart';
 
@@ -52,12 +52,12 @@ class _ImageSliderState extends State<ImageSlider> {
                     _currentIndex = index;
                   });
                 },
-                itemCount: widget.resModel.resImages.length,
+                itemCount: widget.resModel.imagesList.length,
                 itemBuilder: (context, index) {
                   return Container(
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: NetworkImage(widget.resModel.resImages[index].value),
+                        image: NetworkImage(widget.resModel.imagesList[index]),
                         fit: BoxFit.fitHeight,
                       ),
                       borderRadius: BorderRadius.circular(5),

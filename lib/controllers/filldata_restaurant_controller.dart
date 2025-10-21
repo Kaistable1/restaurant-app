@@ -94,10 +94,6 @@ class FillDataRestaurantController extends GetxController {
           '🔍 restaurantDetailsModel.imagesList: ${restaurantDetailsModel!.imagesList}');
       addRestaurantController.restaurantNameController.text =
           restaurantDetailsModel!.resName;
-      addRestaurantController.emailController.text =
-          restaurantDetailsModel!.resEmail;
-      addRestaurantController.assignPasswordController.text =
-          restaurantDetailsModel!.password;
       addRestaurantController.areaController.text =
           restaurantDetailsModel!.address;
       addRestaurantController.instagramController.text =

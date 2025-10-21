@@ -194,11 +194,7 @@ class RestaurantModel {
         spokenLanguage: data['spokenLanguage'] ?? '',
         socialLink: '',
         socialMedia: '',
-        zipCode: data['zipCode'] != null
-            ? data['zipCode']
-            : data['zipcode'] != null
-                ? data['zipcode']
-                : '',
+        zipCode: data['zipCode'] ?? '',
         phoneNo: data['phoneNo'] ?? "",
         websiteUrl: data['websiteUrl'] ?? " ");
   }

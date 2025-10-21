@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:restaurant_web_app/constants/colors.dart';
 import 'package:restaurant_web_app/main.dart';
-import 'package:restaurant_web_app/universal_models/restaurant_model.dart';
+import 'package:restaurant_web_app/models/resaturant_model.dart';
 import 'package:restaurant_web_app/widgets/loading_dialog.dart';
 import 'package:restaurant_web_app/widgets/no_internet_dialog.dart';
 
@@ -106,10 +106,12 @@ class EditScreenController extends GetxController {
   RxList<String> dietarySelection = <String>[].obs;
   RxList<String> atmosphereSelection = <String>[].obs;
 
-
   var selectedAtmosphere = ''.obs;
   final TextEditingController facilitiesTextController =
-  TextEditingController();
+      TextEditingController();
+  final TextEditingController specialConditionsController =
+      TextEditingController();
+  final TextEditingController socialLinkController = TextEditingController();
   // Observable list for facilities
   var facilities = <String>[
     'Free wi-fi',
@@ -151,17 +153,18 @@ class EditScreenController extends GetxController {
   void selectFacility(String facility) {
     selectedFacility.value = facility;
   }
+
   // Add a new facility
   void addFacility(String facility) {
     if (!facilities.contains(facility)) {
       facilities.add(facility);
     }
   }
+
   // Set the selected atmosphere
   void selectAtmosphere(String atmosphereOption) {
     selectedAtmosphere.value = atmosphereOption;
   }
-
 
   // Add a new atmosphere option
   void addAtmosphere(String atmosphereOption) {
@@ -185,9 +188,9 @@ class EditScreenController extends GetxController {
       pricerange.add(priceRangeOption);
     }
   }
-  ///save button of facilities
-  void saveAndNext(BuildContext context,RestaurantModel restaurantModel ) {
 
+  ///save button of facilities
+  void saveAndNext(BuildContext context, RestaurantModel restaurantModel) {
     print('hsvdhd');
     bool isValid = true;
 
@@ -209,7 +212,7 @@ class EditScreenController extends GetxController {
       isValid = false;
     }
 
-    if (  restaurantModel.specialConditions.text =='') {
+    if (restaurantModel.specialConditions == '') {
       Get.snackbar(
         "Special Conditions Required",
         "Please enter special conditions before saving.",
@@ -221,7 +224,7 @@ class EditScreenController extends GetxController {
       isValid = false;
     }
 
-    if (  restaurantModel.socialLink.text =='') {
+    if (restaurantModel.socialLink == '') {
       Get.snackbar(
         "Special Conditions Required",
         "Please enter special conditions before saving.",
@@ -238,11 +241,11 @@ class EditScreenController extends GetxController {
       // descriptionError.value = '';
       ///assigning things
 
-      restaurantModel.dietaryList.value = dietarySelection;
-      restaurantModel.socialMedia = selectedSocialMedia;
-      restaurantModel.priceRange = selectedPriceRange;
-      restaurantModel.atmopshereList.value = atmosphereSelection;
-      restaurantModel.facilityList.value = facilitySelection;
+      restaurantModel.dietaryList = dietarySelection;
+      restaurantModel.socialMedia = selectedSocialMedia.value;
+      restaurantModel.priceRange = selectedPriceRange.value;
+      restaurantModel.atmosphereList = atmosphereSelection;
+      restaurantModel.facilityList = facilitySelection;
       Get.snackbar('Success',
           'All fields selected and validated. Proceeding to next step.',
           snackPosition: SnackPosition.TOP,
@@ -260,7 +263,7 @@ class EditScreenController extends GetxController {
     }
   }
 
-///edit entertainment
+  ///edit entertainment
   final List<String> eventNames = <String>[].obs;
 
   final List<String> byValues = <String>[].obs;
@@ -279,7 +282,7 @@ class EditScreenController extends GetxController {
   final selectedDates = List<DateTime?>.filled(7, null).obs;
   final selectedTimes = List<Map<String, TimeOfDay?>>.generate(
     0,
-        (_) => {"from": null, "to": null},
+    (_) => {"from": null, "to": null},
   ).obs;
 
   final customEventController = TextEditingController();
@@ -298,7 +301,9 @@ class EditScreenController extends GetxController {
     selectedDates.add(null);
     selectedTimes.add({"from": null, "to": null});
   }
-  void onTapEntertainment(BuildContext context, RestaurantModel restaurantModel) {
+
+  void onTapEntertainment(
+      BuildContext context, RestaurantModel restaurantModel) {
     if (eventNames.isEmpty ||
         byValues.isEmpty ||
         selectedDays.isEmpty ||
@@ -330,7 +335,7 @@ class EditScreenController extends GetxController {
       }
 
       String formattedDate =
-      DateFormat('dd MMM, yyyy').format(selectedDates[i]!);
+          DateFormat('dd MMM, yyyy').format(selectedDates[i]!);
 
       Map<String, dynamic> schedule = {
         "eventName": eventNames[i],
@@ -340,7 +345,7 @@ class EditScreenController extends GetxController {
         'startTime': selectedTimes[i]["from"]?.format(context) ?? '',
         'endTime': selectedTimes[i]["to"]?.format(context) ?? '',
         'isSelected':
-        checkBoxValues.length > i ? checkBoxValues[i] ?? false : false,
+            checkBoxValues.length > i ? checkBoxValues[i] ?? false : false,
       };
 
       entertainmentSchedules.add(EntertainmentScheduleModel.fromMap(schedule));
@@ -349,10 +354,9 @@ class EditScreenController extends GetxController {
     // Delay state update until after the widget tree has finished building
     WidgetsBinding.instance.addPostFrameCallback((_) {
       restaurantModel.entertainmentScheduleList = entertainmentSchedules;
-      updateRestaurantData(context,restaurantModel);
+      updateRestaurantData(context, restaurantModel);
       // Navigate only after updating state
       // Get.to(() => OperatingHourScreen1(isFromButtonClick: true));
     });
   }
-
 }

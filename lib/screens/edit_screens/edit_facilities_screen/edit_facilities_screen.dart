@@ -7,7 +7,7 @@ import 'package:restaurant_web_app/main.dart';
 import 'package:restaurant_web_app/screens/add_restaurant/add_resturant_controller/add_resturant%20_controller.dart';
 import 'package:restaurant_web_app/screens/add_restaurant/edit_restaurant/edit_restaurant_controller/edit_restaurant_controller.dart';
 import 'package:restaurant_web_app/screens/edit_screens/controller/edit_controller.dart';
-import 'package:restaurant_web_app/universal_models/restaurant_model.dart';
+import 'package:restaurant_web_app/models/resaturant_model.dart';
 
 import '../../../constants/colors.dart';
 import '../../../utils/responsive.dart';
@@ -276,15 +276,15 @@ class EditFacilitiesScreen extends StatelessWidget {
                               // Ensure updates happen after build completes
                               WidgetsBinding.instance.addPostFrameCallback((_) {
                                 editController.dietarySelection.value =
-                                    resModel.dietaryList.value;
+                                    resModel.dietaryList;
                                 editController.selectedSocialMedia.value =
-                                    resModel.socialMedia.value;
+                                    resModel.socialMedia;
                                 editController.selectedPriceRange.value =
-                                    resModel.priceRange.value;
+                                    resModel.priceRange;
                                 editController.atmosphereSelection.value =
-                                    resModel.atmopshereList.value;
+                                    resModel.atmosphereList;
                                 editController.facilitySelection.value =
-                                    resModel.facilityList.value;
+                                    resModel.facilityList;
                               });
                             } else {
                               resModel = RestaurantModel.initialize();
@@ -1078,8 +1078,8 @@ class EditFacilitiesScreen extends StatelessWidget {
                                               contentPadding:
                                                   const EdgeInsets.only(
                                                       left: 18, top: 22),
-                                              controller:
-                                                  resModel.specialConditions,
+                                              controller: editController
+                                                  .specialConditionsController,
                                               maxLine: 5,
                                               borderColor: AppColors.darkGrey
                                                   .withOpacity(.1),
@@ -1138,10 +1138,9 @@ class EditFacilitiesScreen extends StatelessWidget {
                                                             ),
                                                           ))
                                                       .toList(),
-                                                  value: resModel
-                                                      .socialMedia.value,
+                                                  value: resModel.socialMedia,
                                                   onChanged: (String? value) {
-                                                    resModel.socialMedia.value =
+                                                    resModel.socialMedia =
                                                         value!;
                                                   },
                                                   buttonStyleData:
@@ -1197,7 +1196,8 @@ class EditFacilitiesScreen extends StatelessWidget {
                                               contentPadding:
                                                   const EdgeInsets.only(
                                                       left: 18),
-                                              controller: resModel.socialLink,
+                                              controller: editController
+                                                  .socialLinkController,
                                               borderColor: AppColors.darkGrey
                                                   .withOpacity(.1),
                                               borderRadius: 8,
