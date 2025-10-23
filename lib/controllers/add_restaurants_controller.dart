@@ -679,7 +679,7 @@ class AddRestaurantTabController extends GetxController {
   // Backend code
 
   addRestaurant() async {
-    try {
+    // try {
       // Show loading dialog
       loadingDialog();
 
@@ -718,7 +718,7 @@ class AddRestaurantTabController extends GetxController {
         'city': selectedCity.value.trim(),
         'state': selectedState.value.trim(),
         'country': 'United States',
-        'createdAt': DateTime.now(),
+        'createdAt': Timestamp.now(),
         'dietaryList': [], // Empty array as per your data
         'docID': docID, // Will be set after adding the document
         'entertainmentScheduleList': [], // Empty array as per your data
@@ -800,23 +800,22 @@ class AddRestaurantTabController extends GetxController {
         }
       }
 
-      if (isNewRegistery == true) {
-        print('is new registry true------------------');
-        restaurantModel = RestaurantModel.fromMap(restaurantData);
-        update();
-      }
+      // Always set restaurantModel after successful creation
+      restaurantModel = RestaurantModel.fromMap(restaurantData);
+      currentRestaurantID = docID;
       update();
+
       // Dismiss the loading dialog
       Get.back();
       // Show success message
       selectedIndex.value++;
       clearFields();
       uploadedImage.clear();
-    } catch (e) {
-      Get.back();
-      Get.snackbar('Error', 'Failed to add restaurant: $e');
-      print('Error $e');
-    }
+    // } catch (e) {
+    //   Get.back();
+    //   Get.snackbar('Error', 'Failed to add restaurant: $e');
+    //   print('Error $e');
+    // }
   }
 
   updateBasicInfo() async {
@@ -1070,14 +1069,27 @@ class AddRestaurantTabController extends GetxController {
 
   Future<String> assignedCredencialsLogin(
       {required String email, required String userPassword}) async {
+    String? adminEmail;
+    String? adminPassword;
+
     try {
       // Get admin credentials from SharedPreferences
-      String? adminEmail = preferences?.getString('adminEmail');
-      String? adminPassword = preferences?.getString('adminPassword');
+      adminEmail = preferences?.getString('adminEmail');
+      adminPassword = preferences?.getString('adminPassword');
+
+      if (adminEmail == null || adminPassword == null) {
+        Get.snackbar('Error', 'Admin credentials not found',
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.red,
+            colorText: Colors.white);
+        print('Admin credentials not found in SharedPreferences');
+        return 'error';
+      }
 
       // Sign out temporarily
       await FirebaseAuth.instance.signOut();
       print('admin logout successfully');
+
       // Create restaurant user
       UserCredential userCredential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -1085,7 +1097,7 @@ class AddRestaurantTabController extends GetxController {
         password: assignPasswordController.text,
       );
       print(
-          'restaurant user regiester successfully with id ${userCredential.user?.uid}');
+          'restaurant user registered successfully with id ${userCredential.user?.uid}');
       User? newUser = userCredential.user;
 
       if (newUser != null) {
@@ -1094,20 +1106,42 @@ class AddRestaurantTabController extends GetxController {
         print('logout restaurant');
         // Sign admin back in
         await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: adminEmail!,
-          password: adminPassword!,
+          email: adminEmail,
+          password: adminPassword,
         );
         print('login admin again');
+        return newUser.uid;
       } else {
+        // Sign admin back in even if restaurant creation failed
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: adminEmail,
+          password: adminPassword,
+        );
+        print('Admin logged back in after restaurant creation failure');
+
         Get.snackbar('Error', 'Failed to create restaurant',
             snackPosition: SnackPosition.TOP,
             backgroundColor: Colors.red,
             colorText: Colors.white);
-        print('failf to create restaurant');
+        print('failed to create restaurant');
+        return 'error';
       }
-      return newUser!.uid;
     } catch (e) {
-      print('create reaturant issue $e');
+      print('create restaurant issue $e');
+
+      // Ensure admin is signed back in even on error
+      try {
+        if (adminEmail != null && adminPassword != null) {
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+            email: adminEmail,
+            password: adminPassword,
+          );
+          print('Admin logged back in after error');
+        }
+      } catch (signInError) {
+        print('Failed to sign admin back in: $signInError');
+      }
+
       return 'error';
     }
   }
