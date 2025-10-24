@@ -834,85 +834,55 @@ class AddRestaurantTabController extends GetxController {
 
   updateBasicInfo() async {
     try {
-      if (isNewRegistery == true) {
-        await FirebaseFirestore.instance
-            .collection('restaurants')
-            .doc(restaurantModel!.docID)
-            .collection('operatingHours')
-            .doc('Monday')
-            .delete();
-        await FirebaseFirestore.instance
-            .collection('restaurants')
-            .doc(restaurantModel!.docID)
-            .collection('operatingHours')
-            .doc('Tuesday')
-            .delete();
-        await FirebaseFirestore.instance
-            .collection('restaurants')
-            .doc(restaurantModel!.docID)
-            .collection('operatingHours')
-            .doc('Wednesday')
-            .delete();
-        await FirebaseFirestore.instance
-            .collection('restaurants')
-            .doc(restaurantModel!.docID)
-            .collection('operatingHours')
-            .doc('Thursday')
-            .delete();
-        await FirebaseFirestore.instance
-            .collection('restaurants')
-            .doc(restaurantModel!.docID)
-            .collection('operatingHours')
-            .doc('Friday')
-            .delete();
-        await FirebaseFirestore.instance
-            .collection('restaurants')
-            .doc(restaurantModel!.docID)
-            .collection('operatingHours')
-            .doc('Saturday')
-            .delete();
-        await FirebaseFirestore.instance
-            .collection('restaurants')
-            .doc(restaurantModel!.docID)
-            .collection('operatingHours')
-            .doc('Sunday')
-            .delete();
-
-        await FirebaseFirestore.instance
-            .collection('restaurants')
-            .doc(restaurantModel!.docID)
-            .delete();
-        await addRestaurant();
-        Get.back();
-        return;
-      }
       // Show loading dialog
       loadingDialog();
 
-      if (restaurantModel!.resEmail != emailController.text.trim()) {
-        // Get new email and password from controllers
-        String newEmail = emailController.text.trim();
-        String newPassword = assignPasswordController.text;
+      // Check if we're adding email/password to a restaurant that didn't have them
+      bool addingCredentials = (restaurantModel!.resEmail.isEmpty ||
+              restaurantModel!.resEmail == '') &&
+          emailController.text.trim().isNotEmpty &&
+          assignPasswordController.text.isNotEmpty;
+
+      // Check if we're updating existing credentials
+      bool updatingCredentials = restaurantModel!.resEmail.isNotEmpty &&
+          restaurantModel!.resEmail != emailController.text.trim() &&
+          emailController.text.trim().isNotEmpty;
+
+      String? newUid;
+
+      if (addingCredentials) {
+        // Case 1: Adding credentials to restaurant that didn't have them
+        print('📝 Adding new credentials to existing restaurant');
+        newUid = await assignedCredencialsLogin(
+            email: emailController.text.trim(),
+            userPassword: assignPasswordController.text);
+
+        if (newUid == 'error') {
+          Get.back();
+          Get.snackbar('Error', 'Failed to create authentication credentials',
+              backgroundColor: Colors.red, colorText: Colors.white);
+          return;
+        }
+      } else if (updatingCredentials) {
+        // Case 2: Updating existing credentials
+        print('🔄 Updating existing credentials');
         String uid = await updateCredentials(
             currentEmail: restaurantModel!.resEmail,
             currentPassword: restaurantModel!.password,
-            newEmail: newEmail,
-            newPassword: newPassword);
-        if (uid != 'error') {
-          await FirebaseFirestore.instance
-              .collection('restaurants')
-              .doc(restaurantModel?.docID)
-              .update({
-            'password': assignPasswordController.text,
-            'resEmail': emailController.text.trim(),
-          });
+            newEmail: emailController.text.trim(),
+            newPassword: assignPasswordController.text);
+
+        if (uid == 'error') {
+          Get.back();
+          return;
         }
-        Get.back();
+        newUid = uid;
       }
 
       List<String> imagesList =
           await imagesUrl(uploadedImageModels: uploadedImage);
-      // Prepare the restaurant data
+
+      // Prepare the restaurant data to update
       final restaurantData = {
         'address': areaController.text.trim(),
         'city': selectedCity.value.trim(),
@@ -933,20 +903,36 @@ class AddRestaurantTabController extends GetxController {
         'zipCode': zipCodeController.text.trim(),
       };
 
+      // Add email and password to update data if they're provided
+      if (emailController.text.trim().isNotEmpty) {
+        restaurantData['resEmail'] = emailController.text.trim();
+        restaurantData['password'] = assignPasswordController.text;
+      }
+
+      // Update the restaurant document
       await FirebaseFirestore.instance
           .collection('restaurants')
           .doc(restaurantModel?.docID)
           .update(restaurantData);
 
       // Handle restaurant owner creation/update
-      await handleRestaurantOwnerOnUpdate(imagesList, restaurantData);
+      if (addingCredentials || updatingCredentials) {
+        await handleRestaurantOwnerOnUpdate(imagesList, restaurantData);
+      }
 
       // Dismiss the loading dialog
       Get.back();
+
       // Show success message
+      Get.snackbar(
+        'Success',
+        'Restaurant updated successfully',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+
+      // Move to next tab
       selectedIndex.value++;
-      // clearFields();
-      // uploadedImage.clear();
     } catch (e) {
       Get.back();
       Get.snackbar('Error', 'Failed to updated restaurant: $e');
