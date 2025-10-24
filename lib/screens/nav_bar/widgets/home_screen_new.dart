@@ -14,6 +14,8 @@ import 'package:google_maps_cluster_manager/google_maps_cluster_manager.dart'
     as gmcluster;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:kaistable_website/screens/events/all_events_screen.dart';
+import 'package:kaistable_website/screens/nav_bar/widgets/custom_button.dart';
 import 'package:kaistable_website/streams/views/streams_view.dart';
 import 'package:shimmer/shimmer.dart';
 import 'dart:io';
@@ -1355,6 +1357,17 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                             },
                           ),
                           const SizedBox(height: 10),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: CustomButton(
+                                laBelText: 'Events',
+                              textColor: Colors.white,
+                              fontSize: 20,
+                              ontapp: (){
+                                  Get.to(()=>AllEventsScreen());
+                              },
+                            ),
+                          ),
                         ],
                       );
                     },

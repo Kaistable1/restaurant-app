@@ -558,12 +558,15 @@ class RestaurantDetailScreen extends StatelessWidget {
                                               height: 12, width: 12),
                                         ),
                                         const SizedBox(width: 8),
-                                        Text(
-                                          restaurantModel == null || restaurantModel!.websiteUrl == '' ? 'No website' : restaurantModel!.websiteUrl, // 'www.website.com',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                            fontFamily: 'PlusJakartaSans',
+                                        Expanded(
+                                          child: Text(
+                                            restaurantModel == null || restaurantModel!.websiteUrl == '' ? 'No website' : restaurantModel!.websiteUrl, // 'www.website.com',
+                                            maxLines: 2,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                              fontFamily: 'PlusJakartaSans',
+                                            ),
                                           ),
                                         ),
                                       ],

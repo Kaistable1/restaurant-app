@@ -18,6 +18,8 @@ class AllEventsController extends GetxController {
     'Pool Parties',
     'Pop-ups',
     'Festivals',
+    'Global Events',
+    'City Sponsored Events',
   ];
   // RxString menuItem = ''.obs;
 
@@ -32,15 +34,21 @@ class AllEventsController extends GetxController {
 
   List<Event> filteredEventsList = [];
 
+  // City selector
+  RxString selectedCity = 'Los Angeles'.obs;
+  final List<Map<String, String>> cities = [
+    {'name': 'Los Angeles', 'image': 'assets/images/city_los.png'},
+    {'name': 'New York', 'image': 'assets/images/city_new.png'},
+    {'name': 'Miami', 'image': 'assets/images/city_miami.png'},
+    {'name': 'Chicago', 'image': 'assets/images/city_chicago.png'},
+  ];
+
   Future<void> _getCurrentLocation() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       Geolocator.openLocationSettings();
       return;
     }
-
-
-
 
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
@@ -77,7 +85,6 @@ class AllEventsController extends GetxController {
 
   @override
   void dispose() {
-
     searchController.dispose();
 
     super.dispose();
