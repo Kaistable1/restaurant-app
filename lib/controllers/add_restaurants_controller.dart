@@ -665,7 +665,7 @@ class AddRestaurantTabController extends GetxController {
     phoneNoController.clear();
     websiteUrlController.clear();
     cityController.clear();
-    zipCodeController.clear(); // ✅ Added zipCode
+    zipCodeController.clear();
 
     // Clear images
     uploadedImage.clear();
@@ -676,21 +676,19 @@ class AddRestaurantTabController extends GetxController {
     selectedSpokenLanguage.value = '';
     isPasswordVisible.value = false;
 
-    // ✅ Clear location coordinates
+    // Clear location coordinates
     latitude.value = 0.0;
     longitude.value = 0.0;
 
-    // ✅ Clear restaurant model and ID
+    // Clear restaurant model and ID
     restaurantModel = null;
     currentRestaurantID = '';
     isNewRegistery = null;
 
-    // ✅ Reset tab index to first tab
+    // Reset tab index to first tab
     selectedIndex.value = 0;
 
-    // ========== DROPDOWN_SEARCH SPECIFIC - ADD THIS LINE ==========
     update(); // Ensure UI updates with cleared selections
-    // ========== END DROPDOWN_SEARCH SPECIFIC ==========
   }
   // ========== END UPDATED CLEARFIELDS METHOD ==========
 
@@ -825,10 +823,8 @@ class AddRestaurantTabController extends GetxController {
 
     // Dismiss the loading dialog
     Get.back();
-    // Show success message
+    // Move to next tab
     selectedIndex.value++;
-    clearFields();
-    uploadedImage.clear();
     // } catch (e) {
     //   Get.back();
     //   Get.snackbar('Error', 'Failed to add restaurant: $e');

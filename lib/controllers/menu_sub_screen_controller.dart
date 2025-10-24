@@ -131,10 +131,8 @@ class MenuSubScreenController extends GetxController {
           .doc(restaurantID)
           .update(restaurantData);
 
-      // 👇 Step 4: UI updates
+      // 👇 Step 4: UI updates - Menu is the last tab, don't increment
       Get.back();
-      clearFields();
-      addRestaurantTabController.selectedIndex.value++;
     } catch (e) {
       Get.back();
       Get.snackbar('Error', 'Failed to add amenities: $e');

@@ -42,8 +42,7 @@ class EditRestaurantController extends GetxController {
     // Clear experiences controller if registered
     if (Get.isRegistered<ExperiencesSubScreenController>()) {
       final experiencesController = Get.find<ExperiencesSubScreenController>();
-      experiencesController.clearFields();
-      experiencesController.events.clear();
+      experiencesController.clearAll();
     }
 
     // Clear menu controller if registered

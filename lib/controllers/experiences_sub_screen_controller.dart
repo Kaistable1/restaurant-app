@@ -186,7 +186,11 @@ class ExperiencesSubScreenController extends GetxController {
     endTimeController.clear();
     isEditing.value = false;
     editingIndex.value = -1;
-    // ✅ Also clear the events list when clearing fields
+  }
+
+  // Clear everything including events list (use when completely exiting add/edit flow)
+  void clearAll() {
+    clearFields();
     events.clear();
   }
 
@@ -214,7 +218,6 @@ class ExperiencesSubScreenController extends GetxController {
 
       // UI updates
       Get.back();
-      clearFields();
       addRestaurantTabController.selectedIndex.value++;
     } catch (e) {
       Get.back();

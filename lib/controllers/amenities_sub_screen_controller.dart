@@ -97,9 +97,11 @@ class AmenitiesSubScreenController extends GetxController {
 
   void toggleVibesExpanded() => isVibesExpanded.value = !isVibesExpanded.value;
 
-  void toggleExperiencesExpanded() => isExperiencesExpanded.value = !isExperiencesExpanded.value;
+  void toggleExperiencesExpanded() =>
+      isExperiencesExpanded.value = !isExperiencesExpanded.value;
 
-  void toggleEntertainmentExpanded() => isEntertainmentExpanded.value = !isEntertainmentExpanded.value;
+  void toggleEntertainmentExpanded() =>
+      isEntertainmentExpanded.value = !isEntertainmentExpanded.value;
 
   void togglePriceRangeExpanded() =>
       isPriceRangeExpanded.value = !isPriceRangeExpanded.value;
@@ -241,8 +243,10 @@ class AmenitiesSubScreenController extends GetxController {
     bool atmosphereValid = atmosphere.any((item) => item['isChecked'] == true);
     bool priceRangeValid = priceRange.any((item) => item['isChecked'] == true);
     bool vibesValid = vibes.any((item) => item['isChecked'] == true);
-    bool experiencesValid = experiences.any((item) => item['isChecked'] == true);
-    bool entertainmentValid = entertainment.any((item) => item['isChecked'] == true);
+    bool experiencesValid =
+        experiences.any((item) => item['isChecked'] == true);
+    bool entertainmentValid =
+        entertainment.any((item) => item['isChecked'] == true);
 
     return {
       'facilities': facilitiesValid,
@@ -389,7 +393,6 @@ class AmenitiesSubScreenController extends GetxController {
 
       // 👇 Step 4: UI updates
       Get.back();
-      clearFields();
       addRestaurantTabController.selectedIndex.value++;
 
       Get.snackbar(

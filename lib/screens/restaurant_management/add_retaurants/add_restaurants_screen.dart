@@ -49,7 +49,7 @@ class AddRestaurantsScreen extends StatelessWidget {
               // ✅ Clean up all controllers and fields before going back
               tabController.clearFields();
               amenitiesController.clearFields();
-              experiencesController.clearFields(); // This now clears events too
+              experiencesController.clearAll(); // Clear fields AND events list
               menuController.clearFields();
 
               // Clear operating hours if registered
@@ -97,10 +97,11 @@ class AddRestaurantsScreen extends StatelessWidget {
                             containerColor: primaryColor,
                             ontapp: () async {
                               await menuController.addMeneRestaurants();
-                              tabController
-                                  .clearFields(); // Clear Basic Info fields
+                              // Clear all controllers after final save
+                              tabController.clearFields();
                               amenitiesController.clearFields();
-                              experiencesController.clearFields();
+                              experiencesController
+                                  .clearAll(); // Clear fields AND events list
                               menuController.clearFields();
                               Get.dialog(
                                 AlertDialog(
@@ -227,15 +228,12 @@ class AddRestaurantsScreen extends StatelessWidget {
                       containerColor: primaryColor,
                       ontapp: () async {
                         await menuController.addMeneRestaurants();
-                        tabController.clearFields(); // Clear Basic Info fields
+                        // Clear all controllers after final save
+                        tabController.clearFields();
                         amenitiesController.clearFields();
-                        experiencesController.clearFields();
-                        menuController.clearFields();
-                        tabController.clearFields(); // Clear Basic Info fields
-                        amenitiesController
-                            .clearFields(); // Clear Amenities fields
                         experiencesController
-                            .clearFields(); // Already clearing here
+                            .clearAll(); // Clear fields AND events list
+                        menuController.clearFields();
                         Get.dialog(
                           AlertDialog(
                             title: const Text('Success'),

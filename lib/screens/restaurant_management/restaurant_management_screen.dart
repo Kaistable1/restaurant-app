@@ -175,7 +175,7 @@ class _RestaurantManagementScreenState
                 }
 
                 if (Get.isRegistered<ExperiencesSubScreenController>()) {
-                  Get.find<ExperiencesSubScreenController>().clearFields();
+                  Get.find<ExperiencesSubScreenController>().clearAll();
                 }
 
                 if (Get.isRegistered<MenuSubScreenController>()) {
