@@ -24,13 +24,21 @@ class HomeLocationController extends GetxController {
   final Rx<Position?> userPosition = Rx<Position?>(null);
   final RxBool isFetchingInitialData = true.obs;
   final RxInt selectedDistance = 0.obs;
-  final List<String> distanceOptions = ['All', '1 mi', '5 mi', '10 mi', '25 mi'];
+  final List<String> distanceOptions = [
+    'All',
+    '1 mi',
+    '5 mi',
+    '10 mi',
+    '25 mi'
+  ];
   final RxString searchQuery = ''.obs;
   final TextEditingController searchController = TextEditingController();
-  final RxMap<String, Map<String, Map<String, Map<String, dynamic>>>> operatingHoursCache = <String, Map<String, Map<String, Map<String, dynamic>>>>{}.obs;
+  final RxMap<String, Map<String, Map<String, Map<String, dynamic>>>>
+      operatingHoursCache =
+      <String, Map<String, Map<String, Map<String, dynamic>>>>{}.obs;
   final RxSet<String> fetchingOperatingHours = <String>{}.obs;
-  final Rx<Stream<List<RestaurantModel>>> filteredRestaurantsStream = Rx<Stream<List<RestaurantModel>>>(Stream.value([]));
-
+  final Rx<Stream<List<RestaurantModel>>> filteredRestaurantsStream =
+      Rx<Stream<List<RestaurantModel>>>(Stream.value([]));
 
   DocumentSnapshot? lastDocument;
   RxList<RestaurantModel> restaurants = <RestaurantModel>[].obs;
@@ -49,7 +57,8 @@ class HomeLocationController extends GetxController {
   var videos = <VideoModel>[].obs;
   var thumbnailPaths = <int, String>{}.obs;
   bool _isGeneratingThumbnail = false;
-  final RxMap<String, RestaurantModel?> restaurantCache = <String, RestaurantModel?>{}.obs;
+  final RxMap<String, RestaurantModel?> restaurantCache =
+      <String, RestaurantModel?>{}.obs;
   ////
 
   @override
@@ -63,7 +72,7 @@ class HomeLocationController extends GetxController {
     positionFuture.then((pos) {
       if (pos != null) {
         userPosition.value = pos;
-        _saveUserPosition(pos);  // NEW: Save to shared prefs
+        _saveUserPosition(pos); // NEW: Save to shared prefs
       }
     }).whenComplete(() {
       isFetchingInitialData.value = false;
@@ -77,7 +86,7 @@ class HomeLocationController extends GetxController {
     try {
       var snapshot = await FirebaseFirestore.instance
           .collection('videos')
-      .where('mediaType', isEqualTo: 'video')
+          .where('mediaType', isEqualTo: 'video')
           .orderBy('timestamp', descending: true)
           .get();
 
@@ -85,7 +94,8 @@ class HomeLocationController extends GetxController {
           .map((doc) => VideoModel.fromMap(doc.data(), doc.id))
           .toList();
 
-      filteredVideos.value = videos.toList(); // Initialize filteredVideos with all videos
+      filteredVideos.value =
+          videos.toList(); // Initialize filteredVideos with all videos
       applySearchAndFilters(); // Apply initial filtering if filters are set
     } catch (e) {
       print("Error fetching videos: $e");
@@ -104,7 +114,7 @@ class HomeLocationController extends GetxController {
         thumbnailPath: (await getTemporaryDirectory()).path,
         imageFormat: ImageFormat.PNG,
         maxHeight: 200, // Reduced for performance
-        quality: 50,    // Reduced for performance
+        quality: 50, // Reduced for performance
       );
       if (thumbnailPath != null) {
         thumbnailPaths[index] = thumbnailPath;
@@ -156,15 +166,15 @@ class HomeLocationController extends GetxController {
       Position? pos = await positionFuture;
       if (pos != null) {
         userPosition.value = pos;
-        await _saveUserPosition(pos);  // Save to shared prefs
+        await _saveUserPosition(pos); // Save to shared prefs
       } else {
-        pos = await _loadUserPosition();  // Fallback to shared prefs
+        pos = await _loadUserPosition(); // Fallback to shared prefs
         if (pos != null) {
           userPosition.value = pos;
         }
       }
     } catch (e) {
-      Position? pos = await _loadUserPosition();  // Fallback in catch block
+      Position? pos = await _loadUserPosition(); // Fallback in catch block
       if (pos != null) {
         userPosition.value = pos;
       } else {
@@ -175,12 +185,14 @@ class HomeLocationController extends GetxController {
     }
   }
 
-  Widget buildImage(String url, {double? width, BoxFit fit = BoxFit.cover, double height = 0}) {
+  Widget buildImage(String url,
+      {double? width, BoxFit fit = BoxFit.cover, double height = 0}) {
     return CachedNetworkImage(
       imageUrl: url,
       width: width,
       fit: fit,
-      placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+      placeholder: (context, url) =>
+          const Center(child: CircularProgressIndicator()),
       errorWidget: (context, url, error) => Image.asset(
         'assets/images/event_img3.png',
         width: width,
@@ -199,7 +211,9 @@ class HomeLocationController extends GetxController {
   // }
 
   Future<RestaurantModel?> findRestaurantForVideo(VideoModel video) async {
-    if (video.videoId == null || video.zipCode == null || video.restaurantName == null) {
+    if (video.videoId == null ||
+        video.zipCode == null ||
+        video.restaurantName == null) {
       return null;
     }
 
@@ -217,7 +231,8 @@ class HomeLocationController extends GetxController {
           .get();
 
       if (snapshot.docs.isNotEmpty) {
-        final restaurant = RestaurantModel.fromDocumentSnapshot(snapshot.docs.first);
+        final restaurant =
+            RestaurantModel.fromDocumentSnapshot(snapshot.docs.first);
         restaurantCache[video.videoId!] = restaurant;
         return restaurant;
       }
@@ -278,42 +293,41 @@ class HomeLocationController extends GetxController {
         if (selectedOptions != null && selectedOptions.isNotEmpty) {
           restaurants = restaurants.where((restaurant) {
             if (category == 'Dietary') {
-              return selectedOptions.every((option) => restaurant.dietaryList.contains(option));
+              return selectedOptions
+                  .every((option) => restaurant.dietaryList.contains(option));
             } else if (category == 'Vibes') {
-              return selectedOptions.every((option) => restaurant.vibesList.contains(option));
-            // } else if (category == 'Time') {
-            //   final hours = operatingHoursCache[restaurant.docID];
-            //   if (hours == null || hours.isEmpty) {
-            //     getOperatingHours(restaurant.docID, triggerFilterUpdate: true);
-            //     return false;
-            //   }
-            //   return hours.values.any((dayHours) =>
-            //       selectedOptions.every((timeOfDay) => !(dayHours[timeOfDay]?['isClosed'] ?? true))
-            //   );
+              return selectedOptions
+                  .every((option) => restaurant.vibesList.contains(option));
+              // } else if (category == 'Time') {
+              //   final hours = operatingHoursCache[restaurant.docID];
+              //   if (hours == null || hours.isEmpty) {
+              //     getOperatingHours(restaurant.docID, triggerFilterUpdate: true);
+              //     return false;
+              //   }
+              //   return hours.values.any((dayHours) =>
+              //       selectedOptions.every((timeOfDay) => !(dayHours[timeOfDay]?['isClosed'] ?? true))
+              //   );
             } else if (category == 'Cuisines') {
               final menuList = restaurant.menuList;
               if (menuList.isEmpty) {
                 return false;
               }
               return selectedOptions.every((cuisine) =>
-                  menuList.any((menu) => menu.cuisineType == cuisine)
-              );
+                  menuList.any((menu) => menu.cuisineType == cuisine));
             } else if (category == 'Experience') {
               final entertainmentList = restaurant.entertainmentScheduleList;
               if (entertainmentList.isEmpty) {
                 return false;
               }
-              return selectedOptions.every((experience) =>
-                  entertainmentList.any((event) => event.eventName == experience)
-              );
+              return selectedOptions.every((experience) => entertainmentList
+                  .any((event) => event.eventName == experience));
             } else if (category == 'Entertainment') {
               final entertainmentList = restaurant.entertainmentScheduleList;
               if (entertainmentList.isEmpty) {
                 return false;
               }
-              return selectedOptions.every((entertainment) =>
-                  entertainmentList.any((event) => event.eventName == entertainment)
-              );
+              return selectedOptions.every((entertainment) => entertainmentList
+                  .any((event) => event.eventName == entertainment));
             }
             return true;
           }).toList();
@@ -360,8 +374,9 @@ class HomeLocationController extends GetxController {
         restaurants = restaurants.where((restaurant) {
           return restaurant.resName.toLowerCase().contains(query) ||
               restaurant.address.toLowerCase().contains(query) ||
-          restaurant.city.toLowerCase().contains(query) ||
-          restaurant.country.toLowerCase().contains(query);
+              restaurant.city.toLowerCase().contains(query) ||
+              restaurant.state.toLowerCase().contains(query) ||
+              restaurant.country.toLowerCase().contains(query);
         }).toList();
       }
 
@@ -372,42 +387,41 @@ class HomeLocationController extends GetxController {
         if (selectedOptions != null && selectedOptions.isNotEmpty) {
           restaurants = restaurants.where((restaurant) {
             if (category == 'Dietary') {
-              return selectedOptions.every((option) => restaurant.dietaryList.contains(option));
+              return selectedOptions
+                  .every((option) => restaurant.dietaryList.contains(option));
             } else if (category == 'Vibes') {
-              return selectedOptions.every((option) => restaurant.vibesList.contains(option));
-            // } else if (category == 'Time') {
-            //   final hours = operatingHoursCache[restaurant.docID];
-            //   if (hours == null || hours.isEmpty) {
-            //     getOperatingHours(restaurant.docID, triggerFilterUpdate: true);
-            //     return false;
-            //   }
-            //   return hours.values.any((dayHours) =>
-            //       selectedOptions.every((timeOfDay) => !(dayHours[timeOfDay]?['isClosed'] ?? true))
-            //   );
+              return selectedOptions
+                  .every((option) => restaurant.vibesList.contains(option));
+              // } else if (category == 'Time') {
+              //   final hours = operatingHoursCache[restaurant.docID];
+              //   if (hours == null || hours.isEmpty) {
+              //     getOperatingHours(restaurant.docID, triggerFilterUpdate: true);
+              //     return false;
+              //   }
+              //   return hours.values.any((dayHours) =>
+              //       selectedOptions.every((timeOfDay) => !(dayHours[timeOfDay]?['isClosed'] ?? true))
+              //   );
             } else if (category == 'Cuisines') {
               final menuList = restaurant.menuList;
               if (menuList.isEmpty) {
                 return false;
               }
               return selectedOptions.every((cuisine) =>
-                  menuList.any((menu) => menu.cuisineType == cuisine)
-              );
+                  menuList.any((menu) => menu.cuisineType == cuisine));
             } else if (category == 'Experience') {
               final entertainmentList = restaurant.entertainmentScheduleList;
               if (entertainmentList.isEmpty) {
                 return false;
               }
-              return selectedOptions.every((experience) =>
-                  entertainmentList.any((event) => event.eventName == experience)
-              );
-            }else if (category == 'Entertainment') {
+              return selectedOptions.every((experience) => entertainmentList
+                  .any((event) => event.eventName == experience));
+            } else if (category == 'Entertainment') {
               final entertainmentList = restaurant.entertainmentScheduleList;
               if (entertainmentList.isEmpty) {
                 return false;
               }
-              return selectedOptions.every((entertainment) =>
-                  entertainmentList.any((event) => event.eventName == entertainment)
-              );
+              return selectedOptions.every((entertainment) => entertainmentList
+                  .any((event) => event.eventName == entertainment));
             }
             return true;
           }).toList();
@@ -422,11 +436,12 @@ class HomeLocationController extends GetxController {
             return false;
           }
           final distance = Geolocator.distanceBetween(
-            userPosition.value!.latitude,
-            userPosition.value!.longitude,
-            restaurant.latitude,
-            restaurant.longitude,
-          ) / 1000;
+                userPosition.value!.latitude,
+                userPosition.value!.longitude,
+                restaurant.latitude,
+                restaurant.longitude,
+              ) /
+              1000;
           return distance <= maxDistanceKm;
         }).toList();
       }
@@ -459,27 +474,37 @@ class HomeLocationController extends GetxController {
     if (videos.isNotEmpty) {
       final filterCtrl = Get.find<FilterController>();
       final query = searchQuery.value.toLowerCase();
-      final selectedCuisines = filterCtrl.selectedFilters['Cuisines'] ?? <String>[].obs;
-      final selectedExperiences = filterCtrl.selectedFilters['Experience'] ?? <String>[].obs;
-      final selectedVibes = filterCtrl.selectedFilters['Vibes'] ?? <String>[].obs;
+      final selectedCuisines =
+          filterCtrl.selectedFilters['Cuisines'] ?? <String>[].obs;
+      final selectedExperiences =
+          filterCtrl.selectedFilters['Experience'] ?? <String>[].obs;
+      final selectedVibes =
+          filterCtrl.selectedFilters['Vibes'] ?? <String>[].obs;
 
       filteredVideos.value = videos.where((video) {
         final matchesSearch = query.isEmpty ||
             (video.restaurantName?.toLowerCase().contains(query) ?? false);
 
-        final videoCuisines = video.causines?.split(',').map((c) => c.trim()).toList() ?? [];
+        final videoCuisines =
+            video.causines?.split(',').map((c) => c.trim()).toList() ?? [];
         final matchesCuisines = selectedCuisines.isEmpty ||
             selectedCuisines.any((cuisine) => videoCuisines.contains(cuisine));
 
-        final videoExperiences = video.experience?.split(',').map((e) => e.trim()).toList() ?? [];
+        final videoExperiences =
+            video.experience?.split(',').map((e) => e.trim()).toList() ?? [];
         final matchesExperiences = selectedExperiences.isEmpty ||
-            selectedExperiences.any((experience) => videoExperiences.contains(experience));
+            selectedExperiences
+                .any((experience) => videoExperiences.contains(experience));
 
-        final videoVibes = video.vibes?.split(',').map((v) => v.trim()).toList() ?? [];
+        final videoVibes =
+            video.vibes?.split(',').map((v) => v.trim()).toList() ?? [];
         final matchesVibes = selectedVibes.isEmpty ||
             selectedVibes.any((vibe) => videoVibes.contains(vibe));
 
-        return matchesSearch && matchesCuisines && matchesExperiences && matchesVibes;
+        return matchesSearch &&
+            matchesCuisines &&
+            matchesExperiences &&
+            matchesVibes;
       }).toList();
     }
   }
@@ -542,8 +567,8 @@ class HomeLocationController extends GetxController {
   // }
 
   Future<Map<String, Map<String, Map<String, dynamic>>>?> getOperatingHours(
-      String restaurantId, {bool triggerFilterUpdate = false})
-  async {
+      String restaurantId,
+      {bool triggerFilterUpdate = false}) async {
     if (operatingHoursCache.containsKey(restaurantId)) {
       print('Returning cached operating hours for $restaurantId');
       return operatingHoursCache[restaurantId];
@@ -564,12 +589,14 @@ class HomeLocationController extends GetxController {
 
       for (var doc in querySnapshot.docs) {
         String day = doc.id;
-        daysHours[day] = (doc.data()).map((key, value) => MapEntry(key, value as Map<String, dynamic>));
+        daysHours[day] = (doc.data())
+            .map((key, value) => MapEntry(key, value as Map<String, dynamic>));
       }
 
       operatingHoursCache[restaurantId] = daysHours;
       operatingHoursCache.refresh();
-      print('Fetched operating hours for $restaurantId: ${daysHours.toString()}');
+      print(
+          'Fetched operating hours for $restaurantId: ${daysHours.toString()}');
       if (triggerFilterUpdate) {
         applySearchAndFilters();
       }
@@ -655,8 +682,10 @@ class HomeLocationController extends GetxController {
           .collection('operatingHours')
           .doc(currentDay)
           .get();
-      Map<String, dynamic> data = operatingHoursDoc.exists ? (operatingHoursDoc.data() ?? {}) : {};
-      operatingHoursCache[restaurantId] = data as Map<String, Map<String, Map<String, dynamic>>>;
+      Map<String, dynamic> data =
+          operatingHoursDoc.exists ? (operatingHoursDoc.data() ?? {}) : {};
+      operatingHoursCache[restaurantId] =
+          data as Map<String, Map<String, Map<String, dynamic>>>;
       operatingHoursCache.refresh();
       print('Fetched operating hours for $restaurantId: $data');
       return data;
@@ -668,7 +697,8 @@ class HomeLocationController extends GetxController {
     }
   }
 
-  Future<Map<String, Map<String, Map<String, dynamic>>>?> getOperatingHours2(String restaurantId) async {
+  Future<Map<String, Map<String, Map<String, dynamic>>>?> getOperatingHours2(
+      String restaurantId) async {
     if (operatingHoursCache.containsKey(restaurantId)) {
       print('Returning cached operating hours for $restaurantId');
       return operatingHoursCache[restaurantId];
@@ -684,12 +714,14 @@ class HomeLocationController extends GetxController {
 
       for (var doc in querySnapshot.docs) {
         String day = doc.id;
-        daysHours[day] = (doc.data()).map((key, value) => MapEntry(key, value as Map<String, dynamic>));
+        daysHours[day] = (doc.data())
+            .map((key, value) => MapEntry(key, value as Map<String, dynamic>));
       }
 
       operatingHoursCache[restaurantId] = daysHours;
       operatingHoursCache.refresh();
-      print('Fetched operating hours for $restaurantId: ${daysHours.toString()}');
+      print(
+          'Fetched operating hours for $restaurantId: ${daysHours.toString()}');
       return daysHours;
     } catch (e) {
       print('Error fetching operating hours for $restaurantId: $e');
@@ -725,7 +757,8 @@ class HomeLocationController extends GetxController {
                 child: const Text('Open Settings'),
                 onPressed: () async {
                   await Geolocator.openLocationSettings();
-                  Navigator.of(dialogContext).pop(true); // Dismiss dialog after opening settings
+                  Navigator.of(dialogContext)
+                      .pop(true); // Dismiss dialog after opening settings
                 },
               ),
             ],
@@ -736,7 +769,7 @@ class HomeLocationController extends GetxController {
       serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         // if (enableLocation == false) {
-          return Future.error('Location services are disabled.');
+        return Future.error('Location services are disabled.');
         // }
         // continue loop if returned from settings but still disabled
       }
@@ -754,7 +787,8 @@ class HomeLocationController extends GetxController {
       return Future.error('Location permissions are permanently denied.');
     }
 
-    return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
   }
 
   void filterRestaurants(String query) {
@@ -1089,7 +1123,6 @@ class HomeLocationController extends GetxController {
       print('Error adding review: $e');
     }
   }
-
 }
 
 // class HomeLocationController extends GetxController {

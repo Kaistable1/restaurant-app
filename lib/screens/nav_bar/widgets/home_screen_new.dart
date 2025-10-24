@@ -53,6 +53,9 @@ class _HomeScreenNewState extends State<HomeScreenNew>
 
   GoogleMapController? _mapController;
 
+  // Debounce timer for search
+  Timer? _searchDebounce;
+
   final CustomInfoWindowController _customInfoWindowController =
       CustomInfoWindowController();
 
@@ -148,6 +151,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
     _mapController?.dispose();
     _filteredSub?.cancel(); // Cancel the subscription to prevent memory leaks
     _customInfoWindowController.dispose();
+    _searchDebounce?.cancel(); // Cancel the debounce timer
     super.dispose();
   }
 
@@ -1360,11 +1364,11 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: CustomButton(
-                                laBelText: 'Events',
+                              laBelText: 'Events',
                               textColor: Colors.white,
                               fontSize: 20,
-                              ontapp: (){
-                                  Get.to(()=>AllEventsScreen());
+                              ontapp: () {
+                                Get.to(() => AllEventsScreen());
                               },
                             ),
                           ),
@@ -1413,13 +1417,21 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                     hintStyle: TextStyle(
                                         fontSize: 17, color: Colors.grey[600]),
                                   ),
-                                  onSubmitted: (value) {
-                                    homeLocationCtrl.searchQuery.value = value;
-                                    homeLocationCtrl.applySearchAndFilters();
-                                    isLoading.value = true;
-                                    Future.delayed(
+                                  onChanged: (value) {
+                                    // Cancel previous timer
+                                    _searchDebounce?.cancel();
+                                    // Start new timer for debounce
+                                    _searchDebounce = Timer(
                                         const Duration(milliseconds: 500), () {
-                                      isLoading.value = false;
+                                      homeLocationCtrl.searchQuery.value =
+                                          value;
+                                      homeLocationCtrl.applySearchAndFilters();
+                                      isLoading.value = true;
+                                      Future.delayed(
+                                          const Duration(milliseconds: 500),
+                                          () {
+                                        isLoading.value = false;
+                                      });
                                     });
                                   },
                                 ),
