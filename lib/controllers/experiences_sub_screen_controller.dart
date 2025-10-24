@@ -186,6 +186,8 @@ class ExperiencesSubScreenController extends GetxController {
     endTimeController.clear();
     isEditing.value = false;
     editingIndex.value = -1;
+    // ✅ Also clear the events list when clearing fields
+    events.clear();
   }
 
   bool hasEvents() {

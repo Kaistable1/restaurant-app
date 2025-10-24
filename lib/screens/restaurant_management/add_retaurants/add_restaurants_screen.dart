@@ -13,6 +13,7 @@ import '../../../constants/app_colors.dart';
 import '../../../controllers/add_restaurants_controller.dart';
 import '../../../controllers/amenities_sub_screen_controller.dart';
 import '../../../controllers/drawer_controller.dart';
+import '../../../controllers/edit_restaurant_controller.dart';
 import '../../../controllers/experiences_sub_screen_controller.dart';
 import '../../../controllers/menu_sub_screen_controller.dart';
 import '../../../widgets/button.dart';
@@ -45,6 +46,26 @@ class AddRestaurantsScreen extends StatelessWidget {
             title: 'Add Restaurant',
             back: true,
             onBackTap: () {
+              // ✅ Clean up all controllers and fields before going back
+              tabController.clearFields();
+              amenitiesController.clearFields();
+              experiencesController.clearFields(); // This now clears events too
+              menuController.clearFields();
+
+              // Clear operating hours if registered
+              if (Get.isRegistered<OperatingHoursSubScreenController>()) {
+                final opHoursController =
+                    Get.find<OperatingHoursSubScreenController>();
+                opHoursController.daySwitches.clear();
+                opHoursController.slotStates.clear();
+                opHoursController.slotTimes.clear();
+              }
+
+              // Delete EditRestaurantController if it exists
+              if (Get.isRegistered<EditRestaurantController>()) {
+                Get.delete<EditRestaurantController>();
+              }
+
               drawerController.addRestaurants.value = false;
             },
             end: true,
@@ -145,7 +166,7 @@ class AddRestaurantsScreen extends StatelessWidget {
                                     backgroundColor: Colors.red,
                                     colorText: Colors.white,
                                   );
-                         } else if (formState != null && 
+                                } else if (formState != null &&
                                     formState.validate() &&
                                     tabController.areBasicInfoFieldsFilled()) {
                                   if (tabController.restaurantModel != null) {

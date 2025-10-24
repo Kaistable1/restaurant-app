@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:savrly/constants/text_styles.dart';
 import 'package:savrly/controllers/add_restaurants_controller.dart';
+import 'package:savrly/controllers/amenities_sub_screen_controller.dart';
 import 'package:savrly/controllers/edit_restaurant_controller.dart';
 import 'package:savrly/controllers/experiences_sub_screen_controller.dart';
+import 'package:savrly/controllers/menu_sub_screen_controller.dart';
 import 'package:savrly/controllers/operating_hours_sub_screen_controller.dart';
 import 'package:savrly/models/resaturant_model.dart';
 import '../../constants/app_colors.dart';
@@ -98,76 +100,104 @@ class _RestaurantManagementScreenState
             title: 'Restaurant Management',
             end: true,
             endWidget:
-            // Row(
-            //   children: [
-            //     CustomButton(
-            //       laBelText: 'add websiteUrl',
-            //       isPrefixIcon: true,
-            //       iconWidget: Icon(Icons.add_circle_outline_sharp, color: white),
-            //       fontSize: buttonTextSize,
-            //       width: mobileView ? 150 : 200,
-            //       shadow: [],
-            //       containerColor: primaryColor,
-            //       ontapp: () async {
-            //         try {
-            //           // Reference to the restaurants collection
-            //           CollectionReference restaurants = FirebaseFirestore.instance.collection('restaurants');
-            //
-            //           // Get all documents in the restaurants collection
-            //           QuerySnapshot querySnapshot = await restaurants.get();
-            //
-            //           int i=0;
-            //           // Iterate through each document
-            //           for (QueryDocumentSnapshot doc in querySnapshot.docs) {
-            //             Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-            //
-            //             // Check if resImages exists and is a list
-            //             if (data.containsKey('resImages') && data['resImages'] is List) {
-            //               List<String> resImages = List<String>.from(data['resImages']);
-            //               List<String> imagesList = [];
-            //
-            //               // Check if imagesList exists and is a list
-            //               if (data.containsKey('imagesList') && data['imagesList'] is List) {
-            //                 imagesList = List<String>.from(data['imagesList']);
-            //               }
-            //
-            //               // Add resImages contents to imagesList, avoiding duplicates
-            //               imagesList.addAll(resImages.where((image) => !imagesList.contains(image)));
-            //
-            //               // Update the document: set imagesList and remove resImages
-            //               await doc.reference.update({
-            //                 'imagesList': imagesList,
-            //                 'resImages': FieldValue.delete(),
-            //               });
-            //
-            //               print('${doc.id} document updates $i');
-            //
-            //             }else{
-            //               print('${doc.id} has no resImages field $i');
-            //             }
-            //             i++;
-            //           }
-            //
-            //           print('Finished updating restaurant documents');
-            //         } catch (e) {
-            //           print('Error updating documents: $e');
-            //         }
-            //       },
-            //     ),
+                // Row(
+                //   children: [
+                //     CustomButton(
+                //       laBelText: 'add websiteUrl',
+                //       isPrefixIcon: true,
+                //       iconWidget: Icon(Icons.add_circle_outline_sharp, color: white),
+                //       fontSize: buttonTextSize,
+                //       width: mobileView ? 150 : 200,
+                //       shadow: [],
+                //       containerColor: primaryColor,
+                //       ontapp: () async {
+                //         try {
+                //           // Reference to the restaurants collection
+                //           CollectionReference restaurants = FirebaseFirestore.instance.collection('restaurants');
+                //
+                //           // Get all documents in the restaurants collection
+                //           QuerySnapshot querySnapshot = await restaurants.get();
+                //
+                //           int i=0;
+                //           // Iterate through each document
+                //           for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+                //             Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+                //
+                //             // Check if resImages exists and is a list
+                //             if (data.containsKey('resImages') && data['resImages'] is List) {
+                //               List<String> resImages = List<String>.from(data['resImages']);
+                //               List<String> imagesList = [];
+                //
+                //               // Check if imagesList exists and is a list
+                //               if (data.containsKey('imagesList') && data['imagesList'] is List) {
+                //                 imagesList = List<String>.from(data['imagesList']);
+                //               }
+                //
+                //               // Add resImages contents to imagesList, avoiding duplicates
+                //               imagesList.addAll(resImages.where((image) => !imagesList.contains(image)));
+                //
+                //               // Update the document: set imagesList and remove resImages
+                //               await doc.reference.update({
+                //                 'imagesList': imagesList,
+                //                 'resImages': FieldValue.delete(),
+                //               });
+                //
+                //               print('${doc.id} document updates $i');
+                //
+                //             }else{
+                //               print('${doc.id} has no resImages field $i');
+                //             }
+                //             i++;
+                //           }
+                //
+                //           print('Finished updating restaurant documents');
+                //         } catch (e) {
+                //           print('Error updating documents: $e');
+                //         }
+                //       },
+                //     ),
                 CustomButton(
-                  laBelText: 'Add Restaurant',
-                  isPrefixIcon: true,
-                  iconWidget: Icon(Icons.add_circle_outline_sharp, color: white),
-                  fontSize: buttonTextSize,
-                  width: mobileView ? 150 : 200,
-                  shadow: [],
-                  containerColor: primaryColor,
-                  ontapp: () {
-                    addController.restaurantModel = null;
-                    addController.clearFields();
-                    drawerController.addRestaurants.value = true;
-                  },
-                ),
+              laBelText: 'Add Restaurant',
+              isPrefixIcon: true,
+              iconWidget: Icon(Icons.add_circle_outline_sharp, color: white),
+              fontSize: buttonTextSize,
+              width: mobileView ? 150 : 200,
+              shadow: [],
+              containerColor: primaryColor,
+              ontapp: () {
+                // ✅ Clear all data before adding new restaurant
+                addController
+                    .clearFields(); // This now clears everything including restaurantModel
+
+                // ✅ Clear all sub-controllers if they exist
+                if (Get.isRegistered<AmenitiesSubScreenController>()) {
+                  Get.find<AmenitiesSubScreenController>().clearFields();
+                }
+
+                if (Get.isRegistered<ExperiencesSubScreenController>()) {
+                  Get.find<ExperiencesSubScreenController>().clearFields();
+                }
+
+                if (Get.isRegistered<MenuSubScreenController>()) {
+                  Get.find<MenuSubScreenController>().clearFields();
+                }
+
+                if (Get.isRegistered<OperatingHoursSubScreenController>()) {
+                  final opHoursController =
+                      Get.find<OperatingHoursSubScreenController>();
+                  opHoursController.daySwitches.clear();
+                  opHoursController.slotStates.clear();
+                  opHoursController.slotTimes.clear();
+                }
+
+                // ✅ Delete EditRestaurantController if it exists
+                if (Get.isRegistered<EditRestaurantController>()) {
+                  Get.delete<EditRestaurantController>();
+                }
+
+                drawerController.addRestaurants.value = true;
+              },
+            ),
             //   ],
             // ),
           ),
@@ -693,7 +723,9 @@ class _RestaurantManagementScreenState
                                       ),
                                       onSelected: (value) async {
                                         if (value == 'delete') {
-                                          controller.deleteRestaurantFromFiltered(restaurant);
+                                          controller
+                                              .deleteRestaurantFromFiltered(
+                                                  restaurant);
                                         } else if (value == 'edit') {
                                           // 1️⃣ Assign the selected restaurant
                                           addController.restaurantModel =

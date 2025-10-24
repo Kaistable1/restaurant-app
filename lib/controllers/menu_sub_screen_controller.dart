@@ -83,6 +83,8 @@ class MenuSubScreenController extends GetxController {
     uploadedImages.clear();
     isFoodMenuSelected.value = false;
     isDrinkMenuSelected.value = false;
+    // ✅ Also clear the selected cuisine
+    selectedCuisine.value = '';
   }
 
   // Get special conditions text

@@ -19,6 +19,49 @@ class EditRestaurantController extends GetxController {
     super.onInit();
   }
 
+  @override
+  void onClose() {
+    // Clean up when controller is disposed
+    cleanupAllControllers();
+    super.onClose();
+  }
+
+  /// Cleanup method to clear all data when exiting edit mode
+  void cleanupAllControllers() {
+    final addRestaurantController = Get.find<AddRestaurantTabController>();
+
+    // Clear the main add restaurant controller
+    addRestaurantController.clearFields();
+
+    // Clear amenities controller if registered
+    if (Get.isRegistered<AmenitiesSubScreenController>()) {
+      final amenitiesController = Get.find<AmenitiesSubScreenController>();
+      amenitiesController.clearFields();
+    }
+
+    // Clear experiences controller if registered
+    if (Get.isRegistered<ExperiencesSubScreenController>()) {
+      final experiencesController = Get.find<ExperiencesSubScreenController>();
+      experiencesController.clearFields();
+      experiencesController.events.clear();
+    }
+
+    // Clear menu controller if registered
+    if (Get.isRegistered<MenuSubScreenController>()) {
+      final menuController = Get.find<MenuSubScreenController>();
+      menuController.clearFields();
+    }
+
+    // Clear operating hours controller if registered
+    if (Get.isRegistered<OperatingHoursSubScreenController>()) {
+      final operatingHoursController =
+          Get.find<OperatingHoursSubScreenController>();
+      operatingHoursController.daySwitches.clear();
+      operatingHoursController.slotStates.clear();
+      operatingHoursController.slotTimes.clear();
+    }
+  }
+
   // fillAllVariable() async {
   //   try {
   //     if (restaurantDetailsModel != null) {
