@@ -1231,23 +1231,25 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                     ),
                             );
                           }),
+                          const SizedBox(height: 8),
                           Align(
                             alignment: Alignment.center,
-                            child: TextButton(
-                              onPressed: () {
+                            child: CustomButton(
+                              width: Get.width / 2,
+                              height: 36,
+                              laBelText: 'See All',
+                              textColor: Colors.white,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w500,
+                              fontFamily:
+                                  GoogleFonts.plusJakartaSans().fontFamily,
+                              isPrefixIcon: true,
+                              iconWidget: Icon(Icons.restaurant,
+                                  color: Colors.white, size: 20),
+                              ontapp: () {
                                 Get.to(() =>
                                     SeeAllRestaurantsScreen(fromHome: true));
                               },
-                              child: Text(
-                                'See all',
-                                style: TextStyle(
-                                  color: Colors.green,
-                                  fontSize: 17,
-                                  fontFamily:
-                                      GoogleFonts.plusJakartaSans().fontFamily,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
                             ),
                           ),
                           const SizedBox(height: 8),
@@ -1286,22 +1288,24 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                     ),
                             );
                           }),
+                          const SizedBox(height: 8),
                           Align(
                             alignment: Alignment.center,
-                            child: TextButton(
-                              onPressed: () {
+                            child: CustomButton(
+                              width: Get.width / 2,
+                              height: 36,
+                              laBelText: 'See All',
+                              textColor: Colors.white,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w500,
+                              fontFamily:
+                                  GoogleFonts.plusJakartaSans().fontFamily,
+                              isPrefixIcon: true,
+                              iconWidget: Icon(Icons.restaurant,
+                                  color: Colors.white, size: 20),
+                              ontapp: () {
                                 Get.to(VideosListView(fromHome: true));
                               },
-                              child: Text(
-                                'See all',
-                                style: TextStyle(
-                                  color: Colors.green,
-                                  fontSize: 17,
-                                  fontFamily:
-                                      GoogleFonts.plusJakartaSans().fontFamily,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -1406,7 +1410,13 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                           ),
                           child: Row(
                             children: [
-                              const Icon(Icons.search, size: 26),
+                              Container(
+                                padding: EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primaryColor,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(Icons.search, size: 24, color: Colors.white,)),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: TextField(
