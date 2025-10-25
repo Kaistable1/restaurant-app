@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:kaistable_website/models/restaurant_model.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:geolocator/geolocator.dart';
@@ -49,10 +50,8 @@ class SavedRestaurantsPage extends StatelessWidget {
     }
 
     // Fetch only the saved restaurants from 'restaurants' collection
-    final futures = favoriteIds.map((id) => FirebaseFirestore.instance
-        .collection('restaurants')
-        .doc(id)
-        .get());
+    final futures = favoriteIds.map((id) =>
+        FirebaseFirestore.instance.collection('restaurants').doc(id).get());
 
     final docs = await Future.wait(futures);
     return docs
@@ -74,12 +73,12 @@ class SavedRestaurantsPage extends StatelessWidget {
             .delete();
         print('Removed restaurant $restaurantId from Firestore favorites');
       }
-        // Unauthenticated user: Update SharedPreferences
-        final prefs = await SharedPreferences.getInstance();
-        final favoriteIds = prefs.getStringList('favorite_restaurants') ?? [];
-        favoriteIds.remove(restaurantId);
-        await prefs.setStringList('favorite_restaurants', favoriteIds);
-        print('Removed restaurant $restaurantId from SharedPreferences');
+      // Unauthenticated user: Update SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      final favoriteIds = prefs.getStringList('favorite_restaurants') ?? [];
+      favoriteIds.remove(restaurantId);
+      await prefs.setStringList('favorite_restaurants', favoriteIds);
+      print('Removed restaurant $restaurantId from SharedPreferences');
       restaurantCtrl.favoriteIds.value = favoriteIds;
 
       refreshToggle.toggle();
@@ -121,14 +120,17 @@ class SavedRestaurantsPage extends StatelessWidget {
         leading: const BackButton(),
       ),
       body: Obx(
-          ()=> FutureBuilder<List<RestaurantModel>>(
-          future: refreshToggle.value ? _fetchSavedRestaurants() : _fetchSavedRestaurants(),
+        () => FutureBuilder<List<RestaurantModel>>(
+          future: refreshToggle.value
+              ? _fetchSavedRestaurants()
+              : _fetchSavedRestaurants(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return _buildShimmer();
             }
             if (snapshot.hasError) {
-              return const Center(child: Text('Error loading saved restaurants'));
+              return const Center(
+                  child: Text('Error loading saved restaurants'));
             }
             final savedRestaurants = snapshot.data ?? [];
 
@@ -142,8 +144,8 @@ class SavedRestaurantsPage extends StatelessWidget {
                 final restaurant = savedRestaurants[index];
                 return Card(
                   color: Colors.white,
-
-                  margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+                  margin: const EdgeInsets.symmetric(
+                      vertical: 8.0, horizontal: 8.0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.0),
                     side: BorderSide(color: Colors.grey[300]!),
@@ -173,13 +175,15 @@ class SavedRestaurantsPage extends StatelessWidget {
                         ),
                         Expanded(
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12.0, vertical: 10.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Expanded(
                                       child: Text(
@@ -189,7 +193,9 @@ class SavedRestaurantsPage extends StatelessWidget {
                                         style: TextStyle(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w700,
-                                          fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                          fontFamily:
+                                              GoogleFonts.plusJakartaSans()
+                                                  .fontFamily,
                                         ),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
@@ -197,45 +203,75 @@ class SavedRestaurantsPage extends StatelessWidget {
                                     ),
                                     GestureDetector(
                                       onTap: () {
-                                        removeFavoriteRestaurant(restaurant.docID);
+                                        removeFavoriteRestaurant(
+                                            restaurant.docID);
                                       },
-                                      child: const Icon(Icons.bookmark_remove, color: Colors.red),
+                                      child: const Icon(Icons.bookmark_remove,
+                                          color: Colors.red),
                                     ),
                                   ],
                                 ),
-                                FutureBuilder<Map<String, dynamic>?>(
-                                  future: controller.getOperatingHours1(restaurant.docID),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState == ConnectionState.waiting) {
-                                      return Text(
-                                        'Loading...',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                          fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                          color: Colors.black,
-                                        ),
-                                      );
+                                Obx(() {
+                                  final operatingHours = controller
+                                      .operatingHoursCache[restaurant.docID];
+                                  final isFetching = controller
+                                      .fetchingOperatingHours
+                                      .contains(restaurant.docID);
+                                  final currentDay =
+                                      DateFormat('EEEE').format(DateTime.now());
+
+                                  if (operatingHours == null ||
+                                      operatingHours[currentDay] == null) {
+                                    if (!isFetching) {
+                                      controller.getOperatingHours(
+                                          restaurant.docID,
+                                          triggerFilterUpdate: false);
                                     }
-                                    final timeOfDay = Get.find<FilterController>()
-                                        .selectedFilters['Time']
-                                        ?.isNotEmpty ??
-                                        false
-                                        ? Get.find<FilterController>().selectedFilters['Time']!.first
-                                        : 'Dinner';
-                                    final operatingHours = snapshot.data;
-                                    final isClosed = operatingHours?[timeOfDay]?['isClosed'] ?? true;
                                     return Text(
-                                      isClosed ? 'Closed' : operatingHours?[timeOfDay]?['hours'] ?? '6PM-9PM',
+                                      isFetching ? 'Loading...' : 'Unavailable',
                                       style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w500,
-                                        fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                        fontFamily:
+                                            GoogleFonts.plusJakartaSans()
+                                                .fontFamily,
                                         color: Colors.black,
                                       ),
                                     );
-                                  },
-                                ),
+                                  }
+
+                                  if (operatingHours.isEmpty) {
+                                    return Text(
+                                      'Unavailable',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily:
+                                            GoogleFonts.plusJakartaSans()
+                                                .fontFamily,
+                                        color: Colors.black,
+                                      ),
+                                    );
+                                  }
+
+                                  final dayHours = operatingHours[currentDay]!;
+                                  // Use the new method to get current operating hours
+                                  final hoursText =
+                                      controller.getDisplayHours(dayHours);
+                                  final isOpen =
+                                      controller.isRestaurantOpen(dayHours);
+                                  return Text(
+                                    hoursText,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: GoogleFonts.plusJakartaSans()
+                                          .fontFamily,
+                                      color:
+                                          isOpen ? Colors.green : Colors.black,
+                                    ),
+                                  );
+                                }),
                                 Row(
                                   children: [
                                     Image.asset(
@@ -245,37 +281,47 @@ class SavedRestaurantsPage extends StatelessWidget {
                                     ),
                                     // Replace the per-restaurant getCurrentLocation call with a shared positionFuture. This calculates distance only if position is available, showing 'Unknown' if location is disabled or error occurred, preventing multiple dialogs.
                                     FutureBuilder<double>(
-                                      future: controller.positionFuture.then((position) {
+                                      future: controller.positionFuture
+                                          .then((position) {
                                         if (position == null) {
                                           return -1.0; // Sentinel value for disabled/unknown
                                         }
                                         return Geolocator.distanceBetween(
-                                          position.latitude,
-                                          position.longitude,
-                                          restaurant.latitude,
-                                          restaurant.longitude,
-                                        ) / 1000;
+                                              position.latitude,
+                                              position.longitude,
+                                              restaurant.latitude,
+                                              restaurant.longitude,
+                                            ) /
+                                            1000;
                                       }),
                                       builder: (context, snapshot) {
-                                        if (snapshot.connectionState == ConnectionState.waiting) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
                                           return Text(
                                             'Calculating...',
                                             style: TextStyle(
                                               fontSize: 12,
                                               fontWeight: FontWeight.w500,
-                                              fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                              color: const Color.fromRGBO(142, 142, 147, 1),
+                                              fontFamily:
+                                                  GoogleFonts.plusJakartaSans()
+                                                      .fontFamily,
+                                              color: const Color.fromRGBO(
+                                                  142, 142, 147, 1),
                                             ),
                                           );
                                         }
-                                        if (snapshot.hasData && snapshot.data == -1.0) {
+                                        if (snapshot.hasData &&
+                                            snapshot.data == -1.0) {
                                           return Text(
                                             'Unknown',
                                             style: TextStyle(
                                               fontSize: 12,
                                               fontWeight: FontWeight.w500,
-                                              fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                              color: const Color.fromRGBO(142, 142, 147, 1),
+                                              fontFamily:
+                                                  GoogleFonts.plusJakartaSans()
+                                                      .fontFamily,
+                                              color: const Color.fromRGBO(
+                                                  142, 142, 147, 1),
                                             ),
                                           );
                                         }
@@ -286,8 +332,11 @@ class SavedRestaurantsPage extends StatelessWidget {
                                           style: TextStyle(
                                             fontSize: 12,
                                             fontWeight: FontWeight.w500,
-                                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                            color: const Color.fromRGBO(142, 142, 147, 1),
+                                            fontFamily:
+                                                GoogleFonts.plusJakartaSans()
+                                                    .fontFamily,
+                                            color: const Color.fromRGBO(
+                                                142, 142, 147, 1),
                                           ),
                                         );
                                       },

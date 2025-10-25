@@ -15,24 +15,28 @@ import '../../../constants/app_colors.dart';
 import '../../../models/restaurant_model.dart';
 import '../widgets/discover_controller.dart';
 
-
 class SeeAllRestaurantsScreen extends StatefulWidget {
   bool fromHome = false;
   SeeAllRestaurantsScreen({Key? key, required this.fromHome}) : super(key: key);
 
   @override
-  State<SeeAllRestaurantsScreen> createState() => _SeeAllRestaurantsScreenState();
+  State<SeeAllRestaurantsScreen> createState() =>
+      _SeeAllRestaurantsScreenState();
 }
 
-class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen> with WidgetsBindingObserver {
+class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen>
+    with WidgetsBindingObserver {
   final TextEditingController searchController = TextEditingController();
   final HomeLocationController controller = Get.find<HomeLocationController>();
   final RestaurantController restaurantCtrl = Get.find<RestaurantController>();
-  final FilterController filterCtrl = Get.find<FilterController>(); // NEW: Find the shared FilterController instance to access category filters
+  final FilterController filterCtrl = Get.find<
+      FilterController>(); // NEW: Find the shared FilterController instance to access category filters
   final RxBool isLoading = false.obs;
 
-  final RxList<RestaurantModel> categoryFilteredRestaurants = <RestaurantModel>[].obs; // NEW: RxList to hold the category-filtered restaurants from the stream
-  final RxList<RestaurantModel> displayedRestaurants = <RestaurantModel>[].obs; // NEW: RxList to hold the final list after applying local search and distance
+  final RxList<RestaurantModel> categoryFilteredRestaurants = <RestaurantModel>[]
+      .obs; // NEW: RxList to hold the category-filtered restaurants from the stream
+  final RxList<RestaurantModel> displayedRestaurants = <RestaurantModel>[]
+      .obs; // NEW: RxList to hold the final list after applying local search and distance
 
   @override
   void initState() {
@@ -57,12 +61,15 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen> with 
           .doc(userId)
           .collection('favorite')
           .snapshots()
-      // .distinct() // Avoid redundant updates
-          .listen((snapshot) async {
-        restaurantCtrl.favoriteIds.value = snapshot.docs.map((doc) => doc.id).toList();
-        final prefs = await SharedPreferences.getInstance();
-        prefs.setStringList('favorite_restaurants', restaurantCtrl.favoriteIds);
-      },
+          // .distinct() // Avoid redundant updates
+          .listen(
+        (snapshot) async {
+          restaurantCtrl.favoriteIds.value =
+              snapshot.docs.map((doc) => doc.id).toList();
+          final prefs = await SharedPreferences.getInstance();
+          prefs.setStringList(
+              'favorite_restaurants', restaurantCtrl.favoriteIds);
+        },
         onError: (e) {
           print('Error streaming favorite IDs: $e');
           Get.snackbar('Error', 'Failed to load favorites: $e',
@@ -104,7 +111,8 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen> with 
   Future<void> _fetchFavoriteIds() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      restaurantCtrl.favoriteIds.value = prefs.getStringList('favorite_restaurants') ?? [];
+      restaurantCtrl.favoriteIds.value =
+          prefs.getStringList('favorite_restaurants') ?? [];
     } catch (e) {
       print('Error fetching favorite IDs: $e');
       Get.snackbar('Error', 'Failed to load favorites: $e',
@@ -113,7 +121,8 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen> with 
   }
 
   // Explanation: Adds or removes a restaurant from favorites, updating favoriteIds reactively.
-  Future<void> toggleFavoriteRestaurant(String restaurantId, bool isFavorited) async {
+  Future<void> toggleFavoriteRestaurant(
+      String restaurantId, bool isFavorited) async {
     try {
       if (isFavorited) {
         // Remove from favorites
@@ -128,12 +137,13 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen> with 
           print('Removed restaurant $restaurantId from Firestore favorites');
         }
         final prefs = await SharedPreferences.getInstance();
-        final favoriteIdsList = prefs.getStringList('favorite_restaurants') ?? [];
+        final favoriteIdsList =
+            prefs.getStringList('favorite_restaurants') ?? [];
         favoriteIdsList.remove(restaurantId);
         await prefs.setStringList('favorite_restaurants', favoriteIdsList);
         print('Removed restaurant $restaurantId from SharedPreferences');
-        restaurantCtrl.favoriteIds.remove(restaurantId); // Update RxList for unauthenticated users
-
+        restaurantCtrl.favoriteIds
+            .remove(restaurantId); // Update RxList for unauthenticated users
       } else {
         // Add to favorites
         if (auth.currentUser != null) {
@@ -147,14 +157,15 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen> with 
           print('Added restaurant $restaurantId to Firestore favorites');
         }
         final prefs = await SharedPreferences.getInstance();
-        final favoriteIdsList = prefs.getStringList('favorite_restaurants') ?? [];
+        final favoriteIdsList =
+            prefs.getStringList('favorite_restaurants') ?? [];
         if (!favoriteIdsList.contains(restaurantId)) {
           favoriteIdsList.add(restaurantId);
           await prefs.setStringList('favorite_restaurants', favoriteIdsList);
           print('Added restaurant $restaurantId to SharedPreferences');
-          restaurantCtrl.favoriteIds.add(restaurantId); // Update RxList for unauthenticated users
+          restaurantCtrl.favoriteIds
+              .add(restaurantId); // Update RxList for unauthenticated users
         }
-
       }
     } catch (e) {
       print('Error toggling favorite restaurant: $e');
@@ -172,23 +183,26 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen> with 
     if (searchController.text.isNotEmpty) {
       final query = searchController.text.toLowerCase();
       filtered = filtered
-          .where((restaurant) => restaurant.resName.toLowerCase().contains(query))
+          .where(
+              (restaurant) => restaurant.resName.toLowerCase().contains(query))
           .toList();
     }
 
     // Apply distance filter
-    if (controller.selectedDistance.value > 0 && controller.userPosition.value != null) {
+    if (controller.selectedDistance.value > 0 &&
+        controller.userPosition.value != null) {
       final maxDistanceKm = controller.selectedDistance.value * 1.60934;
       filtered = filtered.where((restaurant) {
         if (restaurant.latitude == 0.0 && restaurant.longitude == 0.0) {
           return false;
         }
         final distance = Geolocator.distanceBetween(
-          controller.userPosition.value!.latitude,
-          controller.userPosition.value!.longitude,
-          restaurant.latitude,
-          restaurant.longitude,
-        ) / 1000;
+              controller.userPosition.value!.latitude,
+              controller.userPosition.value!.longitude,
+              restaurant.latitude,
+              restaurant.longitude,
+            ) /
+            1000;
         return distance <= maxDistanceKm;
       }).toList();
     }
@@ -217,7 +231,8 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen> with 
     // Pre-fetch operating hours for all filtered restaurants
     await Future.wait(filtered.map((restaurant) {
       if (!controller.operatingHoursCache.containsKey(restaurant.docID)) {
-        return controller.getOperatingHours(restaurant.docID, triggerFilterUpdate: false);
+        return controller.getOperatingHours(restaurant.docID,
+            triggerFilterUpdate: false);
       }
       return Future.value();
     }));
@@ -269,7 +284,7 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen> with 
             ),
             DropdownButtonHideUnderline(
               child: Obx(
-                    () => DropdownButton2<String>(
+                () => DropdownButton2<String>(
                   buttonStyleData: ButtonStyleData(
                     width: 55,
                   ),
@@ -289,15 +304,15 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen> with 
                       : controller.selectedDistance.value.toString() + ' mi',
                   items: controller.distanceOptions
                       .map((ele) => DropdownMenuItem(
-                    value: ele,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Text(
-                        ele,
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                    ),
-                  ))
+                            value: ele,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              child: Text(
+                                ele,
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ),
+                          ))
                       .toList(),
                   onChanged: (val) {
                     if (val == 'All') {
@@ -352,14 +367,17 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen> with 
       appBar: AppBar(
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
-        title: Text('Restaurants in the area',
+        title: Text(
+          'Restaurants in the area',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-          ),),
+          ),
+        ),
         centerTitle: true,
         leading: BackButton(
-          onPressed: () => widget.fromHome ? Get.back() : navbarController.jumpToTab(0),
+          onPressed: () =>
+              widget.fromHome ? Get.back() : navbarController.jumpToTab(0),
         ),
       ),
       body: Column(
@@ -386,14 +404,18 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen> with 
                     final restaurant = restaurants[index];
 
                     return Obx(
-                          (){
-                        final isBookmarked = restaurantCtrl.favoriteIds.contains(restaurant.docID).obs;
+                      () {
+                        final isBookmarked = restaurantCtrl.favoriteIds
+                            .contains(restaurant.docID)
+                            .obs;
                         return GestureDetector(
                           onTap: () {
-                            Get.to(() => RestaurantDetailScreen(restaurantModel: restaurant));
+                            Get.to(() => RestaurantDetailScreen(
+                                restaurantModel: restaurant));
                           },
                           child: Container(
-                            margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 8.0),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: const BorderRadius.only(
@@ -429,13 +451,17 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen> with 
                                   ),
                                   Expanded(
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 12.0, vertical: 10.0),
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
                                               Expanded(
                                                 child: Text(
@@ -445,43 +471,68 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen> with 
                                                   style: TextStyle(
                                                     fontSize: 15,
                                                     fontWeight: FontWeight.w700,
-                                                    fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                                    fontFamily: GoogleFonts
+                                                            .plusJakartaSans()
+                                                        .fontFamily,
                                                   ),
                                                   maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                 ),
                                               ),
                                               GestureDetector(
                                                 onTap: () {
-                                                  toggleFavoriteRestaurant(restaurant.docID, isBookmarked.value);
+                                                  toggleFavoriteRestaurant(
+                                                      restaurant.docID,
+                                                      isBookmarked.value);
                                                   isBookmarked.toggle();
                                                 },
                                                 child: Obx(
-                                                      ()=> Icon(
-                                                    isBookmarked.value ? Icons.bookmark : Icons.bookmark_border,
-                                                    color: isBookmarked.value ? Colors.green : Colors.grey,
+                                                  () => Icon(
+                                                    isBookmarked.value
+                                                        ? Icons.bookmark
+                                                        : Icons.bookmark_border,
+                                                    color: isBookmarked.value
+                                                        ? Colors.green
+                                                        : Colors.grey,
                                                   ),
                                                 ),
                                               ),
                                             ],
                                           ),
                                           Obx(() {
-                                            final operatingHours = controller.operatingHoursCache[restaurant.docID];
-                                            final isFetching = controller.fetchingOperatingHours.contains(restaurant.docID);
-                                            final currentDay = DateFormat('EEEE').format(DateTime.now());
-                                            final timeFilter = filterCtrl.selectedFilters['Time'];
+                                            final operatingHours =
+                                                controller.operatingHoursCache[
+                                                    restaurant.docID];
+                                            final isFetching = controller
+                                                .fetchingOperatingHours
+                                                .contains(restaurant.docID);
+                                            final currentDay =
+                                                DateFormat('EEEE')
+                                                    .format(DateTime.now());
+                                            final timeFilter = filterCtrl
+                                                .selectedFilters['Time'];
 
-                                            if (operatingHours == null || operatingHours[currentDay] == null) {
+                                            if (operatingHours == null ||
+                                                operatingHours[currentDay] ==
+                                                    null) {
                                               if (!isFetching) {
-                                                controller.getOperatingHours(restaurant.docID, triggerFilterUpdate: false);
+                                                controller.getOperatingHours(
+                                                    restaurant.docID,
+                                                    triggerFilterUpdate: false);
                                               }
                                               return Text(
-                                                isFetching ? 'Loading...' : 'Unavailable',
+                                                isFetching
+                                                    ? 'Loading...'
+                                                    : 'Unavailable',
                                                 style: TextStyle(
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.w500,
-                                                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                                  color: const Color.fromRGBO(142, 142, 147, 1),
+                                                  fontFamily: GoogleFonts
+                                                          .plusJakartaSans()
+                                                      .fontFamily,
+                                                  color: const Color.fromRGBO(
+                                                      142, 142, 147, 1),
                                                 ),
                                               );
                                             }
@@ -492,43 +543,71 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen> with 
                                                 style: TextStyle(
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.w500,
-                                                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                                  color: const Color.fromRGBO(142, 142, 147, 1),
+                                                  fontFamily: GoogleFonts
+                                                          .plusJakartaSans()
+                                                      .fontFamily,
+                                                  color: const Color.fromRGBO(
+                                                      142, 142, 147, 1),
                                                 ),
                                               );
                                             }
 
-                                            final dayHours = operatingHours[currentDay]!;
+                                            final dayHours =
+                                                operatingHours[currentDay]!;
                                             // Check if no time filter is selected
-                                            if (timeFilter == null || timeFilter.isEmpty) {
+                                            if (timeFilter == null ||
+                                                timeFilter.isEmpty) {
+                                              // Use the new method to get current operating hours
+                                              final hoursText = controller
+                                                  .getDisplayHours(dayHours);
+                                              final isOpen = controller
+                                                  .isRestaurantOpen(dayHours);
                                               return Text(
-                                                controller.getFullDayHours(dayHours),
+                                                hoursText,
                                                 style: TextStyle(
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.w500,
-                                                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                                  color: const Color.fromRGBO(142, 142, 147, 1),
+                                                  fontFamily: GoogleFonts
+                                                          .plusJakartaSans()
+                                                      .fontFamily,
+                                                  color: isOpen
+                                                      ? Colors.green
+                                                      : const Color.fromRGBO(
+                                                          142, 142, 147, 1),
                                                 ),
                                               );
                                             }
 
                                             // Use selected time slot
                                             final timeOfDay = timeFilter.first;
-                                            final isClosed = dayHours[timeOfDay]?['isClosed'] ?? true;
-                                            final startTime = dayHours[timeOfDay]?['startTime'] ?? '6:00 PM';
-                                            final endTime = dayHours[timeOfDay]?['endTime'] ?? '9:00 PM';
+                                            final isClosed = dayHours[timeOfDay]
+                                                    ?['isClosed'] ??
+                                                true;
+                                            final startTime =
+                                                dayHours[timeOfDay]
+                                                        ?['startTime'] ??
+                                                    '6:00 PM';
+                                            final endTime = dayHours[timeOfDay]
+                                                    ?['endTime'] ??
+                                                '9:00 PM';
                                             return Text(
-                                              isClosed ? 'Closed' : '$startTime–$endTime',
+                                              isClosed
+                                                  ? 'Closed'
+                                                  : '$startTime–$endTime',
                                               style: TextStyle(
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w500,
-                                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                                color: const Color.fromRGBO(142, 142, 147, 1),
+                                                fontFamily: GoogleFonts
+                                                        .plusJakartaSans()
+                                                    .fontFamily,
+                                                color: const Color.fromRGBO(
+                                                    142, 142, 147, 1),
                                               ),
                                             );
                                           }),
                                           Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
                                               Row(
                                                 mainAxisSize: MainAxisSize.min,
@@ -540,31 +619,49 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen> with 
                                                   ),
                                                   // Replace the per-restaurant getCurrentLocation call with a shared positionFuture. This calculates distance only if position is available, showing 'Unknown' if location is disabled or error occurred, preventing multiple dialogs.
                                                   Obx(() {
-                                                    final pos = controller.userPosition.value;
+                                                    final pos = controller
+                                                        .userPosition.value;
                                                     if (pos == null) {
                                                       return Text(
-                                                        controller.isFetchingInitialData.value ? 'Fetching...' : 'Location disabled',
+                                                        controller
+                                                                .isFetchingInitialData
+                                                                .value
+                                                            ? 'Fetching...'
+                                                            : 'Location disabled',
                                                         style: TextStyle(
                                                           fontSize: 12,
-                                                          fontWeight: FontWeight.w500,
-                                                          fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                                          color: const Color.fromRGBO(142, 142, 147, 1),
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          fontFamily: GoogleFonts
+                                                                  .plusJakartaSans()
+                                                              .fontFamily,
+                                                          color: const Color
+                                                              .fromRGBO(
+                                                              142, 142, 147, 1),
                                                         ),
                                                       );
                                                     } else {
-                                                      double distance = Geolocator.distanceBetween(
-                                                        pos.latitude,
-                                                        pos.longitude,
-                                                        restaurant.latitude,
-                                                        restaurant.longitude,
-                                                      ) / 1000;
+                                                      double distance = Geolocator
+                                                              .distanceBetween(
+                                                            pos.latitude,
+                                                            pos.longitude,
+                                                            restaurant.latitude,
+                                                            restaurant
+                                                                .longitude,
+                                                          ) /
+                                                          1000;
                                                       return Text(
                                                         '${distance.toStringAsFixed(1)} km away',
                                                         style: TextStyle(
                                                           fontSize: 12,
-                                                          fontWeight: FontWeight.w500,
-                                                          fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                                          color: const Color.fromRGBO(142, 142, 147, 1),
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          fontFamily: GoogleFonts
+                                                                  .plusJakartaSans()
+                                                              .fontFamily,
+                                                          color: const Color
+                                                              .fromRGBO(
+                                                              142, 142, 147, 1),
                                                         ),
                                                       );
                                                     }
@@ -593,7 +690,8 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen> with 
                               ),
                             ),
                           ),
-                        );},
+                        );
+                      },
                     );
                   },
                 );

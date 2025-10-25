@@ -669,6 +669,148 @@ class HomeLocationController extends GetxController {
     return '$startFormatted–$endFormatted';
   }
 
+  /// Get current operating hours based on the current time
+  /// Returns a map with 'hours' (String) and 'isOpen' (bool)
+  Map<String, dynamic> getCurrentOperatingHours(
+      Map<String, Map<String, dynamic>>? dayHours) {
+    if (dayHours == null || dayHours.isEmpty) {
+      return {'hours': 'Unavailable', 'isOpen': false};
+    }
+
+    final now = DateTime.now();
+    final currentTime =
+        DateTime(now.year, now.month, now.day, now.hour, now.minute);
+    final DateFormat timeFormat = DateFormat('h:mm a');
+
+    // Define meal periods with their typical time ranges
+    final List<Map<String, dynamic>> mealPeriods = [
+      {'name': 'Breakfast', 'start': 5, 'end': 11}, // 5 AM - 11 AM
+      {'name': 'Brunch', 'start': 10, 'end': 15}, // 10 AM - 3 PM
+      {'name': 'Lunch', 'start': 11, 'end': 16}, // 11 AM - 4 PM
+      {'name': 'Dinner', 'start': 16, 'end': 24}, // 4 PM - Midnight
+    ];
+
+    // First, check if currently open in any period
+    for (var period in mealPeriods) {
+      String periodName = period['name'];
+      if (dayHours.containsKey(periodName)) {
+        Map<String, dynamic> periodData = dayHours[periodName]!;
+        bool isClosed = periodData['isClosed'] ?? true;
+
+        if (!isClosed) {
+          try {
+            String startTimeStr = periodData['startTime'] ?? '';
+            String endTimeStr = periodData['endTime'] ?? '';
+
+            if (startTimeStr.isNotEmpty && endTimeStr.isNotEmpty) {
+              DateTime startTime = timeFormat.parse(startTimeStr);
+              DateTime endTime = timeFormat.parse(endTimeStr);
+
+              // Convert parsed times to today's date
+              startTime = DateTime(now.year, now.month, now.day, startTime.hour,
+                  startTime.minute);
+              endTime = DateTime(
+                  now.year, now.month, now.day, endTime.hour, endTime.minute);
+
+              // Handle times crossing midnight
+              if (endTime.isBefore(startTime)) {
+                endTime = endTime.add(Duration(days: 1));
+              }
+
+              // Check if current time is within this period
+              if (currentTime
+                      .isAfter(startTime.subtract(Duration(minutes: 1))) &&
+                  currentTime.isBefore(endTime)) {
+                return {
+                  'hours': '$startTimeStr–$endTimeStr',
+                  'isOpen': true,
+                  'period': periodName
+                };
+              }
+            }
+          } catch (e) {
+            print('Error parsing time for $periodName: $e');
+          }
+        }
+      }
+    }
+
+    // If not currently open, find the next opening time
+    DateTime? nextStartTime;
+    String? nextStartTimeStr;
+    String? nextEndTimeStr;
+    String? nextPeriod;
+
+    for (var period in mealPeriods) {
+      String periodName = period['name'];
+      if (dayHours.containsKey(periodName)) {
+        Map<String, dynamic> periodData = dayHours[periodName]!;
+        bool isClosed = periodData['isClosed'] ?? true;
+
+        if (!isClosed) {
+          try {
+            String startTimeStr = periodData['startTime'] ?? '';
+            String endTimeStr = periodData['endTime'] ?? '';
+
+            if (startTimeStr.isNotEmpty && endTimeStr.isNotEmpty) {
+              DateTime startTime = timeFormat.parse(startTimeStr);
+              startTime = DateTime(now.year, now.month, now.day, startTime.hour,
+                  startTime.minute);
+
+              // If this start time is in the future and is the earliest we've found
+              if (startTime.isAfter(currentTime)) {
+                if (nextStartTime == null ||
+                    startTime.isBefore(nextStartTime)) {
+                  nextStartTime = startTime;
+                  nextStartTimeStr = startTimeStr;
+                  nextEndTimeStr = endTimeStr;
+                  nextPeriod = periodName;
+                }
+              }
+            }
+          } catch (e) {
+            print('Error parsing time for $periodName: $e');
+          }
+        }
+      }
+    }
+
+    // If we found a next opening time today
+    if (nextStartTimeStr != null && nextEndTimeStr != null) {
+      return {
+        'hours': '$nextStartTimeStr–$nextEndTimeStr',
+        'isOpen': false,
+        'period': nextPeriod
+      };
+    }
+
+    // If all periods are closed or past for today
+    return {'hours': 'Closed', 'isOpen': false};
+  }
+
+  /// Check if restaurant is currently open
+  bool isRestaurantOpen(Map<String, Map<String, dynamic>>? dayHours) {
+    if (dayHours == null || dayHours.isEmpty) {
+      return false;
+    }
+
+    final result = getCurrentOperatingHours(dayHours);
+    return result['isOpen'] ?? false;
+  }
+
+  /// Get the hours text to display (for restaurant cards)
+  String getDisplayHours(Map<String, Map<String, dynamic>>? dayHours) {
+    final result = getCurrentOperatingHours(dayHours);
+    return result['hours'] ?? 'Unavailable';
+  }
+
+  /// Get open/closed status text
+  String getOpenClosedStatus(Map<String, Map<String, dynamic>>? dayHours) {
+    final result = getCurrentOperatingHours(dayHours);
+    bool isOpen = result['isOpen'] ?? false;
+    return isOpen ? 'Open' : 'Closed';
+  }
+
   Future<Map<String, dynamic>?> getOperatingHours1(String restaurantId) async {
     if (operatingHoursCache.containsKey(restaurantId)) {
       print('Returning cached operating hours for $restaurantId');

@@ -444,11 +444,18 @@ class _HomeScreenNewState extends State<HomeScreenNew>
 
                       final dayHours = operatingHours[currentDay]!;
                       if (timeFilter == null || timeFilter.isEmpty) {
+                        // Use the new method to get current operating hours
+                        final hoursText =
+                            homeLocationCtrl.getDisplayHours(dayHours);
+                        final isOpen =
+                            homeLocationCtrl.isRestaurantOpen(dayHours);
                         return Text(
-                          homeLocationCtrl.getFullDayHours(dayHours),
+                          hoursText,
                           style: TextStyle(
                             fontSize: 13,
-                            color: const Color.fromRGBO(142, 142, 147, 1),
+                            color: isOpen
+                                ? Colors.green
+                                : const Color.fromRGBO(142, 142, 147, 1),
                             fontWeight: FontWeight.w500,
                             fontFamily:
                                 GoogleFonts.plusJakartaSans().fontFamily,
@@ -899,13 +906,19 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                           operatingHours[currentDay]!;
                                       if (timeFilter == null ||
                                           timeFilter.isEmpty) {
+                                        // Use the new method to get current operating hours
+                                        final hoursText = homeLocationCtrl
+                                            .getDisplayHours(dayHours);
+                                        final isOpen = homeLocationCtrl
+                                            .isRestaurantOpen(dayHours);
                                         return Text(
-                                          homeLocationCtrl
-                                              .getFullDayHours(dayHours),
+                                          hoursText,
                                           style: TextStyle(
                                             fontSize: 13,
-                                            color: const Color.fromRGBO(
-                                                142, 142, 147, 1),
+                                            color: isOpen
+                                                ? Colors.green
+                                                : const Color.fromRGBO(
+                                                    142, 142, 147, 1),
                                             fontWeight: FontWeight.w500,
                                             fontFamily:
                                                 GoogleFonts.plusJakartaSans()
@@ -1411,12 +1424,16 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                           child: Row(
                             children: [
                               Container(
-                                padding: EdgeInsets.all(8),
+                                  padding: EdgeInsets.all(8),
                                   decoration: BoxDecoration(
                                     color: AppColors.primaryColor,
                                     shape: BoxShape.circle,
                                   ),
-                                  child: const Icon(Icons.search, size: 24, color: Colors.white,)),
+                                  child: const Icon(
+                                    Icons.search,
+                                    size: 24,
+                                    color: Colors.white,
+                                  )),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: TextField(

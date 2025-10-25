@@ -40,7 +40,6 @@ class RestaurantDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     // Collect all menu food images
     List<String> menuImages = [];
     for (var menu in restaurantModel!.menuList) {
@@ -51,7 +50,8 @@ class RestaurantDetailScreen extends StatelessWidget {
     List<String> allImages = [...restaurantModel!.imagesList, ...menuImages];
 
     // Added menuList to fetchVideos call
-    vc.fetchVideos(restaurantModel!.resName, restaurantModel!.zipCode, restaurantModel!.imagesList, restaurantModel!.menuList);
+    vc.fetchVideos(restaurantModel!.resName, restaurantModel!.zipCode,
+        restaurantModel!.imagesList, restaurantModel!.menuList);
 
     return DefaultTabController(
       length: 4,
@@ -94,29 +94,36 @@ class RestaurantDetailScreen extends StatelessWidget {
                                 ),
                               ),
                               FutureBuilder(
-                                future: getCurrentLocation(context).then((position) =>
-                                (Geolocator.distanceBetween(
-                                  position.latitude,
-                                  position.longitude,
-                                  restaurantModel!.latitude,
-                                  restaurantModel!.longitude,
-                                ) /
-                                    1000) / 1.609),
+                                future: getCurrentLocation(context)
+                                    .then((position) =>
+                                        (Geolocator.distanceBetween(
+                                              position.latitude,
+                                              position.longitude,
+                                              restaurantModel!.latitude,
+                                              restaurantModel!.longitude,
+                                            ) /
+                                            1000) /
+                                        1.609),
                                 builder: (context, snapshot) {
-                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
                                     return Text(
                                       '   Calculating...',
                                       style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w500,
-                                        fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                        color: const Color.fromRGBO(142, 142, 147, 1),
+                                        fontFamily:
+                                            GoogleFonts.plusJakartaSans()
+                                                .fontFamily,
+                                        color: const Color.fromRGBO(
+                                            142, 142, 147, 1),
                                       ),
                                     );
                                   }
 
                                   if (snapshot.hasError) {
-                                    print('Error retrieving location: ${snapshot.error}');
+                                    print(
+                                        'Error retrieving location: ${snapshot.error}');
                                     return Text(
                                       '',
                                       style: TextStyle(
@@ -162,120 +169,131 @@ class RestaurantDetailScreen extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 28),
-                      allImages.length == 0 ?
-                      Row(
-                        children: [
-                          ClipRRect(
-                            clipBehavior: Clip.hardEdge,
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.asset(
-                              'assets/images/restaurant_detail_img1.png',
-                              height: 246,
-                              width: (Get.width - 24 - 24 - 8) / 2,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Column(
-                            children: [
-                              ClipRRect(
-                                clipBehavior: Clip.hardEdge,
-                                borderRadius: BorderRadius.circular(10),
-                                child: Image.asset(
-                                  'assets/images/restaurant_detail_img2.png',
-                                  height: (246 - 8) / 2,
-                                  width: (Get.width - 24 - 24 - 8) / 2,
-                                  fit: BoxFit.cover,
+                      allImages.length == 0
+                          ? Row(
+                              children: [
+                                ClipRRect(
+                                  clipBehavior: Clip.hardEdge,
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.asset(
+                                    'assets/images/restaurant_detail_img1.png',
+                                    height: 246,
+                                    width: (Get.width - 24 - 24 - 8) / 2,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 8),
-                              ClipRRect(
-                                clipBehavior: Clip.hardEdge,
-                                borderRadius: BorderRadius.circular(10),
-                                child: Image.asset(
-                                  'assets/images/restaurant_detail_img3.png',
-                                  height: (246 - 8) / 2,
-                                  width: (Get.width - 24 - 24 - 8) / 2,
-                                  fit: BoxFit.cover,
+                                const SizedBox(width: 8),
+                                Column(
+                                  children: [
+                                    ClipRRect(
+                                      clipBehavior: Clip.hardEdge,
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Image.asset(
+                                        'assets/images/restaurant_detail_img2.png',
+                                        height: (246 - 8) / 2,
+                                        width: (Get.width - 24 - 24 - 8) / 2,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    ClipRRect(
+                                      clipBehavior: Clip.hardEdge,
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Image.asset(
+                                        'assets/images/restaurant_detail_img3.png',
+                                        height: (246 - 8) / 2,
+                                        width: (Get.width - 24 - 24 - 8) / 2,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ) : allImages.length == 1 ?
-                      ClipRRect(
-                        clipBehavior: Clip.hardEdge,
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.network(
-                          allImages.first, // 'assets/images/restaurant_detail_img1.png',
-                          height: 246,
-                          width: Get.width - 48,
-                          fit: BoxFit.cover,
-                        ),
-                      ) : allImages.length == 2 ?
-                      Row(
-                        children: [
-                        ClipRRect(
-                        clipBehavior: Clip.hardEdge,
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.network(
-                          allImages.first,
-                          height: 246,
-                          width: (Get.width - 24 - 24 - 8) / 2,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    const SizedBox(width: 8),
-                          ClipRRect(
-                            clipBehavior: Clip.hardEdge,
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.network(
-                              allImages.last,
-                              height: 246,
-                              width: (Get.width - 24 - 24 - 8) / 2,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          ]) : Row(
-                        children: [
-                          ClipRRect(
-                            clipBehavior: Clip.hardEdge,
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.network(
-                              allImages.first,
-                              height: 246,
-                              width: (Get.width - 24 - 24 - 8) / 2,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Column(
-                            children: [
-                              ClipRRect(
-                                clipBehavior: Clip.hardEdge,
-                                borderRadius: BorderRadius.circular(10),
-                                child: Image.network(
-                                  allImages[1],
-                                  height: (246 - 8) / 2,
-                                  width: (Get.width - 24 - 24 - 8) / 2,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              ClipRRect(
-                                clipBehavior: Clip.hardEdge,
-                                borderRadius: BorderRadius.circular(10),
-                                child: Image.network(
-                                  allImages[2],
-                                  height: (246 - 8) / 2,
-                                  width: (Get.width - 24 - 24 - 8) / 2,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                              ],
+                            )
+                          : allImages.length == 1
+                              ? ClipRRect(
+                                  clipBehavior: Clip.hardEdge,
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.network(
+                                    allImages
+                                        .first, // 'assets/images/restaurant_detail_img1.png',
+                                    height: 246,
+                                    width: Get.width - 48,
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
+                              : allImages.length == 2
+                                  ? Row(children: [
+                                      ClipRRect(
+                                        clipBehavior: Clip.hardEdge,
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: Image.network(
+                                          allImages.first,
+                                          height: 246,
+                                          width: (Get.width - 24 - 24 - 8) / 2,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      ClipRRect(
+                                        clipBehavior: Clip.hardEdge,
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: Image.network(
+                                          allImages.last,
+                                          height: 246,
+                                          width: (Get.width - 24 - 24 - 8) / 2,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ])
+                                  : Row(
+                                      children: [
+                                        ClipRRect(
+                                          clipBehavior: Clip.hardEdge,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          child: Image.network(
+                                            allImages.first,
+                                            height: 246,
+                                            width:
+                                                (Get.width - 24 - 24 - 8) / 2,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Column(
+                                          children: [
+                                            ClipRRect(
+                                              clipBehavior: Clip.hardEdge,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              child: Image.network(
+                                                allImages[1],
+                                                height: (246 - 8) / 2,
+                                                width:
+                                                    (Get.width - 24 - 24 - 8) /
+                                                        2,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            ClipRRect(
+                                              clipBehavior: Clip.hardEdge,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              child: Image.network(
+                                                allImages[2],
+                                                height: (246 - 8) / 2,
+                                                width:
+                                                    (Get.width - 24 - 24 - 8) /
+                                                        2,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                       const SizedBox(height: 24),
                       TabBar(
                         tabs: [
@@ -301,7 +319,8 @@ class RestaurantDetailScreen extends StatelessWidget {
                       Obx(
                         () => tabIndex.value == 0
                             ? Container(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -331,7 +350,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                       containerColor: Colors.orange,
                                       height: 32,
                                       radius: BorderRadius.circular(15),
-                                      ontapp: (){
+                                      ontapp: () {
                                         showCustomDialog(context,
                                             resaturant_model: restaurantModel!);
                                       },
@@ -342,16 +361,16 @@ class RestaurantDetailScreen extends StatelessWidget {
                                     Row(
                                       children: [
                                         Padding(
-                                            padding: EdgeInsets.only(top: 2),
-                                            child: Image.asset(
-                                                'assets/icons/location.png',
-                                                height: 12,
-                                                width: 12),
+                                          padding: EdgeInsets.only(top: 2),
+                                          child: Image.asset(
+                                              'assets/icons/location.png',
+                                              height: 12,
+                                              width: 12),
                                         ),
                                         const SizedBox(width: 8),
                                         Expanded(
                                           child: Text(
-                                            '${restaurantModel?.address ?? ''}, ${restaurantModel?.city ?? ''}, ${restaurantModel?.state ?? ''}, ${restaurantModel?.country ?? ''}${restaurantModel == null || restaurantModel!.zipCode == '' ? '' : ', ${restaurantModel!.zipCode}' }', // '304 Liverpool Blvd, Portsmouth, CA 30103',
+                                            '${restaurantModel?.address ?? ''}, ${restaurantModel?.city ?? ''}, ${restaurantModel?.state ?? ''}, ${restaurantModel?.country ?? ''}${restaurantModel == null || restaurantModel!.zipCode == '' ? '' : ', ${restaurantModel!.zipCode}'}', // '304 Liverpool Blvd, Portsmouth, CA 30103',
                                             style: TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w500,
@@ -365,187 +384,296 @@ class RestaurantDetailScreen extends StatelessWidget {
                                     Divider(color: AppColors.dividerColor),
                                     // const SizedBox(height: 16),
                                     Obx(() {
-                                          final controller = Get.find<HomeLocationController>();
-                                          final operatingHours = controller.operatingHoursCache[restaurantModel!.docID];
-                                          final isFetching = controller.fetchingOperatingHours.contains(restaurantModel!.docID);
-                                          final currentDay = DateFormat('EEEE').format(DateTime.now());
+                                      final controller =
+                                          Get.find<HomeLocationController>();
+                                      final operatingHours =
+                                          controller.operatingHoursCache[
+                                              restaurantModel!.docID];
+                                      final isFetching = controller
+                                          .fetchingOperatingHours
+                                          .contains(restaurantModel!.docID);
+                                      final currentDay = DateFormat('EEEE')
+                                          .format(DateTime.now());
 
-                                          if (operatingHours == null || operatingHours[currentDay] == null) {
-                                            if (!isFetching) {
-                                              controller.getOperatingHours(restaurantModel!.docID, triggerFilterUpdate: false);
-                                            }
-                                            return Column(
-                                              mainAxisSize: MainAxisSize.min,
+                                      if (operatingHours == null ||
+                                          operatingHours[currentDay] == null) {
+                                        if (!isFetching) {
+                                          controller.getOperatingHours(
+                                              restaurantModel!.docID,
+                                              triggerFilterUpdate: false);
+                                        }
+                                        return Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const SizedBox(height: 16),
+                                            Row(
                                               children: [
-                                                const SizedBox(height: 16),
-                                                Row(
-                                                  children: [
-                                                    Padding(
-                                                      padding: EdgeInsets.only(top: 2),
-                                                      child: Image.asset('assets/icons/time.png', height: 12, width: 12),
-                                                    ),
-                                                    const SizedBox(width: 8),
-                                                    Text(
-                                                      isFetching ? 'Retrieving...' : 'Not mentioned',
-                                                      style: TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight: FontWeight.w500,
-                                                        fontFamily: 'PlusJakartaSans',
-                                                        color: const Color.fromRGBO(142, 142, 147, 1),
-                                                      ),
-                                                    ),
-                                                  ],
+                                                Padding(
+                                                  padding:
+                                                      EdgeInsets.only(top: 2),
+                                                  child: Image.asset(
+                                                      'assets/icons/time.png',
+                                                      height: 12,
+                                                      width: 12),
                                                 ),
-                                                const SizedBox(height: 16),
-                                              ],
-                                            );
-                                          }
-
-                                          if (operatingHours.isEmpty) {
-                                            return Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Column(
-                                                  children: [
-                                                    const SizedBox(height: 16),
-                                                  ],
-                                                ),
-                                                Row(
-                                                  children: [
-                                                    Padding(
-                                                      padding: EdgeInsets.only(top: 2),
-                                                      child: Image.asset('assets/icons/time.png', height: 12, width: 12),
-                                                    ),
-                                                    const SizedBox(width: 8),
-                                                    Text(
-                                                      isFetching ? 'Retrieving...' : 'Not mentioned',
-                                                      style: TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight: FontWeight.w500,
-                                                        fontFamily: 'PlusJakartaSans',
-                                                        color: const Color.fromRGBO(142, 142, 147, 1),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                const SizedBox(height: 16),
-                                              ],
-                                            );
-                                          }
-
-                                          final dayHours = operatingHours[currentDay]!;
-                                          final fullDayHours = controller.getFullDayHours(dayHours);
-                                          bool isOpen = false;
-                                          if (fullDayHours != 'Closed' && fullDayHours != 'Unavailable') {
-                                            try {
-                                              final timeFormat = DateFormat('h:mm a');
-                                              final times = fullDayHours.split('–');
-                                              final startTime = timeFormat.parse(times[0]);
-                                              final endTime = timeFormat.parse(times[1]);
-                                              final now = DateTime.now();
-                                              final currentTime = DateTime(2025, 8, 28, now.hour, now.minute);
-                                              isOpen = currentTime.isAfter(startTime) && currentTime.isBefore(endTime);
-                                            } catch (e) {
-                                              print('Error parsing time: $e');
-                                            }
-                                          }
-
-                                          // Weekly hours for dropdown
-                                          List<Map<String, String>> weeklyHours = [];
-                                          final days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-                                          for (var day in days) {
-                                            final hours = operatingHours[day] != null ? controller.getFullDayHours(operatingHours[day]!) : 'Closed';
-                                            weeklyHours.add({'day': day, 'hours': hours});
-                                          }
-
-                                          return Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Padding(
-                                                    padding: EdgeInsets.only(top: 2),
-                                                    child: Image.asset('assets/icons/time.png', height: 12, width: 12),
+                                                const SizedBox(width: 8),
+                                                Text(
+                                                  isFetching
+                                                      ? 'Retrieving...'
+                                                      : 'Not mentioned',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontFamily:
+                                                        'PlusJakartaSans',
+                                                    color: const Color.fromRGBO(
+                                                        142, 142, 147, 1),
                                                   ),
-                                                  const SizedBox(width: 8),
-                                                  Row(
-                                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                                    mainAxisSize: MainAxisSize.min,
-                                                    children: [
-                                                      Text(
-                                                        isOpen ? 'Open' : 'Closed',
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 16),
+                                          ],
+                                        );
+                                      }
+
+                                      if (operatingHours.isEmpty) {
+                                        return Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Column(
+                                              children: [
+                                                const SizedBox(height: 16),
+                                              ],
+                                            ),
+                                            Row(
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      EdgeInsets.only(top: 2),
+                                                  child: Image.asset(
+                                                      'assets/icons/time.png',
+                                                      height: 12,
+                                                      width: 12),
+                                                ),
+                                                const SizedBox(width: 8),
+                                                Text(
+                                                  isFetching
+                                                      ? 'Retrieving...'
+                                                      : 'Not mentioned',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontFamily:
+                                                        'PlusJakartaSans',
+                                                    color: const Color.fromRGBO(
+                                                        142, 142, 147, 1),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 16),
+                                          ],
+                                        );
+                                      }
+
+                                      final dayHours =
+                                          operatingHours[currentDay]!;
+                                      final fullDayHours =
+                                          controller.getFullDayHours(dayHours);
+                                      bool isOpen = false;
+                                      if (fullDayHours != 'Closed' &&
+                                          fullDayHours != 'Unavailable') {
+                                        try {
+                                          final timeFormat =
+                                              DateFormat('h:mm a');
+                                          final times = fullDayHours.split('–');
+                                          final startTime =
+                                              timeFormat.parse(times[0]);
+                                          final endTime =
+                                              timeFormat.parse(times[1]);
+                                          final now = DateTime.now();
+                                          final currentTime = DateTime(2025, 8,
+                                              28, now.hour, now.minute);
+                                          isOpen =
+                                              currentTime.isAfter(startTime) &&
+                                                  currentTime.isBefore(endTime);
+                                        } catch (e) {
+                                          print('Error parsing time: $e');
+                                        }
+                                      }
+
+                                      // Weekly hours for dropdown
+                                      List<Map<String, String>> weeklyHours =
+                                          [];
+                                      final days = [
+                                        'Monday',
+                                        'Tuesday',
+                                        'Wednesday',
+                                        'Thursday',
+                                        'Friday',
+                                        'Saturday',
+                                        'Sunday'
+                                      ];
+                                      for (var day in days) {
+                                        final hours =
+                                            operatingHours[day] != null
+                                                ? controller.getFullDayHours(
+                                                    operatingHours[day]!)
+                                                : 'Closed';
+                                        weeklyHours
+                                            .add({'day': day, 'hours': hours});
+                                      }
+
+                                      return Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(top: 2),
+                                                child: Image.asset(
+                                                    'assets/icons/time.png',
+                                                    height: 12,
+                                                    width: 12),
+                                              ),
+                                              const SizedBox(width: 8),
+                                              Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Text(
+                                                    isOpen ? 'Open' : 'Closed',
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontFamily:
+                                                          'PlusJakartaSans',
+                                                      color: isOpen
+                                                          ? Colors.green
+                                                          : Colors.red,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 16),
+                                                  DropdownButtonHideUnderline(
+                                                    child:
+                                                        DropdownButton2<String>(
+                                                      hint: Text(
+                                                        isOpen
+                                                            ? 'Closes ${fullDayHours.split('–')[1]}'
+                                                            : 'View Hours',
                                                         style: TextStyle(
                                                           fontSize: 14,
-                                                          fontWeight: FontWeight.w500,
-                                                          fontFamily: 'PlusJakartaSans',
-                                                          color: isOpen ? Colors.green : Colors.red,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          fontFamily:
+                                                              'PlusJakartaSans',
                                                         ),
                                                       ),
-                                                      const SizedBox(width: 16),
-                                                      DropdownButtonHideUnderline(
-                                                        child: DropdownButton2<String>(
-                                                          hint: Text(
-                                                            isOpen ? 'Closes ${fullDayHours.split('–')[1]}' : 'View Hours',
-                                                            style: TextStyle(
-                                                              fontSize: 14,
-                                                              fontWeight: FontWeight.w500,
-                                                              fontFamily: 'PlusJakartaSans',
-                                                            ),
-                                                          ),
-                                                          items: weeklyHours
-                                                              .map((dayHours) => DropdownMenuItem<String>(
-                                                            value: dayHours['day'],
-                                                            child: Row(
-                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                              children: [
-                                                                Text(
-                                                                  dayHours['day']! == 'Monday' ? 'Mon' : dayHours['day']! == 'Tuesday' ? 'Tue' : dayHours['day']! == 'Wednesday' ? 'Wed' : dayHours['day']! == 'Thursday' ? 'Thu' : dayHours['day']! == 'Friday' ? 'Fri' : dayHours['day']! == 'Saturday' ? 'Sat' : 'Sun',
-                                                                  style: TextStyle(
-                                                                    fontSize: 15,
-                                                                    fontWeight: FontWeight.w600,
-                                                                    fontFamily: 'PlusJakartaSans',
-                                                                  ),
+                                                      items: weeklyHours
+                                                          .map((dayHours) =>
+                                                              DropdownMenuItem<
+                                                                  String>(
+                                                                value: dayHours[
+                                                                    'day'],
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceBetween,
+                                                                  children: [
+                                                                    Text(
+                                                                      dayHours['day']! ==
+                                                                              'Monday'
+                                                                          ? 'Mon'
+                                                                          : dayHours['day']! == 'Tuesday'
+                                                                              ? 'Tue'
+                                                                              : dayHours['day']! == 'Wednesday'
+                                                                                  ? 'Wed'
+                                                                                  : dayHours['day']! == 'Thursday'
+                                                                                      ? 'Thu'
+                                                                                      : dayHours['day']! == 'Friday'
+                                                                                          ? 'Fri'
+                                                                                          : dayHours['day']! == 'Saturday'
+                                                                                              ? 'Sat'
+                                                                                              : 'Sun',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontSize:
+                                                                            15,
+                                                                        fontWeight:
+                                                                            FontWeight.w600,
+                                                                        fontFamily:
+                                                                            'PlusJakartaSans',
+                                                                      ),
+                                                                    ),
+                                                                    Text(
+                                                                      dayHours[
+                                                                          'hours']!,
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontSize:
+                                                                            14,
+                                                                        fontWeight:
+                                                                            FontWeight.w500,
+                                                                        fontFamily:
+                                                                            'PlusJakartaSans',
+                                                                      ),
+                                                                    ),
+                                                                  ],
                                                                 ),
-                                                                Text(
-                                                                  dayHours['hours']!,
-                                                                  style: TextStyle(
-                                                                    fontSize: 14,
-                                                                    fontWeight: FontWeight.w500,
-                                                                    fontFamily: 'PlusJakartaSans',
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ))
-                                                              .toList(),
-                                                          onChanged: (value) {},
-                                                          buttonStyleData: ButtonStyleData(
-                                                            padding: EdgeInsets.symmetric(horizontal: 12),
-                                                            decoration: BoxDecoration(
-                                                              borderRadius: BorderRadius.circular(5),
-                                                            ),
-                                                          ),
-                                                          dropdownStyleData: DropdownStyleData(
-                                                            maxHeight: 200,
-                                                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                                            decoration: BoxDecoration(
-                                                              color: Colors.white,
-                                                              borderRadius: BorderRadius.circular(10),
-                                                              border: Border.all(color: Colors.black.withOpacity(0.04)),
-                                                            ),
-                                                          ),
-                                                          menuItemStyleData: MenuItemStyleData(
-                                                            padding: EdgeInsets.symmetric(vertical: 4),
-                                                          ),
+                                                              ))
+                                                          .toList(),
+                                                      onChanged: (value) {},
+                                                      buttonStyleData:
+                                                          ButtonStyleData(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal: 12),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(5),
                                                         ),
                                                       ),
-                                                    ],
+                                                      dropdownStyleData:
+                                                          DropdownStyleData(
+                                                        maxHeight: 200,
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal: 12,
+                                                                vertical: 8),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors.white,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                          border: Border.all(
+                                                              color: Colors
+                                                                  .black
+                                                                  .withOpacity(
+                                                                      0.04)),
+                                                        ),
+                                                      ),
+                                                      menuItemStyleData:
+                                                          MenuItemStyleData(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                vertical: 4),
+                                                      ),
+                                                    ),
                                                   ),
                                                 ],
                                               ),
                                             ],
-                                          );
-                                        }),
+                                          ),
+                                        ],
+                                      );
+                                    }),
 
                                     // const SizedBox(height: 16),
                                     Divider(color: AppColors.dividerColor),
@@ -554,13 +682,21 @@ class RestaurantDetailScreen extends StatelessWidget {
                                       children: [
                                         Padding(
                                           padding: EdgeInsets.only(top: 2),
-                                          child: Image.asset('assets/icons/site.png',
-                                              height: 12, width: 12),
+                                          child: Image.asset(
+                                              'assets/icons/site.png',
+                                              height: 12,
+                                              width: 12),
                                         ),
                                         const SizedBox(width: 8),
                                         Expanded(
                                           child: Text(
-                                            restaurantModel == null || restaurantModel!.websiteUrl == '' ? 'No website' : restaurantModel!.websiteUrl, // 'www.website.com',
+                                            restaurantModel == null ||
+                                                    restaurantModel!
+                                                            .websiteUrl ==
+                                                        ''
+                                                ? 'No website'
+                                                : restaurantModel!
+                                                    .websiteUrl, // 'www.website.com',
                                             maxLines: 2,
                                             style: TextStyle(
                                               fontSize: 14,
@@ -601,9 +737,9 @@ class RestaurantDetailScreen extends StatelessWidget {
                               )
                             : tabIndex.value == 1
                                 ? Container(
-                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 16),
                                     child: Column(children: [
-
                                       // ExpansionTile(
                                       //   title: Text(
                                       //     'Experiences',
@@ -676,30 +812,48 @@ class RestaurantDetailScreen extends StatelessWidget {
                                             fontFamily: 'PlusJakartaSans',
                                           ),
                                         ),
-                                        tilePadding: EdgeInsets.symmetric(horizontal: 16),
-                                        shape: Border.all(width: 0, color: Colors.transparent),
+                                        tilePadding: EdgeInsets.symmetric(
+                                            horizontal: 16),
+                                        shape: Border.all(
+                                            width: 0,
+                                            color: Colors.transparent),
                                         iconColor: Colors.grey[800],
                                         expandedAlignment: Alignment.centerLeft,
                                         children: [
                                           Wrap(
                                             spacing: 8,
                                             runSpacing: 0,
-                                            children: restaurantModel!.experiencesList
+                                            children: restaurantModel!
+                                                .experiencesList
                                                 .map((experience) => Chip(
-                                              label: Text(
-                                                experience ?? '',
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  fontFamily: 'PlusJakartaSans',
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                                              side: BorderSide(color: Colors.transparent, width: 0),
-                                              backgroundColor: Colors.green,
-                                              labelPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-                                            ))
+                                                      label: Text(
+                                                        experience ?? '',
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          fontFamily:
+                                                              'PlusJakartaSans',
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          20)),
+                                                      side: BorderSide(
+                                                          color: Colors
+                                                              .transparent,
+                                                          width: 0),
+                                                      backgroundColor:
+                                                          Colors.green,
+                                                      labelPadding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 12,
+                                                              vertical: 2),
+                                                    ))
                                                 .toList(),
                                           ),
                                         ],
@@ -714,30 +868,48 @@ class RestaurantDetailScreen extends StatelessWidget {
                                             fontFamily: 'PlusJakartaSans',
                                           ),
                                         ),
-                                        tilePadding: EdgeInsets.symmetric(horizontal: 16),
-                                        shape: Border.all(width: 0, color: Colors.transparent),
+                                        tilePadding: EdgeInsets.symmetric(
+                                            horizontal: 16),
+                                        shape: Border.all(
+                                            width: 0,
+                                            color: Colors.transparent),
                                         iconColor: Colors.grey[800],
                                         expandedAlignment: Alignment.centerLeft,
                                         children: [
                                           Wrap(
                                             spacing: 8,
                                             runSpacing: 0,
-                                            children: restaurantModel!.entertainmentList
+                                            children: restaurantModel!
+                                                .entertainmentList
                                                 .map((entertainment) => Chip(
-                                              label: Text(
-                                                entertainment ?? '',
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  fontFamily: 'PlusJakartaSans',
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                                              side: BorderSide(color: Colors.transparent, width: 0),
-                                              backgroundColor: Colors.green,
-                                              labelPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-                                            ))
+                                                      label: Text(
+                                                        entertainment ?? '',
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          fontFamily:
+                                                              'PlusJakartaSans',
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          20)),
+                                                      side: BorderSide(
+                                                          color: Colors
+                                                              .transparent,
+                                                          width: 0),
+                                                      backgroundColor:
+                                                          Colors.green,
+                                                      labelPadding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 12,
+                                                              vertical: 2),
+                                                    ))
                                                 .toList(),
                                           ),
                                         ],
@@ -752,8 +924,11 @@ class RestaurantDetailScreen extends StatelessWidget {
                                             fontFamily: 'PlusJakartaSans',
                                           ),
                                         ),
-                                        tilePadding: EdgeInsets.symmetric(horizontal: 16),
-                                        shape: Border.all(width: 0, color: Colors.transparent),
+                                        tilePadding: EdgeInsets.symmetric(
+                                            horizontal: 16),
+                                        shape: Border.all(
+                                            width: 0,
+                                            color: Colors.transparent),
                                         iconColor: Colors.grey[800],
                                         expandedAlignment: Alignment.centerLeft,
                                         children: [
@@ -762,20 +937,34 @@ class RestaurantDetailScreen extends StatelessWidget {
                                             runSpacing: 0,
                                             children: restaurantModel!.vibesList
                                                 .map((vibe) => Chip(
-                                              label: Text(
-                                                vibe ?? '',
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  fontFamily: 'PlusJakartaSans',
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                                              side: BorderSide(color: Colors.transparent, width: 0),
-                                              backgroundColor: Colors.green,
-                                              labelPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-                                            ))
+                                                      label: Text(
+                                                        vibe ?? '',
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          fontFamily:
+                                                              'PlusJakartaSans',
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          20)),
+                                                      side: BorderSide(
+                                                          color: Colors
+                                                              .transparent,
+                                                          width: 0),
+                                                      backgroundColor:
+                                                          Colors.green,
+                                                      labelPadding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 12,
+                                                              vertical: 2),
+                                                    ))
                                                 .toList(),
                                           ),
                                         ],
@@ -812,30 +1001,48 @@ class RestaurantDetailScreen extends StatelessWidget {
                                             fontFamily: 'PlusJakartaSans',
                                           ),
                                         ),
-                                        tilePadding: EdgeInsets.symmetric(horizontal: 16),
-                                        shape: Border.all(width: 0, color: Colors.transparent),
+                                        tilePadding: EdgeInsets.symmetric(
+                                            horizontal: 16),
+                                        shape: Border.all(
+                                            width: 0,
+                                            color: Colors.transparent),
                                         iconColor: Colors.grey[800],
                                         expandedAlignment: Alignment.centerLeft,
                                         children: [
                                           Wrap(
                                             spacing: 8,
                                             runSpacing: 0,
-                                            children: restaurantModel!.atmosphereList
+                                            children: restaurantModel!
+                                                .atmosphereList
                                                 .map((atm) => Chip(
-                                              label: Text(
-                                                atm ?? '',
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  fontFamily: 'PlusJakartaSans',
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                                              side: BorderSide(color: Colors.transparent, width: 0),
-                                              backgroundColor: Colors.green,
-                                              labelPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-                                            ))
+                                                      label: Text(
+                                                        atm ?? '',
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          fontFamily:
+                                                              'PlusJakartaSans',
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          20)),
+                                                      side: BorderSide(
+                                                          color: Colors
+                                                              .transparent,
+                                                          width: 0),
+                                                      backgroundColor:
+                                                          Colors.green,
+                                                      labelPadding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 12,
+                                                              vertical: 2),
+                                                    ))
                                                 .toList(),
                                           ),
                                         ],
@@ -872,30 +1079,48 @@ class RestaurantDetailScreen extends StatelessWidget {
                                             fontFamily: 'PlusJakartaSans',
                                           ),
                                         ),
-                                        tilePadding: EdgeInsets.symmetric(horizontal: 16),
-                                        shape: Border.all(width: 0, color: Colors.transparent),
+                                        tilePadding: EdgeInsets.symmetric(
+                                            horizontal: 16),
+                                        shape: Border.all(
+                                            width: 0,
+                                            color: Colors.transparent),
                                         iconColor: Colors.grey[800],
                                         expandedAlignment: Alignment.centerLeft,
                                         children: [
                                           Wrap(
                                             spacing: 8,
                                             runSpacing: 0,
-                                            children: restaurantModel!.facilityList
+                                            children: restaurantModel!
+                                                .facilityList
                                                 .map((fac) => Chip(
-                                              label: Text(
-                                                fac ?? '',
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  fontFamily: 'PlusJakartaSans',
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                                              side: BorderSide(color: Colors.transparent, width: 0),
-                                              backgroundColor: Colors.green,
-                                              labelPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-                                            ))
+                                                      label: Text(
+                                                        fac ?? '',
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          fontFamily:
+                                                              'PlusJakartaSans',
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          20)),
+                                                      side: BorderSide(
+                                                          color: Colors
+                                                              .transparent,
+                                                          width: 0),
+                                                      backgroundColor:
+                                                          Colors.green,
+                                                      labelPadding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 12,
+                                                              vertical: 2),
+                                                    ))
                                                 .toList(),
                                           ),
                                         ],
@@ -910,8 +1135,11 @@ class RestaurantDetailScreen extends StatelessWidget {
                                             fontFamily: 'PlusJakartaSans',
                                           ),
                                         ),
-                                        tilePadding: EdgeInsets.symmetric(horizontal: 16),
-                                        shape: Border.all(width: 0, color: Colors.transparent),
+                                        tilePadding: EdgeInsets.symmetric(
+                                            horizontal: 16),
+                                        shape: Border.all(
+                                            width: 0,
+                                            color: Colors.transparent),
                                         iconColor: Colors.grey[800],
                                         expandedAlignment: Alignment.centerLeft,
                                         children: [
@@ -920,20 +1148,34 @@ class RestaurantDetailScreen extends StatelessWidget {
                                             runSpacing: 0,
                                             children: restaurantModel!.menuList
                                                 .map((menu) => Chip(
-                                              label: Text(
-                                                menu.cuisineType ?? '',
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  fontFamily: 'PlusJakartaSans',
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                                              side: BorderSide(color: Colors.transparent, width: 0),
-                                              backgroundColor: Colors.green,
-                                              labelPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-                                            ))
+                                                      label: Text(
+                                                        menu.cuisineType ?? '',
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          fontFamily:
+                                                              'PlusJakartaSans',
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          20)),
+                                                      side: BorderSide(
+                                                          color: Colors
+                                                              .transparent,
+                                                          width: 0),
+                                                      backgroundColor:
+                                                          Colors.green,
+                                                      labelPadding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 12,
+                                                              vertical: 2),
+                                                    ))
                                                 .toList(),
                                           ),
                                         ],
@@ -964,25 +1206,32 @@ class RestaurantDetailScreen extends StatelessWidget {
                                   )
                                 : tabIndex.value == 2
                                     ? Container(
-                                        padding:
-                                            const EdgeInsets.symmetric(vertical: 16),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 16),
                                         child: Column(children: [
                                           SizedBox(
                                             height: 256,
                                             child: ClipRRect(
-                                              borderRadius: BorderRadius.circular(10),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
                                               clipBehavior: Clip.hardEdge,
                                               child: GoogleMap(
                                                 initialCameraPosition:
                                                     CameraPosition(
-                                                  target: LatLng(restaurantModel!.latitude, restaurantModel!.longitude),
+                                                  target: LatLng(
+                                                      restaurantModel!.latitude,
+                                                      restaurantModel!
+                                                          .longitude),
                                                   zoom: 14,
                                                 ),
                                                 markers: {
                                                   Marker(
                                                     markerId: MarkerId('1'),
-                                                    position:
-                                                        LatLng(restaurantModel!.latitude, restaurantModel!.longitude),
+                                                    position: LatLng(
+                                                        restaurantModel!
+                                                            .latitude,
+                                                        restaurantModel!
+                                                            .longitude),
                                                   )
                                                 },
                                                 zoomControlsEnabled: false,
@@ -991,7 +1240,8 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                 mapType: MapType.normal,
                                                 gestureRecognizers: {
                                                   Factory<OneSequenceGestureRecognizer>(
-                                                      () => EagerGestureRecognizer()),
+                                                      () =>
+                                                          EagerGestureRecognizer()),
                                                 },
                                               ),
                                             ),
@@ -1006,7 +1256,8 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                   children: [
                                                     Padding(
                                                         padding:
-                                                            EdgeInsets.only(top: 2),
+                                                            EdgeInsets.only(
+                                                                top: 2),
                                                         child: Image.asset(
                                                             'assets/icons/location.png',
                                                             height: 12,
@@ -1014,10 +1265,11 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                     const SizedBox(width: 8),
                                                     Expanded(
                                                       child: Text(
-                                                        '${restaurantModel?.address ?? ''}, ${restaurantModel?.city ?? ''}${restaurantModel == null ? '' : restaurantModel?.state == '' ? '' : ', ${restaurantModel!.state}'}, ${restaurantModel?.country ?? ''}${restaurantModel == null || restaurantModel!.zipCode == '' ? '' : ', ${restaurantModel!.zipCode}' }', // '304 Liverpool Blvd, Portsmouth, CA 30103',
+                                                        '${restaurantModel?.address ?? ''}, ${restaurantModel?.city ?? ''}${restaurantModel == null ? '' : restaurantModel?.state == '' ? '' : ', ${restaurantModel!.state}'}, ${restaurantModel?.country ?? ''}${restaurantModel == null || restaurantModel!.zipCode == '' ? '' : ', ${restaurantModel!.zipCode}'}', // '304 Liverpool Blvd, Portsmouth, CA 30103',
                                                         style: TextStyle(
                                                           fontSize: 14,
-                                                          fontWeight: FontWeight.w500,
+                                                          fontWeight:
+                                                              FontWeight.w500,
                                                           fontFamily:
                                                               'PlusJakartaSans',
                                                         ),
@@ -1027,54 +1279,71 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                 ),
                                               ),
                                               const SizedBox(width: 24),
-                FutureBuilder(
-                  future: getCurrentLocation(context).then((position) =>
-                  Geolocator.distanceBetween(
-                    position.latitude,
-                    position.longitude,
-                    restaurantModel!.latitude,
-                    restaurantModel!.longitude,
-                  ) /
-                      1000),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Text(
-                        'Calculating...',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                          color: const Color.fromRGBO(142, 142, 147, 1),
-                        ),
-                      );
-                    }
+                                              FutureBuilder(
+                                                future: getCurrentLocation(
+                                                        context)
+                                                    .then((position) =>
+                                                        Geolocator
+                                                            .distanceBetween(
+                                                          position.latitude,
+                                                          position.longitude,
+                                                          restaurantModel!
+                                                              .latitude,
+                                                          restaurantModel!
+                                                              .longitude,
+                                                        ) /
+                                                        1000),
+                                                builder: (context, snapshot) {
+                                                  if (snapshot
+                                                          .connectionState ==
+                                                      ConnectionState.waiting) {
+                                                    return Text(
+                                                      'Calculating...',
+                                                      style: TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontFamily: GoogleFonts
+                                                                .plusJakartaSans()
+                                                            .fontFamily,
+                                                        color: const Color
+                                                            .fromRGBO(
+                                                            142, 142, 147, 1),
+                                                      ),
+                                                    );
+                                                  }
 
-                    if (snapshot.hasError) {
-                      print('Error retrieving location: ${snapshot.error}');
-                      return Text(
-                        '',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: 'PlusJakartaSans',
-                          color: Colors.grey[400],
-                        ),
-                      );
-                    }
+                                                  if (snapshot.hasError) {
+                                                    print(
+                                                        'Error retrieving location: ${snapshot.error}');
+                                                    return Text(
+                                                      '',
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontFamily:
+                                                            'PlusJakartaSans',
+                                                        color: Colors.grey[400],
+                                                      ),
+                                                    );
+                                                  }
 
-                    return Text(
-                      snapshot.hasData
-                          ? '${snapshot.data!.toStringAsFixed(2)} km away'
-                          : 'Unknown',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'PlusJakartaSans',
-                        color: Colors.grey[400],
-                      ),
-                    );
-                  },
-                ),
+                                                  return Text(
+                                                    snapshot.hasData
+                                                        ? '${snapshot.data!.toStringAsFixed(2)} km away'
+                                                        : 'Unknown',
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontFamily:
+                                                          'PlusJakartaSans',
+                                                      color: Colors.grey[400],
+                                                    ),
+                                                  );
+                                                },
+                                              ),
                                               // FutureBuilder(
                                               //   future: getCurrentLocation(context).then((position) =>
                                               //   Geolocator.distanceBetween(
@@ -1117,27 +1386,53 @@ class RestaurantDetailScreen extends StatelessWidget {
                                           Row(
                                             children: [
                                               Padding(
-                                                padding: EdgeInsets.only(top: 2),
-                                                child: Image.asset('assets/icons/time.png', height: 12, width: 12),
+                                                padding:
+                                                    EdgeInsets.only(top: 2),
+                                                child: Image.asset(
+                                                    'assets/icons/time.png',
+                                                    height: 12,
+                                                    width: 12),
                                               ),
                                               const SizedBox(width: 8),
                                               Obx(() {
-                                                final controller = Get.find<HomeLocationController>();
-                                                final operatingHours = controller.operatingHoursCache[restaurantModel!.docID];
-                                                final isFetching = controller.fetchingOperatingHours.contains(restaurantModel!.docID);
-                                                final currentDay = DateFormat('EEEE').format(DateTime.now());
+                                                final controller = Get.find<
+                                                    HomeLocationController>();
+                                                final operatingHours = controller
+                                                        .operatingHoursCache[
+                                                    restaurantModel!.docID];
+                                                final isFetching = controller
+                                                    .fetchingOperatingHours
+                                                    .contains(
+                                                        restaurantModel!.docID);
+                                                final currentDay =
+                                                    DateFormat('EEEE')
+                                                        .format(DateTime.now());
 
-                                                if (operatingHours == null || operatingHours[currentDay] == null) {
+                                                if (operatingHours == null ||
+                                                    operatingHours[
+                                                            currentDay] ==
+                                                        null) {
                                                   if (!isFetching) {
-                                                    controller.getOperatingHours(restaurantModel!.docID, triggerFilterUpdate: false);
+                                                    controller
+                                                        .getOperatingHours(
+                                                            restaurantModel!
+                                                                .docID,
+                                                            triggerFilterUpdate:
+                                                                false);
                                                   }
                                                   return Text(
-                                                    isFetching ? 'Retrieving...' : 'Not mentioned',
+                                                    isFetching
+                                                        ? 'Retrieving...'
+                                                        : 'Not mentioned',
                                                     style: TextStyle(
                                                       fontSize: 14,
-                                                      fontWeight: FontWeight.w500,
-                                                      fontFamily: 'PlusJakartaSans',
-                                                      color: const Color.fromRGBO(142, 142, 147, 1),
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontFamily:
+                                                          'PlusJakartaSans',
+                                                      color:
+                                                          const Color.fromRGBO(
+                                                              142, 142, 147, 1),
                                                     ),
                                                   );
                                                 }
@@ -1147,47 +1442,53 @@ class RestaurantDetailScreen extends StatelessWidget {
                                                     'Not mentioned',
                                                     style: TextStyle(
                                                       fontSize: 14,
-                                                      fontWeight: FontWeight.w500,
-                                                      fontFamily: 'PlusJakartaSans',
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontFamily:
+                                                          'PlusJakartaSans',
                                                     ),
                                                   );
                                                 }
 
-                                                final dayHours = operatingHours[currentDay]!;
-                                                final fullDayHours = controller.getFullDayHours(dayHours);
-                                                bool isOpen = false;
-                                                if (fullDayHours != 'Closed' && fullDayHours != 'Unavailable') {
-                                                  try {
-                                                    final timeFormat = DateFormat('h:mm a');
-                                                    final times = fullDayHours.split('–');
-                                                    final startTime = timeFormat.parse(times[0]);
-                                                    final endTime = timeFormat.parse(times[1]);
-                                                    final now = DateTime.now();
-                                                    final currentTime = DateTime(2025, 8, 28, now.hour, now.minute);
-                                                    isOpen = currentTime.isAfter(startTime) && currentTime.isBefore(endTime);
-                                                  } catch (e) {
-                                                    print('Error parsing time: $e');
-                                                  }
-                                                }
+                                                final dayHours =
+                                                    operatingHours[currentDay]!;
+                                                // Use the new method to get current operating hours
+                                                final hoursText = controller
+                                                    .getDisplayHours(dayHours);
+                                                final isOpen = controller
+                                                    .isRestaurantOpen(dayHours);
 
                                                 return Row(
                                                   children: [
                                                     Text(
-                                                      fullDayHours,
+                                                      hoursText,
                                                       style: TextStyle(
                                                         fontSize: 14,
-                                                        fontWeight: FontWeight.w500,
-                                                        fontFamily: 'PlusJakartaSans',
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontFamily:
+                                                            'PlusJakartaSans',
+                                                        color: isOpen
+                                                            ? Colors.green
+                                                            : const Color
+                                                                .fromRGBO(142,
+                                                                142, 147, 1),
                                                       ),
                                                     ),
                                                     const SizedBox(width: 8),
                                                     Text(
-                                                      isOpen ? 'Open now' : 'Closed now',
+                                                      isOpen
+                                                          ? 'Open now'
+                                                          : 'Closed now',
                                                       style: TextStyle(
                                                         fontSize: 14,
-                                                        fontWeight: FontWeight.w500,
-                                                        fontFamily: 'PlusJakartaSans',
-                                                        color: isOpen ? Colors.green : Colors.red,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontFamily:
+                                                            'PlusJakartaSans',
+                                                        color: isOpen
+                                                            ? Colors.green
+                                                            : Colors.red,
                                                       ),
                                                     ),
                                                   ],
@@ -1199,7 +1500,10 @@ class RestaurantDetailScreen extends StatelessWidget {
                                           GestureDetector(
                                             onTap: () async {
                                               MapsLauncher.launchCoordinates(
-                                                  restaurantModel!.latitude, restaurantModel!.longitude, restaurantModel!.resName,);
+                                                restaurantModel!.latitude,
+                                                restaurantModel!.longitude,
+                                                restaurantModel!.resName,
+                                              );
 
                                               // final availableMaps = await ml.MapLauncher.installedMaps;
                                               //
@@ -1214,7 +1518,8 @@ class RestaurantDetailScreen extends StatelessWidget {
                                               fontWeight: FontWeight.w600,
                                               fontFamily: 'PlusJakartaSans',
                                               textColor: Colors.white,
-                                              containerColor: AppColors.primaryColor,
+                                              containerColor:
+                                                  AppColors.primaryColor,
                                               height: 32,
                                               radius: BorderRadius.circular(15),
                                             ),
@@ -1223,10 +1528,15 @@ class RestaurantDetailScreen extends StatelessWidget {
                                           GestureDetector(
                                             onTap: () async {
                                               // Copy text to clipboard
-                                              await Clipboard.setData(ClipboardData(text: '${restaurantModel?.address ?? ''}, ${restaurantModel?.city ?? ''}, ${restaurantModel?.state}, ${restaurantModel?.country ?? ''}${restaurantModel == null || restaurantModel!.zipCode == '' ? '' : ', ${restaurantModel!.zipCode}' }'));
+                                              await Clipboard.setData(ClipboardData(
+                                                  text:
+                                                      '${restaurantModel?.address ?? ''}, ${restaurantModel?.city ?? ''}, ${restaurantModel?.state}, ${restaurantModel?.country ?? ''}${restaurantModel == null || restaurantModel!.zipCode == '' ? '' : ', ${restaurantModel!.zipCode}'}'));
                                               // Show a snackbar to confirm the action
-                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                SnackBar(content: Text('Text copied to clipboard!')),
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                    content: Text(
+                                                        'Text copied to clipboard!')),
                                               );
                                             },
                                             child: CustomButton(
@@ -1235,7 +1545,8 @@ class RestaurantDetailScreen extends StatelessWidget {
                                               fontWeight: FontWeight.w600,
                                               fontFamily: 'PlusJakartaSans',
                                               textColor: Colors.black,
-                                              containerColor: AppColors.secondaryColor
+                                              containerColor: AppColors
+                                                  .secondaryColor
                                                   .withOpacity(0.4),
                                               height: 32,
                                               radius: BorderRadius.circular(15),
@@ -1245,92 +1556,130 @@ class RestaurantDetailScreen extends StatelessWidget {
                                       )
                                     : tabIndex.value == 3
                                         ? Container(
-                                            padding:
-                                                EdgeInsets.symmetric(vertical: 16),
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 16),
                                             child: Column(
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
                                                   Obx(() {
                                                     if (vc.videos.isEmpty) {
-                                                      return const Center(child: Text('No media available'));
+                                                      return const Center(
+                                                          child: Text(
+                                                              'No media available'));
                                                     }
 
                                                     return GridView.builder(
-                                                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                                      gridDelegate:
+                                                          const SliverGridDelegateWithFixedCrossAxisCount(
                                                         crossAxisCount: 3,
                                                         crossAxisSpacing: 8,
-                                                        childAspectRatio: 110 / 120,
+                                                        childAspectRatio:
+                                                            110 / 120,
                                                         mainAxisSpacing: 8,
                                                       ),
-                                                      itemCount: vc.videos.length,
+                                                      itemCount:
+                                                          vc.videos.length,
                                                       shrinkWrap: true,
                                                       primary: false,
-                                                      itemBuilder: (context, index) {
-                                                        final media = vc.videos[index];
+                                                      itemBuilder:
+                                                          (context, index) {
+                                                        final media =
+                                                            vc.videos[index];
 
                                                         // Trigger thumbnail only for videos (already handled in controller)
 
                                                         return GestureDetector(
                                                           onTap: () async {
                                                             // Get.back();
-                                                            await Navigator.push(
+                                                            await Navigator
+                                                                .push(
                                                               context,
                                                               MaterialPageRoute(
-                                                                builder: (context) => FullVideoScreen(video: media),  // Renamed screen and param
+                                                                builder: (context) =>
+                                                                    FullVideoScreen(
+                                                                        video:
+                                                                            media), // Renamed screen and param
                                                               ),
                                                             );
                                                           },
                                                           child: Stack(
-                                                            alignment: Alignment.center,
+                                                            alignment: Alignment
+                                                                .center,
                                                             children: [
                                                               AspectRatio(
-                                                                aspectRatio: 110 / 120,
-                                                                child: ClipRRect(
-                                                                  borderRadius: BorderRadius.circular(10),
-                                                                  child: media.mediaType == 'video'
-                                                                      ? Obx(() => vc.thumbnailPaths[index] != null
-                                                                      ? Image.file(
-                                                                    File(vc.thumbnailPaths[index]!),
-                                                                    fit: BoxFit.cover,
-                                                                    errorBuilder: (context, error, stackTrace) => Container(
-                                                                      color: Colors.grey[300],
-                                                                      child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
-                                                                    ),
-                                                                  )
-                                                                      : Image.network(
-                                                                    'https://via.placeholder.com/640x360',
-                                                                    fit: BoxFit.cover,
-                                                                    loadingBuilder: (context, child, loadingProgress) {
-                                                                      if (loadingProgress == null) return child;
-                                                                      return const Center(child: CircularProgressIndicator());
-                                                                    },
-                                                                    errorBuilder: (context, error, stackTrace) => Container(
-                                                                      color: Colors.grey[300],
-                                                                      child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
-                                                                    ),
-                                                                  ))
-                                                                      : Image.network(
-                                                                    media.url!,
-                                                                    fit: BoxFit.cover,
-                                                                    loadingBuilder: (context, child, loadingProgress) {
-                                                                      if (loadingProgress == null) return child;
-                                                                      return const Center(child: CircularProgressIndicator());
-                                                                    },
-                                                                    errorBuilder: (context, error, stackTrace) => Container(
-                                                                      color: Colors.grey[300],
-                                                                      child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
-                                                                    ),
-                                                                  ),
+                                                                aspectRatio:
+                                                                    110 / 120,
+                                                                child:
+                                                                    ClipRRect(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              10),
+                                                                  child: media.mediaType ==
+                                                                          'video'
+                                                                      ? Obx(() => vc.thumbnailPaths[index] !=
+                                                                              null
+                                                                          ? Image
+                                                                              .file(
+                                                                              File(vc.thumbnailPaths[index]!),
+                                                                              fit: BoxFit.cover,
+                                                                              errorBuilder: (context, error, stackTrace) => Container(
+                                                                                color: Colors.grey[300],
+                                                                                child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
+                                                                              ),
+                                                                            )
+                                                                          : Image
+                                                                              .network(
+                                                                              'https://via.placeholder.com/640x360',
+                                                                              fit: BoxFit.cover,
+                                                                              loadingBuilder: (context, child, loadingProgress) {
+                                                                                if (loadingProgress == null) return child;
+                                                                                return const Center(child: CircularProgressIndicator());
+                                                                              },
+                                                                              errorBuilder: (context, error, stackTrace) => Container(
+                                                                                color: Colors.grey[300],
+                                                                                child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
+                                                                              ),
+                                                                            ))
+                                                                      : Image
+                                                                          .network(
+                                                                          media
+                                                                              .url!,
+                                                                          fit: BoxFit
+                                                                              .cover,
+                                                                          loadingBuilder: (context,
+                                                                              child,
+                                                                              loadingProgress) {
+                                                                            if (loadingProgress ==
+                                                                                null)
+                                                                              return child;
+                                                                            return const Center(child: CircularProgressIndicator());
+                                                                          },
+                                                                          errorBuilder: (context, error, stackTrace) =>
+                                                                              Container(
+                                                                            color:
+                                                                                Colors.grey[300],
+                                                                            child: const Icon(Icons.broken_image,
+                                                                                size: 50,
+                                                                                color: Colors.grey),
+                                                                          ),
+                                                                        ),
                                                                 ),
                                                               ),
-                                                              if (media.mediaType == 'video')  // Only show play icon for videos
+                                                              if (media
+                                                                      .mediaType ==
+                                                                  'video') // Only show play icon for videos
                                                                 Positioned.fill(
                                                                   child: Align(
-                                                                    alignment: Alignment.center,
+                                                                    alignment:
+                                                                        Alignment
+                                                                            .center,
                                                                     child: Icon(
-                                                                      Icons.play_circle_fill_rounded,
+                                                                      Icons
+                                                                          .play_circle_fill_rounded,
                                                                       size: 60,
-                                                                      color: Colors.white,
+                                                                      color: Colors
+                                                                          .white,
                                                                     ),
                                                                   ),
                                                                 ),
