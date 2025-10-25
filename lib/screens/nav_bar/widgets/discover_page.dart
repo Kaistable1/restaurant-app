@@ -158,12 +158,10 @@ class _DiscoverListsPageState extends State<DiscoverListsPage> {
                                           ? discoverList.name
                                           : 'Unnamed List',
                                       style: TextStyle(
-                                        fontSize: 28,
+                                        fontSize: 24,
                                         fontWeight: FontWeight.w700,
                                         fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                                       ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   // ),
                                   // const Icon(

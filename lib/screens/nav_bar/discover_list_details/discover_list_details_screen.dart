@@ -205,9 +205,9 @@ class _DiscoverListDetailScreenState extends State<DiscoverListDetailScreen> wit
             const SizedBox(height: 16),
             Text(widget.discoverListModel.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, fontFamily: GoogleFonts.plusJakartaSans().fontFamily)),
             const SizedBox(height: 16),
-            Text('By ${widget.discoverListModel.by}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, fontFamily: GoogleFonts.plusJakartaSans().fontFamily)),
+            Text('By ${widget.discoverListModel.by}', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w400, fontFamily: GoogleFonts.plusJakartaSans().fontFamily)),
             const SizedBox(height: 16),
-            Text(widget.discoverListModel.description, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, fontFamily: GoogleFonts.plusJakartaSans().fontFamily)),
+            Text(widget.discoverListModel.description, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, fontFamily: GoogleFonts.plusJakartaSans().fontFamily)),
             const SizedBox(height: 16),
             Expanded(
               child: Obx(
