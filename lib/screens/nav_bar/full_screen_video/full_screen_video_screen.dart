@@ -256,34 +256,17 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
                       ],
                     ),
                     const SizedBox(height: 8),
-                    FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                      future: _restaurantFuture,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return Text(
-                            'Loading description...',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.white,
-                              fontFamily: 'PlusJakartaSans',
-                            ),
-                          );
-                        }
-                        final restaurant = snapshot.data;
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 64),
-                          child: Text(
-                            restaurant != null && restaurant.size != 0
-                                ? restaurant.docs.first['about']
-                                : 'No description available.',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.white,
-                              fontFamily: 'PlusJakartaSans',
-                            ),
-                          ),
-                        );
-                      },
+                    Padding(
+                      padding: const EdgeInsets.only(right: 64),
+                      child: Text(
+                        widget.video.description == null || widget.video.description!.isEmpty
+                            ? '' : widget.video.description!,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                          fontFamily: 'PlusJakartaSans',
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Row(

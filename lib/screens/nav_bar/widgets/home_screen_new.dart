@@ -1431,6 +1431,27 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                           const Duration(milliseconds: 500),
                                           () {
                                         isLoading.value = false;
+                                        // Move map to first restaurant if search has results
+                                        if (value.trim().isNotEmpty &&
+                                            cachedRestaurants.isNotEmpty) {
+                                          final firstRestaurant =
+                                              cachedRestaurants.first;
+                                          if (firstRestaurant.latitude != 0.0 &&
+                                              firstRestaurant.longitude !=
+                                                  0.0) {
+                                            _mapController?.animateCamera(
+                                              CameraUpdate.newCameraPosition(
+                                                CameraPosition(
+                                                  target: LatLng(
+                                                    firstRestaurant.latitude,
+                                                    firstRestaurant.longitude,
+                                                  ),
+                                                  zoom: 15,
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        }
                                       });
                                     });
                                   },
