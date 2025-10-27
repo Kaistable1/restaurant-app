@@ -9,6 +9,7 @@ class VideoItem {
   final String city;
   final String state;
   final String zipCode;
+  final String description;
 
   VideoPlayerController? controller;
 
@@ -21,6 +22,7 @@ class VideoItem {
     required this.city,
     required this.state,
     required this.zipCode,
+    required this.description,
     this.controller,
   });
 }

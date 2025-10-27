@@ -165,14 +165,12 @@ class VideoController extends GetxController {
     uploadProgress.value = 0.0;
   }
 
-void loadVideos(List<Map<String, dynamic>> fetchedVideos) {
-  originalVideoList = fetchedVideos;
-  videoDataList.assignAll(fetchedVideos);         // ✅ required
-  filteredVideoDataList.assignAll(fetchedVideos); // ✅ required
-  update(); // if using GetBuilder
-}
-
-
+  void loadVideos(List<Map<String, dynamic>> fetchedVideos) {
+    originalVideoList = fetchedVideos;
+    videoDataList.assignAll(fetchedVideos); // ✅ required
+    filteredVideoDataList.assignAll(fetchedVideos); // ✅ required
+    update(); // if using GetBuilder
+  }
 
   void filterByRestaurantName(String query) {
     if (query.isEmpty) {
@@ -442,10 +440,11 @@ void loadVideos(List<Map<String, dynamic>> fetchedVideos) {
   Future<void> uploadVideo({
     required BuildContext context,
     required String restaurantName,
- required String streetNo,
+    required String streetNo,
     required String city,
     required String zipCode,
     required String State,
+    required String description,
     String? restaurantType,
     String? causine,
     String? vibes,
@@ -487,10 +486,11 @@ void loadVideos(List<Map<String, dynamic>> fetchedVideos) {
           'url': downloadUrl,
           'fileName': pickedVideo.value!.name,
           'restaurantName': restaurantName,
-          'streetNo':streetNo,
+          'streetNo': streetNo,
           'state': State,
-          'city':city,
+          'city': city,
           'zipCode': zipCode,
+          'description': description,
           'restaurantType': restaurantType,
           'vibes': vibes,
           'atmosphere': atmosphere,

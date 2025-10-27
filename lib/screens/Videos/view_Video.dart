@@ -151,6 +151,12 @@ class _ViewVideoState extends State<ViewVideo> {
                       formatDate(widget.videoData['timestamp'])),
                   infoRow('Posted Time:',
                       formatTime(widget.videoData['timestamp'])),
+
+                  // Description field with more space
+                  if (widget.videoData['description'] != null &&
+                      widget.videoData['description'].toString().isNotEmpty)
+                    descriptionSection(
+                        'Description:', widget.videoData['description']),
                 ],
               ),
             ),
@@ -178,6 +184,36 @@ class _ViewVideoState extends State<ViewVideo> {
           Text(value ?? 'Not specified',
               style:
                   const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+        ],
+      ),
+    );
+  }
+
+  Widget descriptionSection(String title, String? value) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8, bottom: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: TextStyle(fontSize: 14, color: Colors.grey[600])),
+          const SizedBox(height: 8),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey[300]!),
+            ),
+            child: Text(
+              value ?? 'No description provided',
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w400,
+                height: 1.5,
+              ),
+            ),
+          ),
         ],
       ),
     );

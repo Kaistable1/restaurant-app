@@ -111,49 +111,7 @@ class _RestaurantManagementScreenState
                 //       shadow: [],
                 //       containerColor: primaryColor,
                 //       ontapp: () async {
-                //         try {
-                //           // Reference to the restaurants collection
-                //           CollectionReference restaurants = FirebaseFirestore.instance.collection('restaurants');
                 //
-                //           // Get all documents in the restaurants collection
-                //           QuerySnapshot querySnapshot = await restaurants.get();
-                //
-                //           int i=0;
-                //           // Iterate through each document
-                //           for (QueryDocumentSnapshot doc in querySnapshot.docs) {
-                //             Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-                //
-                //             // Check if resImages exists and is a list
-                //             if (data.containsKey('resImages') && data['resImages'] is List) {
-                //               List<String> resImages = List<String>.from(data['resImages']);
-                //               List<String> imagesList = [];
-                //
-                //               // Check if imagesList exists and is a list
-                //               if (data.containsKey('imagesList') && data['imagesList'] is List) {
-                //                 imagesList = List<String>.from(data['imagesList']);
-                //               }
-                //
-                //               // Add resImages contents to imagesList, avoiding duplicates
-                //               imagesList.addAll(resImages.where((image) => !imagesList.contains(image)));
-                //
-                //               // Update the document: set imagesList and remove resImages
-                //               await doc.reference.update({
-                //                 'imagesList': imagesList,
-                //                 'resImages': FieldValue.delete(),
-                //               });
-                //
-                //               print('${doc.id} document updates $i');
-                //
-                //             }else{
-                //               print('${doc.id} has no resImages field $i');
-                //             }
-                //             i++;
-                //           }
-                //
-                //           print('Finished updating restaurant documents');
-                //         } catch (e) {
-                //           print('Error updating documents: $e');
-                //         }
                 //       },
                 //     ),
                 CustomButton(

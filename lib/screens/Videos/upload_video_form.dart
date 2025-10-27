@@ -1258,6 +1258,7 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
   final cityController = TextEditingController();
   final stateController = TextEditingController();
   final zipCodeController = TextEditingController();
+  final descriptionController = TextEditingController();
 
   final videoController = Get.find<VideoController>();
   String? selectedRestaurant;
@@ -1378,6 +1379,7 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
       cityController.text = widget.initialData!['city'] ?? '';
       stateController.text = widget.initialData!['state'] ?? '';
       zipCodeController.text = widget.initialData!['zipCode'] ?? '';
+      descriptionController.text = widget.initialData!['description'] ?? '';
 
       selectCusine = causine.contains(widget.initialData!['causines'])
           ? widget.initialData!['causines']
@@ -1422,6 +1424,7 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
     cityController.dispose();
     stateController.dispose();
     zipCodeController.dispose();
+    descriptionController.dispose();
 
     super.dispose();
   }
@@ -1432,6 +1435,7 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
     stateController.clear();
     cityController.clear();
     zipCodeController.clear();
+    descriptionController.clear();
 
     selectedRestaurant = null;
     selectAtmosphere = null;
@@ -1741,7 +1745,12 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
               _buildTextField(
                   zipCodeController, "Zip code", "", showZipcodeError),
 
-              SizedBox(
+              const SizedBox(height: 20),
+
+              // Description text field with maxLines 5
+              _buildDescriptionField(),
+
+              const SizedBox(
                   height: 30), // Equal spacing between address and dropdowns
 
               _buildDropdown("Cuisine", selectCusine, causine, (value) {
@@ -1870,6 +1879,8 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
                                         'streetNo': streetController.text,
                                         'city': cityController.text,
                                         'zipCode': zipCodeController.text,
+                                        'description':
+                                            descriptionController.text,
                                         'restaurantType': selectedRestaurant,
                                         'causines': selectCusine,
                                         'vibes': selectVibes,
@@ -1903,6 +1914,7 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
                                         State: stateController.text,
                                         zipCode: zipCodeController.text,
                                         city: cityController.text,
+                                        description: descriptionController.text,
                                         restaurantType: selectedRestaurant,
                                         atmosphere: selectAtmosphere,
                                         causine: selectCusine,
@@ -1987,6 +1999,36 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
                 style: TextStyle(color: Colors.red, fontSize: 12),
               ),
             ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDescriptionField() {
+    return SizedBox(
+      width: 604,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Description",
+            style:
+                simpleText.copyWith(fontSize: 16, fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 10),
+          TextField(
+            controller: descriptionController,
+            maxLines: 5,
+            decoration: InputDecoration(
+              hintText: "Enter video description...",
+              hintStyle: simpleText.copyWith(
+                  fontSize: 14, fontWeight: FontWeight.w500),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+            ),
+          ),
         ],
       ),
     );
