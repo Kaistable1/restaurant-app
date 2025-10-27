@@ -1478,6 +1478,24 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                               ),
                                             );
                                           }
+                                        } else if (value.trim().isEmpty &&
+                                            homeLocationCtrl
+                                                    .userPosition.value !=
+                                                null) {
+                                          // Move map back to user's current position when search is cleared
+                                          _mapController?.animateCamera(
+                                            CameraUpdate.newCameraPosition(
+                                              CameraPosition(
+                                                target: LatLng(
+                                                  homeLocationCtrl.userPosition
+                                                      .value!.latitude,
+                                                  homeLocationCtrl.userPosition
+                                                      .value!.longitude,
+                                                ),
+                                                zoom: 14,
+                                              ),
+                                            ),
+                                          );
                                         }
                                       });
                                     });
