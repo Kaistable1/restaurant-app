@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:savrly/constants/text_styles.dart';
@@ -10,6 +9,7 @@ import 'package:savrly/controllers/experiences_sub_screen_controller.dart';
 import 'package:savrly/controllers/menu_sub_screen_controller.dart';
 import 'package:savrly/controllers/operating_hours_sub_screen_controller.dart';
 import 'package:savrly/models/resaturant_model.dart';
+import 'package:savrly/utils/zip_to_state.dart';
 import '../../constants/app_colors.dart';
 import '../../controllers/drawer_controller.dart';
 import '../../controllers/restaurant_management_controller.dart';
@@ -115,47 +115,48 @@ class _RestaurantManagementScreenState
                 //       },
                 //     ),
                 CustomButton(
-              laBelText: 'Add Restaurant',
-              isPrefixIcon: true,
-              iconWidget: Icon(Icons.add_circle_outline_sharp, color: white),
-              fontSize: buttonTextSize,
-              width: mobileView ? 150 : 200,
-              shadow: [],
-              containerColor: primaryColor,
-              ontapp: () {
-                // ✅ Clear all data before adding new restaurant
-                addController
-                    .clearFields(); // This now clears everything including restaurantModel
+                  laBelText: 'Add Restaurant',
+                  isPrefixIcon: true,
+                  iconWidget:
+                      Icon(Icons.add_circle_outline_sharp, color: white),
+                  fontSize: buttonTextSize,
+                  width: mobileView ? 150 : 200,
+                  shadow: [],
+                  containerColor: primaryColor,
+                  ontapp: () {
+                    // ✅ Clear all data before adding new restaurant
+                    addController
+                        .clearFields(); // This now clears everything including restaurantModel
 
-                // ✅ Clear all sub-controllers if they exist
-                if (Get.isRegistered<AmenitiesSubScreenController>()) {
-                  Get.find<AmenitiesSubScreenController>().clearFields();
-                }
+                    // ✅ Clear all sub-controllers if they exist
+                    if (Get.isRegistered<AmenitiesSubScreenController>()) {
+                      Get.find<AmenitiesSubScreenController>().clearFields();
+                    }
 
-                if (Get.isRegistered<ExperiencesSubScreenController>()) {
-                  Get.find<ExperiencesSubScreenController>().clearAll();
-                }
+                    if (Get.isRegistered<ExperiencesSubScreenController>()) {
+                      Get.find<ExperiencesSubScreenController>().clearAll();
+                    }
 
-                if (Get.isRegistered<MenuSubScreenController>()) {
-                  Get.find<MenuSubScreenController>().clearFields();
-                }
+                    if (Get.isRegistered<MenuSubScreenController>()) {
+                      Get.find<MenuSubScreenController>().clearFields();
+                    }
 
-                if (Get.isRegistered<OperatingHoursSubScreenController>()) {
-                  final opHoursController =
-                      Get.find<OperatingHoursSubScreenController>();
-                  opHoursController.daySwitches.clear();
-                  opHoursController.slotStates.clear();
-                  opHoursController.slotTimes.clear();
-                }
+                    if (Get.isRegistered<OperatingHoursSubScreenController>()) {
+                      final opHoursController =
+                          Get.find<OperatingHoursSubScreenController>();
+                      opHoursController.daySwitches.clear();
+                      opHoursController.slotStates.clear();
+                      opHoursController.slotTimes.clear();
+                    }
 
-                // ✅ Delete EditRestaurantController if it exists
-                if (Get.isRegistered<EditRestaurantController>()) {
-                  Get.delete<EditRestaurantController>();
-                }
+                    // ✅ Delete EditRestaurantController if it exists
+                    if (Get.isRegistered<EditRestaurantController>()) {
+                      Get.delete<EditRestaurantController>();
+                    }
 
-                drawerController.addRestaurants.value = true;
-              },
-            ),
+                    drawerController.addRestaurants.value = true;
+                  },
+                ),
             //   ],
             // ),
           ),
