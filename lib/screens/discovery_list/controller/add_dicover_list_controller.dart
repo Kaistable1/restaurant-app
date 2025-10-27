@@ -12,11 +12,10 @@ import 'package:get/get.dart';
 import 'package:savrly/models/resaturant_model.dart';
 
 import '../../../constants/app_colors.dart';
-import '../../../controllers/add_restaurants_controller.dart';
 import '../../../models/discover_list_model.dart';
 import '../../../widgets/global_functions.dart';
 
-class AddDiscoverListController extends GetxController{
+class AddDiscoverListController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   DiscoverListModel? selectedDiscoverListModel;
   RxBool isEdit = false.obs;
@@ -34,7 +33,8 @@ class AddDiscoverListController extends GetxController{
 
   final cityController = TextEditingController();
 
-  var isLocationDataLoading = true.obs; // Tracks if location data is still loading
+  var isLocationDataLoading =
+      true.obs; // Tracks if location data is still loading
   var isRestaurantDataLoading = false.obs;
 
   RxList<String> stateList = <String>[].obs;
@@ -44,24 +44,49 @@ class AddDiscoverListController extends GetxController{
 
   final Map<String, List<String>> filterOptions = {
     "Vibes": [
-      "Date Night", "Hidden Gems", "Trendy & Social", "High Vibe",
+      "Date Night",
+      "Hidden Gems",
+      "Trendy & Social",
+      "High Vibe",
       "Chill & Cozy",
     ],
-    "Entertainment": [
-      "Live Music", "Dj Nights", "Comedy", "Karaoke"
-    ],
+    "Entertainment": ["Live Music", "Dj Nights", "Comedy", "Karaoke"],
     "Experience": [
-      "Brunch", "Outdoor", "Happy Hour", "Rooftop", "Water/Beachside",
-      "Late Night", "Show"
+      "Brunch",
+      "Outdoor",
+      "Happy Hour",
+      "Rooftop",
+      "Water/Beachside",
+      "Late Night",
+      "Show"
     ],
     "Cuisines": [
-      "American", "Mexican", "Italian", "French", "Chinese", "Japanese",
-      "Thai", "Indian", "Korean", "Vietnamese", "Mediterranean", "Caribbean",
-      "African", "Middle Eastern", "Spanish", "Filipino", "Brazilian",
-      "Peruvian", "Russian", "German",
+      "American",
+      "Mexican",
+      "Italian",
+      "French",
+      "Chinese",
+      "Japanese",
+      "Thai",
+      "Indian",
+      "Korean",
+      "Vietnamese",
+      "Mediterranean",
+      "Caribbean",
+      "African",
+      "Middle Eastern",
+      "Spanish",
+      "Filipino",
+      "Brazilian",
+      "Peruvian",
+      "Russian",
+      "German",
     ],
     "Dietary": [
-      "Vegan", "Vegetarian", "Plant Based", "Pescatarian",
+      "Vegan",
+      "Vegetarian",
+      "Plant Based",
+      "Pescatarian",
     ],
   };
 
@@ -106,29 +131,44 @@ class AddDiscoverListController extends GetxController{
   Future<List<RestaurantModel>> getFilteredRestaurants(String filter) async {
     print('Fetching restaurants with filter: $filter');
     print('  State: ${selectedState.value}, City: ${selectedCity.value}');
-    print('  Vibes: ${selectedVibes.value}, Experiences: ${selectedExperiences.value}');
-    print('  Entertainment: ${selectedEntertainment.value}, Cuisines: ${selectedCuisines.value}');
+    print(
+        '  Vibes: ${selectedVibes.value}, Experiences: ${selectedExperiences.value}');
+    print(
+        '  Entertainment: ${selectedEntertainment.value}, Cuisines: ${selectedCuisines.value}');
     print('  Dietary: ${selectedDietary.value}');
     try {
       isRestaurantDataLoading.value = true;
-      Query query = _firestore.collection('restaurants')
-          .where('state', isEqualTo: selectedState.value)
-          .where('city', isEqualTo: selectedCity.value);
+
+      // Start with base query
+      Query query = _firestore.collection('restaurants');
+
+      // Apply state filter only if selected
+      if (selectedState.value.isNotEmpty) {
+        query = query.where('state', isEqualTo: selectedState.value);
+      }
+
+      // Apply city filter only if selected
+      if (selectedCity.value.isNotEmpty) {
+        query = query.where('city', isEqualTo: selectedCity.value);
+      }
 
       if (selectedVibes.isNotEmpty) {
         query = query.where('vibesList', arrayContainsAny: selectedVibes);
       }
       if (selectedExperiences.isNotEmpty) {
-        query = query.where('experiencesList', arrayContainsAny: selectedExperiences);
+        query = query.where('experiencesList',
+            arrayContainsAny: selectedExperiences);
       }
       if (selectedEntertainment.isNotEmpty) {
-        query = query.where('entertainmentList', arrayContainsAny: selectedEntertainment);
+        query = query.where('entertainmentList',
+            arrayContainsAny: selectedEntertainment);
       }
       if (selectedDietary.isNotEmpty) {
         query = query.where('dietaryList', arrayContainsAny: selectedDietary);
       }
       if (filter.isNotEmpty) {
-        query = query.where('resName', isGreaterThanOrEqualTo: filter)
+        query = query
+            .where('resName', isGreaterThanOrEqualTo: filter)
             .where('resName', isLessThan: '$filter\uf8ff');
       }
 
@@ -142,7 +182,8 @@ class AddDiscoverListController extends GetxController{
       // Apply cuisine filter client-side
       if (selectedCuisines.isNotEmpty) {
         restaurants = restaurants.where((restaurant) {
-          return restaurant.menuList.any((menu) => selectedCuisines.contains(menu.cuisineType));
+          return restaurant.menuList
+              .any((menu) => selectedCuisines.contains(menu.cuisineType));
         }).toList();
       }
 
@@ -184,7 +225,8 @@ class AddDiscoverListController extends GetxController{
         restaurantIdsList: selectedRestaurants.map((r) => r.docID).toList(),
       );
 
-      DocumentReference docRef = await _firestore.collection('discoverLists').add(dlm.toMap());
+      DocumentReference docRef =
+          await _firestore.collection('discoverLists').add(dlm.toMap());
 
       String imgUrl = '';
       if (imageBytes.value.isNotEmpty) {
@@ -227,8 +269,11 @@ class AddDiscoverListController extends GetxController{
             .ref('discoverList/$docID.${fileName.split('.').last}')
             .putData(imageBytes.value)
             .then((val) => val.ref.getDownloadURL());
-      } else if (imageUrl.value.isEmpty && selectedDiscoverListModel!.image.isNotEmpty) {
-        await FirebaseStorage.instance.refFromURL(selectedDiscoverListModel!.image).delete();
+      } else if (imageUrl.value.isEmpty &&
+          selectedDiscoverListModel!.image.isNotEmpty) {
+        await FirebaseStorage.instance
+            .refFromURL(selectedDiscoverListModel!.image)
+            .delete();
       } else {
         imgUrl = imageUrl.value;
       }
@@ -242,7 +287,10 @@ class AddDiscoverListController extends GetxController{
         restaurantIdsList: selectedRestaurants.map((r) => r.docID).toList(),
       );
 
-      await _firestore.collection('discoverLists').doc(docID).update(dlm.toMap());
+      await _firestore
+          .collection('discoverLists')
+          .doc(docID)
+          .update(dlm.toMap());
 
       clearForm();
       Get.back();
@@ -289,13 +337,13 @@ class AddDiscoverListController extends GetxController{
       isLocationDataLoading.value = true;
       print('Loading location data from country_picker_plus...');
 
-      final stringData = await DefaultAssetBundle.of(Get.context!).loadString(
-          'assets/countries.json');
+      final stringData = await DefaultAssetBundle.of(Get.context!)
+          .loadString('assets/countries.json');
       print('JSON data loaded: ${stringData.substring(0, 100)}...');
 
       final List<dynamic> countries = json.decode(stringData);
       final usData = countries.firstWhere(
-            (c) => c['name'] == 'United States',
+        (c) => c['name'] == 'United States',
         orElse: () {
           print('US data not found in JSON');
           return null;
@@ -303,35 +351,79 @@ class AddDiscoverListController extends GetxController{
       );
 
       if (usData != null) {
-        final List<dynamic> stateData = usData['states'].where((s) => s['type'] == 'state').toList() ?? [];
-        List<String> tempStates = stateData.map((s) => s['name'] as String).toList();
+        final List<dynamic> stateData =
+            usData['states'].where((s) => s['type'] == 'state').toList() ?? [];
+        List<String> tempStates =
+            stateData.map((s) => s['name'] as String).toList();
         tempStates.sort();
 
         Map<String, List<String>> tempCityMap = {};
         for (var state in stateData) {
           List<dynamic> citiesData = state['cities'] ?? [];
-          List<String> cities = citiesData.map((c) => c['name'] as String).toList();
+          List<String> cities =
+              citiesData.map((c) => c['name'] as String).toList();
           cities.sort();
           tempCityMap[state['name']] = cities;
           print('Cities for ${state['name']}: ${cities.length} cities loaded');
         }
 
-        print('Loaded ${tempStates.length} states and ${tempCityMap.length} state-city mappings');
+        print(
+            'Loaded ${tempStates.length} states and ${tempCityMap.length} state-city mappings');
         stateList.assignAll(tempStates);
         citiesByState.assignAll(tempCityMap);
       } else {
         print('No US data found, using fallback states');
         List<String> fallbackStates = [
-          'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado',
-          'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho',
-          'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana',
-          'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota',
-          'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada',
-          'New Hampshire', 'New Jersey', 'New Mexico', 'New York',
-          'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon',
-          'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota',
-          'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington',
-          'West Virginia', 'Wisconsin', 'Wyoming'
+          'Alabama',
+          'Alaska',
+          'Arizona',
+          'Arkansas',
+          'California',
+          'Colorado',
+          'Connecticut',
+          'Delaware',
+          'Florida',
+          'Georgia',
+          'Hawaii',
+          'Idaho',
+          'Illinois',
+          'Indiana',
+          'Iowa',
+          'Kansas',
+          'Kentucky',
+          'Louisiana',
+          'Maine',
+          'Maryland',
+          'Massachusetts',
+          'Michigan',
+          'Minnesota',
+          'Mississippi',
+          'Missouri',
+          'Montana',
+          'Nebraska',
+          'Nevada',
+          'New Hampshire',
+          'New Jersey',
+          'New Mexico',
+          'New York',
+          'North Carolina',
+          'North Dakota',
+          'Ohio',
+          'Oklahoma',
+          'Oregon',
+          'Pennsylvania',
+          'Rhode Island',
+          'South Carolina',
+          'South Dakota',
+          'Tennessee',
+          'Texas',
+          'Utah',
+          'Vermont',
+          'Virginia',
+          'Washington',
+          'West Virginia',
+          'Wisconsin',
+          'Wyoming'
         ];
 
         stateList.assignAll(fallbackStates);
@@ -341,7 +433,9 @@ class AddDiscoverListController extends GetxController{
       print('Error loading location data: $e');
       print('Stack trace: $stackTrace');
       Get.snackbar('Error', 'Failed to load location data: $e',
-          snackPosition: SnackPosition.TOP, backgroundColor: Colors.red, colorText: Colors.white);
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white);
       stateList.assignAll([]);
       citiesByState.assignAll({});
     } finally {
@@ -360,7 +454,8 @@ class AddDiscoverListController extends GetxController{
   }
 
   List<String> getFilteredCities(String? filter) {
-    print('Filtering cities with query: $filter, State: ${selectedState.value}');
+    print(
+        'Filtering cities with query: $filter, State: ${selectedState.value}');
     if (selectedState.value.isEmpty ||
         citiesByState[selectedState.value] == null ||
         citiesByState[selectedState.value]!.isEmpty) {
@@ -385,7 +480,8 @@ class AddDiscoverListController extends GetxController{
     if (previousState != selectedState.value) {
       selectedCity.value = '';
       cityController.text = '';
-      print('Reset city: selectedCity=${selectedCity.value}, cityController=${cityController.text}');
+      print(
+          'Reset city: selectedCity=${selectedCity.value}, cityController=${cityController.text}');
     }
     update();
   }
@@ -422,60 +518,62 @@ class AddDiscoverListController extends GetxController{
                 constraints: const BoxConstraints(maxHeight: 300),
                 itemBuilder: (context, item, isSelected, isDisabled) {
                   return Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: isSelected ? primaryColor.withOpacity(0.1) : null,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: isSelected ? primaryColor.withOpacity(0.1) : null,
+                    ),
+                    child: Text(
+                      item,
+                      style: TextStyle(
+                        color: isDisabled
+                            ? Colors.grey
+                            : isSelected
+                                ? primaryColor
+                                : Colors.black87,
+                        fontWeight:
+                            isSelected ? FontWeight.w600 : FontWeight.normal,
                       ),
-                      child: Text(
-                        item,
-                        style: TextStyle(
-                          color: isDisabled
-                              ? Colors.grey
-                              : isSelected
-                              ? primaryColor
-                              : Colors.black87,
-                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                        ),
-                      ),
+                    ),
                   );
-                  },
+                },
               ),
-            decoratorProps: DropDownDecoratorProps(
-              decoration: InputDecoration(
-                hintText: 'Select or search city',
-                hintStyle: TextStyle(color: lightColor),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: lightColor),
+              decoratorProps: DropDownDecoratorProps(
+                decoration: InputDecoration(
+                  hintText: 'Select or search city',
+                  hintStyle: TextStyle(color: lightColor),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: lightColor),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: lightColor),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: lightColor),
+                  ),
+                  suffixIcon:
+                      const Icon(Icons.arrow_drop_down, color: primaryColor),
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: lightColor),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: lightColor),
-                ),
-                suffixIcon: const Icon(Icons.arrow_drop_down, color: primaryColor),
               ),
+              onChanged: (String? value) async {
+                if (value != null && value.isNotEmpty) {
+                  print('City selected: $value');
+                  cityController.text = value;
+                  selectedCity.value = value;
+                  await Future.delayed(Duration(milliseconds: 500));
+                  Navigator.of(dialogContext).pop();
+                }
+              },
             ),
-            onChanged: (String? value) async {
-              if (value != null && value.isNotEmpty) {
-                print('City selected: $value');
-                cityController.text = value;
-                selectedCity.value = value;
-                await Future.delayed(Duration(milliseconds: 500));
-                Navigator.of(dialogContext).pop();
-              }
-            },
           ),
-        ),
-        actions: [
-        TextButton(
-        onPressed: () => Navigator.of(dialogContext).pop(),
-        child: const Text('Cancel'),
-        ),
-        ],
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Cancel'),
+            ),
+          ],
         );
       },
     );
