@@ -481,27 +481,9 @@ class RestaurantDetailScreen extends StatelessWidget {
                                           operatingHours[currentDay]!;
                                       final fullDayHours =
                                           controller.getFullDayHours(dayHours);
-                                      bool isOpen = false;
-                                      if (fullDayHours != 'Closed' &&
-                                          fullDayHours != 'Unavailable') {
-                                        try {
-                                          final timeFormat =
-                                              DateFormat('h:mm a');
-                                          final times = fullDayHours.split('–');
-                                          final startTime =
-                                              timeFormat.parse(times[0]);
-                                          final endTime =
-                                              timeFormat.parse(times[1]);
-                                          final now = DateTime.now();
-                                          final currentTime = DateTime(2025, 8,
-                                              28, now.hour, now.minute);
-                                          isOpen =
-                                              currentTime.isAfter(startTime) &&
-                                                  currentTime.isBefore(endTime);
-                                        } catch (e) {
-                                          print('Error parsing time: $e');
-                                        }
-                                      }
+                                      // Use the controller's method to properly check if restaurant is open
+                                      bool isOpen =
+                                          controller.isRestaurantOpen(dayHours);
 
                                       // Weekly hours for dropdown
                                       List<Map<String, String>> weeklyHours =
@@ -513,7 +495,7 @@ class RestaurantDetailScreen extends StatelessWidget {
                                         'Thursday',
                                         'Friday',
                                         'Saturday',
-                                        'Sunday'
+                                        'Sunday',
                                       ];
                                       for (var day in days) {
                                         final hours =
