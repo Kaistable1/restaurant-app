@@ -9,7 +9,6 @@ import 'package:savrly/controllers/experiences_sub_screen_controller.dart';
 import 'package:savrly/controllers/menu_sub_screen_controller.dart';
 import 'package:savrly/controllers/operating_hours_sub_screen_controller.dart';
 import 'package:savrly/models/resaturant_model.dart';
-import 'package:savrly/utils/zip_to_state.dart';
 import '../../constants/app_colors.dart';
 import '../../controllers/drawer_controller.dart';
 import '../../controllers/restaurant_management_controller.dart';
