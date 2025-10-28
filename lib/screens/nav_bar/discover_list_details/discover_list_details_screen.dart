@@ -283,7 +283,8 @@ class _DiscoverListDetailScreenState extends State<DiscoverListDetailScreen>
                                           height: 94,
                                           child: ClipRRect(
                                             clipBehavior: Clip.hardEdge,
-                                            borderRadius: const BorderRadius.only(
+                                            borderRadius:
+                                                const BorderRadius.only(
                                               topLeft: Radius.circular(10),
                                               topRight: Radius.circular(10),
                                             ),
@@ -364,23 +365,21 @@ class _DiscoverListDetailScreenState extends State<DiscoverListDetailScreen>
                                                   final currentDay =
                                                       DateFormat('EEEE').format(
                                                           DateTime.now());
-                                                  // final timeFilter = filterCtrl.selectedFilters['Time'];
 
-                                                  if (operatingHours == null ||
-                                                      operatingHours[
-                                                              currentDay] ==
-                                                          null) {
-                                                    if (!isFetching) {
-                                                      controller
-                                                          .getOperatingHours(
-                                                              restaurant.docID,
-                                                              triggerFilterUpdate:
-                                                                  false);
-                                                    }
+                                                  // If no data and not fetching, try to fetch
+                                                  if (operatingHours == null &&
+                                                      !isFetching) {
+                                                    controller
+                                                        .getOperatingHours(
+                                                            restaurant.docID,
+                                                            triggerFilterUpdate:
+                                                                false);
+                                                  }
+
+                                                  // Show loading if fetching
+                                                  if (isFetching) {
                                                     return Text(
-                                                      isFetching
-                                                          ? 'Loading...'
-                                                          : 'Unavailable',
+                                                      'Loading...',
                                                       style: TextStyle(
                                                         fontSize: 14,
                                                         fontWeight:
@@ -395,7 +394,29 @@ class _DiscoverListDetailScreenState extends State<DiscoverListDetailScreen>
                                                     );
                                                   }
 
-                                                  if (operatingHours.isEmpty) {
+                                                  // If no data or empty, show unavailable
+                                                  if (operatingHours == null ||
+                                                      operatingHours.isEmpty) {
+                                                    return Text(
+                                                      'Unavailable',
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontFamily: GoogleFonts
+                                                                .plusJakartaSans()
+                                                            .fontFamily,
+                                                        color: const Color
+                                                            .fromRGBO(
+                                                            142, 142, 147, 1),
+                                                      ),
+                                                    );
+                                                  }
+
+                                                  // Check if current day has data
+                                                  if (!operatingHours
+                                                      .containsKey(
+                                                          currentDay)) {
                                                     return Text(
                                                       'Unavailable',
                                                       style: TextStyle(
@@ -438,21 +459,6 @@ class _DiscoverListDetailScreenState extends State<DiscoverListDetailScreen>
                                                               142, 142, 147, 1),
                                                     ),
                                                   );
-
-                                                  // // Use selected time slot
-                                                  // final timeOfDay = timeFilter.first;
-                                                  // final isClosed = dayHours[timeOfDay]?['isClosed'] ?? true;
-                                                  // final startTime = dayHours[timeOfDay]?['startTime'] ?? '6:00 PM';
-                                                  // final endTime = dayHours[timeOfDay]?['endTime'] ?? '9:00 PM';
-                                                  // return Text(
-                                                  //   isClosed ? 'Closed' : '$startTime–$endTime',
-                                                  //   style: TextStyle(
-                                                  //     fontSize: 12,
-                                                  //     fontWeight: FontWeight.w500,
-                                                  //     fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                                                  //     color: const Color.fromRGBO(142, 142, 147, 1),
-                                                  //   ),
-                                                  // );
                                                 }),
                                                 Row(
                                                   mainAxisAlignment:

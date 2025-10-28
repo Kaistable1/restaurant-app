@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 
 import '../../../../models/restaurant_model.dart';
+import '../../../home_screen/home_controller/home_location_controller.dart';
 
-class DiscoverListDetailsController extends GetxController{
-
+class DiscoverListDetailsController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   RxList<RestaurantModel> selectedRestaurants = <RestaurantModel>[].obs;
@@ -23,8 +23,17 @@ class DiscoverListDetailsController extends GetxController{
         print('Error loading restaurant $id: $e');
       }
     }
+
+    // Prefetch operating hours for all loaded restaurants
+    try {
+      final homeLocationCtrl = Get.find<HomeLocationController>();
+      await Future.wait(selectedRestaurants.map((restaurant) => homeLocationCtrl
+          .getOperatingHours(restaurant.docID, triggerFilterUpdate: false)));
+    } catch (e) {
+      print('Error prefetching operating hours: $e');
+    }
+
     gettingRestaurants.value = false;
     update();
   }
-
 }
