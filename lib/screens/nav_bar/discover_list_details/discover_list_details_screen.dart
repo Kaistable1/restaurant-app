@@ -187,11 +187,11 @@ class _DiscoverListDetailScreenState extends State<DiscoverListDetailScreen>
                 ),
                 child: Image.network(
                   widget.discoverListModel.image,
-                  height: 136,
+                  height: 146,
                   width: double.infinity,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Container(
-                    height: 136,
+                    height: 146,
                     width: double.infinity,
                     color: Colors.grey[300],
                     child: const Icon(Icons.image_not_supported,
@@ -201,7 +201,7 @@ class _DiscoverListDetailScreenState extends State<DiscoverListDetailScreen>
               )
             else
               Container(
-                height: 136,
+                height: 146,
                 width: double.infinity,
                 color: Colors.grey[300],
                 child: const Icon(Icons.image_not_supported,
@@ -210,19 +210,19 @@ class _DiscoverListDetailScreenState extends State<DiscoverListDetailScreen>
             const SizedBox(height: 16),
             Text(widget.discoverListModel.name,
                 style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 24,
                     fontWeight: FontWeight.w500,
                     fontFamily: GoogleFonts.plusJakartaSans().fontFamily)),
             const SizedBox(height: 16),
             Text('By ${widget.discoverListModel.by}',
                 style: TextStyle(
-                    fontSize: 17,
+                    fontSize: 20,
                     fontWeight: FontWeight.w400,
                     fontFamily: GoogleFonts.plusJakartaSans().fontFamily)),
             const SizedBox(height: 16),
             Text(widget.discoverListModel.description,
                 style: TextStyle(
-                    fontSize: 15,
+                    fontSize: 18,
                     fontWeight: FontWeight.w400,
                     fontFamily: GoogleFonts.plusJakartaSans().fontFamily)),
             const SizedBox(height: 16),
@@ -275,22 +275,24 @@ class _DiscoverListDetailScreenState extends State<DiscoverListDetailScreen>
                                     ],
                                   ),
                                   child: SizedBox(
-                                    height: 84,
+                                    height: 94,
                                     child: Row(
                                       children: [
-                                        ClipRRect(
-                                          clipBehavior: Clip.hardEdge,
-                                          borderRadius: const BorderRadius.only(
-                                            topLeft: Radius.circular(10),
-                                            topRight: Radius.circular(10),
-                                          ),
-                                          child: controller.buildImage(
-                                            restaurant.logoImage.isNotEmpty
-                                                ? restaurant.logoImage
-                                                : 'assets/images/event_img5.png',
-                                            width: 124,
-                                            height: 84,
-                                            fit: BoxFit.cover,
+                                        SizedBox(
+                                          width: 124,
+                                          height: 94,
+                                          child: ClipRRect(
+                                            clipBehavior: Clip.hardEdge,
+                                            borderRadius: const BorderRadius.only(
+                                              topLeft: Radius.circular(10),
+                                              topRight: Radius.circular(10),
+                                            ),
+                                            child: controller.buildImage(
+                                              restaurant.logoImage.isNotEmpty
+                                                  ? restaurant.logoImage
+                                                  : 'assets/images/event_img5.png',
+                                              fit: BoxFit.cover,
+                                            ),
                                           ),
                                         ),
                                         Expanded(
@@ -317,7 +319,7 @@ class _DiscoverListDetailScreenState extends State<DiscoverListDetailScreen>
                                                             ? restaurant.resName
                                                             : 'Unknown Restaurant',
                                                         style: TextStyle(
-                                                          fontSize: 15,
+                                                          fontSize: 16,
                                                           fontWeight:
                                                               FontWeight.w700,
                                                           fontFamily: GoogleFonts
@@ -380,7 +382,7 @@ class _DiscoverListDetailScreenState extends State<DiscoverListDetailScreen>
                                                           ? 'Loading...'
                                                           : 'Unavailable',
                                                       style: TextStyle(
-                                                        fontSize: 12,
+                                                        fontSize: 14,
                                                         fontWeight:
                                                             FontWeight.w500,
                                                         fontFamily: GoogleFonts
@@ -397,7 +399,7 @@ class _DiscoverListDetailScreenState extends State<DiscoverListDetailScreen>
                                                     return Text(
                                                       'Unavailable',
                                                       style: TextStyle(
-                                                        fontSize: 12,
+                                                        fontSize: 14,
                                                         fontWeight:
                                                             FontWeight.w500,
                                                         fontFamily: GoogleFonts
@@ -423,7 +425,7 @@ class _DiscoverListDetailScreenState extends State<DiscoverListDetailScreen>
                                                   return Text(
                                                     hoursText,
                                                     style: TextStyle(
-                                                      fontSize: 12,
+                                                      fontSize: 14,
                                                       fontWeight:
                                                           FontWeight.w500,
                                                       fontFamily: GoogleFonts
@@ -463,8 +465,8 @@ class _DiscoverListDetailScreenState extends State<DiscoverListDetailScreen>
                                                       children: [
                                                         Image.asset(
                                                           'assets/images/Icon (1).png',
-                                                          width: 15,
-                                                          height: 13,
+                                                          width: 17,
+                                                          height: 15,
                                                         ),
                                                         // Replace the per-restaurant getCurrentLocation call with a shared positionFuture. This calculates distance only if position is available, showing 'Unknown' if location is disabled or error occurred, preventing multiple dialogs.
                                                         Obx(() {
@@ -479,7 +481,7 @@ class _DiscoverListDetailScreenState extends State<DiscoverListDetailScreen>
                                                                   ? 'Fetching...'
                                                                   : 'Location disabled',
                                                               style: TextStyle(
-                                                                fontSize: 12,
+                                                                fontSize: 14,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w500,
@@ -509,7 +511,7 @@ class _DiscoverListDetailScreenState extends State<DiscoverListDetailScreen>
                                                             return Text(
                                                               '${distance.toStringAsFixed(1)} km away',
                                                               style: TextStyle(
-                                                                fontSize: 12,
+                                                                fontSize: 14,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w500,

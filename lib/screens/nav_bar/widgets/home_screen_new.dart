@@ -1248,17 +1248,17 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                           Align(
                             alignment: Alignment.center,
                             child: CustomButton(
-                              width: Get.width / 2,
+                              width: 84,
                               height: 36,
                               laBelText: 'See All',
                               textColor: Colors.white,
                               fontSize: 17,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w700,
                               fontFamily:
                                   GoogleFonts.plusJakartaSans().fontFamily,
-                              isPrefixIcon: true,
-                              iconWidget: Icon(Icons.restaurant,
-                                  color: Colors.white, size: 20),
+                              // isPrefixIcon: true,
+                              // iconWidget: Icon(Icons.restaurant,
+                              //     color: Colors.white, size: 20),
                               ontapp: () {
                                 Get.to(() =>
                                     SeeAllRestaurantsScreen(fromHome: true));
@@ -1305,19 +1305,19 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                           Align(
                             alignment: Alignment.center,
                             child: CustomButton(
-                              width: Get.width / 2,
+                              width: 84,
                               height: 36,
                               laBelText: 'See All',
                               textColor: Colors.white,
                               fontSize: 17,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w700,
                               fontFamily:
                                   GoogleFonts.plusJakartaSans().fontFamily,
-                              isPrefixIcon: true,
-                              iconWidget: Icon(Icons.restaurant,
-                                  color: Colors.white, size: 20),
+                              // isPrefixIcon: true,
+                              // iconWidget: Icon(Icons.restaurant,
+                              //     color: Colors.white, size: 20),
                               ontapp: () {
-                                Get.to(VideosListView(fromHome: true));
+                                Get.to(()=>VideosListView(fromHome: true));
                               },
                             ),
                           ),
