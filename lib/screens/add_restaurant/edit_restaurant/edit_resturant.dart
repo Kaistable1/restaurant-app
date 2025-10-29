@@ -111,6 +111,13 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
     'American',
     'Vegan',
     'Mediterranean',
+    'Soul food',
+    'Southern food',
+    'Cajun & Creole',
+    'Barbecue',
+    'Diner / Comfort Food',
+    'Jamaican',
+    'Fusion',
     'other',
   ];
   final List<String> menuType = [
@@ -551,9 +558,9 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                                       fontSize: 7,
                                                       fontFamily:
                                                           'Nunito-Regular',
-                                                    ), isSelected: false,onTap: () {
-
-                                                    },
+                                                    ),
+                                                    isSelected: false,
+                                                    onTap: () {},
                                                   ),
                                                 );
                                               },
@@ -1169,7 +1176,9 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                   runSpacing: 10.0, // Space between rows
                                   children: itemController.categoryItems
                                       .map((category) {
-                                    return LocationStarWidget(onTap: (){},isSelected: false,
+                                    return LocationStarWidget(
+                                      onTap: () {},
+                                      isSelected: false,
                                       timeText:
                                           "${category.fromTime}  ${category.toTime}",
                                       persentText:

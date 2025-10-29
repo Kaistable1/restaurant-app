@@ -74,9 +74,8 @@ class UpdateDiscount extends StatelessWidget {
                       ],
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: AccountSettingsPopupWidget()
-                    ),
+                        padding: const EdgeInsets.all(4.0),
+                        child: AccountSettingsPopupWidget()),
                   ),
                 ),
               ],
@@ -121,6 +120,13 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
     'American',
     'Vegan',
     'Mediterranean',
+    'Soul food',
+    'Southern food',
+    'Cajun & Creole',
+    'Barbecue',
+    'Diner / Comfort Food',
+    'Jamaican',
+    'Fusion',
     'other',
   ];
   final List<String> menuType = [
@@ -351,27 +357,26 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(10.0),
                         child: Image.network(
-                          widget.discountModel.menu[0].items[0].itemImages.isNotEmpty
-                              ?  widget.discountModel.menu[0].items[0].itemImages[0].value
+                          widget.discountModel.menu[0].items[0].itemImages
+                                  .isNotEmpty
+                              ? widget.discountModel.menu[0].items[0]
+                                  .itemImages[0].value
                               : '', // Empty string to trigger errorBuilder
                           width: double.infinity,
                           height: Responsive.isMobile(context)
                               ? 95
-                              : (Responsive.isTablet(context)
-                              ? 120
-                              : 140),
+                              : (Responsive.isTablet(context) ? 120 : 140),
                           fit: BoxFit.fitHeight,
                           errorBuilder: (context, error, stackTrace) {
                             return Container(
                               width: double.infinity,
                               height: Responsive.isMobile(context)
                                   ? 100
-                                  : (Responsive.isTablet(context)
-                                  ? 120
-                                  :   140),
-                              color: Colors.grey[300], // Placeholder background color
-                              child:
-                              Icon(Icons.image_not_supported, color: Colors.grey[600]),
+                                  : (Responsive.isTablet(context) ? 120 : 140),
+                              color: Colors
+                                  .grey[300], // Placeholder background color
+                              child: Icon(Icons.image_not_supported,
+                                  color: Colors.grey[600]),
                             );
                           },
                         ),
@@ -383,7 +388,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                       // Meal Info below the image
                       Positioned(
                         top: 8,
-                        right:   12  ,
+                        right: 12,
                         child: GestureDetector(
                           onTap: () async {
                             await FirebaseFirestore.instance
@@ -406,7 +411,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                               color: Colors.grey,
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(Icons.close, color: Colors.white, size: 10),
+                            child: const Icon(Icons.close,
+                                color: Colors.white, size: 10),
                           ),
                         ),
                       ),
@@ -418,8 +424,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                              Text(
-                             widget.discountModel.discountType,
+                            Text(
+                              widget.discountModel.discountType,
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
@@ -439,7 +445,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                     Axis.horizontal, // Horizontal scrolling
                                 itemCount: widget.discountModel.menu.length,
                                 itemBuilder: (context, index) {
-                                  CategoryModel menuModel = widget.discountModel.menu[index];
+                                  CategoryModel menuModel =
+                                      widget.discountModel.menu[index];
                                   return SizedBox(
                                     width: Responsive.isMobile(context)
                                         ? 40
@@ -448,8 +455,9 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                             : 50, // Width of each item
                                     child: LocationStarWidget(
                                       timeText:
-                                      '${menuModel.fromTime} - ${menuModel.toTime}',
-                                      persentText: '${menuModel.percentageValue}% OFF',
+                                          '${menuModel.fromTime} - ${menuModel.toTime}',
+                                      persentText:
+                                          '${menuModel.percentageValue}% OFF',
                                       persentTextStyle: TextStyle(
                                         fontWeight: FontWeight.w700,
                                         fontSize: Responsive.isMobile(context)
@@ -497,9 +505,10 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                     shape: BoxShape
                                         .rectangle, // makes the container circular
                                   ),
-                                  child:   Center(
+                                  child: Center(
                                     child: Text(
-                                      widget. discountModel.fromDate == '' && widget.discountModel.toDate == ''
+                                      widget.discountModel.fromDate == '' &&
+                                              widget.discountModel.toDate == ''
                                           ? '  Lifetime  '
                                           : '${formatDate(widget.discountModel.fromDate)} - ${formatDate(widget.discountModel.toDate)}',
                                       style: const TextStyle(
@@ -513,7 +522,6 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                 const SizedBox(
                                   width: 5,
                                 ),
-
                               ],
                             ),
                           ),
@@ -548,297 +556,297 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                     fontSize: Responsive.isMobile(context)
                         ? 16
                         : Responsive.isTablet(context)
-                        ? 18
-                        : 24,
+                            ? 18
+                            : 24,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: 10),
                 Responsive.isDesktop(context)
                     ? Row(
-                  children: [
-                    Text(
-                      'From',
-                      style: TextStyle(
-                        fontSize: Responsive.isMobile(context)
-                            ? 14
-                            : Responsive.isTablet(context)
-                            ? 16
-                            : 20,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    GestureDetector(
-                      onTap: () => _selectDate(context),
-                      child: AbsorbPointer(
-                        child: Row(
-                          children: [
-                            CustomTextField(
-                              borderColor:
-                              AppColors.darkGrey.withOpacity(.1),
-                              controller: _dateController,
-                              width: 117,
-                              borderRadius: 8,
-                              hintText: "09.03.2024",
-                              fillColor: AppColors.whiteColor,
-                              cursorColor: AppColors.primaryColor,
-                              inputStyle: const TextStyle(
-                                  color: AppColors.blackColor),
-                              hintStyle: const TextStyle(
-                                  color: AppColors.blackColor),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Image.asset(
-                              'assets/images/date_calender.png',
-                              width: 25,
-                              height: 25,
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Text(
-                      'To',
-                      style: TextStyle(
-                        fontSize: Responsive.isMobile(context)
-                            ? 14
-                            : Responsive.isTablet(context)
-                            ? 16
-                            : 20,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    GestureDetector(
-                      onTap: () => _selectDateTo(context),
-                      child: AbsorbPointer(
-                        child: Row(
-                          children: [
-                            CustomTextField(
-                              borderColor:
-                              AppColors.darkGrey.withOpacity(.1),
-                              controller: _dateControllerTo,
-                              width: 117,
-                              borderRadius: 8,
-                              hintText: "09.03.2024",
-                              fillColor: AppColors.whiteColor,
-                              cursorColor: AppColors.primaryColor,
-                              inputStyle: const TextStyle(
-                                  color: AppColors.blackColor),
-                              hintStyle: const TextStyle(
-                                  color: AppColors.blackColor),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Image.asset(
-                              'assets/images/date_calender.png',
-                              width: 25,
-                              height: 25,
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Container(
-                      width: 24,
-                      height: 24,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: AppColors.primaryColor,
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(4.0),
-                      ),
-                      child: Checkbox(
-                        value: isChecked,
-                        side: const BorderSide(
-                            color: AppColors.whiteColor),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                        ),
-                        onChanged: (bool? value) {
-                          setState(() {
-                            isChecked = value ?? false;
-                          });
-                        },
-                        activeColor: Colors.white,
-                        checkColor: AppColors.primaryColor,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      'Lifetime',
-                      style: TextStyle(
-                        fontSize: Responsive.isMobile(context)
-                            ? 14
-                            : Responsive.isTablet(context)
-                            ? 16
-                            : 20,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                )
-                    : Column(
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          'From',
-                          style: TextStyle(
-                            fontSize: Responsive.isMobile(context)
-                                ? 14
-                                : Responsive.isTablet(context)
-                                ? 16
-                                : 20,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        GestureDetector(
-                          onTap: () => _selectDate(context),
-                          child: AbsorbPointer(
-                            child: Row(
-                              children: [
-                                CustomTextField(
-                                  borderColor: AppColors.darkGrey
-                                      .withOpacity(.1),
-                                  controller: _dateController,
-                                  width: 117,
-                                  borderRadius: 8,
-                                  hintText: "09.03.2024",
-                                  fillColor: AppColors.whiteColor,
-                                  cursorColor: AppColors.primaryColor,
-                                  inputStyle: const TextStyle(
-                                      color: AppColors.blackColor),
-                                  hintStyle: const TextStyle(
-                                      color: AppColors.blackColor),
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Image.asset(
-                                  'assets/images/date_calender.png',
-                                  width: 25,
-                                  height: 25,
-                                )
-                              ],
+                        children: [
+                          Text(
+                            'From',
+                            style: TextStyle(
+                              fontSize: Responsive.isMobile(context)
+                                  ? 14
+                                  : Responsive.isTablet(context)
+                                      ? 16
+                                      : 20,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          'To',
-                          style: TextStyle(
-                            fontSize: Responsive.isMobile(context)
-                                ? 14
-                                : Responsive.isTablet(context)
-                                ? 16
-                                : 20,
-                            fontWeight: FontWeight.w700,
+                          const SizedBox(
+                            width: 10,
                           ),
-                        ),
-                        const SizedBox(
-                          width: 28,
-                        ),
-                        GestureDetector(
-                          onTap: () => _selectDateTo(context),
-                          child: AbsorbPointer(
-                            child: Row(
-                              children: [
-                                CustomTextField(
-                                  borderColor: AppColors.darkGrey
-                                      .withOpacity(.1),
-                                  controller: _dateControllerTo,
-                                  width: 117,
-                                  borderRadius: 8,
-                                  hintText: "09.03.2024",
-                                  fillColor: AppColors.whiteColor,
-                                  cursorColor: AppColors.primaryColor,
-                                  inputStyle: const TextStyle(
-                                      color: AppColors.blackColor),
-                                  hintStyle: const TextStyle(
-                                      color: AppColors.blackColor),
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Image.asset(
-                                  'assets/images/date_calender.png',
-                                  width: 25,
-                                  height: 25,
-                                )
-                              ],
+                          GestureDetector(
+                            onTap: () => _selectDate(context),
+                            child: AbsorbPointer(
+                              child: Row(
+                                children: [
+                                  CustomTextField(
+                                    borderColor:
+                                        AppColors.darkGrey.withOpacity(.1),
+                                    controller: _dateController,
+                                    width: 117,
+                                    borderRadius: 8,
+                                    hintText: "09.03.2024",
+                                    fillColor: AppColors.whiteColor,
+                                    cursorColor: AppColors.primaryColor,
+                                    inputStyle: const TextStyle(
+                                        color: AppColors.blackColor),
+                                    hintStyle: const TextStyle(
+                                        color: AppColors.blackColor),
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  Image.asset(
+                                    'assets/images/date_calender.png',
+                                    width: 25,
+                                    height: 25,
+                                  )
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Container(
-                          width: 24,
-                          height: 24,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: AppColors.primaryColor,
-                              width: 2,
-                            ),
-                            borderRadius: BorderRadius.circular(4.0),
+                          const SizedBox(
+                            width: 20,
                           ),
-                          child: Checkbox(
-                            value: isChecked,
-                            side: const BorderSide(
-                                color: AppColors.whiteColor),
-                            shape: RoundedRectangleBorder(
+                          Text(
+                            'To',
+                            style: TextStyle(
+                              fontSize: Responsive.isMobile(context)
+                                  ? 14
+                                  : Responsive.isTablet(context)
+                                      ? 16
+                                      : 20,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          GestureDetector(
+                            onTap: () => _selectDateTo(context),
+                            child: AbsorbPointer(
+                              child: Row(
+                                children: [
+                                  CustomTextField(
+                                    borderColor:
+                                        AppColors.darkGrey.withOpacity(.1),
+                                    controller: _dateControllerTo,
+                                    width: 117,
+                                    borderRadius: 8,
+                                    hintText: "09.03.2024",
+                                    fillColor: AppColors.whiteColor,
+                                    cursorColor: AppColors.primaryColor,
+                                    inputStyle: const TextStyle(
+                                        color: AppColors.blackColor),
+                                    hintStyle: const TextStyle(
+                                        color: AppColors.blackColor),
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  Image.asset(
+                                    'assets/images/date_calender.png',
+                                    width: 25,
+                                    height: 25,
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Container(
+                            width: 24,
+                            height: 24,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: AppColors.primaryColor,
+                                width: 2,
+                              ),
                               borderRadius: BorderRadius.circular(4.0),
                             ),
-                            onChanged: (bool? value) {
-                              setState(() {
-                                isChecked = value ?? false;
-                              });
-                            },
-                            activeColor: Colors.white,
-                            checkColor: AppColors.primaryColor,
+                            child: Checkbox(
+                              value: isChecked,
+                              side:
+                                  const BorderSide(color: AppColors.whiteColor),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4.0),
+                              ),
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  isChecked = value ?? false;
+                                });
+                              },
+                              activeColor: Colors.white,
+                              checkColor: AppColors.primaryColor,
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          'Lifetime',
-                          style: TextStyle(
-                            fontSize: Responsive.isMobile(context)
-                                ? 14
-                                : Responsive.isTablet(context)
-                                ? 16
-                                : 20,
-                            fontWeight: FontWeight.w500,
+                          const SizedBox(width: 10),
+                          Text(
+                            'Lifetime',
+                            style: TextStyle(
+                              fontSize: Responsive.isMobile(context)
+                                  ? 14
+                                  : Responsive.isTablet(context)
+                                      ? 16
+                                      : 20,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                        ],
+                      )
+                    : Column(
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                'From',
+                                style: TextStyle(
+                                  fontSize: Responsive.isMobile(context)
+                                      ? 14
+                                      : Responsive.isTablet(context)
+                                          ? 16
+                                          : 20,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              GestureDetector(
+                                onTap: () => _selectDate(context),
+                                child: AbsorbPointer(
+                                  child: Row(
+                                    children: [
+                                      CustomTextField(
+                                        borderColor:
+                                            AppColors.darkGrey.withOpacity(.1),
+                                        controller: _dateController,
+                                        width: 117,
+                                        borderRadius: 8,
+                                        hintText: "09.03.2024",
+                                        fillColor: AppColors.whiteColor,
+                                        cursorColor: AppColors.primaryColor,
+                                        inputStyle: const TextStyle(
+                                            color: AppColors.blackColor),
+                                        hintStyle: const TextStyle(
+                                            color: AppColors.blackColor),
+                                      ),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Image.asset(
+                                        'assets/images/date_calender.png',
+                                        width: 25,
+                                        height: 25,
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                'To',
+                                style: TextStyle(
+                                  fontSize: Responsive.isMobile(context)
+                                      ? 14
+                                      : Responsive.isTablet(context)
+                                          ? 16
+                                          : 20,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 28,
+                              ),
+                              GestureDetector(
+                                onTap: () => _selectDateTo(context),
+                                child: AbsorbPointer(
+                                  child: Row(
+                                    children: [
+                                      CustomTextField(
+                                        borderColor:
+                                            AppColors.darkGrey.withOpacity(.1),
+                                        controller: _dateControllerTo,
+                                        width: 117,
+                                        borderRadius: 8,
+                                        hintText: "09.03.2024",
+                                        fillColor: AppColors.whiteColor,
+                                        cursorColor: AppColors.primaryColor,
+                                        inputStyle: const TextStyle(
+                                            color: AppColors.blackColor),
+                                        hintStyle: const TextStyle(
+                                            color: AppColors.blackColor),
+                                      ),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Image.asset(
+                                        'assets/images/date_calender.png',
+                                        width: 25,
+                                        height: 25,
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Container(
+                                width: 24,
+                                height: 24,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: AppColors.primaryColor,
+                                    width: 2,
+                                  ),
+                                  borderRadius: BorderRadius.circular(4.0),
+                                ),
+                                child: Checkbox(
+                                  value: isChecked,
+                                  side: const BorderSide(
+                                      color: AppColors.whiteColor),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4.0),
+                                  ),
+                                  onChanged: (bool? value) {
+                                    setState(() {
+                                      isChecked = value ?? false;
+                                    });
+                                  },
+                                  activeColor: Colors.white,
+                                  checkColor: AppColors.primaryColor,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Text(
+                                'Lifetime',
+                                style: TextStyle(
+                                  fontSize: Responsive.isMobile(context)
+                                      ? 14
+                                      : Responsive.isTablet(context)
+                                          ? 16
+                                          : 20,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                 // Text displayed before the list
 
                 const SizedBox(height: 10),
@@ -849,8 +857,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                       fontSize: Responsive.isMobile(context)
                           ? 16
                           : Responsive.isTablet(context)
-                          ? 18
-                          : 24,
+                              ? 18
+                              : 24,
                       fontWeight: FontWeight.w700,
                     ),
                     children: [
@@ -860,8 +868,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                           fontSize: Responsive.isMobile(context)
                               ? 16
                               : Responsive.isTablet(context)
-                              ? 18
-                              : 24,
+                                  ? 18
+                                  : 24,
                           fontWeight: FontWeight.w700,
                           color: AppColors.red,
                         ),
@@ -884,14 +892,14 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                       ),
                       items: generalDiscounts
                           .map((String item) => DropdownMenuItem<String>(
-                        value: item,
-                        child: Text(
-                          item,
-                          style: const TextStyle(
-                            fontSize: 14,
-                          ),
-                        ),
-                      ))
+                                value: item,
+                                child: Text(
+                                  item,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ))
                           .toList(),
                       value: controller.selected_cuisne,
                       onChanged: (String? value) {
@@ -906,7 +914,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                             color: AppColors.darkGrey.withOpacity(.1),
                           ),
                           borderRadius:
-                          BorderRadius.circular(8), // Rounded corners
+                              BorderRadius.circular(8), // Rounded corners
                           color: AppColors.whiteColor,
                         ),
                         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -934,8 +942,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                     fontSize: Responsive.isMobile(context)
                         ? 16
                         : Responsive.isTablet(context)
-                        ? 18
-                        : 24,
+                            ? 18
+                            : 24,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -945,19 +953,19 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                   children: [
                     Wrap(
                       spacing: 10,
-                      children: List.generate(
-                          widget.discountModel.menu.length, (index) {
+                      children: List.generate(widget.discountModel.menu.length,
+                          (index) {
                         final menuItem = widget.discountModel.menu[index];
                         return Obx(
-                              () {
+                          () {
                             return LocationStarWidget(
                               timeTextStyle: TextStyle(
                                 fontWeight: FontWeight.w700,
                                 fontSize: Responsive.isMobile(context)
                                     ? 6
                                     : Responsive.isTablet(context)
-                                    ? 8
-                                    : 10,
+                                        ? 8
+                                        : 10,
                                 fontFamily: 'Nunito-Regular',
                               ),
                               persentTextStyle: TextStyle(
@@ -965,12 +973,12 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                 fontSize: Responsive.isMobile(context)
                                     ? 6
                                     : Responsive.isTablet(context)
-                                    ? 8
-                                    : 10,
+                                        ? 8
+                                        : 10,
                                 fontFamily: 'Nunito-Regular',
                               ),
                               timeText:
-                              '${menuItem.fromTime} to ${menuItem.toTime}',
+                                  '${menuItem.fromTime} to ${menuItem.toTime}',
                               persentText: '${menuItem.percentageValue}% off',
                               isSelected: selectedStarIndex.value == index,
                               onTap: () {
@@ -1056,8 +1064,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                   hint: const Text(
                                     "Select Percentage Value",
                                     style: TextStyle(
-                                        color:
-                                        Colors.grey), // Hint text style
+                                        color: Colors.grey), // Hint text style
                                   ),
                                   value: _selectedDiscount,
                                   onChanged: (int? newValue) {
@@ -1065,11 +1072,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                       _selectedDiscount = newValue;
                                     });
                                   },
-                                  items: [
-                                    10,
-                                    20,
-                                    30
-                                  ].map<DropdownMenuItem<int>>((int value) {
+                                  items: [10, 20, 30]
+                                      .map<DropdownMenuItem<int>>((int value) {
                                     return DropdownMenuItem<int>(
                                       value: value,
                                       child: Text('$value%'),
@@ -1088,7 +1092,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                     ),
                                     padding: const EdgeInsets.symmetric(
                                         horizontal:
-                                        16), // Padding inside button
+                                            16), // Padding inside button
                                     height: 40, // Button height
                                   ),
                                   menuItemStyleData: const MenuItemStyleData(
@@ -1098,8 +1102,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                     icon: Icon(
                                       Icons
                                           .keyboard_arrow_down_outlined, // Custom dropdown icon
-                                      color: AppColors
-                                          .primaryColor, // Icon color
+                                      color:
+                                          AppColors.primaryColor, // Icon color
                                     ),
                                     iconSize: 24, // Icon size
                                   ),
@@ -1252,8 +1256,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                             fontSize: Responsive.isMobile(context)
                                 ? 16
                                 : Responsive.isTablet(context)
-                                ? 18
-                                : 24,
+                                    ? 18
+                                    : 24,
                             fontWeight: FontWeight.w700,
                           ),
                           children: [
@@ -1263,8 +1267,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                 fontSize: Responsive.isMobile(context)
                                     ? 16
                                     : Responsive.isTablet(context)
-                                    ? 18
-                                    : 24,
+                                        ? 18
+                                        : 24,
                                 fontWeight: FontWeight.w700,
                                 color: AppColors.red,
                               ),
@@ -1275,992 +1279,973 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                       const SizedBox(height: 10),
                       Responsive.isDesktop(context)
                           ? Row(
-                        children: [
-                          Text(
-                            'From',
-                            style: TextStyle(
-                              fontSize: Responsive.isMobile(context)
-                                  ? 14
-                                  : Responsive.isTablet(context)
-                                  ? 16
-                                  : 20,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Row(
-                            crossAxisAlignment:
-                            CrossAxisAlignment.center,
-                            children: [
-                              // Hour Input
-                              Container(
-                                width: 44,
-                                height: 39,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: Colors.grey.shade400,
-                                      width: 1),
-                                  borderRadius:
-                                  BorderRadius.circular(6),
-                                ),
-                                child: Center(
-                                  child: TextField(     controller:
-                                  controller.fromTimeHourController,
-
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      contentPadding:
-                                      const EdgeInsets.only(
-                                          bottom: 10),
-                                      hintText: '02',
-                                      fillColor:
-                                      Colors.grey.withOpacity(.4),
-                                      filled: true,
-                                      hintStyle: const TextStyle(
-                                          fontSize: 18,
-                                          color: AppColors.whiteColor),
-                                    ),
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter
-                                          .digitsOnly,
-                                      LengthLimitingTextInputFormatter(
-                                          2), // Restrict to 2 digits
-                                    ],
-                                    onChanged: (value) {
-                                      if (value.isNotEmpty) {
-                                        int? intValue = int.tryParse(value);
-                                        if (intValue != null &&
-                                            (intValue < 1 || intValue > 24)) {
-                                          controller
-                                              .fromTimeHourController
-                                              .text =
-                                          ''; // Clear the field if the value is invalid
-                                        }
-                                      }
-                                    },
-                                    textAlign: TextAlign.center,
-                                    keyboardType: TextInputType.number,
-                                    style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                ),
-                              ),
-                              // Colon Separator
-                              const Padding(
-                                padding:
-                                EdgeInsets.symmetric(horizontal: 4),
-                                child: Text(
-                                  ':',
+                              children: [
+                                Text(
+                                  'From',
                                   style: TextStyle(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              ),
-                              // Minute Input
-                              Container(
-                                width: 44,
-                                height: 39,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: Colors.grey.shade400,
-                                      width: 1),
-                                  borderRadius:
-                                  BorderRadius.circular(6),
-                                ),
-                                child: Center(
-                                  child: TextField(
-                                    controller:
-                                    controller.fromTimeMintController,
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      contentPadding:
-                                      const EdgeInsets.only(
-                                          bottom: 10),
-                                      hintText: '25',
-                                      fillColor:
-                                      Colors.grey.withOpacity(.4),
-                                      filled: true,
-                                      hintStyle: const TextStyle(
-                                          fontSize: 18,
-                                          color: AppColors.whiteColor),
-                                    ),
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter
-                                          .digitsOnly,
-                                      LengthLimitingTextInputFormatter(
-                                          2), // Restrict to 2 digits
-                                    ],
-                                    onChanged: (value) {
-                                      if (value.isNotEmpty) {
-                                        int? intValue = int.tryParse(value);
-                                        if (intValue != null &&
-                                            (intValue < 1 || intValue > 60)) {
-                                          controller
-                                              .fromTimeMintController
-                                              .text =
-                                          ''; // Clear the field if the value is invalid
-                                        }
-                                      }
-                                    },
-                                    textAlign: TextAlign.center,
-                                    keyboardType: TextInputType.number,
-                                    style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w500),
+                                    fontSize: Responsive.isMobile(context)
+                                        ? 14
+                                        : Responsive.isTablet(context)
+                                            ? 16
+                                            : 20,
+                                    fontWeight: FontWeight.w700,
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 12),
-                              // AM/PM Toggle
-                              Container(
-                                height: 39,
-                                decoration: BoxDecoration(
-                                  borderRadius:
-                                  BorderRadius.circular(8),
-                                  border: Border.all(
-                                      color: Colors.grey.shade400,
-                                      width: 1),
-                                ),
-                                child: Row(
+                                const SizedBox(width: 10),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          isAmSelected = true;
-                                        });
-                                      },
-                                      child: Container(
-                                        width: 44,
-                                        height: 39,
-                                        decoration: BoxDecoration(
-                                          color: isAmSelected
-                                              ? AppColors.primaryColor
-                                              : Colors.transparent,
-                                          borderRadius:
-                                          const BorderRadius.only(
-                                            topLeft: Radius.circular(8),
-                                            bottomLeft:
-                                            Radius.circular(8),
+                                    // Hour Input
+                                    Container(
+                                      width: 44,
+                                      height: 39,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Colors.grey.shade400,
+                                            width: 1),
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      child: Center(
+                                        child: TextField(
+                                          controller:
+                                              controller.fromTimeHourController,
+                                          decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            contentPadding:
+                                                const EdgeInsets.only(
+                                                    bottom: 10),
+                                            hintText: '02',
+                                            fillColor:
+                                                Colors.grey.withOpacity(.4),
+                                            filled: true,
+                                            hintStyle: const TextStyle(
+                                                fontSize: 18,
+                                                color: AppColors.whiteColor),
                                           ),
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            'AM',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight:
-                                              FontWeight.w500,
-                                              color: isAmSelected
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                            ),
-                                          ),
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter
+                                                .digitsOnly,
+                                            LengthLimitingTextInputFormatter(
+                                                2), // Restrict to 2 digits
+                                          ],
+                                          onChanged: (value) {
+                                            if (value.isNotEmpty) {
+                                              int? intValue =
+                                                  int.tryParse(value);
+                                              if (intValue != null &&
+                                                  (intValue < 1 ||
+                                                      intValue > 24)) {
+                                                controller
+                                                        .fromTimeHourController
+                                                        .text =
+                                                    ''; // Clear the field if the value is invalid
+                                              }
+                                            }
+                                          },
+                                          textAlign: TextAlign.center,
+                                          keyboardType: TextInputType.number,
+                                          style: const TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w500),
                                         ),
                                       ),
                                     ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          isAmSelected = false;
-                                        });
-                                      },
-                                      child: Container(
-                                        height: 39,
-                                        width: 44,
-                                        decoration: BoxDecoration(
-                                          color: !isAmSelected
-                                              ? AppColors.primaryColor
-                                              : Colors.transparent,
-                                          borderRadius:
-                                          const BorderRadius.only(
-                                            topRight:
-                                            Radius.circular(8),
-                                            bottomRight:
-                                            Radius.circular(8),
+                                    // Colon Separator
+                                    const Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 4),
+                                      child: Text(
+                                        ':',
+                                        style: TextStyle(
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    ),
+                                    // Minute Input
+                                    Container(
+                                      width: 44,
+                                      height: 39,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Colors.grey.shade400,
+                                            width: 1),
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      child: Center(
+                                        child: TextField(
+                                          controller:
+                                              controller.fromTimeMintController,
+                                          decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            contentPadding:
+                                                const EdgeInsets.only(
+                                                    bottom: 10),
+                                            hintText: '25',
+                                            fillColor:
+                                                Colors.grey.withOpacity(.4),
+                                            filled: true,
+                                            hintStyle: const TextStyle(
+                                                fontSize: 18,
+                                                color: AppColors.whiteColor),
                                           ),
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            'PM',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight:
-                                              FontWeight.w500,
-                                              color: !isAmSelected
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                            ),
-                                          ),
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter
+                                                .digitsOnly,
+                                            LengthLimitingTextInputFormatter(
+                                                2), // Restrict to 2 digits
+                                          ],
+                                          onChanged: (value) {
+                                            if (value.isNotEmpty) {
+                                              int? intValue =
+                                                  int.tryParse(value);
+                                              if (intValue != null &&
+                                                  (intValue < 1 ||
+                                                      intValue > 60)) {
+                                                controller
+                                                        .fromTimeMintController
+                                                        .text =
+                                                    ''; // Clear the field if the value is invalid
+                                              }
+                                            }
+                                          },
+                                          textAlign: TextAlign.center,
+                                          keyboardType: TextInputType.number,
+                                          style: const TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w500),
                                         ),
                                       ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    // AM/PM Toggle
+                                    Container(
+                                      height: 39,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(
+                                            color: Colors.grey.shade400,
+                                            width: 1),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                isAmSelected = true;
+                                              });
+                                            },
+                                            child: Container(
+                                              width: 44,
+                                              height: 39,
+                                              decoration: BoxDecoration(
+                                                color: isAmSelected
+                                                    ? AppColors.primaryColor
+                                                    : Colors.transparent,
+                                                borderRadius:
+                                                    const BorderRadius.only(
+                                                  topLeft: Radius.circular(8),
+                                                  bottomLeft:
+                                                      Radius.circular(8),
+                                                ),
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  'AM',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: isAmSelected
+                                                        ? Colors.white
+                                                        : Colors.black,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                isAmSelected = false;
+                                              });
+                                            },
+                                            child: Container(
+                                              height: 39,
+                                              width: 44,
+                                              decoration: BoxDecoration(
+                                                color: !isAmSelected
+                                                    ? AppColors.primaryColor
+                                                    : Colors.transparent,
+                                                borderRadius:
+                                                    const BorderRadius.only(
+                                                  topRight: Radius.circular(8),
+                                                  bottomRight:
+                                                      Radius.circular(8),
+                                                ),
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  'PM',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: !isAmSelected
+                                                        ? Colors.white
+                                                        : Colors.black,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    const Icon(
+                                      Icons.watch_later_outlined,
+                                      size: 30,
+                                      color: AppColors.primaryColor,
                                     ),
                                   ],
                                 ),
-                              ),
-                              const SizedBox(width: 12),
-                              const Icon(
-                                Icons.watch_later_outlined,
-                                size: 30,
-                                color: AppColors.primaryColor,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(width: 20),
-                          Text(
-                            'To',
-                            style: TextStyle(
-                              fontSize: Responsive.isMobile(context)
-                                  ? 14
-                                  : Responsive.isTablet(context)
-                                  ? 16
-                                  : 20,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Row(
-                            crossAxisAlignment:
-                            CrossAxisAlignment.center,
-                            children: [
-                              // Hour Input
-                              Container(
-                                width: 44,
-                                height: 39,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: Colors.grey.shade400,
-                                      width: 1),
-                                  borderRadius:
-                                  BorderRadius.circular(6),
-                                ),
-                                child: Center(
-                                  child: TextField(
-                                    controller:
-                                    controller.toTimeHourController,
-                                    onChanged: (value) {
-                                      if (value.isNotEmpty) {
-                                        int? intValue = int.tryParse(value);
-                                        if (intValue != null &&
-                                            (intValue < 1 || intValue > 24)) {
-                                          controller
-                                              .toTimeHourController.text =
-                                          ''; // Clear the field if the value is invalid
-                                        }
-                                      }
-                                    },
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      contentPadding:
-                                      const EdgeInsets.only(
-                                          bottom: 10),
-                                      hintText: '03',
-                                      fillColor:
-                                      Colors.grey.withOpacity(.4),
-                                      filled: true,
-                                      hintStyle: const TextStyle(
-                                          fontSize: 18,
-                                          color: AppColors.whiteColor),
-                                    ),
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter
-                                          .digitsOnly,
-                                      LengthLimitingTextInputFormatter(
-                                          2), // Restrict to 2 digits
-                                    ],
-                                    textAlign: TextAlign.center,
-                                    keyboardType: TextInputType.number,
-                                    style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                ),
-                              ),
-                              // Colon Separator
-                              const Padding(
-                                padding:
-                                EdgeInsets.symmetric(horizontal: 4),
-                                child: Text(
-                                  ':',
+                                const SizedBox(width: 20),
+                                Text(
+                                  'To',
                                   style: TextStyle(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              ),
-                              // Minute Input
-                              Container(
-                                width: 44,
-                                height: 39,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: Colors.grey.shade400,
-                                      width: 1),
-                                  borderRadius:
-                                  BorderRadius.circular(6),
-                                ),
-                                child: Center(
-                                  child: TextField(
-                                    controller:
-                                    controller.toTimeMintController,
-                                    onChanged: (value) {
-                                      if (value.isNotEmpty) {
-                                        int? intValue = int.tryParse(value);
-                                        if (intValue != null &&
-                                            (intValue < 1 || intValue > 60)) {
-                                          controller
-                                              .toTimeMintController.text =
-                                          ''; // Clear the field if the value is invalid
-                                        }
-                                      }
-                                    },
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      contentPadding:
-                                      const EdgeInsets.only(
-                                          bottom: 10),
-                                      hintText: '56',
-                                      fillColor:
-                                      Colors.grey.withOpacity(.4),
-                                      filled: true,
-                                      hintStyle: const TextStyle(
-                                          fontSize: 18,
-                                          color: AppColors.whiteColor),
-                                    ),
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter
-                                          .digitsOnly,
-                                      LengthLimitingTextInputFormatter(
-                                          2), // Restrict to 2 digits
-                                    ],
-                                    textAlign: TextAlign.center,
-                                    keyboardType: TextInputType.number,
-                                    style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w500),
+                                    fontSize: Responsive.isMobile(context)
+                                        ? 14
+                                        : Responsive.isTablet(context)
+                                            ? 16
+                                            : 20,
+                                    fontWeight: FontWeight.w700,
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 12),
-                              // AM/PM Toggle
-                              Container(
-                                height: 39,
-                                decoration: BoxDecoration(
-                                  borderRadius:
-                                  BorderRadius.circular(8),
-                                  border: Border.all(
-                                      color: Colors.grey.shade400,
-                                      width: 1),
-                                ),
-                                child: Row(
+                                const SizedBox(width: 10),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          isAmSelected2 = true;
-                                        });
-                                      },
-                                      child: Container(
-                                        width: 44,
-                                        height: 39,
-                                        decoration: BoxDecoration(
-                                          color: isAmSelected2
-                                              ? AppColors.primaryColor
-                                              : Colors.transparent,
-                                          borderRadius:
-                                          const BorderRadius.only(
-                                            topLeft: Radius.circular(8),
-                                            bottomLeft:
-                                            Radius.circular(8),
+                                    // Hour Input
+                                    Container(
+                                      width: 44,
+                                      height: 39,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Colors.grey.shade400,
+                                            width: 1),
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      child: Center(
+                                        child: TextField(
+                                          controller:
+                                              controller.toTimeHourController,
+                                          onChanged: (value) {
+                                            if (value.isNotEmpty) {
+                                              int? intValue =
+                                                  int.tryParse(value);
+                                              if (intValue != null &&
+                                                  (intValue < 1 ||
+                                                      intValue > 24)) {
+                                                controller.toTimeHourController
+                                                        .text =
+                                                    ''; // Clear the field if the value is invalid
+                                              }
+                                            }
+                                          },
+                                          decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            contentPadding:
+                                                const EdgeInsets.only(
+                                                    bottom: 10),
+                                            hintText: '03',
+                                            fillColor:
+                                                Colors.grey.withOpacity(.4),
+                                            filled: true,
+                                            hintStyle: const TextStyle(
+                                                fontSize: 18,
+                                                color: AppColors.whiteColor),
                                           ),
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            'AM',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight:
-                                              FontWeight.w500,
-                                              color: isAmSelected2
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                            ),
-                                          ),
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter
+                                                .digitsOnly,
+                                            LengthLimitingTextInputFormatter(
+                                                2), // Restrict to 2 digits
+                                          ],
+                                          textAlign: TextAlign.center,
+                                          keyboardType: TextInputType.number,
+                                          style: const TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w500),
                                         ),
                                       ),
                                     ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          isAmSelected2 = false;
-                                        });
-                                      },
-                                      child: Container(
-                                        height: 39,
-                                        width: 44,
-                                        decoration: BoxDecoration(
-                                          color: !isAmSelected2
-                                              ? AppColors.primaryColor
-                                              : Colors.transparent,
-                                          borderRadius:
-                                          const BorderRadius.only(
-                                            topRight:
-                                            Radius.circular(8),
-                                            bottomRight:
-                                            Radius.circular(8),
+                                    // Colon Separator
+                                    const Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 4),
+                                      child: Text(
+                                        ':',
+                                        style: TextStyle(
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    ),
+                                    // Minute Input
+                                    Container(
+                                      width: 44,
+                                      height: 39,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Colors.grey.shade400,
+                                            width: 1),
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      child: Center(
+                                        child: TextField(
+                                          controller:
+                                              controller.toTimeMintController,
+                                          onChanged: (value) {
+                                            if (value.isNotEmpty) {
+                                              int? intValue =
+                                                  int.tryParse(value);
+                                              if (intValue != null &&
+                                                  (intValue < 1 ||
+                                                      intValue > 60)) {
+                                                controller.toTimeMintController
+                                                        .text =
+                                                    ''; // Clear the field if the value is invalid
+                                              }
+                                            }
+                                          },
+                                          decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            contentPadding:
+                                                const EdgeInsets.only(
+                                                    bottom: 10),
+                                            hintText: '56',
+                                            fillColor:
+                                                Colors.grey.withOpacity(.4),
+                                            filled: true,
+                                            hintStyle: const TextStyle(
+                                                fontSize: 18,
+                                                color: AppColors.whiteColor),
                                           ),
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            'PM',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight:
-                                              FontWeight.w500,
-                                              color: !isAmSelected2
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                            ),
-                                          ),
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter
+                                                .digitsOnly,
+                                            LengthLimitingTextInputFormatter(
+                                                2), // Restrict to 2 digits
+                                          ],
+                                          textAlign: TextAlign.center,
+                                          keyboardType: TextInputType.number,
+                                          style: const TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w500),
                                         ),
                                       ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    // AM/PM Toggle
+                                    Container(
+                                      height: 39,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(
+                                            color: Colors.grey.shade400,
+                                            width: 1),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                isAmSelected2 = true;
+                                              });
+                                            },
+                                            child: Container(
+                                              width: 44,
+                                              height: 39,
+                                              decoration: BoxDecoration(
+                                                color: isAmSelected2
+                                                    ? AppColors.primaryColor
+                                                    : Colors.transparent,
+                                                borderRadius:
+                                                    const BorderRadius.only(
+                                                  topLeft: Radius.circular(8),
+                                                  bottomLeft:
+                                                      Radius.circular(8),
+                                                ),
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  'AM',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: isAmSelected2
+                                                        ? Colors.white
+                                                        : Colors.black,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                isAmSelected2 = false;
+                                              });
+                                            },
+                                            child: Container(
+                                              height: 39,
+                                              width: 44,
+                                              decoration: BoxDecoration(
+                                                color: !isAmSelected2
+                                                    ? AppColors.primaryColor
+                                                    : Colors.transparent,
+                                                borderRadius:
+                                                    const BorderRadius.only(
+                                                  topRight: Radius.circular(8),
+                                                  bottomRight:
+                                                      Radius.circular(8),
+                                                ),
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  'PM',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: !isAmSelected2
+                                                        ? Colors.white
+                                                        : Colors.black,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    const Icon(
+                                      Icons.watch_later_outlined,
+                                      size: 30,
+                                      color: AppColors.primaryColor,
                                     ),
                                   ],
                                 ),
-                              ),
-                              const SizedBox(width: 12),
-                              const Icon(
-                                Icons.watch_later_outlined,
-                                size: 30,
-                                color: AppColors.primaryColor,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Container(
-                            width: 24,
-                            height: 24,
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: AppColors.primaryColor,
-                                width: 2,
-                              ),
-                              borderRadius: BorderRadius.circular(4.0),
-                            ),
-                            child: Checkbox(
-                              value: isAllDay,
-                              side: const BorderSide(
-                                  color: AppColors.whiteColor),
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                BorderRadius.circular(4.0),
-                              ),
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  isAllDay = value ?? false;
-                                });
-                              },
-                              activeColor: Colors.white,
-                              checkColor: AppColors.primaryColor,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                            'All Day',
-                            style: TextStyle(
-                              fontSize: Responsive.isMobile(context)
-                                  ? 14
-                                  : Responsive.isTablet(context)
-                                  ? 16
-                                  : 20,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      )
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Container(
+                                  width: 24,
+                                  height: 24,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: AppColors.primaryColor,
+                                      width: 2,
+                                    ),
+                                    borderRadius: BorderRadius.circular(4.0),
+                                  ),
+                                  child: Checkbox(
+                                    value: isAllDay,
+                                    side: const BorderSide(
+                                        color: AppColors.whiteColor),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(4.0),
+                                    ),
+                                    onChanged: (bool? value) {
+                                      setState(() {
+                                        isAllDay = value ?? false;
+                                      });
+                                    },
+                                    activeColor: Colors.white,
+                                    checkColor: AppColors.primaryColor,
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Text(
+                                  'All Day',
+                                  style: TextStyle(
+                                    fontSize: Responsive.isMobile(context)
+                                        ? 14
+                                        : Responsive.isTablet(context)
+                                            ? 16
+                                            : 20,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            )
                           : Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                'From',
-                                style: TextStyle(
-                                  fontSize: Responsive.isMobile(context)
-                                      ? 14
-                                      : Responsive.isTablet(context)
-                                      ? 16
-                                      : 20,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Row(
-                                crossAxisAlignment:
-                                CrossAxisAlignment.center,
-                                children: [
-                                  // Hour Input
-                                  Container(
-                                    width: 44,
-                                    height: 39,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.grey.shade400,
-                                          width: 1),
-                                      borderRadius:
-                                      BorderRadius.circular(6),
-                                    ),
-                                    child: Center(
-                                      child: TextField(
-                                        decoration: InputDecoration(
-                                          border: InputBorder.none,
-                                          contentPadding:
-                                          const EdgeInsets.only(
-                                              bottom: 10),
-                                          hintText: '02',
-                                          fillColor: Colors.grey
-                                              .withOpacity(.4),
-                                          filled: true,
-                                          hintStyle: const TextStyle(
-                                              fontSize: 18,
-                                              color:
-                                              AppColors.whiteColor),
-                                        ),
-                                        inputFormatters: [
-                                          FilteringTextInputFormatter
-                                              .digitsOnly,
-                                          LengthLimitingTextInputFormatter(
-                                              2), // Restrict to 2 digits
-                                        ],
-                                        textAlign: TextAlign.center,
-                                        keyboardType:
-                                        TextInputType.number,
-                                        style: const TextStyle(
-                                            fontSize: 18,
-                                            fontWeight:
-                                            FontWeight.w500),
-                                      ),
-                                    ),
-                                  ),
-                                  // Colon Separator
-                                  const Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 4),
-                                    child: Text(
-                                      ':',
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      'From',
                                       style: TextStyle(
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
-                                  // Minute Input
-                                  Container(
-                                    width: 44,
-                                    height: 39,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.grey.shade400,
-                                          width: 1),
-                                      borderRadius:
-                                      BorderRadius.circular(6),
-                                    ),
-                                    child: Center(
-                                      child: TextField(
-                                        decoration: InputDecoration(
-                                          border: InputBorder.none,
-                                          contentPadding:
-                                          const EdgeInsets.only(
-                                              bottom: 10),
-                                          hintText: '25',
-                                          fillColor: Colors.grey
-                                              .withOpacity(.4),
-                                          filled: true,
-                                          hintStyle: const TextStyle(
-                                              fontSize: 18,
-                                              color:
-                                              AppColors.whiteColor),
-                                        ),
-                                        inputFormatters: [
-                                          FilteringTextInputFormatter
-                                              .digitsOnly,
-                                          LengthLimitingTextInputFormatter(
-                                              2), // Restrict to 2 digits
-                                        ],
-                                        textAlign: TextAlign.center,
-                                        keyboardType:
-                                        TextInputType.number,
-                                        style: const TextStyle(
-                                            fontSize: 18,
-                                            fontWeight:
-                                            FontWeight.w500),
+                                        fontSize: Responsive.isMobile(context)
+                                            ? 14
+                                            : Responsive.isTablet(context)
+                                                ? 16
+                                                : 20,
+                                        fontWeight: FontWeight.w700,
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  // AM/PM Toggle
-                                  Container(
-                                    height: 39,
-                                    decoration: BoxDecoration(
-                                      borderRadius:
-                                      BorderRadius.circular(8),
-                                      border: Border.all(
-                                          color: Colors.grey.shade400,
-                                          width: 1),
-                                    ),
-                                    child: Row(
+                                    const SizedBox(width: 10),
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              isAmSelected = true;
-                                            });
-                                          },
-                                          child: Container(
-                                            width: 44,
-                                            height: 39,
-                                            decoration: BoxDecoration(
-                                              color: isAmSelected
-                                                  ? AppColors
-                                                  .primaryColor
-                                                  : Colors.transparent,
-                                              borderRadius:
-                                              const BorderRadius
-                                                  .only(
-                                                topLeft:
-                                                Radius.circular(8),
-                                                bottomLeft:
-                                                Radius.circular(8),
+                                        // Hour Input
+                                        Container(
+                                          width: 44,
+                                          height: 39,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: Colors.grey.shade400,
+                                                width: 1),
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                          ),
+                                          child: Center(
+                                            child: TextField(
+                                              decoration: InputDecoration(
+                                                border: InputBorder.none,
+                                                contentPadding:
+                                                    const EdgeInsets.only(
+                                                        bottom: 10),
+                                                hintText: '02',
+                                                fillColor:
+                                                    Colors.grey.withOpacity(.4),
+                                                filled: true,
+                                                hintStyle: const TextStyle(
+                                                    fontSize: 18,
+                                                    color:
+                                                        AppColors.whiteColor),
                                               ),
-                                            ),
-                                            child: Center(
-                                              child: Text(
-                                                'AM',
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight:
-                                                  FontWeight.w500,
-                                                  color: isAmSelected
-                                                      ? Colors.white
-                                                      : Colors.black,
-                                                ),
-                                              ),
+                                              inputFormatters: [
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly,
+                                                LengthLimitingTextInputFormatter(
+                                                    2), // Restrict to 2 digits
+                                              ],
+                                              textAlign: TextAlign.center,
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              style: const TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w500),
                                             ),
                                           ),
                                         ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              isAmSelected = false;
-                                            });
-                                          },
-                                          child: Container(
-                                            height: 39,
-                                            width: 44,
-                                            decoration: BoxDecoration(
-                                              color: !isAmSelected
-                                                  ? AppColors
-                                                  .primaryColor
-                                                  : Colors.transparent,
-                                              borderRadius:
-                                              const BorderRadius
-                                                  .only(
-                                                topRight:
-                                                Radius.circular(8),
-                                                bottomRight:
-                                                Radius.circular(8),
+                                        // Colon Separator
+                                        const Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 4),
+                                          child: Text(
+                                            ':',
+                                            style: TextStyle(
+                                                fontSize: 22,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                        ),
+                                        // Minute Input
+                                        Container(
+                                          width: 44,
+                                          height: 39,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: Colors.grey.shade400,
+                                                width: 1),
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                          ),
+                                          child: Center(
+                                            child: TextField(
+                                              decoration: InputDecoration(
+                                                border: InputBorder.none,
+                                                contentPadding:
+                                                    const EdgeInsets.only(
+                                                        bottom: 10),
+                                                hintText: '25',
+                                                fillColor:
+                                                    Colors.grey.withOpacity(.4),
+                                                filled: true,
+                                                hintStyle: const TextStyle(
+                                                    fontSize: 18,
+                                                    color:
+                                                        AppColors.whiteColor),
                                               ),
-                                            ),
-                                            child: Center(
-                                              child: Text(
-                                                'PM',
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight:
-                                                  FontWeight.w500,
-                                                  color: !isAmSelected
-                                                      ? Colors.white
-                                                      : Colors.black,
-                                                ),
-                                              ),
+                                              inputFormatters: [
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly,
+                                                LengthLimitingTextInputFormatter(
+                                                    2), // Restrict to 2 digits
+                                              ],
+                                              textAlign: TextAlign.center,
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              style: const TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w500),
                                             ),
                                           ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        // AM/PM Toggle
+                                        Container(
+                                          height: 39,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            border: Border.all(
+                                                color: Colors.grey.shade400,
+                                                width: 1),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    isAmSelected = true;
+                                                  });
+                                                },
+                                                child: Container(
+                                                  width: 44,
+                                                  height: 39,
+                                                  decoration: BoxDecoration(
+                                                    color: isAmSelected
+                                                        ? AppColors.primaryColor
+                                                        : Colors.transparent,
+                                                    borderRadius:
+                                                        const BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(8),
+                                                      bottomLeft:
+                                                          Radius.circular(8),
+                                                    ),
+                                                  ),
+                                                  child: Center(
+                                                    child: Text(
+                                                      'AM',
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: isAmSelected
+                                                            ? Colors.white
+                                                            : Colors.black,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    isAmSelected = false;
+                                                  });
+                                                },
+                                                child: Container(
+                                                  height: 39,
+                                                  width: 44,
+                                                  decoration: BoxDecoration(
+                                                    color: !isAmSelected
+                                                        ? AppColors.primaryColor
+                                                        : Colors.transparent,
+                                                    borderRadius:
+                                                        const BorderRadius.only(
+                                                      topRight:
+                                                          Radius.circular(8),
+                                                      bottomRight:
+                                                          Radius.circular(8),
+                                                    ),
+                                                  ),
+                                                  child: Center(
+                                                    child: Text(
+                                                      'PM',
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: !isAmSelected
+                                                            ? Colors.white
+                                                            : Colors.black,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        const Icon(
+                                          Icons.watch_later_outlined,
+                                          size: 30,
+                                          color: AppColors.primaryColor,
                                         ),
                                       ],
                                     ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  const Icon(
-                                    Icons.watch_later_outlined,
-                                    size: 30,
-                                    color: AppColors.primaryColor,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          Row(
-                            children: [
-                              Text(
-                                'To',
-                                style: TextStyle(
-                                  fontSize: Responsive.isMobile(context)
-                                      ? 14
-                                      : Responsive.isTablet(context)
-                                      ? 16
-                                      : 20,
-                                  fontWeight: FontWeight.w700,
+                                  ],
                                 ),
-                              ),
-                              const SizedBox(width: 28),
-                              Row(
-                                crossAxisAlignment:
-                                CrossAxisAlignment.center,
-                                children: [
-                                  // Hour Input
-                                  Container(
-                                    width: 44,
-                                    height: 39,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.grey.shade400,
-                                          width: 1),
-                                      borderRadius:
-                                      BorderRadius.circular(6),
-                                    ),
-                                    child: Center(
-                                      child: TextField(
-                                        decoration: InputDecoration(
-                                          border: InputBorder.none,
-                                          contentPadding:
-                                          const EdgeInsets.only(
-                                              bottom: 10),
-                                          hintText: '03',
-                                          fillColor: Colors.grey
-                                              .withOpacity(.4),
-                                          filled: true,
-                                          hintStyle: const TextStyle(
-                                              fontSize: 18,
-                                              color:
-                                              AppColors.whiteColor),
-                                        ),
-                                        inputFormatters: [
-                                          FilteringTextInputFormatter
-                                              .digitsOnly,
-                                          LengthLimitingTextInputFormatter(
-                                              2), // Restrict to 2 digits
-                                        ],
-                                        textAlign: TextAlign.center,
-                                        keyboardType:
-                                        TextInputType.number,
-                                        style: const TextStyle(
-                                            fontSize: 18,
-                                            fontWeight:
-                                            FontWeight.w500),
-                                      ),
-                                    ),
-                                  ),
-                                  // Colon Separator
-                                  const Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 4),
-                                    child: Text(
-                                      ':',
+                                const SizedBox(height: 10),
+                                Row(
+                                  children: [
+                                    Text(
+                                      'To',
                                       style: TextStyle(
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
-                                  // Minute Input
-                                  Container(
-                                    width: 44,
-                                    height: 39,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.grey.shade400,
-                                          width: 1),
-                                      borderRadius:
-                                      BorderRadius.circular(6),
-                                    ),
-                                    child: Center(
-                                      child: TextField(
-                                        decoration: InputDecoration(
-                                          border: InputBorder.none,
-                                          contentPadding:
-                                          const EdgeInsets.only(
-                                              bottom: 10),
-                                          hintText: '56',
-                                          fillColor: Colors.grey
-                                              .withOpacity(.4),
-                                          filled: true,
-                                          hintStyle: const TextStyle(
-                                              fontSize: 18,
-                                              color:
-                                              AppColors.whiteColor),
-                                        ),
-                                        inputFormatters: [
-                                          FilteringTextInputFormatter
-                                              .digitsOnly,
-                                          LengthLimitingTextInputFormatter(
-                                              2), // Restrict to 2 digits
-                                        ],
-                                        textAlign: TextAlign.center,
-                                        keyboardType:
-                                        TextInputType.number,
-                                        style: const TextStyle(
-                                            fontSize: 18,
-                                            fontWeight:
-                                            FontWeight.w500),
+                                        fontSize: Responsive.isMobile(context)
+                                            ? 14
+                                            : Responsive.isTablet(context)
+                                                ? 16
+                                                : 20,
+                                        fontWeight: FontWeight.w700,
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  // AM/PM Toggle
-                                  Container(
-                                    height: 39,
-                                    decoration: BoxDecoration(
-                                      borderRadius:
-                                      BorderRadius.circular(8),
-                                      border: Border.all(
-                                          color: Colors.grey.shade400,
-                                          width: 1),
-                                    ),
-                                    child: Row(
+                                    const SizedBox(width: 28),
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              isAmSelected2 = true;
-                                            });
-                                          },
-                                          child: Container(
-                                            width: 44,
-                                            height: 39,
-                                            decoration: BoxDecoration(
-                                              color: isAmSelected2
-                                                  ? AppColors
-                                                  .primaryColor
-                                                  : Colors.transparent,
-                                              borderRadius:
-                                              const BorderRadius
-                                                  .only(
-                                                topLeft:
-                                                Radius.circular(8),
-                                                bottomLeft:
-                                                Radius.circular(8),
+                                        // Hour Input
+                                        Container(
+                                          width: 44,
+                                          height: 39,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: Colors.grey.shade400,
+                                                width: 1),
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                          ),
+                                          child: Center(
+                                            child: TextField(
+                                              decoration: InputDecoration(
+                                                border: InputBorder.none,
+                                                contentPadding:
+                                                    const EdgeInsets.only(
+                                                        bottom: 10),
+                                                hintText: '03',
+                                                fillColor:
+                                                    Colors.grey.withOpacity(.4),
+                                                filled: true,
+                                                hintStyle: const TextStyle(
+                                                    fontSize: 18,
+                                                    color:
+                                                        AppColors.whiteColor),
                                               ),
-                                            ),
-                                            child: Center(
-                                              child: Text(
-                                                'AM',
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight:
-                                                  FontWeight.w500,
-                                                  color: isAmSelected2
-                                                      ? Colors.white
-                                                      : Colors.black,
-                                                ),
-                                              ),
+                                              inputFormatters: [
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly,
+                                                LengthLimitingTextInputFormatter(
+                                                    2), // Restrict to 2 digits
+                                              ],
+                                              textAlign: TextAlign.center,
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              style: const TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w500),
                                             ),
                                           ),
                                         ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              isAmSelected2 = false;
-                                            });
-                                          },
-                                          child: Container(
-                                            height: 39,
-                                            width: 44,
-                                            decoration: BoxDecoration(
-                                              color: !isAmSelected2
-                                                  ? AppColors
-                                                  .primaryColor
-                                                  : Colors.transparent,
-                                              borderRadius:
-                                              const BorderRadius
-                                                  .only(
-                                                topRight:
-                                                Radius.circular(8),
-                                                bottomRight:
-                                                Radius.circular(8),
+                                        // Colon Separator
+                                        const Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 4),
+                                          child: Text(
+                                            ':',
+                                            style: TextStyle(
+                                                fontSize: 22,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                        ),
+                                        // Minute Input
+                                        Container(
+                                          width: 44,
+                                          height: 39,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: Colors.grey.shade400,
+                                                width: 1),
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                          ),
+                                          child: Center(
+                                            child: TextField(
+                                              decoration: InputDecoration(
+                                                border: InputBorder.none,
+                                                contentPadding:
+                                                    const EdgeInsets.only(
+                                                        bottom: 10),
+                                                hintText: '56',
+                                                fillColor:
+                                                    Colors.grey.withOpacity(.4),
+                                                filled: true,
+                                                hintStyle: const TextStyle(
+                                                    fontSize: 18,
+                                                    color:
+                                                        AppColors.whiteColor),
                                               ),
-                                            ),
-                                            child: Center(
-                                              child: Text(
-                                                'PM',
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight:
-                                                  FontWeight.w500,
-                                                  color: !isAmSelected2
-                                                      ? Colors.white
-                                                      : Colors.black,
-                                                ),
-                                              ),
+                                              inputFormatters: [
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly,
+                                                LengthLimitingTextInputFormatter(
+                                                    2), // Restrict to 2 digits
+                                              ],
+                                              textAlign: TextAlign.center,
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              style: const TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w500),
                                             ),
                                           ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        // AM/PM Toggle
+                                        Container(
+                                          height: 39,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            border: Border.all(
+                                                color: Colors.grey.shade400,
+                                                width: 1),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    isAmSelected2 = true;
+                                                  });
+                                                },
+                                                child: Container(
+                                                  width: 44,
+                                                  height: 39,
+                                                  decoration: BoxDecoration(
+                                                    color: isAmSelected2
+                                                        ? AppColors.primaryColor
+                                                        : Colors.transparent,
+                                                    borderRadius:
+                                                        const BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(8),
+                                                      bottomLeft:
+                                                          Radius.circular(8),
+                                                    ),
+                                                  ),
+                                                  child: Center(
+                                                    child: Text(
+                                                      'AM',
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: isAmSelected2
+                                                            ? Colors.white
+                                                            : Colors.black,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    isAmSelected2 = false;
+                                                  });
+                                                },
+                                                child: Container(
+                                                  height: 39,
+                                                  width: 44,
+                                                  decoration: BoxDecoration(
+                                                    color: !isAmSelected2
+                                                        ? AppColors.primaryColor
+                                                        : Colors.transparent,
+                                                    borderRadius:
+                                                        const BorderRadius.only(
+                                                      topRight:
+                                                          Radius.circular(8),
+                                                      bottomRight:
+                                                          Radius.circular(8),
+                                                    ),
+                                                  ),
+                                                  child: Center(
+                                                    child: Text(
+                                                      'PM',
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: !isAmSelected2
+                                                            ? Colors.white
+                                                            : Colors.black,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        const Icon(
+                                          Icons.watch_later_outlined,
+                                          size: 30,
+                                          color: AppColors.primaryColor,
                                         ),
                                       ],
                                     ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  const Icon(
-                                    Icons.watch_later_outlined,
-                                    size: 30,
-                                    color: AppColors.primaryColor,
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(width: 10),
-                              Container(
-                                width: 24,
-                                height: 24,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: AppColors.primaryColor,
-                                    width: 2,
-                                  ),
-                                  borderRadius:
-                                  BorderRadius.circular(4.0),
+                                    const SizedBox(width: 10),
+                                    Container(
+                                      width: 24,
+                                      height: 24,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: AppColors.primaryColor,
+                                          width: 2,
+                                        ),
+                                        borderRadius:
+                                            BorderRadius.circular(4.0),
+                                      ),
+                                      child: Checkbox(
+                                        value: isAllDay,
+                                        side: const BorderSide(
+                                            color: AppColors.whiteColor),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(4.0),
+                                        ),
+                                        onChanged: (bool? value) {
+                                          setState(() {
+                                            isAllDay = value ?? false;
+                                          });
+                                        },
+                                        activeColor: Colors.white,
+                                        checkColor: AppColors.primaryColor,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      'All Day',
+                                      style: TextStyle(
+                                        fontSize: Responsive.isMobile(context)
+                                            ? 14
+                                            : Responsive.isTablet(context)
+                                                ? 16
+                                                : 20,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                child: Checkbox(
-                                  value: isAllDay,
-                                  side: const BorderSide(
-                                      color: AppColors.whiteColor),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                    BorderRadius.circular(4.0),
-                                  ),
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      isAllDay = value ?? false;
-                                    });
-                                  },
-                                  activeColor: Colors.white,
-                                  checkColor: AppColors.primaryColor,
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Text(
-                                'All Day',
-                                style: TextStyle(
-                                  fontSize: Responsive.isMobile(context)
-                                      ? 14
-                                      : Responsive.isTablet(context)
-                                      ? 16
-                                      : 20,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                              ],
+                            ),
                     ],
                   ),
                 const SizedBox(height: 10),
@@ -2273,8 +2258,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                       fontSize: Responsive.isMobile(context)
                           ? 16
                           : Responsive.isTablet(context)
-                          ? 18
-                          : 24,
+                              ? 18
+                              : 24,
                       fontWeight: FontWeight.w700,
                     ),
                     children: [
@@ -2284,8 +2269,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                           fontSize: Responsive.isMobile(context)
                               ? 16
                               : Responsive.isTablet(context)
-                              ? 18
-                              : 24,
+                                  ? 18
+                                  : 24,
                           fontWeight: FontWeight.w700,
                           color: AppColors.red,
                         ),
@@ -2295,285 +2280,282 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                 ),
                 const SizedBox(height: 10),
                 Obx(
-                      () => selectedStarIndex.value != null
+                  () => selectedStarIndex.value != null
                       ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: widget.discountModel
-                                  .menu[selectedStarIndex.value!].items
-                                  .map<Widget>((item) {
-                                return Padding(
-                                  padding:
-                                  const EdgeInsets.only(right: 10),
-                                  child: StarDetailsWidget(
-                                    imageBytes: (item.itemMemoryImages
-                                        .isNotEmpty)
-                                        ? item.itemMemoryImages[0]
-                                        : null,
-                                    imageUrl: item.itemImages[0].value,
-                                    cuisine: item.cuisineName,
-                                    menu: item.cuisineMenu,
-                                    offer: item.offer,
-                                    onRemove: () {
-                                      setState(() {
-                                        widget.discountModel.menu[selectedStarIndex.value!].items.remove(item);
-                                      });
-                                    },
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                          Column(
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    _isColumn2Visible =
-                                    !_isColumn2Visible;
-                                  });
-                                },
-                                child: Container(
-                                  width: 24,
-                                  height: 24,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: Colors.blue, width: 2),
-                                    borderRadius:
-                                    BorderRadius.circular(4.0),
-                                  ),
-                                  child: const Center(
-                                    child: Icon(Icons.add,
-                                        color: Colors.blue, size: 16),
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    children: widget.discountModel
+                                        .menu[selectedStarIndex.value!].items
+                                        .map<Widget>((item) {
+                                      return Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 10),
+                                        child: StarDetailsWidget(
+                                          imageBytes:
+                                              (item.itemMemoryImages.isNotEmpty)
+                                                  ? item.itemMemoryImages[0]
+                                                  : null,
+                                          imageUrl: item.itemImages[0].value,
+                                          cuisine: item.cuisineName,
+                                          menu: item.cuisineMenu,
+                                          offer: item.offer,
+                                          onRemove: () {
+                                            setState(() {
+                                              widget
+                                                  .discountModel
+                                                  .menu[
+                                                      selectedStarIndex.value!]
+                                                  .items
+                                                  .remove(item);
+                                            });
+                                          },
+                                        ),
+                                      );
+                                    }).toList(),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 10),
-                              const Text(
-                                'Add meal',
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Add Meal Button
-                    ],
-                  )
-                      : controller.items.isNotEmpty
-                      ? Container(
-                    height: 238,
-                    child: Obx(
-                          () => ListView.builder(
-                        itemCount: controller.items.length +
-                            1, // Add 1 for the "Add Meal" button
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          if (index < controller.items.length) {
-                            final item = controller.items[index];
-                            return Container(
-                              width: 211,
-                              height: 238,
-                              margin: const EdgeInsets.only(
-                                  right:
-                                  8), // Spacing between items
-                              decoration: BoxDecoration(
-                                borderRadius:
-                                BorderRadius.circular(10),
-                                color: AppColors.whiteColor,
-                                border: Border.all(
-                                  color: AppColors.darkGrey
-                                      .withOpacity(.1),
-                                ),
-                              ),
-                              child: Stack(
-                                children: [
-                                  // Image at the top
-                                  Container(
-                                    width: 211,
-                                    height: 150,
-                                    child: ClipRRect(
-                                      borderRadius:
-                                      BorderRadius.circular(
-                                          10.0),
-                                      child: item.itemMemoryImages
-                                          .first.isNotEmpty
-                                          ? Image.memory(
-                                        item.itemMemoryImages
-                                            .first,
-                                        width:
-                                        double.infinity,
-                                        height:
-                                        double.infinity,
-                                        fit: BoxFit.cover,
-                                      )
-                                          : const SizedBox
-                                          .shrink(), // Placeholder if no image
-                                    ),
-                                  ),
-                                  // Meal Info
-                                  Positioned(
-                                    bottom: 20,
-                                    left: 8,
-                                    right: 8,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: [
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        Text(
-                                          'Cuisine: ${item.cuisineName}',
-                                          style: const TextStyle(
-                                              fontSize: 14,
-                                              color: AppColors
-                                                  .textColor),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          'Menu: ${item.cuisineMenu}',
-                                          style: const TextStyle(
-                                            color:
-                                            AppColors.textColor,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          'Offer: ${item.offer}',
-                                          style: const TextStyle(
-                                            color:
-                                            AppColors.textColor,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  // Close Icon
-                                  Positioned(
-                                    top: 8,
-                                    right: 8,
-                                    child: GestureDetector(
+                                Column(
+                                  children: [
+                                    InkWell(
                                       onTap: () {
-                                        controller.items.removeAt(
-                                            index); // Remove item
+                                        setState(() {
+                                          _isColumn2Visible =
+                                              !_isColumn2Visible;
+                                        });
                                       },
                                       child: Container(
-                                        width: 20,
-                                        height: 20,
-                                        decoration:
-                                        const BoxDecoration(
-                                          color: AppColors.darkGrey,
-                                          shape: BoxShape.circle,
+                                        width: 24,
+                                        height: 24,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: Colors.blue, width: 2),
+                                          borderRadius:
+                                              BorderRadius.circular(4.0),
                                         ),
-                                        child: const Icon(
-                                          Icons.close,
-                                          color: Colors.white,
-                                          size: 10,
+                                        child: const Center(
+                                          child: Icon(Icons.add,
+                                              color: Colors.blue, size: 16),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                    const SizedBox(width: 10),
+                                    const Text(
+                                      'Add meal',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 20),
+
+                            // Add Meal Button
+                          ],
+                        )
+                      : controller.items.isNotEmpty
+                          ? Container(
+                              height: 238,
+                              child: Obx(
+                                () => ListView.builder(
+                                  itemCount: controller.items.length +
+                                      1, // Add 1 for the "Add Meal" button
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, index) {
+                                    if (index < controller.items.length) {
+                                      final item = controller.items[index];
+                                      return Container(
+                                        width: 211,
+                                        height: 238,
+                                        margin: const EdgeInsets.only(
+                                            right: 8), // Spacing between items
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color: AppColors.whiteColor,
+                                          border: Border.all(
+                                            color: AppColors.darkGrey
+                                                .withOpacity(.1),
+                                          ),
+                                        ),
+                                        child: Stack(
+                                          children: [
+                                            // Image at the top
+                                            Container(
+                                              width: 211,
+                                              height: 150,
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(10.0),
+                                                child: item.itemMemoryImages
+                                                        .first.isNotEmpty
+                                                    ? Image.memory(
+                                                        item.itemMemoryImages
+                                                            .first,
+                                                        width: double.infinity,
+                                                        height: double.infinity,
+                                                        fit: BoxFit.cover,
+                                                      )
+                                                    : const SizedBox
+                                                        .shrink(), // Placeholder if no image
+                                              ),
+                                            ),
+                                            // Meal Info
+                                            Positioned(
+                                              bottom: 20,
+                                              left: 8,
+                                              right: 8,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  const SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Text(
+                                                    'Cuisine: ${item.cuisineName}',
+                                                    style: const TextStyle(
+                                                        fontSize: 14,
+                                                        color: AppColors
+                                                            .textColor),
+                                                  ),
+                                                  const SizedBox(height: 4),
+                                                  Text(
+                                                    'Menu: ${item.cuisineMenu}',
+                                                    style: const TextStyle(
+                                                      color:
+                                                          AppColors.textColor,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 4),
+                                                  Text(
+                                                    'Offer: ${item.offer}',
+                                                    style: const TextStyle(
+                                                      color:
+                                                          AppColors.textColor,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            // Close Icon
+                                            Positioned(
+                                              top: 8,
+                                              right: 8,
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  controller.items.removeAt(
+                                                      index); // Remove item
+                                                },
+                                                child: Container(
+                                                  width: 20,
+                                                  height: 20,
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                    color: AppColors.darkGrey,
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                  child: const Icon(
+                                                    Icons.close,
+                                                    color: Colors.white,
+                                                    size: 10,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    } else {
+                                      // Add Meal Button at the end
+                                      return Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          InkWell(
+                                            onTap: () {
+                                              setState(() {
+                                                _isColumn2Visible =
+                                                    !_isColumn2Visible;
+                                              }); // Example function
+                                            },
+                                            child: Container(
+                                              width: 24,
+                                              height: 24,
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: AppColors.primaryColor,
+                                                  width: 2,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(4.0),
+                                              ),
+                                              child: const Center(
+                                                child: Icon(
+                                                  Icons.add,
+                                                  color: AppColors.primaryColor,
+                                                  size: 16,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 10),
+                                          const Text(
+                                            'Add meal',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    }
+                                  },
+                                ),
                               ),
-                            );
-                          } else {
-                            // Add Meal Button at the end
-                            return Column(
-                              mainAxisSize: MainAxisSize.min,
+                            )
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 InkWell(
                                   onTap: () {
                                     setState(() {
-                                      _isColumn2Visible =
-                                      !_isColumn2Visible;
-                                    }); // Example function
+                                      _isColumn2Visible = !_isColumn2Visible;
+                                    });
                                   },
                                   child: Container(
                                     width: 24,
                                     height: 24,
                                     decoration: BoxDecoration(
                                       border: Border.all(
-                                        color:
-                                        AppColors.primaryColor,
-                                        width: 2,
-                                      ),
-                                      borderRadius:
-                                      BorderRadius.circular(
-                                          4.0),
+                                          color: AppColors.primaryColor,
+                                          width: 2),
+                                      borderRadius: BorderRadius.circular(4.0),
                                     ),
                                     child: const Center(
-                                      child: Icon(
-                                        Icons.add,
-                                        color:
-                                        AppColors.primaryColor,
-                                        size: 16,
-                                      ),
+                                      child: Icon(Icons.add,
+                                          color: AppColors.primaryColor,
+                                          size: 16),
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: 10),
+                                const SizedBox(width: 10),
                                 const Text(
-                                  'Add meal',
+                                  'Add menu',
                                   style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600),
                                 ),
+                                const SizedBox(width: 10),
                               ],
-                            );
-                          }
-                        },
-                      ),
-                    ),
-                  )
-                      : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            _isColumn2Visible = !_isColumn2Visible;
-                          });
-                        },
-                        child: Container(
-                          width: 24,
-                          height: 24,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                                color: AppColors.primaryColor,
-                                width: 2),
-                            borderRadius:
-                            BorderRadius.circular(4.0),
-                          ),
-                          child: const Center(
-                            child: Icon(Icons.add,
-                                color: AppColors.primaryColor,
-                                size: 16),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      const Text(
-                        'Add menu',
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600),
-                      ),
-                      const SizedBox(width: 10),
-                    ],
-                  ),
+                            ),
                 ),
 
                 // Row(
@@ -2729,8 +2711,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                           fontSize: Responsive.isMobile(context)
                               ? 16
                               : Responsive.isTablet(context)
-                              ? 18
-                              : 24,
+                                  ? 18
+                                  : 24,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -2740,8 +2722,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                         child: Row(
                           children: [
                             CustomTextField(
-                                borderColor:
-                                AppColors.darkGrey.withOpacity(.1),
+                                borderColor: AppColors.darkGrey.withOpacity(.1),
                                 controller: customCuisineController,
                                 width: 500,
                                 borderRadius: 8,
@@ -2776,8 +2757,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                     splashRadius: 20,
                                     style: ButtonStyle(
                                       backgroundColor:
-                                      MaterialStateProperty.all<Color>(
-                                          AppColors.primaryColor),
+                                          MaterialStateProperty.all<Color>(
+                                              AppColors.primaryColor),
                                       shape: MaterialStateProperty.all<
                                           CircleBorder>(
                                         const CircleBorder(),
@@ -2805,16 +2786,16 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                 ),
                               ),
                               items: cuisine
-                                  .map((String item) =>
-                                  DropdownMenuItem<String>(
-                                    value: item,
-                                    child: Text(
-                                      item,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ))
+                                  .map(
+                                      (String item) => DropdownMenuItem<String>(
+                                            value: item,
+                                            child: Text(
+                                              item,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ))
                                   .toList(),
                               value: selected_cuisne3,
                               onChanged: (String? value) {
@@ -2831,8 +2812,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                       8), // Rounded corners
                                   color: AppColors.whiteColor,
                                 ),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
                                 height: 40,
                               ),
                               menuItemStyleData: const MenuItemStyleData(
@@ -2857,8 +2838,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                           fontSize: Responsive.isMobile(context)
                               ? 16
                               : Responsive.isTablet(context)
-                              ? 18
-                              : 24,
+                                  ? 18
+                                  : 24,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -2885,10 +2866,10 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                 ),
                               );
                             }).toList(),
-                            value: menuType.contains(
-                                controller.selected_menuType)
-                                ? controller.selected_menuType
-                                : null, // ✅ Ensure valid value
+                            value:
+                                menuType.contains(controller.selected_menuType)
+                                    ? controller.selected_menuType
+                                    : null, // ✅ Ensure valid value
                             onChanged: (String? value) {
                               setState(() {
                                 controller.selected_menuType = value;
@@ -2897,14 +2878,13 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                             buttonStyleData: ButtonStyleData(
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                    color:
-                                    AppColors.darkGrey.withOpacity(.1)),
-                                borderRadius: BorderRadius.circular(
-                                    8), // Rounded corners
+                                    color: AppColors.darkGrey.withOpacity(.1)),
+                                borderRadius:
+                                    BorderRadius.circular(8), // Rounded corners
                                 color: AppColors.whiteColor,
                               ),
                               padding:
-                              const EdgeInsets.symmetric(horizontal: 16),
+                                  const EdgeInsets.symmetric(horizontal: 16),
                               height: 40,
                             ),
                             menuItemStyleData: const MenuItemStyleData(
@@ -2928,8 +2908,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                           fontSize: Responsive.isMobile(context)
                               ? 16
                               : Responsive.isTablet(context)
-                              ? 18
-                              : 24,
+                                  ? 18
+                                  : 24,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -2937,7 +2917,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                       Row(
                         children: [
                           Obx(
-                                () => Wrap(
+                            () => Wrap(
                               spacing: 8,
                               children: controller.memoryImages.map((image) {
                                 return Stack(
@@ -2954,7 +2934,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                           : 110,
                                       decoration: BoxDecoration(
                                           borderRadius:
-                                          BorderRadius.circular(10)),
+                                              BorderRadius.circular(10)),
                                       child: Image.memory(
                                         image,
                                         // width: 80,
@@ -2973,8 +2953,7 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                       right: 10,
                                       child: GestureDetector(
                                         onTap: () {
-                                          controller.memoryImages
-                                              .remove(image);
+                                          controller.memoryImages.remove(image);
                                         },
                                         child: Container(
                                           width: 19,
@@ -3002,104 +2981,104 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                                 onTap: () async {
                                   // In the GestureDetector
                                   List<Uint8List> selectedImages =
-                                  await getImages();
+                                      await getImages();
                                   controller.memoryImages
                                       .addAll(selectedImages);
                                 },
                                 child: _imageBytes == null
                                     ? Container(
-                                  height: Responsive.isDesktop(context)
-                                      ? 150
-                                      : Responsive.isTablet(context)
-                                      ? 120
-                                      : 110,
-                                  width: 160,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: Colors.grey
-                                            .withOpacity(.1)),
-                                    borderRadius:
-                                    BorderRadius.circular(12),
-                                    color: AppColors.whiteColor,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: DottedBorder(
-                                      borderType: BorderType.RRect,
-                                      radius: const Radius.circular(12),
-                                      dashPattern: [6, 3],
-                                      color: AppColors.primaryColor,
-                                      strokeWidth: 1,
-                                      child: Container(
+                                        height: Responsive.isDesktop(context)
+                                            ? 150
+                                            : Responsive.isTablet(context)
+                                                ? 120
+                                                : 110,
+                                        width: 160,
                                         decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color:
+                                                  Colors.grey.withOpacity(.1)),
                                           borderRadius:
-                                          BorderRadius.circular(12),
+                                              BorderRadius.circular(12),
                                           color: AppColors.whiteColor,
                                         ),
-                                        child: Center(
-                                          child: Column(
-                                            mainAxisSize:
-                                            MainAxisSize.min,
-                                            children: [
-                                              const Icon(
-                                                  Icons
-                                                      .upload_file_outlined,
-                                                  size: 25,
-                                                  color: AppColors
-                                                      .primaryColor),
-                                              Text(
-                                                'Upload Image',
-                                                style: TextStyle(
-                                                  fontSize: Responsive
-                                                      .isMobile(
-                                                      context)
-                                                      ? 7
-                                                      : (Responsive
-                                                      .isTablet(
-                                                      context)
-                                                      ? 8
-                                                      : 10),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(16.0),
+                                          child: DottedBorder(
+                                            borderType: BorderType.RRect,
+                                            radius: const Radius.circular(12),
+                                            dashPattern: [6, 3],
+                                            color: AppColors.primaryColor,
+                                            strokeWidth: 1,
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                color: AppColors.whiteColor,
+                                              ),
+                                              child: Center(
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    const Icon(
+                                                        Icons
+                                                            .upload_file_outlined,
+                                                        size: 25,
+                                                        color: AppColors
+                                                            .primaryColor),
+                                                    Text(
+                                                      'Upload Image',
+                                                      style: TextStyle(
+                                                        fontSize: Responsive
+                                                                .isMobile(
+                                                                    context)
+                                                            ? 7
+                                                            : (Responsive
+                                                                    .isTablet(
+                                                                        context)
+                                                                ? 8
+                                                                : 10),
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      'Upload a .png file only',
+                                                      style: TextStyle(
+                                                        fontSize: Responsive
+                                                                .isMobile(
+                                                                    context)
+                                                            ? 7
+                                                            : (Responsive
+                                                                    .isTablet(
+                                                                        context)
+                                                                ? 8
+                                                                : 10),
+                                                        color: AppColors
+                                                            .primaryColor,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
-                                              Text(
-                                                'Upload a .png file only',
-                                                style: TextStyle(
-                                                  fontSize: Responsive
-                                                      .isMobile(
-                                                      context)
-                                                      ? 7
-                                                      : (Responsive
-                                                      .isTablet(
-                                                      context)
-                                                      ? 8
-                                                      : 10),
-                                                  color: AppColors
-                                                      .primaryColor,
-                                                ),
-                                              ),
-                                            ],
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ),
-                                  ),
-                                )
+                                      )
                                     : Container(
-                                  height: Responsive.isDesktop(context)
-                                      ? 150
-                                      : Responsive.isTablet(context)
-                                      ? 120
-                                      : 110,
-                                  width: 160,
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      image: MemoryImage(_imageBytes!),
-                                      fit: BoxFit.cover,
-                                    ),
-                                    borderRadius:
-                                    BorderRadius.circular(12),
-                                  ),
-                                ),
+                                        height: Responsive.isDesktop(context)
+                                            ? 150
+                                            : Responsive.isTablet(context)
+                                                ? 120
+                                                : 110,
+                                        width: 160,
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                            image: MemoryImage(_imageBytes!),
+                                            fit: BoxFit.cover,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                      ),
                               ),
                             ],
                           ),
@@ -3112,8 +3091,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                           fontSize: Responsive.isMobile(context)
                               ? 16
                               : Responsive.isTablet(context)
-                              ? 18
-                              : 24,
+                                  ? 18
+                                  : 24,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -3127,9 +3106,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                         fillColor: AppColors.whiteColor,
                         cursorColor: AppColors.primaryColor,
                         inputStyle:
-                        const TextStyle(color: AppColors.blackColor),
-                        hintStyle:
-                        const TextStyle(color: AppColors.blackColor),
+                            const TextStyle(color: AppColors.blackColor),
+                        hintStyle: const TextStyle(color: AppColors.blackColor),
                       ),
                       const SizedBox(height: 10),
                       CustomButton(
@@ -3174,15 +3152,15 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                             }
 
                             // ✅ Check if "Food Menu" and "Drinks Menu" exist
-                            bool hasFoodMenu = controller.items.any(
-                                    (item) => item.cuisineMenu == "Food Menu");
+                            bool hasFoodMenu = controller.items
+                                .any((item) => item.cuisineMenu == "Food Menu");
                             bool hasDrinksMenu = controller.items.any(
-                                    (item) => item.cuisineMenu == "Drinks Menu");
+                                (item) => item.cuisineMenu == "Drinks Menu");
 
                             // 🛑 Prevent adding duplicates
                             if ((hasFoodMenu &&
-                                controller.selected_menuType ==
-                                    "Food Menu") ||
+                                    controller.selected_menuType ==
+                                        "Food Menu") ||
                                 (hasDrinksMenu &&
                                     controller.selected_menuType ==
                                         "Drinks Menu")) {
@@ -3224,7 +3202,6 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                     ],
                   ),
 
-
                 const SizedBox(height: 10),
                 Padding(
                   padding: const EdgeInsets.only(left: 100.0),
@@ -3251,14 +3228,10 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
 
                       // **Validation Logic**
                       if (!isAllDay &&
-                          (controller
-                              .fromTimeHourController.text.isEmpty ||
-                              controller.fromTimeMintController.text
-                                  .isEmpty ||
-                              controller
-                                  .toTimeHourController.text.isEmpty ||
-                              controller
-                                  .toTimeMintController.text.isEmpty)) {
+                          (controller.fromTimeHourController.text.isEmpty ||
+                              controller.fromTimeMintController.text.isEmpty ||
+                              controller.toTimeHourController.text.isEmpty ||
+                              controller.toTimeMintController.text.isEmpty)) {
                         Get.snackbar(
                           "Validation Error",
                           "Please select a valid time range or check the 'All Day' option.",
@@ -3343,8 +3316,8 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                     onPressed: () {
                       controller.updateDiscount(
                           widget.discountModel, widget.docID);
-                      Get.snackbar("Update Discount",
-                          "Discount is successfully updated",
+                      Get.snackbar(
+                          "Update Discount", "Discount is successfully updated",
                           maxWidth: 400,
                           backgroundColor: AppColors.primaryColor);
                     },
@@ -3378,7 +3351,6 @@ class _DiscountTimeSetupState extends State<DiscountTimeSetup> {
                 const SizedBox(height: 10),
               ],
             ),
-
           ],
         ),
       ),

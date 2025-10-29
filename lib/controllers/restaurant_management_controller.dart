@@ -109,6 +109,13 @@ class RestaurantManagementController extends GetxController {
     'Japanese',
     'Mediterranean',
     'American',
+    'Soul food',
+    'Southern food',
+    'Cajun & Creole',
+    'Barbecue',
+    'Diner / Comfort Food',
+    'Jamaican',
+    'Fusion',
   ].obs;
   RxInt totalRestaurantsLength = 0.obs;
 

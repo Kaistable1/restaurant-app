@@ -47,7 +47,6 @@ class AmenitiesSubScreenController extends GetxController {
     {'name': 'Casual Dining', 'isChecked': false},
     {'name': 'Fine Dining', 'isChecked': false},
     {'name': 'Fast Food', 'isChecked': false},
-    {'name': 'Date Night', 'isChecked': false},
     {'name': 'Candlelit', 'isChecked': false},
     {'name': 'Outdoor', 'isChecked': false},
     {'name': 'Rooftop', 'isChecked': false},
