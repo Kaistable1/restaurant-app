@@ -2060,7 +2060,6 @@ class _AdminVideoPanelState extends State<AdminVideoPanel> {
                                                   "Casual Dining",
                                                   "Fine Dining",
                                                   "Fast Food",
-                                                  "Date Night",
                                                   "Candlelit",
                                                   "Outdoor",
                                                   "Rooftop",
@@ -2137,6 +2136,13 @@ class _AdminVideoPanelState extends State<AdminVideoPanel> {
                                                   "Peruvian",
                                                   "Russian",
                                                   "German",
+                                                  "Soul food",
+                                                  "Southern food",
+                                                  "Cajun & Creole",
+                                                  "Barbecue",
+                                                  "Diner / Comfort Food",
+                                                  "Jamaican",
+                                                  "Fusion",
                                                 ].map((item) {
                                                   return CheckboxListTile(
                                                     activeColor:

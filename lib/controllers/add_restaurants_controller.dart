@@ -695,141 +695,143 @@ class AddRestaurantTabController extends GetxController {
   // Backend code
 
   addRestaurant() async {
-    // try {
-    // Show loading dialog
-    loadingDialog();
+    try {
+      // Show loading dialog
+      loadingDialog();
 
-    // Upload all images to Firebase Storage and get their URLs
-    List<Uint8List> imageBytesList = uploadedImage
-        .where((img) => img.bytes != null)
-        .map((img) => img.bytes!)
-        .toList();
+      // Upload all images to Firebase Storage and get their URLs
+      List<Uint8List> imageBytesList = uploadedImage
+          .where((img) => img.bytes != null)
+          .map((img) => img.bytes!)
+          .toList();
 
-    List<String> imagesList = await uploadImagesToFirebase(imageBytesList);
+      List<String> imagesList = await uploadImagesToFirebase(imageBytesList);
 
-    String docID = '';
-    if (emailController.text.isNotEmpty &&
-        assignPasswordController.text.isNotEmpty) {
-      docID = await assignedCredencialsLogin(
-          email: emailController.text.trim(),
-          userPassword: assignPasswordController.text);
-    }
-    if (docID == 'error') {
-      Get.snackbar('Savrly', 'Restaurant not registered!');
-      Get.back();
-      return;
-    }
-    // Prepare the restaurant data
-    final restaurantData = {
-      'phoneNo': phoneNoController.text.trim(),
-      'websiteUrl': websiteUrlController.text.trim(),
-      'about': 'Coming Soon!! Stay tuned for something exciting!',
-      'address': areaController.text.trim(),
-      'atmopshereList': [],
-      'vibesList': [], // Empty array as per your data
-      'experiencesList': [],
-      'entertainmentList': [],
-      'averageRating': 0,
-      'reviewCount': 0,
-      'city': selectedCity.value.trim(),
-      'state': selectedState.value.trim(),
-      'country': 'United States',
-      'createdAt': Timestamp.now(),
-      'dietaryList': [], // Empty array as per your data
-      'docID': docID, // Will be set after adding the document
-      'entertainmentScheduleList': [], // Empty array as per your data
-      'facilityList': [], // Empty array as per your data
-      'imagesList': imagesList,
-      'latitude':
-          latitude.value, // Hardcoded for now; you can add a map picker later
-      'logoImage': imagesList.isEmpty
-          ? 'https://s3-media2.fl.yelpcdn.com/bphoto/iCP4QYCjWf9i-qDIBQrsnQ/o.jpg'
-          : imagesList.first,
-      'longitude':
-          longitude.value, // Hardcoded for now; you can add a map picker later
-      'menuList': [], // Empty array as per your data
-      'password': assignPasswordController.text,
-      'priceRange': '', // Hardcoded for now; you can add a field for this
-      'resEmail': emailController.text.trim(),
-      'resName': restaurantNameController.text.trim(),
-      'socialLink': instagramController.text.trim(),
-      'socialMedia': tiktokLinkController.text.trim(),
-      'specialConditions': 'Coming Soon!! Stay tuned for something exciting!',
-      'spokenLanguage': selectedSpokenLanguage.value.trim(),
-      'zipCode': zipCodeController.text.trim(),
-    };
-
-    if (docID == '') {
-      await FirebaseFirestore.instance
-          .collection('restaurants')
-          .add(restaurantData)
-          .then((val) async {
-        await val.update({'docID': val.id});
-        restaurantData['docID'] = val.id;
-        docID = val.id;
-      });
-    } else {
-      // Add the restaurant to Firestore
-      await FirebaseFirestore.instance
-          .collection('restaurants')
-          .doc(docID)
-          .set(restaurantData);
-      restaurantData['docID'] = docID;
-    }
-
-    // Create restaurant owner if email/password were provided
-    if (emailController.text.isNotEmpty &&
-        assignPasswordController.text.isNotEmpty &&
-        docID.isNotEmpty &&
-        docID != 'error') {
-      try {
-        // Prepare owner data
-        final ownerData = {
-          'docID': docID,
-          'contact': '', // Empty contact field as requested
-          'createdAt': DateTime.now(),
-          'email': emailController.text.trim(),
-          'img': imagesList.isEmpty
-              ? 'https://s3-media2.fl.yelpcdn.com/bphoto/iCP4QYCjWf9i-qDIBQrsnQ/o.jpg'
-              : imagesList.first,
-          'password': assignPasswordController.text,
-          'restaurantData': restaurantData,
-        };
-
-        // Create restaurant owner document
-        await FirebaseFirestore.instance
-            .collection('restaurantOwner')
-            .doc(docID)
-            .set(ownerData);
-
-        print('✅ Restaurant owner created with docID: $docID');
-      } catch (e) {
-        print('❌ Error creating restaurant owner: $e');
-        // Note: Restaurant is already created, so we just log the error
-        Get.snackbar(
-          'Warning',
-          'Restaurant created but owner profile failed: $e',
-          backgroundColor: Colors.orange,
-          colorText: Colors.white,
-          duration: const Duration(seconds: 4),
-        );
+      String docID = '';
+      if (emailController.text.isNotEmpty &&
+          assignPasswordController.text.isNotEmpty) {
+        docID = await assignedCredencialsLogin(
+            email: emailController.text.trim(),
+            userPassword: assignPasswordController.text);
       }
+      if (docID == 'error') {
+        Get.back();
+        Get.snackbar('Savrly', 'Restaurant not registered!',
+            backgroundColor: Colors.red, colorText: Colors.white);
+        return;
+      }
+      // Prepare the restaurant data
+      final restaurantData = {
+        'phoneNo': phoneNoController.text.trim(),
+        'websiteUrl': websiteUrlController.text.trim(),
+        'about': 'Coming Soon!! Stay tuned for something exciting!',
+        'address': areaController.text.trim(),
+        'atmopshereList': [],
+        'vibesList': [], // Empty array as per your data
+        'experiencesList': [],
+        'entertainmentList': [],
+        'averageRating': 0,
+        'reviewCount': 0,
+        'city': selectedCity.value.trim(),
+        'state': selectedState.value.trim(),
+        'country': 'United States',
+        'createdAt': Timestamp.now(),
+        'dietaryList': [], // Empty array as per your data
+        'docID': docID, // Will be set after adding the document
+        'entertainmentScheduleList': [], // Empty array as per your data
+        'facilityList': [], // Empty array as per your data
+        'imagesList': imagesList,
+        'latitude':
+            latitude.value, // Hardcoded for now; you can add a map picker later
+        'logoImage': imagesList.isEmpty
+            ? 'https://s3-media2.fl.yelpcdn.com/bphoto/iCP4QYCjWf9i-qDIBQrsnQ/o.jpg'
+            : imagesList.first,
+        'longitude': longitude
+            .value, // Hardcoded for now; you can add a map picker later
+        'menuList': [], // Empty array as per your data
+        'password': assignPasswordController.text,
+        'priceRange': '', // Hardcoded for now; you can add a field for this
+        'resEmail': emailController.text.trim(),
+        'resName': restaurantNameController.text.trim(),
+        'socialLink': instagramController.text.trim(),
+        'socialMedia': tiktokLinkController.text.trim(),
+        'specialConditions': 'Coming Soon!! Stay tuned for something exciting!',
+        'spokenLanguage': selectedSpokenLanguage.value.trim(),
+        'zipCode': zipCodeController.text.trim(),
+      };
+
+      if (docID == '') {
+        await FirebaseFirestore.instance
+            .collection('restaurants')
+            .add(restaurantData)
+            .then((val) async {
+          await val.update({'docID': val.id});
+          restaurantData['docID'] = val.id;
+          docID = val.id;
+        });
+      } else {
+        // Add the restaurant to Firestore
+        await FirebaseFirestore.instance
+            .collection('restaurants')
+            .doc(docID)
+            .set(restaurantData);
+        restaurantData['docID'] = docID;
+      }
+
+      // Create restaurant owner if email/password were provided
+      if (emailController.text.isNotEmpty &&
+          assignPasswordController.text.isNotEmpty &&
+          docID.isNotEmpty &&
+          docID != 'error') {
+        try {
+          // Prepare owner data
+          final ownerData = {
+            'docID': docID,
+            'contact': '', // Empty contact field as requested
+            'createdAt': DateTime.now(),
+            'email': emailController.text.trim(),
+            'img': imagesList.isEmpty
+                ? 'https://s3-media2.fl.yelpcdn.com/bphoto/iCP4QYCjWf9i-qDIBQrsnQ/o.jpg'
+                : imagesList.first,
+            'password': assignPasswordController.text,
+            'restaurantData': restaurantData,
+          };
+
+          // Create restaurant owner document
+          await FirebaseFirestore.instance
+              .collection('restaurantOwner')
+              .doc(docID)
+              .set(ownerData);
+
+          print('✅ Restaurant owner created with docID: $docID');
+        } catch (e) {
+          print('❌ Error creating restaurant owner: $e');
+          // Note: Restaurant is already created, so we just log the error
+          Get.snackbar(
+            'Warning',
+            'Restaurant created but owner profile failed: $e',
+            backgroundColor: Colors.orange,
+            colorText: Colors.white,
+            duration: const Duration(seconds: 4),
+          );
+        }
+      }
+
+      // Always set restaurantModel after successful creation
+      restaurantModel = RestaurantModel.fromMap(restaurantData);
+      currentRestaurantID = docID;
+      update();
+
+      // Dismiss the loading dialog
+      Get.back();
+      // Move to next tab
+      selectedIndex.value++;
+    } catch (e) {
+      Get.back();
+      Get.snackbar('Error', 'Failed to add restaurant: $e',
+          backgroundColor: Colors.red, colorText: Colors.white);
+      print('Error $e');
     }
-
-    // Always set restaurantModel after successful creation
-    restaurantModel = RestaurantModel.fromMap(restaurantData);
-    currentRestaurantID = docID;
-    update();
-
-    // Dismiss the loading dialog
-    Get.back();
-    // Move to next tab
-    selectedIndex.value++;
-    // } catch (e) {
-    //   Get.back();
-    //   Get.snackbar('Error', 'Failed to add restaurant: $e');
-    //   print('Error $e');
-    // }
   }
 
   updateBasicInfo() async {

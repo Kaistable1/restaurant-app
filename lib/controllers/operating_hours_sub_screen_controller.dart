@@ -115,77 +115,117 @@ class OperatingHoursSubScreenController extends GetxController {
   //backend
 
   saveAllOperatingHours() async {
-    loadingDialog();
-    print("Saving Operating Hours...");
+    try {
+      loadingDialog();
+      print("Saving Operating Hours...");
 
-    final addRestaurantTabController = Get.find<AddRestaurantTabController>();
-    final restaurantID = addRestaurantTabController.restaurantModel!.docID;
-    ;
-    for (var day in daySwitches.keys) {
-      // Create a map to hold meal periods for the current day
-      Map<String, dynamic> mealsMap = {};
+      final addRestaurantTabController = Get.find<AddRestaurantTabController>();
 
-      // Check if the day is toggled off
-      if (daySwitches[day] == false) {
-        print("$day is toggled off. Saving all meals as closed...");
-        // Mark all meals as closed for this day
-        for (var meal in slotTimes[day]!.keys) {
-          mealsMap[meal] = {"isClosed": true};
-        }
-      } else {
-        // Iterate over meal periods for the active day
-        for (var meal in slotTimes[day]!.keys) {
-          // Check if the meal is active
-          if (slotStates[day]![meal] == false) {
-            mealsMap[meal] = {"isClosed": true}; // Mark meal as closed
-            continue;
+      // Validate restaurant model exists
+      if (addRestaurantTabController.restaurantModel == null ||
+          addRestaurantTabController.restaurantModel!.docID.isEmpty) {
+        Get.back(); // Close loading dialog
+        Get.snackbar(
+          'Error',
+          'Restaurant information not found. Please try again.',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+        );
+        return;
+      }
+
+      final restaurantID = addRestaurantTabController.restaurantModel!.docID;
+
+      for (var day in daySwitches.keys) {
+        // Create a map to hold meal periods for the current day
+        Map<String, dynamic> mealsMap = {};
+
+        // Check if the day is toggled off
+        if (daySwitches[day] == false) {
+          print("$day is toggled off. Saving all meals as closed...");
+          // Mark all meals as closed for this day
+          for (var meal in slotTimes[day]!.keys) {
+            mealsMap[meal] = {"isClosed": true};
           }
-
-          // Get the meal's start and end time
-          final timeString = slotTimes[day]![meal] ?? '';
-          String fromTime = '';
-          String toTime = '';
-
-          // Split the time string (e.g., "09:00 am - 11:00 am") into start and end times
-          if (timeString.isNotEmpty) {
-            final times = timeString.split(' - ');
-            if (times.length == 2) {
-              fromTime = times[0].trim();
-              toTime = times[1].trim();
+        } else {
+          // Iterate over meal periods for the active day
+          for (var meal in slotTimes[day]!.keys) {
+            // Check if the meal is active
+            if (slotStates[day]![meal] == false) {
+              mealsMap[meal] = {"isClosed": true}; // Mark meal as closed
+              continue;
             }
-          }
 
-          // Skip invalid times
-          if (fromTime.isEmpty || toTime.isEmpty) {
-            print("Skipping $meal on $day: Invalid times.");
-            mealsMap[meal] = {"isClosed": true}; // Save as closed
-            continue;
-          }
+            // Get the meal's start and end time
+            final timeString = slotTimes[day]![meal] ?? '';
+            String fromTime = '';
+            String toTime = '';
 
-          // Add meal period to the day's map
-          mealsMap[meal] = {
-            "isClosed": false,
-            "startTime": fromTime,
-            "endTime": toTime,
-          };
+            // Split the time string (e.g., "09:00 am - 11:00 am") into start and end times
+            if (timeString.isNotEmpty) {
+              final times = timeString.split(' - ');
+              if (times.length == 2) {
+                fromTime = times[0].trim();
+                toTime = times[1].trim();
+              }
+            }
+
+            // Skip invalid times
+            if (fromTime.isEmpty || toTime.isEmpty) {
+              print("Skipping $meal on $day: Invalid times.");
+              mealsMap[meal] = {"isClosed": true}; // Save as closed
+              continue;
+            }
+
+            // Add meal period to the day's map
+            mealsMap[meal] = {
+              "isClosed": false,
+              "startTime": fromTime,
+              "endTime": toTime,
+            };
+          }
+        }
+
+        // Save the day's meals map to Firestore
+        try {
+          await FirebaseFirestore.instance
+              .collection('restaurants')
+              .doc(restaurantID)
+              .collection('operatingHours')
+              .doc(day) // Day as document
+              .set(mealsMap); // Meals as map
+          print("$day saved successfully in Firestore.");
+        } catch (e) {
+          print("Error saving $day: $e");
+          Get.back(); // Close loading dialog
+          Get.snackbar(
+            'Error',
+            'Failed to save operating hours for $day: $e',
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+            snackPosition: SnackPosition.TOP,
+          );
+          return;
         }
       }
 
-      // Save the day's meals map to Firestore
+      Get.back(); // Close loading dialog
+      print("All operating hours saved successfully.");
+    } catch (e) {
+      print("Error in saveAllOperatingHours: $e");
+      // Ensure dialog is closed even if an unexpected error occurs
       try {
-        await FirebaseFirestore.instance
-            .collection('restaurants')
-            .doc(restaurantID)
-            .collection('operatingHours')
-            .doc(day) // Day as document
-            .set(mealsMap); // Meals as map
-        print("$day saved successfully in Firestore.");
-      } catch (e) {
-        print("Error saving $day: $e");
-      }
-    }
-    Get.back();
+        Get.back();
+      } catch (_) {}
 
-    print("All operating hours saved successfully.");
+      Get.snackbar(
+        'Error',
+        'Failed to save operating hours: $e',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+      );
+    }
   }
 }

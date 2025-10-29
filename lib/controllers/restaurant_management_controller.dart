@@ -109,6 +109,13 @@ class RestaurantManagementController extends GetxController {
     'Japanese',
     'Mediterranean',
     'American',
+    'Soul food',
+    'Southern food',
+    'Cajun & Creole',
+    'Barbecue',
+    'Diner / Comfort Food',
+    'Jamaican',
+    'Fusion',
   ].obs;
   RxInt totalRestaurantsLength = 0.obs;
 
@@ -438,72 +445,77 @@ class RestaurantManagementController extends GetxController {
     }
   }
 
-void deleteRestaurantFromFiltered(RestaurantModel restaurant) async {
-  try {
-    final docID = restaurant.docID;
-    print('Deleting docID: $docID');
+  void deleteRestaurantFromFiltered(RestaurantModel restaurant) async {
+    try {
+      final docID = restaurant.docID;
+      print('Deleting docID: $docID');
 
-    await FirebaseFirestore.instance
-        .collection('restaurants')
-        .doc(docID)
-        .collection('operatingHours')
-        .doc('Monday').delete();
-    await FirebaseFirestore.instance
-        .collection('restaurants')
-        .doc(docID)
-        .collection('operatingHours')
-        .doc('Tuesday').delete();
-    await FirebaseFirestore.instance
-        .collection('restaurants')
-        .doc(docID)
-        .collection('operatingHours')
-        .doc('Wednesday').delete();
-    await FirebaseFirestore.instance
-        .collection('restaurants')
-        .doc(docID)
-        .collection('operatingHours')
-        .doc('Thursday').delete();
-    await FirebaseFirestore.instance
-        .collection('restaurants')
-        .doc(docID)
-        .collection('operatingHours')
-        .doc('Friday').delete();
-    await FirebaseFirestore.instance
-        .collection('restaurants')
-        .doc(docID)
-        .collection('operatingHours')
-        .doc('Saturday').delete();
-    await FirebaseFirestore.instance
-        .collection('restaurants')
-        .doc(docID)
-        .collection('operatingHours')
-        .doc('Sunday').delete();
+      await FirebaseFirestore.instance
+          .collection('restaurants')
+          .doc(docID)
+          .collection('operatingHours')
+          .doc('Monday')
+          .delete();
+      await FirebaseFirestore.instance
+          .collection('restaurants')
+          .doc(docID)
+          .collection('operatingHours')
+          .doc('Tuesday')
+          .delete();
+      await FirebaseFirestore.instance
+          .collection('restaurants')
+          .doc(docID)
+          .collection('operatingHours')
+          .doc('Wednesday')
+          .delete();
+      await FirebaseFirestore.instance
+          .collection('restaurants')
+          .doc(docID)
+          .collection('operatingHours')
+          .doc('Thursday')
+          .delete();
+      await FirebaseFirestore.instance
+          .collection('restaurants')
+          .doc(docID)
+          .collection('operatingHours')
+          .doc('Friday')
+          .delete();
+      await FirebaseFirestore.instance
+          .collection('restaurants')
+          .doc(docID)
+          .collection('operatingHours')
+          .doc('Saturday')
+          .delete();
+      await FirebaseFirestore.instance
+          .collection('restaurants')
+          .doc(docID)
+          .collection('operatingHours')
+          .doc('Sunday')
+          .delete();
 
-    await FirebaseFirestore.instance
-        .collection('restaurants')
-        .doc(docID)
-        .delete();
+      await FirebaseFirestore.instance
+          .collection('restaurants')
+          .doc(docID)
+          .delete();
 
-    restaurants.removeWhere((r) => r.docID == docID);
-    restaurants.refresh();
+      restaurants.removeWhere((r) => r.docID == docID);
+      restaurants.refresh();
 
-    filteredResults.removeWhere((r) => r.docID == docID);
-    filteredResults.refresh();
+      filteredResults.removeWhere((r) => r.docID == docID);
+      filteredResults.refresh();
 
-    getAllRestaurantsLength(
-      searchQuery: currentSearchQuery.value,
-      cityFilter: currentCityFilter.value,
-      cuisineFilter: currentCuisineFilter.value,
-    );
+      getAllRestaurantsLength(
+        searchQuery: currentSearchQuery.value,
+        cityFilter: currentCityFilter.value,
+        cuisineFilter: currentCuisineFilter.value,
+      );
 
-    Get.snackbar('Success', '${restaurant.resName} deleted.');
-  } catch (e) {
-    print('Error deleting restaurant: $e');
-    Get.snackbar('Error', 'Deletion failed');
+      Get.snackbar('Success', '${restaurant.resName} deleted.');
+    } catch (e) {
+      print('Error deleting restaurant: $e');
+      Get.snackbar('Error', 'Deletion failed');
+    }
   }
-}
-
-
 
   final TextEditingController descriptionController = TextEditingController();
   Future<void> setFeaturedRestaurant({

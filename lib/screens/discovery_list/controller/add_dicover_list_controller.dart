@@ -81,6 +81,13 @@ class AddDiscoverListController extends GetxController {
       "Peruvian",
       "Russian",
       "German",
+      "Soul food",
+      "Southern food",
+      "Cajun & Creole",
+      "Barbecue",
+      "Diner / Comfort Food",
+      "Jamaican",
+      "Fusion",
     ],
     "Dietary": [
       "Vegan",

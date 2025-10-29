@@ -19,7 +19,7 @@ class AddEventController extends GetxController {
   final dateController = TextEditingController();
   final timeController = TextEditingController();
   final descriptionController = TextEditingController();
-  
+
   RxString selectEvent = 'Concert'.obs;
   RxList<String> events = <String>['Concert', 'Festival', 'Sports'].obs;
 
@@ -104,6 +104,7 @@ class AddEventController extends GetxController {
         snackPosition: SnackPosition.TOP,
       );
     } catch (e) {
+      Get.back(); // Close loading dialog
       Get.snackbar(
         'Error',
         'Failed to add event: $e',
@@ -155,9 +156,10 @@ class AddEventController extends GetxController {
         snackPosition: SnackPosition.TOP,
       );
     } catch (e) {
+      Get.back(); // Close loading dialog
       Get.snackbar(
         'Error',
-        'Failed to add event: $e',
+        'Failed to update event: $e',
         backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,

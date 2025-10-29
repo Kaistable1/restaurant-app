@@ -19,6 +19,13 @@ class MenuSubScreenController extends GetxController {
     'Japanese',
     'Mediterranean',
     'American',
+    'Soul food',
+    'Southern food',
+    'Cajun & Creole',
+    'Barbecue',
+    'Diner / Comfort Food',
+    'Jamaican',
+    'Fusion',
   ].obs;
   RxString selectedCuisine = ''.obs;
 
