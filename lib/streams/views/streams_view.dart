@@ -9,26 +9,33 @@ import '../../screens/nav_bar/full_screen_video/full_screen_video_screen.dart';
 import '../controllers/streams_controller.dart';
 import '../model/streams_model.dart';
 
-
 class VideosListView extends StatelessWidget {
   bool fromHome = false;
   VideosListView({super.key, required this.fromHome});
-
 
   final RxMap<String, bool> showFilterDropdowns = <String, bool>{}.obs;
   final RxMap<String, String> selectedFilters = <String, String>{}.obs;
 
   var filterOptions = <String, List<String>>{
     "Vibes": [
-      "Lively", "High-Energy", "LaidBack", "Intimate",
-      "Loud", "Lowkey", "UpBeat"
+      "Lively",
+      "High-Energy",
+      "LaidBack",
+      "Intimate",
+      "Loud",
+      "Lowkey",
+      "UpBeat"
     ],
     "Experience": [
-      "Live Music", "Dj Night", "Ladies Night",
-      "Hookah", "Karaoke",
+      "Live Music",
+      "Dj Night",
+      "Ladies Night",
+      "Hookah",
+      "Karaoke",
     ],
     "Atmosphere": [
-      "Fast Food", "Casual Dining", "Date Night",
+      "Fast Food",
+      "Casual Dining",
     ],
   }.obs;
 
@@ -54,7 +61,8 @@ class VideosListView extends StatelessWidget {
         ),
         centerTitle: true,
         leading: BackButton(
-          onPressed: () => fromHome ? Get.back() : navbarController.jumpToTab(0),
+          onPressed: () =>
+              fromHome ? Get.back() : navbarController.jumpToTab(0),
         ),
       ),
       backgroundColor: Colors.white,
@@ -96,7 +104,9 @@ class VideosListView extends StatelessWidget {
                               hintStyle: TextStyle(color: Colors.grey[600]),
                             ),
                             onSubmitted: (value) {
-                              Get.find<VideoController>().applySearchAndFilters(controller.searchController.text, selectedFilters);
+                              Get.find<VideoController>().applySearchAndFilters(
+                                  controller.searchController.text,
+                                  selectedFilters);
                             },
                           ),
                         ),
@@ -128,7 +138,7 @@ class VideosListView extends StatelessWidget {
                       }
                       return GestureDetector(
                         onTap: () {
-                          Get.to(()=>FullVideoScreen(video: video));
+                          Get.to(() => FullVideoScreen(video: video));
 
                           // Navigator.push(
                           //   context,
@@ -153,35 +163,58 @@ class VideosListView extends StatelessWidget {
                                   AspectRatio(
                                     aspectRatio: 356 / 520,
                                     child: Obx(() {
-                                      return controller.thumbnailPaths[video.url] != null
+                                      return controller
+                                                  .thumbnailPaths[video.url] !=
+                                              null
                                           ? Image.file(
-                                        File(controller.thumbnailPaths[video.url]!),
-                                        fit: BoxFit.cover,
-                                        errorBuilder: (context, error, stackTrace) => Image.network(
-                                          'https://via.placeholder.com/640x360',
-                                          fit: BoxFit.cover,
-                                          loadingBuilder: (context, child, loadingProgress) {
-                                            if (loadingProgress == null) return child;
-                                            return const Center(child: CircularProgressIndicator());
-                                          },
-                                          errorBuilder: (context, error, stackTrace) => Container(
-                                            color: Colors.grey[300],
-                                            child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
-                                          ),
-                                        ),
-                                      )
+                                              File(controller
+                                                  .thumbnailPaths[video.url]!),
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (context, error,
+                                                      stackTrace) =>
+                                                  Image.network(
+                                                'https://via.placeholder.com/640x360',
+                                                fit: BoxFit.cover,
+                                                loadingBuilder: (context, child,
+                                                    loadingProgress) {
+                                                  if (loadingProgress == null)
+                                                    return child;
+                                                  return const Center(
+                                                      child:
+                                                          CircularProgressIndicator());
+                                                },
+                                                errorBuilder: (context, error,
+                                                        stackTrace) =>
+                                                    Container(
+                                                  color: Colors.grey[300],
+                                                  child: const Icon(
+                                                      Icons.broken_image,
+                                                      size: 50,
+                                                      color: Colors.grey),
+                                                ),
+                                              ),
+                                            )
                                           : Image.network(
-                                        'https://via.placeholder.com/640x360',
-                                        fit: BoxFit.cover,
-                                        loadingBuilder: (context, child, loadingProgress) {
-                                          if (loadingProgress == null) return child;
-                                          return const Center(child: CircularProgressIndicator());
-                                        },
-                                        errorBuilder: (context, error, stackTrace) => Container(
-                                          color: Colors.grey[300],
-                                          child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
-                                        ),
-                                      );
+                                              'https://via.placeholder.com/640x360',
+                                              fit: BoxFit.cover,
+                                              loadingBuilder: (context, child,
+                                                  loadingProgress) {
+                                                if (loadingProgress == null)
+                                                  return child;
+                                                return const Center(
+                                                    child:
+                                                        CircularProgressIndicator());
+                                              },
+                                              errorBuilder: (context, error,
+                                                      stackTrace) =>
+                                                  Container(
+                                                color: Colors.grey[300],
+                                                child: const Icon(
+                                                    Icons.broken_image,
+                                                    size: 50,
+                                                    color: Colors.grey),
+                                              ),
+                                            );
                                     }),
                                   ),
                                   Positioned.fill(
@@ -199,7 +232,8 @@ class VideosListView extends StatelessWidget {
                             ),
                             Container(
                               // height: 50,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 6),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(12),
@@ -212,12 +246,15 @@ class VideosListView extends StatelessWidget {
                                 ],
                               ),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Text(
                                           video.restaurantName ?? '',
@@ -229,7 +266,8 @@ class VideosListView extends StatelessWidget {
                                         ),
                                         const SizedBox(height: 4),
                                         Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
                                             Image.asset(
                                               'assets/images/Icon (1).png',
@@ -242,8 +280,11 @@ class VideosListView extends StatelessWidget {
                                                 '${video.streetNo ?? ''}, ${video.city ?? ''}, ${video.state ?? ''}, ${video.zipCode ?? ''}',
                                                 style: TextStyle(
                                                   fontSize: 13,
-                                                  color: const Color.fromRGBO(142, 142, 147, 1),
-                                                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                                  color: const Color.fromRGBO(
+                                                      142, 142, 147, 1),
+                                                  fontFamily: GoogleFonts
+                                                          .plusJakartaSans()
+                                                      .fontFamily,
                                                   fontWeight: FontWeight.w500,
                                                 ),
                                               ),
@@ -271,122 +312,160 @@ class VideosListView extends StatelessWidget {
             left: 0,
             right: 0,
             child: Obx(() => SizedBox(
-              height: showFilterDropdowns.values.contains(true) ? 250 : 36,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                children: filterOptions.keys.map((category) {
-                  return Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          showFilterDropdowns[category] = !showFilterDropdowns[category]!;
-                          showFilterDropdowns.refresh();
-                        },
-                        child: Container(
-                          height: 36,
-                          margin: const EdgeInsets.only(right: 8),
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey.shade300),
-                            borderRadius: BorderRadius.circular(30),
-                            color: Colors.white,
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Obx(() => Text(
-                                selectedFilters[category] != null
-                                    ? '$category: ${selectedFilters[category]}'
-                                    : category,
-                                style: const TextStyle(color: Colors.black, fontSize: 18),
-                              )),
-                              const SizedBox(width: 4),
-                              const Icon(Icons.arrow_drop_down, size: 20, color: Colors.black),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Obx(() {
-                        if (showFilterDropdowns[category] ?? false) {
-                          final optionCount = filterOptions[category]?.length ?? 0;
-                          final dropdownHeight = (optionCount + 1) * 40.0;
-                          return Positioned(
-                            top: 50,
-                            left: 0,
-                            child: Material(
-                              elevation: 5,
-                              borderRadius: BorderRadius.circular(12),
-                              child: Container(
-                                width: 150,
-                                height: dropdownHeight < 190 ? dropdownHeight : 190,
-                                padding: const EdgeInsets.fromLTRB(8, 8, 8, 16),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: SingleChildScrollView(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      // Add "Clear" option
-                                      InkWell(
-                                        onTap: () {
-                                          selectedFilters.remove(category);
-                                          selectedFilters.refresh();
-                                          showFilterDropdowns[category] = false;
-                                          showFilterDropdowns.refresh();
-                                          controller.applySearchAndFilters(controller.searchController.text, selectedFilters);
-                                        },
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(vertical: 8),
-                                          child: Text(
-                                            'Clear',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.red,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      ...?filterOptions[category]?.map((option) => InkWell(
-                                        onTap: () {
-                                          selectedFilters[category] = option;
-                                          selectedFilters.refresh();
-                                          showFilterDropdowns[category] = false;
-                                          showFilterDropdowns.refresh();
-                                          controller.applySearchAndFilters(controller.searchController.text, selectedFilters);
-                                        },
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(vertical: 8),
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                option,
-                                                style: const TextStyle(fontSize: 16),
-                                              ),
-                                              if (selectedFilters[category] == option)
-                                                const Icon(Icons.check, color: Colors.green, size: 16),
-                                            ],
-                                          ),
-                                        ),
-                                      )).toList(),
-                                    ],
-                                  ),
-                                ),
+                  height: showFilterDropdowns.values.contains(true) ? 250 : 36,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    children: filterOptions.keys.map((category) {
+                      return Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              showFilterDropdowns[category] =
+                                  !showFilterDropdowns[category]!;
+                              showFilterDropdowns.refresh();
+                            },
+                            child: Container(
+                              height: 36,
+                              margin: const EdgeInsets.only(right: 8),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey.shade300),
+                                borderRadius: BorderRadius.circular(30),
+                                color: Colors.white,
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Obx(() => Text(
+                                        selectedFilters[category] != null
+                                            ? '$category: ${selectedFilters[category]}'
+                                            : category,
+                                        style: const TextStyle(
+                                            color: Colors.black, fontSize: 18),
+                                      )),
+                                  const SizedBox(width: 4),
+                                  const Icon(Icons.arrow_drop_down,
+                                      size: 20, color: Colors.black),
+                                ],
                               ),
                             ),
-                          );
-                        }
-                        return const SizedBox.shrink();
-                      }),
-                    ],
-                  );
-                }).toList(),
-              ),
-            )),
+                          ),
+                          Obx(() {
+                            if (showFilterDropdowns[category] ?? false) {
+                              final optionCount =
+                                  filterOptions[category]?.length ?? 0;
+                              final dropdownHeight = (optionCount + 1) * 40.0;
+                              return Positioned(
+                                top: 50,
+                                left: 0,
+                                child: Material(
+                                  elevation: 5,
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Container(
+                                    width: 150,
+                                    height: dropdownHeight < 190
+                                        ? dropdownHeight
+                                        : 190,
+                                    padding:
+                                        const EdgeInsets.fromLTRB(8, 8, 8, 16),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: SingleChildScrollView(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          // Add "Clear" option
+                                          InkWell(
+                                            onTap: () {
+                                              selectedFilters.remove(category);
+                                              selectedFilters.refresh();
+                                              showFilterDropdowns[category] =
+                                                  false;
+                                              showFilterDropdowns.refresh();
+                                              controller.applySearchAndFilters(
+                                                  controller
+                                                      .searchController.text,
+                                                  selectedFilters);
+                                            },
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 8),
+                                              child: Text(
+                                                'Clear',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: Colors.red,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          ...?filterOptions[category]
+                                              ?.map((option) => InkWell(
+                                                    onTap: () {
+                                                      selectedFilters[
+                                                          category] = option;
+                                                      selectedFilters.refresh();
+                                                      showFilterDropdowns[
+                                                          category] = false;
+                                                      showFilterDropdowns
+                                                          .refresh();
+                                                      controller
+                                                          .applySearchAndFilters(
+                                                              controller
+                                                                  .searchController
+                                                                  .text,
+                                                              selectedFilters);
+                                                    },
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 8),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Text(
+                                                            option,
+                                                            style:
+                                                                const TextStyle(
+                                                                    fontSize:
+                                                                        16),
+                                                          ),
+                                                          if (selectedFilters[
+                                                                  category] ==
+                                                              option)
+                                                            const Icon(
+                                                                Icons.check,
+                                                                color: Colors
+                                                                    .green,
+                                                                size: 16),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ))
+                                              .toList(),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+                            return const SizedBox.shrink();
+                          }),
+                        ],
+                      );
+                    }).toList(),
+                  ),
+                )),
           ),
         ],
       ),

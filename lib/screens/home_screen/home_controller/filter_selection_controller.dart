@@ -9,6 +9,13 @@ class FilterSelectionController extends GetxController {
     'vegetarian',
     'vegan',
     'american',
+    'Soul food',
+    'Southern food',
+    'Cajun & Creole',
+    'Barbecue',
+    'Diner / Comfort Food',
+    'Jamaican',
+    'Fusion',
   ];
   RxString selectedCountry = ''.obs;
   RxString selectedCity = ''.obs;
