@@ -120,7 +120,7 @@ class AddDiscoverListController extends GetxController {
 
   // Remove image from the list
   void removeImage() {
-    if (imageBytes.value.isEmpty) {
+    if (imageBytes.value.isNotEmpty) {
       fileName = '';
       imageBytes.value = Uint8List.fromList([]);
     } else if (imageUrl.value != '') {
