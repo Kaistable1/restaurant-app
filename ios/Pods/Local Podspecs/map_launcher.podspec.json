@@ -13,12 +13,12 @@
   "source": {
     "path": "."
   },
-  "source_files": "Classes/**/*",
+  "source_files": "map_launcher/Sources/map_launcher/**/*",
   "dependencies": {
     "Flutter": []
   },
   "platforms": {
-    "ios": "12.0"
+    "ios": "13.0"
   },
   "pod_target_xcconfig": {
     "DEFINES_MODULE": "YES",

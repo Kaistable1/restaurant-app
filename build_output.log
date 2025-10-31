@@ -1,0 +1,135 @@
+Building com.alestra.userapp for simulator (ios)...
+An error occurred when adding LLDB Init File:
+Exception: Unable to get scheme file for Runner.
+Running pod install...                                             371ms
+CocoaPods' output:
+↳
+      Preparing
+
+    Analyzing dependencies
+
+    Inspecting targets to integrate
+      Using `ARCHS` setting to build architectures of target `Pods-Runner`: (``)
+
+    Finding Podfile changes
+      M geolocator_apple
+      - Flutter
+      - GoogleMaps
+      - awesome_notifications
+      - cloud_firestore
+      - file_picker
+      - firebase_auth
+      - firebase_core
+      - firebase_messaging
+      - firebase_storage
+      - flutter_local_notifications
+      - fluttertoast
+      - geocoding_ios
+      - google_maps_flutter_ios
+      - image_picker_ios
+      - map_launcher
+      - maps_launcher
+      - package_info_plus
+      - path_provider_foundation
+      - permission_handler_apple
+      - shared_preferences_foundation
+      - sqflite_darwin
+      - url_launcher_ios
+      - video_player_avfoundation
+      - video_thumbnail
+      - wakelock_plus
+
+    Fetching external sources
+    -> Fetching podspec for `Flutter` from `Flutter`
+    -> Fetching podspec for `awesome_notifications` from `.symlinks/plugins/awesome_notifications/ios`
+    -> Fetching podspec for `cloud_firestore` from `.symlinks/plugins/cloud_firestore/ios`
+    cloud_firestore: Using Firebase SDK version '11.15.0' defined in 'firebase_core'
+    -> Fetching podspec for `file_picker` from `.symlinks/plugins/file_picker/ios`
+    -> Fetching podspec for `firebase_auth` from `.symlinks/plugins/firebase_auth/ios`
+    firebase_auth: Using Firebase SDK version '11.15.0' defined in 'firebase_core'
+    -> Fetching podspec for `firebase_core` from `.symlinks/plugins/firebase_core/ios`
+    firebase_core: Using Firebase SDK version '11.15.0' defined in 'firebase_core'
+    -> Fetching podspec for `firebase_messaging` from `.symlinks/plugins/firebase_messaging/ios`
+    firebase_messaging: Using Firebase SDK version '11.15.0' defined in 'firebase_core'
+    -> Fetching podspec for `firebase_storage` from `.symlinks/plugins/firebase_storage/ios`
+    firebase_storage: Using Firebase SDK version '11.15.0' defined in 'firebase_core'
+    -> Fetching podspec for `flutter_local_notifications` from `.symlinks/plugins/flutter_local_notifications/ios`
+    -> Fetching podspec for `fluttertoast` from `.symlinks/plugins/fluttertoast/ios`
+    -> Fetching podspec for `geocoding_ios` from `.symlinks/plugins/geocoding_ios/ios`
+    -> Fetching podspec for `geolocator_apple` from `.symlinks/plugins/geolocator_apple/darwin`
+    -> Fetching podspec for `google_maps_flutter_ios` from `.symlinks/plugins/google_maps_flutter_ios/ios`
+    -> Fetching podspec for `image_picker_ios` from `.symlinks/plugins/image_picker_ios/ios`
+    -> Fetching podspec for `map_launcher` from `.symlinks/plugins/map_launcher/ios`
+    -> Fetching podspec for `maps_launcher` from `.symlinks/plugins/maps_launcher/ios`
+    -> Fetching podspec for `package_info_plus` from `.symlinks/plugins/package_info_plus/ios`
+    -> Fetching podspec for `path_provider_foundation` from `.symlinks/plugins/path_provider_foundation/darwin`
+    -> Fetching podspec for `permission_handler_apple` from `.symlinks/plugins/permission_handler_apple/ios`
+    -> Fetching podspec for `shared_preferences_foundation` from `.symlinks/plugins/shared_preferences_foundation/darwin`
+    -> Fetching podspec for `sqflite_darwin` from `.symlinks/plugins/sqflite_darwin/darwin`
+    -> Fetching podspec for `url_launcher_ios` from `.symlinks/plugins/url_launcher_ios/ios`
+    -> Fetching podspec for `video_player_avfoundation` from `.symlinks/plugins/video_player_avfoundation/darwin`
+    -> Fetching podspec for `video_thumbnail` from `.symlinks/plugins/video_thumbnail/ios`
+    -> Fetching podspec for `wakelock_plus` from `.symlinks/plugins/wakelock_plus/ios`
+
+    Resolving dependencies of `Podfile`
+      CDN: trunk Relative path: CocoaPods-version.yml exists! Returning local because checking is only performed in repo update
+      CDN: trunk Relative path: all_pods_versions_a_d_d.txt exists! Returning local because checking is only performed in repo update
+      CDN: trunk Relative path: Specs/a/d/d/GoogleMaps/10.4.0/GoogleMaps.podspec.json exists! Returning local because checking is only performed in repo update
+      CDN: trunk Relative path: all_pods_versions_b_9_e.txt exists! Returning local because checking is only performed in repo update
+      CDN: trunk Relative path: Specs/b/9/e/IosAwnCore/0.10.0/IosAwnCore.podspec.json exists! Returning local because checking is only performed in repo update
+      CDN: trunk Relative path: all_pods_versions_1_6_1.txt exists! Returning local because checking is only performed in repo update
+      CDN: trunk Relative path: Specs/1/6/1/DKImagePickerController/4.3.9/DKImagePickerController.podspec.json exists! Returning local because checking is only performed in repo update
+      CDN: trunk Relative path: Specs/1/6/1/DKImagePickerController/4.3.9/DKImagePickerController.podspec.json exists! Returning local because checking is only performed in repo update
+      CDN: trunk Relative path: all_pods_versions_0_3_5.txt exists! Returning local because checking is only performed in repo update
+      CDN: trunk Relative path: Specs/0/3/5/Firebase/12.5.0/Firebase.podspec.json exists! Returning local because checking is only performed in repo update
+      CDN: trunk Relative path: all_pods_versions_3_5_e.txt exists! Returning local because checking is only performed in repo update
+      CDN: trunk Relative path: Specs/3/5/e/Google-Maps-iOS-Utils/6.1.3/Google-Maps-iOS-Utils.podspec.json exists! Returning local because checking is only performed in repo update
+      CDN: trunk Relative path: all_pods_versions_4_2_c.txt exists! Returning local because checking is only performed in repo update
+      CDN: trunk Relative path: Specs/4/2/c/FlutterMacOS/3.16.0/FlutterMacOS.podspec.json exists! Returning local because checking is only performed in repo update
+      CDN: trunk Relative path: all_pods_versions_1_9_2.txt exists! Returning local because checking is only performed in repo update
+      CDN: trunk Relative path: Specs/1/9/2/libwebp/1.5.0/libwebp.podspec.json exists! Returning local because checking is only performed in repo update
+      CDN: trunk Relative path: Specs/0/3/5/Firebase/11.15.0/Firebase.podspec.json exists! Returning local because checking is only performed in repo update
+    [!] CocoaPods could not find compatible versions for pod "Firebase/CoreOnly":
+      In snapshot (Podfile.lock):
+        Firebase/CoreOnly (= 11.10.0)
+
+      In Podfile:
+        firebase_core (from `.symlinks/plugins/firebase_core/ios`) was resolved to 3.15.2, which depends on
+          Firebase/CoreOnly (= 11.15.0)
+
+
+    You have either:
+     * out-of-date source repos which you can update with `pod repo update` or with `pod install --repo-update`.
+     * changed the constraints of dependency `Firebase/CoreOnly` inside your development pod `firebase_core`.
+       You should run `pod update Firebase/CoreOnly` to apply changes you've made.
+
+    /opt/homebrew/lib/ruby/gems/3.4.0/gems/molinillo-0.8.0/lib/molinillo/resolution.rb:317:in 'Molinillo::Resolver::Resolution#raise_error_unless_state'
+    /opt/homebrew/lib/ruby/gems/3.4.0/gems/molinillo-0.8.0/lib/molinillo/resolution.rb:299:in 'block in Molinillo::Resolver::Resolution#unwind_for_conflict'
+    <internal:kernel>:91:in 'Kernel#tap'
+    /opt/homebrew/lib/ruby/gems/3.4.0/gems/molinillo-0.8.0/lib/molinillo/resolution.rb:297:in 'Molinillo::Resolver::Resolution#unwind_for_conflict'
+    /opt/homebrew/lib/ruby/gems/3.4.0/gems/molinillo-0.8.0/lib/molinillo/resolution.rb:257:in 'Molinillo::Resolver::Resolution#process_topmost_state'
+    /opt/homebrew/lib/ruby/gems/3.4.0/gems/molinillo-0.8.0/lib/molinillo/resolution.rb:182:in 'Molinillo::Resolver::Resolution#resolve'
+    /opt/homebrew/lib/ruby/gems/3.4.0/gems/molinillo-0.8.0/lib/molinillo/resolver.rb:43:in 'Molinillo::Resolver#resolve'
+    /opt/homebrew/lib/ruby/gems/3.4.0/gems/cocoapods-1.16.2/lib/cocoapods/resolver.rb:94:in 'Pod::Resolver#resolve'
+    /opt/homebrew/lib/ruby/gems/3.4.0/gems/cocoapods-1.16.2/lib/cocoapods/installer/analyzer.rb:1082:in 'block in Pod::Installer::Analyzer#resolve_dependencies'
+    /opt/homebrew/lib/ruby/gems/3.4.0/gems/cocoapods-1.16.2/lib/cocoapods/user_interface.rb:64:in 'Pod::UserInterface.section'
+    /opt/homebrew/lib/ruby/gems/3.4.0/gems/cocoapods-1.16.2/lib/cocoapods/installer/analyzer.rb:1080:in 'Pod::Installer::Analyzer#resolve_dependencies'
+    /opt/homebrew/lib/ruby/gems/3.4.0/gems/cocoapods-1.16.2/lib/cocoapods/installer/analyzer.rb:125:in 'Pod::Installer::Analyzer#analyze'
+    /opt/homebrew/lib/ruby/gems/3.4.0/gems/cocoapods-1.16.2/lib/cocoapods/installer.rb:422:in 'Pod::Installer#analyze'
+    /opt/homebrew/lib/ruby/gems/3.4.0/gems/cocoapods-1.16.2/lib/cocoapods/installer.rb:244:in 'block in Pod::Installer#resolve_dependencies'
+    /opt/homebrew/lib/ruby/gems/3.4.0/gems/cocoapods-1.16.2/lib/cocoapods/user_interface.rb:64:in 'Pod::UserInterface.section'
+    /opt/homebrew/lib/ruby/gems/3.4.0/gems/cocoapods-1.16.2/lib/cocoapods/installer.rb:243:in 'Pod::Installer#resolve_dependencies'
+    /opt/homebrew/lib/ruby/gems/3.4.0/gems/cocoapods-1.16.2/lib/cocoapods/installer.rb:162:in 'Pod::Installer#install!'
+    /opt/homebrew/lib/ruby/gems/3.4.0/gems/cocoapods-1.16.2/lib/cocoapods/command/install.rb:52:in 'Pod::Command::Install#run'
+    /opt/homebrew/lib/ruby/gems/3.4.0/gems/claide-1.1.0/lib/claide/command.rb:334:in 'CLAide::Command.run'
+    /opt/homebrew/lib/ruby/gems/3.4.0/gems/cocoapods-1.16.2/lib/cocoapods/command.rb:52:in 'Pod::Command.run'
+    /opt/homebrew/lib/ruby/gems/3.4.0/gems/cocoapods-1.16.2/bin/pod:55:in '<top (required)>'
+    /opt/homebrew/lib/ruby/site_ruby/3.4.0/rubygems.rb:319:in 'Kernel#load'
+    /opt/homebrew/lib/ruby/site_ruby/3.4.0/rubygems.rb:319:in 'Gem.activate_and_load_bin_path'
+    /opt/homebrew/opt/ruby/bin/pod:25:in '<main>'
+
+Error: CocoaPods's specs repository is too out-of-date to satisfy dependencies.
+To update the CocoaPods specs, run:
+  pod repo update
+
+Error running pod install
