@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:restaurant_web_app/controllers/filldata_restaurant_controller.dart';
 import 'package:restaurant_web_app/main.dart';
-import 'package:restaurant_web_app/models/claim_model.dart';
+import 'package:restaurant_web_app/models/restaurant_owner_model.dart';
 import 'package:restaurant_web_app/screens/edit_restaurant_forms.dart';
 import 'package:restaurant_web_app/screens/main_screen/main_screen.dart';
 import 'package:restaurant_web_app/screens/main_screen/mainscreen_controller/main_controller.dart';
@@ -90,46 +90,57 @@ class LoginController extends GetxController {
           .then((value) async {
         print('Checking restaurant owner authentication...');
 
-        // Check restaurantOwner collection instead of restaurants
-        await FirebaseFirestore.instance
+        // Query restaurantOwner collection by email (not UID)
+        final userEmail = value.user!.email;
+        if (userEmail == null) {
+          Get.back();
+          await auth.signOut();
+          customAlertDialog2(
+            "Error",
+            "Unable to retrieve email address. Please try again.",
+          );
+          return;
+        }
+
+        final querySnapshot = await FirebaseFirestore.instance
             .collection('restaurantOwner')
-            .doc(value.user!.uid)
-            .get()
-            .then((doc) async {
-          if (doc.exists) {
-            // Restaurant owner found - convert to RestaurantClaimsModel and store globally
-            // The restaurantOwner collection structure matches RestaurantClaimsModel
-            final ownerModel = RestaurantClaimsModel.fromFirestore(doc);
-            currentRestaurantOwner.value = ownerModel;
+            .where('email', isEqualTo: userEmail)
+            .limit(1)
+            .get();
 
-            print('✅ Restaurant owner data loaded: ${ownerModel.email}');
-            print('✅ Restaurant: ${ownerModel.restaurantData.resName}');
-            print('✅ Owner Name: ${ownerModel.ownerName}');
+        if (querySnapshot.docs.isNotEmpty) {
+          // Restaurant owner found - convert to RestaurantOwnerModel and store globally
+          final doc = querySnapshot.docs.first;
+          final ownerModel = RestaurantOwnerModel.fromFirestore(doc);
+          currentRestaurantOwner.value = ownerModel;
 
-            final fillcontroller = Get.put(FillDataRestaurantController());
-            fillcontroller.fetchRestaurantData();
-            Get.back();
-            Get.offAll(() => AdminPanel());
-            passwordController.clear();
-            emailController.clear();
-            Get.snackbar("Login", "Logged in successfully",
-                maxWidth: 400, backgroundColor: AppColors.primaryColor);
-            await auth.currentUser!.reload();
+          print('✅ Restaurant owner data loaded: ${ownerModel.email}');
+          print('✅ Restaurant: ${ownerModel.restaurantData.resName}');
+          print('✅ Document ID: ${doc.id}');
 
-            print(
-                '✅ Restaurant owner logged in successfully: ${value.user!.uid}');
-          } else {
-            // Not a restaurant owner
-            Get.back();
-            await auth.signOut(); // Sign out the user
-            customAlertDialog2(
-              "We Couldn't Find Your Account",
-              "This email address is not associated with a restaurant owner account. If you believe you should have access, please contact the Support Team.",
-            );
-            print(
-                '❌ No restaurant owner account found for UID: ${value.user!.uid}');
-          }
-        });
+          final fillcontroller = Get.put(FillDataRestaurantController());
+          fillcontroller.fetchRestaurantData();
+          Get.back();
+          Get.offAll(() => AdminPanel());
+          passwordController.clear();
+          emailController.clear();
+          Get.snackbar("Login", "Logged in successfully",
+              maxWidth: 400, backgroundColor: AppColors.primaryColor);
+          await auth.currentUser!.reload();
+
+          print(
+              '✅ Restaurant owner logged in successfully: ${ownerModel.email}');
+        } else {
+          // Not a restaurant owner
+          Get.back();
+          await auth.signOut(); // Sign out the user
+          customAlertDialog2(
+            "We Couldn't Find Your Account",
+            "This email address is not associated with a restaurant owner account. If you believe you should have access, please contact the Support Team.",
+          );
+          print(
+              '❌ No restaurant owner account found for email: $userEmail');
+        }
       });
     } on FirebaseAuthException catch (error) {
       print('❌ Firebase Auth Error: ${error.code} - ${error.message}');

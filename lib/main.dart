@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:restaurant_web_app/models/claim_model.dart';
+import 'package:restaurant_web_app/models/restaurant_owner_model.dart';
 import 'package:restaurant_web_app/screens/auth_screens/login_screen/login_screen.dart';
 import 'package:restaurant_web_app/screens/edit_restaurant_forms.dart';
 import 'package:restaurant_web_app/screens/main_screen/main_screen.dart';
@@ -36,7 +36,7 @@ var currentUserDataModel =
 
 // Restaurant Owner Model - stores logged in owner data
 var currentRestaurantOwner =
-    Rxn<RestaurantClaimsModel>(); // Use Rxn for nullable objects
+    Rxn<RestaurantOwnerModel>(); // Use Rxn for nullable objects
 
 DocumentSnapshot<Map<String, dynamic>>? currentRestaurant;
 

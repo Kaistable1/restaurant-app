@@ -14,27 +14,37 @@ import 'package:path/path.dart' as Path;
 import 'dart:async';
 
 import '../main.dart';
-import '../models/claim_model.dart';
+import '../models/restaurant_owner_model.dart';
 
 Future<void> getCurrentUserData() async {
   print('Getting user data...');
 
   if (auth.currentUser != null) {
-    DocumentSnapshot<Map<String, dynamic>> value = await FirebaseFirestore.instance
+    final userEmail = auth.currentUser!.email;
+    if (userEmail == null) {
+      print('No email found for current user');
+      return;
+    }
+
+    // Query restaurantOwner collection by email (not UID)
+    final querySnapshot = await FirebaseFirestore.instance
         .collection('restaurantOwner')
-        .doc(auth.currentUser!.uid.toString())
+        .where('email', isEqualTo: userEmail)
+        .limit(1)
         .get();
 
-    if (value.exists && value.data()!.isNotEmpty) {
+    if (querySnapshot.docs.isNotEmpty) {
       // ✅ Correct way to update observable
-      currentRestaurantOwner.value = RestaurantClaimsModel.fromFirestore(value);
+      final doc = querySnapshot.docs.first;
+      currentRestaurantOwner.value = RestaurantOwnerModel.fromFirestore(doc);
 
       // ✅ If currentRestaurant is also observable, update it correctly
       // currentRestaurant = value;
 
       print('User data found ✅');
+      print('Document ID: ${doc.id}');
     } else {
-      print('User data not found, deleting user...');
+      print('User data not found for email: $userEmail, deleting user...');
       await auth.currentUser!.delete();
     }
   }

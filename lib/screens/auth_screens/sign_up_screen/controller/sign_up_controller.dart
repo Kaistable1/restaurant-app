@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:restaurant_web_app/models/claim_model.dart';
+import 'package:restaurant_web_app/models/restaurant_owner_model.dart';
 import 'package:restaurant_web_app/models/resaturant_model.dart';
 import 'package:restaurant_web_app/widgets/global_functions.dart';
 
@@ -128,27 +128,20 @@ class SignUpController extends GetxController {
       restaurantData.password = passwordController.text;
 
       // Create restaurant owner document
-      RestaurantClaimsModel ownerModel = RestaurantClaimsModel(
-        id: userId,
-        ownerName: ownerNameController.text.trim(),
-        email: emailController.text.trim(),
+      RestaurantOwnerModel ownerModel = RestaurantOwnerModel(
+        docID: userId,
         contact: phoneController.text.trim(),
-        message: '',
-        status: 'Pending',
+        email: emailController.text.trim(),
+        img: imageUrl,
         password: passwordController.text,
-        priceRange: '',
         restaurantData: restaurantData,
-        createdAt: DateTime.now(),
       );
 
       // Save to Firestore
       await FirebaseFirestore.instance
           .collection('restaurantOwner')
           .doc(userId)
-          .set({
-        ...ownerModel.toJson(),
-        'img': imageUrl,
-      });
+          .set(await ownerModel.toMap());
 
       Get.back(); // Close loading dialog
       Get.back(); // Go back to login screen
