@@ -5,8 +5,8 @@ import '../../../constants/colors.dart';
 import '../../../utils/responsive.dart';
 import '../../../widgets/auth_textfield.dart';
 import '../../../widgets/round_button.dart';
-import '../../../widgets/text_field.dart';
 import '../forgot_password/forgot_password.dart';
+import '../sign_up_screen/sign_up_screen.dart';
 import 'controller/login_controller.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -157,6 +157,36 @@ class LoginScreen extends StatelessWidget {
                       controller.logIn();
                     }
                   }, // Call login function
+                ),
+                const SizedBox(height: 20),
+                
+                // Sign Up Link
+                Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Don't have an account? ",
+                        style: TextStyle(
+                          color: AppColors.whiteColor,
+                          fontSize: Responsive.isDesktop(context) ? 16 : 14,
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Get.to(() => const SignUpScreen());
+                        },
+                        child: Text(
+                          "Sign Up",
+                          style: TextStyle(
+                            color: AppColors.primaryColor,
+                            fontSize: Responsive.isDesktop(context) ? 16 : 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 30),
               ],

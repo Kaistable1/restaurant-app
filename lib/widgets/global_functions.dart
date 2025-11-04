@@ -41,6 +41,50 @@ Future<void> getCurrentUserData() async {
 }
 
 
+/// Helper function to detect image extension from bytes
+String _getImageExtension(Uint8List imageBytes) {
+  if (imageBytes.length < 4) {
+    return 'jpg'; // Default to jpg if unable to detect
+  }
+
+  // Check for JPEG (FF D8 FF)
+  if (imageBytes[0] == 0xFF && imageBytes[1] == 0xD8 && imageBytes[2] == 0xFF) {
+    return 'jpg';
+  }
+
+  // Check for PNG (89 50 4E 47)
+  if (imageBytes[0] == 0x89 &&
+      imageBytes[1] == 0x50 &&
+      imageBytes[2] == 0x4E &&
+      imageBytes[3] == 0x47) {
+    return 'png';
+  }
+
+  // Check for GIF (47 49 46 38)
+  if (imageBytes[0] == 0x47 &&
+      imageBytes[1] == 0x49 &&
+      imageBytes[2] == 0x46 &&
+      imageBytes[3] == 0x38) {
+    return 'gif';
+  }
+
+  // Check for WebP (RIFF header: 52 49 46 46, then WEBP: 57 45 42 50)
+  if (imageBytes.length >= 12 &&
+      imageBytes[0] == 0x52 &&
+      imageBytes[1] == 0x49 &&
+      imageBytes[2] == 0x46 &&
+      imageBytes[3] == 0x46 &&
+      imageBytes[8] == 0x57 &&
+      imageBytes[9] == 0x45 &&
+      imageBytes[10] == 0x42 &&
+      imageBytes[11] == 0x50) {
+    return 'webp';
+  }
+
+  // Default to jpg if format is unknown
+  return 'jpg';
+}
+
 ///upload image to firebaseStorage
 Future<String> uploadImageToFirebase(
     String refPath, Uint8List imagePath) async {
@@ -50,9 +94,14 @@ Future<String> uploadImageToFirebase(
   String id = auth.currentUser != null
       ? "${DateTime.now().millisecondsSinceEpoch}${auth.currentUser!.uid.toString()}"
       : '${DateTime.now().millisecondsSinceEpoch}';
-  print('id +$id');
+  
+  // Detect image extension from bytes
+  String extension = _getImageExtension(imagePath);
+  String fileName = '$id.$extension';
+  
+  print('id +$id, extension: $extension, filename: $fileName');
 //reference for storage
-  final ref = FirebaseStorage.instance.ref(refPath).child(id);
+  final ref = FirebaseStorage.instance.ref(refPath).child(fileName);
   print(ref);
   print(imagePath.length);
 //put file
