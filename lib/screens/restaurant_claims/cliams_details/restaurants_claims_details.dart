@@ -457,13 +457,15 @@ class RestaurantsClaimsDetails extends StatelessWidget {
                                   ? 260
                                   : containerHeight, // Height set using MediaQuery
                               decoration: BoxDecoration(
+                                color: Colors.grey.shade300,
                                 borderRadius: BorderRadius.circular(
                                     isMobile ? 10 : (isTablet ? 10 : 10)),
-                                image: DecorationImage(
+                                image: claimsModel.restaurantData.imagesList.isEmpty ? null : DecorationImage(
                                   image: NetworkImage(claimsModel.restaurantData.imagesList.first),
                                   fit: BoxFit.cover,
                                 ),
                               ),
+                              child: claimsModel.restaurantData.imagesList.isEmpty ? Icon(Icons.image_not_supported, size: 48) : null,
                               // Add content inside the container if needed
                             ),
                             SizedBox(
