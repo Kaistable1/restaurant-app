@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:video_player/video_player.dart';
 import 'dart:io';
 
 import '../../main.dart';
-import '../../screens/nav_bar/full_screen_video/full_screen_video_screen.dart';
+import '../../screens/nav_bar/full_screen_video/scrollable_full_video_screen.dart';
 import '../controllers/streams_controller.dart';
-import '../model/streams_model.dart';
 
 class VideosListView extends StatelessWidget {
-  bool fromHome = false;
+  final bool fromHome;
   VideosListView({super.key, required this.fromHome});
 
   final RxMap<String, bool> showFilterDropdowns = <String, bool>{}.obs;
   final RxMap<String, String> selectedFilters = <String, String>{}.obs;
 
-  var filterOptions = <String, List<String>>{
+  final filterOptions = <String, List<String>>{
     "Vibes": [
       "Lively",
       "High-Energy",
@@ -138,14 +136,10 @@ class VideosListView extends StatelessWidget {
                       }
                       return GestureDetector(
                         onTap: () {
-                          Get.to(() => FullVideoScreen(video: video));
-
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (context) => FullVideoScreen(video: video),
-                          //   ),
-                          // );
+                          Get.to(() => ScrollableFullVideoScreen(
+                            videos: controller.filteredVideos,
+                            initialIndex: index,
+                          ));
                         },
                         child: Column(
                           mainAxisSize: MainAxisSize.min,

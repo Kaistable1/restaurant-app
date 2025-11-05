@@ -265,8 +265,8 @@ class AllEventsScreen extends StatelessWidget {
                                                                   ind] +
                                                               's'),
                                                       style: TextStyle(
-                                                          fontSize: 14,
-                                                          fontWeight: FontWeight.w500,
+                                                          fontSize: 16,
+                                                          fontWeight: FontWeight.w600,
                                                           fontFamily:
                                                               'PlusJakartaSans'),
                                                     ),
@@ -320,7 +320,7 @@ class AllEventsScreen extends StatelessWidget {
                                             hint: Text(
                                               'Events',
                                               style: TextStyle(
-                                                  fontSize: 14,
+                                                  fontSize: 16,
                                                   fontWeight: FontWeight.w500,
                                                   fontFamily: 'PlusJakartaSans'),
                                             ),
@@ -343,7 +343,7 @@ class AllEventsScreen extends StatelessWidget {
                                                       child: Text(
                                                         item,
                                                         style: TextStyle(
-                                                          fontSize: 12,
+                                                          fontSize: 15,
                                                           fontWeight: FontWeight.w500,
                                                           fontFamily:
                                                               'PlusJakartaSans',
@@ -409,7 +409,7 @@ class AllEventsScreen extends StatelessWidget {
                                               icon: Icon(
                                                 Icons.arrow_drop_down_sharp,
                                               ),
-                                              iconSize: 14,
+                                              iconSize: 16,
                                               iconEnabledColor: Colors.black,
                                               iconDisabledColor: Colors.grey,
                                             ),
@@ -421,7 +421,7 @@ class AllEventsScreen extends StatelessWidget {
                                                     BorderRadius.circular(14),
                                                 color: Colors.white,
                                               ),
-                                              offset: const Offset(-20, 0),
+                                              offset: const Offset(0, -4),
                                               scrollbarTheme: ScrollbarThemeData(
                                                 radius: const Radius.circular(40),
                                                 thickness:
@@ -668,7 +668,7 @@ class AllEventsScreen extends StatelessWidget {
                                                         elevation: 0,
                                                         color: Colors.white,
                                                         margin: const EdgeInsets.only(
-                                                            right: 12),
+                                                            right: 6),
                                                         shape: RoundedRectangleBorder(
                                                           borderRadius:
                                                               const BorderRadius.only(
@@ -793,7 +793,7 @@ class AllEventsScreen extends StatelessWidget {
                                                                     ]),
                                                               ),
                                                               const SizedBox(
-                                                                  width: 16),
+                                                                  width: 8),
                                                               GestureDetector(
                                                                   onTap: () {
                                                                     bookmarked
