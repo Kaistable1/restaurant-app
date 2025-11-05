@@ -158,6 +158,8 @@ class _MainScreenState extends State<MainScreen> {
             padding: EdgeInsets.zero,
             navBarStyle: NavBarStyle.style3,
             onItemSelected: (index) {
+              // Unfocus any active text field when switching tabs to prevent keyboard from auto-opening
+              FocusManager.instance.primaryFocus?.unfocus();
               setState(() {}); // Update UI if needed
             },
           );

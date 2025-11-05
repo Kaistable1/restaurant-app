@@ -62,6 +62,9 @@ class _HomeScreenNewState extends State<HomeScreenNew>
   // StreamSubscription to manage the listener for filtered restaurants
   StreamSubscription<List<RestaurantModel>>? _filteredSub;
 
+  // FocusNode for search TextField to prevent keyboard from auto-opening
+  final FocusNode _searchFocusNode = FocusNode();
+
   // Emoji mappings for filter options
   final Map<String, String> emojiMap = {
     // Vibes
@@ -152,7 +155,15 @@ class _HomeScreenNewState extends State<HomeScreenNew>
     _filteredSub?.cancel(); // Cancel the subscription to prevent memory leaks
     _customInfoWindowController.dispose();
     _searchDebounce?.cancel(); // Cancel the debounce timer
+    _searchFocusNode.dispose(); // Dispose the search FocusNode
     super.dispose();
+  }
+
+  @override
+  void deactivate() {
+    // Unfocus the search TextField when navigating away from this screen
+    _searchFocusNode.unfocus();
+    super.deactivate();
   }
 
   @override
@@ -1438,6 +1449,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                               Expanded(
                                 child: TextField(
                                   controller: homeLocationCtrl.searchController,
+                                  focusNode: _searchFocusNode,
                                   decoration: InputDecoration(
                                     hintText: 'Find places by vibes...',
                                     border: InputBorder.none,
