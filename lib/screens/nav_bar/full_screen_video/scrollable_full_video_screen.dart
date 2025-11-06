@@ -29,7 +29,6 @@ class _ScrollableFullVideoScreenState extends State<ScrollableFullVideoScreen> {
   final Map<int, VideoPlayerController> _controllers = {};
   final Map<int, bool> _initialized = {};
   final Map<int, bool> _isInitializing = {}; // Track videos currently being initialized
-  final Map<int, bool> _isBuffering = {}; // Track buffering state for each video
 
   @override
   void initState() {
@@ -67,39 +66,20 @@ class _ScrollableFullVideoScreenState extends State<ScrollableFullVideoScreen> {
     if (video.mediaType == 'video' && video.url != null) {
       _isInitializing[index] = true;
 
-      // Optimized video player initialization with better settings
       final controller = VideoPlayerController.networkUrl(
         Uri.parse(video.url!),
         videoPlayerOptions: VideoPlayerOptions(
           mixWithOthers: true,
           allowBackgroundPlayback: false,
         ),
-        httpHeaders: {
-          'Connection': 'keep-alive',
-          'Accept-Encoding': 'gzip, deflate',
-        },
-        formatHint: VideoFormat.other, // Let player auto-detect format
       );
       _controllers[index] = controller;
-
-      // Add buffering listener for better UX
-      controller.addListener(() {
-        if (mounted && controller.value.isInitialized) {
-          final isBuffering = controller.value.isBuffering;
-          if (_isBuffering[index] != isBuffering) {
-            setState(() {
-              _isBuffering[index] = isBuffering;
-            });
-          }
-        }
-      });
 
       controller.initialize().then((_) {
         if (mounted) {
           setState(() {
             _initialized[index] = true;
             _isInitializing[index] = false;
-            _isBuffering[index] = false;
           });
           // Only play if this is the current video being viewed
           if (_currentIndex == index) {
@@ -113,7 +93,6 @@ class _ScrollableFullVideoScreenState extends State<ScrollableFullVideoScreen> {
       }).catchError((error) {
         print('Error initializing video at index $index: $error');
         _isInitializing[index] = false;
-        _isBuffering[index] = false;
       });
     }
   }
@@ -156,7 +135,6 @@ class _ScrollableFullVideoScreenState extends State<ScrollableFullVideoScreen> {
       _controllers.remove(index);
       _initialized.remove(index);
       _isInitializing.remove(index);
-      _isBuffering.remove(index);
     }
   }
 
@@ -210,7 +188,6 @@ class _ScrollableFullVideoScreenState extends State<ScrollableFullVideoScreen> {
             controller: _controllers[index],
             isInitialized: _initialized[index] == true,
             isCurrentPage: _currentIndex == index,
-            isBuffering: _isBuffering[index] == true,
           );
         },
       ),
@@ -223,14 +200,12 @@ class _VideoPage extends StatefulWidget {
   final VideoPlayerController? controller;
   final bool isInitialized;
   final bool isCurrentPage;
-  final bool isBuffering;
 
   const _VideoPage({
     required this.video,
     required this.controller,
     required this.isInitialized,
     required this.isCurrentPage,
-    required this.isBuffering,
   });
 
   @override
@@ -358,34 +333,15 @@ class _VideoPageState extends State<_VideoPage> {
             color: Colors.black,
             child: widget.video.mediaType == 'video'
                 ? (widget.isInitialized
-                ? Stack(
-              fit: StackFit.expand,
-              children: [
-                FittedBox(
-                  fit: BoxFit.cover,
-                  child: SizedBox(
-                    width: widget.controller!.value.size.width,
-                    height: widget.controller!.value.size.height,
-                    child: VideoPlayer(widget.controller!),
-                  ),
-                ),
-                // Show buffering indicator when video is buffering
-                if (widget.isBuffering)
-                  Container(
-                    color: Colors.black26,
-                    child: const Center(
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    ),
-                  ),
-              ],
+                ? FittedBox(
+              fit: BoxFit.cover,
+              child: SizedBox(
+                width: widget.controller!.value.size.width,
+                height: widget.controller!.value.size.height,
+                child: VideoPlayer(widget.controller!),
+              ),
             )
-                : const Center(
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  ))
+                : const Center(child: CircularProgressIndicator()))
                 : Image.network(
               widget.video.url ?? '',
               fit: BoxFit.cover,
