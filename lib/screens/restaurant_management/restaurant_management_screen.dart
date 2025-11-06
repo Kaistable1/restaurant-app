@@ -345,19 +345,19 @@ class _RestaurantManagementScreenState
                             ),
                           ),
                         ),
-                        Expanded(
-                          flex: 1,
-                          child: Center(
-                            child: Text(
-                              "Featured",
-                              textAlign: TextAlign.center,
-                              style: simpleText.copyWith(
-                                fontSize: tableHeaderTextSize,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ),
-                        ),
+                        // Expanded(
+                        //   flex: 1,
+                        //   child: Center(
+                        //     child: Text(
+                        //       "Featured",
+                        //       textAlign: TextAlign.center,
+                        //       style: simpleText.copyWith(
+                        //         fontSize: tableHeaderTextSize,
+                        //         fontWeight: FontWeight.w700,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
                         Expanded(
                           flex: 1,
                           child: Center(
@@ -532,103 +532,103 @@ class _RestaurantManagementScreenState
                                     ),
                                   ),
                                 ),
-                                Expanded(
-                                  flex: 1,
-                                  child: StreamBuilder<Map<String, dynamic>?>(
-                                    stream:
-                                        controller.getFeaturedRestaurantID(),
-                                    builder: (context, snapshot) {
-                                      // Show loading state
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return CircleCheckbox(
-                                          onChanged: (v) async {},
-                                          value: false,
-                                        );
-                                      }
-
-                                      // Handle error state
-                                      if (snapshot.hasError) {
-                                        return CircleCheckbox(
-                                          onChanged: (v) async {},
-                                          value: false,
-                                        );
-                                      }
-
-                                      // Check if data exists and match restaurant ID
-                                      final data = snapshot.data;
-                                      final isFeatured = data != null &&
-                                          data['restaurantID'] ==
-                                              restaurant.docID;
-                                      final currentDescription = data != null
-                                          ? data['description'] as String?
-                                          : '';
-
-                                      return CircleCheckbox(
-                                        onChanged: (v) async {
-                                          // Show the dialog
-                                          await showDialog(
-                                            context: context,
-                                            builder:
-                                                (BuildContext dialogContext) {
-                                              return FeatureDescriptionDialog(
-                                                initialDescription:
-                                                    currentDescription ?? '',
-                                                onSubmit: (description) async {
-                                                  try {
-                                                    // Perform the Firestore update
-                                                    await controller
-                                                        .setFeaturedRestaurant(
-                                                      restaurantID:
-                                                          restaurant.docID,
-                                                      description: description,
-                                                    );
-                                                    // Check if the widget is still mounted before showing SnackBar
-                                                    if (context.mounted) {
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                        SnackBar(
-                                                          content: Text(
-                                                            'Featured restaurant updated successfully!',
-                                                            style: simpleText
-                                                                .copyWith(
-                                                                    color: Colors
-                                                                        .white),
-                                                          ),
-                                                          backgroundColor:
-                                                              primaryColor,
-                                                        ),
-                                                      );
-                                                    }
-                                                  } catch (e) {
-                                                    // Check if the widget is still mounted before showing error SnackBar
-                                                    if (context.mounted) {
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                        SnackBar(
-                                                          content: Text(
-                                                              'Failed to update featured restaurant'),
-                                                          backgroundColor:
-                                                              Colors.red,
-                                                        ),
-                                                      );
-                                                    }
-                                                  }
-                                                },
-                                                onCancel: () {
-                                                  setState(() {});
-                                                },
-                                              );
-                                            },
-                                          );
-                                        },
-                                        value: isFeatured,
-                                      );
-                                    },
-                                  ),
-                                ),
+                                // Expanded(
+                                //   flex: 1,
+                                //   child: StreamBuilder<Map<String, dynamic>?>(
+                                //     stream:
+                                //         controller.getFeaturedRestaurantID(),
+                                //     builder: (context, snapshot) {
+                                //       // Show loading state
+                                //       if (snapshot.connectionState ==
+                                //           ConnectionState.waiting) {
+                                //         return CircleCheckbox(
+                                //           onChanged: (v) async {},
+                                //           value: false,
+                                //         );
+                                //       }
+                                //
+                                //       // Handle error state
+                                //       if (snapshot.hasError) {
+                                //         return CircleCheckbox(
+                                //           onChanged: (v) async {},
+                                //           value: false,
+                                //         );
+                                //       }
+                                //
+                                //       // Check if data exists and match restaurant ID
+                                //       final data = snapshot.data;
+                                //       final isFeatured = data != null &&
+                                //           data['restaurantID'] ==
+                                //               restaurant.docID;
+                                //       final currentDescription = data != null
+                                //           ? data['description'] as String?
+                                //           : '';
+                                //
+                                //       return CircleCheckbox(
+                                //         onChanged: (v) async {
+                                //           // Show the dialog
+                                //           await showDialog(
+                                //             context: context,
+                                //             builder:
+                                //                 (BuildContext dialogContext) {
+                                //               return FeatureDescriptionDialog(
+                                //                 initialDescription:
+                                //                     currentDescription ?? '',
+                                //                 onSubmit: (description) async {
+                                //                   try {
+                                //                     // Perform the Firestore update
+                                //                     await controller
+                                //                         .setFeaturedRestaurant(
+                                //                       restaurantID:
+                                //                           restaurant.docID,
+                                //                       description: description,
+                                //                     );
+                                //                     // Check if the widget is still mounted before showing SnackBar
+                                //                     if (context.mounted) {
+                                //                       ScaffoldMessenger.of(
+                                //                               context)
+                                //                           .showSnackBar(
+                                //                         SnackBar(
+                                //                           content: Text(
+                                //                             'Featured restaurant updated successfully!',
+                                //                             style: simpleText
+                                //                                 .copyWith(
+                                //                                     color: Colors
+                                //                                         .white),
+                                //                           ),
+                                //                           backgroundColor:
+                                //                               primaryColor,
+                                //                         ),
+                                //                       );
+                                //                     }
+                                //                   } catch (e) {
+                                //                     // Check if the widget is still mounted before showing error SnackBar
+                                //                     if (context.mounted) {
+                                //                       ScaffoldMessenger.of(
+                                //                               context)
+                                //                           .showSnackBar(
+                                //                         SnackBar(
+                                //                           content: Text(
+                                //                               'Failed to update featured restaurant'),
+                                //                           backgroundColor:
+                                //                               Colors.red,
+                                //                         ),
+                                //                       );
+                                //                     }
+                                //                   }
+                                //                 },
+                                //                 onCancel: () {
+                                //                   setState(() {});
+                                //                 },
+                                //               );
+                                //             },
+                                //           );
+                                //         },
+                                //         value: isFeatured,
+                                //       );
+                                //     },
+                                //   ),
+                                // ),
                                 Expanded(
                                   flex: 1,
                                   child: Center(
