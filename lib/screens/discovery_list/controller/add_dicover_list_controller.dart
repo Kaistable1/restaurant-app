@@ -173,11 +173,8 @@ class AddDiscoverListController extends GetxController {
       if (selectedDietary.isNotEmpty) {
         query = query.where('dietaryList', arrayContainsAny: selectedDietary);
       }
-      if (filter.isNotEmpty) {
-        query = query
-            .where('resName', isGreaterThanOrEqualTo: filter)
-            .where('resName', isLessThan: '$filter\uf8ff');
-      }
+      // Note: Removed case-sensitive Firestore query for resName
+      // Will filter client-side for case-insensitive search
 
       query = query.limit(50);
 
@@ -185,6 +182,15 @@ class AddDiscoverListController extends GetxController {
       List<RestaurantModel> restaurants = snaps.docs
           .map((doc) => RestaurantModel.fromDocumentSnapshot(doc))
           .toList();
+
+      // Apply restaurant name filter client-side (case-insensitive)
+      if (filter.isNotEmpty) {
+        restaurants = restaurants.where((restaurant) {
+          return restaurant.resName
+              .toLowerCase()
+              .contains(filter.toLowerCase());
+        }).toList();
+      }
 
       // Apply cuisine filter client-side
       if (selectedCuisines.isNotEmpty) {
