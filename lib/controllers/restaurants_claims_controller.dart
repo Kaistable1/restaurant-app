@@ -119,65 +119,73 @@ class RestaurantsClaimsController extends GetxController {
       //     .doc(restaurantClaimModel.restaurantData.docID)
       //     .delete();
 
-      String docID = await assignedCredencialsLogin(
+      String authUid = await assignedCredencialsLogin(
           email: restaurantClaimModel.email,
           userPassword: passwordController.text);
 
-      if (docID != 'error') {
+      if (authUid != 'error') {
         // Restaurant already exists, just update email and password
+        // Restaurant is a separate entity - keep its own document ID
+        final restaurantDocID = restaurantClaimModel.restaurantData.docID;
+        
         await FirebaseFirestore.instance
             .collection('restaurants')
-            .doc(restaurantClaimModel.restaurantData.docID)
+            .doc(restaurantDocID)
             .update({
           'resEmail': restaurantClaimModel.email,
           'password': passwordController.text,
-          'docID': docID, // Update with Auth UID
+          // Note: Do NOT update restaurant's docID field with auth UID
+          // Restaurant keeps its own document ID
         });
 
         print(
-            '✅ Restaurant updated with credentials: ${restaurantClaimModel.restaurantData.docID}');
+            '✅ Restaurant updated with credentials: $restaurantDocID');
 
         // Check if restaurant owner document already exists
+        // RestaurantOwner is a separate entity with auth UID as its document ID
         final ownerDoc = await FirebaseFirestore.instance
             .collection('restaurantOwner')
-            .doc(docID)
+            .doc(authUid)
             .get();
 
         // Prepare restaurant data map
+        // Keep the restaurant's own document ID (not auth UID)
         final restaurantDataMap =
             await restaurantClaimModel.restaurantData.toMap();
-        restaurantDataMap['docID'] = docID;
+        restaurantDataMap['docID'] = restaurantDocID; // Restaurant's own document ID
         restaurantDataMap['resEmail'] = restaurantClaimModel.email;
         restaurantDataMap['password'] = passwordController.text;
 
+        // RestaurantOwner is a separate entity with auth UID as its document ID
+        // The docID field should also contain the auth UID (not restaurant doc ID)
         final ownerData = {
-          'docID': docID,
+          'docID': authUid, // Auth user's UID (same as document ID)
           'contact': restaurantClaimModel.contact,
           'email': restaurantClaimModel.email,
           'img': restaurantClaimModel.restaurantData.imagesList.isEmpty
-              ? ''
+              ? 'https://s3-media2.fl.yelpcdn.com/bphoto/iCP4QYCjWf9i-qDIBQrsnQ/o.jpg'
               : restaurantClaimModel.restaurantData.imagesList.first,
           'password': passwordController.text,
-          'restaurantData': restaurantDataMap,
+          'restaurantData': restaurantDataMap, // Contains restaurant's own docID inside
         };
 
         if (ownerDoc.exists) {
           // Update existing owner document
           await FirebaseFirestore.instance
               .collection('restaurantOwner')
-              .doc(docID)
-              .update(ownerData);
+              .doc(authUid)
+              .set(ownerData, SetOptions(merge: true));
 
-          print('✅ Restaurant owner document updated: $docID');
+          print('✅ Restaurant owner document updated - Document ID: $authUid, Restaurant DocID: $restaurantDocID');
         } else {
           // Create new owner document
           ownerData['createdAt'] = DateTime.now();
           await FirebaseFirestore.instance
               .collection('restaurantOwner')
-              .doc(docID)
+              .doc(authUid)
               .set(ownerData);
 
-          print('✅ Restaurant owner document created: $docID');
+          print('✅ Restaurant owner document created - Document ID: $authUid, Restaurant DocID: $restaurantDocID');
         }
 
         // Update the claim status
