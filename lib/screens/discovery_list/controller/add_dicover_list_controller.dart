@@ -176,7 +176,7 @@ class AddDiscoverListController extends GetxController {
       // Note: Removed case-sensitive Firestore query for resName
       // Will filter client-side for case-insensitive search
 
-      query = query.limit(50);
+      // query = query.limit(50);
 
       final snaps = await query.get() as QuerySnapshot<Map<String, dynamic>>;
       List<RestaurantModel> restaurants = snaps.docs
