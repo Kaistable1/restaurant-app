@@ -916,7 +916,8 @@ class AddRestaurantTabController extends GetxController {
 
       // Handle restaurant owner creation/update
       if (addingCredentials || updatingCredentials) {
-        await handleRestaurantOwnerOnUpdate(imagesList, restaurantData, newUid);
+        String? oldEmail = updatingCredentials ? restaurantModel!.resEmail : null;
+        await handleRestaurantOwnerOnUpdate(imagesList, restaurantData, newUid, oldEmail);
       }
 
       // Dismiss the loading dialog
@@ -941,7 +942,7 @@ class AddRestaurantTabController extends GetxController {
 
   // Handle restaurant owner creation or update when updating restaurant
   Future<void> handleRestaurantOwnerOnUpdate(
-      List<String> imagesList, Map<String, dynamic> restaurantData, String? authUid) async {
+      List<String> imagesList, Map<String, dynamic> restaurantData, String? authUid, String? oldEmail) async {
     try {
       // Check if email and password are now provided
       bool hasEmailPassword = emailController.text.trim().isNotEmpty &&
@@ -949,18 +950,28 @@ class AddRestaurantTabController extends GetxController {
 
       if (hasEmailPassword && authUid != null && authUid != 'error') {
         // Use the auth UID as the document ID for restaurantOwner
-        // Check if owner document exists (by auth UID or by email)
+        // Check if owner document exists (by auth UID first)
         final ownerDocByUid = await FirebaseFirestore.instance
             .collection('restaurantOwner')
             .doc(authUid)
             .get();
 
-        // Also check if an owner document exists with the restaurant docID
-        QuerySnapshot ownerDocByEmail = await FirebaseFirestore.instance
+        // Also check by new email
+        QuerySnapshot ownerDocByNewEmail = await FirebaseFirestore.instance
             .collection('restaurantOwner')
             .where('email', isEqualTo: emailController.text.trim())
             .limit(1)
             .get();
+
+        // If updating credentials, also check by old email
+        QuerySnapshot? ownerDocByOldEmail;
+        if (oldEmail != null && oldEmail.isNotEmpty) {
+          ownerDocByOldEmail = await FirebaseFirestore.instance
+              .collection('restaurantOwner')
+              .where('email', isEqualTo: oldEmail)
+              .limit(1)
+              .get();
+        }
 
         String ownerDocId = authUid; // Use auth UID as primary document ID
 
@@ -989,7 +1000,12 @@ class AddRestaurantTabController extends GetxController {
           'restaurantData': completeRestaurantData, // Contains restaurant's own docID inside
         };
 
-        if (!ownerDocByUid.exists && ownerDocByEmail.docs.isEmpty) {
+        // Determine which document to update/create
+        bool documentExists = ownerDocByUid.exists || 
+                             ownerDocByNewEmail.docs.isNotEmpty || 
+                             (ownerDocByOldEmail != null && ownerDocByOldEmail.docs.isNotEmpty);
+
+        if (!documentExists) {
           // Case: No owner document exists, create new one with auth UID
           print('📝 Creating new restaurant owner with auth UID: $authUid');
 
@@ -1000,11 +1016,30 @@ class AddRestaurantTabController extends GetxController {
 
           print('✅ Restaurant owner created successfully with auth UID: $authUid');
         } else {
-          // Case: Owner document exists (either by UID or by email), update it
+          // Case: Owner document exists, determine which one to update
           if (ownerDocByUid.exists) {
+            // Document exists with correct UID, update it
             ownerDocId = authUid;
-          } else if (ownerDocByEmail.docs.isNotEmpty) {
-            ownerDocId = ownerDocByEmail.docs.first.id;
+          } else if (ownerDocByOldEmail != null && ownerDocByOldEmail.docs.isNotEmpty) {
+            // Found by old email (credentials being updated)
+            String oldDocId = ownerDocByOldEmail.docs.first.id;
+            // If the old document ID is not the auth UID, we need to migrate it
+            if (oldDocId != authUid) {
+              // Copy data to new document with auth UID, then delete old one
+              await FirebaseFirestore.instance
+                  .collection('restaurantOwner')
+                  .doc(authUid)
+                  .set(ownerData);
+              await FirebaseFirestore.instance
+                  .collection('restaurantOwner')
+                  .doc(oldDocId)
+                  .delete();
+              print('✅ Migrated restaurant owner document from $oldDocId to $authUid');
+            }
+            ownerDocId = authUid;
+          } else if (ownerDocByNewEmail.docs.isNotEmpty) {
+            // Found by new email (shouldn't happen if UID is correct, but handle it)
+            ownerDocId = ownerDocByNewEmail.docs.first.id;
           }
 
           print('🔄 Updating existing restaurant owner: $ownerDocId');
@@ -1027,7 +1062,7 @@ class AddRestaurantTabController extends GetxController {
           await FirebaseFirestore.instance
               .collection('restaurantOwner')
               .doc(ownerDocId)
-              .update(updatedOwnerData);
+              .set(updatedOwnerData, SetOptions(merge: true));
 
           print('✅ Restaurant owner updated successfully: $ownerDocId');
         }
