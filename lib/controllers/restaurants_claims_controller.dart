@@ -119,15 +119,70 @@ class RestaurantsClaimsController extends GetxController {
       //     .doc(restaurantClaimModel.restaurantData.docID)
       //     .delete();
 
+      // Restaurant is a separate entity - keep its own document ID
+      final restaurantDocID = restaurantClaimModel.restaurantData.docID;
+      
+      // IMPORTANT: Check if this restaurant already has an owner account
+      // First, check if the restaurant document has credentials (indicates it might have an owner)
+      final restaurantDoc = await FirebaseFirestore.instance
+          .collection('restaurants')
+          .doc(restaurantDocID)
+          .get();
+
+      String? existingRestaurantEmail;
+      if (restaurantDoc.exists) {
+        final restaurantData = restaurantDoc.data();
+        existingRestaurantEmail = restaurantData?['resEmail'] as String?;
+      }
+
+      // If restaurant has an email, check if an owner account exists for this restaurant
+      if (existingRestaurantEmail != null && existingRestaurantEmail.isNotEmpty) {
+        // Query restaurantOwner by email to find existing owner
+        QuerySnapshot existingOwnersQuery = await FirebaseFirestore.instance
+            .collection('restaurantOwner')
+            .where('email', isEqualTo: existingRestaurantEmail)
+            .limit(1)
+            .get();
+
+        if (existingOwnersQuery.docs.isNotEmpty) {
+          // Found an owner with this email, verify it's for the same restaurant
+          final existingOwnerDoc = existingOwnersQuery.docs.first;
+          final existingOwnerData = existingOwnerDoc.data() as Map<String, dynamic>;
+          final existingOwnerEmail = existingOwnerData['email'] as String? ?? '';
+          final existingOwnerRestaurantData = existingOwnerData['restaurantData'] as Map<String, dynamic>?;
+          final existingOwnerRestaurantDocID = existingOwnerRestaurantData?['docID'] as String?;
+
+          // Verify this owner is for the same restaurant
+          if (existingOwnerRestaurantDocID == restaurantDocID) {
+            // Check if it's the same person trying to reclaim (same email)
+            if (existingOwnerEmail.toLowerCase() == restaurantClaimModel.email.toLowerCase()) {
+              // Same person - allow reclaiming/updating credentials
+              print('⚠️ Same owner reclaiming restaurant: $restaurantDocID');
+              // Continue with the approval process below
+            } else {
+              // Different person trying to claim an already-owned restaurant
+              Get.back();
+              Get.snackbar(
+                'Error',
+                'This restaurant already has an owner account (${existingOwnerEmail}). Cannot approve claim for a different owner.',
+                maxWidth: 400,
+                backgroundColor: Colors.red,
+                colorText: Colors.white,
+                duration: const Duration(seconds: 5),
+              );
+              print('❌ Restaurant $restaurantDocID already owned by: $existingOwnerEmail');
+              return;
+            }
+          }
+        }
+      }
+
       String authUid = await assignedCredencialsLogin(
           email: restaurantClaimModel.email,
           userPassword: passwordController.text);
 
       if (authUid != 'error') {
         // Restaurant already exists, just update email and password
-        // Restaurant is a separate entity - keep its own document ID
-        final restaurantDocID = restaurantClaimModel.restaurantData.docID;
-        
         await FirebaseFirestore.instance
             .collection('restaurants')
             .doc(restaurantDocID)
@@ -141,7 +196,7 @@ class RestaurantsClaimsController extends GetxController {
         print(
             '✅ Restaurant updated with credentials: $restaurantDocID');
 
-        // Check if restaurant owner document already exists
+        // Check if restaurant owner document already exists with this auth UID
         // RestaurantOwner is a separate entity with auth UID as its document ID
         final ownerDoc = await FirebaseFirestore.instance
             .collection('restaurantOwner')
