@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:savrly/constants/app_colors.dart';
+import 'package:savrly/constants/text_styles.dart';
 import 'package:savrly/main.dart';
 import 'package:savrly/widgets/global_functions.dart';
 import '../models/claims_model.dart';
@@ -161,17 +162,113 @@ class RestaurantsClaimsController extends GetxController {
               // Continue with the approval process below
             } else {
               // Different person trying to claim an already-owned restaurant
-              Get.back();
-              Get.snackbar(
-                'Error',
-                'This restaurant already has an owner account (${existingOwnerEmail}). Cannot approve claim for a different owner.',
-                maxWidth: 400,
-                backgroundColor: Colors.red,
-                colorText: Colors.white,
-                duration: const Duration(seconds: 5),
+              // Show dialog to inform admin and get confirmation
+              Get.back(); // Close loading dialog first
+              
+              bool? shouldProceed = await Get.dialog<bool>(
+                AlertDialog(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  title: Text(
+                    'Restaurant Already Has Owner',
+                    style: headingText.copyWith(fontSize: 18),
+                  ),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'This restaurant already has an owner account.',
+                        style: simpleText.copyWith(
+                          fontSize: 16,
+                          color: secondaryColor,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Existing Owner:',
+                        style: simpleText.copyWith(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: secondaryColor,
+                        ),
+                      ),
+                      Text(
+                        existingOwnerEmail,
+                        style: simpleText.copyWith(
+                          fontSize: 14,
+                          color: primaryColor,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'New Claim Email:',
+                        style: simpleText.copyWith(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: secondaryColor,
+                        ),
+                      ),
+                      Text(
+                        restaurantClaimModel.email,
+                        style: simpleText.copyWith(
+                          fontSize: 14,
+                          color: primaryColor,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Approving this claim will replace the existing owner account. Do you want to proceed?',
+                        style: simpleText.copyWith(
+                          fontSize: 14,
+                          color: Colors.red,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Get.back(result: false); // Cancel
+                      },
+                      child: Text(
+                        'Cancel',
+                        style: headingText.copyWith(
+                          fontSize: 14,
+                          color: Colors.blueAccent,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Get.back(result: true); // Accept
+                      },
+                      child: Text(
+                        'Accept',
+                        style: headingText.copyWith(
+                          fontSize: 14,
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                barrierDismissible: false,
               );
-              print('❌ Restaurant $restaurantDocID already owned by: $existingOwnerEmail');
-              return;
+
+              if (shouldProceed != true) {
+                // User cancelled
+                print('❌ Claim approval cancelled by admin');
+                return;
+              }
+
+              // User accepted - proceed with claim approval
+              print('⚠️ Admin approved claim replacement for restaurant $restaurantDocID');
+              // Continue with the approval process below (re-open loading dialog)
+              loadingDialog();
             }
           }
         }
