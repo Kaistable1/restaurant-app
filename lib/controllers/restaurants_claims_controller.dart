@@ -136,8 +136,17 @@ class RestaurantsClaimsController extends GetxController {
         existingRestaurantEmail = restaurantData?['resEmail'] as String?;
       }
 
+      // Store old owner info if we need to delete it later
+      String? oldOwnerDocID;
+      String? oldOwnerEmail;
+      String? oldOwnerPassword;
+
       // If restaurant has an email, check if an owner account exists for this restaurant
       if (existingRestaurantEmail != null && existingRestaurantEmail.isNotEmpty) {
+        // Get old owner's password from restaurant document
+        final restaurantDataForPassword = restaurantDoc.data();
+        oldOwnerPassword = restaurantDataForPassword?['password'] as String?;
+
         // Query restaurantOwner by email to find existing owner
         QuerySnapshot existingOwnersQuery = await FirebaseFirestore.instance
             .collection('restaurantOwner')
@@ -162,6 +171,11 @@ class RestaurantsClaimsController extends GetxController {
               // Continue with the approval process below
             } else {
               // Different person trying to claim an already-owned restaurant
+              // Store old owner info for deletion
+              oldOwnerDocID = existingOwnerDoc.id; // This is the old owner's auth UID (document ID)
+              oldOwnerEmail = existingOwnerEmail;
+              // Password is already retrieved from restaurant document above
+
               // Show dialog to inform admin and get confirmation
               Get.back(); // Close loading dialog first
               
@@ -219,7 +233,7 @@ class RestaurantsClaimsController extends GetxController {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'Approving this claim will replace the existing owner account. Do you want to proceed?',
+                        'Approving this claim will delete the existing owner account and replace it with the new one. Do you want to proceed?',
                         style: simpleText.copyWith(
                           fontSize: 14,
                           color: Colors.red,
@@ -267,6 +281,7 @@ class RestaurantsClaimsController extends GetxController {
 
               // User accepted - proceed with claim approval
               print('⚠️ Admin approved claim replacement for restaurant $restaurantDocID');
+              print('🗑️ Will delete old owner document: $oldOwnerDocID');
               // Continue with the approval process below (re-open loading dialog)
               loadingDialog();
             }
@@ -279,6 +294,41 @@ class RestaurantsClaimsController extends GetxController {
           userPassword: passwordController.text);
 
       if (authUid != 'error') {
+        // If we're replacing an old owner, delete the old owner's auth account and document
+        if (oldOwnerDocID != null && oldOwnerDocID.isNotEmpty && 
+            oldOwnerEmail != null && oldOwnerEmail.isNotEmpty &&
+            oldOwnerPassword != null && oldOwnerPassword.isNotEmpty) {
+          try {
+            // Delete the old owner's Firebase Auth account
+            await _deleteOldOwnerAuthAccount(
+              oldOwnerEmail: oldOwnerEmail,
+              oldOwnerPassword: oldOwnerPassword,
+            );
+
+            // Delete the old owner document
+            await FirebaseFirestore.instance
+                .collection('restaurantOwner')
+                .doc(oldOwnerDocID)
+                .delete();
+            
+            print('✅ Deleted old owner auth account and document: $oldOwnerDocID (Email: $oldOwnerEmail)');
+          } catch (e) {
+            print('⚠️ Warning: Failed to delete old owner account/document $oldOwnerDocID: $e');
+            // Continue anyway - we'll create the new owner document
+          }
+        } else if (oldOwnerDocID != null && oldOwnerDocID.isNotEmpty) {
+          // If we have the document ID but not the password, at least delete the document
+          try {
+            await FirebaseFirestore.instance
+                .collection('restaurantOwner')
+                .doc(oldOwnerDocID)
+                .delete();
+            print('✅ Deleted old owner document (auth account deletion skipped): $oldOwnerDocID');
+          } catch (e) {
+            print('⚠️ Warning: Failed to delete old owner document $oldOwnerDocID: $e');
+          }
+        }
+
         // Restaurant already exists, just update email and password
         await FirebaseFirestore.instance
             .collection('restaurants')
@@ -369,6 +419,71 @@ class RestaurantsClaimsController extends GetxController {
       Get.snackbar('Error', "Failed to approve restaurant claim: $e",
           maxWidth: 400, backgroundColor: Colors.red, colorText: Colors.white);
       print('❌ Error approving restaurant claim: $e');
+    }
+  }
+
+  // Delete old owner's Firebase Auth account
+  Future<void> _deleteOldOwnerAuthAccount({
+    required String oldOwnerEmail,
+    required String oldOwnerPassword,
+  }) async {
+    // Get admin credentials from SharedPreferences
+    String? adminEmail = preferences?.getString('adminEmail');
+    String? adminPassword = preferences?.getString('adminPassword');
+
+    if (adminEmail == null || adminPassword == null) {
+      print('⚠️ Admin credentials not found - cannot delete old owner auth account');
+      throw Exception('Admin credentials not found');
+    }
+
+    try {
+      // Sign out admin temporarily
+      await FirebaseAuth.instance.signOut();
+      print('Admin logged out to delete old owner account');
+
+      // Sign in with old owner's credentials
+      UserCredential oldOwnerCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: oldOwnerEmail,
+        password: oldOwnerPassword,
+      );
+      
+      User? oldOwnerUser = oldOwnerCredential.user;
+      if (oldOwnerUser != null) {
+        print('Old owner signed in with ID: ${oldOwnerUser.uid}');
+        
+        // Delete the user account
+        await oldOwnerUser.delete();
+        print('✅ Old owner auth account deleted: ${oldOwnerUser.uid}');
+      } else {
+        throw Exception('Failed to sign in old owner');
+      }
+
+      // Sign out (should already be signed out after deletion, but just in case)
+      await FirebaseAuth.instance.signOut();
+      print('Signed out after deleting old owner account');
+
+      // Sign admin back in
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: adminEmail,
+        password: adminPassword,
+      );
+      print('Admin signed back in after deleting old owner account');
+    } catch (e) {
+      // Make sure to sign admin back in even if deletion failed
+      try {
+        await FirebaseAuth.instance.signOut();
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: adminEmail,
+          password: adminPassword,
+        );
+        print('Admin signed back in after error');
+      } catch (signInError) {
+        print('❌ Failed to sign admin back in: $signInError');
+      }
+      
+      print('❌ Error deleting old owner auth account: $e');
+      rethrow; // Re-throw to let caller handle it
     }
   }
 
