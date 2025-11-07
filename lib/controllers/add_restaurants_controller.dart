@@ -707,19 +707,23 @@ class AddRestaurantTabController extends GetxController {
 
       List<String> imagesList = await uploadImagesToFirebase(imageBytesList);
 
-      String docID = '';
+      String authUid = ''; // Auth UID for restaurantOwner document
+      
+      // Create auth account if email/password provided
       if (emailController.text.isNotEmpty &&
           assignPasswordController.text.isNotEmpty) {
-        docID = await assignedCredencialsLogin(
+        authUid = await assignedCredencialsLogin(
             email: emailController.text.trim(),
             userPassword: assignPasswordController.text);
+        
+        if (authUid == 'error') {
+          Get.back();
+          Get.snackbar('Savrly', 'Restaurant not registered!',
+              backgroundColor: Colors.red, colorText: Colors.white);
+          return;
+        }
       }
-      if (docID == 'error') {
-        Get.back();
-        Get.snackbar('Savrly', 'Restaurant not registered!',
-            backgroundColor: Colors.red, colorText: Colors.white);
-        return;
-      }
+      
       // Prepare the restaurant data
       final restaurantData = {
         'phoneNo': phoneNoController.text.trim(),
@@ -737,7 +741,6 @@ class AddRestaurantTabController extends GetxController {
         'country': 'United States',
         'createdAt': Timestamp.now(),
         'dietaryList': [], // Empty array as per your data
-        'docID': docID, // Will be set after adding the document
         'entertainmentScheduleList': [], // Empty array as per your data
         'facilityList': [], // Empty array as per your data
         'imagesList': imagesList,
@@ -760,50 +763,44 @@ class AddRestaurantTabController extends GetxController {
         'zipCode': zipCodeController.text.trim(),
       };
 
-      if (docID == '') {
-        await FirebaseFirestore.instance
-            .collection('restaurants')
-            .add(restaurantData)
-            .then((val) async {
-          await val.update({'docID': val.id});
-          restaurantData['docID'] = val.id;
-          docID = val.id;
-        });
-      } else {
-        // Add the restaurant to Firestore
-        await FirebaseFirestore.instance
-            .collection('restaurants')
-            .doc(docID)
-            .set(restaurantData);
-        restaurantData['docID'] = docID;
-      }
+      // Always create restaurant document with its own generated ID (separate from auth UID)
+      final docRef = await FirebaseFirestore.instance
+          .collection('restaurants')
+          .add(restaurantData);
+      final restaurantDocID = docRef.id;
+      await docRef.update({'docID': restaurantDocID});
+      restaurantData['docID'] = restaurantDocID;
 
-      // Create restaurant owner if email/password were provided
+      // Create restaurant owner document if email/password were provided
       if (emailController.text.isNotEmpty &&
           assignPasswordController.text.isNotEmpty &&
-          docID.isNotEmpty &&
-          docID != 'error') {
+          authUid.isNotEmpty &&
+          authUid != 'error') {
         try {
           // Prepare owner data
+          // RestaurantOwner is a separate entity with auth UID as its document ID
+          // The docID field should also contain the auth UID (not restaurant doc ID)
           final ownerData = {
-            'docID': docID,
-            'contact': '', // Empty contact field as requested
+            'docID': authUid, // Auth user's UID (same as document ID)
+            'contact': phoneNoController.text.trim().isNotEmpty 
+                ? phoneNoController.text.trim() 
+                : '',
             'createdAt': DateTime.now(),
             'email': emailController.text.trim(),
             'img': imagesList.isEmpty
                 ? 'https://s3-media2.fl.yelpcdn.com/bphoto/iCP4QYCjWf9i-qDIBQrsnQ/o.jpg'
                 : imagesList.first,
             'password': assignPasswordController.text,
-            'restaurantData': restaurantData,
+            'restaurantData': restaurantData, // Contains restaurant's own docID inside
           };
 
-          // Create restaurant owner document
+          // Create restaurant owner document (document ID = auth UID)
           await FirebaseFirestore.instance
               .collection('restaurantOwner')
-              .doc(docID)
+              .doc(authUid)
               .set(ownerData);
 
-          print('✅ Restaurant owner created with docID: $docID');
+          print('✅ Restaurant owner created - Document ID: $authUid, Restaurant DocID: $restaurantDocID');
         } catch (e) {
           print('❌ Error creating restaurant owner: $e');
           // Note: Restaurant is already created, so we just log the error
@@ -819,7 +816,7 @@ class AddRestaurantTabController extends GetxController {
 
       // Always set restaurantModel after successful creation
       restaurantModel = RestaurantModel.fromMap(restaurantData);
-      currentRestaurantID = docID;
+      currentRestaurantID = restaurantDocID;
       update();
 
       // Dismiss the loading dialog
@@ -919,7 +916,7 @@ class AddRestaurantTabController extends GetxController {
 
       // Handle restaurant owner creation/update
       if (addingCredentials || updatingCredentials) {
-        await handleRestaurantOwnerOnUpdate(imagesList, restaurantData);
+        await handleRestaurantOwnerOnUpdate(imagesList, restaurantData, newUid);
       }
 
       // Dismiss the loading dialog
@@ -944,87 +941,95 @@ class AddRestaurantTabController extends GetxController {
 
   // Handle restaurant owner creation or update when updating restaurant
   Future<void> handleRestaurantOwnerOnUpdate(
-      List<String> imagesList, Map<String, dynamic> restaurantData) async {
+      List<String> imagesList, Map<String, dynamic> restaurantData, String? authUid) async {
     try {
       // Check if email and password are now provided
       bool hasEmailPassword = emailController.text.trim().isNotEmpty &&
           assignPasswordController.text.isNotEmpty;
 
-      // Check if restaurant previously had no email (was created without owner)
-      bool previouslyNoEmail = restaurantModel?.resEmail == null ||
-          restaurantModel!.resEmail.isEmpty;
-
-      if (hasEmailPassword && restaurantModel?.docID != null) {
-        // Check if owner document exists
-        final ownerDoc = await FirebaseFirestore.instance
+      if (hasEmailPassword && authUid != null && authUid != 'error') {
+        // Use the auth UID as the document ID for restaurantOwner
+        // Check if owner document exists (by auth UID or by email)
+        final ownerDocByUid = await FirebaseFirestore.instance
             .collection('restaurantOwner')
-            .doc(restaurantModel!.docID)
+            .doc(authUid)
             .get();
 
-        if (!ownerDoc.exists && previouslyNoEmail) {
-          // Case: Email/password added during update, create new owner
-          print(
-              '📝 Creating new restaurant owner (email/password added during update)');
+        // Also check if an owner document exists with the restaurant docID
+        QuerySnapshot ownerDocByEmail = await FirebaseFirestore.instance
+            .collection('restaurantOwner')
+            .where('email', isEqualTo: emailController.text.trim())
+            .limit(1)
+            .get();
 
-          // Note: Auth account creation is already handled by updateCredentials above
-          // We just need to create the restaurantOwner document
+        String ownerDocId = authUid; // Use auth UID as primary document ID
 
-          // Get the complete restaurant data including the new email/password
-          final completeRestaurantData = {
-            ...restaurantData,
-            'docID': restaurantModel!.docID,
-            'resEmail': emailController.text.trim(),
-            'password': assignPasswordController.text,
-          };
+        // Get the complete restaurant data including the new email/password
+        final completeRestaurantData = {
+          ...restaurantData,
+          'docID': restaurantModel!.docID,
+          'resEmail': emailController.text.trim(),
+          'password': assignPasswordController.text,
+        };
 
-          // Create owner data
-          final ownerData = {
-            'docID': restaurantModel!.docID,
-            'contact': '', // Empty contact field as requested
-            'createdAt': DateTime.now(),
-            'email': emailController.text.trim(),
-            'img': imagesList.isEmpty
-                ? 'https://s3-media2.fl.yelpcdn.com/bphoto/iCP4QYCjWf9i-qDIBQrsnQ/o.jpg'
-                : imagesList.first,
-            'password': assignPasswordController.text,
-            'restaurantData': completeRestaurantData,
-          };
+        // Create owner data
+        // RestaurantOwner is a separate entity with auth UID as its document ID
+        // The docID field should also contain the auth UID (not restaurant doc ID)
+        final ownerData = {
+          'docID': authUid, // Auth user's UID (same as document ID)
+          'contact': phoneNoController.text.trim().isNotEmpty 
+              ? phoneNoController.text.trim() 
+              : '',
+          'createdAt': DateTime.now(),
+          'email': emailController.text.trim(),
+          'img': imagesList.isEmpty
+              ? 'https://s3-media2.fl.yelpcdn.com/bphoto/iCP4QYCjWf9i-qDIBQrsnQ/o.jpg'
+              : imagesList.first,
+          'password': assignPasswordController.text,
+          'restaurantData': completeRestaurantData, // Contains restaurant's own docID inside
+        };
 
-          // Create restaurant owner document
+        if (!ownerDocByUid.exists && ownerDocByEmail.docs.isEmpty) {
+          // Case: No owner document exists, create new one with auth UID
+          print('📝 Creating new restaurant owner with auth UID: $authUid');
+
           await FirebaseFirestore.instance
               .collection('restaurantOwner')
-              .doc(restaurantModel!.docID)
+              .doc(authUid)
               .set(ownerData);
 
-          print('✅ Restaurant owner created successfully during update');
-        } else if (ownerDoc.exists) {
-          // Case: Owner exists, update it
-          print('🔄 Updating existing restaurant owner');
+          print('✅ Restaurant owner created successfully with auth UID: $authUid');
+        } else {
+          // Case: Owner document exists (either by UID or by email), update it
+          if (ownerDocByUid.exists) {
+            ownerDocId = authUid;
+          } else if (ownerDocByEmail.docs.isNotEmpty) {
+            ownerDocId = ownerDocByEmail.docs.first.id;
+          }
+
+          print('🔄 Updating existing restaurant owner: $ownerDocId');
 
           final updatedOwnerData = {
+            'docID': authUid, // Auth user's UID (same as document ID)
             'email': emailController.text.trim(),
             'img': imagesList.isEmpty
                 ? 'https://s3-media2.fl.yelpcdn.com/bphoto/iCP4QYCjWf9i-qDIBQrsnQ/o.jpg'
                 : imagesList.first,
-            'restaurantData': {
-              ...restaurantData,
-              'docID': restaurantModel!.docID,
-              'resEmail': emailController.text.trim(),
-              'password': assignPasswordController.text,
-            },
+            'restaurantData': completeRestaurantData, // Contains restaurant's own docID inside
+            'password': assignPasswordController.text,
           };
 
-          // Update password only if it changed
-          if (restaurantModel!.password != assignPasswordController.text) {
-            updatedOwnerData['password'] = assignPasswordController.text;
+          // Update contact if phone number is provided
+          if (phoneNoController.text.trim().isNotEmpty) {
+            updatedOwnerData['contact'] = phoneNoController.text.trim();
           }
 
           await FirebaseFirestore.instance
               .collection('restaurantOwner')
-              .doc(restaurantModel!.docID)
+              .doc(ownerDocId)
               .update(updatedOwnerData);
 
-          print('✅ Restaurant owner updated successfully');
+          print('✅ Restaurant owner updated successfully: $ownerDocId');
         }
       }
     } catch (e) {
