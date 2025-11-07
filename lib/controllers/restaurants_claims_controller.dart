@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -233,7 +234,7 @@ class RestaurantsClaimsController extends GetxController {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'Approving this claim will delete the existing owner account and replace it with the new one. Do you want to proceed?',
+                        'Approving this claim will update the existing owner account credentials (email and password) to the new claim information. Do you want to proceed?',
                         style: simpleText.copyWith(
                           fontSize: 14,
                           color: Colors.red,
@@ -281,7 +282,7 @@ class RestaurantsClaimsController extends GetxController {
 
               // User accepted - proceed with claim approval
               print('⚠️ Admin approved claim replacement for restaurant $restaurantDocID');
-              print('🗑️ Will delete old owner document: $oldOwnerDocID');
+              print('🔄 Will update old owner credentials instead of creating new account');
               // Continue with the approval process below (re-open loading dialog)
               loadingDialog();
             }
@@ -289,106 +290,104 @@ class RestaurantsClaimsController extends GetxController {
         }
       }
 
-      String authUid = await assignedCredencialsLogin(
-          email: restaurantClaimModel.email,
-          userPassword: passwordController.text);
+      String authUid;
 
-      if (authUid != 'error') {
-        // If we're replacing an old owner, delete the old owner's auth account and document
-        if (oldOwnerDocID != null && oldOwnerDocID.isNotEmpty && 
-            oldOwnerEmail != null && oldOwnerEmail.isNotEmpty &&
-            oldOwnerPassword != null && oldOwnerPassword.isNotEmpty) {
-          try {
-            // Delete the old owner's Firebase Auth account
-            await _deleteOldOwnerAuthAccount(
-              oldOwnerEmail: oldOwnerEmail,
-              oldOwnerPassword: oldOwnerPassword,
-            );
+      // If we're replacing an old owner, update their credentials instead of creating new account
+      if (oldOwnerDocID != null && oldOwnerDocID.isNotEmpty && 
+          oldOwnerEmail != null && oldOwnerEmail.isNotEmpty &&
+          oldOwnerPassword != null && oldOwnerPassword.isNotEmpty) {
+        // Update existing owner's credentials
+        authUid = await _updateOldOwnerCredentials(
+          oldOwnerEmail: oldOwnerEmail,
+          oldOwnerPassword: oldOwnerPassword,
+          newEmail: restaurantClaimModel.email,
+          newPassword: passwordController.text,
+        );
 
-            // Delete the old owner document
-            await FirebaseFirestore.instance
-                .collection('restaurantOwner')
-                .doc(oldOwnerDocID)
-                .delete();
-            
-            print('✅ Deleted old owner auth account and document: $oldOwnerDocID (Email: $oldOwnerEmail)');
-          } catch (e) {
-            print('⚠️ Warning: Failed to delete old owner account/document $oldOwnerDocID: $e');
-            // Continue anyway - we'll create the new owner document
-          }
-        } else if (oldOwnerDocID != null && oldOwnerDocID.isNotEmpty) {
-          // If we have the document ID but not the password, at least delete the document
-          try {
-            await FirebaseFirestore.instance
-                .collection('restaurantOwner')
-                .doc(oldOwnerDocID)
-                .delete();
-            print('✅ Deleted old owner document (auth account deletion skipped): $oldOwnerDocID');
-          } catch (e) {
-            print('⚠️ Warning: Failed to delete old owner document $oldOwnerDocID: $e');
-          }
+        if (authUid == 'error') {
+          Get.back();
+          Get.snackbar('Error', 'Failed to update owner credentials',
+              maxWidth: 400,
+              backgroundColor: Colors.red,
+              colorText: Colors.white);
+          return;
         }
+      } else {
+        // No existing owner, create new account
+        authUid = await assignedCredencialsLogin(
+            email: restaurantClaimModel.email,
+            userPassword: passwordController.text);
 
-        // Restaurant already exists, just update email and password
+        if (authUid == 'error') {
+          Get.back();
+          Get.snackbar('Error', "Failed to create restaurant account",
+              maxWidth: 400,
+              backgroundColor: Colors.red,
+              colorText: Colors.white);
+          return;
+        }
+      }
+
+      // Restaurant already exists, just update email and password
+      await FirebaseFirestore.instance
+          .collection('restaurants')
+          .doc(restaurantDocID)
+          .update({
+        'resEmail': restaurantClaimModel.email,
+        'password': passwordController.text,
+        // Note: Do NOT update restaurant's docID field with auth UID
+        // Restaurant keeps its own document ID
+      });
+
+      print(
+          '✅ Restaurant updated with credentials: $restaurantDocID');
+
+      // Check if restaurant owner document already exists with this auth UID
+      // RestaurantOwner is a separate entity with auth UID as its document ID
+      final ownerDoc = await FirebaseFirestore.instance
+          .collection('restaurantOwner')
+          .doc(authUid)
+          .get();
+
+      // Prepare restaurant data map
+      // Keep the restaurant's own document ID (not auth UID)
+      final restaurantDataMap =
+          await restaurantClaimModel.restaurantData.toMap();
+      restaurantDataMap['docID'] = restaurantDocID; // Restaurant's own document ID
+      restaurantDataMap['resEmail'] = restaurantClaimModel.email;
+      restaurantDataMap['password'] = passwordController.text;
+
+      // RestaurantOwner is a separate entity with auth UID as its document ID
+      // The docID field should also contain the auth UID (not restaurant doc ID)
+      final ownerData = {
+        'docID': authUid, // Auth user's UID (same as document ID)
+        'contact': restaurantClaimModel.contact,
+        'email': restaurantClaimModel.email,
+        'img': restaurantClaimModel.restaurantData.imagesList.isEmpty
+            ? 'https://s3-media2.fl.yelpcdn.com/bphoto/iCP4QYCjWf9i-qDIBQrsnQ/o.jpg'
+            : restaurantClaimModel.restaurantData.imagesList.first,
+        'password': passwordController.text,
+        'restaurantData': restaurantDataMap, // Contains restaurant's own docID inside
+      };
+
+      if (ownerDoc.exists) {
+        // Update existing owner document
         await FirebaseFirestore.instance
-            .collection('restaurants')
-            .doc(restaurantDocID)
-            .update({
-          'resEmail': restaurantClaimModel.email,
-          'password': passwordController.text,
-          // Note: Do NOT update restaurant's docID field with auth UID
-          // Restaurant keeps its own document ID
-        });
-
-        print(
-            '✅ Restaurant updated with credentials: $restaurantDocID');
-
-        // Check if restaurant owner document already exists with this auth UID
-        // RestaurantOwner is a separate entity with auth UID as its document ID
-        final ownerDoc = await FirebaseFirestore.instance
             .collection('restaurantOwner')
             .doc(authUid)
-            .get();
+            .set(ownerData, SetOptions(merge: true));
 
-        // Prepare restaurant data map
-        // Keep the restaurant's own document ID (not auth UID)
-        final restaurantDataMap =
-            await restaurantClaimModel.restaurantData.toMap();
-        restaurantDataMap['docID'] = restaurantDocID; // Restaurant's own document ID
-        restaurantDataMap['resEmail'] = restaurantClaimModel.email;
-        restaurantDataMap['password'] = passwordController.text;
+        print('✅ Restaurant owner document updated - Document ID: $authUid, Restaurant DocID: $restaurantDocID');
+      } else {
+        // Create new owner document (shouldn't happen if updating, but handle it)
+        ownerData['createdAt'] = DateTime.now();
+        await FirebaseFirestore.instance
+            .collection('restaurantOwner')
+            .doc(authUid)
+            .set(ownerData);
 
-        // RestaurantOwner is a separate entity with auth UID as its document ID
-        // The docID field should also contain the auth UID (not restaurant doc ID)
-        final ownerData = {
-          'docID': authUid, // Auth user's UID (same as document ID)
-          'contact': restaurantClaimModel.contact,
-          'email': restaurantClaimModel.email,
-          'img': restaurantClaimModel.restaurantData.imagesList.isEmpty
-              ? 'https://s3-media2.fl.yelpcdn.com/bphoto/iCP4QYCjWf9i-qDIBQrsnQ/o.jpg'
-              : restaurantClaimModel.restaurantData.imagesList.first,
-          'password': passwordController.text,
-          'restaurantData': restaurantDataMap, // Contains restaurant's own docID inside
-        };
-
-        if (ownerDoc.exists) {
-          // Update existing owner document
-          await FirebaseFirestore.instance
-              .collection('restaurantOwner')
-              .doc(authUid)
-              .set(ownerData, SetOptions(merge: true));
-
-          print('✅ Restaurant owner document updated - Document ID: $authUid, Restaurant DocID: $restaurantDocID');
-        } else {
-          // Create new owner document
-          ownerData['createdAt'] = DateTime.now();
-          await FirebaseFirestore.instance
-              .collection('restaurantOwner')
-              .doc(authUid)
-              .set(ownerData);
-
-          print('✅ Restaurant owner document created - Document ID: $authUid, Restaurant DocID: $restaurantDocID');
-        }
+        print('✅ Restaurant owner document created - Document ID: $authUid, Restaurant DocID: $restaurantDocID');
+      }
 
         // Update the claim status
         await FirebaseFirestore.instance
@@ -407,13 +406,6 @@ class RestaurantsClaimsController extends GetxController {
             maxWidth: 400,
             backgroundColor: primaryColor,
             colorText: Colors.white);
-      } else {
-        Get.back();
-        Get.snackbar('Error', "Failed to create restaurant account",
-            maxWidth: 400,
-            backgroundColor: Colors.red,
-            colorText: Colors.white);
-      }
     } catch (e) {
       Get.back(); // Close loading dialog
       Get.snackbar('Error', "Failed to approve restaurant claim: $e",
@@ -422,24 +414,30 @@ class RestaurantsClaimsController extends GetxController {
     }
   }
 
-  // Delete old owner's Firebase Auth account
-  Future<void> _deleteOldOwnerAuthAccount({
+  // Update old owner's Firebase Auth credentials
+  Future<String> _updateOldOwnerCredentials({
     required String oldOwnerEmail,
     required String oldOwnerPassword,
+    required String newEmail,
+    required String newPassword,
   }) async {
     // Get admin credentials from SharedPreferences
     String? adminEmail = preferences?.getString('adminEmail');
     String? adminPassword = preferences?.getString('adminPassword');
 
     if (adminEmail == null || adminPassword == null) {
-      print('⚠️ Admin credentials not found - cannot delete old owner auth account');
-      throw Exception('Admin credentials not found');
+      print('⚠️ Admin credentials not found - cannot update old owner credentials');
+      Get.snackbar('Error', 'Admin credentials not found',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white);
+      return 'error';
     }
 
     try {
       // Sign out admin temporarily
       await FirebaseAuth.instance.signOut();
-      print('Admin logged out to delete old owner account');
+      print('Admin logged out to update old owner credentials');
 
       // Sign in with old owner's credentials
       UserCredential oldOwnerCredential =
@@ -449,28 +447,113 @@ class RestaurantsClaimsController extends GetxController {
       );
       
       User? oldOwnerUser = oldOwnerCredential.user;
-      if (oldOwnerUser != null) {
-        print('Old owner signed in with ID: ${oldOwnerUser.uid}');
-        
-        // Delete the user account
-        await oldOwnerUser.delete();
-        print('✅ Old owner auth account deleted: ${oldOwnerUser.uid}');
-      } else {
+      if (oldOwnerUser == null) {
         throw Exception('Failed to sign in old owner');
       }
 
-      // Sign out (should already be signed out after deletion, but just in case)
+      print('Old owner signed in with ID: ${oldOwnerUser.uid}');
+      String authUid = oldOwnerUser.uid;
+
+      // Update Email if needed
+      if (newEmail.isNotEmpty && newEmail != oldOwnerEmail) {
+        try {
+          final payload = {
+            'uid': authUid,
+            'newEmail': newEmail.trim().toLowerCase(),
+          };
+          print('Sending payload to Cloud Function to update email: $payload');
+
+          final callable = FirebaseFunctions.instanceFor(region: 'us-central1')
+              .httpsCallable('updateUserEmail');
+          final response = await callable.call(payload);
+          print('Cloud Function response: ${response.data}');
+
+          if (response.data['success'] == true) {
+            print('Old owner email updated to $newEmail via Cloud Function');
+
+            // Re-sign in with new email to refresh token
+            UserCredential newCredential =
+                await FirebaseAuth.instance.signInWithEmailAndPassword(
+              email: newEmail,
+              password: oldOwnerPassword,
+            );
+            oldOwnerUser = newCredential.user;
+            print('Old owner re-logged in with updated email: ${oldOwnerUser?.uid}');
+          } else {
+            String errorMessage = response.data['error'] ?? 'Unknown error';
+            throw Exception('Email update failed: $errorMessage');
+          }
+        } catch (e) {
+          print('Email update failed: $e');
+          // Sign admin back in before throwing
+          await FirebaseAuth.instance.signOut();
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+            email: adminEmail,
+            password: adminPassword,
+          );
+          throw e;
+        }
+      }
+
+      // Update Password if needed
+      if (newPassword.isNotEmpty && newPassword != oldOwnerPassword) {
+        try {
+          await oldOwnerUser?.updatePassword(newPassword);
+          print('Old owner password updated');
+        } catch (e) {
+          if (e is FirebaseAuthException && e.code == 'requires-recent-login') {
+            try {
+              // Re-authenticate with current credentials
+              // Use new email if it was updated, otherwise use old email
+              String emailForReAuth = (newEmail.isNotEmpty && newEmail != oldOwnerEmail) 
+                  ? newEmail 
+                  : oldOwnerEmail;
+              String passwordForReAuth = (newEmail.isNotEmpty && newEmail != oldOwnerEmail)
+                  ? oldOwnerPassword // Still use old password for re-auth
+                  : oldOwnerPassword;
+              
+              AuthCredential credential = EmailAuthProvider.credential(
+                email: emailForReAuth,
+                password: passwordForReAuth,
+              );
+              await oldOwnerUser?.reauthenticateWithCredential(credential);
+              print('Re-authentication successful');
+              await oldOwnerUser?.updatePassword(newPassword);
+              print('Old owner password updated after re-auth');
+            } catch (reAuthError) {
+              print('Re-authentication or password update failed: $reAuthError');
+              await FirebaseAuth.instance.signOut();
+              await FirebaseAuth.instance.signInWithEmailAndPassword(
+                email: adminEmail,
+                password: adminPassword,
+              );
+              throw reAuthError;
+            }
+          } else {
+            await FirebaseAuth.instance.signOut();
+            await FirebaseAuth.instance.signInWithEmailAndPassword(
+              email: adminEmail,
+              password: adminPassword,
+            );
+            throw e;
+          }
+        }
+      }
+
+      // Sign out
       await FirebaseAuth.instance.signOut();
-      print('Signed out after deleting old owner account');
+      print('Signed out after updating old owner credentials');
 
       // Sign admin back in
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: adminEmail,
         password: adminPassword,
       );
-      print('Admin signed back in after deleting old owner account');
+      print('Admin signed back in after updating old owner credentials');
+
+      return authUid; // Return the same auth UID (not changed)
     } catch (e) {
-      // Make sure to sign admin back in even if deletion failed
+      // Make sure to sign admin back in even if update failed
       try {
         await FirebaseAuth.instance.signOut();
         await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -482,8 +565,12 @@ class RestaurantsClaimsController extends GetxController {
         print('❌ Failed to sign admin back in: $signInError');
       }
       
-      print('❌ Error deleting old owner auth account: $e');
-      rethrow; // Re-throw to let caller handle it
+      print('❌ Error updating old owner credentials: $e');
+      Get.snackbar('Error', 'Failed to update owner credentials: $e',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white);
+      return 'error';
     }
   }
 
