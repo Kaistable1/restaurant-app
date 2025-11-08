@@ -16,6 +16,7 @@ import 'package:kaistable_website/screens/favorite_screen/favorite_screen.dart';
 import 'package:kaistable_website/screens/general_preferences/screens_general/preference_1.dart';
 import 'package:kaistable_website/screens/nav_bar/widgets/custom_button.dart';
 import 'package:kaistable_website/screens/monetization_screen/monetization_screen.dart';
+import 'package:kaistable_website/screens/moderation_screen/admin_moderation_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -58,6 +59,17 @@ class ProfileScreen extends StatelessWidget {
             fontFamily: 'Nunito-Bold',
           ),
         ),
+        actions: [
+          // Admin moderation access - shown to all users for demo purposes
+          // In production, this should check user roles/permissions
+          IconButton(
+            icon: Icon(Icons.admin_panel_settings, color: AppColors.primaryColor),
+            tooltip: 'Admin Moderation',
+            onPressed: () {
+              Get.to(() => AdminModerationScreen());
+            },
+          ),
+        ],
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,

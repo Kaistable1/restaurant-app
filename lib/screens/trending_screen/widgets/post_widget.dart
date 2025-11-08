@@ -4,6 +4,7 @@ import 'package:kaistable_website/constants/app_colors.dart';
 import 'package:kaistable_website/models/post_model.dart';
 import 'package:kaistable_website/services/post_service.dart';
 import 'package:kaistable_website/screens/trending_screen/widgets/report_dialog.dart';
+import 'package:kaistable_website/screens/user_profile_screen/user_profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
@@ -60,37 +61,43 @@ class _PostWidgetState extends State<PostWidget> {
   Widget _buildHeader() {
     return Row(
       children: [
-        CircleAvatar(
-          radius: 20,
-          backgroundImage: widget.post.userImage != null && widget.post.userImage!.isNotEmpty
-              ? NetworkImage(widget.post.userImage!)
-              : null,
-          child: widget.post.userImage == null || widget.post.userImage!.isEmpty
-              ? Icon(Icons.person, size: 24)
-              : null,
+        GestureDetector(
+          onTap: _navigateToUserProfile,
+          child: CircleAvatar(
+            radius: 20,
+            backgroundImage: widget.post.userImage != null && widget.post.userImage!.isNotEmpty
+                ? NetworkImage(widget.post.userImage!)
+                : null,
+            child: widget.post.userImage == null || widget.post.userImage!.isEmpty
+                ? Icon(Icons.person, size: 24)
+                : null,
+          ),
         ),
         SizedBox(width: 12),
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                widget.post.userName ?? 'Unknown User',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                  fontFamily: 'Nunito-Bold',
+          child: GestureDetector(
+            onTap: _navigateToUserProfile,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.post.userName ?? 'Unknown User',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    fontFamily: 'Nunito-Bold',
+                  ),
                 ),
-              ),
-              Text(
-                _formatDate(widget.post.createdAt),
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 12,
-                  fontFamily: 'Nunito-Regular',
+                Text(
+                  _formatDate(widget.post.createdAt),
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 12,
+                    fontFamily: 'Nunito-Regular',
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         PopupMenuButton<String>(
@@ -331,6 +338,23 @@ class _PostWidgetState extends State<PostWidget> {
           snackPosition: SnackPosition.BOTTOM,
         );
       }
+    }
+  }
+
+  void _navigateToUserProfile() {
+    final currentUserID = FirebaseAuth.instance.currentUser?.uid;
+    
+    // Don't navigate to own profile
+    if (currentUserID == widget.post.userID) {
+      return;
+    }
+
+    Get.to(() => UserProfileScreen(
+      userID: widget.post.userID ?? '',
+      userName: widget.post.userName ?? 'Unknown User',
+      userImage: widget.post.userImage,
+    ));
+  }
     }
   }
 }
