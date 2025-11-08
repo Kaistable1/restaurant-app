@@ -8,6 +8,7 @@ import 'package:kaistable_website/screens/favorite_screen/favorite_screen.dart';
 import 'package:kaistable_website/screens/home_screen/my_home_screen.dart';
 import 'package:kaistable_website/screens/nav_bar/controller/home_controller.dart';
 import 'package:kaistable_website/screens/nav_bar/profile.dart';
+import 'package:kaistable_website/screens/trending_screen/trending_screen.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 
 import '../home_screen/notification_screen/notification_screen.dart';
@@ -27,6 +28,7 @@ class _MainScreenState extends State<MainScreen> {
     return [
       HomeScreen(),
       MyHomeScreen(),
+      TrendingScreen(),
       FavoriteScreen(),
       ProfileScreen(),
     ];
@@ -48,6 +50,12 @@ class _MainScreenState extends State<MainScreen> {
         inactiveIcon: Image.asset('assets/images/search_unselected.png',
             color: AppColors.blackColor, width: 25, height: 25),
         title: "Search",
+        activeColorPrimary: AppColors.primaryColor,
+      ),
+      PersistentBottomNavBarItem(
+        icon: Icon(Icons.explore, size: 28),
+        inactiveIcon: Icon(Icons.explore_outlined, size: 25, color: AppColors.blackColor),
+        title: "Explore",
         activeColorPrimary: AppColors.primaryColor,
       ),
       PersistentBottomNavBarItem(
