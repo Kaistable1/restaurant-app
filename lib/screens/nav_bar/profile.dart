@@ -15,6 +15,7 @@ import 'package:kaistable_website/screens/edit_profile/edit_profile_page.dart';
 import 'package:kaistable_website/screens/favorite_screen/favorite_screen.dart';
 import 'package:kaistable_website/screens/general_preferences/screens_general/preference_1.dart';
 import 'package:kaistable_website/screens/nav_bar/widgets/custom_button.dart';
+import 'package:kaistable_website/screens/monetization_screen/monetization_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -29,10 +30,12 @@ class ProfileScreen extends StatelessWidget {
       'assets/images/about_img.png',
       'assets/images/contact_us_img.png',
       'assets/images/privacy_img.png',
+      'assets/images/privacy_img.png',
     ];
     List<String> tilesNames = [
       'Change Password',
       'Change preferences',
+      'Premium Features',
       'Terms and conditions',
       'Privacy policy',
       'About app',
@@ -224,18 +227,21 @@ class ProfileScreen extends StatelessWidget {
                         ));
                         break;
                       case 2:
-                        Get.to(TermsAndCondition());
+                        Get.to(MonetizationScreen());
                         break;
                       case 3:
-                        Get.to(const PrivacyPolicy());
+                        Get.to(TermsAndCondition());
                         break;
                       case 4:
-                        Get.to(AboutApp());
+                        Get.to(const PrivacyPolicy());
                         break;
                       case 5:
-                        Get.to(ContactUs());
+                        Get.to(AboutApp());
                         break;
                       case 6:
+                        Get.to(ContactUs());
+                        break;
+                      case 7:
                         deleteAccountDialog(context);
                         break;
                     }
