@@ -116,6 +116,7 @@ class RestaurantManagementController extends GetxController {
     'Diner / Comfort Food',
     'Jamaican',
     'Fusion',
+
   ].obs;
   RxInt totalRestaurantsLength = 0.obs;
 
