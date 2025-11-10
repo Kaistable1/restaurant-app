@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:savrly/constants/text_styles.dart';
@@ -16,7 +15,6 @@ import '../../widgets/CustomDropDownWidget.dart';
 import '../../widgets/button.dart';
 import '../../widgets/custom_textfield.dart';
 import '../../widgets/customheader_widget.dart';
-import 'dialoge/featured_dialoge.dart';
 
 class RestaurantManagementScreen extends StatefulWidget {
   const RestaurantManagementScreen({super.key});
@@ -99,20 +97,62 @@ class _RestaurantManagementScreenState
             title: 'Restaurant Management',
             end: true,
             endWidget:
-                // Row(
-                //   children: [
-                //     CustomButton(
-                //       laBelText: 'add websiteUrl',
-                //       isPrefixIcon: true,
-                //       iconWidget: Icon(Icons.add_circle_outline_sharp, color: white),
-                //       fontSize: buttonTextSize,
-                //       width: mobileView ? 150 : 200,
-                //       shadow: [],
-                //       containerColor: primaryColor,
-                //       ontapp: () async {
-                //
-                //       },
-                //     ),
+                Row(
+                  children: [
+                    Obx(() => CustomButton(
+                      laBelText: controller.isFixingRestaurants.value
+                          ? 'Fixing...'
+                          : 'add websiteUrl',
+                      isPrefixIcon: true,
+                      iconWidget: controller.isFixingRestaurants.value
+                          ? SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(white),
+                              ),
+                            )
+                          : Icon(Icons.add_circle_outline_sharp, color: white),
+                      fontSize: buttonTextSize,
+                      width: mobileView ? 150 : 200,
+                      shadow: [],
+                      containerColor: controller.isFixingRestaurants.value
+                          ? Colors.grey
+                          : primaryColor,
+                      ontapp: controller.isFixingRestaurants.value
+                          ? null
+                          : () async {
+                              // Show confirmation dialog
+                              final skipCount = controller.skipRestaurantDocIds.length;
+                              final confirmed = await Get.dialog<bool>(
+                                AlertDialog(
+                                  title: const Text('Fix Restaurant Owners'),
+                                  content: Text(
+                                    skipCount > 0
+                                        ? 'This will fix missing restaurant owner auth users and documents for all restaurants with email and password.\n\n${skipCount} restaurant(s) will be skipped (see skipRestaurantDocIds in controller).\n\nThis may take a while. Continue?'
+                                        : 'This will fix missing restaurant owner auth users and documents for all restaurants with email and password. This may take a while. Continue?',
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Get.back(result: false),
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () => Get.back(result: true),
+                                      child: const Text('Continue'),
+                                    ),
+                                  ],
+                                ),
+                              );
+
+                              if (confirmed == true) {
+                                await controller.fixRestaurantOwnerCredentials(
+                                  skipRestaurantDocIds: controller.skipRestaurantDocIds,
+                                );
+                              }
+                            },
+                    )),
                 CustomButton(
                   laBelText: 'Add Restaurant',
                   isPrefixIcon: true,
@@ -156,8 +196,8 @@ class _RestaurantManagementScreenState
                     drawerController.addRestaurants.value = true;
                   },
                 ),
-            //   ],
-            // ),
+              ],
+            ),
           ),
           SizedBox(height: 30),
           mobileView
