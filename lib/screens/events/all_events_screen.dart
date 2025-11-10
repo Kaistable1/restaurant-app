@@ -679,7 +679,7 @@ class AllEventsScreen extends StatelessWidget {
                                                           ),
                                                         ),
                                                         child: SizedBox(
-                                                          height: 130,
+                                                          height: 150,
                                                           child: Row(
                                                             mainAxisAlignment:
                                                                 MainAxisAlignment
@@ -711,7 +711,7 @@ class AllEventsScreen extends StatelessWidget {
                                                                                 width:
                                                                                     120,
                                                                                 height:
-                                                                                    130,
+                                                                                    150,
                                                                                 fit: BoxFit
                                                                                     .cover,
                                                                               )
@@ -723,7 +723,7 @@ class AllEventsScreen extends StatelessWidget {
                                                                                 width:
                                                                                     120,
                                                                                 height:
-                                                                                    130,
+                                                                                    150,
                                                                                 fit: BoxFit
                                                                                     .cover,
                                                                               ),
@@ -764,10 +764,8 @@ class AllEventsScreen extends StatelessWidget {
                                                                                     ]),
                                                                               ),
                                                                               Container(
-                                                                                height:
-                                                                                    24,
-                                                                                width:
-                                                                                    72,
+                                                                                height: 24,
+                                                                                width: 72,
                                                                                 // padding: EdgeInsets.only(left: 8, right: 8),
                                                                                 decoration: BoxDecoration(
                                                                                     color: Colors.transparent,

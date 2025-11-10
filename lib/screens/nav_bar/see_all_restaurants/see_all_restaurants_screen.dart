@@ -16,8 +16,9 @@ import '../../../models/restaurant_model.dart';
 import '../widgets/discover_controller.dart';
 
 class SeeAllRestaurantsScreen extends StatefulWidget {
-  bool fromHome = false;
-  SeeAllRestaurantsScreen({Key? key, required this.fromHome}) : super(key: key);
+  final bool fromHome;
+  const SeeAllRestaurantsScreen({Key? key, required this.fromHome})
+      : super(key: key);
 
   @override
   State<SeeAllRestaurantsScreen> createState() =>
@@ -37,6 +38,20 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen>
       .obs; // NEW: RxList to hold the category-filtered restaurants from the stream
   final RxList<RestaurantModel> displayedRestaurants = <RestaurantModel>[]
       .obs; // NEW: RxList to hold the final list after applying local search and distance
+
+  final FocusNode _searchFocusNode = FocusNode();
+
+  void _dismissKeyboard() {
+    if (_searchFocusNode.hasFocus) {
+      _searchFocusNode.unfocus();
+    }
+    FocusManager.instance.primaryFocus?.unfocus();
+  }
+
+  Future<T?>? _navigateTo<T>(Widget Function() pageBuilder) {
+    _dismissKeyboard();
+    return Get.to<T>(pageBuilder);
+  }
 
   @override
   void initState() {
@@ -92,8 +107,16 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _dismissKeyboard();
+    _searchFocusNode.dispose();
     searchController.dispose();
     super.dispose();
+  }
+
+  @override
+  void deactivate() {
+    _dismissKeyboard();
+    super.deactivate();
   }
 
   @override
@@ -268,12 +291,14 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen>
             Expanded(
               child: TextField(
                 controller: searchController,
+                focusNode: _searchFocusNode,
                 decoration: InputDecoration(
                   hintText: 'Search for restaurants',
                   border: InputBorder.none,
                   hintStyle: TextStyle(color: Colors.grey[600]),
                 ),
                 onSubmitted: (value) {
+                  _dismissKeyboard();
                   isLoading.value = true; // Show loading during "processing"
                   applyLocalFilters();
                   Future.delayed(const Duration(milliseconds: 500), () {
@@ -315,6 +340,7 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen>
                           ))
                       .toList(),
                   onChanged: (val) {
+                    _dismissKeyboard();
                     if (val == 'All') {
                       controller.selectedDistance.value = 0;
                     } else {
@@ -376,19 +402,24 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen>
         ),
         centerTitle: true,
         leading: BackButton(
-          onPressed: () =>
-              widget.fromHome ? Get.back() : navbarController.jumpToTab(0),
+          onPressed: () {
+            _dismissKeyboard();
+            widget.fromHome ? Get.back() : navbarController.jumpToTab(0);
+          },
         ),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: _buildSearchBar(),
-          ),
-          const SizedBox(height: 18.0),
-          Expanded(
-            child: Obx(() {
+      body: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: _dismissKeyboard,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: _buildSearchBar(),
+            ),
+            const SizedBox(height: 18.0),
+            Expanded(
+              child: Obx(() {
               if (isLoading.value) {
                 return _buildShimmer();
               }
@@ -410,7 +441,7 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen>
                             .obs;
                         return GestureDetector(
                           onTap: () {
-                            Get.to(() => RestaurantDetailScreen(
+                            _navigateTo(() => RestaurantDetailScreen(
                                 restaurantModel: restaurant));
                           },
                           child: Container(
@@ -482,6 +513,7 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen>
                                               ),
                                               GestureDetector(
                                                 onTap: () {
+                                                  _dismissKeyboard();
                                                   toggleFavoriteRestaurant(
                                                       restaurant.docID,
                                                       isBookmarked.value);
@@ -700,6 +732,7 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen>
           ),
         ],
       ),
-    );
+    ),
+  );
   }
 }

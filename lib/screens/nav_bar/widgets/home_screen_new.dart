@@ -65,6 +65,18 @@ class _HomeScreenNewState extends State<HomeScreenNew>
   // FocusNode for search TextField to prevent keyboard from auto-opening
   final FocusNode _searchFocusNode = FocusNode();
 
+  void _dismissKeyboard() {
+    if (_searchFocusNode.hasFocus) {
+      _searchFocusNode.unfocus();
+    }
+    FocusManager.instance.primaryFocus?.unfocus();
+  }
+
+  Future<T?>? _navigateTo<T>(Widget Function() pageBuilder) {
+    _dismissKeyboard();
+    return Get.to<T>(pageBuilder);
+  }
+
   // Emoji mappings for filter options
   final Map<String, String> emojiMap = {
     // Vibes
@@ -162,7 +174,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
   @override
   void deactivate() {
     // Unfocus the search TextField when navigating away from this screen
-    _searchFocusNode.unfocus();
+    _dismissKeyboard();
     super.deactivate();
   }
 
@@ -232,7 +244,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
 
     return GestureDetector(
       onTap: () {
-        Get.to(() => RestaurantDetailScreen(restaurantModel: restaurant));
+        _navigateTo(() => RestaurantDetailScreen(restaurantModel: restaurant));
       },
       child: Container(
         width: 200,
@@ -352,7 +364,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
 
     return GestureDetector(
       onTap: () {
-        Get.to(() => RestaurantDetailScreen(restaurantModel: restaurant));
+        _navigateTo(() => RestaurantDetailScreen(restaurantModel: restaurant));
       },
       child: Container(
         width: cardWidth,
@@ -576,6 +588,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
 
     return GestureDetector(
       onTap: () {
+        _dismissKeyboard();
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -805,7 +818,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
       children: [
         GestureDetector(
           onTap: () {
-            Get.to(() => RestaurantDetailScreen(restaurantModel: restaurant));
+            _navigateTo(() => RestaurantDetailScreen(restaurantModel: restaurant));
           },
           child: Stack(
             children: [
@@ -1271,7 +1284,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                               // iconWidget: Icon(Icons.restaurant,
                               //     color: Colors.white, size: 20),
                               ontapp: () {
-                                Get.to(() =>
+                                _navigateTo(() =>
                                     SeeAllRestaurantsScreen(fromHome: true));
                               },
                             ),
@@ -1328,7 +1341,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                               // iconWidget: Icon(Icons.restaurant,
                               //     color: Colors.white, size: 20),
                               ontapp: () {
-                                Get.to(()=>VideosListView(fromHome: true));
+                                _navigateTo(() => VideosListView(fromHome: true));
                               },
                             ),
                           ),
@@ -1396,7 +1409,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                               textColor: Colors.white,
                               fontSize: 20,
                               ontapp: () {
-                                Get.to(() => AllEventsScreen());
+                                _navigateTo(() => AllEventsScreen());
                               },
                             ),
                           ),
