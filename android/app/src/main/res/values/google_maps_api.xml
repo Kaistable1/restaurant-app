@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- TODO: Add your Google Maps API key here -->
+    <!-- Replace YOUR_API_KEY_HERE with your actual API key -->
+    <string name="google_maps_key" translatable="false">YOUR_API_KEY_HERE</string>
+</resources>
