@@ -40,6 +40,9 @@ ios/Podfile.lock
 /android/app/profile
 /android/app/release
 
+# Firebase build artifacts
+.firebase/
+
 # Symbolication & Obfuscation
 app.*.symbols
 app.*.map.json
@@ -53,5 +56,5 @@ key.properties
 **/*.jks
 local.properties
 
-# Sensitive strings (if any)
+# Sensitive strings (API keys, etc.)
 android/app/src/main/res/values/strings.xml

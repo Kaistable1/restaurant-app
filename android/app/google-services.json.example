@@ -1,29 +1,60 @@
-{
-  "project_info": {
-    "project_number": "YOUR_PROJECT_NUMBER",
-    "project_id": "your-project-id",
-    "storage_bucket": "your-project-id.firebasestorage.app"
-  },
-  "client": [
-    {
-      "client_info": {
-        "mobilesdk_app_id": "YOUR_MOBILE_SDK_APP_ID",
-        "android_client_info": {
-          "package_name": "com.kaistable.restaurant_website"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "YOUR_FIREBASE_API_KEY"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    }
-  ],
-  "configuration_version": "1"
-}
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ / Android Studio
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# VS Code (optional)
+# .vscode/
+
+# Flutter / Dart / Pub
+**/doc/api/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+build/
+
+# iOS
+/ios/Flutter/.last_build_id
+/ios/Pods/
+ios/Podfile.lock
+
+# Android
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Firebase build artifacts
+.firebase/
+
+# Symbolication & Obfuscation
+app.*.symbols
+app.*.map.json
+
+# Local configuration – NEVER commit
+android/app/google-services.json
+ios/GoogleService-Info.plist
+ios/Runner/GoogleService-Info.plist
+key.properties
+**/*.keystore
+**/*.jks
+local.properties
+
+# Sensitive strings (API keys)
+android/app/src/main/res/values/strings.xml
