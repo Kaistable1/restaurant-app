@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Google Maps API Key - Replace with your actual API key -->
+    <!-- To set up:
+         1. Copy this file to android/app/src/main/res/values/strings.xml
+         2. Replace YOUR_GOOGLE_MAPS_API_KEY_HERE with your actual Google Maps API key
+         3. Keep strings.xml in .gitignore to prevent committing sensitive keys
+    -->
+    <string name="google_maps_api_key">YOUR_GOOGLE_MAPS_API_KEY_HERE</string>
+</resources>
