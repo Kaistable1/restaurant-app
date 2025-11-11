@@ -43,3 +43,9 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Sensitive API keys and configuration files
+# Keep the .example files but ignore the actual config files
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+android/app/src/main/res/values/strings.xml

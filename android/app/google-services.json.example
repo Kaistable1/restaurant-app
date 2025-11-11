@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "404399548475",
-    "project_id": "restaurantwebsite-4bdd8",
-    "storage_bucket": "restaurantwebsite-4bdd8.firebasestorage.app"
+    "project_number": "YOUR_PROJECT_NUMBER",
+    "project_id": "YOUR_PROJECT_ID",
+    "storage_bucket": "YOUR_STORAGE_BUCKET"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:404399548475:android:c7ef5610488496554dd41e",
+        "mobilesdk_app_id": "YOUR_MOBILE_SDK_APP_ID",
         "android_client_info": {
           "package_name": "com.kaistable.restaurant_website"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDSzo86iMcwW-mjuAXgh1lQ7t9NJLZV0ro"
+          "current_key": "YOUR_API_KEY"
         }
       ],
       "services": {
