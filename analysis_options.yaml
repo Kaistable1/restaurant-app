@@ -1,24 +1,31 @@
-# This file configures the analyzer, which statically analyzes Dart code to
-# check for errors, warnings, and lints.
+# analysis_options.yaml
+include: package:flutter_lints/flutter.yaml
 
 linter:
   rules:
+    # Enforce only real issues
     - must_be_immutable
     - unused_import
     - unused_element
     - unused_local_variable
     - dead_code
     - unnecessary_import
-    - avoid_print
-    - prefer_const_constructors
+    - argument_type_not_assignable
+    - invalid_assignment
+    - non_bool_condition
+    - expected_executable
 
 analyzer:
   errors:
     must_be_immutable: error
     unused_import: error
-    include_file_not_found: error
+    argument_type_not_assignable: error
+    invalid_assignment: error
+    non_bool_condition: error
+    expected_executable: error
   exclude:
     - '**/*.g.dart'
+    - 'lib/**_desktop.dart'
     - 'lib/**_linux.dart'
     - 'lib/**_macos.dart'
     - 'lib/**_windows.dart'
