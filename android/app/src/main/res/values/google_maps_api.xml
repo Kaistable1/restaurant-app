@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Google Maps API Key – DO NOT COMMIT REAL KEY -->
-    <!-- 
+    <!--
          How to use:
          1. Copy this file to:
             - android/app/src/debug/res/values/strings.xml
