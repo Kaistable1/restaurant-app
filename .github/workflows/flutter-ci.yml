@@ -2,79 +2,49 @@ name: Flutter CI
 
 on:
   pull_request:
-    branches: [ main ]
-  push:
-    branches: [ main ]
+    branches: [ main, develop ]
 
 jobs:
   analyze-test-build:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 20
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Set up Flutter
-        uses: subosito/flutter-action@v2
+        uses: flutter-actions/setup-flutter@main
         with:
-          flutter-version: 'stable'
+          channel: stable
           cache: true
-          cache-key: flutter-pubspec-${{ hashFiles('pubspec.yaml') }}
+
+      - name: Verify Flutter
+        run: flutter --version
 
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Inject Firebase config (Android)
-        if: env.GOOGLE_SERVICES_JSON != ''
+      - name: Inject Firebase config (from secrets)
+        if: env.GOOGLE_SERVICES_JSON != '' || env.IOS_GOOGLE_SERVICE_INFO_PLIST != ''
         env:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
-        run: |
-          echo "$GOOGLE_SERVICES_JSON" > android/app/google-services.json
-
-      - name: Inject Firebase config (iOS)
-        if: env.IOS_GOOGLE_SERVICE_INFO_PLIST != ''
-        env:
           IOS_GOOGLE_SERVICE_INFO_PLIST: ${{ secrets.IOS_GOOGLE_SERVICE_INFO_PLIST }}
         run: |
-          echo "$IOS_GOOGLE_SERVICE_INFO_PLIST" > ios/GoogleService-Info.plist
+          if [ -n "$GOOGLE_SERVICES_JSON" ]; then
+            printf '%s' "$GOOGLE_SERVICES_JSON" > android/app/google-services.json
+            echo "android/app/google-services.json created"
+          fi
+          if [ -n "$IOS_GOOGLE_SERVICE_INFO_PLIST" ]; then
+            printf '%s' "$IOS_GOOGLE_SERVICE_INFO_PLIST" > ios/GoogleService-Info.plist
+            echo "ios/GoogleService-Info.plist created"
+          fi
 
-      - name: Run Flutter analyzer
+      - name: Run analyzer
         run: flutter analyze --no-fatal-infos
 
       - name: Run tests
-        run: flutter test --no-test-assets --machine > test-results.json || echo "Tests failed"
+        run: flutter test --no-test-assets
 
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results
-          path: test-results.json
-
-      - name: Build APK (Release)
-        run: |
-          flutter build apk --release --no-shrink
-          ls -la build/app/outputs/flutter-apk/
-
-      - name: Build iOS (Archive for TestFlight)
-        if: github.ref == 'refs/heads/main' && env.IOS_GOOGLE_SERVICE_INFO_PLIST != ''
-        run: |
-          flutter build ios --release --no-codesign
-          cd build/ios/iphoneos
-          zip -r app.ipa Runner.app
-
-      - name: Distribute APK to Firebase App Distribution
-        if: github.ref == 'refs/heads/main' && env.GOOGLE_SERVICES_JSON != ''
-        uses: wzieba/Firebase-Distribution-Github-Action@v1
-        with:
-          appId: ${{ secrets.FIREBASE_ANDROID_APP_ID }}
-          token: ${{ secrets.FIREBASE_CI_TOKEN }}
-          file: build/app/outputs/flutter-apk/app-release.apk
-          groups: internal-testers
-
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: savrli-apk-release
-          path: build/app/outputs/flutter-apk/app-release.apk
+      - name: Build debug APK (smoke test)
+        run: flutter build apk --debug --no-shrink
