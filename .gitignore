@@ -43,3 +43,17 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Local Google/Firebase config (do not commit)
+android/app/google-services.json
+ios/GoogleService-Info.plist
+
+# Local gradle/keystore/config
+key.properties
+**/*.keystore
+**/*.jks
+/local.properties
+
+# iOS CocoaPods artifacts
+ios/Pods/
+ios/Podfile.lock
