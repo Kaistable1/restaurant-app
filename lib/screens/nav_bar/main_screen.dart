@@ -11,6 +11,7 @@ import 'package:kaistable_website/screens/nav_bar/profile.dart';
 import 'package:kaistable_website/screens/trending_screen/trending_screen.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 
+import '../chat_ai/savrly_ai_view.dart';
 import '../home_screen/notification_screen/notification_screen.dart';
 import 'home_screen.dart';
 
@@ -54,7 +55,8 @@ class _MainScreenState extends State<MainScreen> {
       ),
       PersistentBottomNavBarItem(
         icon: Icon(Icons.explore, size: 28),
-        inactiveIcon: Icon(Icons.explore_outlined, size: 25, color: AppColors.blackColor),
+        inactiveIcon:
+            Icon(Icons.explore_outlined, size: 25, color: AppColors.blackColor),
         title: "Explore",
         activeColorPrimary: AppColors.primaryColor,
       ),
@@ -79,7 +81,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-        HomeController homeController = Get.put(HomeController());
+    HomeController homeController = Get.put(HomeController());
 
     return Scaffold(
       appBar: _currentIndex == 0
@@ -122,45 +124,69 @@ class _MainScreenState extends State<MainScreen> {
               ],
             )
           : null, // Hide AppBar for other screens
-      body:
-         GetBuilder<HomeController>(
-              builder: (controller) {
-
-                return homeController.isSpotlightFinish.value == false
-            ? HomeScreen()
-            :  PersistentTabView(
-                    context,
-                    controller: _controller,
-                    screens: _buildScreens(),
-                    items: _navBarsItems(),
-                    handleAndroidBackButtonPress: true,
-                    // resizeToAvoidBottomInset: true,
-                    // stateManagement: true,
-                    hideNavigationBarWhenKeyboardAppears: true,
-                    popBehaviorOnSelectedNavBarItemPress: PopBehavior.all,
-                    backgroundColor: AppColors.whiteColor,
-                    decoration: NavBarDecoration(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
-                      ),
-                      colorBehindNavBar: AppColors.whiteColor.withOpacity(.3),
-                    ),
-                    isVisible: true,
-                    // confineToSafeArea: true,
-                    navBarHeight: 60,
-                    padding: EdgeInsets.zero,
-                    navBarStyle: NavBarStyle.style3,
-                    onItemSelected: (index) {
-                      setState(() {
-                        _currentIndex =
-                            index; // Update the AppBar visibility dynamically
-                      });
-                    },
-                  );
-              }
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 60.0),
+        child: SizedBox(
+          width: 120,
+          height: 56,
+          child: FloatingActionButton.extended(
+            onPressed: () {
+              Get.to(() => SavrlyAIView());
+            },
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
             ),
-     
+            backgroundColor: Colors.black,
+            label: const Text(
+              "AI Assistant",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
+            icon: const Icon(
+              Icons.chat_bubble_outline,
+              color: Colors.white,
+              size: 20,
+            ),
+          ),
+        ),
+      ),
+      body: GetBuilder<HomeController>(builder: (controller) {
+        return homeController.isSpotlightFinish.value == false
+            ? HomeScreen()
+            : PersistentTabView(
+                context,
+                controller: _controller,
+                screens: _buildScreens(),
+                items: _navBarsItems(),
+                handleAndroidBackButtonPress: true,
+                // resizeToAvoidBottomInset: true,
+                // stateManagement: true,
+                hideNavigationBarWhenKeyboardAppears: true,
+                popBehaviorOnSelectedNavBarItemPress: PopBehavior.all,
+                backgroundColor: AppColors.whiteColor,
+                decoration: NavBarDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                  colorBehindNavBar: AppColors.whiteColor.withOpacity(.3),
+                ),
+                isVisible: true,
+                // confineToSafeArea: true,
+                navBarHeight: 60,
+                padding: EdgeInsets.zero,
+                navBarStyle: NavBarStyle.style3,
+                onItemSelected: (index) {
+                  setState(() {
+                    _currentIndex =
+                        index; // Update the AppBar visibility dynamically
+                  });
+                },
+              );
+      }),
     );
   }
 }
