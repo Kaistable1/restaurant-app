@@ -1,16 +1,14 @@
-# kaistable_website
+# restaurant-app — City Savrli (Pilot)
 
-A new Flutter project.
+This repository contains the backend and tooling for the City Savrli pilot.
 
-## Getting Started
+Getting started (dev)
+1. git checkout feature/city-savrli
+2. Install dependencies for services/api and apps/city-savrli
+3. Run migrations and seed the pilot data
+4. Start services locally and call GET /api/v1/city-savrli/{slug}/hub
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Docs
+- /docs/wireframes/phase1-wireframes.md
+- /docs/visual-sitemap.md
+- /docs/manifest.md
