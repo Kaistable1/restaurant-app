@@ -46,7 +46,7 @@ app.*.map.json
 
 # Local Google/Firebase config (do not commit)
 android/app/google-services.json
-ios/GoogleService-Info.plist
+ios/Runner/GoogleService-Info.plist
 
 # Local gradle/keystore/config
 key.properties
