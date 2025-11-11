@@ -44,6 +44,9 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Firebase build artifacts
+.firebase/
+
 # Sensitive API keys and configuration files
 # Keep the .example files but ignore the actual config files
 android/app/google-services.json
