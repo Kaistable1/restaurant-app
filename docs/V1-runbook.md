@@ -1,61 +1,47 @@
-# Savrli City — V1 Runbook (staging)
+# Savrli City V1 – Operations Runbook
 
-Purpose
-- Quick guide to deploy to staging, verify core flow, and rollback if needed.
+**Purpose**  
+Quick guide to deploy, verify, monitor, and rollback the **Savrli City** restaurant concierge app (V1) in **staging** and **production**.
 
-Staging URL
-- https://staging.example.com (replace with your staging URL)
+**Staging URL**: `https://staging.savrli.city`  
+**Production URL**: `https://savrli.city`  
+**Last Updated**: 2025-11-12  
+**Version**: 1.0.0  
+**Owner**: Kaistable Engineering Team
 
-Deploy to staging
-- Command:
-  - ./scripts/deploy-staging.sh
-  - OR replace with your CI trigger: gh workflow run deploy-staging.yml
-- Verify:
-  - Open staging URL and complete the smoke flow below.
-  - Check Sentry for new errors and Slack #alerts channel.
+---
 
-Smoke verification (manual)
-1. Signup as a new user (use a test email).
-2. Complete onboarding steps.
-3. Perform the primary task and verify success.
-4. Check analytics dashboard for events:
-   - signup
-   - onboarding_start
-   - onboarding_complete
-   - primary_task_success
+## Table of Contents
+1. [Pre-Deployment Checklist](#pre-deployment-checklist)  
+2. [Staging Deployment](#staging-deployment)  
+3. [Smoke Test Verification](#smoke-test-verification)  
+4. [Production Deployment](#production-deployment)  
+5. [Rollback Procedures](#rollback-procedures)  
+6. [Concierge Onboarding](#concierge-onboarding)  
+7. [Monitoring & Alerts](#monitoring--alerts)  
+8. [Troubleshooting](#troubleshooting)  
+9. [Emergency Contacts](#emergency-contacts)  
+10. [Appendix](#appendix)
 
-Rollback
-- If deploy causes issues:
-  - Revert the last commit on staging branch and redeploy, or
-  - Use your host's rollback mechanism (e.g., previous version in cloud console).
-- Command example (git):
-  - git checkout staging
-  - git revert <commit-sha>
-  - git push
-  - ./scripts/deploy-staging.sh
+---
 
-On-call & contacts
-- On-call engineer: See PagerDuty schedule
-- Slack: #savrli-city-alerts
-- Email: oncall@example.com
+## Pre-Deployment Checklist
+Before deploying:
+- [ ] All CI tests pass
+- [ ] Code review approved
+- [ ] `openapi.yaml` is up-to-date
+- [ ] Firebase config verified
+- [ ] Secrets injected (Google Services, API keys)
+- [ ] Rollback plan ready
+- [ ] On-call notified
 
-Manual concierge onboarding (V1 process)
-1. User signs up via /signup endpoint
-2. Concierge team receives notification
-3. Concierge manually verifies user info
-4. Concierge updates onboarding_state via admin panel or API
-5. User can proceed to primary task
+---
 
-Known issues & workarounds
-- Issue: Onboarding step 2 may timeout on slow connections
-  - Workaround: Retry or increase timeout in client
-- Issue: Primary task payload validation may be strict
-  - Workaround: Ensure payload matches schema in openapi.yaml
+## Staging Deployment
 
-Monitoring & metrics
-- CloudWatch/DataDog dashboard: [staging-savrli-city]
-- Key metrics:
-  - signup_success_rate
-  - onboarding_completion_rate
-  - primary_task_success_rate
-  - api_response_time_p95
+### Prerequisites
+```bash
+flutter --version  # ≥3.24.0
+firebase --version
+git checkout feature/savrli-v1-setup
+git pull

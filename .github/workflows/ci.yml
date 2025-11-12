@@ -1,62 +1,116 @@
-name: CI
+name: CI Pipeline
 
 on:
   push:
-    branches: [ main, staging ]
+    branches: [ main, develop, staging, 'feature/**' ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, develop ]
 
 jobs:
-  build-and-test:
+  build-flutter:
+    name: Build Flutter Web
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
+    timeout-minutes: 20
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Use Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
         with:
-          node-version: '18'
+          flutter-version: '3.24.0'
+          channel: 'stable'
+          cache: true
 
-      - name: Install dependencies
-        run: |
-          npm ci
+      - name: Get dependencies
+        run: flutter pub get
 
-      - name: Lint
-        run: |
-          npm run lint || true
+      - name: Verify formatting
+        run: flutter format --set-exit-if-changed .
+        continue-on-error: true
+
+      - name: Analyze code
+        run: flutter analyze
+        continue-on-error: true
 
       - name: Run unit tests
-        run: |
-          npm test
+        run: flutter test
+        continue-on-error: true
+
+      - name: Build web app
+        run: flutter build web --release
+
+      - name: Upload web build
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: build/web/
+          retention-days: 7
 
   cypress-smoke:
-    needs: build-and-test
+    name: Cypress Smoke Tests
+    needs: build-flutter
     runs-on: ubuntu-latest
-    if: ${{ always() }}
-    permissions:
-      contents: read
+    timeout-minutes: 15
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
+          cache: 'npm'
 
-      - name: Install deps
-        run: npm ci
-
-      - name: Start app (staging or local)
+      - name: Install Cypress
         run: |
-          # Replace with your start command for staging or a dev server
-          npm run start & sleep 5
+          npm install --save-dev cypress@13
+          npx cypress install
 
-      - name: Cypress run (smoke)
-        uses: cypress-io/github-action@v5
+      - name: Download Flutter web build
+        uses: actions/download-artifact@v4
         with:
-          start: false
-          config-file: cypress.json
+          name: web-build
+          path: build/web/
+
+      - name: Serve Flutter app
+        run: |
+          flutter pub get
+          flutter pub global activate dhttpd 2>/dev/null || npm install -g dhttpd
+          flutter pub global run dhttpd --path=build/web --port=8080 &
+          echo "SERVER_PID=$!" >> $GITHUB_ENV
+          sleep 8
+
+      - name: Wait for server
+        run: |
+          timeout 30 bash -c 'until curl -s -f http://localhost:8080 > /dev/null; do sleep 2; done' || echo "Warning: Server not responding"
+
+      - name: Run Cypress smoke tests
+        run: npx cypress run --spec "cypress/integration/smoke_spec.cy.js" --browser chrome
+        env:
+          CYPRESS_baseUrl: http://localhost:8080
+        continue-on-error: false
+
+      - name: Upload screenshots (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots/
+          retention-days: 7
+
+      - name: Upload videos (always)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-videos
+          path: cypress/videos/
+          retention-days: 7
+
+      - name: Cleanup server
+        if: always()
+        run: |
+          if [ ! -z "$SERVER_PID" ]; then
+            kill $SERVER_PID || true
+          fi

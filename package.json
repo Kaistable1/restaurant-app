@@ -1,17 +1,42 @@
 {
-  "name": "restaurant-app",
+  "name": "savrli-city-v1",
   "version": "1.0.0",
-  "description": "Restaurant app with Savrli City V1 setup",
+  "description": "Savrli City Restaurant Concierge Application (Flutter Web + Cypress E2E)",
+  "private": true,
+  "main": "lib/main.dart",
   "scripts": {
-    "start": "echo 'Start command placeholder - replace with actual start command'",
-    "build": "echo 'Build command placeholder - replace with actual build command'",
-    "test": "echo 'Test command placeholder - replace with actual test command'",
-    "lint": "echo 'Lint command placeholder - replace with actual lint command'"
+    "start": "flutter run -d chrome --web-port=8080",
+    "build": "flutter build web --release",
+    "serve": "flutter build web --release && npx dhttpd --path build/web --port 8080",
+    "test": "flutter test",
+    "test:integration": "flutter test integration_test/",
+    "lint": "flutter analyze",
+    "format": "flutter format .",
+    "clean": "flutter clean && flutter pub get",
+
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "cypress:run:smoke": "cypress run --spec 'cypress/e2e/smoke_spec.cy.js'",
+    "test:e2e": "cypress run --browser chrome",
+    "test:e2e:headed": "cypress run --browser chrome --headed",
+    "test:e2e:record": "cypress run --record --key $CYPRESS_RECORD_KEY"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "flutter",
+    "web",
+    "restaurant",
+    "concierge",
+    "savrli",
+    "cypress",
+    "e2e"
+  ],
+  "author": "Kaistable Team",
+  "license": "UNLICENSED",
   "devDependencies": {
-    "cypress": "^13.0.0"
+    "cypress": "^13.15.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
   }
 }
