@@ -1,0 +1,17 @@
+{
+  "name": "restaurant-app",
+  "version": "1.0.0",
+  "description": "Restaurant app with Savrli City V1 setup",
+  "scripts": {
+    "start": "echo 'Start command placeholder - replace with actual start command'",
+    "build": "echo 'Build command placeholder - replace with actual build command'",
+    "test": "echo 'Test command placeholder - replace with actual test command'",
+    "lint": "echo 'Lint command placeholder - replace with actual lint command'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "cypress": "^13.0.0"
+  }
+}

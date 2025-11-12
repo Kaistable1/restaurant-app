@@ -1,0 +1,113 @@
+openapi: 3.0.1
+info:
+  title: Savrli City V1 API (minimal)
+  version: "1.0.0"
+servers:
+  - url: https://staging.example.com/api
+paths:
+  /signup:
+    post:
+      summary: Create a new user (reuse existing signup)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+  /onboarding:
+    get:
+      summary: Get onboarding state for current user
+      responses:
+        '200':
+          description: Onboarding state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OnboardingState'
+    post:
+      summary: Update onboarding progress / complete step
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OnboardingUpdate'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OnboardingState'
+  /primary-task:
+    post:
+      summary: Execute primary task (minimal)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrimaryTaskRequest'
+      responses:
+        '200':
+          description: Primary task completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrimaryTaskResponse'
+components:
+  schemas:
+    SignupRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required:
+        - email
+        - password
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        onboarding_state:
+          $ref: '#/components/schemas/OnboardingState'
+    OnboardingState:
+      type: object
+      properties:
+        step:
+          type: integer
+          description: "Current onboarding step (0..n)"
+        completed:
+          type: boolean
+    OnboardingUpdate:
+      type: object
+      properties:
+        step:
+          type: integer
+        data:
+          type: object
+    PrimaryTaskRequest:
+      type: object
+      properties:
+        payload:
+          type: object
+    PrimaryTaskResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        result:
+          type: object
