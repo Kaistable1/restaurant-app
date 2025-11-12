@@ -58,3 +58,22 @@ local.properties
 
 # Sensitive strings (API keys, etc.)
 android/app/src/main/res/values/strings.xml
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Node modules and package files
+node_modules/
+package-lock.json
+yarn.lock
+
+# Cypress artifacts
+cypress/videos/
+cypress/screenshots/
+cypress/downloads/
+cypress.env.json
+
+# Deployment artifacts
+deploy.log
