@@ -355,6 +355,4 @@ class _PostWidgetState extends State<PostWidget> {
       userImage: widget.post.userImage,
     ));
   }
-    }
-  }
 }
