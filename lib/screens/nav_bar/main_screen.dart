@@ -28,6 +28,7 @@ class _MainScreenState extends State<MainScreen> {
   List<Widget> _buildScreens() {
     return [
       HomeScreen(),
+      SavrlyAIView(),
       MyHomeScreen(),
       TrendingScreen(),
       FavoriteScreen(),
@@ -43,6 +44,14 @@ class _MainScreenState extends State<MainScreen> {
         inactiveIcon: Image.asset('assets/images/home_unselected.png',
             color: AppColors.blackColor, width: 24, height: 24),
         title: "Home",
+        activeColorPrimary: AppColors.primaryColor,
+      ),
+      PersistentBottomNavBarItem(
+        icon: Image.asset('assets/images/chat_selected.png',
+            color: AppColors.primaryColor, width: 24, height: 24),
+        inactiveIcon: Image.asset('assets/images/chat_unselected.png',
+            color: AppColors.blackColor, width: 24, height: 24),
+        title: "AI",
         activeColorPrimary: AppColors.primaryColor,
       ),
       PersistentBottomNavBarItem(
@@ -124,35 +133,7 @@ class _MainScreenState extends State<MainScreen> {
               ],
             )
           : null, // Hide AppBar for other screens
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 60.0),
-        child: SizedBox(
-          width: 120,
-          height: 56,
-          child: FloatingActionButton.extended(
-            onPressed: () {
-              Get.to(() => SavrlyAIView());
-            },
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            backgroundColor: Colors.black,
-            label: const Text(
-              "AI Assistant",
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-              ),
-            ),
-            icon: const Icon(
-              Icons.chat_bubble_outline,
-              color: Colors.white,
-              size: 20,
-            ),
-          ),
-        ),
-      ),
+
       body: GetBuilder<HomeController>(builder: (controller) {
         return homeController.isSpotlightFinish.value == false
             ? HomeScreen()

@@ -175,53 +175,77 @@ class SavrlyAIView extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    child: TextField(
-                      controller: controller.messageController,
-                      decoration: InputDecoration(
-                        hintText: 'Message',
-                        border: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(width: 1, color: Color(0xFFE5E5E1)),
-                          borderRadius: BorderRadius.circular(32),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(width: 1, color: Color(0xFFE5E5E1)),
-                          borderRadius: BorderRadius.circular(32),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(width: 1, color: Color(0xFFE5E5E1)),
-                          borderRadius: BorderRadius.circular(32),
-                        ),
-                        filled: true,
-                        fillColor: Color(0xFFF5F5F5),
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
-                      ),
-                      onSubmitted: (value) {
-                        controller.sendMessage(value);
-                      },
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.grey[100],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                      child: Icon(Icons.add),
                     ),
                   ),
                 ),
-                SizedBox(width: 12),
-                Container(
-                  decoration: BoxDecoration(
-                      color: Colors.black, shape: BoxShape.circle),
-                  child: IconButton(
-                    icon: const Icon(Icons.send, color: Colors.white),
-                    onPressed: () {
-                      controller.sendMessage(controller.messageController.text);
-                    },
+                SizedBox(
+                  width: 4,
+                ),
+                Expanded(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[100],
+                      border: Border.all(
+                        width: 1,
+                        color: Color(0xFFE5E5E1),
+                      ),
+                      borderRadius: BorderRadius.circular(32),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: controller.messageController,
+                            decoration: InputDecoration(
+                              hintText: 'Message',
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              filled: false,
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 12,
+                              ),
+                            ),
+                            onSubmitted: (value) {
+                              controller.sendMessage(value);
+                            },
+                          ),
+                        ),
+                        Container(
+                          height: 28,
+                          width: 32,
+                          child: Image.asset('assets/images/microphone.png',
+                              width: 14, height: 14),
+                        ),
+                        SizedBox(width: 4),
+                        Container(
+                          height: 32,
+                          width: 32,
+                          decoration: BoxDecoration(
+                              color: Colors.black, shape: BoxShape.circle),
+                          child: IconButton(
+                            padding: EdgeInsets.zero,
+                            icon: Image.asset('assets/images/send-chat.png',
+                                color: Colors.white, width: 16, height: 16),
+                            onPressed: () {
+                              controller.sendMessage(
+                                  controller.messageController.text);
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
