@@ -81,44 +81,43 @@ class LoginController extends GetxController {
     loadingDialog();
     if (emailController.text.trim().isEmpty ||
         passwordController.text.trim().isEmpty) {
+      Get.back();
+
       Get.snackbar('Error', 'Please enter email and password',
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.red,
           colorText: Colors.white);
+      isLoading.value = false;
       return;
     }
 
     try {
-// Check if the email exists in admins collection with role: admin
-      QuerySnapshot adminQuery = await _firestore
-          .collection('admins')
-          .where('email', isEqualTo: emailController.text.trim())
-          .where('role', isEqualTo: 'admin')
-          .limit(1)
-          .get();
-
-      if (adminQuery.docs.isEmpty) {
-        Get.snackbar('Error', 'No admin found with this email',
-            snackPosition: SnackPosition.TOP,
-            backgroundColor: Colors.red,
-            colorText: Colors.white);
-        return;
-      }
-
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
-      await preferences?.setString('adminEmail', emailController.text.trim());
-      await preferences?.setString(
-          'adminPassword', passwordController.text.trim());
       User? user = userCredential.user;
 
       if (user != null) {
         DocumentSnapshot adminDoc =
             await _firestore.collection('admins').doc(user.uid).get();
 
-        if (adminDoc.exists && adminDoc['role'] == 'admin') {
+        if (!adminDoc.exists) {
+          Get.back();
+
+          await _auth.signOut();
+          Get.snackbar('Error', 'No admin profile found for this user',
+              snackPosition: SnackPosition.TOP,
+              backgroundColor: Colors.red,
+              colorText: Colors.white);
+          return;
+        }
+
+        if (adminDoc['role'] == 'admin') {
+          await preferences?.setString(
+              'adminEmail', emailController.text.trim());
+          await preferences?.setString(
+              'adminPassword', passwordController.text.trim());
           Get.snackbar('Success', 'Admin login successful',
               snackPosition: SnackPosition.TOP,
               backgroundColor: Colors.green,
@@ -196,28 +195,12 @@ class LoginController extends GetxController {
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.red,
           colorText: Colors.white);
+      isLoading.value = false;
       return;
     }
 
     isLoading.value = true;
     try {
-      // Check if the email exists in admins collection with role: admin
-      QuerySnapshot adminQuery = await _firestore
-          .collection('admins')
-          .where('email', isEqualTo: subAdminEmailController.text.trim())
-          .where('role', isEqualTo: 'sub-admin')
-          .limit(1)
-          .get();
-
-      if (adminQuery.docs.isEmpty) {
-        Get.back();
-
-        Get.snackbar('Error', 'No sub-admin found with this email',
-            snackPosition: SnackPosition.TOP,
-            backgroundColor: Colors.red,
-            colorText: Colors.white);
-        return;
-      }
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: subAdminEmailController.text.trim(),
         password: subAdminPasswordController.text.trim(),
@@ -228,7 +211,18 @@ class LoginController extends GetxController {
         DocumentSnapshot adminDoc =
             await _firestore.collection('admins').doc(user.uid).get();
 
-        if (adminDoc.exists && adminDoc['role'] == 'sub-admin') {
+        if (!adminDoc.exists) {
+          Get.back();
+
+          await _auth.signOut();
+          Get.snackbar('Error', 'No sub-admin profile found for this user',
+              snackPosition: SnackPosition.TOP,
+              backgroundColor: Colors.red,
+              colorText: Colors.white);
+          return;
+        }
+
+        if (adminDoc['role'] == 'sub-admin') {
           Get.snackbar('Success', 'Sub-admin login successful',
               snackPosition: SnackPosition.TOP,
               backgroundColor: Colors.green,
