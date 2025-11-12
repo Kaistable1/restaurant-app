@@ -60,14 +60,21 @@ void main() async {
     badge: false,
     sound: false,
   );
-  try {
-    await getCurrentUserData();
+  import 'package:flutter/foundation.dart' show kIsWeb; // ← ADD THIS AT TOP
+
+// ... later in main() ...
+try {
+  await getCurrentUserData();
+  
+  // Only request location on mobile (not web)
+  if (!kIsWeb) {
     await requestLocationPermission();
-  } on FirebaseAuthException catch (e) {
-    print('Error: ${e.code} - ${e.message}');
-  } catch (e) {
-    print('Unhandled error: $e');
   }
+} on FirebaseAuthException catch (e) {
+  print('Error: ${e.code} - ${e.message}');
+} catch (e) {
+  print('Unhandled error: $e');
+}
 
   // Temporarily disable topic subscription for testing
   // await subscribeToTopic('allUsers');
