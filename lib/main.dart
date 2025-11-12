@@ -101,13 +101,13 @@ try {
   await SendNotificationService()
       .initialize(); // Initialize FCM + local notifications().initFirebaseNotification();
   debugPrint("SendNotifiation initialized");
-  SystemChrome.setPreferredOrientations([
+  if (!kIsWeb) {
+  await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
-  ]).then((_) {
-    runApp(MyApp());
-  });
+  ]);
 }
+runApp(MyApp());
 
 Future<void> subscribeToTopic(String topic) async {
   try {
