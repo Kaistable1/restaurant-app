@@ -18,7 +18,7 @@ migrate_working_dir/
 *.iws
 .idea/
 
-# VS Code (optional: uncomment if you DON'T want to commit settings)
+# VS Code (optional)
 # .vscode/
 
 # Flutter / Dart / Pub
@@ -47,7 +47,7 @@ ios/Podfile.lock
 app.*.symbols
 app.*.map.json
 
-# Local configuration - NEVER commit
+# Local configuration – NEVER commit
 android/app/google-services.json
 ios/GoogleService-Info.plist
 ios/Runner/GoogleService-Info.plist
@@ -56,24 +56,5 @@ key.properties
 **/*.jks
 local.properties
 
-# Sensitive strings (API keys, etc.)
+# Sensitive strings (API keys)
 android/app/src/main/res/values/strings.xml
-
-# Environment variables
-.env
-.env.local
-.env.*.local
-
-# Node modules and package files
-node_modules/
-package-lock.json
-yarn.lock
-
-# Cypress artifacts
-cypress/videos/
-cypress/screenshots/
-cypress/downloads/
-cypress.env.json
-
-# Deployment artifacts
-deploy.log

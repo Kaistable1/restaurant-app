@@ -3,41 +3,56 @@ name: Flutter CI
 on:
   pull_request:
     branches: [ main, develop ]
+  push:
+    branches: [ main ]
 
 jobs:
   analyze-test-build:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up Java (required for Android)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
       - name: Set up Flutter
-        uses: flutter-actions/setup-flutter@main
+        uses: subosito/flutter-action@v2
         with:
           channel: stable
           cache: true
 
-      - name: Verify Flutter
+      - name: Debug: Flutter version
         run: flutter --version
 
       - name: Install dependencies
         run: flutter pub get
 
       - name: Inject Firebase config (from secrets)
-        if: env.GOOGLE_SERVICES_JSON != '' || env.IOS_GOOGLE_SERVICE_INFO_PLIST != ''
         env:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
           IOS_GOOGLE_SERVICE_INFO_PLIST: ${{ secrets.IOS_GOOGLE_SERVICE_INFO_PLIST }}
         run: |
+          # Create directories
+          mkdir -p android/app ios/Runner
+
+          # Android: google-services.json
           if [ -n "$GOOGLE_SERVICES_JSON" ]; then
-            printf '%s' "$GOOGLE_SERVICES_JSON" > android/app/google-services.json
-            echo "android/app/google-services.json created"
+            echo "Writing android/app/google-services.json"
+            echo "$GOOGLE_SERVICES_JSON" | base64 --decode > android/app/google-services.json 2>/dev/null || echo "$GOOGLE_SERVICES_JSON" > android/app/google-services.json
           fi
+
+          # iOS: GoogleService-Info.plist
           if [ -n "$IOS_GOOGLE_SERVICE_INFO_PLIST" ]; then
-            printf '%s' "$IOS_GOOGLE_SERVICE_INFO_PLIST" > ios/GoogleService-Info.plist
-            echo "ios/GoogleService-Info.plist created"
+            echo "Writing ios/Runner/GoogleService-Info.plist"
+            echo "$IOS_GOOGLE_SERVICE_INFO_PLIST" | base64 --decode > ios/Runner/GoogleService-Info.plist 2>/dev/null || echo "$IOS_GOOGLE_SERVICE_INFO_PLIST" > ios/Runner/GoogleService-Info.plist
           fi
 
       - name: Run analyzer
