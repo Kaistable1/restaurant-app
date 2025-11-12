@@ -99,7 +99,7 @@ class _DiscoverListsPageState extends State<DiscoverListsPage> {
                   Get.to(() => DiscoverListDetailScreen(discoverListModel: discoverList));
                 },
                 child: Container(
-                  height: 176,
+                  height: 165,
                   margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -125,8 +125,8 @@ class _DiscoverListsPageState extends State<DiscoverListsPage> {
                           topRight: Radius.circular(10),
                         ),
                         child: SizedBox(
-                          height: 176,
-                          width: 124,
+                          height: 165,
+                          width: 160,
                           child: Image.network(
                             discoverList.image.isNotEmpty
                                 ? discoverList.image

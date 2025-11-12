@@ -188,8 +188,8 @@ class AllEventsScreen extends StatelessWidget {
                                     Text(
                                       city['name']!,
                                       style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
+                                        fontSize: 14 * (5/4),
+                                        fontWeight: FontWeight.w700,
                                         fontFamily: 'PlusJakartaSans',
                                         color: Colors.black,
                                       ),

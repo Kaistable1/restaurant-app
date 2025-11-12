@@ -359,8 +359,8 @@ class _HomeScreenNewState extends State<HomeScreenNew>
 
   Widget buildRestaurantCard(RestaurantModel restaurant) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final cardWidth = (screenWidth * 0.3).clamp(120.0, 160.0);
-    final imageHeight = (cardWidth * 0.55).clamp(66.0, 88.0);
+    final cardWidth = (screenWidth * 0.5) - 32; // .clamp(120.0, 160.0);
+    final imageHeight = (cardWidth * (117/175)); // .clamp(66.0, 88.0);
 
     return GestureDetector(
       onTap: () {
@@ -419,7 +419,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                           ? restaurant.resName
                           : 'Unknown Restaurant',
                       style: TextStyle(
-                        fontSize: (cardWidth * 0.1).clamp(13.0, 15.0),
+                        fontSize: 14 * (5/4), // (cardWidth * 0.1).clamp(13.0, 15.0),
                         fontWeight: FontWeight.w700,
                         fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                         color: Colors.black,
@@ -580,6 +580,10 @@ class _HomeScreenNewState extends State<HomeScreenNew>
   }
 
   Widget buildStreamCard(VideoModel video, int index) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final cardWidth = (screenWidth * 0.5) - 32;
+    final videoHeight = (cardWidth * (196/175));
+
     if (homeLocationCtrl.thumbnailPaths[index] == null &&
         video.url != null &&
         video.url!.isNotEmpty) {
@@ -597,8 +601,8 @@ class _HomeScreenNewState extends State<HomeScreenNew>
         );
       },
       child: Container(
-        width: 163,
-        height: 295,
+        width: cardWidth,
+        height: 264,
         margin: const EdgeInsets.only(right: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -608,8 +612,8 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Container(
-                    height: 191,
-                    width: 163,
+                    width: cardWidth,
+                    height: videoHeight,
                     color: Colors.black,
                     child: homeLocationCtrl.thumbnailPaths[index] != null
                         ? Image.file(
@@ -680,7 +684,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                   Text(
                     video.restaurantName ?? 'Kaistable at Drews',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 13 * (5/4),
                       fontWeight: FontWeight.w700,
                       fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                     ),
@@ -1242,8 +1246,8 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                             child: Text(
                               'Restaurants in the area',
                               style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w900,
+                                fontSize: 18 * (5/4),
+                                fontWeight: FontWeight.w600,
                                 fontFamily:
                                     GoogleFonts.plusJakartaSans().fontFamily,
                               ),
@@ -1252,7 +1256,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                           const SizedBox(height: 11),
                           Obx(() {
                             return SizedBox(
-                              height: 156,
+                              height: 216,
                               child: isLoading.value ||
                                       cachedRestaurants.isEmpty
                                   ? _buildShimmer()
@@ -1295,7 +1299,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                             child: Text(
                               'Streams',
                               style: TextStyle(
-                                fontSize: 16,
+                                fontSize: 18 * (5/4),
                                 fontWeight: FontWeight.w900,
                                 fontFamily:
                                     GoogleFonts.plusJakartaSans().fontFamily,
@@ -1305,7 +1309,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                           const SizedBox(height: 8),
                           Obx(() {
                             return SizedBox(
-                              height: 252,
+                              height: 264,
                               child: homeLocationCtrl.filteredVideos.isEmpty
                                   ? const Center(
                                       child: Text('No videos available'))
@@ -1351,8 +1355,8 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                             child: Text(
                               'Curated for you',
                               style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w900,
+                                fontSize: 18 * (5/4),
+                                fontWeight: FontWeight.w600,
                                 fontFamily:
                                     GoogleFonts.plusJakartaSans().fontFamily,
                               ),
