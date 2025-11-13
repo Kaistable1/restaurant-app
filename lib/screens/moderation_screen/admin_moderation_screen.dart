@@ -148,15 +148,19 @@ class _AdminModerationScreenState extends State<AdminModerationScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildInfoRow('Content Type', report.contentType ?? 'Unknown'),
-                  _buildInfoRow('Reported User', report.reportedUserName ?? 'Unknown'),
-                  if (report.description != null && report.description!.isNotEmpty)
+                  _buildInfoRow(
+                      'Content Type', report.contentType ?? 'Unknown'),
+                  _buildInfoRow(
+                      'Reported User', report.reportedUserName ?? 'Unknown'),
+                  if (report.description != null &&
+                      report.description!.isNotEmpty)
                     _buildInfoRow('Description', report.description!),
                   _buildInfoRow('Date', _formatDate(report.createdAt)),
                   if (report.aiModerated == true)
                     Row(
                       children: [
-                        Icon(Icons.smart_toy, size: 14, color: AppColors.primaryColor),
+                        Icon(Icons.smart_toy,
+                            size: 14, color: AppColors.primaryColor),
                         SizedBox(width: 4),
                         Text(
                           'AI Moderated',
