@@ -184,17 +184,21 @@ class FilterBox extends StatelessWidget {
                       return InkWell(
                         onTap: () {
                           if (controller.top[index] != 'Discount') {
-                            controller.selectedTop.value = controller.top[index];
+                            controller.selectedTop.value =
+                                controller.top[index];
                           }
                         },
                         child: Container(
                           height: 26,
                           decoration: BoxDecoration(
-                            color: controller.selectedTop.value == controller.top[index] ||
+                            color: controller.selectedTop.value ==
+                                        controller.top[index] ||
                                     (controller.top[index] == 'Discount' &&
-                                        items.contains(controller.selectedTop.value)) ||
+                                        items.contains(
+                                            controller.selectedTop.value)) ||
                                     (controller.top[index] == 'Dining' &&
-                                        diningItems.contains(controller.selectedTop.value))
+                                        diningItems.contains(
+                                            controller.selectedTop.value))
                                 ? AppColors.whiteColor
                                 : Colors.transparent,
                             borderRadius: BorderRadius.circular(4),
@@ -202,48 +206,91 @@ class FilterBox extends StatelessWidget {
                           child: Center(
                             child: controller.top[index] == 'Discount'
                                 ? Padding(
-                                    padding: const EdgeInsets.only(top: 4, bottom: 4, right: 4, left: 20),
+                                    padding: const EdgeInsets.only(
+                                        top: 4, bottom: 4, right: 4, left: 20),
                                     child: DropdownButtonHideUnderline(
                                       child: DropdownButton2<String>(
                                         iconStyleData: IconStyleData(
-                                          icon: Image.asset('assets/images/drop_down_img.png', width: 10, height: 10),
+                                          icon: Image.asset(
+                                              'assets/images/drop_down_img.png',
+                                              width: 10,
+                                              height: 10),
                                         ),
                                         dropdownStyleData: DropdownStyleData(
                                           width: 200,
                                           maxHeight: 200,
                                           decoration: BoxDecoration(
                                             color: AppColors.whiteColor,
-                                            borderRadius: BorderRadius.circular(10),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
                                           ),
                                         ),
-                                        value: items.contains(controller.selectedTop.value)
+                                        value: items.contains(
+                                                controller.selectedTop.value)
                                             ? controller.selectedTop.value
                                             : null,
-                                        hint: Text('Discount', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: AppColors.darkGrey, fontFamily: 'Nunito-Regular')),
-                                        selectedItemBuilder: (context) => items.map((item) => Text(item, style: TextStyle(fontSize: 10, color: AppColors.darkGrey))).toList(),
+                                        hint: Text('Discount',
+                                            style: TextStyle(
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.w500,
+                                                color: AppColors.darkGrey,
+                                                fontFamily: 'Nunito-Regular')),
+                                        selectedItemBuilder: (context) => items
+                                            .map((item) => Text(item,
+                                                style: TextStyle(
+                                                    fontSize: 10,
+                                                    color: AppColors.darkGrey)))
+                                            .toList(),
                                         items: items.map((item) {
                                           return DropdownMenuItem<String>(
                                             value: item,
                                             child: Row(
                                               children: [
                                                 Checkbox(
-                                                  fillColor: WidgetStateProperty.resolveWith<Color>(
-                                                    (states) => states.contains(WidgetState.selected) ? AppColors.primaryColor : AppColors.whiteColor,
+                                                  fillColor: WidgetStateProperty
+                                                      .resolveWith<Color>(
+                                                    (states) => states.contains(
+                                                            WidgetState
+                                                                .selected)
+                                                        ? AppColors.primaryColor
+                                                        : AppColors.whiteColor,
                                                   ),
-                                                  side: WidgetStateBorderSide.resolveWith((states) => BorderSide(color: AppColors.primaryColor)),
-                                                  value: controller.selectedTop.value == item,
+                                                  side: WidgetStateBorderSide
+                                                      .resolveWith((states) =>
+                                                          BorderSide(
+                                                              color: AppColors
+                                                                  .primaryColor)),
+                                                  value: controller
+                                                          .selectedTop.value ==
+                                                      item,
                                                   onChanged: (selected) {
-                                                    controller.selectedTop.value = selected == true ? item : '';
+                                                    controller
+                                                            .selectedTop.value =
+                                                        selected == true
+                                                            ? item
+                                                            : '';
                                                     Get.to(() => HappyHours());
                                                   },
                                                 ),
-                                                Text(item, style: TextStyle(fontSize: Responsive.isMobile(context) ? 10 : 14, color: AppColors.darkGrey)),
+                                                Text(item,
+                                                    style: TextStyle(
+                                                        fontSize:
+                                                            Responsive.isMobile(
+                                                                    context)
+                                                                ? 10
+                                                                : 14,
+                                                        color: AppColors
+                                                            .darkGrey)),
                                               ],
                                             ),
                                           );
                                         }).toList(),
                                         onChanged: (value) {
-                                          controller.selectedTop.value = value == controller.selectedTop.value ? '' : value!;
+                                          controller
+                                              .selectedTop.value = value ==
+                                                  controller.selectedTop.value
+                                              ? ''
+                                              : value!;
                                           Get.to(() => HappyHours());
                                         },
                                       ),
@@ -255,42 +302,100 @@ class FilterBox extends StatelessWidget {
                                         child: DropdownButtonHideUnderline(
                                           child: DropdownButton2<String>(
                                             iconStyleData: IconStyleData(
-                                              icon: Image.asset('assets/images/drop_down_img.png', width: 10, height: 10),
+                                              icon: Image.asset(
+                                                  'assets/images/drop_down_img.png',
+                                                  width: 10,
+                                                  height: 10),
                                             ),
-                                            dropdownStyleData: DropdownStyleData(
+                                            dropdownStyleData:
+                                                DropdownStyleData(
                                               width: 200,
                                               maxHeight: 200,
-                                              decoration: BoxDecoration(color: AppColors.whiteColor, borderRadius: BorderRadius.circular(10)),
+                                              decoration: BoxDecoration(
+                                                  color: AppColors.whiteColor,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
                                             ),
-                                            value: diningItems.contains(controller.selectedTop.value) ? controller.selectedTop.value : null,
+                                            value: diningItems.contains(
+                                                    controller
+                                                        .selectedTop.value)
+                                                ? controller.selectedTop.value
+                                                : null,
                                             hint: Padding(
-                                              padding: const EdgeInsets.only(right: 10, left: 8),
-                                              child: Text('Dining', style: TextStyle(fontSize: Responsive.isMobile(context) ? 10 : 14, color: AppColors.darkGrey)),
+                                              padding: const EdgeInsets.only(
+                                                  right: 10, left: 8),
+                                              child: Text('Dining',
+                                                  style: TextStyle(
+                                                      fontSize:
+                                                          Responsive.isMobile(
+                                                                  context)
+                                                              ? 10
+                                                              : 14,
+                                                      color:
+                                                          AppColors.darkGrey)),
                                             ),
-                                            selectedItemBuilder: (context) => diningItems.map((item) => Text(item, style: TextStyle(fontSize: 10, color: AppColors.darkGrey))).toList(),
+                                            selectedItemBuilder: (context) =>
+                                                diningItems
+                                                    .map((item) => Text(item,
+                                                        style: TextStyle(
+                                                            fontSize: 10,
+                                                            color: AppColors
+                                                                .darkGrey)))
+                                                    .toList(),
                                             items: diningItems.map((item) {
                                               return DropdownMenuItem<String>(
                                                 value: item,
                                                 child: Row(
                                                   children: [
                                                     Checkbox(
-                                                      fillColor: WidgetStateProperty.resolveWith<Color>(
-                                                        (states) => states.contains(WidgetState.selected) ? AppColors.primaryColor : AppColors.whiteColor,
+                                                      fillColor:
+                                                          WidgetStateProperty
+                                                              .resolveWith<
+                                                                  Color>(
+                                                        (states) => states
+                                                                .contains(
+                                                                    WidgetState
+                                                                        .selected)
+                                                            ? AppColors
+                                                                .primaryColor
+                                                            : AppColors
+                                                                .whiteColor,
                                                       ),
-                                                      side: WidgetStateBorderSide.resolveWith((states) => BorderSide(color: AppColors.primaryColor)),
-                                                      value: controller.selectedTop.value == item,
+                                                      side: WidgetStateBorderSide
+                                                          .resolveWith((states) =>
+                                                              BorderSide(
+                                                                  color: AppColors
+                                                                      .primaryColor)),
+                                                      value: controller
+                                                              .selectedTop
+                                                              .value ==
+                                                          item,
                                                       onChanged: (selected) {
-                                                        controller.selectedTop.value = selected == true ? item : '';
+                                                        controller.selectedTop
+                                                                .value =
+                                                            selected == true
+                                                                ? item
+                                                                : '';
                                                         Navigator.pop(context);
                                                       },
                                                     ),
-                                                    Text(item, style: TextStyle(fontSize: 10, color: AppColors.darkGrey)),
+                                                    Text(item,
+                                                        style: TextStyle(
+                                                            fontSize: 10,
+                                                            color: AppColors
+                                                                .darkGrey)),
                                                   ],
                                                 ),
                                               );
                                             }).toList(),
                                             onChanged: (value) {
-                                              controller.selectedTop.value = value == controller.selectedTop.value ? '' : value!;
+                                              controller.selectedTop.value =
+                                                  value ==
+                                                          controller
+                                                              .selectedTop.value
+                                                      ? ''
+                                                      : value!;
                                             },
                                           ),
                                         ),
@@ -300,9 +405,17 @@ class FilterBox extends StatelessWidget {
                                         child: Text(
                                           controller.top[index],
                                           style: TextStyle(
-                                            fontWeight: controller.selectedTop.value != controller.top[index] ? FontWeight.w500 : FontWeight.w700,
+                                            fontWeight:
+                                                controller.selectedTop.value !=
+                                                        controller.top[index]
+                                                    ? FontWeight.w500
+                                                    : FontWeight.w700,
                                             fontSize: 10,
-                                            color: controller.selectedTop.value != controller.top[index] ? AppColors.darkGrey : AppColors.primaryColor,
+                                            color:
+                                                controller.selectedTop.value !=
+                                                        controller.top[index]
+                                                    ? AppColors.darkGrey
+                                                    : AppColors.primaryColor,
                                             fontFamily: 'Nunito-Regular',
                                           ),
                                         ),
