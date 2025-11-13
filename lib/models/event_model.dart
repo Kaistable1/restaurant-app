@@ -11,5 +11,3 @@ class EventModel {
     required this.categories,
   });
 }
-
-

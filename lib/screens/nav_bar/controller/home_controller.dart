@@ -76,7 +76,7 @@ class HomeController extends GetxController {
 
   // banner
 
-   Stream<List<BannerModel>> fetchAllBanners() {
+  Stream<List<BannerModel>> fetchAllBanners() {
     return FirebaseFirestore.instance
         .collection('banner')
         .snapshots()
