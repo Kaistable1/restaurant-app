@@ -2,7 +2,7 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [ main, develop, 'feature/**' ]
+    branches: [ main, develop, staging, 'feature/**' ]
   pull_request:
     branches: [ main, develop ]
 
@@ -26,7 +26,7 @@ jobs:
         run: flutter pub get
 
       - name: Verify formatting
-        run: flutter format --set-exit-if-changed .
+        run: dart format --set-exit-if-changed .
 
       - name: Analyze code
         run: flutter analyze
