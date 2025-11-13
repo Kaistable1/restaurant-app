@@ -11,6 +11,7 @@ import 'package:kaistable_website/widgets/global_functions.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart' show kIsWeb; /
 import 'main_controller.dart';
 
 // Android channel for notifications
@@ -60,7 +61,6 @@ void main() async {
     badge: false,
     sound: false,
   );
-  import 'package:flutter/foundation.dart' show kIsWeb; // ← ADD THIS AT TOP
 
 // ... later in main() ...
 try {
