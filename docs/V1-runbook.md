@@ -1,34 +1,48 @@
-# Savrli City — V1 Runbook (staging)
+# Savrli City V1 — Operations Runbook
 
-Purpose
-- Quick guide to deploy to staging, verify core flow, and rollback if needed.
+**Last Updated:** 2025-11-13  
+**Version:** 1.0.0  
+**Owner:** Kaistable Engineering Team  
+**Staging URL:** `https://staging.savrli.city`  
+**Production URL:** `https://savrli.city`
 
-Staging URL
-- https://staging.example.com (replace with your staging URL)
+---
 
-Deploy to staging
-- Command:
-  - ./scripts/deploy-staging.sh
-  - OR replace with your CI trigger: gh workflow run deploy-staging.yml
-- Verify:
-  - Open staging URL and complete the smoke flow below.
-  - Check Sentry for new errors and Slack #alerts channel.
+## Purpose
+Quick-reference guide to **deploy, verify, monitor, and rollback** the Savrli City concierge web app (Flutter + Firebase).
 
-Smoke verification (manual)
-1. Signup as a new user (use a test email).
-2. Complete onboarding steps.
-3. Perform the primary task and verify success.
-4. Check analytics dashboard for events:
-   - signup
-   - onboarding_start
-   - onboarding_complete
-   - primary_task_success
+---
 
-Rollback
-- If deploy causes issues:
-  - Revert the last commit on staging branch and redeploy, or
-  - Use your host's rollback mechanism (e.g., previous version in cloud console).
-- Command example (git):
-  - git checkout staging
-  - git revert <commit-sha>
-  - git push origin staging
+## Table of Contents
+1. [Pre-Deployment Checklist](#pre-deployment-checklist)  
+2. [Staging Deployment](#staging-deployment)  
+3. [Smoke Test Verification](#smoke-test-verification)  
+4. [Production Deployment](#production-deployment)  
+5. [Rollback Procedures](#rollback-procedures)  
+6. [Monitoring & Alerts](#monitoring--alerts)  
+7. [Troubleshooting](#troubleshooting)  
+8. [Emergency Contacts](#emergency-contacts)  
+9. [Appendix](#appendix)
+
+---
+
+## Pre-Deployment Checklist
+| Item | Status |
+|------|--------|
+| CI/CD pipeline passed (unit + integration) | [ ] |
+| Code review approved | [ ] |
+| OpenAPI spec up-to-date | [ ] |
+| Environment variables configured | [ ] |
+| Database migrations tested (if any) | [ ] |
+| Rollback plan documented | [ ] |
+| On-call engineer notified | [ ] |
+
+---
+
+## Staging Deployment
+
+### 1. Prerequisites
+```bash
+flutter --version    # ≥ 3.24.0
+firebase --version
+git status           # clean working tree

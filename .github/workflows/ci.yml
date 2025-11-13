@@ -1,58 +1,154 @@
-name: CI
+name: CI Pipeline
 
+# ----------------------------------------------------------------------
+# Triggers
+# ----------------------------------------------------------------------
 on:
   push:
-    branches: [ main, staging ]
+    branches: [ main, develop, staging, 'feature/**' ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, develop ]
 
+# ----------------------------------------------------------------------
+# Jobs
+# ----------------------------------------------------------------------
 jobs:
-  build-and-test:
+  # --------------------------------------------------------------
+  # 1. Build Flutter Web + run Dart/Flutter checks
+  # --------------------------------------------------------------
+  build-flutter-web:
+    name: Build Flutter Web
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Use Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
         with:
-          node-version: '18'
+          flutter-version: '3.24.0'
+          channel: stable
+          cache: true
 
-      - name: Install dependencies
-        run: |
-          npm ci
+      - name: Get dependencies
+        run: flutter pub get
 
-      - name: Lint
-        run: |
-          npm run lint || true
+      - name: Verify formatting
+        run: dart format --set-exit-if-changed .
 
-      - name: Run unit tests
-        run: |
-          npm test
+      - name: Analyze code
+        run: flutter analyze
 
-  cypress-smoke:
-    needs: build-and-test
+      - name: Run unit tests (headless Chrome)
+        run: flutter test --platform=chrome
+
+      - name: Build web app (release, canvaskit)
+        run: flutter build web --release --web-renderer=canvaskit
+
+      - name: Upload web build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: build/web/
+          retention-days: 7
+
+  # --------------------------------------------------------------
+  # 2. (Optional) Node lint + unit tests
+  # --------------------------------------------------------------
+  node-checks:
+    name: Node Lint & Tests
     runs-on: ubuntu-latest
-    if: ${{ always() }}
+    needs: build-flutter-web
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
+          cache: npm
 
-      - name: Install deps
+      - name: Install npm deps
         run: npm ci
 
-      - name: Start app (staging or local)
-        run: |
-          # Replace with your start command for staging or a dev server
-          npm run start & sleep 5
+      - name: Lint
+        run: npm run lint || true   # keep non-blocking
 
-      - name: Cypress run (smoke)
-        uses: cypress-io/github-action@v5
+      - name: Run unit tests
+        run: npm test
+
+  # --------------------------------------------------------------
+  # 3. Cypress smoke tests (runs after Flutter build)
+  # --------------------------------------------------------------
+  cypress-smoke:
+    name: Cypress Smoke Tests
+    needs: [build-flutter-web, node-checks]   # wait for both
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: >-
+      github.event_name == 'pull_request' ||
+      github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          start: false
-          config-file: cypress.json
+          node-version: '20'
+          cache: npm
+
+      - name: Install npm deps + Cypress binary
+        run: |
+          npm ci
+          npx cypress install
+
+      - name: Download Flutter web build
+        uses: actions/download-artifact@v4
+        with:
+          name: web-build
+          path: build/web/
+
+      - name: Serve Flutter app
+        run: |
+          npm install -g dhttpd
+          dhttpd --path=build/web --port=8080 &
+          echo "SERVER_PID=$!" >> $GITHUB_ENV
+          sleep 8
+
+      - name: Wait for server to be ready
+        run: |
+          timeout 30 bash -c 'until curl -s -f http://localhost:8080 > /dev/null; do sleep 2; done'
+
+      - name: Run Cypress smoke tests
+        env:
+          CYPRESS_baseUrl: http://localhost:8080
+        run: npx cypress run \
+               --spec "cypress/e2e/smoke_spec.cy.js" \
+               --browser chrome
+
+      - name: Upload screenshots (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots/
+          retention-days: 7
+
+      - name: Upload videos (always)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-videos
+          path: cypress/videos/
+          retention-days: 7
+
+      - name: Cleanup server
+        if: always()
+        run: |
+          if [ -n "$SERVER_PID" ]; then
+            kill "$SERVER_PID" || true
+          fi

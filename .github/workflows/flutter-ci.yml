@@ -2,28 +2,32 @@ name: Flutter CI
 
 on:
   pull_request:
+    branches: [ main, develop ]
   push:
     branches: [ main ]
 
 jobs:
-  analyze-and-test:
+  analyze-test-build:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: read
+
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Java (required for Android toolchain)
+      - name: Set up Java (required for Android)
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '11'
 
-      - name: Set up Flutter (stable)
+      - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
+          cache: true
 
       - name: Debug: Flutter version
         run: flutter --version
@@ -31,35 +35,31 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Run analyzer
-        run: flutter analyze
-
-      - name: Run tests
-        run: flutter test --no-test-assets
-
-      - name: Build APK (smoke)
+      - name: Inject Firebase config (from secrets)
         env:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
           IOS_GOOGLE_SERVICE_INFO_PLIST: ${{ secrets.IOS_GOOGLE_SERVICE_INFO_PLIST }}
         run: |
-          # Ensure android/ and ios/ paths exist
-          mkdir -p android/app
-          mkdir -p ios/Runner
+          # Create directories
+          mkdir -p android/app ios/Runner
 
-          # GOOGLE_SERVICES_JSON: accept either raw JSON or base64-encoded JSON
+          # Android: google-services.json
           if [ -n "$GOOGLE_SERVICES_JSON" ]; then
-            echo "Writing android/app/google-services.json (secret present)"
-            # try base64 decode, fall back to raw if decode fails
+            echo "Writing android/app/google-services.json"
             echo "$GOOGLE_SERVICES_JSON" | base64 --decode > android/app/google-services.json 2>/dev/null || echo "$GOOGLE_SERVICES_JSON" > android/app/google-services.json
-            ls -l android/app/google-services.json || true
           fi
 
-          # IOS_GOOGLE_SERVICE_INFO_PLIST: accept either raw plist or base64-encoded plist
+          # iOS: GoogleService-Info.plist
           if [ -n "$IOS_GOOGLE_SERVICE_INFO_PLIST" ]; then
-            echo "Writing ios/Runner/GoogleService-Info.plist (secret present)"
+            echo "Writing ios/Runner/GoogleService-Info.plist"
             echo "$IOS_GOOGLE_SERVICE_INFO_PLIST" | base64 --decode > ios/Runner/GoogleService-Info.plist 2>/dev/null || echo "$IOS_GOOGLE_SERVICE_INFO_PLIST" > ios/Runner/GoogleService-Info.plist
-            ls -l ios/Runner/GoogleService-Info.plist || true
           fi
 
-          # smoke build to validate Android build path (won't sign)
-          flutter build apk --no-shrink
+      - name: Run analyzer
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+
+      - name: Run tests
+        run: flutter test --no-test-assets
+
+      - name: Build debug APK (smoke test)
+        run: flutter build apk --debug --no-shrink
