@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
 
-
 datSelectionWidget({
   required int index,
   required int selectIndex,
@@ -15,22 +14,23 @@ datSelectionWidget({
     children: [
       Padding(
         padding:
-        EdgeInsets.symmetric(horizontal: index == selectIndex ? 11 : 0),
+            EdgeInsets.symmetric(horizontal: index == selectIndex ? 11 : 0),
         child: Align(
           alignment: index != selectIndex && index == 0
               ? Alignment.center
               : index != selectIndex && index == 1
-              ? Alignment.center
-              : Alignment.center,
+                  ? Alignment.center
+                  : Alignment.center,
           child: Text(
             text,
             style: TextStyle(
-                color: index == selectIndex ? AppColors.primaryColor : AppColors.textColor,
+                color: index == selectIndex
+                    ? AppColors.primaryColor
+                    : AppColors.textColor,
                 fontWeight: FontWeight.w800,
                 fontFamily: 'Quicksand-bold',
                 fontSize: 12),
-            textAlign:
-            TextAlign.center, // Center the text within the container
+            textAlign: TextAlign.center, // Center the text within the container
           ),
         ),
       ),

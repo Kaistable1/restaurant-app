@@ -29,8 +29,7 @@ loadingDialog(
           child: Dialog(
             alignment: Alignment.center,
             backgroundColor: Colors.white,
-            insetPadding:
-                EdgeInsets.symmetric(horizontal: 15),
+            insetPadding: EdgeInsets.symmetric(horizontal: 15),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
@@ -40,18 +39,15 @@ loadingDialog(
               decoration: BoxDecoration(
                   color: Colors.white, borderRadius: BorderRadius.circular(20)),
               child: Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 18.0),
+                  padding: EdgeInsets.symmetric(horizontal: 18.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       loading
                           ? Padding(
-                              padding:
-                                  EdgeInsets.only(top: 10),
+                              padding: EdgeInsets.only(top: 10),
                               child: CircularProgressIndicator(
                                 color: AppColors.primaryColor,
-                                
                               ),
                             )
                           : top == true
@@ -85,8 +81,7 @@ loadingDialog(
                       ),
                       button
                           ? Padding(
-                              padding:
-                                  EdgeInsets.only(top: 20.0),
+                              padding: EdgeInsets.only(top: 20.0),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
