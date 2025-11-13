@@ -1,7 +1,9 @@
 openapi: 3.0.3
 info:
   title: Savrli City Concierge API
-  description: API specification for Savrli City restaurant concierge onboarding and core flows
+  description: |
+    REST API for Savrli City V1 — restaurant concierge service.
+    Covers user signup, concierge onboarding, and primary task creation (e.g., reservations).
   version: 1.0.0
   contact:
     name: Kaistable Team
@@ -9,9 +11,9 @@ info:
 
 servers:
   - url: https://api.savrli.city/v1
-    description: Production server
+    description: Production
   - url: https://staging-api.savrli.city/v1
-    description: Staging server
+    description: Staging
 
 paths:
   # ──────────────────────────────────────────────────────────────
@@ -19,8 +21,8 @@ paths:
   # ──────────────────────────────────────────────────────────────
   /auth/signup:
     post:
-      summary: User signup
-      description: Register a new user for Savrli City concierge service
+      summary: Register new user
+      description: Create a new Savrli City user account
       operationId: userSignup
       tags:
         - Authentication
@@ -39,24 +41,26 @@ paths:
                 email:
                   type: string
                   format: email
-                  example: user@example.com
+                  example: test+1698765432@example.com
                 password:
                   type: string
                   format: password
                   minLength: 8
+                  description: Must include uppercase, lowercase, number, and special char
                   example: SecurePass123!
                 firstName:
                   type: string
-                  example: John
+                  example: Alex
                 lastName:
                   type: string
-                  example: Doe
+                  example: Rivera
                 phoneNumber:
                   type: string
-                  example: +1-555-0123
+                  pattern: '^\+?[1-9]\d{1,14}$'
+                  example: +15550123456
       responses:
         '201':
-          description: User successfully registered
+          description: User created successfully
           content:
             application/json:
               schema:
@@ -71,13 +75,9 @@ paths:
                     type: string
                     example: User registered successfully
         '400':
-          description: Invalid request data
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+          $ref: '#/components/responses/BadRequest'
         '409':
-          description: User already exists
+          description: Email already in use
           content:
             application/json:
               schema:
@@ -89,7 +89,7 @@ paths:
   /onboarding:
     post:
       summary: Complete concierge onboarding
-      description: Submit onboarding information for Savrli City concierge
+      description: Submit user preferences and location to activate concierge service
       operationId: completeOnboarding
       tags:
         - Onboarding
@@ -112,12 +112,12 @@ paths:
                       type: array
                       items:
                         type: string
-                      example: ["Italian", "Japanese", "Mexican"]
+                      example: ["Italian", "Japanese", "Vegan"]
                     dietaryRestrictions:
                       type: array
                       items:
                         type: string
-                      example: ["vegetarian", "gluten-free"]
+                      example: ["gluten-free", "nut-allergy"]
                     priceRange:
                       type: string
                       enum: [budget, moderate, upscale, fine-dining]
@@ -133,10 +133,11 @@ paths:
                       example: San Francisco
                     zipCode:
                       type: string
+                      pattern: '^\d{5}(-\d{4})?$'
                       example: "94102"
                     address:
                       type: string
-                      example: 123 Main St
+                      example: 123 Market St
                 notifications:
                   type: object
                   properties:
@@ -151,7 +152,7 @@ paths:
                       default: false
       responses:
         '200':
-          description: Onboarding completed successfully
+          description: Onboarding completed
           content:
             application/json:
               schema:
@@ -167,25 +168,17 @@ paths:
                     type: string
                     example: Onboarding completed successfully
         '400':
-          description: Invalid onboarding data
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+          $ref: '#/components/responses/BadRequest'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+          $ref: '#/components/responses/Unauthorized'
 
   # ──────────────────────────────────────────────────────────────
   # TASKS: Create & List Primary Tasks
   # ──────────────────────────────────────────────────────────────
   /tasks/primary:
     post:
-      summary: Create primary task
-      description: Create a primary concierge task (e.g., restaurant reservation)
+      summary: Create primary concierge task
+      description: Submit a high-priority task (e.g., make a restaurant reservation)
       operationId: createPrimaryTask
       tags:
         - Tasks
@@ -214,21 +207,22 @@ paths:
                     partySize:
                       type: integer
                       minimum: 1
+                      maximum: 20
                       example: 4
                     dateTime:
                       type: string
                       format: date-time
-                      example: "2025-11-15T19:00:00Z"
+                      example: "2025-11-20T19:00:00Z"
                     specialRequests:
                       type: string
-                      example: Window seat preferred
+                      example: Window seat, high chair needed
                 priority:
                   type: string
                   enum: [low, normal, high, urgent]
                   default: normal
       responses:
         '201':
-          description: Task created successfully
+          description: Task created
           content:
             application/json:
               schema:
@@ -243,15 +237,12 @@ paths:
                   createdAt:
                     type: string
                     format: date-time
-                  estimatedCompletionTime:
+                  estimatedCompletion:
                     type: string
                     format: date-time
+                    description: When concierge will respond
         '400':
-          description: Invalid task data
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+          $ref: '#/components/responses/BadRequest'
         '401':
           description: Unauthorized
           content:
@@ -260,8 +251,7 @@ paths:
                 $ref: '#/components/schemas/Error'
 
     get:
-      summary: Get primary tasks
-      description: Retrieve list of user's primary tasks
+      summary: List user's primary tasks
       operationId: getPrimaryTasks
       tags:
         - Tasks
@@ -288,7 +278,7 @@ paths:
             default: 0
       responses:
         '200':
-          description: Tasks retrieved successfully
+          description: Paginated task list
           content:
             application/json:
               schema:
@@ -305,11 +295,7 @@ paths:
                   offset:
                     type: integer
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+          $ref: '#/components/responses/Unauthorized'
 
 # ──────────────────────────────────────────────────────────────
 # COMPONENTS
@@ -333,11 +319,12 @@ components:
           example: VALIDATION_ERROR
         message:
           type: string
-          example: Invalid request data
+          example: Invalid email format
         details:
           type: array
           items:
             type: string
+          example: ["password must be at least 8 characters"]
 
     Task:
       type: object
@@ -365,3 +352,18 @@ components:
         completedAt:
           type: string
           format: date-time
+          nullable: true
+
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'

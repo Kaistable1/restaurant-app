@@ -1,15 +1,16 @@
 /// <reference types="cypress" />
 
 /**
- * Savrli City V1 – Smoke Test
+ * Savrli City – Smoke Test Suite
  *
  * Critical path:
- *   1. App loads
- *   2. Signup
- *   3. Onboarding (concierge preferences)
- *   4. Primary task – restaurant reservation
+ * 1. App loads
+ * 2. Signup
+ * 3. Onboarding (concierge preferences)
+ * 4. Primary task – restaurant reservation
+ * 5. Full end-to-end flow
  *
- * Update the `data-cy` / `data-testid` attributes to match your actual UI.
+ * Update `data-cy` selectors to match your actual UI.
  */
 
 const BASE_URL = Cypress.config('baseUrl') || 'http://localhost:8080';
@@ -39,7 +40,6 @@ describe('Savrli City – Smoke Test', () => {
   const reservation = {
     restaurant: 'The Blue Duck',
     partySize: 4,
-    // 7 days from now, ISO string
     dateTime: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
     notes: 'Window seat preferred',
   };
@@ -55,9 +55,9 @@ describe('Savrli City – Smoke Test', () => {
   // -------------------------------------------------------------------------
   it('loads the application', () => {
     cy.visit(BASE_URL);
-    cy.wait(3000); // give Flutter web a moment to bootstrap
+    cy.wait(3000); // Allow Flutter web to bootstrap
     cy.get('body').should('be.visible');
-    cy.log('Application loaded');
+    cy.log('Application loaded successfully');
   });
 
   // -------------------------------------------------------------------------
@@ -65,13 +65,11 @@ describe('Savrli City – Smoke Test', () => {
   // -------------------------------------------------------------------------
   it('completes user signup', () => {
     cy.visit(`${BASE_URL}/signup`);
-
     cy.get('input[name="email"]').type(user.email);
     cy.get('input[name="password"]').type(user.password);
     cy.get('input[name="firstName"]').type(user.firstName);
     cy.get('input[name="lastName"]').type(user.lastName);
     cy.get('input[name="phone"]').type(user.phone);
-
     cy.get('button[type="submit"]').click();
 
     cy.url().should('include', '/onboarding');
@@ -83,15 +81,12 @@ describe('Savrli City – Smoke Test', () => {
   // 3. Concierge onboarding
   // -------------------------------------------------------------------------
   it('completes concierge onboarding', () => {
-    // we should already be on /onboarding after signup
+    // Already on /onboarding after signup
     onboarding.cuisines.forEach(selectCuisine);
     onboarding.dietary.forEach(selectDiet);
-
     cy.get(`[data-cy="price-${onboarding.price}"]`).click();
-
     cy.get('input[data-cy="city"]').type(onboarding.city);
     cy.get('input[data-cy="zip"]').type(onboarding.zip);
-
     cy.get('[data-cy="onboard-complete"]').click();
 
     cy.url().should('include', '/dashboard');
@@ -104,15 +99,12 @@ describe('Savrli City – Smoke Test', () => {
   // -------------------------------------------------------------------------
   it('creates a restaurant reservation', () => {
     cy.visit(`${BASE_URL}/dashboard`);
-
     cy.get('[data-cy="create-task-btn"]').click();
     cy.get('[data-cy="task-type-reservation"]').click();
-
     cy.get('input[data-cy="restaurant"]').type(reservation.restaurant);
-    cy.get('input[data-cy="party-size"]').clear().type(reservation.partySize);
-    cy.get('input[data-cy="datetime"]').type(reservation.dateTime.slice(0, 16)); // YYYY-MM-DDTHH:mm
+    cy.get('input[data-cy="party-size"]').clear().type(reservation.partySize.toString());
+    cy.get('input[data-cy="datetime"]').type(reservation.dateTime.slice(0, 16));
     cy.get('textarea[data-cy="special-requests"]').type(reservation.notes);
-
     cy.get('[data-cy="task-submit"]').click();
 
     cy.contains('Task created', { timeout: 15000 }).should('be.visible');
@@ -121,7 +113,7 @@ describe('Savrli City – Smoke Test', () => {
   });
 
   // -------------------------------------------------------------------------
-  // 5. Full end-to-end (runs all steps in one go)
+  // 5. Full end-to-end flow (all steps in one test)
   // -------------------------------------------------------------------------
   it('runs the full end-to-end flow', () => {
     cy.log('=== Full E2E Flow Start ===');
@@ -150,13 +142,13 @@ describe('Savrli City – Smoke Test', () => {
     cy.get('[data-cy="create-task-btn"]').click();
     cy.get('[data-cy="task-type-reservation"]').click();
     cy.get('input[data-cy="restaurant"]').type(reservation.restaurant);
-    cy.get('input[data-cy="party-size"]').clear().type(reservation.partySize);
+    cy.get('input[data-cy="party-size"]').clear().type(reservation.partySize.toString());
     cy.get('input[data-cy="datetime"]').type(reservation.dateTime.slice(0, 16));
     cy.get('textarea[data-cy="special-requests"]').type(reservation.notes);
     cy.get('[data-cy="task-submit"]').click();
 
     cy.contains('Task created', { timeout: 15000 }).should('be.visible');
-    cy.log('=== Full E2E Flow Completed ===');
+    cy.log('=== Full E2E Flow Completed Successfully ===');
   });
 
   // -------------------------------------------------------------------------
@@ -171,10 +163,13 @@ describe('Savrli City – Smoke Test', () => {
 
     endpoints.forEach(({ name, path }) => {
       it(`has ${name} endpoint reachable`, () => {
-        cy.request({ method: 'OPTIONS', url: `${API_URL}${path}`, failOnStatusCode: false })
-          .then((resp) => {
-            cy.log(`${name} endpoint → ${resp.status}`);
-          });
+        cy.request({
+          method: 'OPTIONS',
+          url: `${API_URL}${path}`,
+          failOnStatusCode: false,
+        }).then((resp) => {
+          cy.log(`${name} endpoint → ${resp.status}`);
+        });
       });
     });
   });
