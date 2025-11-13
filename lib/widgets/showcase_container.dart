@@ -40,12 +40,11 @@ class ShowCaseContainer extends StatelessWidget {
         child:
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           CustomButton(
-            ontapp: ()async{
+            ontapp: () async {
               controller.isSpotlightFinish.value = true;
               controller.update();
               ShowCaseWidget.of(showcaseContext).dismiss();
-                    await preferences?.setBool('isSpotLightViewd', true);
-
+              await preferences?.setBool('isSpotLightViewd', true);
             },
             laBelText: 'Skip',
             fontSize: 12,

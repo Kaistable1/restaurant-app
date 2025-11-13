@@ -59,13 +59,16 @@ class LoginController extends GetxController {
 
         // update user fcm token by "Modassir"
         FirebaseMessaging.instance.getToken().then((fcmToken) =>
-        FirebaseFirestore.instance.collection("users").doc(auth.currentUser!.uid).update({"fcmToken": fcmToken}));
+            FirebaseFirestore.instance
+                .collection("users")
+                .doc(auth.currentUser!.uid)
+                .update({"fcmToken": fcmToken}));
 
         // Close the loading dialog
         Get.back();
 
         if (currentUserDataModel != null) {
-          Get.offAll(() =>MainScreen());
+          Get.offAll(() => MainScreen());
           // Clear the email and password fields
           emailController.clear();
           passwordController.clear();

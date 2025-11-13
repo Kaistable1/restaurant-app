@@ -77,7 +77,8 @@ class _ReportDialogState extends State<ReportDialog> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               ),
               items: _reportReasons.map((reason) {
                 return DropdownMenuItem(
@@ -174,12 +175,14 @@ class _ReportDialogState extends State<ReportDialog> {
       // Run AI moderation on the description
       ModerationResult? aiResult;
       if (_descriptionController.text.isNotEmpty) {
-        aiResult = await _aiModerationService.moderateContent(_descriptionController.text);
+        aiResult = await _aiModerationService
+            .moderateContent(_descriptionController.text);
       }
 
       final report = ReportModel(
         reportedByUserID: currentUser.uid,
-        reportedByUserName: currentUserDataModel?.value.username.text ?? 'Unknown',
+        reportedByUserName:
+            currentUserDataModel?.value.username.text ?? 'Unknown',
         reportedUserID: widget.reportedUserID,
         reportedUserName: widget.reportedUserName,
         contentID: widget.contentID,
