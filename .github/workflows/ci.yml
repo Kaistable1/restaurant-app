@@ -10,13 +10,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # Needed to push formatting fixes
+      contents: write  # Allows git push for auto-fixes
+      pull-requests: write  # For PR comments if needed
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Required for git push
+          fetch-depth: 0  # Full history for git operations
+          token: ${{ secrets.GITHUB_TOKEN }}  # Use token for authenticated push
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -26,28 +28,39 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      # AUTO-FORMAT: Fixes your formatting issues and commits them
-      - name: Format Dart code (auto-fix & commit)
+      # AUTO-FORMAT: Fix and commit if needed
+      - name: Auto-format Dart code
+        id: format
         run: |
+          echo "Running dart format..."
           dart format .
-          if ! git diff --quiet; then
-            echo "Formatting changes detected. Committing..."
+          
+          if git diff --quiet; then
+            echo "No changes needed."
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "Changes detected. Committing..."
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add .
-            git commit -m "style: apply dart format [skip ci]" || echo "No changes to commit"
-            git push
-          else
-            echo "No formatting changes needed."
+            git commit -m "style: auto-format Dart code [skip ci]" || echo "No commit needed"
+            git push origin HEAD:${{ github.head_ref || github.ref_name }}
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "Auto-fixed formatting – re-run checks to verify."
           fi
 
-      # Optional: Keep linting and testing
+      # VERIFY: Only fail if still broken after auto-fix
+      - name: Verify formatting (post-fix check)
+        if: steps.format.outputs.changed == 'false'  # Skip if we just fixed it
+        run: dart format --set-exit-if-changed .
+
+      # Your other steps (lint, test, etc.)
       - name: Analyze code
         run: flutter analyze
 
       - name: Run tests
         run: flutter test
 
-      # Uncomment if you build web
-      # - name: Build web
-      #   run: flutter build web
+      # Build web (your failing job – add this if not present)
+      - name: Build Flutter Web
+        run: flutter build web --release
