@@ -27,13 +27,15 @@ void changePasswordDialogBox() {
           backgroundColor: AppColors.bgColor,
           surfaceTintColor: AppColors.bgColor,
           child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-            ),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.only(
-                    top: 24, bottom: 24, right: 16, left: 16),
+                  top: 24,
+                  bottom: 24,
+                  right: 16,
+                  left: 16,
+                ),
                 child: Form(
                   key: formKey,
                   child: Column(
@@ -48,9 +50,7 @@ void changePasswordDialogBox() {
                           fontFamily: 'Nunito-Bold',
                         ),
                       ),
-                      SizedBox(
-                        height: 16,
-                      ),
+                      SizedBox(height: 16),
                       Obx(
                         () => TextAndFieldWidget(
                           controller: controller.currentPasswordController,
@@ -63,7 +63,11 @@ void changePasswordDialogBox() {
                           obscureText: controller.isNewPasswordVisible.value,
                           suffixIcon: Padding(
                             padding: const EdgeInsets.only(
-                                top: 13, bottom: 13, right: 13, left: 13),
+                              top: 13,
+                              bottom: 13,
+                              right: 13,
+                              left: 13,
+                            ),
                             child: GestureDetector(
                               onTap: () {
                                 controller.isNewPasswordVisible.value =
@@ -71,16 +75,16 @@ void changePasswordDialogBox() {
                               },
                               child:
                                   controller.isNewPasswordVisible.value == true
-                                      ? Image.asset(
-                                          'assets/images/open_eye.png',
-                                          height: 16,
-                                          width: 22,
-                                        )
-                                      : Image.asset(
-                                          'assets/images/closed_eye.png',
-                                          height: 16,
-                                          width: 22,
-                                        ),
+                                  ? Image.asset(
+                                      'assets/images/open_eye.png',
+                                      height: 16,
+                                      width: 22,
+                                    )
+                                  : Image.asset(
+                                      'assets/images/closed_eye.png',
+                                      height: 16,
+                                      width: 22,
+                                    ),
                             ),
                           ),
                         ),
@@ -104,8 +108,9 @@ void changePasswordDialogBox() {
                             if (!value.contains(RegExp(r'[A-Z]'))) {
                               return 'Password must contain at least one uppercase letter.';
                             }
-                            if (!value
-                                .contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+                            if (!value.contains(
+                              RegExp(r'[!@#$%^&*(),.?":{}|<>]'),
+                            )) {
                               return 'Password must contain at least one special character.';
                             }
                             return null;
@@ -113,7 +118,11 @@ void changePasswordDialogBox() {
                           obscureText: controller.isNewPasswordVisible.value,
                           suffixIcon: Padding(
                             padding: const EdgeInsets.only(
-                                top: 13, bottom: 13, right: 13, left: 13),
+                              top: 13,
+                              bottom: 13,
+                              right: 13,
+                              left: 13,
+                            ),
                             child: GestureDetector(
                               onTap: () {
                                 controller.isNewPasswordVisible.value =
@@ -121,16 +130,16 @@ void changePasswordDialogBox() {
                               },
                               child:
                                   controller.isNewPasswordVisible.value == true
-                                      ? Image.asset(
-                                          'assets/images/open_eye.png',
-                                          height: 16,
-                                          width: 22,
-                                        )
-                                      : Image.asset(
-                                          'assets/images/closed_eye.png',
-                                          height: 16,
-                                          width: 22,
-                                        ),
+                                  ? Image.asset(
+                                      'assets/images/open_eye.png',
+                                      height: 16,
+                                      width: 22,
+                                    )
+                                  : Image.asset(
+                                      'assets/images/closed_eye.png',
+                                      height: 16,
+                                      width: 22,
+                                    ),
                             ),
                           ),
                         ),
@@ -155,7 +164,11 @@ void changePasswordDialogBox() {
                               controller.isConfirmPasswordVisible.value,
                           suffixIcon: Padding(
                             padding: const EdgeInsets.only(
-                                top: 13, bottom: 13, right: 13, left: 13),
+                              top: 13,
+                              bottom: 13,
+                              right: 13,
+                              left: 13,
+                            ),
                             child: GestureDetector(
                               onTap: () {
                                 controller.isConfirmPasswordVisible.value =
@@ -163,17 +176,17 @@ void changePasswordDialogBox() {
                               },
                               child:
                                   controller.isConfirmPasswordVisible.value ==
-                                          true
-                                      ? Image.asset(
-                                          'assets/images/open_eye.png',
-                                          height: 16,
-                                          width: 22,
-                                        )
-                                      : Image.asset(
-                                          'assets/images/closed_eye.png',
-                                          height: 16,
-                                          width: 22,
-                                        ),
+                                      true
+                                  ? Image.asset(
+                                      'assets/images/open_eye.png',
+                                      height: 16,
+                                      width: 22,
+                                    )
+                                  : Image.asset(
+                                      'assets/images/closed_eye.png',
+                                      height: 16,
+                                      width: 22,
+                                    ),
                             ),
                           ),
                         ),
@@ -192,12 +205,16 @@ void changePasswordDialogBox() {
                             fontFamily: 'Nunito-Sans',
                             ontapp: () async {
                               print(
-                                  'password ${currentUserDataModel!.value.userEmail.text}');
+                                'password ${currentUserDataModel!.value.userEmail.text}',
+                              );
                               if (formKey.currentState!.validate()) {
                                 if (formKey.currentState!.validate()) {
                                   await controller.changePassword(
-                                      email: currentUserDataModel!
-                                          .value.userEmail.text);
+                                    email: currentUserDataModel!
+                                        .value
+                                        .userEmail
+                                        .text,
+                                  );
                                 }
                                 Get.back();
                                 controller.newPasswordController.clear();

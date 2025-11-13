@@ -33,7 +33,9 @@ class CircleContainerWidget extends StatelessWidget {
       child: Container(
         width: Get.width * 0.45,
         decoration: BoxDecoration(
-            color: Colors.transparent, borderRadius: BorderRadius.circular(10)),
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,9 +51,7 @@ class CircleContainerWidget extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(
-              height: 5,
-            ),
+            SizedBox(height: 5),
             Padding(
               padding: const EdgeInsets.only(left: 5),
               child: Row(
@@ -92,9 +92,7 @@ class CircleContainerWidget extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(
-              height: 12,
-            ),
+            SizedBox(height: 12),
           ],
         ),
       ),

@@ -32,13 +32,15 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
 
   final LocationListController locationController = LocationListController();
 
-  final HomeLocationController homeLocationController =
-      Get.put(HomeLocationController());
+  final HomeLocationController homeLocationController = Get.put(
+    HomeLocationController(),
+  );
   @override
   void initState() {
     homeLocationController.addRecentView(
-        restaurantID: widget.restaurantModel?.docID ?? '',
-        resName: widget.restaurantModel?.resName ?? '');
+      restaurantID: widget.restaurantModel?.docID ?? '',
+      resName: widget.restaurantModel?.resName ?? '',
+    );
 
     super.initState();
   }
@@ -49,73 +51,72 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
       int indexOfMenuPersentageOff = 0;
       int indexOfMenuHappyHourOff = 0;
 
-      indexOfMenuPersentageOff =
-          homeLocationController.selectedPersentage.indexOf(true);
-      indexOfMenuHappyHourOff =
-          homeLocationController.selectedHappyhour.indexOf(true);
-      bool _isCommingSoon = widget.restaurantModel?.resEmail == '' ||
+      indexOfMenuPersentageOff = homeLocationController.selectedPersentage
+          .indexOf(true);
+      indexOfMenuHappyHourOff = homeLocationController.selectedHappyhour
+          .indexOf(true);
+      bool _isCommingSoon =
+          widget.restaurantModel?.resEmail == '' ||
           (widget.restaurantModel?.resEmail.isEmpty ?? true);
       print('widget.restaurantModel?.resEmail ${_isCommingSoon}');
       return WillPopScope(
-          onWillPop: () async {
-            Get.back();
-            return false;
-          },
-          child: Scaffold(
+        onWillPop: () async {
+          Get.back();
+          return false;
+        },
+        child: Scaffold(
+          backgroundColor: AppColors.bgColor,
+          appBar: AppBar(
             backgroundColor: AppColors.bgColor,
-            appBar: AppBar(
-              backgroundColor: AppColors.bgColor,
-              iconTheme: const IconThemeData(
-                color: AppColors.primaryColor,
-              ),
-              centerTitle: true,
-              automaticallyImplyLeading: true,
-              leading: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Container(
-                  height: 16,
-                  width: 16,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        spreadRadius: 1,
-                        blurRadius: 3,
-                        offset: const Offset(0, 1),
-                      ),
-                    ],
-                  ),
-                  child: GestureDetector(
-                    onTap: () {
-                      Get.back();
-                    },
-                    child: Icon(Icons.arrow_back, size: 18),
-                  ),
+            iconTheme: const IconThemeData(color: AppColors.primaryColor),
+            centerTitle: true,
+            automaticallyImplyLeading: true,
+            leading: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Container(
+                height: 16,
+                width: 16,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      spreadRadius: 1,
+                      blurRadius: 3,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
                 ),
-              ),
-              actions: [
-                auth.currentUser == null || widget.restaurantModel?.docID == ''
-                    ? SizedBox()
-                    : HomeLocationController().favoriteHeart(
-                        resturant_id: widget.restaurantModel?.docID),
-                SizedBox(
-                  width: 12,
-                )
-              ],
-              title: const Text(
-                'Restaurant details',
-                style: const TextStyle(
-                  fontSize: 17,
-                  color: AppColors.bottomSheetColor,
-                  fontWeight: FontWeight.w700,
-                  fontFamily: 'Nunito-Bold',
+                child: GestureDetector(
+                  onTap: () {
+                    Get.back();
+                  },
+                  child: Icon(Icons.arrow_back, size: 18),
                 ),
               ),
             ),
-            body: SingleChildScrollView(
-              child: Stack(children: [
+            actions: [
+              auth.currentUser == null || widget.restaurantModel?.docID == ''
+                  ? SizedBox()
+                  : HomeLocationController().favoriteHeart(
+                      resturant_id: widget.restaurantModel?.docID,
+                    ),
+              SizedBox(width: 12),
+            ],
+            title: const Text(
+              'Restaurant details',
+              style: const TextStyle(
+                fontSize: 17,
+                color: AppColors.bottomSheetColor,
+                fontWeight: FontWeight.w700,
+                fontFamily: 'Nunito-Bold',
+              ),
+            ),
+          ),
+          body: SingleChildScrollView(
+            child: Stack(
+              children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -135,10 +136,13 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                           height: Get.height * 0.27,
                           width: Get.width,
                           decoration: BoxDecoration(
-                              image: DecorationImage(
-                                  image: NetworkImage(
-                                      widget.restaurantModel!.logoImage),
-                                  fit: BoxFit.cover)),
+                            image: DecorationImage(
+                              image: NetworkImage(
+                                widget.restaurantModel!.logoImage,
+                              ),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                         ),
                         widget.restaurantModel?.imagesList.length == 0
                             ? SizedBox()
@@ -148,25 +152,34 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                                 child: ClipRRect(
                                   // Prevents blur from overflowing
                                   borderRadius: BorderRadius.circular(
-                                      4), // Same as container
+                                    4,
+                                  ), // Same as container
                                   child: BackdropFilter(
                                     filter: ImageFilter.blur(
-                                        sigmaX: 8, sigmaY: 8), // Blur effect
+                                      sigmaX: 8,
+                                      sigmaY: 8,
+                                    ), // Blur effect
                                     child: GestureDetector(
-                                      onTap: () => Get.to(EventDetailsGallery(
-                                        imageList: widget
-                                                .restaurantModel?.imagesList ??
-                                            [],
-                                      )),
+                                      onTap: () => Get.to(
+                                        EventDetailsGallery(
+                                          imageList:
+                                              widget
+                                                  .restaurantModel
+                                                  ?.imagesList ??
+                                              [],
+                                        ),
+                                      ),
                                       child: Container(
                                         height: 32,
                                         width: 151,
                                         decoration: BoxDecoration(
                                           color: AppColors.whiteColor
                                               .withOpacity(
-                                                  0.2), // Adjust opacity
-                                          borderRadius:
-                                              BorderRadius.circular(4),
+                                                0.2,
+                                              ), // Adjust opacity
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
                                         ),
                                         child: Center(
                                           child: Text(
@@ -182,7 +195,7 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                                     ),
                                   ),
                                 ),
-                              )
+                              ),
                       ],
                     ),
 
@@ -206,9 +219,7 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                                 if (link == '') {
                                   Get.snackbar('Oops!', 'URl not available');
                                 } else {
-                                  await launchUrl(
-                                    Uri.parse(link),
-                                  );
+                                  await launchUrl(Uri.parse(link));
                                 }
                               },
                               child: Image.asset(
@@ -225,9 +236,7 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                                 if (link == '') {
                                   Get.snackbar('Oops!', 'URl not available');
                                 } else {
-                                  await launchUrl(
-                                    Uri.parse(link),
-                                  );
+                                  await launchUrl(Uri.parse(link));
                                 }
                               },
                               child: Image.asset(
@@ -242,6 +251,7 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                       ),
                     ),
                     SizedBox(height: 18),
+
                     // Column(
                     //   children: [
                     //     Padding(
@@ -319,7 +329,6 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                     //       )
                     //     : controller.selectedTop.value == 'About'
                     //         ?
-
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -327,7 +336,9 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                           aboutText: widget.restaurantModel?.about ?? '',
                           resturantID: widget.restaurantModel?.docID ?? '',
                         ),
-                        widget.restaurantModel!.entertainmentScheduleList
+                        widget
+                                .restaurantModel!
+                                .entertainmentScheduleList
                                 .isEmpty
                             ? SizedBox()
                             : Column(
@@ -335,7 +346,9 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                                 children: [
                                   Padding(
                                     padding: const EdgeInsets.only(
-                                        left: 16.0, right: 16),
+                                      left: 16.0,
+                                      right: 16,
+                                    ),
                                     child: Text(
                                       'Experience',
                                       style: TextStyle(
@@ -348,18 +361,17 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
+                                  SizedBox(height: 10),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 16.0),
+                                      horizontal: 16.0,
+                                    ),
                                     child: Table(
                                       border: TableBorder.all(
-                                          color: AppColors.tableBorderColor,
-                                          width: 2,
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
+                                        color: AppColors.tableBorderColor,
+                                        width: 2,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
                                       columnWidths: const {
                                         0: FlexColumnWidth(1.3),
                                         1: FlexColumnWidth(1.3),
@@ -370,13 +382,13 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                                       children: [
                                         TableRow(
                                           decoration: BoxDecoration(
-                                              color: const Color(0xff4ECCA3),
-                                              borderRadius:
-                                                  BorderRadius.circular(10)),
-                                          children: [
-                                            buildHeaderCell(
-                                              "Name",
+                                            color: const Color(0xff4ECCA3),
+                                            borderRadius: BorderRadius.circular(
+                                              10,
                                             ),
+                                          ),
+                                          children: [
+                                            buildHeaderCell("Name"),
                                             buildHeaderCell("By"),
                                             buildHeaderCell("Day"),
                                             buildHeaderCell("Date"),
@@ -384,34 +396,46 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                                           ],
                                         ),
                                         // Table data rows
-                                        ...widget.restaurantModel!
+                                        ...widget
+                                            .restaurantModel!
                                             .entertainmentScheduleList
                                             .map((data) {
-                                          return TableRow(
-                                            decoration: const BoxDecoration(
-                                              color: Colors
-                                                  .white, // Row background color
-                                            ),
-                                            children: [
-                                              buildDataCell(
-                                                  data.eventName ?? ""),
-                                              buildDataCell(data.eventBy ?? ""),
-                                              buildDataCell(data.day ?? ""),
-                                              buildDataCell(data.date ?? ""),
-                                              buildDataCell(data.startTime +
-                                                      ' - ' +
-                                                      data.endTime ??
-                                                  ""),
-                                            ],
-                                          );
-                                        }).toList(),
+                                              return TableRow(
+                                                decoration: const BoxDecoration(
+                                                  color: Colors
+                                                      .white, // Row background color
+                                                ),
+                                                children: [
+                                                  buildDataCell(
+                                                    data.eventName ?? "",
+                                                  ),
+                                                  buildDataCell(
+                                                    data.eventBy ?? "",
+                                                  ),
+                                                  buildDataCell(data.day ?? ""),
+                                                  buildDataCell(
+                                                    data.date ?? "",
+                                                  ),
+                                                  buildDataCell(
+                                                    data.startTime +
+                                                            ' - ' +
+                                                            data.endTime ??
+                                                        "",
+                                                  ),
+                                                ],
+                                              );
+                                            })
+                                            .toList(),
                                       ],
                                     ),
                                   ),
                                 ],
                               ),
                         widget.restaurantModel!.menuList.isEmpty ||
-                                widget.restaurantModel!.menuList[0].foodImages
+                                widget
+                                    .restaurantModel!
+                                    .menuList[0]
+                                    .foodImages
                                     .isEmpty
                             ? SizedBox()
                             : SizedBox(
@@ -421,19 +445,25 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                                   screenHeight: Get.height,
                                   mobileView: true,
                                   screenWidth: Get.width,
-                                  selectedMenuTypes: widget
-                                          .restaurantModel!.menuList.isEmpty
+                                  selectedMenuTypes:
+                                      widget.restaurantModel!.menuList.isEmpty
                                       ? MenuModel(
                                           cuisineType: '',
                                           foodImages: [],
-                                          menuType: '')
+                                          menuType: '',
+                                        )
                                       : widget.restaurantModel!.menuList.first,
                                   specialConditions:
                                       widget.restaurantModel!.specialConditions,
-                                  uploadedImages: widget
-                                          .restaurantModel!.menuList.isNotEmpty
-                                      ? widget.restaurantModel!.menuList[0]
-                                          .foodImages
+                                  uploadedImages:
+                                      widget
+                                          .restaurantModel!
+                                          .menuList
+                                          .isNotEmpty
+                                      ? widget
+                                            .restaurantModel!
+                                            .menuList[0]
+                                            .foodImages
                                       : [],
                                 ),
                               ),
@@ -444,7 +474,9 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                               alignment: Alignment.topLeft,
                               child: Padding(
                                 padding: const EdgeInsets.only(
-                                    left: 16.0, right: 16),
+                                  left: 16.0,
+                                  right: 16,
+                                ),
                                 child: Text(
                                   'Map',
                                   style: TextStyle(
@@ -458,14 +490,18 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                             ),
                             SizedBox(height: 16),
                             Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 16.0, right: 16),
+                              padding: const EdgeInsets.only(
+                                left: 16.0,
+                                right: 16,
+                              ),
                               child: Container(
                                 width: Get.width,
                                 decoration: const BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10))),
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10),
+                                  ),
+                                ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
@@ -473,19 +509,18 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                                       width: Get.width,
                                       height: 500,
                                       decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(16)),
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
                                       child: MapWidget(
-                                        lat: widget.restaurantModel?.latitude ??
+                                        lat:
+                                            widget.restaurantModel?.latitude ??
                                             0.0,
                                         long:
                                             widget.restaurantModel?.longitude ??
-                                                0.0,
+                                            0.0,
                                       ),
                                     ),
-                                    const SizedBox(
-                                      width: 40,
-                                    ),
+                                    const SizedBox(width: 40),
                                     MapDetailWidget(
                                       restaurantModel: widget.restaurantModel!,
                                       isCommingSoon: _isCommingSoon,
@@ -494,9 +529,7 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                                 ),
                               ),
                             ),
-                            SizedBox(
-                              height: 50,
-                            ),
+                            SizedBox(height: 50),
                           ],
                         ),
                       ],
@@ -1278,9 +1311,11 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                 //     ),
                 //   ),
                 // ),
-              ]),
+              ],
             ),
-          ));
+          ),
+        ),
+      );
     });
   }
 
@@ -1301,17 +1336,18 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
     );
   }
 
-// Data cell builder
+  // Data cell builder
   Widget buildDataCell(String text) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Text(
         text,
         style: TextStyle(
-            fontFamily: 'Nunito-Sans',
-            color: AppColors.textColor,
-            fontWeight: FontWeight.w500,
-            fontSize: 8),
+          fontFamily: 'Nunito-Sans',
+          color: AppColors.textColor,
+          fontWeight: FontWeight.w500,
+          fontSize: 8,
+        ),
         textAlign: TextAlign.center,
       ),
     );
@@ -1468,10 +1504,7 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
 }
 
 class OfferSelectionWidget extends StatelessWidget {
-  const OfferSelectionWidget({
-    super.key,
-    required this.controller,
-  });
+  const OfferSelectionWidget({super.key, required this.controller});
 
   final RestaurantDetailController controller;
 
@@ -1489,45 +1522,44 @@ class OfferSelectionWidget extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: List.generate(
-            controller.menuList.length,
-            (index) {
-              return Obx(() {
-                return InkWell(
-                  onTap: () {
-                    controller.selectedMenu.value = controller.menuList[index];
-                  },
-                  child: IntrinsicWidth(
-                    child: Container(
-                      height: 26,
-                      decoration: BoxDecoration(
-                        color: controller.selectedMenu.value !=
-                                controller.menuList[index]
-                            ? Colors.transparent
-                            : AppColors.whiteColor,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Center(
-                        child: Text(
-                          controller.menuList[index],
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 13,
-                            color: controller.selectedMenu.value !=
-                                    controller.menuList[index]
-                                ? AppColors.darkGrey
-                                : AppColors.primaryColor,
-                            fontFamily: 'Nunito-Regular',
-                          ),
+          children: List.generate(controller.menuList.length, (index) {
+            return Obx(() {
+              return InkWell(
+                onTap: () {
+                  controller.selectedMenu.value = controller.menuList[index];
+                },
+                child: IntrinsicWidth(
+                  child: Container(
+                    height: 26,
+                    decoration: BoxDecoration(
+                      color:
+                          controller.selectedMenu.value !=
+                              controller.menuList[index]
+                          ? Colors.transparent
+                          : AppColors.whiteColor,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Center(
+                      child: Text(
+                        controller.menuList[index],
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                          color:
+                              controller.selectedMenu.value !=
+                                  controller.menuList[index]
+                              ? AppColors.darkGrey
+                              : AppColors.primaryColor,
+                          fontFamily: 'Nunito-Regular',
                         ),
                       ),
                     ),
                   ),
-                );
-              });
-            },
-          ),
+                ),
+              );
+            });
+          }),
         ),
       ),
     );
@@ -1589,9 +1621,7 @@ class RatingRowWidget extends StatelessWidget {
                         color: Colors.black,
                       ),
                     ),
-                    SizedBox(
-                      width: 180,
-                    ),
+                    SizedBox(width: 180),
                     Text(
                       date,
                       style: TextStyle(
@@ -1603,9 +1633,7 @@ class RatingRowWidget extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(
-                  width: 4,
-                ),
+                SizedBox(width: 4),
                 RichText(
                   text: TextSpan(
                     children: [
@@ -1635,10 +1663,14 @@ class RatingRowWidget extends StatelessWidget {
                                 height: 14,
                                 color: AppColors.primaryColor,
                               ),
-                              half: Image.asset('assets/images/star yellow.png',
-                                  height: 14),
-                              empty: Image.asset('assets/images/green_star.png',
-                                  height: 14),
+                              half: Image.asset(
+                                'assets/images/star yellow.png',
+                                height: 14,
+                              ),
+                              empty: Image.asset(
+                                'assets/images/green_star.png',
+                                height: 14,
+                              ),
                             ),
                             itemPadding: const EdgeInsets.only(left: 2.0),
                             onRatingUpdate: (rating) {
@@ -1650,9 +1682,7 @@ class RatingRowWidget extends StatelessWidget {
                     ],
                   ),
                 ),
-                SizedBox(
-                  width: 4,
-                ),
+                SizedBox(width: 4),
                 SizedBox(
                   width: 338,
                   height: 32,
@@ -1701,7 +1731,7 @@ class RatingRowWidget extends StatelessWidget {
               const SizedBox(height: 5),
             ],
           ),
-        )
+        ),
       ],
     );
   }
@@ -1749,9 +1779,7 @@ class MenuWidget extends StatelessWidget {
                     fontWeight: FontWeight.w800,
                   ),
                 ),
-                SizedBox(
-                  height: 10,
-                ),
+                SizedBox(height: 10),
 
                 SizedBox(
                   child: SingleChildScrollView(
@@ -1838,19 +1866,19 @@ class MenuWidget extends StatelessWidget {
                                   child: Image.network(
                                     uploadedImages[index],
                                     fit: BoxFit.cover,
-                                    loadingBuilder:
-                                        (context, child, loadingProgress) {
+                                    loadingBuilder: (context, child, loadingProgress) {
                                       if (loadingProgress == null) return child;
                                       return Center(
                                         child: CircularProgressIndicator(
-                                          value: loadingProgress
+                                          value:
+                                              loadingProgress
                                                       .expectedTotalBytes !=
                                                   null
                                               ? loadingProgress
-                                                      .cumulativeBytesLoaded /
-                                                  (loadingProgress
-                                                          .expectedTotalBytes ??
-                                                      1)
+                                                        .cumulativeBytesLoaded /
+                                                    (loadingProgress
+                                                            .expectedTotalBytes ??
+                                                        1)
                                               : null,
                                         ),
                                       );

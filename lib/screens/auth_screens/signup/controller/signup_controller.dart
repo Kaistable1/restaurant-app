@@ -56,8 +56,9 @@ class SignupController extends GetxController {
 
   // Function to send a verification email
   sendEmail({bool isFromResendOtp = false}) async {
-    bool emailExists =
-        await checkIfEmailExists(email: userModel.userEmail.text);
+    bool emailExists = await checkIfEmailExists(
+      email: userModel.userEmail.text,
+    );
     if (emailExists) {
       loadingDialog(
         message: "Sending email verification code!",
@@ -97,9 +98,7 @@ class SignupController extends GetxController {
 
         // Navigate to verification page if this is not a resend request
         if (!isFromResendOtp) {
-          Get.to(() => VerifyPage(
-                email: userModel.userEmail.text,
-              ));
+          Get.to(() => VerifyPage(email: userModel.userEmail.text));
         }
       } on MailerException catch (e) {
         // Handle email sending failure
@@ -109,14 +108,17 @@ class SignupController extends GetxController {
           print('Problem: ${problem.code}: ${problem.msg}');
         }
         loadingDialog(
-            message: "Failed to send verification code", button: true);
+          message: "Failed to send verification code",
+          button: true,
+        );
       }
     } else {
       loadingDialog(
-          message: "Email already exists!",
-          button: true,
-          isWrongPassword: true,
-          height: 150);
+        message: "Email already exists!",
+        button: true,
+        isWrongPassword: true,
+        height: 150,
+      );
     }
   }
 
@@ -126,36 +128,39 @@ class SignupController extends GetxController {
     try {
       await auth
           .createUserWithEmailAndPassword(
-        email: userModel.userEmail.text,
-        password: userModel.password.text,
-      )
+            email: userModel.userEmail.text,
+            password: userModel.password.text,
+          )
           .then((value) async {
-        debugPrint('Create Account successfully');
+            debugPrint('Create Account successfully');
 
-        // Insert user data into Firestore after successful account creation
-        await insertData();
-        Get.back();
-      }).onError((error, stackTrace) {
-        // Handle errors during account creation
-        print(error.toString());
-        if (error ==
-            '[firebase_auth/email-already-in-use] The email address is already in use by another account.') {
-          loadingDialog(
-              message:
-                  "The email you provided is already in use. Try with a new email!",
-              button: true);
-        } else {
-          loadingDialog(message: "Something went wrong !!!", button: true);
-        }
-      });
+            // Insert user data into Firestore after successful account creation
+            await insertData();
+            Get.back();
+          })
+          .onError((error, stackTrace) {
+            // Handle errors during account creation
+            print(error.toString());
+            if (error ==
+                '[firebase_auth/email-already-in-use] The email address is already in use by another account.') {
+              loadingDialog(
+                message:
+                    "The email you provided is already in use. Try with a new email!",
+                button: true,
+              );
+            } else {
+              loadingDialog(message: "Something went wrong !!!", button: true);
+            }
+          });
     } on FirebaseAuthException catch (error) {
       // Handle Firebase-specific exceptions
       debugPrint("signUp ${error.code}");
       if (error.code == "email-already-in-use") {
         loadingDialog(
-            message:
-                "The email you provided is already in use. Try with a new email!",
-            button: true);
+          message:
+              "The email you provided is already in use. Try with a new email!",
+          button: true,
+        );
       }
     }
   }
@@ -174,36 +179,43 @@ class SignupController extends GetxController {
         .doc(auth.currentUser!.uid.toString())
         .set(data)
         .then((value) async {
-      // Update additional fields in Firestore
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(auth.currentUser!.uid.toString())
-          .update({
-        'userID': auth.currentUser!.uid,
-        'country': onbordingController.selectedCountry.value,
-        'city': onbordingController.selectedCity.value,
-        'token': Platform.isAndroid ? await getUserDeviceToken() : '',
-      }).then((value) {
-        // Navigate to preferences page after successful data insertion
-        print('going to prefer 1');
-        // update user fcm token by "Modassir"
-        FirebaseMessaging.instance.getToken().then((fcmToken) =>
-            FirebaseFirestore.instance.collection("users").doc(auth.currentUser!.uid).update({"fcmToken": fcmToken}));
-        userModel.userID = auth.currentUser!.uid;
-        verifyController.clear();
-        resetTextFields();
-        onClick.value = false;
-        Get.off(() => Preference1());
-      });
-    }).onError((error, stackTrace) async {
-      // Handle errors during data insertion
-      print(error.toString());
-      await auth.currentUser!.delete();
-      Get.back();
-      loadingDialog(
-          message: "There was a problem!\nPlease try again later",
-          button: true);
-    });
+          // Update additional fields in Firestore
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(auth.currentUser!.uid.toString())
+              .update({
+                'userID': auth.currentUser!.uid,
+                'country': onbordingController.selectedCountry.value,
+                'city': onbordingController.selectedCity.value,
+                'token': Platform.isAndroid ? await getUserDeviceToken() : '',
+              })
+              .then((value) {
+                // Navigate to preferences page after successful data insertion
+                print('going to prefer 1');
+                // update user fcm token by "Modassir"
+                FirebaseMessaging.instance.getToken().then(
+                  (fcmToken) => FirebaseFirestore.instance
+                      .collection("users")
+                      .doc(auth.currentUser!.uid)
+                      .update({"fcmToken": fcmToken}),
+                );
+                userModel.userID = auth.currentUser!.uid;
+                verifyController.clear();
+                resetTextFields();
+                onClick.value = false;
+                Get.off(() => Preference1());
+              });
+        })
+        .onError((error, stackTrace) async {
+          // Handle errors during data insertion
+          print(error.toString());
+          await auth.currentUser!.delete();
+          Get.back();
+          loadingDialog(
+            message: "There was a problem!\nPlease try again later",
+            button: true,
+          );
+        });
   }
 
   // Function to retrieve the user's FCM token

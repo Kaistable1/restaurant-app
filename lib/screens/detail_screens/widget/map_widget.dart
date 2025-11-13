@@ -3,11 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MapWidget extends StatelessWidget {
-  MapWidget({
-    super.key,
-    required this.lat,
-    required this.long,
-  });
+  MapWidget({super.key, required this.lat, required this.long});
 
   final double lat, long;
   GoogleMapController? _controller;
@@ -62,11 +58,7 @@ class MapWidget extends StatelessWidget {
         child: InkWell(
           splashColor: Colors.grey,
           onTap: onPressed,
-          child: SizedBox(
-            width: 40,
-            height: 40,
-            child: Icon(icon, size: 22),
-          ),
+          child: SizedBox(width: 40, height: 40, child: Icon(icon, size: 22)),
         ),
       ),
     );
@@ -140,8 +132,6 @@ class MapWidget extends StatelessWidget {
   }
 
   void _panBy(double dx, double dy) {
-    _controller?.moveCamera(
-      CameraUpdate.scrollBy(dx * 1000, dy * 1000),
-    );
+    _controller?.moveCamera(CameraUpdate.scrollBy(dx * 1000, dy * 1000));
   }
 }

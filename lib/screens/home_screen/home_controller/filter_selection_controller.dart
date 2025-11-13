@@ -46,10 +46,7 @@ class FilterSelectionController extends GetxController {
     }
   }
 
-  final discountType = [
-    'percentage off',
-    'happy hour specials',
-  ];
+  final discountType = ['percentage off', 'happy hour specials'];
 
   void toggleDiscounts(String name) {
     if (selectedDiscounts.contains(name)) {
@@ -59,13 +56,7 @@ class FilterSelectionController extends GetxController {
     }
   }
 
-  final timeOfDay = [
-    'Breakfast',
-    'Brunch',
-    'Lunch',
-    'Dinner',
-    'Late Night',
-  ];
+  final timeOfDay = ['Breakfast', 'Brunch', 'Lunch', 'Dinner', 'Late Night'];
 
   void toggleTimeOfDay(String name) {
     if (selectedTimeOfDay.contains(name)) {
@@ -75,12 +66,7 @@ class FilterSelectionController extends GetxController {
     }
   }
 
-  final atmosphere = [
-    'casual dining',
-    'fine dining',
-    'fast casual',
-    'pop',
-  ];
+  final atmosphere = ['casual dining', 'fine dining', 'fast casual', 'pop'];
 
   void toggleAtmosphere(String name) {
     if (selectedAtmosphere.contains(name)) {

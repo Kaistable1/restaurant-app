@@ -10,8 +10,9 @@ import '../../../constants/app_colors.dart';
 import '../../../custom_widget/separate_text_field.dart';
 
 class NewViewall extends StatelessWidget {
-  final NewRestaurantsController controller =
-      Get.put(NewRestaurantsController());
+  final NewRestaurantsController controller = Get.put(
+    NewRestaurantsController(),
+  );
 
   NewViewall({super.key});
 
@@ -32,8 +33,11 @@ class NewViewall extends StatelessWidget {
             padding: const EdgeInsets.all(12.0),
             child: GestureDetector(
               onTap: () => Get.back(),
-              child: Icon(Icons.arrow_back,
-                  size: 18, color: AppColors.primaryColor),
+              child: Icon(
+                Icons.arrow_back,
+                size: 18,
+                color: AppColors.primaryColor,
+              ),
             ),
           ),
           title: Text(
@@ -66,7 +70,11 @@ class NewViewall extends StatelessWidget {
                   isShadow: true,
                   prefixIcon: Padding(
                     padding: const EdgeInsets.only(
-                        left: 4, top: 8, bottom: 8, right: 0),
+                      left: 4,
+                      top: 8,
+                      bottom: 8,
+                      right: 0,
+                    ),
                     child: Image.asset(
                       'assets/images/search_icon.png',
                       fit: BoxFit.contain,
@@ -127,59 +135,65 @@ class NewViewall extends StatelessWidget {
                       return Center(child: Text('No restaurants found'));
                     }
 
-                    return Obx(() => NotificationListener<ScrollNotification>(
-                          onNotification: (ScrollNotification scrollInfo) {
-                            if (scrollInfo.metrics.pixels >=
-                                    scrollInfo.metrics.maxScrollExtent * 0.8 &&
-                                !controller.isLoading.value) {
-                              controller.loadMoreRestaurants();
-                            }
-                            return true;
-                          },
-                          child: Column(
-                            children: [
-                              Flexible(
-                                child: GridView.builder(
-                                  shrinkWrap: true,
-                                  physics: AlwaysScrollableScrollPhysics(),
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    mainAxisExtent: Get.height * 0.2,
-                                    crossAxisCount: 2,
-                                    crossAxisSpacing: 10,
-                                    mainAxisSpacing: 20,
-                                  ),
-                                  itemCount: controller.restaurants.length +
-                                      (controller.hasMoreData.value ? 1 : 0),
-                                  itemBuilder: (context, index) {
-                                    if (index ==
-                                        controller.restaurants.length) {
-                                      return Center(
-                                          child: CircularProgressIndicator());
-                                    }
-                                    final item = controller.restaurants[index];
-                                    return InkWell(
-                                      onTap: () {
-                                        Get.to(RestaurantDetailScreen(
-                                            restaurantModel: item));
-                                      },
-                                      child: RectangleWidget(
-                                        title: item.resName,
-                                        description: item.address,
-                                        resturant_id: item.docID,
-                                        imagePath: item.logoImage,
-                                        timetext: '10 AM',
-                                        percentText: '25%',
-                                        endTimeText: '9 PM',
-                                        isFavorite: false.obs,
-                                      ),
+                    return Obx(
+                      () => NotificationListener<ScrollNotification>(
+                        onNotification: (ScrollNotification scrollInfo) {
+                          if (scrollInfo.metrics.pixels >=
+                                  scrollInfo.metrics.maxScrollExtent * 0.8 &&
+                              !controller.isLoading.value) {
+                            controller.loadMoreRestaurants();
+                          }
+                          return true;
+                        },
+                        child: Column(
+                          children: [
+                            Flexible(
+                              child: GridView.builder(
+                                shrinkWrap: true,
+                                physics: AlwaysScrollableScrollPhysics(),
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                      mainAxisExtent: Get.height * 0.2,
+                                      crossAxisCount: 2,
+                                      crossAxisSpacing: 10,
+                                      mainAxisSpacing: 20,
+                                    ),
+                                itemCount:
+                                    controller.restaurants.length +
+                                    (controller.hasMoreData.value ? 1 : 0),
+                                itemBuilder: (context, index) {
+                                  if (index == controller.restaurants.length) {
+                                    return Center(
+                                      child: CircularProgressIndicator(),
                                     );
-                                  },
-                                ),
+                                  }
+                                  final item = controller.restaurants[index];
+                                  return InkWell(
+                                    onTap: () {
+                                      Get.to(
+                                        RestaurantDetailScreen(
+                                          restaurantModel: item,
+                                        ),
+                                      );
+                                    },
+                                    child: RectangleWidget(
+                                      title: item.resName,
+                                      description: item.address,
+                                      resturant_id: item.docID,
+                                      imagePath: item.logoImage,
+                                      timetext: '10 AM',
+                                      percentText: '25%',
+                                      endTimeText: '9 PM',
+                                      isFavorite: false.obs,
+                                    ),
+                                  );
+                                },
                               ),
-                            ],
-                          ),
-                        ));
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
                   },
                 ),
               ),

@@ -21,9 +21,7 @@ class Preference12 extends StatelessWidget {
       backgroundColor: AppColors.bgColor,
       appBar: AppBar(
         backgroundColor: AppColors.bgColor,
-        iconTheme: IconThemeData(
-          color: AppColors.primaryColor,
-        ),
+        iconTheme: IconThemeData(color: AppColors.primaryColor),
         centerTitle: true,
         automaticallyImplyLeading: true,
         leading: Padding(
@@ -86,9 +84,7 @@ class Preference12 extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: 8,
-                ),
+                SizedBox(height: 8),
                 Text(
                   'What’s Your Favorite Type Of Live Music?',
                   style: TextStyle(
@@ -98,9 +94,7 @@ class Preference12 extends StatelessWidget {
                     fontSize: 16,
                   ),
                 ),
-                SizedBox(
-                  height: 16,
-                ),
+                SizedBox(height: 16),
                 ListView.builder(
                   padding: EdgeInsets.zero,
                   shrinkWrap: true,
@@ -158,9 +152,7 @@ class Preference12 extends StatelessWidget {
                     });
                   },
                 ),
-                SizedBox(
-                  height: 24,
-                ),
+                SizedBox(height: 24),
                 Center(
                   child: CustomButton(
                     laBelText: 'Next',
@@ -172,8 +164,9 @@ class Preference12 extends StatelessWidget {
                     textColor: Colors.white,
                     ontapp: () {
                       if (formKey.currentState!.validate()) {
-                        if (controller.selectedPreferences12
-                                .contains("Other") &&
+                        if (controller.selectedPreferences12.contains(
+                              "Other",
+                            ) &&
                             controller.screen12Controller.text.isEmpty) {
                           Get.snackbar(
                             'Error',
@@ -199,21 +192,21 @@ class Preference12 extends StatelessWidget {
                           return;
                         }
                         if (controller.screen12Controller.text.isNotEmpty) {
-                          controller.selectedPreferences12
-                              .add(controller.screen12Controller.text);
+                          controller.selectedPreferences12.add(
+                            controller.screen12Controller.text,
+                          );
                         }
                         final signupController = Get.put(SignupController());
                         signupController.updateUserData(
-                            field: 'favTypeOfLiveMusic',
-                            entry: controller.selectedPreferences12.last);
+                          field: 'favTypeOfLiveMusic',
+                          entry: controller.selectedPreferences12.last,
+                        );
                         Get.to(() => Preference13());
                       }
                     },
                   ),
                 ),
-                SizedBox(
-                  height: 30,
-                ),
+                SizedBox(height: 30),
               ],
             ),
           ),

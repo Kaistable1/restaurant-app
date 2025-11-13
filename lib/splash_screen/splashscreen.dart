@@ -28,12 +28,10 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     // Create a Tween for scaling the image
-    _animation = Tween<double>(begin: 0.5, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeOut,
-      ),
-    );
+    _animation = Tween<double>(
+      begin: 0.5,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
     // Start the animation
     _controller.forward();

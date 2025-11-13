@@ -31,7 +31,7 @@ class PostService {
   // Get trending posts (most liked in last 7 days)
   Stream<List<PostModel>> getTrendingPosts({int limit = 20}) {
     final sevenDaysAgo = DateTime.now().subtract(Duration(days: 7));
-    
+
     return _postsCollection
         .where('createdAt', isGreaterThan: sevenDaysAgo)
         .orderBy('createdAt', descending: false)
@@ -39,10 +39,13 @@ class PostService {
         .limit(limit)
         .snapshots()
         .map((snapshot) {
-      return snapshot.docs
-          .map((doc) => PostModel.fromFirestore(doc.data() as Map<String, dynamic>))
-          .toList();
-    });
+          return snapshot.docs
+              .map(
+                (doc) =>
+                    PostModel.fromFirestore(doc.data() as Map<String, dynamic>),
+              )
+              .toList();
+        });
   }
 
   // Get recent posts
@@ -52,10 +55,13 @@ class PostService {
         .limit(limit)
         .snapshots()
         .map((snapshot) {
-      return snapshot.docs
-          .map((doc) => PostModel.fromFirestore(doc.data() as Map<String, dynamic>))
-          .toList();
-    });
+          return snapshot.docs
+              .map(
+                (doc) =>
+                    PostModel.fromFirestore(doc.data() as Map<String, dynamic>),
+              )
+              .toList();
+        });
   }
 
   // Get posts by user
@@ -66,10 +72,13 @@ class PostService {
         .limit(limit)
         .snapshots()
         .map((snapshot) {
-      return snapshot.docs
-          .map((doc) => PostModel.fromFirestore(doc.data() as Map<String, dynamic>))
-          .toList();
-    });
+          return snapshot.docs
+              .map(
+                (doc) =>
+                    PostModel.fromFirestore(doc.data() as Map<String, dynamic>),
+              )
+              .toList();
+        });
   }
 
   // Like/Unlike a post
@@ -80,12 +89,12 @@ class PostService {
 
       final docRef = _postsCollection.doc(postID);
       final doc = await docRef.get();
-      
+
       if (!doc.exists) return false;
 
       final post = PostModel.fromFirestore(doc.data() as Map<String, dynamic>);
       final likedBy = post.likedBy ?? [];
-      
+
       if (likedBy.contains(currentUserID)) {
         // Unlike
         likedBy.remove(currentUserID);

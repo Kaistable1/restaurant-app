@@ -63,7 +63,8 @@ class EventsController extends GetxController {
     }
 
     return await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+      desiredAccuracy: LocationAccuracy.high,
+    );
   }
 
   double _calculateDistance(GeoPoint p1, GeoPoint p2) {
@@ -76,7 +77,8 @@ class EventsController extends GetxController {
     double dLat = _degreesToRadians(lat2 - lat1);
     double dLon = _degreesToRadians(lon2 - lon1);
 
-    double a = sin(dLat / 2) * sin(dLat / 2) +
+    double a =
+        sin(dLat / 2) * sin(dLat / 2) +
         cos(_degreesToRadians(lat1)) *
             cos(_degreesToRadians(lat2)) *
             sin(dLon / 2) *
@@ -97,7 +99,9 @@ class EventsController extends GetxController {
       Position position = await _getCurrentLocation();
       print('lat lng current user ${position.latitude} ${position.longitude}');
       GeoPoint userLocation = GeoPoint(
-          position.latitude, position.longitude); // Hardcoded for testing
+        position.latitude,
+        position.longitude,
+      ); // Hardcoded for testing
 
       // Fetch all events
       QuerySnapshot<Map<String, dynamic>> snapshot = await _firestore

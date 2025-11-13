@@ -26,22 +26,22 @@ class HomeController extends GetxController {
     {
       "name": "Spice Symphony",
       "description": 'Lorem ipsum dolor sit amet.',
-      "image": 'assets/images/spice.png'
+      "image": 'assets/images/spice.png',
     },
     {
       "name": "Flavor Harmony",
       "description": 'Lorem ipsum dolor sit amet.',
-      "image": 'assets/images/flavor.png'
+      "image": 'assets/images/flavor.png',
     },
     {
       "name": "Spice Symphony",
       "description": 'Lorem ipsum dolor sit amet.',
-      "image": 'assets/images/new.png'
+      "image": 'assets/images/new.png',
     },
     {
       "name": "Flavor Harmony",
       "description": 'Lorem ipsum dolor sit amet.',
-      "image": 'assets/images/trending.png'
+      "image": 'assets/images/trending.png',
     },
   ].obs;
 
@@ -49,22 +49,22 @@ class HomeController extends GetxController {
     {
       "name": "Spice Symphony",
       "description": 'Lorem ipsum dolor sit amet.',
-      "image": 'assets/images/spice.png'
+      "image": 'assets/images/spice.png',
     },
     {
       "name": "Flavor Harmony",
       "description": 'Lorem ipsum dolor sit amet.',
-      "image": 'assets/images/flavor.png'
+      "image": 'assets/images/flavor.png',
     },
     {
       "name": "Spice Symphony",
       "description": 'Lorem ipsum dolor sit amet.',
-      "image": 'assets/images/new.png'
+      "image": 'assets/images/new.png',
     },
     {
       "name": "Flavor Harmony",
       "description": 'Lorem ipsum dolor sit amet.',
-      "image": 'assets/images/trending.png'
+      "image": 'assets/images/trending.png',
     },
   ].obs;
   // Track the selected category
@@ -76,11 +76,10 @@ class HomeController extends GetxController {
 
   // banner
 
-   Stream<List<BannerModel>> fetchAllBanners() {
-    return FirebaseFirestore.instance
-        .collection('banner')
-        .snapshots()
-        .map((QuerySnapshot<Map<String, dynamic>> snapshot) {
+  Stream<List<BannerModel>> fetchAllBanners() {
+    return FirebaseFirestore.instance.collection('banner').snapshots().map((
+      QuerySnapshot<Map<String, dynamic>> snapshot,
+    ) {
       return snapshot.docs.map((doc) {
         return BannerModel.fromDocumentSnapshot(doc);
       }).toList();

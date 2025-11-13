@@ -20,9 +20,7 @@ class TermsAndCondition extends StatelessWidget {
         backgroundColor: AppColors.bgColor,
         appBar: AppBar(
           backgroundColor: AppColors.bgColor,
-          iconTheme: const IconThemeData(
-            color: AppColors.primaryColor,
-          ),
+          iconTheme: const IconThemeData(color: AppColors.primaryColor),
           centerTitle: true,
           automaticallyImplyLeading: true,
           leading: Padding(
@@ -68,18 +66,20 @@ class TermsAndCondition extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 20),
-                Obx(() => Text(
-                      controller.termsAndConditionsText.value.isNotEmpty
-                          ? controller.termsAndConditionsText.value
-                          : 'Loading terms and conditions...',
-                      textAlign: TextAlign.justify,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontFamily: "Nunito-Regular",
-                        color: Color(0xFF656D7B),
-                        fontWeight: FontWeight.w400,
-                      ),
-                    )),
+                Obx(
+                  () => Text(
+                    controller.termsAndConditionsText.value.isNotEmpty
+                        ? controller.termsAndConditionsText.value
+                        : 'Loading terms and conditions...',
+                    textAlign: TextAlign.justify,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontFamily: "Nunito-Regular",
+                      color: Color(0xFF656D7B),
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 2),
               ],
             ),

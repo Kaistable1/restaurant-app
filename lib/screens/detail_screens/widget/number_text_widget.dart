@@ -6,11 +6,8 @@ class NumberedTextWidget extends StatelessWidget {
   final int number;
   final String text;
 
-  const NumberedTextWidget({
-    Key? key,
-    required this.number,
-    required this.text,
-  }) : super(key: key);
+  const NumberedTextWidget({Key? key, required this.number, required this.text})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {

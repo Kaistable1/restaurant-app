@@ -18,7 +18,8 @@ class SendNotificationService {
     // Create channel for Android
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.createNotificationChannel(channel);
 
     // Request permissions
@@ -67,9 +68,9 @@ class SendNotificationService {
     });
 
     // App opened from terminated
-    FirebaseMessaging.instance
-        .getInitialMessage()
-        .then((RemoteMessage? message) {
+    FirebaseMessaging.instance.getInitialMessage().then((
+      RemoteMessage? message,
+    ) {
       if (message != null) {
         debugPrint('App opened from terminated state: ${message.messageId}');
         // Handle if needed

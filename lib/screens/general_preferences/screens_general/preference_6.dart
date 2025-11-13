@@ -22,9 +22,7 @@ class Preference6 extends StatelessWidget {
       backgroundColor: AppColors.bgColor,
       appBar: AppBar(
         backgroundColor: AppColors.bgColor,
-        iconTheme: IconThemeData(
-          color: AppColors.primaryColor,
-        ),
+        iconTheme: IconThemeData(color: AppColors.primaryColor),
         centerTitle: true,
         automaticallyImplyLeading: true,
         leading: Padding(
@@ -84,9 +82,7 @@ class Preference6 extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                height: 8,
-              ),
+              SizedBox(height: 8),
               Text(
                 'What kind of dining experiences do you enjoy the most?',
                 style: TextStyle(
@@ -96,9 +92,7 @@ class Preference6 extends StatelessWidget {
                   fontSize: 16,
                 ),
               ),
-              SizedBox(
-                height: 16,
-              ),
+              SizedBox(height: 16),
               ListView.builder(
                 padding: EdgeInsets.zero,
                 shrinkWrap: true,
@@ -107,8 +101,9 @@ class Preference6 extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final preference = controller.preferences6[index];
                   return Obx(() {
-                    final isSelected = controller.selectedPreferences6
-                        .contains(preference["name"]);
+                    final isSelected = controller.selectedPreferences6.contains(
+                      preference["name"],
+                    );
                     final isOther = preference["name"] == "Other";
 
                     return GestureDetector(
@@ -148,9 +143,7 @@ class Preference6 extends StatelessWidget {
                   });
                 },
               ),
-              SizedBox(
-                height: 24,
-              ),
+              SizedBox(height: 24),
               Center(
                 child: CustomButton(
                   laBelText: 'Next',
@@ -174,16 +167,15 @@ class Preference6 extends StatelessWidget {
                     } else {
                       final signupController = Get.put(SignupController());
                       signupController.updateUserData(
-                          field: 'diningExp',
-                          entry: controller.selectedPreferences6);
+                        field: 'diningExp',
+                        entry: controller.selectedPreferences6,
+                      );
                       Get.to(() => Preference7());
                     }
                   },
                 ),
               ),
-              SizedBox(
-                height: 30,
-              ),
+              SizedBox(height: 30),
             ],
           ),
         ),

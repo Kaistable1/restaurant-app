@@ -31,8 +31,11 @@ class EventsList extends StatelessWidget {
             // Sunday is end of week
             final endOfWeek = startOfWeek.add(Duration(days: 6));
             // Only compare dates, ignore time
-            final justDate =
-                DateTime(eventDate.year, eventDate.month, eventDate.day);
+            final justDate = DateTime(
+              eventDate.year,
+              eventDate.month,
+              eventDate.day,
+            );
             return justDate.isAtSameMomentAs(startOfWeek) ||
                 (justDate.isAfter(startOfWeek) &&
                     justDate.isBefore(endOfWeek.add(Duration(days: 1))));
@@ -50,10 +53,11 @@ class EventsList extends StatelessWidget {
 
       String selectedCategory = categoryController.selectedCat.value;
       if (selectedCategory.isNotEmpty && selectedCategory != 'Distance') {
-        filteredEvents
-            .retainWhere((event) => event.eventType == selectedCategory);
+        filteredEvents.retainWhere(
+          (event) => event.eventType == selectedCategory,
+        );
       }
-// Apply geofencing filter if 'Distance' is selected and a valid mile value is chosen
+      // Apply geofencing filter if 'Distance' is selected and a valid mile value is chosen
       if (selectedCategory == 'Distance' &&
           categoryController.selectedMiles.isNotEmpty) {
         // Parse the max distance value from the selectedMiles string
@@ -61,8 +65,10 @@ class EventsList extends StatelessWidget {
         double maxDistance = double.parse(
           categoryController.selectedMiles
               .split(' ')[0] // Take the first part before the space (e.g., "5")
-              .replaceAll('Miles',
-                  '') // Just in case there's a word "Miles" lingering (defensive coding)
+              .replaceAll(
+                'Miles',
+                '',
+              ) // Just in case there's a word "Miles" lingering (defensive coding)
               .trim(), // Remove any spaces
         );
         print('maxDistance $maxDistance');
@@ -102,12 +108,12 @@ class EventsList extends StatelessWidget {
           return Column(
             children: [
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 8.0,
+                ),
                 child: DaysTile(
-                  onTap: () => Get.to(() => EventDetailsScreen(
-                        event: event,
-                      )),
+                  onTap: () => Get.to(() => EventDetailsScreen(event: event)),
                   image: event.imageUrls.first,
                   title: event.eventName,
                   location: event.location,

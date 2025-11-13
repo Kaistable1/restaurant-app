@@ -148,15 +148,26 @@ class _AdminModerationScreenState extends State<AdminModerationScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildInfoRow('Content Type', report.contentType ?? 'Unknown'),
-                  _buildInfoRow('Reported User', report.reportedUserName ?? 'Unknown'),
-                  if (report.description != null && report.description!.isNotEmpty)
+                  _buildInfoRow(
+                    'Content Type',
+                    report.contentType ?? 'Unknown',
+                  ),
+                  _buildInfoRow(
+                    'Reported User',
+                    report.reportedUserName ?? 'Unknown',
+                  ),
+                  if (report.description != null &&
+                      report.description!.isNotEmpty)
                     _buildInfoRow('Description', report.description!),
                   _buildInfoRow('Date', _formatDate(report.createdAt)),
                   if (report.aiModerated == true)
                     Row(
                       children: [
-                        Icon(Icons.smart_toy, size: 14, color: AppColors.primaryColor),
+                        Icon(
+                          Icons.smart_toy,
+                          size: 14,
+                          color: AppColors.primaryColor,
+                        ),
                         SizedBox(width: 4),
                         Text(
                           'AI Moderated',
@@ -294,10 +305,7 @@ class _AdminModerationScreenState extends State<AdminModerationScreen> {
           Expanded(
             child: Text(
               value,
-              style: TextStyle(
-                fontSize: 12,
-                fontFamily: 'Nunito-Regular',
-              ),
+              style: TextStyle(fontSize: 12, fontFamily: 'Nunito-Regular'),
             ),
           ),
         ],
@@ -315,11 +323,7 @@ class _AdminModerationScreenState extends State<AdminModerationScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.check_circle_outline,
-            size: 80,
-            color: Colors.grey[300],
-          ),
+          Icon(Icons.check_circle_outline, size: 80, color: Colors.grey[300]),
           SizedBox(height: 16),
           Text(
             'No reports to review',
@@ -350,9 +354,7 @@ class _AdminModerationScreenState extends State<AdminModerationScreen> {
           maxLines: 3,
           decoration: InputDecoration(
             hintText: 'Enter resolution notes...',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
           ),
           style: TextStyle(fontFamily: 'Nunito-Regular'),
         ),
@@ -366,10 +368,7 @@ class _AdminModerationScreenState extends State<AdminModerationScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryColor,
             ),
-            child: Text(
-              'Submit',
-              style: TextStyle(color: Colors.white),
-            ),
+            child: Text('Submit', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),

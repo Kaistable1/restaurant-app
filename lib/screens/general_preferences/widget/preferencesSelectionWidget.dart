@@ -55,13 +55,11 @@ class PreferencesSelectionWidget extends StatelessWidget {
                 height: 54,
                 width: 54,
                 fit: BoxFit.fill,
-              )
+              ),
             ],
           ),
         ),
-        SizedBox(
-          height: 14,
-        ),
+        SizedBox(height: 14),
       ],
     );
   }

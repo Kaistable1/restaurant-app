@@ -51,16 +51,16 @@ class CustomTextFormField extends StatelessWidget {
       width: width,
       decoration: BoxDecoration(
         color: containerColor ?? Colors.white, // Set container color
-        borderRadius:
-            BorderRadius.circular( 10 ),
-        boxShadow: isShadow // Conditional expression
+        borderRadius: BorderRadius.circular(10),
+        boxShadow:
+            isShadow // Conditional expression
             ? [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.1),
                   spreadRadius: 2,
                   blurRadius: 12,
                   offset: const Offset(0, 1),
-                )
+                ),
               ]
             : [],
       ),
@@ -85,14 +85,16 @@ class CustomTextFormField extends StatelessWidget {
           border: InputBorder.none,
           // Removes the default border
           contentPadding: EdgeInsets.only(
-            top:  11,
+            top: 11,
             // bottom: Responsive.isMobile(context) ? 20 : 12,
-            left:  14 ,
+            left: 14,
             // right: Responsive.isMobile(context) ? 9 : 20,
           ),
           suffix: suffexWidget,
           suffixIcon: suffixIcon,
-          prefixIcon: prefixImagePath != null // Add this check for prefix icon
+          prefixIcon:
+              prefixImagePath !=
+                  null // Add this check for prefix icon
               ? Padding(
                   padding: EdgeInsets.all(15),
                   child: Image.asset(

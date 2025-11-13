@@ -14,12 +14,10 @@ import '../home_controller/home_trending_controller.dart';
 
 class TrendingViewAll extends StatefulWidget {
   final Function(int)? onNavigate;
-  final HomeLocationController homeController =
-      Get.put(HomeLocationController());
-  TrendingViewAll({
-    super.key,
-    this.onNavigate,
-  }) {
+  final HomeLocationController homeController = Get.put(
+    HomeLocationController(),
+  );
+  TrendingViewAll({super.key, this.onNavigate}) {
     homeController.selectedTop.value = '';
   }
 
@@ -28,11 +26,13 @@ class TrendingViewAll extends StatefulWidget {
 }
 
 class _TrendingViewAllState extends State<TrendingViewAll> {
-  final HomeTrendingController trendingController =
-      Get.put(HomeTrendingController());
+  final HomeTrendingController trendingController = Get.put(
+    HomeTrendingController(),
+  );
 
-  final HomeLocationController homeController =
-      Get.put(HomeLocationController());
+  final HomeLocationController homeController = Get.put(
+    HomeLocationController(),
+  );
 
   List<RestaurantModel> filteredRestaurants = [];
 
@@ -50,8 +50,8 @@ class _TrendingViewAllState extends State<TrendingViewAll> {
           int itemsPerRow = Responsive.isMobile(context)
               ? 2
               : Responsive.isTablet(context)
-                  ? 3
-                  : 4;
+              ? 3
+              : 4;
           double itemWidth = (constraints.maxWidth / itemsPerRow) - 16;
           double itemHeight = Responsive.isMobile(context)
               ? 320
@@ -132,7 +132,11 @@ class _TrendingViewAllState extends State<TrendingViewAll> {
                         isShadow: true,
                         prefixIcon: Padding(
                           padding: const EdgeInsets.only(
-                              left: 4, top: 8, bottom: 8, right: 0),
+                            left: 4,
+                            top: 8,
+                            bottom: 8,
+                            right: 0,
+                          ),
                           child: Image.asset(
                             'assets/images/search_icon.png',
                             fit: BoxFit.contain,
@@ -181,72 +185,75 @@ class _TrendingViewAllState extends State<TrendingViewAll> {
                     ),
                     SizedBox(height: 12),
                     StreamBuilder(
-                        stream: homeController.getTrendingRestaurants(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return buildShimmerEffect();
-                          }
+                      stream: homeController.getTrendingRestaurants(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return buildShimmerEffect();
+                        }
 
-                          if (snapshot.hasError) {
-                            print('Error during stream call ${snapshot.error}');
-                            return Text(''); // Show error message if any
-                          }
+                        if (snapshot.hasError) {
+                          print('Error during stream call ${snapshot.error}');
+                          return Text(''); // Show error message if any
+                        }
 
-                          if (snapshot.data == null || snapshot.data!.isEmpty) {
-                            return Text(
-                                'No restaurants found'); // Handle the case where data is null or empty
-                          }
+                        if (snapshot.data == null || snapshot.data!.isEmpty) {
+                          return Text(
+                            'No restaurants found',
+                          ); // Handle the case where data is null or empty
+                        }
 
-                          List<RestaurantModel> restaurants = snapshot.data!;
-                          // Initialize filtered restaurants
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            homeController.initializeSelectors(restaurants);
-                          });
+                        List<RestaurantModel> restaurants = snapshot.data!;
+                        // Initialize filtered restaurants
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          homeController.initializeSelectors(restaurants);
+                        });
 
-                          return GetBuilder<HomeLocationController>(
-                            builder: (controller) {
-                              return GridView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                  mainAxisExtent: Get.height * 0.2,
-                                  crossAxisCount: 2,
-                                  crossAxisSpacing: 10,
-                                  mainAxisSpacing: 20,
-                                ),
-                                itemCount:
-                                    controller.filteredRestaurants.length,
-                                itemBuilder: (context, index) {
-                                  final item =
-                                      controller.filteredRestaurants[index];
-                                  return InkWell(
-                                    onTap: () {
-                                      Get.to(RestaurantDetailScreen(
+                        return GetBuilder<HomeLocationController>(
+                          builder: (controller) {
+                            return GridView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                    mainAxisExtent: Get.height * 0.2,
+                                    crossAxisCount: 2,
+                                    crossAxisSpacing: 10,
+                                    mainAxisSpacing: 20,
+                                  ),
+                              itemCount: controller.filteredRestaurants.length,
+                              itemBuilder: (context, index) {
+                                final item =
+                                    controller.filteredRestaurants[index];
+                                return InkWell(
+                                  onTap: () {
+                                    Get.to(
+                                      RestaurantDetailScreen(
                                         restaurantModel: item,
-                                      ));
-                                    },
-                                    child: RectangleWidget(
-                                      title: item.resName,
-                                      description: item.address,
-                                      resturant_id: item.docID,
-                                      imagePath: item.logoImage,
-                                      timetext: '10 AM',
-                                      percentText: '25%',
-                                      endTimeText: '9 PM',
-                                      // percentageOff:
-                                      //     item.menuList.percentageOff,
-                                      // happyhour:
-                                      //     item.menuList.happyHourSpecials,
-                                      isFavorite: false.obs,
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                          );
-                        }),
+                                      ),
+                                    );
+                                  },
+                                  child: RectangleWidget(
+                                    title: item.resName,
+                                    description: item.address,
+                                    resturant_id: item.docID,
+                                    imagePath: item.logoImage,
+                                    timetext: '10 AM',
+                                    percentText: '25%',
+                                    endTimeText: '9 PM',
+                                    // percentageOff:
+                                    //     item.menuList.percentageOff,
+                                    // happyhour:
+                                    //     item.menuList.happyHourSpecials,
+                                    isFavorite: false.obs,
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        );
+                      },
+                    ),
                     const SizedBox(height: 30),
                   ],
                 ),

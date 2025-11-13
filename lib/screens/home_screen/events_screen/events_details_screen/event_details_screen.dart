@@ -27,15 +27,15 @@ class EventDetailsScreen extends StatelessWidget {
                 height: 327,
                 width: Get.width,
                 decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: NetworkImage(event.imageUrls.first),
-                        fit: BoxFit.cover)),
+                  image: DecorationImage(
+                    image: NetworkImage(event.imageUrls.first),
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
               AppBar(
                 backgroundColor: Colors.transparent,
-                iconTheme: const IconThemeData(
-                  color: AppColors.primaryColor,
-                ),
+                iconTheme: const IconThemeData(color: AppColors.primaryColor),
                 centerTitle: true,
                 automaticallyImplyLeading: true,
                 leading: Padding(
@@ -59,8 +59,11 @@ class EventDetailsScreen extends StatelessWidget {
                       onTap: () {
                         Get.back();
                       },
-                      child: Icon(Icons.arrow_back,
-                          size: 18, color: AppColors.primaryColor),
+                      child: Icon(
+                        Icons.arrow_back,
+                        size: 18,
+                        color: AppColors.primaryColor,
+                      ),
                     ),
                   ),
                 ),
@@ -81,18 +84,21 @@ class EventDetailsScreen extends StatelessWidget {
                   // Prevents blur from overflowing
                   borderRadius: BorderRadius.circular(4), // Same as container
                   child: BackdropFilter(
-                    filter:
-                        ImageFilter.blur(sigmaX: 8, sigmaY: 8), // Blur effect
+                    filter: ImageFilter.blur(
+                      sigmaX: 8,
+                      sigmaY: 8,
+                    ), // Blur effect
                     child: GestureDetector(
-                      onTap: () => Get.to(EventDetailsGallery(
-                        imageList: event.imageUrls,
-                      )),
+                      onTap: () => Get.to(
+                        EventDetailsGallery(imageList: event.imageUrls),
+                      ),
                       child: Container(
                         height: 32,
                         width: 151,
                         decoration: BoxDecoration(
-                          color: AppColors.whiteColor
-                              .withOpacity(0.2), // Adjust opacity
+                          color: AppColors.whiteColor.withOpacity(
+                            0.2,
+                          ), // Adjust opacity
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Center(
@@ -109,21 +115,20 @@ class EventDetailsScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-              )
+              ),
             ],
           ),
-          SizedBox(
-            height: 20,
-          ),
+          SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Text(
               event.eventName,
               style: TextStyle(
-                  color: AppColors.bottomSheetColor,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'Nunito-Bold'),
+                color: AppColors.bottomSheetColor,
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                fontFamily: 'Nunito-Bold',
+              ),
             ),
           ),
           const SizedBox(height: 8),
@@ -131,8 +136,11 @@ class EventDetailsScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Row(
               children: [
-                Image.asset('assets/images/location_icon2.png',
-                    width: 16, height: 16),
+                Image.asset(
+                  'assets/images/location_icon2.png',
+                  width: 16,
+                  height: 16,
+                ),
                 const SizedBox(width: 6),
                 Text(
                   event.location,
@@ -151,9 +159,7 @@ class EventDetailsScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(
-                  height: 10,
-                ),
+                const SizedBox(height: 10),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Row(
@@ -197,23 +203,22 @@ class EventDetailsScreen extends StatelessWidget {
                   thickness: 0.2,
                   height: 1,
                 ),
-                SizedBox(
-                  height: 10,
-                ),
+                SizedBox(height: 10),
                 Expanded(
-                  child:
-                      Obx(() => controller.upcomingAppointmentsCheck.value == 0
-                          ? DetailsTabWidget(
-                              location: event.location,
-                              lat: event.latitude,
-                              long: event.longitude,
-                            )
-                          : AdditionalInfoWidget(
-                              desctiption: event.description,
-                              date: event.date,
-                              time: event.time,
-                              phone: event.phoneNumber,
-                            )),
+                  child: Obx(
+                    () => controller.upcomingAppointmentsCheck.value == 0
+                        ? DetailsTabWidget(
+                            location: event.location,
+                            lat: event.latitude,
+                            long: event.longitude,
+                          )
+                        : AdditionalInfoWidget(
+                            desctiption: event.description,
+                            date: event.date,
+                            time: event.time,
+                            phone: event.phoneNumber,
+                          ),
+                  ),
                 ),
               ],
             ),
@@ -236,30 +241,30 @@ detailsSelectionWidget({
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
       Padding(
-        padding:
-            EdgeInsets.symmetric(horizontal: index == selectIndex ? 11 : 0),
+        padding: EdgeInsets.symmetric(
+          horizontal: index == selectIndex ? 11 : 0,
+        ),
         child: Align(
           alignment: index != selectIndex && index == 0
               ? Alignment.center
               : index != selectIndex && index == 1
-                  ? Alignment.center
-                  : Alignment.center,
+              ? Alignment.center
+              : Alignment.center,
           child: Text(
             text,
             style: TextStyle(
-                color: index == selectIndex
-                    ? AppColors.primaryColor
-                    : Color(0xFF4F5A57),
-                fontWeight: FontWeight.w800,
-                fontFamily: 'Quicksand-bold',
-                fontSize: 12),
+              color: index == selectIndex
+                  ? AppColors.primaryColor
+                  : Color(0xFF4F5A57),
+              fontWeight: FontWeight.w800,
+              fontFamily: 'Quicksand-bold',
+              fontSize: 12,
+            ),
             textAlign: TextAlign.center, // Center the text within the container
           ),
         ),
       ),
-      const SizedBox(
-        height: 10,
-      ),
+      const SizedBox(height: 10),
       if (index == selectIndex) ...{
         Container(
           width: selectIndex == 2
@@ -276,7 +281,7 @@ detailsSelectionWidget({
             ),
           ),
         ),
-      }
+      },
     ],
   );
 }

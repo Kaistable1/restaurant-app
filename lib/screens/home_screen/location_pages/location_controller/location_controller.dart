@@ -3,12 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class LocationController extends GetxController {
   var locationItem = <LocationItem>[].obs;
-  List top = [
-    'most reviewed',
-    'Discount',
-    'minimum',
-    'maximum',
-  ];
+  List top = ['most reviewed', 'Discount', 'minimum', 'maximum'];
   RxString selectedTop = 'most reviewed'.obs;
   var selectedDiscount = '10%'.obs;
 
@@ -52,60 +47,75 @@ class LocationController extends GetxController {
     // Dummy data. Replace with your actual data source.
     locationItem.addAll([
       LocationItem(
-          title: 'Pizza',
-          description:
-              'Duis aute irure dolor in reprehend voluptate velit esse cillum',
-          imagePath: 'assets/images/a1.png',
-          timetext: '09:00',endTimeText: '08:00',
-          percentText: '50%'),
+        title: 'Pizza',
+        description:
+            'Duis aute irure dolor in reprehend voluptate velit esse cillum',
+        imagePath: 'assets/images/a1.png',
+        timetext: '09:00',
+        endTimeText: '08:00',
+        percentText: '50%',
+      ),
       LocationItem(
-          title: 'Buffet',
-          description:
-              'Duis aute irure dolor in reprehend voluptate velit esse cillum',
-          imagePath: 'assets/images/a2.png',
-          timetext: '06:00',endTimeText: '08:00',
-          percentText: '80%'),
+        title: 'Buffet',
+        description:
+            'Duis aute irure dolor in reprehend voluptate velit esse cillum',
+        imagePath: 'assets/images/a2.png',
+        timetext: '06:00',
+        endTimeText: '08:00',
+        percentText: '80%',
+      ),
       LocationItem(
-          title: 'Pizza',
-          description:
-              'Duis aute irure dolor in reprehend voluptate velit esse cillum',
-          imagePath: 'assets/images/a3.png',
-          timetext: '12:00',endTimeText: '08:00',
-          percentText: '60%'),
-      LocationItem(
-          title: 'Salad',
-          description:
-              'Duis aute irure dolor in reprehend voluptate velit esse cillum',
-          imagePath: 'assets/images/a2.png',
-          timetext: '01:00',endTimeText: '08:00',
-          percentText: '40%'),
-      LocationItem(
-          title: 'Buffet',
-          description:
-              'Duis aute irure dolor in reprehend voluptate velit esse cillum',
-          imagePath: 'assets/images/a1.png',
-          timetext: '18:00',endTimeText: '08:00',
-          percentText: '20%'),
-      LocationItem(
-          title: 'Pasta',
-          description:
-              'Duis aute irure dolor in reprehend voluptate velit esse cillum',
-          imagePath: 'assets/images/a3.png',
-          timetext: '16:00',endTimeText: '08:00',
-          percentText: '50%'),
-      LocationItem(
-          title: 'Pizza',
-          description:
-              'Duis aute irure dolor in reprehend voluptate velit esse cillum',
-          imagePath: 'assets/images/a1.png',
-          timetext: '03:00',endTimeText: '08:00',
-          percentText: '56%'),
+        title: 'Pizza',
+        description:
+            'Duis aute irure dolor in reprehend voluptate velit esse cillum',
+        imagePath: 'assets/images/a3.png',
+        timetext: '12:00',
+        endTimeText: '08:00',
+        percentText: '60%',
+      ),
       LocationItem(
         title: 'Salad',
         description:
             'Duis aute irure dolor in reprehend voluptate velit esse cillum',
         imagePath: 'assets/images/a2.png',
-        timetext: '06:00',endTimeText: '08:00',
+        timetext: '01:00',
+        endTimeText: '08:00',
+        percentText: '40%',
+      ),
+      LocationItem(
+        title: 'Buffet',
+        description:
+            'Duis aute irure dolor in reprehend voluptate velit esse cillum',
+        imagePath: 'assets/images/a1.png',
+        timetext: '18:00',
+        endTimeText: '08:00',
+        percentText: '20%',
+      ),
+      LocationItem(
+        title: 'Pasta',
+        description:
+            'Duis aute irure dolor in reprehend voluptate velit esse cillum',
+        imagePath: 'assets/images/a3.png',
+        timetext: '16:00',
+        endTimeText: '08:00',
+        percentText: '50%',
+      ),
+      LocationItem(
+        title: 'Pizza',
+        description:
+            'Duis aute irure dolor in reprehend voluptate velit esse cillum',
+        imagePath: 'assets/images/a1.png',
+        timetext: '03:00',
+        endTimeText: '08:00',
+        percentText: '56%',
+      ),
+      LocationItem(
+        title: 'Salad',
+        description:
+            'Duis aute irure dolor in reprehend voluptate velit esse cillum',
+        imagePath: 'assets/images/a2.png',
+        timetext: '06:00',
+        endTimeText: '08:00',
         percentText: '07%',
       ),
     ]);
@@ -120,11 +130,12 @@ class LocationItem {
   String endTimeText;
   String percentText;
 
-  LocationItem(
-      {required this.title,
-      required this.description,
-      required this.imagePath,
-      required this.timetext,
-      required this.endTimeText,
-      required this.percentText});
+  LocationItem({
+    required this.title,
+    required this.description,
+    required this.imagePath,
+    required this.timetext,
+    required this.endTimeText,
+    required this.percentText,
+  });
 }

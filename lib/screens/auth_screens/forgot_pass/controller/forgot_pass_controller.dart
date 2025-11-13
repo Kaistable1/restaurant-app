@@ -24,41 +24,43 @@ class ForgotPassController extends GetxController {
           .where('userEmail', isEqualTo: emailController.text)
           .get()
           .then((value) async {
-        // If no documents are found, show an error dialog
-        if (value.docs.isEmpty) {
-          Get.back(); // Close the loading dialog
-          print(value);
-          loadingDialog(
-              message: "The Email doesn't Exist.",
-              button: true,
-              height: 150,
-              padding: 0);
-        } else {
-          // If the email exists, send a password reset email using Firebase Auth
-          FirebaseAuth.instance
-              .sendPasswordResetEmail(email: emailController.text)
-              .then((value) {
-            // Clear the email field and close the loading dialog
-            emailController.clear();
-            Get.back();
-            print('Reset email sent successfully');
+            // If no documents are found, show an error dialog
+            if (value.docs.isEmpty) {
+              Get.back(); // Close the loading dialog
+              print(value);
+              loadingDialog(
+                message: "The Email doesn't Exist.",
+                button: true,
+                height: 150,
+                padding: 0,
+              );
+            } else {
+              // If the email exists, send a password reset email using Firebase Auth
+              FirebaseAuth.instance
+                  .sendPasswordResetEmail(email: emailController.text)
+                  .then((value) {
+                    // Clear the email field and close the loading dialog
+                    emailController.clear();
+                    Get.back();
+                    print('Reset email sent successfully');
 
-            // Show a dialog box indicating that the reset email was sent
-            dialogueBox(
-              text:
-                  'A reset link has been emailed to you. Please also check your spam.',
-              onPressed: () async {
-                // Navigate to the Login Screen after the dialog is dismissed
-                Get.offAll(() => LoginScreen());
-              },
-              color: AppColors.primaryColor,
-            );
-          }).onError((error, stackTrace) {
-            // Log any errors encountered while sending the reset email
-            print(error.toString());
+                    // Show a dialog box indicating that the reset email was sent
+                    dialogueBox(
+                      text:
+                          'A reset link has been emailed to you. Please also check your spam.',
+                      onPressed: () async {
+                        // Navigate to the Login Screen after the dialog is dismissed
+                        Get.offAll(() => LoginScreen());
+                      },
+                      color: AppColors.primaryColor,
+                    );
+                  })
+                  .onError((error, stackTrace) {
+                    // Log any errors encountered while sending the reset email
+                    print(error.toString());
+                  });
+            }
           });
-        }
-      });
     } catch (e) {
       // Catch and log any unexpected errors during the process
       print('Error $e');

@@ -83,11 +83,11 @@ class CustomSeparateTextField extends StatelessWidget {
         boxShadow: [
           isShadow == true
               ? const BoxShadow(
-            color: Color(0x26333333),
-            blurRadius: 3,
-            offset: Offset(0, 1),
-            spreadRadius: 0.5,
-          )
+                  color: Color(0x26333333),
+                  blurRadius: 3,
+                  offset: Offset(0, 1),
+                  spreadRadius: 0.5,
+                )
               : BoxShadow(color: fillColor!),
         ],
       ),
@@ -114,7 +114,7 @@ class CustomSeparateTextField extends StatelessWidget {
           enabled: enabled,
           fillColor: fillColor,
           filled: filled,
-          contentPadding:  EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+          contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
           suffixText: suffixText,
           suffixStyle: TextStyle(
             fontWeight: fontWeight,
@@ -130,8 +130,9 @@ class CustomSeparateTextField extends StatelessWidget {
             color: AppColors.blackColor,
           ),
           hintText: hintText,
-          hintStyle: hintStyle ??
-             TextStyle(
+          hintStyle:
+              hintStyle ??
+              TextStyle(
                 color: AppColors.hintText,
                 fontWeight: FontWeight.w400,
                 fontSize: 14,
@@ -169,4 +170,3 @@ class CustomSeparateTextField extends StatelessWidget {
     );
   }
 }
-

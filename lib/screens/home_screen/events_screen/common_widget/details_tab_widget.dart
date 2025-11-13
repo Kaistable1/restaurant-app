@@ -35,11 +35,12 @@ class MapController extends GetxController {
 
 class DetailsTabWidget extends StatelessWidget {
   final controller = Get.put(MapController());
-  DetailsTabWidget(
-      {super.key,
-      required this.lat,
-      required this.location,
-      required this.long});
+  DetailsTabWidget({
+    super.key,
+    required this.lat,
+    required this.location,
+    required this.long,
+  });
   String location;
   double lat;
   double long;
@@ -54,29 +55,30 @@ class DetailsTabWidget extends StatelessWidget {
             Text(
               'Details',
               style: TextStyle(
-                  fontFamily: 'Nunito-Sans',
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
-                  color: AppColors.headingTextColor),
+                fontFamily: 'Nunito-Sans',
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+                color: AppColors.headingTextColor,
+              ),
             ),
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
             Text(
               'Address',
               style: TextStyle(
-                  fontFamily: 'Nunito-Sans',
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14,
-                  color: AppColors.textNormalColor),
+                fontFamily: 'Nunito-Sans',
+                fontWeight: FontWeight.w500,
+                fontSize: 14,
+                color: AppColors.textNormalColor,
+              ),
             ),
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
             Row(
               children: [
-                Image.asset('assets/images/location_icon2.png',
-                    width: 16, height: 16),
+                Image.asset(
+                  'assets/images/location_icon2.png',
+                  width: 16,
+                  height: 16,
+                ),
                 const SizedBox(width: 6),
                 Text(
                   location,
@@ -89,9 +91,7 @@ class DetailsTabWidget extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(
-              height: 12,
-            ),
+            SizedBox(height: 12),
             Container(
               height: 209,
               width: Get.width,

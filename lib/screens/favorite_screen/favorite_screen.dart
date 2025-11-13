@@ -37,11 +37,10 @@ class FavoriteScreen extends StatelessWidget {
         backgroundColor: AppColors.whiteColor,
         appBar: AppBar(
           backgroundColor: AppColors.whiteColor,
-          iconTheme: IconThemeData(
-            color: AppColors.primaryColor,
-          ),
+          iconTheme: IconThemeData(color: AppColors.primaryColor),
           centerTitle: true,
           automaticallyImplyLeading: true,
+
           // leading: Padding(
           //   padding: const EdgeInsets.all(12.0),
           //   child: Container(
@@ -67,7 +66,6 @@ class FavoriteScreen extends StatelessWidget {
           //     ),
           //   ),
           // ),
-
           title: Text(
             'Favorites',
             style: TextStyle(
@@ -105,9 +103,7 @@ class FavoriteScreen extends StatelessWidget {
                                 Get.offAll(() => LoginScreen());
                               },
                             ),
-                            SizedBox(
-                              height: 20,
-                            ),
+                            SizedBox(height: 20),
                             CustomButton(
                               laBelText: 'Register',
                               fontSize: 17,
@@ -129,35 +125,40 @@ class FavoriteScreen extends StatelessWidget {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
                             return SizedBox(
-                                height: Get.height * 0.7,
-                                child:
-                                    Center(child: CircularProgressIndicator()));
+                              height: Get.height * 0.7,
+                              child: Center(child: CircularProgressIndicator()),
+                            );
                           }
 
                           if (snapshot.hasError) {
                             print(
-                                'Error during stream call: ${snapshot.error}');
+                              'Error during stream call: ${snapshot.error}',
+                            );
                             return const Center(
-                                child: Text('Error loading data'));
+                              child: Text('Error loading data'),
+                            );
                           }
 
                           if (snapshot.data == null || snapshot.data!.isEmpty) {
                             return const Center(
-                                child: Text('No restaurants available.'));
+                              child: Text('No restaurants available.'),
+                            );
                           }
 
                           List<RestaurantModel> restaurants = snapshot.data!;
 
                           WidgetsBinding.instance.addPostFrameCallback((_) {
                             mycontroller.initailizedSelectors(
-                                resaturantsList: restaurants);
+                              resaturantsList: restaurants,
+                            );
                           });
                           return SizedBox(
                             child: StreamBuilder<QuerySnapshot>(
                               stream: FirebaseFirestore.instance
                                   .collection('users')
-                                  .doc(auth.currentUser!
-                                      .uid) // Current user's document
+                                  .doc(
+                                    auth.currentUser!.uid,
+                                  ) // Current user's document
                                   .collection('favorite')
                                   .snapshots(), // Stream the favorite collection to listen for changes
                               builder: (context, snapshot) {
@@ -167,7 +168,8 @@ class FavoriteScreen extends StatelessWidget {
                                 }
                                 if (snapshot.hasError) {
                                   return Text(
-                                      'Something went wrong!'); // Handle errors
+                                    'Something went wrong!',
+                                  ); // Handle errors
                                 }
 
                                 // Extract restaurant IDs from the favorite collection
@@ -177,9 +179,10 @@ class FavoriteScreen extends StatelessWidget {
 
                                 // Filter the restaurant list to show only the favorites
                                 var favoriteRestaurants = restaurants
-                                    .where((restaurant) => favoriteRestaurantIds
-                                        .contains(restaurant
-                                            .docID)) // Assuming 'id' is a property of restaurant
+                                    .where(
+                                      (restaurant) => favoriteRestaurantIds
+                                          .contains(restaurant.docID),
+                                    ) // Assuming 'id' is a property of restaurant
                                     .toList();
                                 if (favoriteRestaurants.isEmpty) {
                                   return Container(
@@ -195,20 +198,22 @@ class FavoriteScreen extends StatelessWidget {
                                   physics: const NeverScrollableScrollPhysics(),
                                   gridDelegate:
                                       SliverGridDelegateWithFixedCrossAxisCount(
-                                    mainAxisExtent: Get.height * 0.27,
-                                    crossAxisCount: 2,
-                                    crossAxisSpacing: 10,
-                                    mainAxisSpacing: 20,
-                                  ),
+                                        mainAxisExtent: Get.height * 0.27,
+                                        crossAxisCount: 2,
+                                        crossAxisSpacing: 10,
+                                        mainAxisSpacing: 20,
+                                      ),
                                   itemCount: favoriteRestaurants
                                       .length, // Set the item count to the length of favorite restaurants
                                   itemBuilder: (context, index) {
                                     final item = favoriteRestaurants[index];
                                     return InkWell(
                                       onTap: () {
-                                        Get.to(RestaurantDetailScreen(
-                                          restaurantModel: item,
-                                        ));
+                                        Get.to(
+                                          RestaurantDetailScreen(
+                                            restaurantModel: item,
+                                          ),
+                                        );
                                       },
                                       child: RectangleWidget(
                                         onNavigate: onNavigate,
@@ -227,7 +232,8 @@ class FavoriteScreen extends StatelessWidget {
                               },
                             ),
                           );
-                        }),
+                        },
+                      ),
                 SizedBox(height: 30),
               ],
             ),

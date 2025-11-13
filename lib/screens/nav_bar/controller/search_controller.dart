@@ -18,16 +18,8 @@ class FilterController extends GetxController {
   var selectedLanguage = "".obs;
 
   List<String> countries = ["USA", "France"];
-  List<String> cities = [
-    "New York",
-    "Los Angeles",
-    "Paris",
-  ];
-  List<String> languages = [
-    "English",
-    "French",
-    "Spanish",
-  ];
+  List<String> cities = ["New York", "Los Angeles", "Paris"];
+  List<String> languages = ["English", "French", "Spanish"];
 
   void selectCountry(String country) {
     filterSelectionController.selectedCountry.value = country;
@@ -47,10 +39,7 @@ class FilterController extends GetxController {
   // Multi-Selection Lists with Checkboxes
   var selectedFilters = <String, RxList<String>>{}.obs;
   var filterOptions = <String, List<String>>{
-    "States": [
-      "New York",
-      "Los Angeles",
-    ],
+    "States": ["New York", "Los Angeles"],
     "City": [],
     "Cuisines": [
       "American",
@@ -74,17 +63,8 @@ class FilterController extends GetxController {
       "Russian",
       "German",
     ],
-    "Discount Type": [
-      'Percentage off',
-      'Happy hour specials',
-    ],
-    "Time of Day": [
-      'Breakfast',
-      'Brunch',
-      'Lunch',
-      'Dinner',
-      'Late Night',
-    ],
+    "Discount Type": ['Percentage off', 'Happy hour specials'],
+    "Time of Day": ['Breakfast', 'Brunch', 'Lunch', 'Dinner', 'Late Night'],
     "Atmospheres": [
       "Casual Dining",
       "Fine Dining",

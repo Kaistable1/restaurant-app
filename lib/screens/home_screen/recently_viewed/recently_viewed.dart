@@ -11,15 +11,14 @@ import '../home_controller/home_recently_viewed_controller.dart';
 
 class RecentlyViewed extends StatelessWidget {
   final Function(int)? onNavigate;
-  final HomeRecentlyViewedController recentlyViewedController =
-      Get.put(HomeRecentlyViewedController());
-  final HomeLocationController homeController =
-      Get.put(HomeLocationController());
+  final HomeRecentlyViewedController recentlyViewedController = Get.put(
+    HomeRecentlyViewedController(),
+  );
+  final HomeLocationController homeController = Get.put(
+    HomeLocationController(),
+  );
 
-  RecentlyViewed({
-    super.key,
-    this.onNavigate,
-  }) {
+  RecentlyViewed({super.key, this.onNavigate}) {
     homeController.selectedTop.value = '';
   }
 
@@ -38,9 +37,7 @@ class RecentlyViewed extends StatelessWidget {
         backgroundColor: AppColors.bgColor,
         appBar: AppBar(
           backgroundColor: AppColors.bgColor,
-          iconTheme: IconThemeData(
-            color: AppColors.primaryColor,
-          ),
+          iconTheme: IconThemeData(color: AppColors.primaryColor),
           centerTitle: true,
           automaticallyImplyLeading: true,
           leading: Padding(
@@ -103,7 +100,11 @@ class RecentlyViewed extends StatelessWidget {
                     isShadow: true,
                     prefixIcon: Padding(
                       padding: const EdgeInsets.only(
-                          left: 4, top: 8, bottom: 8, right: 0),
+                        left: 4,
+                        top: 8,
+                        bottom: 8,
+                        right: 0,
+                      ),
                       child: Image.asset(
                         'assets/images/search_icon.png',
                         fit: BoxFit.contain,
@@ -169,14 +170,16 @@ class RecentlyViewed extends StatelessWidget {
 
                   if (snapshot.data == null || snapshot.data!.isEmpty) {
                     return const Center(
-                        child: Text('No restaurants available.'));
+                      child: Text('No restaurants available.'),
+                    );
                   }
 
                   List<RestaurantModel> restaurants = snapshot.data!;
 
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     homeController.initailizedSelectors(
-                        resaturantsList: restaurants);
+                      resaturantsList: restaurants,
+                    );
                   });
 
                   return StreamBuilder<List<RecentViewModel>>(
@@ -184,8 +187,9 @@ class RecentlyViewed extends StatelessWidget {
                     builder: (context, snapshot) {
                       List<RecentViewModel> restaurantIDs = snapshot.data ?? [];
 
-                      restaurantIDs
-                          .sort((a, b) => b.dateTime.compareTo(a.dateTime));
+                      restaurantIDs.sort(
+                        (a, b) => b.dateTime.compareTo(a.dateTime),
+                      );
 
                       List<String> sortedRestaurantIds = restaurantIDs
                           .map((recentView) => recentView.restaurantID)
@@ -194,19 +198,23 @@ class RecentlyViewed extends StatelessWidget {
                       List<RestaurantModel> filteredIDSRestaurants = [];
                       if (restaurants.isNotEmpty) {
                         filteredIDSRestaurants = sortedRestaurantIds
-                            .map((id) => restaurants
-                                .where((restaurant) => restaurant.docID == id)
-                                .toList())
+                            .map(
+                              (id) => restaurants
+                                  .where((restaurant) => restaurant.docID == id)
+                                  .toList(),
+                            )
                             .expand((element) => element)
                             .toList();
                       }
                       filteredRestaurants = filteredIDSRestaurants;
                       homeController.searchController.addListener(() {
                         filteredRestaurants = filteredIDSRestaurants
-                            .where((item) => item.resName
-                                .toLowerCase()
-                                .contains(homeController.searchController.text
-                                    .toLowerCase()))
+                            .where(
+                              (item) => item.resName.toLowerCase().contains(
+                                homeController.searchController.text
+                                    .toLowerCase(),
+                              ),
+                            )
                             .toList();
                         homeController.update();
                       });
@@ -218,41 +226,45 @@ class RecentlyViewed extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               GetBuilder<HomeLocationController>(
-                                  builder: (homeLocationController) {
-                                return GridView.builder(
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    mainAxisExtent: Get.height * 0.2,
-                                    crossAxisCount: 2,
-                                    crossAxisSpacing: 10,
-                                    mainAxisSpacing: 30,
-                                  ),
-                                  itemCount: filteredRestaurants.length,
-                                  itemBuilder: (context, index) {
-                                    final item = filteredRestaurants[index];
-                                    return InkWell(
-                                      onTap: () {
-                                        Get.to(RestaurantDetailScreen(
-                                          restaurantModel: item,
-                                        ));
-                                      },
-                                      child: RectangleWidget(
-                                        onNavigate: onNavigate,
-                                        title: item.resName,
-                                        description: item.address,
-                                        resturant_id: item.docID,
-                                        imagePath: item.logoImage,
-                                        timetext: '10 AM',
-                                        percentText: '25%',
-                                        endTimeText: '9 PM',
-                                        isFavorite: false.obs,
-                                      ),
-                                    );
-                                  },
-                                );
-                              }),
+                                builder: (homeLocationController) {
+                                  return GridView.builder(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                          mainAxisExtent: Get.height * 0.2,
+                                          crossAxisCount: 2,
+                                          crossAxisSpacing: 10,
+                                          mainAxisSpacing: 30,
+                                        ),
+                                    itemCount: filteredRestaurants.length,
+                                    itemBuilder: (context, index) {
+                                      final item = filteredRestaurants[index];
+                                      return InkWell(
+                                        onTap: () {
+                                          Get.to(
+                                            RestaurantDetailScreen(
+                                              restaurantModel: item,
+                                            ),
+                                          );
+                                        },
+                                        child: RectangleWidget(
+                                          onNavigate: onNavigate,
+                                          title: item.resName,
+                                          description: item.address,
+                                          resturant_id: item.docID,
+                                          imagePath: item.logoImage,
+                                          timetext: '10 AM',
+                                          percentText: '25%',
+                                          endTimeText: '9 PM',
+                                          isFavorite: false.obs,
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
                               const SizedBox(height: 30),
                             ],
                           ),

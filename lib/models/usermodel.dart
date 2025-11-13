@@ -81,7 +81,8 @@ class UserModel {
 
   // Create a model instance from a Firestore DocumentSnapshot
   factory UserModel.fromDocumentSnapshot(
-      DocumentSnapshot<Map<String, dynamic>> doc) {
+    DocumentSnapshot<Map<String, dynamic>> doc,
+  ) {
     final data = doc.data()!;
     return UserModel(
       userEmail: TextEditingController(text: data['userEmail'] ?? ''),
@@ -89,7 +90,8 @@ class UserModel {
       username: TextEditingController(text: data['username'] ?? ''),
       confirmpass: TextEditingController(text: data['confirmpass'] ?? ''),
       token: data['fcmToken'],
-      userID: data['userID'] ??
+      userID:
+          data['userID'] ??
           doc.id, // Fallback to document ID if userID is missing
       userImage: RxString(data['userImage'] ?? ''),
     )..topThreeCuisines = List<String>.from(data['topThreeCuisines'] ?? []);

@@ -23,9 +23,7 @@ class EditProfilePage extends StatelessWidget {
       backgroundColor: AppColors.bgColor,
       appBar: AppBar(
         backgroundColor: AppColors.bgColor,
-        iconTheme: IconThemeData(
-          color: AppColors.primaryColor,
-        ),
+        iconTheme: IconThemeData(color: AppColors.primaryColor),
         centerTitle: true,
         automaticallyImplyLeading: true,
         leading: Padding(
@@ -71,9 +69,7 @@ class EditProfilePage extends StatelessWidget {
             key: _formkey,
             child: Column(
               children: [
-                SizedBox(
-                  height: 20,
-                ),
+                SizedBox(height: 20),
                 Stack(
                   clipBehavior: Clip.none,
                   children: [
@@ -100,24 +96,31 @@ class EditProfilePage extends StatelessWidget {
                             height: 92,
                             margin: EdgeInsets.all(5),
                             decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  image: controller.imagePath.isNotEmpty
-                                      ? FileImage(
-                                          File(
-                                            controller.imagePath.toString(),
-                                          ),
-                                        )
-                                      : currentUserDataModel!
-                                              .value.userImage.value.isNotEmpty
-                                          ? NetworkImage(currentUserDataModel
-                                                  ?.value.userImage.value ??
-                                              '')
-                                          : const AssetImage(
-                                              'assets/images/edit_profile_image.png',
-                                            ) as ImageProvider<Object>,
-                                  fit: BoxFit.cover,
-                                )),
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                image: controller.imagePath.isNotEmpty
+                                    ? FileImage(
+                                        File(controller.imagePath.toString()),
+                                      )
+                                    : currentUserDataModel!
+                                          .value
+                                          .userImage
+                                          .value
+                                          .isNotEmpty
+                                    ? NetworkImage(
+                                        currentUserDataModel
+                                                ?.value
+                                                .userImage
+                                                .value ??
+                                            '',
+                                      )
+                                    : const AssetImage(
+                                            'assets/images/edit_profile_image.png',
+                                          )
+                                          as ImageProvider<Object>,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -146,11 +149,16 @@ class EditProfilePage extends StatelessWidget {
                           height: 32,
                           width: 32,
                           decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: AppColors.primaryColor.withOpacity(0.9)),
+                            shape: BoxShape.circle,
+                            color: AppColors.primaryColor.withOpacity(0.9),
+                          ),
                           child: Padding(
                             padding: const EdgeInsets.only(
-                                left: 6, bottom: 8, top: 8, right: 6),
+                              left: 6,
+                              bottom: 8,
+                              top: 8,
+                              right: 6,
+                            ),
                             child: Image.asset(
                               'assets/images/camera_icon.png',
                               height: 16,
@@ -164,9 +172,7 @@ class EditProfilePage extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(
-                  height: 28,
-                ),
+                SizedBox(height: 28),
                 TextAndFieldWidget(
                   labelText: 'User Name',
                   hintText: 'Denna Jones',
@@ -174,7 +180,11 @@ class EditProfilePage extends StatelessWidget {
                   isSuffixIcon: true,
                   suffixIcon: Padding(
                     padding: const EdgeInsets.only(
-                        left: 12, bottom: 12, top: 12, right: 8),
+                      left: 12,
+                      bottom: 12,
+                      top: 12,
+                      right: 8,
+                    ),
                     child: Image.asset(
                       'assets/images/user_icon.png',
                       height: 20,
@@ -196,7 +206,11 @@ class EditProfilePage extends StatelessWidget {
                   isSuffixIcon: true,
                   suffixIcon: Padding(
                     padding: const EdgeInsets.only(
-                        left: 13.0, bottom: 8, top: 8, right: 13),
+                      left: 13.0,
+                      bottom: 8,
+                      top: 8,
+                      right: 13,
+                    ),
                     child: Image.asset(
                       'assets/images/email.icon.png',
                       height: 20,
@@ -217,9 +231,7 @@ class EditProfilePage extends StatelessWidget {
                     return null;
                   },
                 ),
-                SizedBox(
-                  height: 40,
-                ),
+                SizedBox(height: 40),
                 Center(
                   child: CustomButton(
                     laBelText: 'Save',
@@ -233,7 +245,10 @@ class EditProfilePage extends StatelessWidget {
                       if (_formkey.currentState!.validate()) {
                         if (controller.imagePath.isEmpty &&
                             (currentUserDataModel
-                                    ?.value.userImage.value.isEmpty ??
+                                    ?.value
+                                    .userImage
+                                    .value
+                                    .isEmpty ??
                                 false)) {
                           Get.snackbar(
                             'Image Required',

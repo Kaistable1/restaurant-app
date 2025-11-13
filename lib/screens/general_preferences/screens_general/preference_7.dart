@@ -22,9 +22,7 @@ class Preference7 extends StatelessWidget {
       backgroundColor: AppColors.bgColor,
       appBar: AppBar(
         backgroundColor: AppColors.bgColor,
-        iconTheme: IconThemeData(
-          color: AppColors.primaryColor,
-        ),
+        iconTheme: IconThemeData(color: AppColors.primaryColor),
         centerTitle: true,
         automaticallyImplyLeading: true,
         leading: Padding(
@@ -85,9 +83,7 @@ class Preference7 extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                height: 8,
-              ),
+              SizedBox(height: 8),
               Text(
                 'How far are you willing to travel for a great dining experience?',
                 style: TextStyle(
@@ -97,9 +93,7 @@ class Preference7 extends StatelessWidget {
                   fontSize: 16,
                 ),
               ),
-              SizedBox(
-                height: 16,
-              ),
+              SizedBox(height: 16),
               ListView.builder(
                 padding: EdgeInsets.zero,
                 shrinkWrap: true,
@@ -108,8 +102,9 @@ class Preference7 extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final preference = controller.preferences7[index];
                   return Obx(() {
-                    final isSelected = controller.selectedPreferences7
-                        .contains(preference["name"]);
+                    final isSelected = controller.selectedPreferences7.contains(
+                      preference["name"],
+                    );
                     final isOther = preference["name"] == "Other";
 
                     return GestureDetector(
@@ -149,9 +144,7 @@ class Preference7 extends StatelessWidget {
                   });
                 },
               ),
-              SizedBox(
-                height: 24,
-              ),
+              SizedBox(height: 24),
               Center(
                 child: CustomButton(
                   laBelText: 'Next',
@@ -175,16 +168,15 @@ class Preference7 extends StatelessWidget {
                     } else {
                       final signupController = Get.put(SignupController());
                       signupController.updateUserData(
-                          field: 'willingToTravel',
-                          entry: controller.selectedPreferences7.last);
+                        field: 'willingToTravel',
+                        entry: controller.selectedPreferences7.last,
+                      );
                       Get.to(() => Preference8());
                     }
                   },
                 ),
               ),
-              SizedBox(
-                height: 30,
-              ),
+              SizedBox(height: 30),
             ],
           ),
         ),

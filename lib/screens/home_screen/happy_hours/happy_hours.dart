@@ -83,33 +83,34 @@ class HappyHours extends StatelessWidget {
                 SizedBox(height: 10),
                 Obx(() {
                   return Padding(
-                      padding: EdgeInsets.only(left: 8, right: 8),
-                      child: GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          mainAxisExtent: 220,
-                          crossAxisCount: 2,
-                          crossAxisSpacing:
-                              10, // Adjust this if needed for column spacing
-                          mainAxisSpacing:
-                              5, // Reduced mainAxisSpacing to minimize row spacing
-                        ),
-                        itemCount: controller.happyHoursItems.length,
-                        itemBuilder: (context, index) {
-                          final item = controller.happyHoursItems[index];
-                          return RectangleWidget(
-                            onNavigate: onNavigate,
-                            title: item.title,
-                            description: item.description,
-                            imagePath: item.imagePath,
-                            timetext: item.startTimeText,
-                            percentText: item.percentText,
-                            isFavorite: false.obs,
-                            endTimeText: item.endTimeText,
-                          );
-                        },
-                      ));
+                    padding: EdgeInsets.only(left: 8, right: 8),
+                    child: GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        mainAxisExtent: 220,
+                        crossAxisCount: 2,
+                        crossAxisSpacing:
+                            10, // Adjust this if needed for column spacing
+                        mainAxisSpacing:
+                            5, // Reduced mainAxisSpacing to minimize row spacing
+                      ),
+                      itemCount: controller.happyHoursItems.length,
+                      itemBuilder: (context, index) {
+                        final item = controller.happyHoursItems[index];
+                        return RectangleWidget(
+                          onNavigate: onNavigate,
+                          title: item.title,
+                          description: item.description,
+                          imagePath: item.imagePath,
+                          timetext: item.startTimeText,
+                          percentText: item.percentText,
+                          isFavorite: false.obs,
+                          endTimeText: item.endTimeText,
+                        );
+                      },
+                    ),
+                  );
                 }),
                 SizedBox(height: 30),
               ],

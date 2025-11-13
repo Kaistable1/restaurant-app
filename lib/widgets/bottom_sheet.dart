@@ -29,25 +29,47 @@ void showFilterBottomSheet() {
               children: [
                 GestureDetector(
                   onTap: () => Get.back(),
-                  child: const Text("Cancel",
-                      style: TextStyle(color: Colors.red, fontSize: 16)),
+                  child: const Text(
+                    "Cancel",
+                    style: TextStyle(color: Colors.red, fontSize: 16),
+                  ),
                 ),
                 GestureDetector(
                   onTap: controller.clearAll,
-                  child: const Text("Clear all",
-                      style: TextStyle(color: Colors.red, fontSize: 16)),
+                  child: const Text(
+                    "Clear all",
+                    style: TextStyle(color: Colors.red, fontSize: 16),
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 10),
 
             // Country, City, and Language Selection
-            Obx(() => buildFilterSection("Country", controller.countries,
-                controller.selectedCountry, controller.selectCountry)),
-            Obx(() => buildFilterSection("City", controller.cities,
-                controller.selectedCity, controller.selectCity)),
-            Obx(() => buildFilterSection("Language", controller.languages,
-                controller.selectedLanguage, controller.selectLanguage)),
+            Obx(
+              () => buildFilterSection(
+                "Country",
+                controller.countries,
+                controller.selectedCountry,
+                controller.selectCountry,
+              ),
+            ),
+            Obx(
+              () => buildFilterSection(
+                "City",
+                controller.cities,
+                controller.selectedCity,
+                controller.selectCity,
+              ),
+            ),
+            Obx(
+              () => buildFilterSection(
+                "Language",
+                controller.languages,
+                controller.selectedLanguage,
+                controller.selectLanguage,
+              ),
+            ),
             Text(
               'Filter',
               style: TextStyle(

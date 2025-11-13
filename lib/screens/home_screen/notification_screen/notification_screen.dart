@@ -8,8 +8,9 @@ class NotificationScreen extends StatelessWidget {
   const NotificationScreen({super.key});
 
   Stream<QuerySnapshot> getUserNotificationsStream(String userId) {
-    final notificationsRef =
-        FirebaseFirestore.instance.collection('notifications');
+    final notificationsRef = FirebaseFirestore.instance.collection(
+      'notifications',
+    );
 
     return notificationsRef
         .where('createdAt', isGreaterThan: Timestamp(0, 0))
@@ -18,8 +19,9 @@ class NotificationScreen extends StatelessWidget {
   }
 
   Future<void> deleteAllNotifications(String userID) async {
-    final snapshot =
-        await FirebaseFirestore.instance.collection('notifications').get();
+    final snapshot = await FirebaseFirestore.instance
+        .collection('notifications')
+        .get();
 
     final batch = FirebaseFirestore.instance.batch();
 
@@ -61,8 +63,11 @@ class NotificationScreen extends StatelessWidget {
             ),
             child: GestureDetector(
               onTap: () => Get.back(),
-              child: const Icon(Icons.arrow_back,
-                  size: 18, color: AppColors.primaryColor),
+              child: const Icon(
+                Icons.arrow_back,
+                size: 18,
+                color: AppColors.primaryColor,
+              ),
             ),
           ),
         ),
@@ -83,7 +88,8 @@ class NotificationScreen extends StatelessWidget {
                 AlertDialog(
                   title: const Text('Confirm Delete'),
                   content: const Text(
-                      'Are you sure you want to delete all notifications?'),
+                    'Are you sure you want to delete all notifications?',
+                  ),
                   actions: [
                     TextButton(
                       onPressed: () => Get.back(result: false),
@@ -98,8 +104,12 @@ class NotificationScreen extends StatelessWidget {
               );
               if (confirm == true) {
                 await deleteAllNotifications(userID!);
-                Get.snackbar('Deleted', 'All notifications deleted',
-                    backgroundColor: Colors.white, colorText: Colors.black);
+                Get.snackbar(
+                  'Deleted',
+                  'All notifications deleted',
+                  backgroundColor: Colors.white,
+                  colorText: Colors.black,
+                );
               }
             },
           ),

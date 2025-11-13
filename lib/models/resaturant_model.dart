@@ -149,7 +149,8 @@ class RestaurantModel {
       dietaryList: List<String>.from(data['dietaryList'] ?? []),
       docID: data['docID'] ?? '',
       entertainmentScheduleList: List<EntertainmentScheduleModel>.from(
-          data['entertainmentScheduleList'] ?? []),
+        data['entertainmentScheduleList'] ?? [],
+      ),
       facilityList: List<String>.from(data['facilityList'] ?? []),
       imagesList: List<String>.from(data['resImages'] ?? []),
       latitude: (data['latitude'] ?? 0.0).toDouble(),
@@ -172,7 +173,8 @@ class RestaurantModel {
 
   // From Firestore Document
   static RestaurantModel fromDocumentSnapshot(
-      DocumentSnapshot<Map<String, dynamic>> snapshot) {
+    DocumentSnapshot<Map<String, dynamic>> snapshot,
+  ) {
     final data = snapshot.data()!;
 
     return RestaurantModel(
@@ -240,13 +242,14 @@ class EntertainmentScheduleModel {
 
   static EntertainmentScheduleModel initialize() {
     return EntertainmentScheduleModel(
-        date: '',
-        isSelected: false,
-        startTime: '',
-        endTime: '',
-        day: '',
-        eventName: '',
-        eventBy: '');
+      date: '',
+      isSelected: false,
+      startTime: '',
+      endTime: '',
+      day: '',
+      eventName: '',
+      eventBy: '',
+    );
   }
 
   // Convert to Map for Firestore
@@ -290,11 +293,7 @@ class MenuModel {
 
   // Initialize with default values
   static MenuModel initialize() {
-    return MenuModel(
-      cuisineType: '',
-      foodImages: [],
-      menuType: '',
-    );
+    return MenuModel(cuisineType: '', foodImages: [], menuType: '');
   }
 
   // Convert the model instance to a map for Firestore

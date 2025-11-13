@@ -28,8 +28,9 @@ class OnboardingScreen extends StatelessWidget {
                 decoration: const BoxDecoration(
                   image: DecorationImage(
                     fit: BoxFit.cover,
-                    image:
-                        AssetImage("assets/images/onboarding_background.png"),
+                    image: AssetImage(
+                      "assets/images/onboarding_background.png",
+                    ),
                   ),
                 ),
                 child: Center(
@@ -74,9 +75,7 @@ class OnboardingScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    SizedBox(
-                      height: 20,
-                    ),
+                    SizedBox(height: 20),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -86,18 +85,14 @@ class OnboardingScreen extends StatelessWidget {
                           width: 370,
                           height: 250,
                         ),
-                        const SizedBox(
-                          height: 30,
-                        ),
+                        const SizedBox(height: 30),
                         Padding(
                           padding: EdgeInsets.only(left: 0),
                           child: ChooseLocationWidget(controller: controller),
                         ),
                       ],
                     ),
-                    SizedBox(
-                      height: 50,
-                    ),
+                    SizedBox(height: 50),
                   ],
                 ),
               ),
@@ -110,10 +105,7 @@ class OnboardingScreen extends StatelessWidget {
 }
 
 class ChooseLocationWidget extends StatelessWidget {
-  const ChooseLocationWidget({
-    super.key,
-    required this.controller,
-  });
+  const ChooseLocationWidget({super.key, required this.controller});
 
   final OnboardingController controller;
 
@@ -134,71 +126,60 @@ class ChooseLocationWidget extends StatelessWidget {
             ),
           ),
           SizedBox(height: 10),
-          Obx(() => Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  DropDownButton(
-                    hintText: 'Country',
-                    items: const ["USA", "France"],
-                    containerColor: const Color(0xFFFFFFFF),
-                    textColor: Colors.grey,
-                    onChanged: (value) {
-                      controller.selectedCountry.value = value!;
-                      controller.hasError.value = false;
-                    },
-                    selectedValue: controller.selectedCountry.value,
-                    height: 52,
-                    width: 320,
-                    hintfontsize: 12,
+          Obx(
+            () => Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                DropDownButton(
+                  hintText: 'Country',
+                  items: const ["USA", "France"],
+                  containerColor: const Color(0xFFFFFFFF),
+                  textColor: Colors.grey,
+                  onChanged: (value) {
+                    controller.selectedCountry.value = value!;
+                    controller.hasError.value = false;
+                  },
+                  selectedValue: controller.selectedCountry.value,
+                  height: 52,
+                  width: 320,
+                  hintfontsize: 12,
+                ),
+                SizedBox(height: 10),
+                DropDownButton(
+                  height: 52,
+                  width: 320,
+                  hintText: "City",
+                  hintfontsize: 14,
+                  dropdownItemWidth: 100,
+                  items: controller.selectedCountry.value == 'USA'
+                      ? const ["New York", "Los Angeles"]
+                      : const ["Paris"],
+                  selectedValue: controller.selectedCity.value,
+                  onChanged: (value) {
+                    controller.selectedCity.value = value!;
+                    controller.hasError.value = false;
+                  },
+                  containerColor: const Color(0xFFFFFFFF),
+                  textColor: Colors.grey,
+                ),
+                const SizedBox(height: 20),
+                if (controller.hasError.value)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(Icons.error_outline, color: Colors.red, size: 12),
+                      const SizedBox(width: 5),
+                      Text(
+                        'Please select both country and city.',
+                        style: TextStyle(color: Colors.red, fontSize: 10),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 10),
-                  DropDownButton(
-                    height: 52,
-                    width: 320,
-                    hintText: "City",
-                    hintfontsize: 14,
-                    dropdownItemWidth: 100,
-                    items: controller.selectedCountry.value == 'USA'
-                        ? const [
-                            "New York",
-                            "Los Angeles",
-                          ]
-                        : const [
-                            "Paris",
-                          ],
-                    selectedValue: controller.selectedCity.value,
-                    onChanged: (value) {
-                      controller.selectedCity.value = value!;
-                      controller.hasError.value = false;
-                    },
-                    containerColor: const Color(0xFFFFFFFF),
-                    textColor: Colors.grey,
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  if (controller.hasError.value)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.error_outline,
-                          color: Colors.red,
-                          size: 12,
-                        ),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Text(
-                          'Please select both country and city.',
-                          style: TextStyle(color: Colors.red, fontSize: 10),
-                        ),
-                      ],
-                    ),
-                ],
-              )),
+              ],
+            ),
+          ),
           SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -243,9 +224,7 @@ class ChooseLocationWidget extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(
-            height: 100,
-          )
+          const SizedBox(height: 100),
         ],
       ),
     );

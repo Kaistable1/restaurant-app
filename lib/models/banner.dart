@@ -10,7 +10,6 @@ class BannerModel {
   String userID;
   String status;
 
-
   BannerModel({
     required this.bannerImage,
     required this.title,
@@ -24,14 +23,15 @@ class BannerModel {
 
   static BannerModel initialize() {
     return BannerModel(
-        bannerImage: '',
-        title: '',
-        state: '',
-        city: '',
-        startDate: '',
-        endDate: '',
-        userID: '',
-        status: '');
+      bannerImage: '',
+      title: '',
+      state: '',
+      city: '',
+      startDate: '',
+      endDate: '',
+      userID: '',
+      status: '',
+    );
   }
 
   Map<String, dynamic> toJson() {
@@ -42,13 +42,14 @@ class BannerModel {
       'city': city,
       'startDate': startDate,
       'endDate': endDate,
-      'userID':userID,
-      'status':status,
+      'userID': userID,
+      'status': status,
     };
   }
 
   static BannerModel fromDocumentSnapshot(
-      DocumentSnapshot<Map<String, dynamic>> snapshot) {
+    DocumentSnapshot<Map<String, dynamic>> snapshot,
+  ) {
     final doc = snapshot.data()!;
     return BannerModel(
       bannerImage: doc['bannerImage'] ?? '',
@@ -57,8 +58,8 @@ class BannerModel {
       city: doc['city'] ?? '',
       startDate: doc['startDate'] ?? '',
       endDate: doc['endDate'] ?? '',
-      userID: doc['userID'] ??'',
-      status: doc['status']??'',
+      userID: doc['userID'] ?? '',
+      status: doc['status'] ?? '',
     );
   }
 }

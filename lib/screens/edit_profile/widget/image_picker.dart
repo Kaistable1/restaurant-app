@@ -3,13 +3,12 @@ import 'package:get/get.dart';
 import '../../../../constants/app_colors.dart';
 
 void pickImageBottomSheet(
-    void Function() onCameraPressed, void Function() onGalleryPressed) {
+  void Function() onCameraPressed,
+  void Function() onGalleryPressed,
+) {
   Get.bottomSheet(
     BottomSheet(
-      constraints: BoxConstraints(
-        maxHeight: 200,
-        minWidth: Get.width,
-      ),
+      constraints: BoxConstraints(maxHeight: 200, minWidth: Get.width),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20),
@@ -35,9 +34,7 @@ void pickImageBottomSheet(
               imageIcon: 'assets/images/camera_icon.png',
               onTap: onCameraPressed,
             ),
-            SizedBox(
-              height: 16,
-            ),
+            SizedBox(height: 16),
             ImageSelectWidget(
               name: 'Choose from gallery',
               imageIcon: 'assets/images/choosefrom_gallery.png',
@@ -84,15 +81,14 @@ class ImageSelectWidget extends StatelessWidget {
               fit: BoxFit.fill,
               color: AppColors.primaryColor,
             ),
-            SizedBox(
-              width: 8,
-            ),
+            SizedBox(width: 8),
             Text(
               name,
               style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  fontFamily: 'Nunito-Sans'),
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                fontFamily: 'Nunito-Sans',
+              ),
             ),
           ],
         ),

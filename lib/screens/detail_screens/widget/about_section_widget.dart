@@ -19,9 +19,7 @@ class AboutSectionWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
-          height: 20,
-        ),
+        SizedBox(height: 20),
         Padding(
           padding: const EdgeInsets.only(left: 16.0, right: 16),
           child: Text(
@@ -34,15 +32,9 @@ class AboutSectionWidget extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(
-          height: 10,
-        ),
-        MyAbout(
-          resturantID: resturantID,
-        ),
-        SizedBox(
-          height: 10,
-        ),
+        SizedBox(height: 10),
+        MyAbout(resturantID: resturantID),
+        SizedBox(height: 10),
         aboutText.contains('Soon')
             ? SizedBox()
             : Column(
@@ -81,10 +73,7 @@ class AboutSectionWidget extends StatelessWidget {
 }
 
 class MyAbout extends StatelessWidget {
-  MyAbout({
-    super.key,
-    required this.resturantID,
-  });
+  MyAbout({super.key, required this.resturantID});
   String resturantID;
   @override
   Widget build(BuildContext context) {
@@ -94,10 +83,10 @@ class MyAbout extends StatelessWidget {
         stream: resturantID == ''
             ? null
             : FirebaseFirestore.instance
-                .collection('restaurants')
-                .doc(resturantID)
-                .collection('operatingHours')
-                .snapshots(),
+                  .collection('restaurants')
+                  .doc(resturantID)
+                  .collection('operatingHours')
+                  .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -116,12 +105,13 @@ class MyAbout extends StatelessWidget {
             'Thursday',
             'Friday',
             'Saturday',
-            'Sunday'
+            'Sunday',
           ];
           // Sort operatingHours by day order
           operatingHours.sort((a, b) {
-            int indexA =
-                dayOrder.indexOf(a.id); // Use the document ID (e.g., "Monday")
+            int indexA = dayOrder.indexOf(
+              a.id,
+            ); // Use the document ID (e.g., "Monday")
             int indexB = dayOrder.indexOf(b.id);
             return indexA.compareTo(indexB);
           });
@@ -142,10 +132,14 @@ class MyAbout extends StatelessWidget {
             }
 
             // Use your `_buildRow` method
-            return _buildRow(day, getTimeRange(breakfast), getTimeRange(brunch),
-                getTimeRange(lunch), getTimeRange(dinner)
-                // getTimeRange(lateNight),
-                );
+            return _buildRow(
+              day,
+              getTimeRange(breakfast),
+              getTimeRange(brunch),
+              getTimeRange(lunch),
+              getTimeRange(dinner),
+              // getTimeRange(lateNight),
+            );
           }).toList();
 
           return Container(
@@ -156,7 +150,11 @@ class MyAbout extends StatelessWidget {
             width: Get.width,
             child: Padding(
               padding: const EdgeInsets.only(
-                  left: 4.0, right: 4, top: 22, bottom: 10),
+                left: 4.0,
+                right: 4,
+                top: 22,
+                bottom: 10,
+              ),
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: DataTable(
@@ -185,7 +183,7 @@ class MyAbout extends StatelessWidget {
                               height: Get.height,
                               width: 0.5,
                               color: AppColors.hintText,
-                            )
+                            ),
                           ],
                         ),
                       ),
@@ -256,8 +254,13 @@ class MyAbout extends StatelessWidget {
     );
   }
 
-  DataRow _buildRow(String day, String breakfast, String brunch, String lunch,
-      String dinner) {
+  DataRow _buildRow(
+    String day,
+    String breakfast,
+    String brunch,
+    String lunch,
+    String dinner,
+  ) {
     Color availableColor = AppColors.primaryColor.withOpacity(.9);
     Color closedColor = AppColors.hintText.withOpacity(.8);
 

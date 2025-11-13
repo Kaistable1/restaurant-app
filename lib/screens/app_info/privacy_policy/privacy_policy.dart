@@ -20,9 +20,7 @@ class PrivacyPolicy extends StatelessWidget {
         backgroundColor: AppColors.bgColor,
         appBar: AppBar(
           backgroundColor: AppColors.bgColor,
-          iconTheme: const IconThemeData(
-            color: AppColors.primaryColor,
-          ),
+          iconTheme: const IconThemeData(color: AppColors.primaryColor),
           centerTitle: true,
           leading: Padding(
             padding: const EdgeInsets.all(12.0),
@@ -67,18 +65,20 @@ class PrivacyPolicy extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 20),
-                Obx(() => Text(
-                      controller.privacyPolicyText.value.isNotEmpty
-                          ? controller.privacyPolicyText.value
-                          : 'Loading privacy policy...',
-                      textAlign: TextAlign.justify,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontFamily: "Nunito-Regular",
-                        color: Color(0xFF656D7B),
-                        fontWeight: FontWeight.w400,
-                      ),
-                    )),
+                Obx(
+                  () => Text(
+                    controller.privacyPolicyText.value.isNotEmpty
+                        ? controller.privacyPolicyText.value
+                        : 'Loading privacy policy...',
+                    textAlign: TextAlign.justify,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontFamily: "Nunito-Regular",
+                      color: Color(0xFF656D7B),
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 2),
               ],
             ),

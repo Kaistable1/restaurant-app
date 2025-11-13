@@ -42,9 +42,9 @@ class HomeFilterController extends GetxController {
       final filteredMap = _originalCuisineMap.entries
           .where((entry) => entry.key.toLowerCase().contains(searchText))
           .fold<Map<String, List<String>>>({}, (map, entry) {
-        map[entry.key] = entry.value;
-        return map;
-      });
+            map[entry.key] = entry.value;
+            return map;
+          });
       cusinesMapFilter.clear();
       cusinesMapFilter.addAll(filteredMap);
     }
@@ -91,12 +91,14 @@ class HomeFilterController extends GetxController {
     yield cuisineMap;
   }
 
-  Future<Map<String, List<String>>> getRestaurantsGroupedByAddress(
-      {String? city}) async {
+  Future<Map<String, List<String>>> getRestaurantsGroupedByAddress({
+    String? city,
+  }) async {
     final firestore = FirebaseFirestore.instance;
 
-    QuerySnapshot restaurantsSnapshot =
-        await firestore.collection('restaurants').get();
+    QuerySnapshot restaurantsSnapshot = await firestore
+        .collection('restaurants')
+        .get();
 
     Map<String, List<String>> addressMap = {};
 

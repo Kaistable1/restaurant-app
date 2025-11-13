@@ -23,9 +23,7 @@ class Preference8 extends StatelessWidget {
       backgroundColor: AppColors.bgColor,
       appBar: AppBar(
         backgroundColor: AppColors.bgColor,
-        iconTheme: IconThemeData(
-          color: AppColors.primaryColor,
-        ),
+        iconTheme: IconThemeData(color: AppColors.primaryColor),
         centerTitle: true,
         automaticallyImplyLeading: true,
         leading: Padding(
@@ -88,9 +86,7 @@ class Preference8 extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: 8,
-                ),
+                SizedBox(height: 8),
                 Text(
                   'What type of notifications would you like to receive? ',
                   style: TextStyle(
@@ -100,9 +96,7 @@ class Preference8 extends StatelessWidget {
                     fontSize: 16,
                   ),
                 ),
-                SizedBox(
-                  height: 16,
-                ),
+                SizedBox(height: 16),
                 ListView.builder(
                   padding: EdgeInsets.zero,
                   shrinkWrap: true,
@@ -160,9 +154,7 @@ class Preference8 extends StatelessWidget {
                     });
                   },
                 ),
-                SizedBox(
-                  height: 24,
-                ),
+                SizedBox(height: 24),
                 Center(
                   child: CustomButton(
                     laBelText: 'Next',
@@ -200,21 +192,21 @@ class Preference8 extends StatelessWidget {
                           return;
                         }
                         if (controller.screen8Controller.text.isNotEmpty) {
-                          controller.selectedPreferences8
-                              .add(controller.screen8Controller.text);
+                          controller.selectedPreferences8.add(
+                            controller.screen8Controller.text,
+                          );
                         }
                         final signupController = Get.put(SignupController());
                         signupController.updateUserData(
-                            field: 'notificationType',
-                            entry: controller.selectedPreferences8);
+                          field: 'notificationType',
+                          entry: controller.selectedPreferences8,
+                        );
                         Get.to(() => Preference9());
                       }
                     },
                   ),
                 ),
-                SizedBox(
-                  height: 30,
-                ),
+                SizedBox(height: 30),
               ],
             ),
           ),

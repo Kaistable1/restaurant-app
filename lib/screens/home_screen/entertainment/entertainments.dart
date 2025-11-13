@@ -13,12 +13,10 @@ import '../home_controller/home_new_controller.dart';
 class EntertainmentsScreen extends StatelessWidget {
   final Function(int)? onNavigate;
   final HomeNewController newController = Get.put(HomeNewController());
-  final HomeLocationController homeController =
-      Get.put(HomeLocationController());
-  EntertainmentsScreen({
-    super.key,
-    this.onNavigate,
-  }) {
+  final HomeLocationController homeController = Get.put(
+    HomeLocationController(),
+  );
+  EntertainmentsScreen({super.key, this.onNavigate}) {
     homeController.selectedTop.value = '';
   }
 
@@ -107,7 +105,11 @@ class EntertainmentsScreen extends StatelessWidget {
                         isShadow: true,
                         prefixIcon: Padding(
                           padding: const EdgeInsets.only(
-                              left: 4, top: 8, bottom: 8, right: 0),
+                            left: 4,
+                            top: 8,
+                            bottom: 8,
+                            right: 0,
+                          ),
                           child: Image.asset(
                             'assets/images/search_icon.png',
                             fit: BoxFit.contain,
@@ -156,67 +158,70 @@ class EntertainmentsScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 12),
                     StreamBuilder(
-                        stream: homeController.getEntertainmentRestaurants(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return buildShimmerEffect();
-                          }
+                      stream: homeController.getEntertainmentRestaurants(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return buildShimmerEffect();
+                        }
 
-                          if (snapshot.hasError) {
-                            print('Error during stream call ${snapshot.error}');
-                            return Text(''); // Show error message if any
-                          }
+                        if (snapshot.hasError) {
+                          print('Error during stream call ${snapshot.error}');
+                          return Text(''); // Show error message if any
+                        }
 
-                          if (snapshot.data == null || snapshot.data!.isEmpty) {
-                            return Text(
-                                'No restaurants found'); // Handle the case where data is null or empty
-                          }
+                        if (snapshot.data == null || snapshot.data!.isEmpty) {
+                          return Text(
+                            'No restaurants found',
+                          ); // Handle the case where data is null or empty
+                        }
 
-                          List<RestaurantModel> restaurants = snapshot.data!;
-                          // Initialize filtered restaurants
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            homeController.initializeSelectors(restaurants);
-                          });
-                          return GetBuilder<HomeLocationController>(
-                            builder: (controller) {
-                              return GridView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                  mainAxisExtent: Get.height * 0.18,
-                                  crossAxisCount: 2,
-                                  crossAxisSpacing: 10,
-                                  mainAxisSpacing: 20,
-                                ),
-                                itemCount:
-                                    controller.filteredRestaurants.length,
-                                itemBuilder: (context, index) {
-                                  final item =
-                                      controller.filteredRestaurants[index];
-                                  return InkWell(
-                                    onTap: () {
-                                      Get.to(RestaurantDetailScreen(
+                        List<RestaurantModel> restaurants = snapshot.data!;
+                        // Initialize filtered restaurants
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          homeController.initializeSelectors(restaurants);
+                        });
+                        return GetBuilder<HomeLocationController>(
+                          builder: (controller) {
+                            return GridView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                    mainAxisExtent: Get.height * 0.18,
+                                    crossAxisCount: 2,
+                                    crossAxisSpacing: 10,
+                                    mainAxisSpacing: 20,
+                                  ),
+                              itemCount: controller.filteredRestaurants.length,
+                              itemBuilder: (context, index) {
+                                final item =
+                                    controller.filteredRestaurants[index];
+                                return InkWell(
+                                  onTap: () {
+                                    Get.to(
+                                      RestaurantDetailScreen(
                                         restaurantModel: item,
-                                      ));
-                                    },
-                                    child: RectangleWidget(
-                                      title: item.resName,
-                                      description: item.address,
-                                      resturant_id: item.docID,
-                                      imagePath: item.logoImage,
-                                      timetext: '10 AM',
-                                      percentText: '25%',
-                                      endTimeText: '9 PM',
-                                      isFavorite: false.obs,
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                          );
-                        }),
+                                      ),
+                                    );
+                                  },
+                                  child: RectangleWidget(
+                                    title: item.resName,
+                                    description: item.address,
+                                    resturant_id: item.docID,
+                                    imagePath: item.logoImage,
+                                    timetext: '10 AM',
+                                    percentText: '25%',
+                                    endTimeText: '9 PM',
+                                    isFavorite: false.obs,
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        );
+                      },
+                    ),
                     const SizedBox(height: 30),
                   ],
                 ),

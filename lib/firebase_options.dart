@@ -72,5 +72,4 @@ class DefaultFirebaseOptions {
     projectId: 'restaurantwebsite-4bdd8',
     storageBucket: 'restaurantwebsite-4bdd8.firebasestorage.app',
   );
-
 }

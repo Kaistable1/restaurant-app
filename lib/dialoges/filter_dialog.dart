@@ -19,14 +19,14 @@ void filterSelectionDialogueBox() {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          insetPadding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 24),
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 24,
+          ),
           backgroundColor: Colors.white,
           surfaceTintColor: Colors.white,
           child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-            ),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,9 +66,7 @@ void filterSelectionDialogueBox() {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(
-                            height: 20,
-                          ),
+                          SizedBox(height: 20),
                           Text(
                             'Location',
                             style: TextStyle(
@@ -78,9 +76,7 @@ void filterSelectionDialogueBox() {
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          SizedBox(
-                            height: 12,
-                          ),
+                          SizedBox(height: 12),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -103,9 +99,7 @@ void filterSelectionDialogueBox() {
                                   ),
                                 ),
                               ),
-                              SizedBox(
-                                width: 16,
-                              ),
+                              SizedBox(width: 16),
                               Expanded(
                                 child: Obx(
                                   () => DropDownButton(
@@ -115,15 +109,11 @@ void filterSelectionDialogueBox() {
                                     fontfamily: 'Nunito-Sans',
                                     hintfontsize: 14,
                                     dropdownItemWidth: 100,
-                                    items: controller.selectedCountry.value ==
+                                    items:
+                                        controller.selectedCountry.value ==
                                             'USA'
-                                        ? const [
-                                            "New York",
-                                            "Los Angeles",
-                                          ]
-                                        : const [
-                                            "Paris",
-                                          ],
+                                        ? const ["New York", "Los Angeles"]
+                                        : const ["Paris"],
                                     selectedValue:
                                         controller.selectedCity.value,
                                     onChanged: (value) {
@@ -136,9 +126,7 @@ void filterSelectionDialogueBox() {
                               ),
                             ],
                           ),
-                          SizedBox(
-                            height: 16,
-                          ),
+                          SizedBox(height: 16),
                           Text(
                             'Language',
                             style: TextStyle(
@@ -148,18 +136,12 @@ void filterSelectionDialogueBox() {
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          SizedBox(
-                            height: 12,
-                          ),
+                          SizedBox(height: 12),
                           Obx(
                             () => DropDownButton(
                               hintText: 'Language',
                               fontfamily: 'Nunito-Sans',
-                              items: const [
-                                "English",
-                                "French",
-                                "Spanish",
-                              ],
+                              items: const ["English", "French", "Spanish"],
                               containerColor: const Color(0xFFFFFFFF),
                               textColor: Colors.grey,
                               onChanged: (value) {
@@ -171,9 +153,7 @@ void filterSelectionDialogueBox() {
                               hintfontsize: 12,
                             ),
                           ),
-                          SizedBox(
-                            height: 16,
-                          ),
+                          SizedBox(height: 16),
                           Text(
                             'Cuisines',
                             style: TextStyle(
@@ -183,46 +163,43 @@ void filterSelectionDialogueBox() {
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          SizedBox(
-                            height: 12,
-                          ),
+                          SizedBox(height: 12),
                           LayoutBuilder(
                             builder: (context, constraints) {
                               double availableWidth = constraints.maxWidth;
                               return Obx(
                                 () => Wrap(
-                                    direction: Axis.horizontal,
-                                    spacing: 10,
-                                    runSpacing: 10,
-                                    children: [
-                                      ...List.generate(
-                                        controller.filterNames.length,
-                                        (index) {
-                                          final name =
-                                              controller.filterNames[index];
-                                          final isSelected = controller
-                                              .selectedFilters
-                                              .contains(name);
-                                          return ConstrainedBox(
-                                            constraints: BoxConstraints(
-                                              maxWidth: availableWidth / 1,
-                                            ),
-                                            child: FilterSelectionWidgetForHome(
-                                              name: name,
-                                              isSelected: isSelected,
-                                              onTap: () =>
-                                                  controller.toggleFilter(name),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ]),
+                                  direction: Axis.horizontal,
+                                  spacing: 10,
+                                  runSpacing: 10,
+                                  children: [
+                                    ...List.generate(
+                                      controller.filterNames.length,
+                                      (index) {
+                                        final name =
+                                            controller.filterNames[index];
+                                        final isSelected = controller
+                                            .selectedFilters
+                                            .contains(name);
+                                        return ConstrainedBox(
+                                          constraints: BoxConstraints(
+                                            maxWidth: availableWidth / 1,
+                                          ),
+                                          child: FilterSelectionWidgetForHome(
+                                            name: name,
+                                            isSelected: isSelected,
+                                            onTap: () =>
+                                                controller.toggleFilter(name),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
                               );
                             },
                           ),
-                          SizedBox(
-                            height: 16,
-                          ),
+                          SizedBox(height: 16),
                           Text(
                             'Discount Type',
                             style: TextStyle(
@@ -232,46 +209,43 @@ void filterSelectionDialogueBox() {
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          SizedBox(
-                            height: 12,
-                          ),
+                          SizedBox(height: 12),
                           LayoutBuilder(
                             builder: (context, constraints) {
                               double availableWidth = constraints.maxWidth;
                               return Obx(
                                 () => Wrap(
-                                    direction: Axis.horizontal,
-                                    spacing: 10,
-                                    runSpacing: 10,
-                                    children: [
-                                      ...List.generate(
-                                        controller.discountType.length,
-                                        (index) {
-                                          final name =
-                                              controller.discountType[index];
-                                          final isSelected = controller
-                                              .selectedDiscounts
-                                              .contains(name);
-                                          return ConstrainedBox(
-                                            constraints: BoxConstraints(
-                                              maxWidth: availableWidth / 1,
-                                            ),
-                                            child: FilterSelectionWidgetForHome(
-                                              name: name,
-                                              isSelected: isSelected,
-                                              onTap: () => controller
-                                                  .toggleDiscounts(name),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ]),
+                                  direction: Axis.horizontal,
+                                  spacing: 10,
+                                  runSpacing: 10,
+                                  children: [
+                                    ...List.generate(
+                                      controller.discountType.length,
+                                      (index) {
+                                        final name =
+                                            controller.discountType[index];
+                                        final isSelected = controller
+                                            .selectedDiscounts
+                                            .contains(name);
+                                        return ConstrainedBox(
+                                          constraints: BoxConstraints(
+                                            maxWidth: availableWidth / 1,
+                                          ),
+                                          child: FilterSelectionWidgetForHome(
+                                            name: name,
+                                            isSelected: isSelected,
+                                            onTap: () => controller
+                                                .toggleDiscounts(name),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
                               );
                             },
                           ),
-                          SizedBox(
-                            height: 16,
-                          ),
+                          SizedBox(height: 16),
                           Text(
                             'Time of Day',
                             style: TextStyle(
@@ -281,46 +255,43 @@ void filterSelectionDialogueBox() {
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          SizedBox(
-                            height: 12,
-                          ),
+                          SizedBox(height: 12),
                           LayoutBuilder(
                             builder: (context, constraints) {
                               double availableWidth = constraints.maxWidth;
                               return Obx(
                                 () => Wrap(
-                                    direction: Axis.horizontal,
-                                    spacing: 10,
-                                    runSpacing: 10,
-                                    children: [
-                                      ...List.generate(
-                                        controller.timeOfDay.length,
-                                        (index) {
-                                          final name =
-                                              controller.timeOfDay[index];
-                                          final isSelected = controller
-                                              .selectedTimeOfDay
-                                              .contains(name);
-                                          return ConstrainedBox(
-                                            constraints: BoxConstraints(
-                                              maxWidth: availableWidth / 1,
-                                            ),
-                                            child: FilterSelectionWidgetForHome(
-                                              name: name,
-                                              isSelected: isSelected,
-                                              onTap: () => controller
-                                                  .toggleTimeOfDay(name),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ]),
+                                  direction: Axis.horizontal,
+                                  spacing: 10,
+                                  runSpacing: 10,
+                                  children: [
+                                    ...List.generate(
+                                      controller.timeOfDay.length,
+                                      (index) {
+                                        final name =
+                                            controller.timeOfDay[index];
+                                        final isSelected = controller
+                                            .selectedTimeOfDay
+                                            .contains(name);
+                                        return ConstrainedBox(
+                                          constraints: BoxConstraints(
+                                            maxWidth: availableWidth / 1,
+                                          ),
+                                          child: FilterSelectionWidgetForHome(
+                                            name: name,
+                                            isSelected: isSelected,
+                                            onTap: () => controller
+                                                .toggleTimeOfDay(name),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
                               );
                             },
                           ),
-                          SizedBox(
-                            height: 16,
-                          ),
+                          SizedBox(height: 16),
                           Text(
                             'Atmospheres',
                             style: TextStyle(
@@ -330,46 +301,43 @@ void filterSelectionDialogueBox() {
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          SizedBox(
-                            height: 12,
-                          ),
+                          SizedBox(height: 12),
                           LayoutBuilder(
                             builder: (context, constraints) {
                               double availableWidth = constraints.maxWidth;
                               return Obx(
                                 () => Wrap(
-                                    direction: Axis.horizontal,
-                                    spacing: 10,
-                                    runSpacing: 10,
-                                    children: [
-                                      ...List.generate(
-                                        controller.atmosphere.length,
-                                        (index) {
-                                          final name =
-                                              controller.atmosphere[index];
-                                          final isSelected = controller
-                                              .selectedAtmosphere
-                                              .contains(name);
-                                          return ConstrainedBox(
-                                            constraints: BoxConstraints(
-                                              maxWidth: availableWidth / 1,
-                                            ),
-                                            child: FilterSelectionWidgetForHome(
-                                              name: name,
-                                              isSelected: isSelected,
-                                              onTap: () => controller
-                                                  .toggleAtmosphere(name),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ]),
+                                  direction: Axis.horizontal,
+                                  spacing: 10,
+                                  runSpacing: 10,
+                                  children: [
+                                    ...List.generate(
+                                      controller.atmosphere.length,
+                                      (index) {
+                                        final name =
+                                            controller.atmosphere[index];
+                                        final isSelected = controller
+                                            .selectedAtmosphere
+                                            .contains(name);
+                                        return ConstrainedBox(
+                                          constraints: BoxConstraints(
+                                            maxWidth: availableWidth / 1,
+                                          ),
+                                          child: FilterSelectionWidgetForHome(
+                                            name: name,
+                                            isSelected: isSelected,
+                                            onTap: () => controller
+                                                .toggleAtmosphere(name),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
                               );
                             },
                           ),
-                          SizedBox(
-                            height: 16,
-                          ),
+                          SizedBox(height: 16),
                           Text(
                             'Facilities/services',
                             style: TextStyle(
@@ -379,9 +347,7 @@ void filterSelectionDialogueBox() {
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          SizedBox(
-                            height: 12,
-                          ),
+                          SizedBox(height: 12),
                           SizedBox(
                             width: 350,
                             child: LayoutBuilder(
@@ -389,40 +355,38 @@ void filterSelectionDialogueBox() {
                                 double availableWidth = constraints.maxWidth;
                                 return Obx(
                                   () => Wrap(
-                                      direction: Axis.horizontal,
-                                      spacing: 10,
-                                      runSpacing: 10,
-                                      children: [
-                                        ...List.generate(
-                                          controller.facilities.length,
-                                          (index) {
-                                            final name =
-                                                controller.facilities[index];
-                                            final isSelected = controller
-                                                .selectedFacilities
-                                                .contains(name);
-                                            return ConstrainedBox(
-                                              constraints: BoxConstraints(
-                                                maxWidth: availableWidth / 1,
-                                              ),
-                                              child:
-                                                  FilterSelectionWidgetForHome(
-                                                name: name,
-                                                isSelected: isSelected,
-                                                onTap: () => controller
-                                                    .toggleFacilities(name),
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ]),
+                                    direction: Axis.horizontal,
+                                    spacing: 10,
+                                    runSpacing: 10,
+                                    children: [
+                                      ...List.generate(
+                                        controller.facilities.length,
+                                        (index) {
+                                          final name =
+                                              controller.facilities[index];
+                                          final isSelected = controller
+                                              .selectedFacilities
+                                              .contains(name);
+                                          return ConstrainedBox(
+                                            constraints: BoxConstraints(
+                                              maxWidth: availableWidth / 1,
+                                            ),
+                                            child: FilterSelectionWidgetForHome(
+                                              name: name,
+                                              isSelected: isSelected,
+                                              onTap: () => controller
+                                                  .toggleFacilities(name),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 );
                               },
                             ),
                           ),
-                          SizedBox(
-                            height: 16,
-                          ),
+                          SizedBox(height: 16),
                           Text(
                             'Dietary Preferences',
                             style: TextStyle(
@@ -432,9 +396,7 @@ void filterSelectionDialogueBox() {
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          SizedBox(
-                            height: 12,
-                          ),
+                          SizedBox(height: 12),
                           SizedBox(
                             width: 350,
                             child: LayoutBuilder(
@@ -442,40 +404,38 @@ void filterSelectionDialogueBox() {
                                 double availableWidth = constraints.maxWidth;
                                 return Obx(
                                   () => Wrap(
-                                      direction: Axis.horizontal,
-                                      spacing: 10,
-                                      runSpacing: 10,
-                                      children: [
-                                        ...List.generate(
-                                          controller.dietaryPreferences.length,
-                                          (index) {
-                                            final name = controller
-                                                .dietaryPreferences[index];
-                                            final isSelected = controller
-                                                .selectedDietary
-                                                .contains(name);
-                                            return ConstrainedBox(
-                                              constraints: BoxConstraints(
-                                                maxWidth: availableWidth / 1,
-                                              ),
-                                              child:
-                                                  FilterSelectionWidgetForHome(
-                                                name: name,
-                                                isSelected: isSelected,
-                                                onTap: () => controller
-                                                    .toggleDietary(name),
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ]),
+                                    direction: Axis.horizontal,
+                                    spacing: 10,
+                                    runSpacing: 10,
+                                    children: [
+                                      ...List.generate(
+                                        controller.dietaryPreferences.length,
+                                        (index) {
+                                          final name = controller
+                                              .dietaryPreferences[index];
+                                          final isSelected = controller
+                                              .selectedDietary
+                                              .contains(name);
+                                          return ConstrainedBox(
+                                            constraints: BoxConstraints(
+                                              maxWidth: availableWidth / 1,
+                                            ),
+                                            child: FilterSelectionWidgetForHome(
+                                              name: name,
+                                              isSelected: isSelected,
+                                              onTap: () => controller
+                                                  .toggleDietary(name),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 );
                               },
                             ),
                           ),
-                          SizedBox(
-                            height: 16,
-                          ),
+                          SizedBox(height: 16),
                           Text(
                             'Experience',
                             style: TextStyle(
@@ -485,9 +445,7 @@ void filterSelectionDialogueBox() {
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          SizedBox(
-                            height: 12,
-                          ),
+                          SizedBox(height: 12),
                           SizedBox(
                             width: 350,
                             child: LayoutBuilder(
@@ -495,40 +453,38 @@ void filterSelectionDialogueBox() {
                                 double availableWidth = constraints.maxWidth;
                                 return Obx(
                                   () => Wrap(
-                                      direction: Axis.horizontal,
-                                      spacing: 10,
-                                      runSpacing: 10,
-                                      children: [
-                                        ...List.generate(
-                                          controller.entertainment.length,
-                                          (index) {
-                                            final name =
-                                                controller.entertainment[index];
-                                            final isSelected = controller
-                                                .selectedEntertainment
-                                                .contains(name);
-                                            return ConstrainedBox(
-                                              constraints: BoxConstraints(
-                                                maxWidth: availableWidth / 1,
-                                              ),
-                                              child:
-                                                  FilterSelectionWidgetForHome(
-                                                name: name,
-                                                isSelected: isSelected,
-                                                onTap: () => controller
-                                                    .toggleEntertainment(name),
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ]),
+                                    direction: Axis.horizontal,
+                                    spacing: 10,
+                                    runSpacing: 10,
+                                    children: [
+                                      ...List.generate(
+                                        controller.entertainment.length,
+                                        (index) {
+                                          final name =
+                                              controller.entertainment[index];
+                                          final isSelected = controller
+                                              .selectedEntertainment
+                                              .contains(name);
+                                          return ConstrainedBox(
+                                            constraints: BoxConstraints(
+                                              maxWidth: availableWidth / 1,
+                                            ),
+                                            child: FilterSelectionWidgetForHome(
+                                              name: name,
+                                              isSelected: isSelected,
+                                              onTap: () => controller
+                                                  .toggleEntertainment(name),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 );
                               },
                             ),
                           ),
-                          SizedBox(
-                            height: 16,
-                          ),
+                          SizedBox(height: 16),
                           Text(
                             'Price Range',
                             style: TextStyle(
@@ -538,9 +494,7 @@ void filterSelectionDialogueBox() {
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          SizedBox(
-                            height: 12,
-                          ),
+                          SizedBox(height: 12),
                           SizedBox(
                             width: 350,
                             child: LayoutBuilder(
@@ -548,40 +502,38 @@ void filterSelectionDialogueBox() {
                                 double availableWidth = constraints.maxWidth;
                                 return Obx(
                                   () => Wrap(
-                                      direction: Axis.horizontal,
-                                      spacing: 10,
-                                      runSpacing: 10,
-                                      children: [
-                                        ...List.generate(
-                                          controller.priceRange.length,
-                                          (index) {
-                                            final name =
-                                                controller.priceRange[index];
-                                            final isSelected = controller
-                                                .selectedPriceRange
-                                                .contains(name);
-                                            return ConstrainedBox(
-                                              constraints: BoxConstraints(
-                                                maxWidth: availableWidth / 1,
-                                              ),
-                                              child:
-                                                  FilterSelectionWidgetForHome(
-                                                name: name,
-                                                isSelected: isSelected,
-                                                onTap: () => controller
-                                                    .togglePriceRange(name),
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ]),
+                                    direction: Axis.horizontal,
+                                    spacing: 10,
+                                    runSpacing: 10,
+                                    children: [
+                                      ...List.generate(
+                                        controller.priceRange.length,
+                                        (index) {
+                                          final name =
+                                              controller.priceRange[index];
+                                          final isSelected = controller
+                                              .selectedPriceRange
+                                              .contains(name);
+                                          return ConstrainedBox(
+                                            constraints: BoxConstraints(
+                                              maxWidth: availableWidth / 1,
+                                            ),
+                                            child: FilterSelectionWidgetForHome(
+                                              name: name,
+                                              isSelected: isSelected,
+                                              onTap: () => controller
+                                                  .togglePriceRange(name),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 );
                               },
                             ),
                           ),
-                          SizedBox(
-                            height: 30,
-                          ),
+                          SizedBox(height: 30),
                           Center(
                             child: CustomButton(
                               laBelText: 'Apply',
@@ -597,9 +549,7 @@ void filterSelectionDialogueBox() {
                               },
                             ),
                           ),
-                          SizedBox(
-                            height: 30,
-                          ),
+                          SizedBox(height: 30),
                         ],
                       ),
                     ),
