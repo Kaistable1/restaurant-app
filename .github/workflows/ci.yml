@@ -1,12 +1,21 @@
 name: CI Pipeline
 
+# ----------------------------------------------------------------------
+# Triggers
+# ----------------------------------------------------------------------
 on:
   push:
     branches: [ main, develop, staging, 'feature/**' ]
   pull_request:
     branches: [ main, develop ]
 
+# ----------------------------------------------------------------------
+# Jobs
+# ----------------------------------------------------------------------
 jobs:
+  # --------------------------------------------------------------
+  # 1. Build Flutter Web + run Dart/Flutter checks
+  # --------------------------------------------------------------
   build-flutter-web:
     name: Build Flutter Web
     runs-on: ubuntu-latest
@@ -19,7 +28,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.24.0'
-          channel: 'stable'
+          channel: stable
           cache: true
 
       - name: Get dependencies
@@ -31,26 +40,27 @@ jobs:
       - name: Analyze code
         run: flutter analyze
 
-      - name: Run unit tests
+      - name: Run unit tests (headless Chrome)
         run: flutter test --platform=chrome
-        continue-on-error: true   # <-- kept from the feature branch
+        continue-on-error: true  # Allow build to continue on test failures
 
-      - name: Build web app
+      - name: Build web app (release, canvaskit)
         run: flutter build web --release --web-renderer=canvaskit
 
-      - name: Upload web build
+      - name: Upload web build artifact
         uses: actions/upload-artifact@v4
         with:
           name: web-build
           path: build/web/
           retention-days: 7
 
-  cypress-smoke:
-    name: Cypress Smoke Tests
-    needs: build-flutter-web
+  # --------------------------------------------------------------
+  # 2. (Optional) Node lint + unit tests
+  # --------------------------------------------------------------
+  node-checks:
+    name: Node Lint & Tests
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+    needs: build-flutter-web
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -59,9 +69,39 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+          cache: npm
 
-      - name: Install Cypress
+      - name: Install npm deps
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint || true  # Non-blocking
+
+      - name: Run unit tests
+        run: npm test
+
+  # --------------------------------------------------------------
+  # 3. Cypress smoke tests (runs after Flutter build)
+  # --------------------------------------------------------------
+  cypress-smoke:
+    name: Cypress Smoke Tests
+    needs: [build-flutter-web, node-checks]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: >-
+      github.event_name == 'pull_request' ||
+      github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install npm deps + Cypress binary
         run: |
           npm ci
           npx cypress install
@@ -79,15 +119,18 @@ jobs:
           echo "SERVER_PID=$!" >> $GITHUB_ENV
           sleep 8
 
-      - name: Wait for server
+      - name: Wait for server to be ready
         run: |
-          timeout 30 bash -c 'until curl -s -f http://localhost:8080 > /dev/null; do sleep 2; done' || echo "Warning: Server not ready"
-          # <-- kept the warning from the feature branch; you can remove the || part if you want the job to fail hard
+          timeout 30 bash -c 'until curl -s -f http://localhost:8080 > /dev/null; do sleep 2; done' || \
+            echo "Warning: Server not ready in time"
 
       - name: Run Cypress smoke tests
-        run: npx cypress run --spec "cypress/e2e/smoke_spec.cy.js" --browser chrome
         env:
           CYPRESS_baseUrl: http://localhost:8080
+        run: |
+          npx cypress run \
+            --spec "cypress/e2e/smoke_spec.cy.js" \
+            --browser chrome
 
       - name: Upload screenshots (on failure)
         if: failure()
@@ -105,9 +148,12 @@ jobs:
           path: cypress/videos/
           retention-days: 7
 
+      # --------------------------------------------------------------
+      # Cleanup server – safe and works in all shells
+      # --------------------------------------------------------------
       - name: Cleanup server
         if: always()
         run: |
-          if [ ! -z "$SERVER_PID" ]; then
-            kill $SERVER_PID || true
+          if [ -n "${SERVER_PID:-}" ]; then
+            kill "${SERVER_PID}" || true
           fi
