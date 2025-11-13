@@ -35,9 +35,7 @@ class LoginScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                    height: 50,
-                  ),
+                  SizedBox(height: 50),
                   Center(
                     child: Image.asset(
                       'assets/images/botomsheet_logo.png',
@@ -46,9 +44,7 @@ class LoginScreen extends StatelessWidget {
                       color: AppColors.primaryColor,
                     ),
                   ),
-                  SizedBox(
-                    height: 73,
-                  ),
+                  SizedBox(height: 73),
                   Text(
                     'Welcome',
                     style: TextStyle(
@@ -58,9 +54,7 @@ class LoginScreen extends StatelessWidget {
                       fontSize: 28,
                     ),
                   ),
-                  SizedBox(
-                    height: 14,
-                  ),
+                  SizedBox(height: 14),
                   Text(
                     'Login to Continue!',
                     style: TextStyle(
@@ -70,9 +64,7 @@ class LoginScreen extends StatelessWidget {
                       fontSize: 15,
                     ),
                   ),
-                  SizedBox(
-                    height: 30,
-                  ),
+                  SizedBox(height: 30),
                   TextAndFieldWidget(
                     labelText: 'Email',
                     hintText: 'deanna.curtis@example.com',
@@ -93,7 +85,11 @@ class LoginScreen extends StatelessWidget {
                     },
                     suffixIcon: Padding(
                       padding: const EdgeInsets.only(
-                          left: 13.0, bottom: 8, top: 8, right: 13),
+                        left: 13.0,
+                        bottom: 8,
+                        top: 8,
+                        right: 13,
+                      ),
                       child: Image.asset(
                         'assets/images/email.icon.png',
                         height: 20,
@@ -118,7 +114,11 @@ class LoginScreen extends StatelessWidget {
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(
-                              left: 13.0, bottom: 13, top: 13, right: 13),
+                            left: 13.0,
+                            bottom: 13,
+                            top: 13,
+                            right: 13,
+                          ),
                           child: controller.isPasswordHidden.value == true
                               ? Image.asset(
                                   'assets/images/open_eye.png',
@@ -151,9 +151,7 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: 16,
-                  ),
+                  SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -162,10 +160,14 @@ class LoginScreen extends StatelessWidget {
                           controller.rememberMe.value =
                               !controller.rememberMe.value;
                           if (controller.rememberMe.value) {
-                            remember_me_pref!.setString('remember_me',
-                                controller.passwordController.text);
-                            remember_me_pref!.setString('remember_me_email',
-                                controller.emailController.text);
+                            remember_me_pref!.setString(
+                              'remember_me',
+                              controller.passwordController.text,
+                            );
+                            remember_me_pref!.setString(
+                              'remember_me_email',
+                              controller.emailController.text,
+                            );
                             remember_me_pref!.setBool('is_remember_me', true);
                           } else {
                             remember_me_pref!.clear();
@@ -179,7 +181,9 @@ class LoginScreen extends StatelessWidget {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(6),
                               border: Border.all(
-                                  color: AppColors.primaryColor, width: 2),
+                                color: AppColors.primaryColor,
+                                width: 2,
+                              ),
                               shape: BoxShape.rectangle,
                             ),
                             child: controller.rememberMe.value == true
@@ -203,12 +207,10 @@ class LoginScreen extends StatelessWidget {
                           fontFamily: 'Nunito-Sans',
                           fontSize: 16,
                         ),
-                      )
+                      ),
                     ],
                   ),
-                  SizedBox(
-                    height: 40,
-                  ),
+                  SizedBox(height: 40),
                   Center(
                     child: CustomButton(
                       laBelText: 'Login',
@@ -225,9 +227,7 @@ class LoginScreen extends StatelessWidget {
                       },
                     ),
                   ),
-                  SizedBox(
-                    height: 24,
-                  ),
+                  SizedBox(height: 24),
                   Center(
                     child: RichText(
                       text: TextSpan(
@@ -235,10 +235,11 @@ class LoginScreen extends StatelessWidget {
                           TextSpan(
                             text: 'Don\'t have an account?',
                             style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Nunito-Regular',
-                                color: AppColors.headingTextColor),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Nunito-Regular',
+                              color: AppColors.headingTextColor,
+                            ),
                           ),
                           TextSpan(
                             text: ' Signup',

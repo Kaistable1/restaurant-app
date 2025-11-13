@@ -30,9 +30,7 @@ class ForgotPassScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    height: 50,
-                  ),
+                  SizedBox(height: 50),
                   Center(
                     child: Image.asset(
                       'assets/images/botomsheet_logo.png',
@@ -41,9 +39,7 @@ class ForgotPassScreen extends StatelessWidget {
                       color: AppColors.primaryColor,
                     ),
                   ),
-                  SizedBox(
-                    height: 53,
-                  ),
+                  SizedBox(height: 53),
                   Text(
                     'Forgot Password',
                     style: TextStyle(
@@ -53,9 +49,7 @@ class ForgotPassScreen extends StatelessWidget {
                       fontSize: 28,
                     ),
                   ),
-                  SizedBox(
-                    height: 14,
-                  ),
+                  SizedBox(height: 14),
                   Text(
                     'Not to worry, it happens to the best of us. Please enter your email address below.',
                     style: TextStyle(
@@ -66,9 +60,7 @@ class ForgotPassScreen extends StatelessWidget {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(
-                    height: 30,
-                  ),
+                  SizedBox(height: 30),
                   TextAndFieldWidget(
                     labelText: 'Email',
                     hintText: 'deanna.curtis@example.com',
@@ -76,7 +68,11 @@ class ForgotPassScreen extends StatelessWidget {
                     isSuffixIcon: true,
                     suffixIcon: Padding(
                       padding: const EdgeInsets.only(
-                          left: 13.0, bottom: 8, top: 8, right: 13),
+                        left: 13.0,
+                        bottom: 8,
+                        top: 8,
+                        right: 13,
+                      ),
                       child: Image.asset(
                         'assets/images/email.icon.png',
                         height: 20,
@@ -97,9 +93,7 @@ class ForgotPassScreen extends StatelessWidget {
                       return null;
                     },
                   ),
-                  SizedBox(
-                    height: 40,
-                  ),
+                  SizedBox(height: 40),
                   Center(
                     child: CustomButton(
                       laBelText: 'Submit',
@@ -116,9 +110,7 @@ class ForgotPassScreen extends StatelessWidget {
                       },
                     ),
                   ),
-                  SizedBox(
-                    height: 24,
-                  ),
+                  SizedBox(height: 24),
                 ],
               ),
             ),

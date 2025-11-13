@@ -28,7 +28,9 @@ class _PostWidgetState extends State<PostWidget> {
   }
 
   Future<void> _checkLikeStatus() async {
-    final isLiked = await _postService.isPostLikedByCurrentUser(widget.post.postID ?? '');
+    final isLiked = await _postService.isPostLikedByCurrentUser(
+      widget.post.postID ?? '',
+    );
     setState(() {
       _isLiked = isLiked;
     });
@@ -65,10 +67,13 @@ class _PostWidgetState extends State<PostWidget> {
           onTap: _navigateToUserProfile,
           child: CircleAvatar(
             radius: 20,
-            backgroundImage: widget.post.userImage != null && widget.post.userImage!.isNotEmpty
+            backgroundImage:
+                widget.post.userImage != null &&
+                    widget.post.userImage!.isNotEmpty
                 ? NetworkImage(widget.post.userImage!)
                 : null,
-            child: widget.post.userImage == null || widget.post.userImage!.isEmpty
+            child:
+                widget.post.userImage == null || widget.post.userImage!.isEmpty
                 ? Icon(Icons.person, size: 24)
                 : null,
           ),
@@ -112,7 +117,7 @@ class _PostWidgetState extends State<PostWidget> {
           itemBuilder: (BuildContext context) {
             final currentUserID = FirebaseAuth.instance.currentUser?.uid;
             final isOwnPost = currentUserID == widget.post.userID;
-            
+
             return [
               if (!isOwnPost)
                 PopupMenuItem(
@@ -146,16 +151,13 @@ class _PostWidgetState extends State<PostWidget> {
   Widget _buildContent() {
     return Text(
       widget.post.content ?? '',
-      style: TextStyle(
-        fontSize: 14,
-        fontFamily: 'Nunito-Regular',
-      ),
+      style: TextStyle(fontSize: 14, fontFamily: 'Nunito-Regular'),
     );
   }
 
   Widget _buildImages() {
     final images = widget.post.images!;
-    
+
     if (images.length == 1) {
       return Padding(
         padding: EdgeInsets.only(top: 12),
@@ -222,10 +224,7 @@ class _PostWidgetState extends State<PostWidget> {
               SizedBox(width: 4),
               Text(
                 '${widget.post.likesCount ?? 0}',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontFamily: 'Nunito-Regular',
-                ),
+                style: TextStyle(fontSize: 14, fontFamily: 'Nunito-Regular'),
               ),
             ],
           ),
@@ -235,10 +234,7 @@ class _PostWidgetState extends State<PostWidget> {
         SizedBox(width: 4),
         Text(
           '${widget.post.commentsCount ?? 0}',
-          style: TextStyle(
-            fontSize: 14,
-            fontFamily: 'Nunito-Regular',
-          ),
+          style: TextStyle(fontSize: 14, fontFamily: 'Nunito-Regular'),
         ),
         if (widget.post.restaurantName != null)
           Expanded(
@@ -267,10 +263,10 @@ class _PostWidgetState extends State<PostWidget> {
 
   String _formatDate(DateTime? date) {
     if (date == null) return '';
-    
+
     final now = DateTime.now();
     final difference = now.difference(date);
-    
+
     if (difference.inMinutes < 1) {
       return 'Just now';
     } else if (difference.inHours < 1) {
@@ -343,16 +339,18 @@ class _PostWidgetState extends State<PostWidget> {
 
   void _navigateToUserProfile() {
     final currentUserID = FirebaseAuth.instance.currentUser?.uid;
-    
+
     // Don't navigate to own profile
     if (currentUserID == widget.post.userID) {
       return;
     }
 
-    Get.to(() => UserProfileScreen(
-      userID: widget.post.userID ?? '',
-      userName: widget.post.userName ?? 'Unknown User',
-      userImage: widget.post.userImage,
-    ));
+    Get.to(
+      () => UserProfileScreen(
+        userID: widget.post.userID ?? '',
+        userName: widget.post.userName ?? 'Unknown User',
+        userImage: widget.post.userImage,
+      ),
+    );
   }
 }

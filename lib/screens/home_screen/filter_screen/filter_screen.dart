@@ -36,7 +36,7 @@ class FilterScreen extends StatelessWidget {
     'W',
     'X',
     'Y',
-    'Z'
+    'Z',
   ];
 
   final HomeLocationController controller = Get.put(HomeLocationController());
@@ -45,10 +45,7 @@ class FilterScreen extends StatelessWidget {
   final RxBool showFilterOptions = false.obs;
   final LocationController locationController = Get.put(LocationController());
 
-  FilterScreen({
-    super.key,
-    this.onNavigate,
-  });
+  FilterScreen({super.key, this.onNavigate});
   @override
   Widget build(BuildContext context) {
     // Get the selected letter passed from the previous screen
@@ -70,9 +67,7 @@ class FilterScreen extends StatelessWidget {
             backgroundColor: AppColors.bgColor,
             appBar: AppBar(
               backgroundColor: AppColors.bgColor,
-              iconTheme: IconThemeData(
-                color: AppColors.primaryColor,
-              ),
+              iconTheme: IconThemeData(color: AppColors.primaryColor),
               centerTitle: true,
               automaticallyImplyLeading: true,
               leading: Padding(
@@ -139,9 +134,7 @@ class FilterScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(
-                  width: 10,
-                )
+                SizedBox(width: 10),
               ],
             ),
             body: SingleChildScrollView(
@@ -219,11 +212,11 @@ class FilterScreen extends StatelessWidget {
                   //   )
                   //       : SizedBox.shrink(),
                   // ),
-
                   SizedBox(height: Responsive.isMobile(context) ? 8 : 18),
                   Padding(
                     padding: EdgeInsets.symmetric(
-                        horizontal: Responsive.isMobile(context) ? 16 : 46.0),
+                      horizontal: Responsive.isMobile(context) ? 16 : 46.0,
+                    ),
                     child: Text(
                       'Showing results for \'$selectedLetter\'',
                       style: TextStyle(
@@ -239,10 +232,7 @@ class FilterScreen extends StatelessWidget {
                   SizedBox(height: Responsive.isMobile(context) ? 20 : 22),
                   Obx(() {
                     return Padding(
-                      padding: EdgeInsets.only(
-                        left: 14,
-                        right: 14,
-                      ),
+                      padding: EdgeInsets.only(left: 14, right: 14),
                       child: GridView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
@@ -282,9 +272,7 @@ class FilterScreen extends StatelessWidget {
                       ),
                     );
                   }),
-                  SizedBox(
-                    height: 30,
-                  )
+                  SizedBox(height: 30),
                 ],
               ),
             ),

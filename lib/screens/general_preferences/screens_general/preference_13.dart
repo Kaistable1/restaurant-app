@@ -21,9 +21,7 @@ class Preference13 extends StatelessWidget {
       backgroundColor: AppColors.bgColor,
       appBar: AppBar(
         backgroundColor: AppColors.bgColor,
-        iconTheme: IconThemeData(
-          color: AppColors.primaryColor,
-        ),
+        iconTheme: IconThemeData(color: AppColors.primaryColor),
         centerTitle: true,
         automaticallyImplyLeading: true,
         leading: Padding(
@@ -85,9 +83,7 @@ class Preference13 extends StatelessWidget {
             key: _formKey,
             child: Column(
               children: [
-                SizedBox(
-                  height: 16,
-                ),
+                SizedBox(height: 16),
                 Text(
                   'What ZIP Code Should We Use To Find Dining Deals For You?',
                   style: TextStyle(
@@ -97,16 +93,12 @@ class Preference13 extends StatelessWidget {
                     fontSize: 16,
                   ),
                 ),
-                SizedBox(
-                  height: 16,
-                ),
+                SizedBox(height: 16),
                 CustomSeparateTextField(
                   hintText: 'Add Zip Code',
                   controller: controller.zipCodeController,
                   keyboardType: TextInputType.number,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                  ],
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   isShadow: true,
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -115,9 +107,7 @@ class Preference13 extends StatelessWidget {
                     return null;
                   },
                 ),
-                SizedBox(
-                  height: 36,
-                ),
+                SizedBox(height: 36),
                 Center(
                   child: CustomButton(
                     laBelText: 'Next',
@@ -131,16 +121,15 @@ class Preference13 extends StatelessWidget {
                       if (_formKey.currentState!.validate()) {
                         final signupController = Get.put(SignupController());
                         signupController.updateUserData(
-                            field: 'zipCode',
-                            entry: controller.zipCodeController.text);
+                          field: 'zipCode',
+                          entry: controller.zipCodeController.text,
+                        );
                         Get.to(() => Preference14());
                       }
                     },
                   ),
                 ),
-                SizedBox(
-                  height: 30,
-                ),
+                SizedBox(height: 30),
               ],
             ),
           ),

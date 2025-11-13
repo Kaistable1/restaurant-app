@@ -3,20 +3,25 @@ import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
 import 'package:kaistable_website/screens/nav_bar/controller/search_controller.dart';
 
-
-
 // Build a selectable filter row (Country, City, Language)
 Widget buildFilterSection(
-    String title, List<String> options, RxString selectedValue, Function(String) onSelect) {
+  String title,
+  List<String> options,
+  RxString selectedValue,
+  Function(String) onSelect,
+) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text(title, style: TextStyle(
-        fontSize: 16,
-        color: AppColors.headingTextColor,
-        fontWeight: FontWeight.w700,
-        fontFamily: 'Nunito-Sans',
-      ),),
+      Text(
+        title,
+        style: TextStyle(
+          fontSize: 16,
+          color: AppColors.headingTextColor,
+          fontWeight: FontWeight.w700,
+          fontFamily: 'Nunito-Sans',
+        ),
+      ),
       const SizedBox(height: 8),
 
       // Main container with rounded corners
@@ -25,14 +30,14 @@ Widget buildFilterSection(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: Colors.white,
-  boxShadow: [
-  BoxShadow(
-  color: Colors.black.withOpacity(0.1), // Soft shadow
-  blurRadius: 4,
-  spreadRadius: 1,
-  offset: const Offset(0, 2), // Shadow appears at bottom
-  ),
-  ],
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1), // Soft shadow
+              blurRadius: 4,
+              spreadRadius: 1,
+              offset: const Offset(0, 2), // Shadow appears at bottom
+            ),
+          ],
           // border: Border.all(color: Colors.grey.shade300),
           borderRadius: BorderRadius.circular(16),
         ),
@@ -50,24 +55,29 @@ Widget buildFilterSection(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-
-                    padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 4,
+                      horizontal: 6,
+                    ),
                     decoration: BoxDecoration(
-                      color: isSelected ? AppColors.primaryColor.withOpacity(.3) : Colors.transparent,
+                      color: isSelected
+                          ? AppColors.primaryColor.withOpacity(.3)
+                          : Colors.transparent,
                       borderRadius: BorderRadius.circular(4),
                       border: Border.all(
-                        color:isSelected ? AppColors.primaryColor: Colors.transparent,
-
+                        color: isSelected
+                            ? AppColors.primaryColor
+                            : Colors.transparent,
                       ),
                     ),
                     child: Text(
                       option,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: AppColors.textColor,
-                          fontWeight: FontWeight.w400,
-                          fontFamily: 'Nunito-Sans',
-                        ),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: AppColors.textColor,
+                        fontWeight: FontWeight.w400,
+                        fontFamily: 'Nunito-Sans',
+                      ),
                     ),
                   ),
 
@@ -75,7 +85,10 @@ Widget buildFilterSection(
                   if (index != options.length - 1)
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: Text("|", style: TextStyle(color: AppColors.primaryColor)),
+                      child: Text(
+                        "|",
+                        style: TextStyle(color: AppColors.primaryColor),
+                      ),
                     ),
                 ],
               ),
@@ -88,7 +101,6 @@ Widget buildFilterSection(
     ],
   );
 }
-
 
 // Build expandable filters with checkboxes
 Widget buildCheckboxFilter(String title, FilterController controller) {
@@ -107,38 +119,59 @@ Widget buildCheckboxFilter(String title, FilterController controller) {
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
                 if (selectedCount > 0)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.primaryColor,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
                       "$selectedCount",
-                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
               ],
             ),
-            trailing: const Icon(Icons.keyboard_arrow_down, color: AppColors.primaryColor),
+            trailing: const Icon(
+              Icons.keyboard_arrow_down,
+              color: AppColors.primaryColor,
+            ),
             children: controller.filterOptions[title]!.map((option) {
               return Obx(() {
-                bool isChecked = controller.selectedFilters[title]!.contains(option);
+                bool isChecked = controller.selectedFilters[title]!.contains(
+                  option,
+                );
                 return ListTile(
                   leading: Checkbox(
                     activeColor: AppColors.primaryColor, // Green checkbox
                     value: isChecked,
 
-                    onChanged: (value) => controller.toggleFilter(title, option),
+                    onChanged: (value) =>
+                        controller.toggleFilter(title, option),
                   ),
-                  title: Text(option,  style: TextStyle(
-                    fontSize: 14,
-                    color: AppColors.headingTextColor,
-                    fontWeight: FontWeight.w500,
-                    fontFamily: 'Nunito-Sans',
-                  ),),
+                  title: Text(
+                    option,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: AppColors.headingTextColor,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: 'Nunito-Sans',
+                    ),
+                  ),
                   onTap: () {
                     controller.toggleFilter(title, option);
                   },
@@ -158,6 +191,3 @@ Widget buildCheckboxFilter(String title, FilterController controller) {
     ],
   );
 }
-
-
-

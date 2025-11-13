@@ -83,7 +83,8 @@ class ContactUsController extends GetxController {
     }
 
     // Check if any validation errors are present
-    hasError.value = dropdownError.value.isNotEmpty ||
+    hasError.value =
+        dropdownError.value.isNotEmpty ||
         emailError.value.isNotEmpty ||
         messageError.value.isNotEmpty;
   }

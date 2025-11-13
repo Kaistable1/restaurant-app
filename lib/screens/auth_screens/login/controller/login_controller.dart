@@ -35,8 +35,9 @@ class LoginController extends GetxController {
       passwordController.text =
           remember_me_pref!.getString('remember_me') ?? '';
     }
-    rememberMe.value =
-        remember_me_pref?.getBool('is_remember_me') == true ? true : false;
+    rememberMe.value = remember_me_pref?.getBool('is_remember_me') == true
+        ? true
+        : false;
   }
 
   // Handles user login
@@ -48,41 +49,46 @@ class LoginController extends GetxController {
       // Sign in using Firebase Authentication
       await auth
           .signInWithEmailAndPassword(
-        email: emailController.value.text,
-        password: passwordController.value.text,
-      )
+            email: emailController.value.text,
+            password: passwordController.value.text,
+          )
           .then((value) async {
-        // Update user location data
-        await updateUserCityCountry();
-        // Fetch current user data
-        await getCurrentUserData();
+            // Update user location data
+            await updateUserCityCountry();
+            // Fetch current user data
+            await getCurrentUserData();
 
-        // update user fcm token by "Modassir"
-        FirebaseMessaging.instance.getToken().then((fcmToken) =>
-        FirebaseFirestore.instance.collection("users").doc(auth.currentUser!.uid).update({"fcmToken": fcmToken}));
+            // update user fcm token by "Modassir"
+            FirebaseMessaging.instance.getToken().then(
+              (fcmToken) => FirebaseFirestore.instance
+                  .collection("users")
+                  .doc(auth.currentUser!.uid)
+                  .update({"fcmToken": fcmToken}),
+            );
 
-        // Close the loading dialog
-        Get.back();
+            // Close the loading dialog
+            Get.back();
 
-        if (currentUserDataModel != null) {
-          Get.offAll(() =>MainScreen());
-          // Clear the email and password fields
-          emailController.clear();
-          passwordController.clear();
+            if (currentUserDataModel != null) {
+              Get.offAll(() => MainScreen());
+              // Clear the email and password fields
+              emailController.clear();
+              passwordController.clear();
 
-          // Reload the current user to ensure updated data is reflected
-          await auth.currentUser!.reload();
+              // Reload the current user to ensure updated data is reflected
+              await auth.currentUser!.reload();
 
-          // Reset text fields
-          resetTextFields();
-        } else {
-          // If user data is null, show an error dialog
-          Get.back();
-          loadingDialog(
-              message:
-                  "Your account was deleted, contact the provider or create new account");
-        }
-      });
+              // Reset text fields
+              resetTextFields();
+            } else {
+              // If user data is null, show an error dialog
+              Get.back();
+              loadingDialog(
+                message:
+                    "Your account was deleted, contact the provider or create new account",
+              );
+            }
+          });
     } on FirebaseAuthException catch (error) {
       // Close the loading dialog
       Get.back();
@@ -91,24 +97,27 @@ class LoginController extends GetxController {
       switch (error.code) {
         case "invalid-credential":
           loadingDialog(
-              isWrongPassword: true,
-              padding: 0,
-              message:
-                  "The username or password you entered is incorrect. Please check your login information and try again.",
-              button: true);
+            isWrongPassword: true,
+            padding: 0,
+            message:
+                "The username or password you entered is incorrect. Please check your login information and try again.",
+            button: true,
+          );
           break;
         case "too-many-requests":
           loadingDialog(
-              isWrongPassword: true,
-              message:
-                  "Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later.",
-              button: true);
+            isWrongPassword: true,
+            message:
+                "Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later.",
+            button: true,
+          );
           break;
         case "network-request-failed":
           loadingDialog(
-              isWrongPassword: true,
-              message: "Please check internet connection and try again.",
-              button: true);
+            isWrongPassword: true,
+            message: "Please check internet connection and try again.",
+            button: true,
+          );
           break;
         default:
           // Handle unexpected errors gracefully
@@ -125,9 +134,9 @@ class LoginController extends GetxController {
           .collection('users')
           .doc(auth.currentUser!.uid.toString())
           .update({
-        'country': onboardingController.selectedCountry.value,
-        'city': onboardingController.selectedCity.value,
-      });
+            'country': onboardingController.selectedCountry.value,
+            'city': onboardingController.selectedCity.value,
+          });
     } catch (e) {
       // Log any errors that occur during the update
       print('Error $e');

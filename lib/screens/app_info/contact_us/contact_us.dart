@@ -18,13 +18,10 @@ class ContactUs extends StatelessWidget {
     "Demi Wilkinson",
     "Candice Wu",
     "Natali Craig",
-    "Drew Cano"
+    "Drew Cano",
   ];
 
-  ContactUs({
-    super.key,
-    this.onNavigate,
-  });
+  ContactUs({super.key, this.onNavigate});
 
   // Validation method
 
@@ -118,9 +115,7 @@ class ContactUs extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(
-                height: 18,
-              ),
+              SizedBox(height: 18),
               Padding(
                 padding: const EdgeInsets.only(left: 16.0, right: 16),
                 child: Row(
@@ -130,9 +125,7 @@ class ContactUs extends StatelessWidget {
                       height: 24,
                       width: 24,
                     ),
-                    SizedBox(
-                      width: 12,
-                    ),
+                    SizedBox(width: 12),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -140,34 +133,29 @@ class ContactUs extends StatelessWidget {
                         Text(
                           "Email",
                           style: TextStyle(
-                              fontSize: 14,
-                              fontFamily: "Nunito-Regulr",
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.bottomSheetColor),
+                            fontSize: 14,
+                            fontFamily: "Nunito-Regulr",
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.bottomSheetColor,
+                          ),
                         ),
                         Text(
                           controller.adminEmailController.text,
                           style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontFamily: "Nunito-Regular",
-                              color: AppColors.bottomSheetColor,
-                              fontSize: 12),
-                        )
+                            fontWeight: FontWeight.w400,
+                            fontFamily: "Nunito-Regular",
+                            color: AppColors.bottomSheetColor,
+                            fontSize: 12,
+                          ),
+                        ),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),
-              SizedBox(
-                height: 10,
-              ),
-              Divider(
-                thickness: 1,
-                color: Color(0xFF98A2B34D).withOpacity(.2),
-              ),
-              SizedBox(
-                height: 10,
-              ),
+              SizedBox(height: 10),
+              Divider(thickness: 1, color: Color(0xFF98A2B34D).withOpacity(.2)),
+              SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.only(left: 16.0, right: 16),
                 child: Row(
@@ -177,9 +165,7 @@ class ContactUs extends StatelessWidget {
                       height: 24,
                       width: 24,
                     ),
-                    SizedBox(
-                      width: 12,
-                    ),
+                    SizedBox(width: 12),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -187,21 +173,23 @@ class ContactUs extends StatelessWidget {
                         Text(
                           "Phone number",
                           style: TextStyle(
-                              fontSize: 14,
-                              fontFamily: "Nunito-Regular",
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.bottomSheetColor),
+                            fontSize: 14,
+                            fontFamily: "Nunito-Regular",
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.bottomSheetColor,
+                          ),
                         ),
                         Text(
                           controller.adminPhone.text,
                           style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontFamily: "Nunito-Regular",
-                              color: AppColors.bottomSheetColor,
-                              fontSize: 12),
-                        )
+                            fontWeight: FontWeight.w400,
+                            fontFamily: "Nunito-Regular",
+                            color: AppColors.bottomSheetColor,
+                            fontSize: 12,
+                          ),
+                        ),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -216,33 +204,38 @@ class ContactUs extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding:
-                                const EdgeInsets.only(left: 16.0, right: 16),
+                            padding: const EdgeInsets.only(
+                              left: 16.0,
+                              right: 16,
+                            ),
                             child: Text(
                               "Reason",
                               style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: "Nunito-Regular",
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.bottomSheetColor),
+                                fontSize: 16,
+                                fontFamily: "Nunito-Regular",
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.bottomSheetColor,
+                              ),
                             ),
                           ),
-                          SizedBox(
-                            height: 12,
-                          ),
+                          SizedBox(height: 12),
                           Padding(
-                            padding:
-                                const EdgeInsets.only(left: 16.0, right: 16),
+                            padding: const EdgeInsets.only(
+                              left: 16.0,
+                              right: 16,
+                            ),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton2<String>(
                                 buttonStyleData: ButtonStyleData(
                                   padding: EdgeInsets.only(left: 14),
-                                  height:
-                                      Responsive.isMobile(context) ? 44 : 44,
+                                  height: Responsive.isMobile(context)
+                                      ? 44
+                                      : 44,
                                   width: Get.width,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(
-                                        Responsive.isMobile(context) ? 10 : 10),
+                                      Responsive.isMobile(context) ? 10 : 10,
+                                    ),
                                     color: AppColors.whiteColor,
                                     // boxShadow: [
                                     //   BoxShadow(
@@ -281,15 +274,16 @@ class ContactUs extends StatelessWidget {
                                 // Add null check here, fallback to null if contactingUs.value is null
                                 value:
                                     (controller.contactingUs.value?.isEmpty ??
-                                            true)
-                                        ? null
-                                        : controller.contactingUs.value,
+                                        true)
+                                    ? null
+                                    : controller.contactingUs.value,
 
                                 hint: Padding(
                                   padding: EdgeInsets.only(
-                                      right: Responsive.isMobile(context)
-                                          ? 0
-                                          : 14.0),
+                                    right: Responsive.isMobile(context)
+                                        ? 0
+                                        : 14.0,
+                                  ),
                                   child: Text(
                                     "Tell us why you're contacting us",
                                     style: TextStyle(
@@ -306,10 +300,11 @@ class ContactUs extends StatelessWidget {
                                   return items.map((String item) {
                                     return Padding(
                                       padding: EdgeInsets.only(
-                                          right: Responsive.isMobile(context)
-                                              ? 0
-                                              : 14.0,
-                                          top: 12),
+                                        right: Responsive.isMobile(context)
+                                            ? 0
+                                            : 14.0,
+                                        top: 12,
+                                      ),
                                       child: Text(
                                         item,
                                         style: TextStyle(
@@ -338,8 +333,8 @@ class ContactUs extends StatelessWidget {
                                             fontWeight: FontWeight.w400,
                                             fontSize:
                                                 Responsive.isMobile(context)
-                                                    ? 16
-                                                    : 14,
+                                                ? 16
+                                                : 14,
                                             fontFamily: 'Nunito-Regular',
                                           ),
                                           overflow: TextOverflow.ellipsis,
@@ -348,7 +343,8 @@ class ContactUs extends StatelessWidget {
                                             item)
                                           Padding(
                                             padding: const EdgeInsets.only(
-                                                right: 10.0),
+                                              right: 10.0,
+                                            ),
                                             child: Icon(
                                               Icons.check,
                                               color: AppColors.primaryColor,
@@ -392,8 +388,9 @@ class ContactUs extends StatelessWidget {
                                 controller.dropdownError.value,
                                 style: TextStyle(
                                   color: Colors.red,
-                                  fontSize:
-                                      Responsive.isMobile(context) ? 10 : 12,
+                                  fontSize: Responsive.isMobile(context)
+                                      ? 10
+                                      : 12,
                                 ),
                               ),
                             ),
@@ -406,23 +403,26 @@ class ContactUs extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding:
-                                const EdgeInsets.only(left: 16.0, right: 16),
+                            padding: const EdgeInsets.only(
+                              left: 16.0,
+                              right: 16,
+                            ),
                             child: Text(
                               "Email",
                               style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: "Nunito-Regular",
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.bottomSheetColor),
+                                fontSize: 16,
+                                fontFamily: "Nunito-Regular",
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.bottomSheetColor,
+                              ),
                             ),
                           ),
-                          SizedBox(
-                            height: 12,
-                          ),
+                          SizedBox(height: 12),
                           Padding(
-                            padding:
-                                const EdgeInsets.only(left: 16.0, right: 16),
+                            padding: const EdgeInsets.only(
+                              left: 16.0,
+                              right: 16,
+                            ),
                             child: CustomTextFormField(
                               // topPadding: -3,
                               isShadow: false,
@@ -432,8 +432,9 @@ class ContactUs extends StatelessWidget {
                               controller: controller.emailController,
                               containerColor: AppColors.whiteColor,
                               fontfamily: 'Nunito-Regular',
-                              hintfontsize:
-                                  Responsive.isMobile(context) ? 14 : 14,
+                              hintfontsize: Responsive.isMobile(context)
+                                  ? 14
+                                  : 14,
                               textColor: AppColors.textColor,
                             ),
                           ),
@@ -445,8 +446,9 @@ class ContactUs extends StatelessWidget {
                                 controller.emailError.value,
                                 style: TextStyle(
                                   color: Colors.red,
-                                  fontSize:
-                                      Responsive.isMobile(context) ? 10 : 12,
+                                  fontSize: Responsive.isMobile(context)
+                                      ? 10
+                                      : 12,
                                 ),
                               ),
                             ),
@@ -459,23 +461,26 @@ class ContactUs extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding:
-                                const EdgeInsets.only(left: 16.0, right: 16),
+                            padding: const EdgeInsets.only(
+                              left: 16.0,
+                              right: 16,
+                            ),
                             child: Text(
                               "Note",
                               style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: "Nunito-Regular",
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.bottomSheetColor),
+                                fontSize: 16,
+                                fontFamily: "Nunito-Regular",
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.bottomSheetColor,
+                              ),
                             ),
                           ),
-                          SizedBox(
-                            height: 12,
-                          ),
+                          SizedBox(height: 12),
                           Padding(
-                            padding:
-                                const EdgeInsets.only(left: 16.0, right: 16),
+                            padding: const EdgeInsets.only(
+                              left: 16.0,
+                              right: 16,
+                            ),
                             child: CustomTextFormField(
                               isShadow: false,
 
@@ -485,8 +490,9 @@ class ContactUs extends StatelessWidget {
                               controller: controller.messagreController,
                               containerColor: AppColors.whiteColor,
                               fontfamily: 'Nunito-Regular',
-                              hintfontsize:
-                                  Responsive.isMobile(context) ? 14 : 14,
+                              hintfontsize: Responsive.isMobile(context)
+                                  ? 14
+                                  : 14,
                               textColor: AppColors.textColor,
                             ),
                           ),
@@ -498,8 +504,9 @@ class ContactUs extends StatelessWidget {
                                 controller.messageError.value,
                                 style: TextStyle(
                                   color: Colors.red,
-                                  fontSize:
-                                      Responsive.isMobile(context) ? 10 : 12,
+                                  fontSize: Responsive.isMobile(context)
+                                      ? 10
+                                      : 12,
                                 ),
                               ),
                             ),

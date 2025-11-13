@@ -85,7 +85,11 @@ class LocationViewAll extends StatelessWidget {
                   isShadow: true,
                   prefixIcon: Padding(
                     padding: const EdgeInsets.only(
-                        left: 4, top: 8, bottom: 8, right: 0),
+                      left: 4,
+                      top: 8,
+                      bottom: 8,
+                      right: 0,
+                    ),
                     child: Image.asset(
                       'assets/images/search_icon.png',
                       fit: BoxFit.contain,
@@ -140,11 +144,11 @@ class LocationViewAll extends StatelessWidget {
                         shrinkWrap: true,
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          crossAxisSpacing: 8.0,
-                          mainAxisSpacing: 8.0,
-                          childAspectRatio: 113 / 144,
-                        ),
+                              crossAxisCount: 3,
+                              crossAxisSpacing: 8.0,
+                              mainAxisSpacing: 8.0,
+                              childAspectRatio: 113 / 144,
+                            ),
                         itemCount: 12,
                         itemBuilder: (context, index) {
                           return Container(
@@ -181,12 +185,15 @@ class LocationViewAll extends StatelessWidget {
 
                   controller.searchController.addListener(() {
                     filteredCuisineMap = addressMap.entries
-                        .where((entry) => entry.key.toLowerCase().contains(
-                            controller.searchController.text.toLowerCase()))
+                        .where(
+                          (entry) => entry.key.toLowerCase().contains(
+                            controller.searchController.text.toLowerCase(),
+                          ),
+                        )
                         .fold<Map<String, List<String>>>({}, (map, entry) {
-                      map[entry.key] = entry.value;
-                      return map;
-                    });
+                          map[entry.key] = entry.value;
+                          return map;
+                        });
 
                     controller.cusinesMapFilter = filteredCuisineMap;
                     controller.update();
@@ -198,32 +205,35 @@ class LocationViewAll extends StatelessWidget {
                     builder: (controller) {
                       return ConstrainedBox(
                         constraints: BoxConstraints(
-                            maxHeight: MediaQuery.of(context).size.height),
+                          maxHeight: MediaQuery.of(context).size.height,
+                        ),
                         child: GridView.builder(
                           shrinkWrap: true,
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
-                            mainAxisExtent: Get.height * 0.23,
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 10.0,
-                            mainAxisSpacing: 20.0,
-                          ),
+                                mainAxisExtent: Get.height * 0.23,
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 10.0,
+                                mainAxisSpacing: 20.0,
+                              ),
                           itemCount: controller.cusinesMapFilter.keys.length,
                           itemBuilder: (context, index) {
                             final cuisineName = controller.cusinesMapFilter.keys
                                 .elementAt(index);
-                            final restaurants = controller
-                                .cusinesMapFilter[cuisineName]!
-                                .toSet()
-                                .toList()
-                              ..sort();
+                            final restaurants =
+                                controller.cusinesMapFilter[cuisineName]!
+                                    .toSet()
+                                    .toList()
+                                  ..sort();
 
                             return CircleContainerWidget(
                               ontap: () {
-                                Get.to(() => ExploreRestaurant(
-                                      restaurantIDs: restaurants,
-                                      cuisneName: cuisineName,
-                                    ));
+                                Get.to(
+                                  () => ExploreRestaurant(
+                                    restaurantIDs: restaurants,
+                                    cuisneName: cuisineName,
+                                  ),
+                                );
                               },
                               isFavourite: false.obs,
                               isLocation: false,

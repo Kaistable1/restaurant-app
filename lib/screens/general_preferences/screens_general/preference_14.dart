@@ -20,9 +20,7 @@ class Preference14 extends StatelessWidget {
       backgroundColor: AppColors.bgColor,
       appBar: AppBar(
         backgroundColor: AppColors.bgColor,
-        iconTheme: IconThemeData(
-          color: AppColors.primaryColor,
-        ),
+        iconTheme: IconThemeData(color: AppColors.primaryColor),
         centerTitle: true,
         automaticallyImplyLeading: true,
         leading: Padding(
@@ -83,9 +81,7 @@ class Preference14 extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                height: 16,
-              ),
+              SizedBox(height: 16),
               Text(
                 'Which Location Do You Prefer?',
                 style: TextStyle(
@@ -95,55 +91,51 @@ class Preference14 extends StatelessWidget {
                   fontSize: 16,
                 ),
               ),
-              SizedBox(
-                height: 16,
+              SizedBox(height: 16),
+              Obx(
+                () => Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    DropDownButton(
+                      hintText: 'States',
+                      fontfamily: 'Nunito-Sans',
+                      items: const ["New York", "Los Angeles"],
+                      containerColor: const Color(0xFFFFFFFF),
+                      textColor: Colors.grey,
+                      onChanged: (value) {
+                        controller.selectedCountry.value = value!;
+                      },
+                      selectedValue: controller.selectedCountry.value,
+                      height: 52,
+                      width: Get.width,
+                      hintfontsize: 12,
+                    ),
+                    SizedBox(height: 16),
+                    DropDownButton(
+                      height: 52,
+                      width: Get.width,
+                      hintText: "City",
+                      fontfamily: 'Nunito-Sans',
+                      hintfontsize: 14,
+                      dropdownItemWidth: 100,
+                      items: controller.selectedCountry.value == "Los Angeles"
+                          ? FilterController().losAngelusCities
+                          : controller.selectedCountry.value == "New York"
+                          ? FilterController().newYorkCitiesList
+                          : [],
+                      selectedValue: controller.selectedCity.value,
+                      onChanged: (value) {
+                        controller.selectedCity.value = value!;
+                      },
+                      containerColor: const Color(0xFFFFFFFF),
+                      textColor: Colors.grey,
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
               ),
-              Obx(() => Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      DropDownButton(
-                        hintText: 'States',
-                        fontfamily: 'Nunito-Sans',
-                        items: const ["New York", "Los Angeles"],
-                        containerColor: const Color(0xFFFFFFFF),
-                        textColor: Colors.grey,
-                        onChanged: (value) {
-                          controller.selectedCountry.value = value!;
-                        },
-                        selectedValue: controller.selectedCountry.value,
-                        height: 52,
-                        width: Get.width,
-                        hintfontsize: 12,
-                      ),
-                      SizedBox(height: 16),
-                      DropDownButton(
-                        height: 52,
-                        width: Get.width,
-                        hintText: "City",
-                        fontfamily: 'Nunito-Sans',
-                        hintfontsize: 14,
-                        dropdownItemWidth: 100,
-                        items: controller.selectedCountry.value == "Los Angeles"
-                            ? FilterController().losAngelusCities
-                            : controller.selectedCountry.value == "New York"
-                                ? FilterController().newYorkCitiesList
-                                : [],
-                        selectedValue: controller.selectedCity.value,
-                        onChanged: (value) {
-                          controller.selectedCity.value = value!;
-                        },
-                        containerColor: const Color(0xFFFFFFFF),
-                        textColor: Colors.grey,
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                    ],
-                  )),
-              SizedBox(
-                height: 20,
-              ),
+              SizedBox(height: 20),
               Center(
                 child: CustomButton(
                   laBelText: 'Done',
@@ -168,20 +160,19 @@ class Preference14 extends StatelessWidget {
                     } else {
                       final signupController = Get.put(SignupController());
                       signupController.updateUserData(
-                          field: 'country',
-                          entry: controller.selectedCountry.value);
-                      signupController.updateUserData(
-                          field: 'city', entry: controller.selectedCity.value);
-                      Get.offAll(
-                        () => MainScreen(),
+                        field: 'country',
+                        entry: controller.selectedCountry.value,
                       );
+                      signupController.updateUserData(
+                        field: 'city',
+                        entry: controller.selectedCity.value,
+                      );
+                      Get.offAll(() => MainScreen());
                     }
                   },
                 ),
               ),
-              SizedBox(
-                height: 30,
-              ),
+              SizedBox(height: 30),
             ],
           ),
         ),

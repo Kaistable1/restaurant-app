@@ -26,7 +26,8 @@ const AndroidNotificationChannel channel = AndroidNotificationChannel(
 // FCM background message handler (only runs on mobile)
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   debugPrint(
-      "Handling a background message: ${message.messageId}, Title: ${message.notification?.title}");
+    "Handling a background message: ${message.messageId}, Title: ${message.notification?.title}",
+  );
 }
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -50,21 +51,23 @@ void main() async {
         AndroidInitializationSettings('@mipmap/ic_launcher');
     const DarwinInitializationSettings initializationSettingsIOS =
         DarwinInitializationSettings();
-    const InitializationSettings initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
-    );
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsIOS,
+        );
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
     // Set up background message handler
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
     // Disable foreground notifications
-    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-      alert: false,
-      badge: false,
-      sound: false,
-    );
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+          alert: false,
+          badge: false,
+          sound: false,
+        );
   }
 
   // === USER DATA & PERMISSIONS (WEB-SAFE) ===

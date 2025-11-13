@@ -1,8 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
-
 
 class CustomButton extends StatelessWidget {
   final String laBelText;
@@ -55,12 +53,14 @@ class CustomButton extends StatelessWidget {
         decoration: BoxDecoration(
           border: isBorder == true
               ? Border.all(
-              color: borderColor ?? AppColors.primaryColor,
-              width: borderwidth ?? 1)
+                  color: borderColor ?? AppColors.primaryColor,
+                  width: borderwidth ?? 1,
+                )
               : null,
           color: containerColor ?? AppColors.primaryColor,
           borderRadius: radius ?? BorderRadius.circular(10),
-          boxShadow: shadow ??
+          boxShadow:
+              shadow ??
               [
                 BoxShadow(
                   color: Colors.white.withOpacity(0.4), // Shadow color
@@ -75,12 +75,8 @@ class CustomButton extends StatelessWidget {
           children: [
             isPrefixIcon == true ? iconWidget! : const SizedBox(),
             isPrefixIcon == true
-                ? const SizedBox(
-              width: 8,
-            )
-                : const SizedBox(
-              width: 0,
-            ),
+                ? const SizedBox(width: 8)
+                : const SizedBox(width: 0),
             FittedBox(
               fit: BoxFit.contain,
               child: Center(

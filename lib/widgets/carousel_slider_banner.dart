@@ -6,10 +6,7 @@ class CarouselWidget extends StatelessWidget {
   // List of image paths
   final List<String> imagePaths;
 
-  const CarouselWidget({
-    super.key,
-    required this.imagePaths,
-  });
+  const CarouselWidget({super.key, required this.imagePaths});
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +17,9 @@ class CarouselWidget extends StatelessWidget {
         aspectRatio: Get.width / (Get.height * 0.25),
         autoPlay: true, // Enable auto-play
         autoPlayInterval: const Duration(seconds: 3), // Time between slides
-        autoPlayAnimationDuration:
-            const Duration(milliseconds: 800), // Smooth transition
+        autoPlayAnimationDuration: const Duration(
+          milliseconds: 800,
+        ), // Smooth transition
         autoPlayCurve: Curves.easeInOut, // Animation curve
         enlargeCenterPage: false, // No zoom effect
       ),

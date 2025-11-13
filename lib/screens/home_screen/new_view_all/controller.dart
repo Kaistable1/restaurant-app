@@ -61,7 +61,8 @@ class NewRestaurantsController extends GetxController {
       List<RestaurantModel> newRestaurants = await Future.wait(
         snapshot.docs.map((doc) async {
           return RestaurantModel.fromDocumentSnapshot(
-              doc as DocumentSnapshot<Map<String, dynamic>>);
+            doc as DocumentSnapshot<Map<String, dynamic>>,
+          );
         }),
       );
 
@@ -103,7 +104,8 @@ class NewRestaurantsController extends GetxController {
       List<RestaurantModel> allRestaurants = await Future.wait(
         querySnapshot.docs.map((doc) async {
           return RestaurantModel.fromDocumentSnapshot(
-              doc as DocumentSnapshot<Map<String, dynamic>>);
+            doc as DocumentSnapshot<Map<String, dynamic>>,
+          );
         }),
       );
 
@@ -138,8 +140,10 @@ class NewRestaurantsController extends GetxController {
       return;
     }
 
-    List<RestaurantModel> newRestaurants =
-        filteredResults.sublist(startIndex, endIndex);
+    List<RestaurantModel> newRestaurants = filteredResults.sublist(
+      startIndex,
+      endIndex,
+    );
     restaurants.addAll(newRestaurants);
   }
 
@@ -148,9 +152,11 @@ class NewRestaurantsController extends GetxController {
     if (currentSearchQuery.value.isEmpty) return restaurants;
 
     return restaurants
-        .where((restaurant) => restaurant.resName
-            .toLowerCase()
-            .contains(currentSearchQuery.value.toLowerCase()))
+        .where(
+          (restaurant) => restaurant.resName.toLowerCase().contains(
+            currentSearchQuery.value.toLowerCase(),
+          ),
+        )
         .toList();
   }
 
@@ -163,16 +169,19 @@ class NewRestaurantsController extends GetxController {
       List<RestaurantModel> restaurants = await Future.wait(
         querySnapshot.docs.map((doc) async {
           return RestaurantModel.fromDocumentSnapshot(
-              doc as DocumentSnapshot<Map<String, dynamic>>);
+            doc as DocumentSnapshot<Map<String, dynamic>>,
+          );
         }),
       );
 
       // Apply search filter
       if (searchQuery != null && searchQuery.isNotEmpty) {
         restaurants = restaurants
-            .where((restaurant) => restaurant.resName
-                .toLowerCase()
-                .contains(searchQuery.toLowerCase()))
+            .where(
+              (restaurant) => restaurant.resName.toLowerCase().contains(
+                searchQuery.toLowerCase(),
+              ),
+            )
             .toList();
       }
 

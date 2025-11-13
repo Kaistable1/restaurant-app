@@ -12,8 +12,9 @@ import '../home_controller/home_location_controller.dart';
 
 class CuisinesViewAll extends StatelessWidget {
   final Function(int)? onNavigate;
-  final HomeCusinessController cusinessController =
-      Get.put(HomeCusinessController());
+  final HomeCusinessController cusinessController = Get.put(
+    HomeCusinessController(),
+  );
   final HomeFilterController filterController = Get.put(HomeFilterController());
 
   CuisinesViewAll({super.key, this.onNavigate}) {
@@ -34,9 +35,7 @@ class CuisinesViewAll extends StatelessWidget {
             backgroundColor: AppColors.bgColor,
             appBar: AppBar(
               backgroundColor: AppColors.bgColor,
-              iconTheme: const IconThemeData(
-                color: AppColors.primaryColor,
-              ),
+              iconTheme: const IconThemeData(color: AppColors.primaryColor),
               centerTitle: true,
               automaticallyImplyLeading: true,
               leading: Padding(
@@ -60,8 +59,11 @@ class CuisinesViewAll extends StatelessWidget {
                     onTap: () {
                       Get.back();
                     },
-                    child: Icon(Icons.arrow_back,
-                        size: 18, color: AppColors.primaryColor),
+                    child: Icon(
+                      Icons.arrow_back,
+                      size: 18,
+                      color: AppColors.primaryColor,
+                    ),
                   ),
                 ),
               ),
@@ -99,7 +101,11 @@ class CuisinesViewAll extends StatelessWidget {
                         },
                         prefixIcon: Padding(
                           padding: const EdgeInsets.only(
-                              left: 4, top: 8, bottom: 8, right: 0),
+                            left: 4,
+                            top: 8,
+                            bottom: 8,
+                            right: 0,
+                          ),
                           child: Image.asset(
                             'assets/images/search_icon.png',
                             fit: BoxFit.contain,
@@ -153,15 +159,17 @@ class CuisinesViewAll extends StatelessWidget {
 
                         if (snapshot.hasError) {
                           return Center(
-                              child: Text('Error: ${snapshot.error}'));
+                            child: Text('Error: ${snapshot.error}'),
+                          );
                         }
 
                         final cuisineMap = snapshot.data ?? {};
 
                         // Initialize the cuisine selectors only if not already initialized
                         if (filterController.cusinesMapFilter.isEmpty) {
-                          filterController
-                              .initializeCuisinesSelectors(cuisineMap);
+                          filterController.initializeCuisinesSelectors(
+                            cuisineMap,
+                          );
                         }
 
                         return Obx(() {
@@ -173,15 +181,15 @@ class CuisinesViewAll extends StatelessWidget {
                             child: GridView.builder(
                               gridDelegate:
                                   SliverGridDelegateWithFixedCrossAxisCount(
-                                mainAxisExtent: Get.height * 0.22,
-                                crossAxisCount: 2,
-                                crossAxisSpacing: 10.0,
-                                mainAxisSpacing: 20.0,
-                              ),
+                                    mainAxisExtent: Get.height * 0.22,
+                                    crossAxisCount: 2,
+                                    crossAxisSpacing: 10.0,
+                                    mainAxisSpacing: 20.0,
+                                  ),
                               itemCount: filteredCuisineMap.keys.length,
                               itemBuilder: (context, index) {
-                                final cuisineName =
-                                    filteredCuisineMap.keys.elementAt(index);
+                                final cuisineName = filteredCuisineMap.keys
+                                    .elementAt(index);
                                 final restaurants =
                                     filteredCuisineMap[cuisineName]!
                                         .toSet()
@@ -190,10 +198,12 @@ class CuisinesViewAll extends StatelessWidget {
 
                                 return CircleContainerWidget(
                                   ontap: () {
-                                    Get.to(() => ExploreRestaurant(
-                                          restaurantIDs: restaurants,
-                                          cuisneName: cuisineName,
-                                        ));
+                                    Get.to(
+                                      () => ExploreRestaurant(
+                                        restaurantIDs: restaurants,
+                                        cuisneName: cuisineName,
+                                      ),
+                                    );
                                   },
                                   isFavourite: false.obs,
                                   isLocation: false,

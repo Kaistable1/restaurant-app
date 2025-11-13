@@ -13,69 +13,85 @@ class FavoriteController extends GetxController {
     // Dummy data. Replace with your actual data source.
     favoriteItems.addAll([
       FavoriteItem(
-          title: 'Pasta',
-          description:
-              'Duis aute irure dolor in reprehend voluptate velit esse cillum',
-          imagePath: 'assets/images/a2.png',
-          timetext: '09:00',
-          percentText: '50%',endTimeText: '08:00',
-          isFavorite: false.obs),
+        title: 'Pasta',
+        description:
+            'Duis aute irure dolor in reprehend voluptate velit esse cillum',
+        imagePath: 'assets/images/a2.png',
+        timetext: '09:00',
+        percentText: '50%',
+        endTimeText: '08:00',
+        isFavorite: false.obs,
+      ),
       FavoriteItem(
-          title: 'Pasta',
-          description:
-              'Duis aute irure dolor in reprehend voluptate velit esse cillum',
-          imagePath: 'assets/images/a1.png',
-          timetext: '06:00',endTimeText: '08:00',
-          percentText: '80%',
-          isFavorite: false.obs),
+        title: 'Pasta',
+        description:
+            'Duis aute irure dolor in reprehend voluptate velit esse cillum',
+        imagePath: 'assets/images/a1.png',
+        timetext: '06:00',
+        endTimeText: '08:00',
+        percentText: '80%',
+        isFavorite: false.obs,
+      ),
       FavoriteItem(
-          title: 'Pizza',
-          description:
-              'Duis aute irure dolor in reprehend voluptate velit esse cillum',
-          imagePath: 'assets/images/a3.png',
-          timetext: '12:00',
-          percentText: '60%',endTimeText: '08:00',
-          isFavorite: false.obs),
+        title: 'Pizza',
+        description:
+            'Duis aute irure dolor in reprehend voluptate velit esse cillum',
+        imagePath: 'assets/images/a3.png',
+        timetext: '12:00',
+        percentText: '60%',
+        endTimeText: '08:00',
+        isFavorite: false.obs,
+      ),
       FavoriteItem(
-          title: 'Salad',
-          description:
-              'Duis aute irure dolor in reprehend voluptate velit esse cillum',
-          imagePath: 'assets/images/a1.png',
-          timetext: '01:00',
-          percentText: '40%',endTimeText: '08:00',
-          isFavorite: false.obs),
+        title: 'Salad',
+        description:
+            'Duis aute irure dolor in reprehend voluptate velit esse cillum',
+        imagePath: 'assets/images/a1.png',
+        timetext: '01:00',
+        percentText: '40%',
+        endTimeText: '08:00',
+        isFavorite: false.obs,
+      ),
       FavoriteItem(
-          title: 'Buffet',
-          description:
-              'Duis aute irure dolor in reprehend voluptate velit esse cillum',
-          imagePath: 'assets/images/a2.png',
-          timetext: '18:00',
-          percentText: '20%',endTimeText: '08:00',
-          isFavorite: false.obs),
+        title: 'Buffet',
+        description:
+            'Duis aute irure dolor in reprehend voluptate velit esse cillum',
+        imagePath: 'assets/images/a2.png',
+        timetext: '18:00',
+        percentText: '20%',
+        endTimeText: '08:00',
+        isFavorite: false.obs,
+      ),
       FavoriteItem(
-          title: 'Pasta',
-          description:
-              'Duis aute irure dolor in reprehend voluptate velit esse cillum',
-          imagePath: 'assets/images/a3.png',
-          timetext: '16:00',endTimeText: '08:00',
-          percentText: '50%',
-          isFavorite: false.obs),
+        title: 'Pasta',
+        description:
+            'Duis aute irure dolor in reprehend voluptate velit esse cillum',
+        imagePath: 'assets/images/a3.png',
+        timetext: '16:00',
+        endTimeText: '08:00',
+        percentText: '50%',
+        isFavorite: false.obs,
+      ),
       FavoriteItem(
-          title: 'Pizza',
-          description:
-              'Duis aute irure dolor in reprehend voluptate velit esse cillum',
-          imagePath: 'assets/images/a2.png',
-          timetext: '03:00',endTimeText: '08:00',
-          percentText: '56%',
-          isFavorite: false.obs),
+        title: 'Pizza',
+        description:
+            'Duis aute irure dolor in reprehend voluptate velit esse cillum',
+        imagePath: 'assets/images/a2.png',
+        timetext: '03:00',
+        endTimeText: '08:00',
+        percentText: '56%',
+        isFavorite: false.obs,
+      ),
       FavoriteItem(
-          title: 'Salad',
-          description:
-              'Duis aute irure dolor in reprehend voluptate velit esse cillum',
-          imagePath: 'assets/images/a1.png',
-          timetext: '06:00',
-          percentText: '07%',endTimeText: '08:00',
-          isFavorite: false.obs),
+        title: 'Salad',
+        description:
+            'Duis aute irure dolor in reprehend voluptate velit esse cillum',
+        imagePath: 'assets/images/a1.png',
+        timetext: '06:00',
+        percentText: '07%',
+        endTimeText: '08:00',
+        isFavorite: false.obs,
+      ),
     ]);
   }
 }
@@ -89,12 +105,13 @@ class FavoriteItem {
   String percentText;
   RxBool isFavorite;
 
-  FavoriteItem(
-      {required this.title,
-      required this.isFavorite,
-      required this.description,
-      required this.imagePath,
-      required this.timetext,
-      required this.endTimeText,
-      required this.percentText});
+  FavoriteItem({
+    required this.title,
+    required this.isFavorite,
+    required this.description,
+    required this.imagePath,
+    required this.timetext,
+    required this.endTimeText,
+    required this.percentText,
+  });
 }

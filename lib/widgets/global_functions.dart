@@ -23,17 +23,19 @@ Future<void> getCurrentUserData() async {
         .doc(auth.currentUser!.uid.toString())
         .get()
         .then((value) async {
-      if (value.exists && value.data()!.isNotEmpty) {
-        currentUserDataModel = UserModel.fromDocumentSnapshot(value).obs;
-      } else {
-        auth.currentUser!.delete();
-      }
-    });
+          if (value.exists && value.data()!.isNotEmpty) {
+            currentUserDataModel = UserModel.fromDocumentSnapshot(value).obs;
+          } else {
+            auth.currentUser!.delete();
+          }
+        });
   }
 }
 
 Future<String> uploadImageToFirebase(
-    String refPath, Uint8List imagePath) async {
+  String refPath,
+  Uint8List imagePath,
+) async {
   try {
     String url = '';
 

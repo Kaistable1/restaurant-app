@@ -28,8 +28,10 @@ class GeneralPreferencesController extends GetxController {
     String? uid = auth.currentUser?.uid;
 
     try {
-      DocumentSnapshot userDoc =
-          await firestore.collection('users').doc(uid).get();
+      DocumentSnapshot userDoc = await firestore
+          .collection('users')
+          .doc(uid)
+          .get();
 
       if (userDoc.exists) {
         Map<String, dynamic> data = userDoc.data() as Map<String, dynamic>;
@@ -38,31 +40,26 @@ class GeneralPreferencesController extends GetxController {
           data["topThreeCuisines"] ?? [],
         );
 
-        selectedPreferences2.value =
-            data["dietaryPrefList"] is List
-                ? List<String>.from(data["dietaryPrefList"])
-                : [data["dietaryPrefList"]];
-        selectedPreferences3.value =
-            data["whereToEat"] is List
-                ? List<String>.from(data["whereToEat"])
-                : [data["whereToEat"]];
+        selectedPreferences2.value = data["dietaryPrefList"] is List
+            ? List<String>.from(data["dietaryPrefList"])
+            : [data["dietaryPrefList"]];
+        selectedPreferences3.value = data["whereToEat"] is List
+            ? List<String>.from(data["whereToEat"])
+            : [data["whereToEat"]];
 
         selectedPreferences4.value = [data["planner"]];
         print('selectedPreferences4 ${selectedPreferences4}');
-        selectedPreferences5.value =
-            data["impDiningOut"] is List
-                ? List<String>.from(data["impDiningOut"])
-                : [data["impDiningOut"]];
+        selectedPreferences5.value = data["impDiningOut"] is List
+            ? List<String>.from(data["impDiningOut"])
+            : [data["impDiningOut"]];
 
-        selectedPreferences6.value =
-            data["diningExp"] is List
-                ? List<String>.from(data["diningExp"])
-                : [data["diningExp"]];
+        selectedPreferences6.value = data["diningExp"] is List
+            ? List<String>.from(data["diningExp"])
+            : [data["diningExp"]];
 
-        selectedPreferences7.value =
-            data["willingToTravel"] is List
-                ? List<String>.from(data["willingToTravel"])
-                : [data["willingToTravel"]];
+        selectedPreferences7.value = data["willingToTravel"] is List
+            ? List<String>.from(data["willingToTravel"])
+            : [data["willingToTravel"]];
 
         selectedPreferences8.value = List<String>.from(
           data["notificationType"] ?? [],

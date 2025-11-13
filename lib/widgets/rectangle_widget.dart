@@ -55,15 +55,16 @@ class RectangleWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(
-              height: imgHeight ?? 82,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: Colors.transparent,
-                  image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: NetworkImage(
-                        imagePath,
-                      )))),
+            height: imgHeight ?? 82,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.transparent,
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: NetworkImage(imagePath),
+              ),
+            ),
+          ),
           SizedBox(height: 8),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -90,11 +91,10 @@ class RectangleWidget extends StatelessWidget {
                     Spacer(),
                     auth.currentUser == null || resturant_id == ''
                         ? SizedBox()
-                        : HomeLocationController()
-                            .favoriteHeart(resturant_id: resturant_id),
-                    SizedBox(
-                      width: 6,
-                    )
+                        : HomeLocationController().favoriteHeart(
+                            resturant_id: resturant_id,
+                          ),
+                    SizedBox(width: 6),
                   ],
                 ),
                 SizedBox(height: 2),
@@ -122,9 +122,7 @@ class RectangleWidget extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(
-            height: 6,
-          ),
+          SizedBox(height: 6),
           // percentageOff?.isNotEmpty ?? false
           //     ? Row(
           //         mainAxisAlignment: MainAxisAlignment.start,

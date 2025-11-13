@@ -10,28 +10,33 @@ class LocationStarWidget extends StatefulWidget {
   final String percentageText;
   final int index;
   final String menuType;
-  const LocationStarWidget(
-      {super.key,
-      required this.timeText1,
-      required this.percentageText,
-      required this.menuType,
-      required this.timeText2,
-      required this.index});
+  const LocationStarWidget({
+    super.key,
+    required this.timeText1,
+    required this.percentageText,
+    required this.menuType,
+    required this.timeText2,
+    required this.index,
+  });
 
   @override
   _LocationStarWidgetState createState() => _LocationStarWidgetState();
 }
 
 class _LocationStarWidgetState extends State<LocationStarWidget> {
-  HomeLocationController homeLocationController =
-      Get.put(HomeLocationController());
+  HomeLocationController homeLocationController = Get.put(
+    HomeLocationController(),
+  );
 
   void _toggleTapped() {
     if (widget.menuType == 'PercentageOff' &&
         homeLocationController.selectedPersentage.isNotEmpty) {
       // Reset all values to false
       homeLocationController.selectedPersentage.fillRange(
-          0, homeLocationController.selectedPersentage.length, false);
+        0,
+        homeLocationController.selectedPersentage.length,
+        false,
+      );
       // Set the clicked index to the opposite value (_isTapped toggles between true and false)
       homeLocationController.selectedPersentage[widget.index] =
           !homeLocationController.selectedPersentage[widget.index];
@@ -39,8 +44,11 @@ class _LocationStarWidgetState extends State<LocationStarWidget> {
     if (widget.menuType == 'HappyHour' &&
         homeLocationController.selectedHappyhour.isNotEmpty) {
       // Reset all values to false
-      homeLocationController.selectedHappyhour
-          .fillRange(0, homeLocationController.selectedHappyhour.length, false);
+      homeLocationController.selectedHappyhour.fillRange(
+        0,
+        homeLocationController.selectedHappyhour.length,
+        false,
+      );
       // Set the clicked index to the opposite value (_isTapped toggles between true and false)
       homeLocationController.selectedHappyhour[widget.index] =
           !homeLocationController.selectedHappyhour[widget.index];
@@ -52,16 +60,17 @@ class _LocationStarWidgetState extends State<LocationStarWidget> {
     return Obx(() {
       bool isToggle = widget.menuType == 'HappyHour'
           ? homeLocationController.selectedHappyhour.isEmpty
-              ? false
-              : homeLocationController.selectedHappyhour[widget.index]
+                ? false
+                : homeLocationController.selectedHappyhour[widget.index]
           : homeLocationController.selectedPersentage.isEmpty
-              ? false
-              : homeLocationController.selectedPersentage[widget.index];
+          ? false
+          : homeLocationController.selectedPersentage[widget.index];
       final String imagePath = isToggle == true
           ? 'assets/images/star_img.png'
           : 'assets/images/star_img2.png';
-      final Color textColor =
-          isToggle == true ? AppColors.whiteColor : AppColors.blackColor;
+      final Color textColor = isToggle == true
+          ? AppColors.whiteColor
+          : AppColors.blackColor;
 
       return InkWell(
         onTap: _toggleTapped,
@@ -69,9 +78,7 @@ class _LocationStarWidgetState extends State<LocationStarWidget> {
           height: 200,
           width: 85,
           decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(imagePath),
-            ),
+            image: DecorationImage(image: AssetImage(imagePath)),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -80,28 +87,31 @@ class _LocationStarWidgetState extends State<LocationStarWidget> {
               Text(
                 '${widget.timeText1} to',
                 style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 11,
-                    color: textColor,
-                    fontFamily: 'Nunito-Regular'),
+                  fontWeight: FontWeight.w600,
+                  fontSize: 11,
+                  color: textColor,
+                  fontFamily: 'Nunito-Regular',
+                ),
                 textAlign: TextAlign.center,
               ),
               Text(
                 widget.timeText2,
                 style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 11,
-                    color: textColor,
-                    fontFamily: 'Nunito-Regular'),
+                  fontWeight: FontWeight.w600,
+                  fontSize: 11,
+                  color: textColor,
+                  fontFamily: 'Nunito-Regular',
+                ),
                 textAlign: TextAlign.center,
               ),
               Text(
                 '${widget.percentageText} off',
                 style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 11,
-                    color: textColor,
-                    fontFamily: 'Nunito-Regular'),
+                  fontWeight: FontWeight.w600,
+                  fontSize: 11,
+                  color: textColor,
+                  fontFamily: 'Nunito-Regular',
+                ),
               ),
             ],
           ),

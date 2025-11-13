@@ -13,9 +13,7 @@ class RestaurantImages extends StatelessWidget {
       backgroundColor: AppColors.bgColor,
       appBar: AppBar(
         backgroundColor: AppColors.bgColor,
-        iconTheme: const IconThemeData(
-          color: AppColors.primaryColor,
-        ),
+        iconTheme: const IconThemeData(color: AppColors.primaryColor),
         centerTitle: true,
         leading: Padding(
           padding: const EdgeInsets.all(12.0),
@@ -36,8 +34,11 @@ class RestaurantImages extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Icon(Icons.arrow_back,
-                  size: 18, color: AppColors.primaryColor),
+              child: Icon(
+                Icons.arrow_back,
+                size: 18,
+                color: AppColors.primaryColor,
+              ),
             ),
           ),
         ),
@@ -64,10 +65,7 @@ class RestaurantImages extends StatelessWidget {
               onTap: () => showImageDialog(context, imageList[index]),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: Image.network(
-                  imageList[index],
-                  fit: BoxFit.cover,
-                ),
+                child: Image.network(imageList[index], fit: BoxFit.cover),
               ),
             );
           },
@@ -110,10 +108,7 @@ showImageDialog(BuildContext context, String imagePath) {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: Image.network(
-                      imagePath,
-                      fit: BoxFit.contain,
-                    ),
+                    child: Image.network(imagePath, fit: BoxFit.contain),
                   ),
                 ),
 
@@ -137,8 +132,11 @@ showImageDialog(BuildContext context, String imagePath) {
                           ),
                         ],
                       ),
-                      child: Icon(Icons.close,
-                          color: AppColors.primaryColor, size: 22),
+                      child: Icon(
+                        Icons.close,
+                        color: AppColors.primaryColor,
+                        size: 22,
+                      ),
                     ),
                   ),
                 ),

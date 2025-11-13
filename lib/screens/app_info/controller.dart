@@ -36,42 +36,51 @@ class AppInfoController extends GetxController {
   // Bind Firestore streams to Rx variables
   void bindStreams() {
     // Bind about_app stream
-    _aboutStream().listen((snapshot) {
-      if (snapshot.exists && snapshot.data() != null) {
-        aboutText.value = snapshot.data()!['text'] ?? '';
-      } else {
+    _aboutStream().listen(
+      (snapshot) {
+        if (snapshot.exists && snapshot.data() != null) {
+          aboutText.value = snapshot.data()!['text'] ?? '';
+        } else {
+          aboutText.value = '';
+          print('No data found for about_app/current');
+        }
+      },
+      onError: (e) {
+        print('Error fetching about_app data: $e');
         aboutText.value = '';
-        print('No data found for about_app/current');
-      }
-    }, onError: (e) {
-      print('Error fetching about_app data: $e');
-      aboutText.value = '';
-    });
+      },
+    );
 
     // Bind privacy_policy stream
-    _privacyPolicyStream().listen((snapshot) {
-      if (snapshot.exists && snapshot.data() != null) {
-        privacyPolicyText.value = snapshot.data()!['text'] ?? '';
-      } else {
+    _privacyPolicyStream().listen(
+      (snapshot) {
+        if (snapshot.exists && snapshot.data() != null) {
+          privacyPolicyText.value = snapshot.data()!['text'] ?? '';
+        } else {
+          privacyPolicyText.value = '';
+          print('No data found for privacy_policy/current');
+        }
+      },
+      onError: (e) {
+        print('Error fetching privacy_policy data: $e');
         privacyPolicyText.value = '';
-        print('No data found for privacy_policy/current');
-      }
-    }, onError: (e) {
-      print('Error fetching privacy_policy data: $e');
-      privacyPolicyText.value = '';
-    });
+      },
+    );
 
     // Bind terms_and_conditions stream
-    _termsAndConditionsStream().listen((snapshot) {
-      if (snapshot.exists && snapshot.data() != null) {
-        termsAndConditionsText.value = snapshot.data()!['text'] ?? '';
-      } else {
+    _termsAndConditionsStream().listen(
+      (snapshot) {
+        if (snapshot.exists && snapshot.data() != null) {
+          termsAndConditionsText.value = snapshot.data()!['text'] ?? '';
+        } else {
+          termsAndConditionsText.value = '';
+          print('No data found for terms_and_conditions/current');
+        }
+      },
+      onError: (e) {
+        print('Error fetching terms_and_conditions data: $e');
         termsAndConditionsText.value = '';
-        print('No data found for terms_and_conditions/current');
-      }
-    }, onError: (e) {
-      print('Error fetching terms_and_conditions data: $e');
-      termsAndConditionsText.value = '';
-    });
+      },
+    );
   }
 }

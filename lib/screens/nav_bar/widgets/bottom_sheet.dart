@@ -29,13 +29,17 @@ void showFilterBottomSheet() {
               children: [
                 GestureDetector(
                   onTap: () => Get.back(),
-                  child: const Text("Cancel",
-                      style: TextStyle(color: Colors.red, fontSize: 16)),
+                  child: const Text(
+                    "Cancel",
+                    style: TextStyle(color: Colors.red, fontSize: 16),
+                  ),
                 ),
                 GestureDetector(
                   onTap: controller.clearAll,
-                  child: const Text("Clear all",
-                      style: TextStyle(color: Colors.red, fontSize: 16)),
+                  child: const Text(
+                    "Clear all",
+                    style: TextStyle(color: Colors.red, fontSize: 16),
+                  ),
                 ),
               ],
             ),
@@ -48,7 +52,6 @@ void showFilterBottomSheet() {
             //     controller.selectedCity, controller.selectCity)),
             // Obx(() => buildFilterSection("Language", controller.languages,
             //     controller.selectedLanguage, controller.selectLanguage)),
-
             Text(
               'Filter',
               style: TextStyle(

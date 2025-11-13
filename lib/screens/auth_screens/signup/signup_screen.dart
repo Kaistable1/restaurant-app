@@ -32,9 +32,7 @@ class SignupScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                    height: 50,
-                  ),
+                  SizedBox(height: 50),
                   Center(
                     child: Image.asset(
                       'assets/images/botomsheet_logo.png',
@@ -43,9 +41,7 @@ class SignupScreen extends StatelessWidget {
                       color: AppColors.primaryColor,
                     ),
                   ),
-                  SizedBox(
-                    height: 73,
-                  ),
+                  SizedBox(height: 73),
                   Text(
                     'Welcome',
                     style: TextStyle(
@@ -55,9 +51,7 @@ class SignupScreen extends StatelessWidget {
                       fontSize: 28,
                     ),
                   ),
-                  SizedBox(
-                    height: 14,
-                  ),
+                  SizedBox(height: 14),
                   Text(
                     'Signup to Continue!',
                     style: TextStyle(
@@ -67,9 +61,7 @@ class SignupScreen extends StatelessWidget {
                       fontSize: 15,
                     ),
                   ),
-                  SizedBox(
-                    height: 30,
-                  ),
+                  SizedBox(height: 30),
                   TextAndFieldWidget(
                     labelText: 'User Name',
                     hintText: 'Harold Richards',
@@ -83,7 +75,11 @@ class SignupScreen extends StatelessWidget {
                     },
                     suffixIcon: Padding(
                       padding: const EdgeInsets.only(
-                          left: 12, bottom: 12, top: 12, right: 8),
+                        left: 12,
+                        bottom: 12,
+                        top: 12,
+                        right: 8,
+                      ),
                       child: Image.asset(
                         'assets/images/user_icon.png',
                         height: 20,
@@ -111,7 +107,11 @@ class SignupScreen extends StatelessWidget {
                     },
                     suffixIcon: Padding(
                       padding: const EdgeInsets.only(
-                          left: 13.0, bottom: 8, top: 8, right: 13),
+                        left: 13.0,
+                        bottom: 8,
+                        top: 8,
+                        right: 13,
+                      ),
                       child: Image.asset(
                         'assets/images/email.icon.png',
                         height: 20,
@@ -136,7 +136,11 @@ class SignupScreen extends StatelessWidget {
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(
-                              left: 13.0, bottom: 13, top: 13, right: 13),
+                            left: 13.0,
+                            bottom: 13,
+                            top: 13,
+                            right: 13,
+                          ),
                           child: controller.isPasswordHidden.value == true
                               ? Image.asset(
                                   'assets/images/open_eye.png',
@@ -175,26 +179,28 @@ class SignupScreen extends StatelessWidget {
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(
-                              left: 13.0, bottom: 13, top: 13, right: 13),
+                            left: 13.0,
+                            bottom: 13,
+                            top: 13,
+                            right: 13,
+                          ),
                           child:
                               controller.isConfirmPasswordHidden.value == true
-                                  ? Image.asset(
-                                      'assets/images/open_eye.png',
-                                      height: 16,
-                                      width: 22,
-                                    )
-                                  : Image.asset(
-                                      'assets/images/closed_eye.png',
-                                      height: 16,
-                                      width: 22,
-                                    ),
+                              ? Image.asset(
+                                  'assets/images/open_eye.png',
+                                  height: 16,
+                                  width: 22,
+                                )
+                              : Image.asset(
+                                  'assets/images/closed_eye.png',
+                                  height: 16,
+                                  width: 22,
+                                ),
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: 8,
-                  ),
+                  SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -210,7 +216,9 @@ class SignupScreen extends StatelessWidget {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(6),
                               border: Border.all(
-                                  color: AppColors.primaryColor, width: 2),
+                                color: AppColors.primaryColor,
+                                width: 2,
+                              ),
                               shape: BoxShape.rectangle,
                             ),
                             child: controller.termsAndConditions.value == true
@@ -250,12 +258,10 @@ class SignupScreen extends StatelessWidget {
                             fontSize: 16,
                           ),
                         ),
-                      )
+                      ),
                     ],
                   ),
-                  SizedBox(
-                    height: 40,
-                  ),
+                  SizedBox(height: 40),
                   Center(
                     child: CustomButton(
                       laBelText: 'Sign-up',
@@ -282,9 +288,7 @@ class SignupScreen extends StatelessWidget {
                       },
                     ),
                   ),
-                  SizedBox(
-                    height: 24,
-                  ),
+                  SizedBox(height: 24),
                   Center(
                     child: RichText(
                       text: TextSpan(
@@ -292,10 +296,11 @@ class SignupScreen extends StatelessWidget {
                           TextSpan(
                             text: 'Already  have an account?',
                             style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Nunito-Regular',
-                                color: AppColors.headingTextColor),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Nunito-Regular',
+                              color: AppColors.headingTextColor,
+                            ),
                           ),
                           TextSpan(
                             text: ' Login',
@@ -312,9 +317,7 @@ class SignupScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: 16,
-                  ),
+                  SizedBox(height: 16),
                 ],
               ),
             ),

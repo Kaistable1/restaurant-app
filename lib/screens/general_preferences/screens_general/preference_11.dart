@@ -20,9 +20,7 @@ class Preference11 extends StatelessWidget {
       backgroundColor: AppColors.bgColor,
       appBar: AppBar(
         backgroundColor: AppColors.bgColor,
-        iconTheme: IconThemeData(
-          color: AppColors.primaryColor,
-        ),
+        iconTheme: IconThemeData(color: AppColors.primaryColor),
         centerTitle: true,
         automaticallyImplyLeading: true,
         leading: Padding(
@@ -83,9 +81,7 @@ class Preference11 extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                height: 8,
-              ),
+              SizedBox(height: 8),
               Text(
                 'Would You Like To Be Notified About Happy Hours With Entertainment?',
                 style: TextStyle(
@@ -95,9 +91,7 @@ class Preference11 extends StatelessWidget {
                   fontSize: 16,
                 ),
               ),
-              SizedBox(
-                height: 16,
-              ),
+              SizedBox(height: 16),
               ListView.builder(
                 padding: EdgeInsets.zero,
                 shrinkWrap: true,
@@ -147,9 +141,7 @@ class Preference11 extends StatelessWidget {
                   });
                 },
               ),
-              SizedBox(
-                height: 24,
-              ),
+              SizedBox(height: 24),
               Center(
                 child: CustomButton(
                   laBelText: 'Next',
@@ -173,16 +165,15 @@ class Preference11 extends StatelessWidget {
                     } else {
                       final signupController = Get.put(SignupController());
                       signupController.updateUserData(
-                          field: 'notifyHappyHour',
-                          entry: controller.selectedPreferences11.first);
+                        field: 'notifyHappyHour',
+                        entry: controller.selectedPreferences11.first,
+                      );
                       Get.to(() => Preference12());
                     }
                   },
                 ),
               ),
-              SizedBox(
-                height: 30,
-              ),
+              SizedBox(height: 30),
             ],
           ),
         ),

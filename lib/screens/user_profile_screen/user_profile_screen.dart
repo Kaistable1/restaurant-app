@@ -107,7 +107,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   // User Avatar
                   CircleAvatar(
                     radius: 50,
-                    backgroundImage: widget.userImage != null && widget.userImage!.isNotEmpty
+                    backgroundImage:
+                        widget.userImage != null && widget.userImage!.isNotEmpty
                         ? NetworkImage(widget.userImage!)
                         : null,
                     child: widget.userImage == null || widget.userImage!.isEmpty

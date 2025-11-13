@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import '../../../../constants/app_colors.dart';
 
 class AdditionalInfoWidget extends StatelessWidget {
-  AdditionalInfoWidget(
-      {super.key,
-      required this.desctiption,
-      required this.date,
-      required this.time,
-      required this.phone});
+  AdditionalInfoWidget({
+    super.key,
+    required this.desctiption,
+    required this.date,
+    required this.time,
+    required this.phone,
+  });
   String desctiption;
   String date;
   String time;
@@ -24,39 +25,32 @@ class AdditionalInfoWidget extends StatelessWidget {
             child: Text(
               'Additional information',
               style: TextStyle(
-                  fontFamily: 'Nunito-Sans',
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
-                  color: AppColors.headingTextColor),
+                fontFamily: 'Nunito-Sans',
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+                color: AppColors.headingTextColor,
+              ),
             ),
           ),
-          SizedBox(
-            height: 10,
-          ),
+          SizedBox(height: 10),
           InfoTile(
             title: 'Description',
             description: desctiption,
             iconPath: 'assets/images/description_icon.png',
           ),
-          SizedBox(
-            height: 20,
-          ),
+          SizedBox(height: 20),
           InfoTile(
             title: 'Date',
             description: date,
             iconPath: 'assets/images/date_icon.png',
           ),
-          SizedBox(
-            height: 20,
-          ),
+          SizedBox(height: 20),
           InfoTile(
             title: 'Time',
             description: time,
             iconPath: 'assets/images/time_icon.png',
           ),
-          SizedBox(
-            height: 20,
-          ),
+          SizedBox(height: 20),
           InfoTile(
             title: 'Phone',
             description: phone,
@@ -89,11 +83,7 @@ class InfoTile extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 2.0),
-            child: Image.asset(
-              iconPath,
-              height: 16,
-              width: 16,
-            ),
+            child: Image.asset(iconPath, height: 16, width: 16),
           ),
           const SizedBox(width: 10),
 

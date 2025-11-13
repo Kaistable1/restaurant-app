@@ -11,12 +11,17 @@ import '../home_controller/home_location_controller.dart';
 
 class ExploreRestaurant extends StatelessWidget {
   final Function(int)? onNavigate;
-  final HomeCusinessController cusinessController =
-      Get.put(HomeCusinessController());
+  final HomeCusinessController cusinessController = Get.put(
+    HomeCusinessController(),
+  );
   final HomeLocationController controller = Get.put(HomeLocationController());
 
-  ExploreRestaurant(
-      {super.key, this.onNavigate, this.cuisneName, this.restaurantIDs}) {
+  ExploreRestaurant({
+    super.key,
+    this.onNavigate,
+    this.cuisneName,
+    this.restaurantIDs,
+  }) {
     // Reset the selectedTop value when this screen is instantiated
     controller.selectedTop.value = ''; // Clear any previous selections
   }
@@ -36,9 +41,7 @@ class ExploreRestaurant extends StatelessWidget {
             backgroundColor: AppColors.bgColor,
             appBar: AppBar(
               backgroundColor: AppColors.bgColor,
-              iconTheme: const IconThemeData(
-                color: AppColors.primaryColor,
-              ),
+              iconTheme: const IconThemeData(color: AppColors.primaryColor),
               centerTitle: true,
               automaticallyImplyLeading: true,
               leading: Padding(
@@ -62,8 +65,11 @@ class ExploreRestaurant extends StatelessWidget {
                     onTap: () {
                       Get.back();
                     },
-                    child: Icon(Icons.arrow_back,
-                        size: 18, color: AppColors.primaryColor),
+                    child: Icon(
+                      Icons.arrow_back,
+                      size: 18,
+                      color: AppColors.primaryColor,
+                    ),
                   ),
                 ),
               ),
@@ -99,7 +105,11 @@ class ExploreRestaurant extends StatelessWidget {
                         isShadow: true,
                         prefixIcon: Padding(
                           padding: const EdgeInsets.only(
-                              left: 4, top: 8, bottom: 8, right: 0),
+                            left: 4,
+                            top: 8,
+                            bottom: 8,
+                            right: 0,
+                          ),
                           child: Image.asset(
                             'assets/images/search_icon.png',
                             fit: BoxFit.contain,
@@ -167,16 +177,20 @@ class ExploreRestaurant extends StatelessWidget {
                         if (restaurantIDs?.isNotEmpty ?? false) {
                           // Filter restaurants where the ID is in the selected IDs list
                           restaurants = restaurants
-                              .where((restaurant) =>
-                                  restaurantIDs!.contains(restaurant.docID))
+                              .where(
+                                (restaurant) =>
+                                    restaurantIDs!.contains(restaurant.docID),
+                              )
                               .toList();
                         }
                         controller.searchController.addListener(() {
                           controller.filteredRestaurants = restaurants
-                              .where((item) => item.resName
-                                  .toLowerCase()
-                                  .contains(controller.searchController.text
-                                      .toLowerCase()))
+                              .where(
+                                (item) => item.resName.toLowerCase().contains(
+                                  controller.searchController.text
+                                      .toLowerCase(),
+                                ),
+                              )
                               .toList();
                           controller.update();
                         });
@@ -191,20 +205,22 @@ class ExploreRestaurant extends StatelessWidget {
                               physics: const NeverScrollableScrollPhysics(),
                               gridDelegate:
                                   SliverGridDelegateWithFixedCrossAxisCount(
-                                mainAxisExtent: Get.height * 0.27,
-                                crossAxisCount: 2,
-                                crossAxisSpacing: 10,
-                                mainAxisSpacing: 20,
-                              ),
+                                    mainAxisExtent: Get.height * 0.27,
+                                    crossAxisCount: 2,
+                                    crossAxisSpacing: 10,
+                                    mainAxisSpacing: 20,
+                                  ),
                               itemCount: controller.filteredRestaurants.length,
                               itemBuilder: (context, index) {
                                 final item =
                                     controller.filteredRestaurants[index];
                                 return InkWell(
                                   onTap: () {
-                                    Get.to(RestaurantDetailScreen(
-                                      restaurantModel: item,
-                                    ));
+                                    Get.to(
+                                      RestaurantDetailScreen(
+                                        restaurantModel: item,
+                                      ),
+                                    );
                                   },
                                   child: RectangleWidget(
                                     onNavigate: onNavigate,

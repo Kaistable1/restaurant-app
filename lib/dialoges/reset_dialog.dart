@@ -26,12 +26,14 @@ void dialogueBox({
           backgroundColor: Colors.white,
           surfaceTintColor: Colors.white,
           child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-            ),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
             child: Padding(
               padding: const EdgeInsets.only(
-                  top: 16.0, bottom: 16, right: 20, left: 20),
+                top: 16.0,
+                bottom: 16,
+                right: 20,
+                left: 20,
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -43,18 +45,18 @@ void dialogueBox({
                     fit: BoxFit.fill,
                     color: color,
                   ),
-                  const SizedBox(
-                    height: 19,
-                  ),
+                  const SizedBox(height: 19),
                   Center(
-                    child: Text(text,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontFamily: 'Nunito-Sans',
-                          color: AppColors.headingTextColor,
-                          fontSize: 16,
-                        )),
+                    child: Text(
+                      text,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Nunito-Sans',
+                        color: AppColors.headingTextColor,
+                        fontSize: 16,
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 36),
                   Center(

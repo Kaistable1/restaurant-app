@@ -33,7 +33,8 @@ class CategoryController extends GetxController {
     const double earthRadius = 3958.8; // Radius of Earth in miles
     double dLat = _toRadians(lat2 - userLatitude.value);
     double dLon = _toRadians(lon2 - userLongitude.value);
-    double a = pow(sin(dLat / 2), 2) +
+    double a =
+        pow(sin(dLat / 2), 2) +
         cos(_toRadians(userLatitude.value)) *
             cos(_toRadians(lat2)) *
             pow(sin(dLon / 2), 2);
@@ -47,8 +48,9 @@ class CategoryController extends GetxController {
 
   final locationController = Get.find<HomeLocationController>();
   getCurrentLatLong(context) async {
-    Position userLocation =
-        await locationController.getCurrentLocation(context);
+    Position userLocation = await locationController.getCurrentLocation(
+      context,
+    );
     userLatitude.value = userLocation.latitude;
     userLongitude.value = userLocation.longitude;
   }
@@ -59,7 +61,7 @@ class HorizontalCategorySelector extends StatelessWidget {
     "assets/images/concert_icon.png",
     "assets/images/festival_icon.png",
     "assets/images/sports_icon.png",
-    "assets/images/distance.png"
+    "assets/images/distance.png",
   ];
   final CategoryController controller = Get.put(CategoryController());
 
@@ -105,9 +107,7 @@ class HorizontalCategorySelector extends StatelessWidget {
                         height: 16,
                         width: 16,
                       ),
-                      SizedBox(
-                        width: 12,
-                      ),
+                      SizedBox(width: 12),
                       Text(
                         controller.categories[index],
                         textAlign: TextAlign.center,
@@ -177,9 +177,7 @@ class HorizontalMiles extends StatelessWidget {
                         height: 16,
                         width: 16,
                       ),
-                      SizedBox(
-                        width: 12,
-                      ),
+                      SizedBox(width: 12),
                       Text(
                         controller.miles[index],
                         textAlign: TextAlign.center,

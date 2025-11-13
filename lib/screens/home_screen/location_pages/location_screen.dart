@@ -16,14 +16,10 @@ class LocationScreen extends StatelessWidget {
   final Function(int)? onNavigate;
 
   final LocationController locationController = Get.put(LocationController());
-  final HomeLocationController homeController =
-      Get.put(HomeLocationController());
-  LocationScreen({
-    super.key,
-    this.onNavigate,
-    this.city,
-    this.country,
-  }) {
+  final HomeLocationController homeController = Get.put(
+    HomeLocationController(),
+  );
+  LocationScreen({super.key, this.onNavigate, this.city, this.country}) {
     homeController.selectedTop.value = '';
   }
   List<RestaurantModel> filteredRestaurants = [];
@@ -131,7 +127,11 @@ class LocationScreen extends StatelessWidget {
                         isShadow: true,
                         prefixIcon: Padding(
                           padding: const EdgeInsets.only(
-                              left: 4, top: 8, bottom: 8, right: 0),
+                            left: 4,
+                            top: 8,
+                            bottom: 8,
+                            right: 0,
+                          ),
                           child: Image.asset(
                             'assets/images/search_icon.png',
                             fit: BoxFit.contain,
@@ -197,9 +197,9 @@ class LocationScreen extends StatelessWidget {
 
                         if (snapshot.data == null || snapshot.data!.isEmpty) {
                           return SizedBox(
-                              height: Get.height * 0.5,
-                              child:
-                                  Center(child: Text('No restaurants found')));
+                            height: Get.height * 0.5,
+                            child: Center(child: Text('No restaurants found')),
+                          );
                         }
 
                         List<RestaurantModel> restaurants = snapshot.data!;
@@ -213,9 +213,10 @@ class LocationScreen extends StatelessWidget {
                               controller.filteredRestaurants = controller
                                   .filteredRestaurants
                                   .where((restaurant) {
-                                return restaurant.city == city &&
-                                    restaurant.country == country;
-                              }).toList();
+                                    return restaurant.city == city &&
+                                        restaurant.country == country;
+                                  })
+                                  .toList();
                             }
 
                             return GridView.builder(
@@ -223,20 +224,22 @@ class LocationScreen extends StatelessWidget {
                               physics: const NeverScrollableScrollPhysics(),
                               gridDelegate:
                                   SliverGridDelegateWithFixedCrossAxisCount(
-                                mainAxisExtent: Get.height * 0.27,
-                                crossAxisCount: 2,
-                                crossAxisSpacing: 10,
-                                mainAxisSpacing: 20,
-                              ),
+                                    mainAxisExtent: Get.height * 0.27,
+                                    crossAxisCount: 2,
+                                    crossAxisSpacing: 10,
+                                    mainAxisSpacing: 20,
+                                  ),
                               itemCount: controller.filteredRestaurants.length,
                               itemBuilder: (context, index) {
                                 final item =
                                     controller.filteredRestaurants[index];
                                 return InkWell(
                                   onTap: () {
-                                    Get.to(RestaurantDetailScreen(
-                                      restaurantModel: item,
-                                    ));
+                                    Get.to(
+                                      RestaurantDetailScreen(
+                                        restaurantModel: item,
+                                      ),
+                                    );
                                   },
                                   child: RectangleWidget(
                                     onNavigate: onNavigate,
@@ -246,7 +249,7 @@ class LocationScreen extends StatelessWidget {
                                     imagePath: item.logoImage,
                                     timetext: '10 AM',
                                     percentText: '25%',
-                        
+
                                     isFavorite: false.obs,
                                   ),
                                 );

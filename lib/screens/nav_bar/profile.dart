@@ -41,7 +41,7 @@ class ProfileScreen extends StatelessWidget {
       'Privacy policy',
       'About app',
       'Contact us',
-      'Delete Account'
+      'Delete Account',
     ];
 
     return Scaffold(
@@ -63,7 +63,10 @@ class ProfileScreen extends StatelessWidget {
           // Admin moderation access - shown to all users for demo purposes
           // In production, this should check user roles/permissions
           IconButton(
-            icon: Icon(Icons.admin_panel_settings, color: AppColors.primaryColor),
+            icon: Icon(
+              Icons.admin_panel_settings,
+              color: AppColors.primaryColor,
+            ),
             tooltip: 'Admin Moderation',
             onPressed: () {
               Get.to(() => AdminModerationScreen());
@@ -121,39 +124,44 @@ class ProfileScreen extends StatelessWidget {
                           width: Get.width * 0.13,
                           height: Get.width * 0.13,
                           margin: EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                          ),
+                          decoration: BoxDecoration(shape: BoxShape.circle),
                           child: ClipOval(
-                            child: currentUserDataModel!
-                                    .value.userImage.value.isNotEmpty
+                            child:
+                                currentUserDataModel!
+                                    .value
+                                    .userImage
+                                    .value
+                                    .isNotEmpty
                                 ? Image.network(
                                     currentUserDataModel!.value.userImage.value,
                                     fit: BoxFit.cover,
-                                    loadingBuilder:
-                                        (context, child, loadingProgress) {
+                                    loadingBuilder: (context, child, loadingProgress) {
                                       if (loadingProgress == null) return child;
                                       return Center(
                                         child: CircularProgressIndicator(
                                           color: AppColors.primaryColor,
-                                          value: loadingProgress
+                                          value:
+                                              loadingProgress
                                                       .expectedTotalBytes !=
                                                   null
                                               ? loadingProgress
-                                                      .cumulativeBytesLoaded /
-                                                  (loadingProgress
-                                                          .expectedTotalBytes ??
-                                                      1)
+                                                        .cumulativeBytesLoaded /
+                                                    (loadingProgress
+                                                            .expectedTotalBytes ??
+                                                        1)
                                               : null,
                                         ),
                                       );
                                     },
                                     errorBuilder:
-                                        (context, error, stackTrace) =>
-                                            Image.asset(
-                                      'assets/images/edit_profile_image.png',
-                                      fit: BoxFit.cover,
-                                    ),
+                                        (
+                                          context,
+                                          error,
+                                          stackTrace,
+                                        ) => Image.asset(
+                                          'assets/images/edit_profile_image.png',
+                                          fit: BoxFit.cover,
+                                        ),
                                   )
                                 : Image.asset(
                                     'assets/images/edit_profile_image.png',
@@ -188,29 +196,30 @@ class ProfileScreen extends StatelessWidget {
                         ),
                         const Spacer(),
                         GestureDetector(
-                            onTap: () {
-                              Get.to(() => EditProfilePage());
-                            },
-                            child: Container(
-                              width: 100,
-                              height: 30,
-                              margin: EdgeInsets.only(right: 8),
-                              decoration: BoxDecoration(
-                                color: AppColors.primaryColor,
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  'Edit Profile',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: AppColors.whiteColor,
-                                    fontWeight: FontWeight.w400,
-                                    fontFamily: 'Nunito-Bold',
-                                  ),
+                          onTap: () {
+                            Get.to(() => EditProfilePage());
+                          },
+                          child: Container(
+                            width: 100,
+                            height: 30,
+                            margin: EdgeInsets.only(right: 8),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryColor,
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Edit Profile',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: AppColors.whiteColor,
+                                  fontWeight: FontWeight.w400,
+                                  fontFamily: 'Nunito-Bold',
                                 ),
                               ),
-                            )),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -224,8 +233,9 @@ class ProfileScreen extends StatelessWidget {
                   : tilesNames.length,
               itemBuilder: (context, index) {
                 // Adjust index if the first tile (Change Password) is hidden
-                int adjustedIndex =
-                    auth.currentUser == null ? index + 2 : index;
+                int adjustedIndex = auth.currentUser == null
+                    ? index + 2
+                    : index;
 
                 return GestureDetector(
                   onTap: () {
@@ -234,9 +244,7 @@ class ProfileScreen extends StatelessWidget {
                         changePasswordDialogBox();
                         break;
                       case 1:
-                        Get.to(Preference1(
-                          isComeFromSetting: true,
-                        ));
+                        Get.to(Preference1(isComeFromSetting: true));
                         break;
                       case 2:
                         Get.to(MonetizationScreen());
@@ -313,9 +321,7 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
 
-          SizedBox(
-            height: Get.height * 0.05,
-          ),
+          SizedBox(height: Get.height * 0.05),
         ],
       ),
     );

@@ -18,8 +18,9 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  final PersistentTabController _controller =
-      PersistentTabController(initialIndex: 0);
+  final PersistentTabController _controller = PersistentTabController(
+    initialIndex: 0,
+  );
   int _currentIndex = 0;
 
   List<Widget> _buildScreens() {
@@ -35,41 +36,72 @@ class _MainScreenState extends State<MainScreen> {
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [
       PersistentBottomNavBarItem(
-        icon: Image.asset('assets/images/home_selected.png',
-            width: 24, height: 24),
-        inactiveIcon: Image.asset('assets/images/home_unselected.png',
-            color: AppColors.blackColor, width: 24, height: 24),
+        icon: Image.asset(
+          'assets/images/home_selected.png',
+          width: 24,
+          height: 24,
+        ),
+        inactiveIcon: Image.asset(
+          'assets/images/home_unselected.png',
+          color: AppColors.blackColor,
+          width: 24,
+          height: 24,
+        ),
         title: "Home",
         activeColorPrimary: AppColors.primaryColor,
       ),
       PersistentBottomNavBarItem(
-        icon: Image.asset('assets/images/search_selected.png',
-            width: 34, height: 34),
-        inactiveIcon: Image.asset('assets/images/search_unselected.png',
-            color: AppColors.blackColor, width: 25, height: 25),
+        icon: Image.asset(
+          'assets/images/search_selected.png',
+          width: 34,
+          height: 34,
+        ),
+        inactiveIcon: Image.asset(
+          'assets/images/search_unselected.png',
+          color: AppColors.blackColor,
+          width: 25,
+          height: 25,
+        ),
         title: "Search",
         activeColorPrimary: AppColors.primaryColor,
       ),
       PersistentBottomNavBarItem(
         icon: Icon(Icons.explore, size: 28),
-        inactiveIcon: Icon(Icons.explore_outlined,
-            size: 25, color: AppColors.blackColor),
+        inactiveIcon: Icon(
+          Icons.explore_outlined,
+          size: 25,
+          color: AppColors.blackColor,
+        ),
         title: "Explore",
         activeColorPrimary: AppColors.primaryColor,
       ),
       PersistentBottomNavBarItem(
-        icon: Image.asset('assets/images/like_selected.png',
-            width: 34, height: 34),
-        inactiveIcon: Image.asset('assets/images/like_unselected.png',
-            color: AppColors.blackColor, width: 25, height: 25),
+        icon: Image.asset(
+          'assets/images/like_selected.png',
+          width: 34,
+          height: 34,
+        ),
+        inactiveIcon: Image.asset(
+          'assets/images/like_unselected.png',
+          color: AppColors.blackColor,
+          width: 25,
+          height: 25,
+        ),
         title: "Favorite",
         activeColorPrimary: AppColors.primaryColor,
       ),
       PersistentBottomNavBarItem(
-        icon: Image.asset('assets/images/account_selected.png',
-            width: 34, height: 34),
-        inactiveIcon: Image.asset('assets/images/account_unselected.png',
-            color: AppColors.blackColor, width: 25, height: 25),
+        icon: Image.asset(
+          'assets/images/account_selected.png',
+          width: 34,
+          height: 34,
+        ),
+        inactiveIcon: Image.asset(
+          'assets/images/account_unselected.png',
+          color: AppColors.blackColor,
+          width: 25,
+          height: 25,
+        ),
         title: "Profile",
         activeColorPrimary: AppColors.primaryColor,
       ),
@@ -102,10 +134,7 @@ class _MainScreenState extends State<MainScreen> {
               backgroundColor: AppColors.whiteColor,
               elevation: 0,
               centerTitle: true,
-              title: Image.asset(
-                'assets/images/logo.png',
-                height: 40,
-              ),
+              title: Image.asset('assets/images/logo.png', height: 40),
               actions: [
                 GestureDetector(
                   onTap: () => Get.to(NotificationScreen()),

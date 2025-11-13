@@ -29,9 +29,7 @@ class VerifyPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(
-                height: 50,
-              ),
+              SizedBox(height: 50),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -61,9 +59,7 @@ class VerifyPage extends StatelessWidget {
                   SizedBox(),
                 ],
               ),
-              SizedBox(
-                height: 53,
-              ),
+              SizedBox(height: 53),
               Text(
                 'Verify Email',
                 style: TextStyle(
@@ -73,9 +69,7 @@ class VerifyPage extends StatelessWidget {
                   fontSize: 28,
                 ),
               ),
-              SizedBox(
-                height: 14,
-              ),
+              SizedBox(height: 14),
               Text(
                 'Enter the 6 digit code we have sent to ${signupController.userModel.userEmail.text}',
                 style: TextStyle(
@@ -86,9 +80,7 @@ class VerifyPage extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(
-                height: 30,
-              ),
+              SizedBox(height: 30),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.0),
                 child: Pinput(
@@ -116,9 +108,7 @@ class VerifyPage extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: AppColors.whiteColor,
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                        color: AppColors.primaryColor,
-                      ),
+                      border: Border.all(color: AppColors.primaryColor),
                     ),
                   ),
                   focusedPinTheme: PinTheme(
@@ -140,9 +130,7 @@ class VerifyPage extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(
-                height: 40,
-              ),
+              SizedBox(height: 40),
               Center(
                 child: CustomButton(
                   laBelText: 'Verify code',
@@ -153,8 +141,8 @@ class VerifyPage extends StatelessWidget {
                   textColor: Colors.white,
                   ontapp: () async {
                     controller.onClick.value = !controller.onClick.value;
-                    String enteredCode =
-                        controller.verifyController.text.trim();
+                    String enteredCode = controller.verifyController.text
+                        .trim();
                     if (_formKey.currentState!.validate()) {
                       if (enteredCode.isEmpty ||
                           !RegExp(r'^[0-9]+$').hasMatch(enteredCode)) {
@@ -171,18 +159,17 @@ class VerifyPage extends StatelessWidget {
                           Get.offAll(() => Preference1());
                         } else {
                           loadingDialog(
-                              message:
-                                  'The OTP you entered is incorrect. Please try again.',
-                              button: true);
+                            message:
+                                'The OTP you entered is incorrect. Please try again.',
+                            button: true,
+                          );
                         }
                       }
                     }
                   },
                 ),
               ),
-              SizedBox(
-                height: 38,
-              ),
+              SizedBox(height: 38),
               Center(
                 child: Text(
                   'Haven’t received the code yet?',
@@ -194,35 +181,33 @@ class VerifyPage extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(
-                height: 24,
-              ),
+              SizedBox(height: 24),
               Center(
                 child: GestureDetector(
                   onTap: () async {
                     await signupController.sendEmail(isFromResendOtp: true);
 
                     dialogueBox(
-                        text:
-                            'The code has been sent to your email address.\nCheck your Spam folder if you do not receive it.',
-                        color: AppColors.primaryColor,
-                        onPressed: () {
-                          Get.back();
-                        });
+                      text:
+                          'The code has been sent to your email address.\nCheck your Spam folder if you do not receive it.',
+                      color: AppColors.primaryColor,
+                      onPressed: () {
+                        Get.back();
+                      },
+                    );
                   },
                   child: Text(
                     'Resend!',
                     style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                        fontFamily: 'Nunito-Sans',
-                        color: AppColors.primaryColor),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                      fontFamily: 'Nunito-Sans',
+                      color: AppColors.primaryColor,
+                    ),
                   ),
                 ),
               ),
-              SizedBox(
-                height: 30,
-              ),
+              SizedBox(height: 30),
             ],
           ),
         ),

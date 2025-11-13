@@ -69,7 +69,8 @@ class ThemeViewAll extends StatelessWidget {
             // childAspectRatio: 18.0, // Ratio to control the size of the items
           ),
           itemCount: themeController
-              .circleItems.length, // Number of items (3 rows * 3 columns = 9)
+              .circleItems
+              .length, // Number of items (3 rows * 3 columns = 9)
           itemBuilder: (context, index) {
             final item = themeController.circleItems[index];
             return CircleContainerWidget(

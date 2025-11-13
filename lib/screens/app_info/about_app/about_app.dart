@@ -21,9 +21,7 @@ class AboutApp extends StatelessWidget {
         backgroundColor: AppColors.bgColor,
         appBar: AppBar(
           backgroundColor: AppColors.bgColor,
-          iconTheme: IconThemeData(
-            color: AppColors.bottomSheetColor,
-          ),
+          iconTheme: IconThemeData(color: AppColors.bottomSheetColor),
           centerTitle: true,
           automaticallyImplyLeading: true,
           leading: Padding(
@@ -70,18 +68,20 @@ class AboutApp extends StatelessWidget {
               children: [
                 const SizedBox(height: 20),
                 // About Section
-                Obx(() => Text(
-                      controller.aboutText.value.isNotEmpty
-                          ? controller.aboutText.value
-                          : 'Loading about information...',
-                      textAlign: TextAlign.justify,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontFamily: "Nunito-Regular",
-                        color: Color(0xFF656D7B),
-                        fontWeight: FontWeight.w400,
-                      ),
-                    )),
+                Obx(
+                  () => Text(
+                    controller.aboutText.value.isNotEmpty
+                        ? controller.aboutText.value
+                        : 'Loading about information...',
+                    textAlign: TextAlign.justify,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontFamily: "Nunito-Regular",
+                      color: Color(0xFF656D7B),
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 20),
               ],
             ),

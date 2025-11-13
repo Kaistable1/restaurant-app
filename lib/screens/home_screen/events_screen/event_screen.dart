@@ -24,8 +24,11 @@ class EventScreen extends StatelessWidget {
           padding: const EdgeInsets.all(12.0),
           child: GestureDetector(
             onTap: () => Get.back(),
-            child:
-                Icon(Icons.arrow_back, size: 18, color: AppColors.primaryColor),
+            child: Icon(
+              Icons.arrow_back,
+              size: 18,
+              color: AppColors.primaryColor,
+            ),
           ),
         ),
         title: Text(
@@ -60,7 +63,11 @@ class EventScreen extends StatelessWidget {
                 isShadow: true,
                 prefixIcon: Padding(
                   padding: const EdgeInsets.only(
-                      left: 4, top: 8, bottom: 8, right: 0),
+                    left: 4,
+                    top: 8,
+                    bottom: 8,
+                    right: 0,
+                  ),
                   child: Image.asset(
                     'assets/images/search_icon.png',
                     fit: BoxFit.contain,
@@ -72,9 +79,7 @@ class EventScreen extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(
-            height: 20,
-          ),
+          SizedBox(height: 20),
 
           /// horizontal tabs
           Padding(
@@ -85,9 +90,7 @@ class EventScreen extends StatelessWidget {
             () => categoryController.selectedCat.value == 'Distance'
                 ? Column(
                     children: [
-                      SizedBox(
-                        height: 20,
-                      ),
+                      SizedBox(height: 20),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: HorizontalMiles(),
@@ -97,43 +100,37 @@ class EventScreen extends StatelessWidget {
                 : SizedBox(),
           ),
 
-          SizedBox(
-            height: 20,
-          ),
+          SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Text(
               'Top Events for today',
               style: TextStyle(
-                  color: AppColors.bottomSheetColor,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'Nunito-Bold'),
+                color: AppColors.bottomSheetColor,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                fontFamily: 'Nunito-Bold',
+              ),
             ),
           ),
-          SizedBox(
-            height: 10,
-          ),
+          SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Text(
               'Get ready to make the most of your day with exciting events happening around you. From a cozy outdoor movie night under the stars to a sizzling chef’s tasting menu at your favorite restaurant, there’s something for everyone.',
               style: TextStyle(
-                  color: AppColors.textColor,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                  fontFamily: 'Nunito-Regular'),
+                color: AppColors.textColor,
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+                fontFamily: 'Nunito-Regular',
+              ),
             ),
           ),
-          SizedBox(
-            height: 10,
-          ),
+          SizedBox(height: 10),
           Expanded(
             child: Column(
               children: [
-                const SizedBox(
-                  height: 10,
-                ),
+                const SizedBox(height: 10),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Row(
@@ -192,18 +189,13 @@ class EventScreen extends StatelessWidget {
                   height: 1,
                 ),
                 Expanded(
-                  child:
-                      Obx(() => controller.upcomingAppointmentsCheck.value == 0
-                          ? EventsList(
-                              eventsOnly: 'Today',
-                            )
-                          : controller.upcomingAppointmentsCheck.value == 1
-                              ? EventsList(
-                                  eventsOnly: 'This week',
-                                )
-                              : EventsList(
-                                  eventsOnly: 'This month',
-                                )),
+                  child: Obx(
+                    () => controller.upcomingAppointmentsCheck.value == 0
+                        ? EventsList(eventsOnly: 'Today')
+                        : controller.upcomingAppointmentsCheck.value == 1
+                        ? EventsList(eventsOnly: 'This week')
+                        : EventsList(eventsOnly: 'This month'),
+                  ),
                 ),
               ],
             ),

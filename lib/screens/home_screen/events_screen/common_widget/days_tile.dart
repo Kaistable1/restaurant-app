@@ -28,13 +28,14 @@ class DaysTile extends StatelessWidget {
   final VoidCallback onTap;
   final BookmarksController bookmarkController = Get.put(BookmarksController());
 
-  DaysTile(
-      {super.key,
-      this.image,
-      this.title,
-      this.location,
-      required this.onTap,
-      this.type});
+  DaysTile({
+    super.key,
+    this.image,
+    this.title,
+    this.location,
+    required this.onTap,
+    this.type,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -105,9 +106,7 @@ class DaysTile extends StatelessWidget {
                 Wrap(
                   spacing: 8,
                   runSpacing: 4,
-                  children: [
-                    _buildCategoryChip(type ?? ''),
-                  ],
+                  children: [_buildCategoryChip(type ?? '')],
                 ),
               ],
             ),

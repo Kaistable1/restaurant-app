@@ -53,11 +53,7 @@ class HomeLocationController extends GetxController {
   // ScrollController to control the ListView scroll position
   ScrollController scrollController = ScrollController();
   var selectedLetter = ''.obs; // Observable variable to store selected index
-  List top = [
-    'Most Reviewed',
-    'Discount',
-    'Dining',
-  ];
+  List top = ['Most Reviewed', 'Discount', 'Dining'];
   RxString selectedTop = ''.obs;
   var selectedDiscount = '10%'.obs;
   RxList<RestaurantModel> restaurants = <RestaurantModel>[].obs;
@@ -161,8 +157,9 @@ class HomeLocationController extends GetxController {
       loadingDialog(message: 'Please wait!', loading: true, height: 150);
       List<String> imagesLinks = [];
       for (var v in images) {
-        imagesLinks
-            .add(await uploadImageToFirebase('reviews', v.readAsBytesSync()));
+        imagesLinks.add(
+          await uploadImageToFirebase('reviews', v.readAsBytesSync()),
+        );
       }
       print('restaurantID ------- $restaurantID');
       var reviewCollection = FirebaseFirestore.instance
@@ -199,14 +196,18 @@ class HomeLocationController extends GetxController {
         .collection('restaurants')
         .doc(restaurantID)
         .collection('reviews')
-        .orderBy('dateTime',
-            descending: true) // Sort by dateTime (most recent first)
+        .orderBy(
+          'dateTime',
+          descending: true,
+        ) // Sort by dateTime (most recent first)
         .snapshots()
         .map((querySnapshot) {
-      return querySnapshot.docs.map((doc) {
-        return ReviewModel.fromFirestore(doc.data() as Map<String, dynamic>);
-      }).toList();
-    });
+          return querySnapshot.docs.map((doc) {
+            return ReviewModel.fromFirestore(
+              doc.data() as Map<String, dynamic>,
+            );
+          }).toList();
+        });
   }
 
   //get trensing resturants base on totoal reviews and rating
@@ -261,10 +262,10 @@ class HomeLocationController extends GetxController {
         .orderBy('averageRating', descending: true)
         .snapshots()
         .map((snapshot) {
-      return snapshot.docs.map((doc) {
-        return RestaurantModel.fromDocumentSnapshot(doc);
-      }).toList();
-    });
+          return snapshot.docs.map((doc) {
+            return RestaurantModel.fromDocumentSnapshot(doc);
+          }).toList();
+        });
   }
 
   addRecentView({required String restaurantID, resName}) async {
@@ -277,7 +278,8 @@ class HomeLocationController extends GetxController {
     }
 
     print(
-        'recent view list -------------------------- ${localStoreResturatnstID.toString()}');
+      'recent view list -------------------------- ${localStoreResturatnstID.toString()}',
+    );
 
     try {
       var reviewCollection = FirebaseFirestore.instance
@@ -343,25 +345,29 @@ class HomeLocationController extends GetxController {
         .limit(limit)
         .snapshots()
         .asyncMap((snapshot) async {
-      if (snapshot.docs.isNotEmpty) {
-        lastDocument = snapshot.docs.last; // Track last document for pagination
-      }
+          if (snapshot.docs.isNotEmpty) {
+            lastDocument =
+                snapshot.docs.last; // Track last document for pagination
+          }
 
-      List<RestaurantModel> restaurantsList = await Future.wait(
-        snapshot.docs.map((doc) async {
-          final restaurant = RestaurantModel.fromDocumentSnapshot(doc);
+          List<RestaurantModel> restaurantsList = await Future.wait(
+            snapshot.docs.map((doc) async {
+              final restaurant = RestaurantModel.fromDocumentSnapshot(doc);
 
-          return restaurant;
-        }),
-      );
+              return restaurant;
+            }),
+          );
 
-      restaurants.assignAll(restaurantsList.where((item) => item.resName
-          .toLowerCase()
-          .contains(searchController.text
-              .toLowerCase()))); // Use `.assignAll` for observable list
-      update(); // Ensure UI updates
-      return restaurantsList;
-    });
+          restaurants.assignAll(
+            restaurantsList.where(
+              (item) => item.resName.toLowerCase().contains(
+                searchController.text.toLowerCase(),
+              ),
+            ),
+          ); // Use `.assignAll` for observable list
+          update(); // Ensure UI updates
+          return restaurantsList;
+        });
   }
 
   /// Loads more restaurants for pagination
@@ -373,8 +379,10 @@ class HomeLocationController extends GetxController {
 
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('restaurants')
-        .orderBy('createdAt',
-            descending: true) // Ensure order is same as initial fetch
+        .orderBy(
+          'createdAt',
+          descending: true,
+        ) // Ensure order is same as initial fetch
         .startAfterDocument(lastDocument!)
         .limit(limit)
         .get();
@@ -385,7 +393,8 @@ class HomeLocationController extends GetxController {
       final newRestaurants = await Future.wait(
         querySnapshot.docs.map((doc) async {
           final restaurant = RestaurantModel.fromDocumentSnapshot(
-              doc as DocumentSnapshot<Map<String, dynamic>>);
+            doc as DocumentSnapshot<Map<String, dynamic>>,
+          );
 
           return restaurant;
         }),
@@ -407,22 +416,24 @@ class HomeLocationController extends GetxController {
         .orderBy('createdAt', descending: true)
         .snapshots()
         .asyncMap((snapshot) async {
-      if (snapshot.docs.isNotEmpty) {
-        lastDocument = snapshot.docs.last; // Track last document for pagination
-      }
+          if (snapshot.docs.isNotEmpty) {
+            lastDocument =
+                snapshot.docs.last; // Track last document for pagination
+          }
 
-      List<RestaurantModel> restaurantsList = await Future.wait(
-        snapshot.docs.map((doc) async {
-          final restaurant = RestaurantModel.fromDocumentSnapshot(doc);
-          return restaurant;
-        }),
-      );
+          List<RestaurantModel> restaurantsList = await Future.wait(
+            snapshot.docs.map((doc) async {
+              final restaurant = RestaurantModel.fromDocumentSnapshot(doc);
+              return restaurant;
+            }),
+          );
 
-      restaurants
-          .assignAll(restaurantsList); // Use `.assignAll` for observable list
-      update(); // Ensure UI updates
-      return restaurantsList;
-    });
+          restaurants.assignAll(
+            restaurantsList,
+          ); // Use `.assignAll` for observable list
+          update(); // Ensure UI updates
+          return restaurantsList;
+        });
   }
 
   /// Fetches initial restaurants with pagination support
@@ -433,30 +444,34 @@ class HomeLocationController extends GetxController {
         .limit(limit)
         .snapshots()
         .asyncMap((snapshot) async {
-      if (snapshot.docs.isNotEmpty) {
-        lastDocument = snapshot.docs.last; // Track last document for pagination
-      }
+          if (snapshot.docs.isNotEmpty) {
+            lastDocument =
+                snapshot.docs.last; // Track last document for pagination
+          }
 
-      List<RestaurantModel> restaurantsList = await Future.wait(
-        snapshot.docs.map((doc) async {
-          final restaurant = RestaurantModel.fromDocumentSnapshot(doc);
+          List<RestaurantModel> restaurantsList = await Future.wait(
+            snapshot.docs.map((doc) async {
+              final restaurant = RestaurantModel.fromDocumentSnapshot(doc);
 
-          return restaurant;
-        }),
-      );
+              return restaurant;
+            }),
+          );
 
-      restaurants
-          .assignAll(restaurantsList); // Use `.assignAll` for observable list
-      update(); // Ensure UI updates
-      return restaurantsList;
-    });
+          restaurants.assignAll(
+            restaurantsList,
+          ); // Use `.assignAll` for observable list
+          update(); // Ensure UI updates
+          return restaurantsList;
+        });
   }
 
   Stream<List<RestaurantModel>> getEntertainmentRestaurants() {
     return FirebaseFirestore.instance
         .collection('restaurants')
-        .where('entertainmentScheduleList',
-            isGreaterThan: []) // Ensures non-empty lists
+        .where(
+          'entertainmentScheduleList',
+          isGreaterThan: [],
+        ) // Ensures non-empty lists
         .snapshots()
         .asyncMap((snapshot) async {
           final restaurants = await Future.wait(
@@ -473,8 +488,11 @@ class HomeLocationController extends GetxController {
   bool isOfferValidForCurrentDate(String fromDate, String toDate) {
     try {
       DateTime currentDate = DateTime.now().toLocal();
-      DateTime now =
-          DateTime(currentDate.year, currentDate.month, currentDate.day);
+      DateTime now = DateTime(
+        currentDate.year,
+        currentDate.month,
+        currentDate.day,
+      );
 
       // Parse the dates in the format dd/MM/yy
       DateTime fromDateTime = DateFormat("dd/MM/yy").parse(fromDate);
@@ -609,9 +627,11 @@ class HomeLocationController extends GetxController {
       filteredRestaurants = allRestaurants;
     } else {
       filteredRestaurants = allRestaurants
-          .where((restaurant) => restaurant.resName
-              .toLowerCase()
-              .contains(query.toLowerCase().trim()))
+          .where(
+            (restaurant) => restaurant.resName.toLowerCase().contains(
+              query.toLowerCase().trim(),
+            ),
+          )
           .toList();
     }
     update();
@@ -675,15 +695,26 @@ class HomeLocationController extends GetxController {
   }
 
   bool isWithinRadius(
-      Position userLocation, double restLat, double restLng, double radiusKm) {
+    Position userLocation,
+    double restLat,
+    double restLng,
+    double radiusKm,
+  ) {
     double distance = Geolocator.distanceBetween(
-        userLocation.latitude, userLocation.longitude, restLat, restLng);
+      userLocation.latitude,
+      userLocation.longitude,
+      restLat,
+      restLng,
+    );
 
     return distance <= radiusKm * 1000; // Convert km to meters
   }
 
   Future<List<RestaurantModel>> getNearbyRestaurants(
-      List<RestaurantModel> allRestaurants, double radiusKm, context) async {
+    List<RestaurantModel> allRestaurants,
+    double radiusKm,
+    context,
+  ) async {
     Position userLocation = await getCurrentLocation(context);
 
     return allRestaurants.where((restaurant) {
@@ -702,8 +733,10 @@ class HomeLocationController extends GetxController {
           .collection('users')
           .doc(auth.currentUser?.uid) // Current user's document
           .collection('favorite')
-          .where('resturantID',
-              isEqualTo: resturant_id) // Filter by restaurantID
+          .where(
+            'resturantID',
+            isEqualTo: resturant_id,
+          ) // Filter by restaurantID
           .snapshots(), // Stream the snapshot for real-time updates
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -737,12 +770,14 @@ class HomeLocationController extends GetxController {
                   .where('resturantID', isEqualTo: resturant_id)
                   .get()
                   .then((snapshot) {
-                for (var doc in snapshot.docs) {
-                  doc.reference.delete(); // Remove from favorites
-                }
-              });
+                    for (var doc in snapshot.docs) {
+                      doc.reference.delete(); // Remove from favorites
+                    }
+                  });
               await updateAverageRating(
-                  isRate: true, resturant_id: resturant_id);
+                isRate: true,
+                resturant_id: resturant_id,
+              );
             } else {
               // Add the restaurant to favorites
               String favId = FirebaseFirestore.instance
@@ -757,12 +792,11 @@ class HomeLocationController extends GetxController {
                   .doc(auth.currentUser!.uid)
                   .collection('favorite')
                   .doc(favId)
-                  .set({
-                'resturantID': resturant_id,
-                'favID': favId,
-              });
+                  .set({'resturantID': resturant_id, 'favID': favId});
               await updateAverageRating(
-                  isRate: false, resturant_id: resturant_id);
+                isRate: false,
+                resturant_id: resturant_id,
+              );
             }
           },
           child: isFavorite
@@ -783,8 +817,9 @@ class HomeLocationController extends GetxController {
   }
 
   Future<void> updateAverageRating({required bool isRate, resturant_id}) async {
-    final DocumentReference docRef =
-        FirebaseFirestore.instance.collection('restaurants').doc(resturant_id);
+    final DocumentReference docRef = FirebaseFirestore.instance
+        .collection('restaurants')
+        .doc(resturant_id);
 
     try {
       await docRef.update({
@@ -802,11 +837,11 @@ class HomeLocationController extends GetxController {
         .doc('mainFeatured')
         .snapshots()
         .map((snapshot) {
-      if (snapshot.exists) {
-        return snapshot.data();
-      }
-      return null;
-    });
+          if (snapshot.exists) {
+            return snapshot.data();
+          }
+          return null;
+        });
   }
 
   Stream<RestaurantModel?> getFeaturedRestaurants({required String restID}) {
@@ -815,13 +850,13 @@ class HomeLocationController extends GetxController {
         .where('docID', isEqualTo: restID)
         .snapshots()
         .map((snapshot) {
-      if (snapshot.docs.isNotEmpty) {
-        final doc = snapshot.docs.first;
-        lastDocument = snapshot.docs.last; // Optional: for pagination
-        return RestaurantModel.fromDocumentSnapshot(doc);
-      } else {
-        return null;
-      }
-    });
+          if (snapshot.docs.isNotEmpty) {
+            final doc = snapshot.docs.first;
+            lastDocument = snapshot.docs.last; // Optional: for pagination
+            return RestaurantModel.fromDocumentSnapshot(doc);
+          } else {
+            return null;
+          }
+        });
   }
 }

@@ -20,9 +20,7 @@ class MapDetailWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            height: 20,
-          ),
+          SizedBox(height: 20),
           restaurantModel.address.isEmpty
               ? SizedBox()
               : Column(
@@ -41,9 +39,7 @@ class MapDetailWidget extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(
-                      height: 4,
-                    ),
+                    SizedBox(height: 4),
                     SizedBox(
                       height: 40,
                       width: 290,
@@ -51,7 +47,7 @@ class MapDetailWidget extends StatelessWidget {
                         restaurantModel.address.isEmpty
                             ? "comming Soon!"
                             : restaurantModel.address +
-                                ',${restaurantModel.city} ${restaurantModel.zipCode},${restaurantModel.country}',
+                                  ',${restaurantModel.city} ${restaurantModel.zipCode},${restaurantModel.country}',
                         style: TextStyle(
                           color: AppColors.darkGrey,
                           fontSize: 14,
@@ -76,9 +72,7 @@ class MapDetailWidget extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
+                    SizedBox(height: 10),
                     SizedBox(
                       width: 325,
                       child: restaurantModel.atmosphereList.isEmpty
@@ -88,9 +82,7 @@ class MapDetailWidget extends StatelessWidget {
                               context,
                             ),
                     ),
-                    SizedBox(
-                      height: 20,
-                    ),
+                    SizedBox(height: 20),
                   ],
                 ),
           restaurantModel.facilityList.isEmpty
@@ -107,9 +99,7 @@ class MapDetailWidget extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
+                    SizedBox(height: 10),
                     SizedBox(
                       width: 325,
                       child: restaurantModel.facilityList.isEmpty
@@ -119,9 +109,7 @@ class MapDetailWidget extends StatelessWidget {
                               context,
                             ),
                     ),
-                    SizedBox(
-                      height: 20,
-                    ),
+                    SizedBox(height: 20),
                   ],
                 ),
           restaurantModel.dietaryList.isEmpty
@@ -138,9 +126,7 @@ class MapDetailWidget extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    SizedBox(
-                      height: 16,
-                    ),
+                    SizedBox(height: 16),
                     SizedBox(
                       width: 325,
                       child: restaurantModel.dietaryList.isEmpty
@@ -150,9 +136,7 @@ class MapDetailWidget extends StatelessWidget {
                               context,
                             ),
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
+                    SizedBox(height: 10),
                   ],
                 ),
           restaurantModel.entertainmentScheduleList.isEmpty
@@ -169,9 +153,7 @@ class MapDetailWidget extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
+                    SizedBox(height: 10),
                     SizedBox(
                       width: 325,
                       child: restaurantModel.entertainmentScheduleList.isEmpty
@@ -184,9 +166,7 @@ class MapDetailWidget extends StatelessWidget {
                               context,
                             ),
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
+                    SizedBox(height: 10),
                   ],
                 ),
           restaurantModel.priceRange.isEmpty ||
@@ -204,9 +184,7 @@ class MapDetailWidget extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
+                    SizedBox(height: 10),
                     SizedBox(
                       width: 325,
                       child: restaurantModel.priceRange == '\$\$'
@@ -232,9 +210,7 @@ class MapDetailWidget extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
+                    SizedBox(height: 10),
                     restaurantModel.spokenLanguage.isEmpty
                         ? Text("comming Soon!")
                         : _buildStarBox(
@@ -246,25 +222,23 @@ class MapDetailWidget extends StatelessWidget {
           isCommingSoon == true
               ? Column(
                   children: [
-                    SizedBox(
-                      height: 20,
-                    ),
+                    SizedBox(height: 20),
                     CustomButton(
                       laBelText: 'Claim your business',
                       textColor: AppColors.whiteColor,
                       fontSize: 16,
                       ontapp: () {
-                        showCustomDialog(context,
-                            resaturant_model: restaurantModel);
+                        showCustomDialog(
+                          context,
+                          resaturant_model: restaurantModel,
+                        );
                       },
                       fontWeight: FontWeight.bold,
                     ),
                   ],
                 )
               : SizedBox(),
-          SizedBox(
-            height: 20,
-          )
+          SizedBox(height: 20),
         ],
       ),
     );
@@ -280,29 +254,35 @@ class MapDetailWidget extends StatelessWidget {
       spacing: 4, // Horizontal spacing between items
       runSpacing: 8, // Vertical spacing between rows
       children: titleList
-          .map((title) => Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 8, vertical: 4), // Add padding around the text
-                decoration: BoxDecoration(
-                  color: AppColors.primaryColor.withOpacity(.5),
-                  borderRadius: BorderRadius.circular(32),
-                ),
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    fontFamily: 'Nunito-Regular',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: AppColors.textColor,
-                  ), // Adjust font size as needed
-                ),
-              ))
+          .map(
+            (title) => Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8,
+                vertical: 4,
+              ), // Add padding around the text
+              decoration: BoxDecoration(
+                color: AppColors.primaryColor.withOpacity(.5),
+                borderRadius: BorderRadius.circular(32),
+              ),
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontFamily: 'Nunito-Regular',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.textColor,
+                ), // Adjust font size as needed
+              ),
+            ),
+          )
           .toList(),
     );
   }
 
-  void showCustomDialog(BuildContext context,
-      {required RestaurantModel resaturant_model}) {
+  void showCustomDialog(
+    BuildContext context, {
+    required RestaurantModel resaturant_model,
+  }) {
     TextEditingController nameController = TextEditingController();
     TextEditingController resNameController = TextEditingController();
     TextEditingController emailController = TextEditingController();
@@ -467,8 +447,10 @@ class MapDetailWidget extends StatelessWidget {
                             );
                           } catch (e) {
                             print('Error submitting claim: $e');
-                            Get.snackbar('Error',
-                                'Something went wrong. Please try again later.');
+                            Get.snackbar(
+                              'Error',
+                              'Something went wrong. Please try again later.',
+                            );
                           }
                         }
                       },
@@ -483,7 +465,7 @@ class MapDetailWidget extends StatelessWidget {
     );
   }
 
-// Common TextStyle for Labels
+  // Common TextStyle for Labels
   TextStyle _textStyle() {
     return TextStyle(
       fontFamily: 'Nunito-Regular',
@@ -493,7 +475,7 @@ class MapDetailWidget extends StatelessWidget {
     );
   }
 
-// Common InputDecoration for TextFields
+  // Common InputDecoration for TextFields
   InputDecoration _inputDecoration(String hint) {
     return InputDecoration(
       hintText: hint,

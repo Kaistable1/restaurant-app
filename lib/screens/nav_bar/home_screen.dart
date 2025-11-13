@@ -31,8 +31,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final EventsController eventController = Get.put(EventsController());
 
-  final HomeLocationController homeController =
-      Get.put(HomeLocationController());
+  final HomeLocationController homeController = Get.put(
+    HomeLocationController(),
+  );
 
   final GlobalKey _carouselKey = GlobalKey();
 
@@ -114,23 +115,30 @@ class _HomeScreenState extends State<HomeScreen> {
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
-                              return CarouselWidget(imagePaths: [
-                                'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4',
-                              ]);
+                              return CarouselWidget(
+                                imagePaths: [
+                                  'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4',
+                                ],
+                              );
                             }
 
                             if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                              return CarouselWidget(imagePaths: [
-                                'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4',
-                              ]);
+                              return CarouselWidget(
+                                imagePaths: [
+                                  'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4',
+                                ],
+                              );
                             }
                             final banners = snapshot.data!;
-                            List<String> bannerImages =
-                                banners.map((e) => e.bannerImage).toList();
+                            List<String> bannerImages = banners
+                                .map((e) => e.bannerImage)
+                                .toList();
                             if (bannerImages.isEmpty) {
-                              return CarouselWidget(imagePaths: [
-                                'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4',
-                              ]);
+                              return CarouselWidget(
+                                imagePaths: [
+                                  'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4',
+                                ],
+                              );
                             }
                             return CarouselWidget(imagePaths: bannerImages);
                           },
@@ -285,15 +293,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   width: double.infinity,
                   height: 100,
                   child: Center(
-                      child: Text(
-                    'No events found in your region.',
-                    style: TextStyle(
-                      color: AppColors.bottomSheetColor,
-                      fontFamily: 'aftika-regular',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                    child: Text(
+                      'No events found in your region.',
+                      style: TextStyle(
+                        color: AppColors.bottomSheetColor,
+                        fontFamily: 'aftika-regular',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  )))
+                  ),
+                )
               : ListView.builder(
                   shrinkWrap: true,
                   physics: ScrollPhysics(),
@@ -306,11 +316,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0, vertical: 8.0),
+                            horizontal: 16.0,
+                            vertical: 8.0,
+                          ),
                           child: DaysTile(
-                            onTap: () => Get.to(EventDetailsScreen(
-                              event: event,
-                            )),
+                            onTap: () =>
+                                Get.to(EventDetailsScreen(event: event)),
                             image: event.imageUrls.first,
                             title: event.eventName,
                             location: event.location,
@@ -409,7 +420,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: InkWell(
                             onTap: () => Get.to(
-                                RestaurantDetailScreen(restaurantModel: item)),
+                              RestaurantDetailScreen(restaurantModel: item),
+                            ),
                             child: RectangleWidget(
                               boxColor: AppColors.whiteColor,
                               imgHeight: 203,
@@ -457,7 +469,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
         return StreamBuilder<RestaurantModel?>(
           stream: homeController.getFeaturedRestaurants(
-              restID: data['restaurantID']),
+            restID: data['restaurantID'],
+          ),
           builder: (context, restaurantSnapshot) {
             if (!restaurantSnapshot.hasData ||
                 restaurantSnapshot.data == null) {
@@ -501,9 +514,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 18),
                     GestureDetector(
                       onTap: () {
-                        Get.to(RestaurantDetailScreen(
-                          restaurantModel: restaurant,
-                        ));
+                        Get.to(
+                          RestaurantDetailScreen(restaurantModel: restaurant),
+                        );
                       },
                       child: Container(
                         height: Get.height * 0.3,
@@ -531,8 +544,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             const SizedBox(height: 1),
                             Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 10),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                              ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
@@ -551,7 +565,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(
-                                  left: 10, top: 5, right: 10),
+                                left: 10,
+                                top: 5,
+                                right: 10,
+                              ),
                               child: Row(
                                 children: [
                                   Expanded(
@@ -587,89 +604,91 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildCategories() {
-    return Obx(() => Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 14),
-              child: Text(
-                'Explore By Category',
-                style: TextStyle(
-                  color: AppColors.bottomSheetColor,
-                  fontFamily: 'aftika-regular',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                ),
+    return Obx(
+      () => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 14),
+            child: Text(
+              'Explore By Category',
+              style: TextStyle(
+                color: AppColors.bottomSheetColor,
+                fontFamily: 'aftika-regular',
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
               ),
             ),
-            SizedBox(height: 5),
-            Padding(
-              padding: const EdgeInsets.only(left: 14),
-              child: Text(
-                'Find food that fits you',
-                style: TextStyle(
-                  color: AppColors.bottomSheetColor,
-                  fontFamily: 'aftika-regular',
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                ),
+          ),
+          SizedBox(height: 5),
+          Padding(
+            padding: const EdgeInsets.only(left: 14),
+            child: Text(
+              'Find food that fits you',
+              style: TextStyle(
+                color: AppColors.bottomSheetColor,
+                fontFamily: 'aftika-regular',
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
               ),
             ),
-            SizedBox(height: 14),
-            SizedBox(
-              height: 100,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: controller.categories.length,
-                itemBuilder: (context, index) {
-                  var category = controller.categories[index];
-                  return GestureDetector(
-                    onTap: () {
-                      if (category['name'] == 'Cuisines') {
-                        Get.to(CuisinesViewAll());
-                      } else if (category['name'] == 'New') {
-                        Get.to(NewViewall());
-                      } else if (category['name'] == 'Trending') {
-                        Get.to(TrendingViewAll());
-                      } else if (category['name'] == 'Experience') {
-                        Get.to(EntertainmentsScreen());
-                      } else if (category['name'] == 'Events') {
-                        Get.to(EventScreen());
-                      }
-                    },
-                    child: Column(
-                      children: [
-                        Container(
-                          margin: EdgeInsets.symmetric(horizontal: 15),
-                          width: 70,
-                          height: 70,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.circular(10),
-                            image: DecorationImage(
-                              image: AssetImage(category["image"] as String),
-                              fit: BoxFit.cover,
-                            ),
+          ),
+          SizedBox(height: 14),
+          SizedBox(
+            height: 100,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: controller.categories.length,
+              itemBuilder: (context, index) {
+                var category = controller.categories[index];
+                return GestureDetector(
+                  onTap: () {
+                    if (category['name'] == 'Cuisines') {
+                      Get.to(CuisinesViewAll());
+                    } else if (category['name'] == 'New') {
+                      Get.to(NewViewall());
+                    } else if (category['name'] == 'Trending') {
+                      Get.to(TrendingViewAll());
+                    } else if (category['name'] == 'Experience') {
+                      Get.to(EntertainmentsScreen());
+                    } else if (category['name'] == 'Events') {
+                      Get.to(EventScreen());
+                    }
+                  },
+                  child: Column(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.symmetric(horizontal: 15),
+                        width: 70,
+                        height: 70,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.circular(10),
+                          image: DecorationImage(
+                            image: AssetImage(category["image"] as String),
+                            fit: BoxFit.cover,
                           ),
                         ),
-                        SizedBox(height: 5),
-                        Text(
-                          category["name"] as String,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: AppColors.bottomSheetColor,
-                            fontWeight: FontWeight.w500,
-                            fontFamily: 'aftika-regular',
-                          ),
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        category["name"] as String,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.bottomSheetColor,
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'aftika-regular',
                         ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
-          ],
-        ));
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildTrendingSection() {
@@ -891,7 +910,10 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 10),
               FutureBuilder(
                 future: controller.getNearbyRestaurants(
-                    all_restaurants, 50, context),
+                  all_restaurants,
+                  50,
+                  context,
+                ),
                 builder: (context, futureSnapshot) {
                   if (futureSnapshot.connectionState ==
                       ConnectionState.waiting) {
@@ -926,7 +948,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         padding: const EdgeInsets.only(bottom: 10),
                         child: InkWell(
                           onTap: () => Get.to(
-                              RestaurantDetailScreen(restaurantModel: item)),
+                            RestaurantDetailScreen(restaurantModel: item),
+                          ),
                           child: RectangleWidget(
                             imgHeight: 169,
                             title: item.resName,
@@ -954,7 +977,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget nearBySection() {
     List<String> img = [
       'assets/images/event_img5.png',
-      'assets/images/event_ing2.png'
+      'assets/images/event_ing2.png',
     ];
     List<String> nameOfRestaurant = ['ABSteak by Chef', 'Tsuri'];
     List<String> address = ['8500 Beverkt', ' 200 Manathan'];
@@ -1029,11 +1052,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       Container(
                         height: 82,
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            color: Colors.transparent,
-                            image: DecorationImage(
-                                fit: BoxFit.cover,
-                                image: AssetImage(img[index]))),
+                          borderRadius: BorderRadius.circular(5),
+                          color: Colors.transparent,
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: AssetImage(img[index]),
+                          ),
+                        ),
                       ),
                       SizedBox(height: 8),
                       Padding(
@@ -1059,9 +1084,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                                 Spacer(),
-                                SizedBox(
-                                  width: 6,
-                                )
+                                SizedBox(width: 6),
                               ],
                             ),
                             SizedBox(height: 2),
@@ -1089,9 +1112,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                       ),
-                      SizedBox(
-                        height: 6,
-                      ),
+                      SizedBox(height: 6),
                     ],
                   ),
                 ),
@@ -1106,7 +1127,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget trendingSection() {
     List<String> img = [
       'assets/images/aaa.jpg',
-      'assets/images/event_ing2.png'
+      'assets/images/event_ing2.png',
     ];
     List<String> nameOfRestaurant = ['Cactus Cantina', 'Tsuri'];
     List<String> address = ['Scottside', 'Manathan'];

@@ -43,9 +43,7 @@ class TextAndFieldWidget extends StatelessWidget {
             fontSize: 16,
           ),
         ),
-        SizedBox(
-          height: 12,
-        ),
+        SizedBox(height: 12),
         CustomSeparateTextField(
           hintText: hintText,
           controller: controller!,
@@ -57,9 +55,7 @@ class TextAndFieldWidget extends StatelessWidget {
           suffixIcon: suffixIcon,
           validator: validator,
         ),
-        SizedBox(
-          height: 16,
-        ),
+        SizedBox(height: 16),
       ],
     );
   }

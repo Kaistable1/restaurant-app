@@ -56,19 +56,21 @@ class DropDownButton extends StatelessWidget {
               ),
             ),
             items: items
-                .map((String value) => DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(
-                        value,
-                        style: TextStyle(
-                          color: Color(0xFF4F5762),
-                          fontFamily: fontfamily ?? "Lora-Regular",
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                        ),
-                        overflow: TextOverflow.ellipsis,
+                .map(
+                  (String value) => DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(
+                      value,
+                      style: TextStyle(
+                        color: Color(0xFF4F5762),
+                        fontFamily: fontfamily ?? "Lora-Regular",
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14,
                       ),
-                    ))
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                )
                 .toList(),
             value: items.contains(selectedValue) ? selectedValue : null,
             onChanged: onChanged,
@@ -96,10 +98,7 @@ class DropDownButton extends StatelessWidget {
                       Icons.expand_less_rounded,
                       color: AppColors.primaryColor,
                     )
-                  : Icon(
-                      Icons.expand_more,
-                      color: AppColors.primaryColor,
-                    ),
+                  : Icon(Icons.expand_more, color: AppColors.primaryColor),
               iconSize: 30,
             ),
             dropdownStyleData: DropdownStyleData(

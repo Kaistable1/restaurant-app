@@ -21,9 +21,7 @@ class Preference5 extends StatelessWidget {
       backgroundColor: AppColors.bgColor,
       appBar: AppBar(
         backgroundColor: AppColors.bgColor,
-        iconTheme: IconThemeData(
-          color: AppColors.primaryColor,
-        ),
+        iconTheme: IconThemeData(color: AppColors.primaryColor),
         centerTitle: true,
         automaticallyImplyLeading: true,
         leading: Padding(
@@ -83,9 +81,7 @@ class Preference5 extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                height: 8,
-              ),
+              SizedBox(height: 8),
               Text(
                 'What’s most important to you when dining out? (Rank in order of importance 1-6)',
                 style: TextStyle(
@@ -95,13 +91,9 @@ class Preference5 extends StatelessWidget {
                   fontSize: 16,
                 ),
               ),
-              SizedBox(
-                height: 16,
-              ),
+              SizedBox(height: 16),
               prefList(),
-              SizedBox(
-                height: 24,
-              ),
+              SizedBox(height: 24),
               Center(
                 child: CustomButton(
                   laBelText: 'Next',
@@ -125,16 +117,15 @@ class Preference5 extends StatelessWidget {
                     } else {
                       final signupController = Get.put(SignupController());
                       signupController.updateUserData(
-                          field: 'impDiningOut',
-                          entry: controller.selectedPreferences5);
+                        field: 'impDiningOut',
+                        entry: controller.selectedPreferences5,
+                      );
                       Get.to(() => Preference6());
                     }
                   },
                 ),
               ),
-              SizedBox(
-                height: 30,
-              ),
+              SizedBox(height: 30),
             ],
           ),
         ),
@@ -151,8 +142,9 @@ class Preference5 extends StatelessWidget {
       itemBuilder: (context, index) {
         final preference = controller.preferences5[index];
         return Obx(() {
-          final isSelected =
-              controller.selectedPreferences5.contains(preference["name"]);
+          final isSelected = controller.selectedPreferences5.contains(
+            preference["name"],
+          );
           final isOther = preference["name"] == "Other";
 
           // Get the selection number (index in selected list + 1)

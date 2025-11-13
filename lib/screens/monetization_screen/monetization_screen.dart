@@ -12,7 +12,8 @@ class MonetizationScreen extends StatefulWidget {
   State<MonetizationScreen> createState() => _MonetizationScreenState();
 }
 
-class _MonetizationScreenState extends State<MonetizationScreen> with SingleTickerProviderStateMixin {
+class _MonetizationScreenState extends State<MonetizationScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final MonetizationService _monetizationService = MonetizationService();
 
@@ -56,10 +57,7 @@ class _MonetizationScreenState extends State<MonetizationScreen> with SingleTick
       ),
       body: TabBarView(
         controller: _tabController,
-        children: [
-          _buildBadgesTab(),
-          _buildTransactionsTab(),
-        ],
+        children: [_buildBadgesTab(), _buildTransactionsTab()],
       ),
     );
   }
@@ -94,7 +92,10 @@ class _MonetizationScreenState extends State<MonetizationScreen> with SingleTick
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.primaryColor, AppColors.primaryColor.withOpacity(0.7)],
+          colors: [
+            AppColors.primaryColor,
+            AppColors.primaryColor.withOpacity(0.7),
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -344,11 +345,7 @@ class _MonetizationScreenState extends State<MonetizationScreen> with SingleTick
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.receipt_long_outlined,
-            size: 80,
-            color: Colors.grey[300],
-          ),
+          Icon(Icons.receipt_long_outlined, size: 80, color: Colors.grey[300]),
           SizedBox(height: 16),
           Text(
             'No transactions yet',
@@ -420,10 +417,7 @@ class _MonetizationScreenState extends State<MonetizationScreen> with SingleTick
               SizedBox(height: 16),
               Text(
                 'Price: \$${badge.price?.toStringAsFixed(2) ?? '0.00'}',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontFamily: 'Nunito-Bold',
-                ),
+                style: TextStyle(fontSize: 16, fontFamily: 'Nunito-Bold'),
               ),
               SizedBox(height: 16),
               Text(
@@ -444,11 +438,16 @@ class _MonetizationScreenState extends State<MonetizationScreen> with SingleTick
                     child: Row(
                       children: [
                         Icon(
-                          method == 'Stripe' ? Icons.credit_card : Icons.account_balance_wallet,
+                          method == 'Stripe'
+                              ? Icons.credit_card
+                              : Icons.account_balance_wallet,
                           size: 20,
                         ),
                         SizedBox(width: 8),
-                        Text(method, style: TextStyle(fontFamily: 'Nunito-Regular')),
+                        Text(
+                          method,
+                          style: TextStyle(fontFamily: 'Nunito-Regular'),
+                        ),
                       ],
                     ),
                   );

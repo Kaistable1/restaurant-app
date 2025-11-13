@@ -12,7 +12,8 @@ class TrendingScreen extends StatefulWidget {
   State<TrendingScreen> createState() => _TrendingScreenState();
 }
 
-class _TrendingScreenState extends State<TrendingScreen> with SingleTickerProviderStateMixin {
+class _TrendingScreenState extends State<TrendingScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final PostService _postService = PostService();
 
@@ -58,10 +59,7 @@ class _TrendingScreenState extends State<TrendingScreen> with SingleTickerProvid
       ),
       body: TabBarView(
         controller: _tabController,
-        children: [
-          _buildTrendingTab(),
-          _buildRecentTab(),
-        ],
+        children: [_buildTrendingTab(), _buildRecentTab()],
       ),
     );
   }
@@ -75,7 +73,10 @@ class _TrendingScreenState extends State<TrendingScreen> with SingleTickerProvid
         }
 
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return _buildEmptyState('No trending posts yet', 'Be the first to share something amazing!');
+          return _buildEmptyState(
+            'No trending posts yet',
+            'Be the first to share something amazing!',
+          );
         }
 
         return RefreshIndicator(
@@ -103,7 +104,10 @@ class _TrendingScreenState extends State<TrendingScreen> with SingleTickerProvid
         }
 
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return _buildEmptyState('No posts yet', 'Check back soon for new content!');
+          return _buildEmptyState(
+            'No posts yet',
+            'Check back soon for new content!',
+          );
         }
 
         return RefreshIndicator(
@@ -129,11 +133,7 @@ class _TrendingScreenState extends State<TrendingScreen> with SingleTickerProvid
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.explore_outlined,
-              size: 80,
-              color: Colors.grey[300],
-            ),
+            Icon(Icons.explore_outlined, size: 80, color: Colors.grey[300]),
             SizedBox(height: 16),
             Text(
               title,

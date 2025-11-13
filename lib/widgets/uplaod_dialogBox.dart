@@ -67,15 +67,18 @@ class UploadImageSectionState extends State<UploadImageSection> {
       _errorMessage = "Please enter your  review.";
     } else {
       await homeLocationController.addRestaurantReview(
-          restaurantID: widget.restaurantId,
-          description: _reviewController.text,
-          images: _selectedImages,
-          starRating: ratingStars);
+        restaurantID: widget.restaurantId,
+        description: _reviewController.text,
+        images: _selectedImages,
+        starRating: ratingStars,
+      );
       _errorMessage = null;
-      Get.snackbar("Thank you for your feedback! ",
-          "Your review has been successfully added.",
-          colorText: AppColors.whiteColor,
-          backgroundColor: AppColors.primaryColor);
+      Get.snackbar(
+        "Thank you for your feedback! ",
+        "Your review has been successfully added.",
+        colorText: AppColors.whiteColor,
+        backgroundColor: AppColors.primaryColor,
+      );
       Navigator.pop(context);
     }
     setState(() {});
@@ -120,12 +123,18 @@ class UploadImageSectionState extends State<UploadImageSection> {
                   allowHalfRating: true,
                   itemCount: 5,
                   ratingWidget: RatingWidget(
-                    full: Image.asset('assets/images/star yellow.png',
-                        height: 14),
-                    half: Image.asset('assets/images/star yellow.png',
-                        height: 14),
-                    empty: Image.asset('assets/images/star_empty_yellow.png',
-                        height: 14),
+                    full: Image.asset(
+                      'assets/images/star yellow.png',
+                      height: 14,
+                    ),
+                    half: Image.asset(
+                      'assets/images/star yellow.png',
+                      height: 14,
+                    ),
+                    empty: Image.asset(
+                      'assets/images/star_empty_yellow.png',
+                      height: 14,
+                    ),
                   ),
                   itemPadding: const EdgeInsets.only(left: 2.0),
                   onRatingUpdate: (rating) {
@@ -222,16 +231,17 @@ class UploadImageSectionState extends State<UploadImageSection> {
                                           onTap: () {
                                             if (_pageController.page! > 0) {
                                               _pageController.previousPage(
-                                                duration:
-                                                    Duration(milliseconds: 300),
+                                                duration: Duration(
+                                                  milliseconds: 300,
+                                                ),
                                                 curve: Curves.easeInOut,
                                               );
                                             }
                                           },
                                           child: CircleAvatar(
                                             radius: 14,
-                                            backgroundColor:
-                                                Colors.white.withOpacity(0.7),
+                                            backgroundColor: Colors.white
+                                                .withOpacity(0.7),
                                             child: Icon(
                                               Icons.arrow_back_ios_rounded,
                                               color: AppColors.primaryColor,
@@ -248,16 +258,17 @@ class UploadImageSectionState extends State<UploadImageSection> {
                                             if (_pageController.page! <
                                                 _selectedImages.length - 1) {
                                               _pageController.nextPage(
-                                                duration:
-                                                    Duration(milliseconds: 300),
+                                                duration: Duration(
+                                                  milliseconds: 300,
+                                                ),
                                                 curve: Curves.easeInOut,
                                               );
                                             }
                                           },
                                           child: CircleAvatar(
                                             radius: 14,
-                                            backgroundColor:
-                                                Colors.white.withOpacity(0.7),
+                                            backgroundColor: Colors.white
+                                                .withOpacity(0.7),
                                             child: Icon(
                                               Icons.arrow_forward_ios_rounded,
                                               color: AppColors.primaryColor,

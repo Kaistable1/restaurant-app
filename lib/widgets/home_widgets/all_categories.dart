@@ -14,12 +14,7 @@ class AllCategories extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        _buildTopSection(),
-        SizedBox(height: 16),
-      ],
-    );
+    return Column(children: [_buildTopSection(), SizedBox(height: 16)]);
   }
 
   Widget _buildTopSection() {
@@ -55,15 +50,18 @@ class AllCategories extends StatelessWidget {
                 preferences?.getStringList('recentView') ?? [];
 
             filteredRestaurants = recentView
-                .map((resName) => restaurants.firstWhere(
-                      (restaurant) =>
-                          restaurant.resName.toLowerCase() ==
-                          resName.toLowerCase(),
-                      orElse: () => RestaurantModel.initialize(),
-                    ))
+                .map(
+                  (resName) => restaurants.firstWhere(
+                    (restaurant) =>
+                        restaurant.resName.toLowerCase() ==
+                        resName.toLowerCase(),
+                    orElse: () => RestaurantModel.initialize(),
+                  ),
+                )
                 .where((restaurant) => restaurant.resName.isNotEmpty)
                 .cast<
-                    RestaurantModel>() // Cast back to proper type if necessary
+                  RestaurantModel
+                >() // Cast back to proper type if necessary
                 .toList();
           }
 
@@ -100,9 +98,7 @@ class AllCategories extends StatelessWidget {
                     final item = filteredRestaurants[index];
                     return InkWell(
                       onTap: () {
-                        Get.to(RestaurantDetailScreen(
-                          restaurantModel: item,
-                        ));
+                        Get.to(RestaurantDetailScreen(restaurantModel: item));
                       },
                       child: SizedBox(
                         width: Get.width * 0.45,

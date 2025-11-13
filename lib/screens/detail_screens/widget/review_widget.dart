@@ -15,10 +15,7 @@ import 'package:kaistable_website/widgets/global_functions.dart';
 import 'package:kaistable_website/widgets/uplaod_dialogBox.dart';
 
 class ReviewWidget extends StatelessWidget {
-  ReviewWidget({
-    super.key,
-    this.restaurantModel,
-  });
+  ReviewWidget({super.key, this.restaurantModel});
   RestaurantModel? restaurantModel;
   final controller = Get.find<HomeLocationController>();
   @override
@@ -227,7 +224,8 @@ class ReviewWidget extends StatelessWidget {
                           child: RatingBar(
                             itemSize: 14,
                             ignoreGestures: true,
-                            initialRating: reviews
+                            initialRating:
+                                reviews
                                     .map((e) => e.starRating ?? 0)
                                     .reduce((a, b) => a + b) /
                                 reviews.length,
