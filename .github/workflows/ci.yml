@@ -1,5 +1,4 @@
 name: CI Pipeline
-
 # ----------------------------------------------------------------------
 # Triggers
 # ----------------------------------------------------------------------
@@ -84,13 +83,12 @@ jobs:
   # --------------------------------------------------------------
   cypress-smoke:
     name: Cypress Smoke Tests
-    needs: [build-flutter-web, node-checks]   # wait for both
+    needs: [build-flutter-web, node-checks]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     if: >-
       github.event_name == 'pull_request' ||
       github.ref == 'refs/heads/main'
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -126,9 +124,10 @@ jobs:
       - name: Run Cypress smoke tests
         env:
           CYPRESS_baseUrl: http://localhost:8080
-        run: npx cypress run \
-               --spec "cypress/e2e/smoke_spec.cy.js" \
-               --browser chrome
+        run: |
+          npx cypress run \
+            --spec "cypress/e2e/smoke_spec.cy.js" \
+            --browser chrome
 
       - name: Upload screenshots (on failure)
         if: failure()
@@ -146,9 +145,12 @@ jobs:
           path: cypress/videos/
           retention-days: 7
 
+      # --------------------------------------------------------------
+      # Cleanup server (merged version – safe and works on all shells)
+      # --------------------------------------------------------------
       - name: Cleanup server
         if: always()
         run: |
-          if [ -n "$SERVER_PID" ]; then
-            kill "$SERVER_PID" || true
+          if [ -n "${SERVER_PID:-}" ]; then
+            kill "${SERVER_PID}" || true
           fi

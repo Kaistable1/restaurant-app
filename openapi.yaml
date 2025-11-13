@@ -16,9 +16,9 @@ servers:
     description: Staging
 
 paths:
-  # ---------------------------------------------------------------------
-  # 1. AUTH — User Signup
-  # ---------------------------------------------------------------------
+  # ──────────────────────────────────────────────────────────────
+  # AUTH: User Signup
+  # ──────────────────────────────────────────────────────────────
   /auth/signup:
     post:
       summary: Register new user
@@ -83,9 +83,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  # ---------------------------------------------------------------------
-  # 2. ONBOARDING — Submit preferences & location
-  # ---------------------------------------------------------------------
+  # ──────────────────────────────────────────────────────────────
+  # ONBOARDING: Submit preferences & location
+  # ──────────────────────────────────────────────────────────────
   /onboarding:
     post:
       summary: Complete concierge onboarding
@@ -172,9 +172,9 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 
-  # ---------------------------------------------------------------------
-  # 3. TASKS — Primary task (e.g., reservation)
-  # ---------------------------------------------------------------------
+  # ──────────────────────────────────────────────────────────────
+  # TASKS: Create & List Primary Tasks
+  # ──────────────────────────────────────────────────────────────
   /tasks/primary:
     post:
       summary: Create primary concierge task
@@ -244,7 +244,11 @@ paths:
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
     get:
       summary: List user's primary tasks
@@ -293,9 +297,9 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 
-# ---------------------------------------------------------------------
+# ──────────────────────────────────────────────────────────────
 # COMPONENTS
-# ---------------------------------------------------------------------
+# ──────────────────────────────────────────────────────────────
 components:
   securitySchemes:
     bearerAuth:

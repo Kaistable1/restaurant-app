@@ -1,29 +1,31 @@
-// cypress/e2e/smoke_spec.cy.js
 /// <reference types="cypress" />
 
 /**
- * Savrli City V1 – Smoke Test
+ * Savrli City – Smoke Test Suite
  *
  * Critical path:
- *   1. Sign-up (new user)
- *   2. Concierge onboarding
- *   3. Create a restaurant reservation (primary task)
+ * 1. App loads
+ * 2. Signup
+ * 3. Onboarding (concierge preferences)
+ * 4. Primary task – restaurant reservation
+ * 5. Full end-to-end flow
  *
- * Replace the `data-cy` selectors with the real ones when the UI is implemented.
+ * Update `data-cy` selectors to match your actual UI.
  */
 
-describe('Savrli City Concierge – Full Smoke Flow', () => {
-  const baseUrl = Cypress.config('baseUrl') || 'http://localhost:8080';
+const BASE_URL = Cypress.config('baseUrl') || 'http://localhost:8080';
+const API_URL = Cypress.env('API_BASE_URL') || 'https://staging-api.savrli.city/v1';
 
+describe('Savrli City – Smoke Test', () => {
   // -------------------------------------------------------------------------
-  // Test data (unique per run)
+  // Test data – unique per run
   // -------------------------------------------------------------------------
   const timestamp = Date.now();
   const user = {
     email: `test+${timestamp}@example.com`,
     password: 'Password123!',
-    firstName: 'Smoke',
-    lastName: 'Tester',
+    firstName: 'Test',
+    lastName: 'User',
     phone: '+15550199',
   };
 
@@ -38,115 +40,137 @@ describe('Savrli City Concierge – Full Smoke Flow', () => {
   const reservation = {
     restaurant: 'The Blue Duck',
     partySize: 4,
-    // 7 days from now, ISO string (Flutter date-picker expects ISO)
     dateTime: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
     notes: 'Window seat preferred',
   };
 
   // -------------------------------------------------------------------------
-  // Helper: wait for Flutter app to be ready
+  // Helpers
   // -------------------------------------------------------------------------
-  const waitForApp = () => {
-    cy.visit('/', { timeout: 30_000 });
-    // Flutter web injects a <flt-glass-pane> element when fully booted
-    cy.get('flt-glass-pane', { timeout: 20_000 }).should('exist');
-    cy.log('Flutter app bootstrapped');
-  };
+  const selectCuisine = (name) => cy.get(`[data-cy="cuisine-${name.toLowerCase()}"]`).click();
+  const selectDiet = (name) => cy.get(`[data-cy="diet-${name}"]`).click();
 
   // -------------------------------------------------------------------------
-  // Main flow
+  // 1. App loads
   // -------------------------------------------------------------------------
-  it('completes signup → onboarding → reservation', () => {
-    // ---------------------------------------------------------------------
-    // 1. Load the app
-    // ---------------------------------------------------------------------
-    waitForApp();
-
-    // ---------------------------------------------------------------------
-    // 2. Sign-up
-    // ---------------------------------------------------------------------
-    cy.log('**Step 1 – Sign-up**');
-    cy.get('[data-cy=nav-signup]').click();
-    cy.url().should('include', '/signup');
-
-    cy.get('[data-cy=email]').type(user.email);
-    cy.get('[data-cy=password]').type(user.password);
-    cy.get('[data-cy=first-name]').type(user.firstName);
-    cy.get('[data-cy=last-name]').type(user.lastName);
-    cy.get('[data-cy=phone]').type(user.phone);
-    cy.get('[data-cy=signup-submit]').click();
-
-    // Expect redirect to onboarding
-    cy.url({ timeout: 15_000 }).should('include', '/onboarding');
-    cy.contains('Welcome', { timeout: 10_000 }).should('be.visible');
-
-    // ---------------------------------------------------------------------
-    // 3. Onboarding
-    // ---------------------------------------------------------------------
-    cy.log('**Step 2 – Onboarding**');
-
-    // Cuisines
-    onboarding.cuisines.forEach((c) => {
-      cy.get(`[data-cy=cuisine-${c.toLowerCase()}]`).click();
-    });
-
-    // Dietary restrictions
-    onboarding.dietary.forEach((d) => {
-      cy.get(`[data-cy=diet-${d}]`).click();
-    });
-
-    // Price range
-    cy.get(`[data-cy=price-${onboarding.price}]`).click();
-
-    // Location
-    cy.get('[data-cy=city]').type(onboarding.city);
-    cy.get('[data-cy=zip]').type(onboarding.zip);
-
-    cy.get('[data-cy=onboarding-next]').click();
-    cy.get('[data-cy=onboarding-complete]').click();
-
-    // Dashboard after onboarding
-    cy.url({ timeout: 15_000 }).should('include', '/dashboard');
-    cy.contains('Your concierge is ready').should('be.visible');
-
-    // ---------------------------------------------------------------------
-    // 4. Primary task – restaurant reservation
-    // ---------------------------------------------------------------------
-    cy.log('**Step 3 – Create reservation**');
-
-    cy.get('[data-cy=create-task]').click();
-    cy.get('[data-cy=task-type-reservation]').click();
-
-    cy.get('[data-cy=restaurant]').type(reservation.restaurant);
-    cy.get('[data-cy=party-size]').clear().type(reservation.partySize.toString());
-
-    // Date-time picker – simple click-into-field then type ISO string
-    cy.get('[data-cy=datetime]').type(reservation.dateTime.slice(0, 16)); // YYYY-MM-DDTHH:mm
-
-    cy.get('[data-cy=special-requests]').type(reservation.notes);
-    cy.get('[data-cy=task-submit]').click();
-
-    // Success indicator
-    cy.get('[data-cy=task-success]', { timeout: 20_000 })
-      .should('be.visible')
-      .and('contain', 'created');
-
-    cy.log('Full smoke flow passed!');
+  it('loads the application', () => {
+    cy.visit(BASE_URL);
+    cy.wait(3000); // Allow Flutter web to bootstrap
+    cy.get('body').should('be.visible');
+    cy.log('Application loaded successfully');
   });
 
   // -------------------------------------------------------------------------
-  // Optional: API endpoint health checks (does not fail the build)
+  // 2. Signup flow
   // -------------------------------------------------------------------------
-  context('API endpoint availability (soft check)', () => {
-    const api = Cypress.env('API_BASE_URL') || 'https://staging-api.savrli.city/v1';
+  it('completes user signup', () => {
+    cy.visit(`${BASE_URL}/signup`);
+    cy.get('input[name="email"]').type(user.email);
+    cy.get('input[name="password"]').type(user.password);
+    cy.get('input[name="firstName"]').type(user.firstName);
+    cy.get('input[name="lastName"]').type(user.lastName);
+    cy.get('input[name="phone"]').type(user.phone);
+    cy.get('button[type="submit"]').click();
 
-    const check = (path) => {
-      cy.request({ method: 'OPTIONS', url: `${api}${path}`, failOnStatusCode: false })
-        .then((resp) => cy.log(`${path} → ${resp.status}`));
-    };
+    cy.url().should('include', '/onboarding');
+    cy.contains('Welcome', { timeout: 10000 }).should('be.visible');
+    cy.log('Signup completed');
+  });
 
-    it('signup endpoint', () => check('/auth/signup'));
-    it('onboarding endpoint', () => check('/onboarding'));
-    it('primary task endpoint', () => check('/tasks/primary'));
+  // -------------------------------------------------------------------------
+  // 3. Concierge onboarding
+  // -------------------------------------------------------------------------
+  it('completes concierge onboarding', () => {
+    // Already on /onboarding after signup
+    onboarding.cuisines.forEach(selectCuisine);
+    onboarding.dietary.forEach(selectDiet);
+    cy.get(`[data-cy="price-${onboarding.price}"]`).click();
+    cy.get('input[data-cy="city"]').type(onboarding.city);
+    cy.get('input[data-cy="zip"]').type(onboarding.zip);
+    cy.get('[data-cy="onboard-complete"]').click();
+
+    cy.url().should('include', '/dashboard');
+    cy.contains('Your concierge is ready', { timeout: 10000 }).should('be.visible');
+    cy.log('Onboarding completed');
+  });
+
+  // -------------------------------------------------------------------------
+  // 4. Primary task – restaurant reservation
+  // -------------------------------------------------------------------------
+  it('creates a restaurant reservation', () => {
+    cy.visit(`${BASE_URL}/dashboard`);
+    cy.get('[data-cy="create-task-btn"]').click();
+    cy.get('[data-cy="task-type-reservation"]').click();
+    cy.get('input[data-cy="restaurant"]').type(reservation.restaurant);
+    cy.get('input[data-cy="party-size"]').clear().type(reservation.partySize.toString());
+    cy.get('input[data-cy="datetime"]').type(reservation.dateTime.slice(0, 16));
+    cy.get('textarea[data-cy="special-requests"]').type(reservation.notes);
+    cy.get('[data-cy="task-submit"]').click();
+
+    cy.contains('Task created', { timeout: 15000 }).should('be.visible');
+    cy.get('[data-cy="task-status"]').should('contain', 'pending');
+    cy.log('Reservation task created');
+  });
+
+  // -------------------------------------------------------------------------
+  // 5. Full end-to-end flow (all steps in one test)
+  // -------------------------------------------------------------------------
+  it('runs the full end-to-end flow', () => {
+    cy.log('=== Full E2E Flow Start ===');
+
+    // 1. Load
+    cy.visit(BASE_URL);
+    cy.wait(3000);
+
+    // 2. Signup
+    cy.visit(`${BASE_URL}/signup`);
+    cy.get('input[name="email"]').type(user.email);
+    cy.get('input[name="password"]').type(user.password);
+    cy.get('button[type="submit"]').click();
+    cy.url().should('include', '/onboarding');
+
+    // 3. Onboarding
+    onboarding.cuisines.forEach(selectCuisine);
+    onboarding.dietary.forEach(selectDiet);
+    cy.get(`[data-cy="price-${onboarding.price}"]`).click();
+    cy.get('input[data-cy="city"]').type(onboarding.city);
+    cy.get('input[data-cy="zip"]').type(onboarding.zip);
+    cy.get('[data-cy="onboard-complete"]').click();
+    cy.url().should('include', '/dashboard');
+
+    // 4. Reservation
+    cy.get('[data-cy="create-task-btn"]').click();
+    cy.get('[data-cy="task-type-reservation"]').click();
+    cy.get('input[data-cy="restaurant"]').type(reservation.restaurant);
+    cy.get('input[data-cy="party-size"]').clear().type(reservation.partySize.toString());
+    cy.get('input[data-cy="datetime"]').type(reservation.dateTime.slice(0, 16));
+    cy.get('textarea[data-cy="special-requests"]').type(reservation.notes);
+    cy.get('[data-cy="task-submit"]').click();
+
+    cy.contains('Task created', { timeout: 15000 }).should('be.visible');
+    cy.log('=== Full E2E Flow Completed Successfully ===');
+  });
+
+  // -------------------------------------------------------------------------
+  // Optional: API endpoint health checks (won’t fail the suite)
+  // -------------------------------------------------------------------------
+  context('API endpoint availability (smoke)', () => {
+    const endpoints = [
+      { name: 'signup', path: '/auth/signup' },
+      { name: 'onboarding', path: '/onboarding' },
+      { name: 'primary task', path: '/tasks/primary' },
+    ];
+
+    endpoints.forEach(({ name, path }) => {
+      it(`has ${name} endpoint reachable`, () => {
+        cy.request({
+          method: 'OPTIONS',
+          url: `${API_URL}${path}`,
+          failOnStatusCode: false,
+        }).then((resp) => {
+          cy.log(`${name} endpoint → ${resp.status}`);
+        });
+      });
+    });
   });
 });
