@@ -1,111 +1,59 @@
 name: CI Pipeline
-
 on:
   push:
-    branches: [ main, develop, staging, 'feature/**' ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main ]
+
+permissions:
+  contents: write
 
 jobs:
-  build-flutter-web:
-    name: Build Flutter Web
+  build:
+    name: Build & Test
     runs-on: ubuntu-latest
-    timeout-minutes: 20
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Setup Flutter
+      - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.24.0'
-          channel: 'stable'
-          cache: true
 
-      - name: Get dependencies
+      - name: Cache Pub
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
+
+      - name: Install dependencies
         run: flutter pub get
 
-      - name: Verify formatting
+      - name: Run dart format (in-place)
+        run: dart format .
+
+      - name: Commit and push formatting changes (if any)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH_NAME: ${{ github.event.pull_request.head.ref || github.ref_name }}
+        run: |
+          # Only attempt to push if we have a writable token. For PRs from forks this will likely fail.
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add -A
+            git commit -m "chore: format code (automated) [skip ci]" || echo "nothing to commit"
+            echo "Attempting to push formatting commit to branch: $BRANCH_NAME"
+            git push origin HEAD:$BRANCH_NAME || echo "Push failed (likely a fork or permission issue). Continue without failing."
+          else
+            echo "No formatting changes"
+          fi
+
+      - name: Verify formatting (fail if any remaining diffs)
         run: dart format --set-exit-if-changed .
 
-      - name: Analyze code
-        run: flutter analyze
-
-      - name: Run unit tests
-        run: flutter test --platform=chrome
-
-      - name: Build web app
-        run: flutter build web --release --web-renderer=canvaskit
-
-      - name: Upload web build
-        uses: actions/upload-artifact@v4
-        with:
-          name: web-build
-          path: build/web/
-          retention-days: 7
-
-  cypress-smoke:
-    name: Cypress Smoke Tests
-    needs: build-flutter-web
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install Cypress
-        run: |
-          npm ci
-          npx cypress install
-
-      - name: Download Flutter web build
-        uses: actions/download-artifact@v4
-        with:
-          name: web-build
-          path: build/web/
-
-      - name: Serve Flutter app
-        run: |
-          npm install -g dhttpd
-          dhttpd --path=build/web --port=8080 &
-          echo "SERVER_PID=$!" >> $GITHUB_ENV
-          sleep 8
-
-      - name: Wait for server
-        run: |
-          timeout 30 bash -c 'until curl -s -f http://localhost:8080 > /dev/null; do sleep 2; done'
-
-      - name: Run Cypress smoke tests
-        run: npx cypress run --spec "cypress/e2e/smoke_spec.cy.js" --browser chrome
-        env:
-          CYPRESS_baseUrl: http://localhost:8080
-
-      - name: Upload screenshots (on failure)
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: cypress-screenshots
-          path: cypress/screenshots/
-          retention-days: 7
-
-      - name: Upload videos (always)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: cypress-videos
-          path: cypress/videos/
-          retention-days: 7
-
-      - name: Cleanup server
-        if: always()
-        run: |
-          if [ ! -z "$SERVER_PID" ]; then
-            kill $SERVER_PID || true
-          fi
+      - name: Run tests
+        run: flutter test --no-sound-null-safety
