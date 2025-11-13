@@ -17,56 +17,64 @@ class HomeNewController extends GetxController {
           description:
               'Duis aute irure dolor in reprehend voluptate velit esse cillum',
           imagePath: 'assets/images/a1.png',
-          timetext: '09:00',endTimeText: '08:00',
+          timetext: '09:00',
+          endTimeText: '08:00',
           percentText: '50%'),
       NewItem(
           title: 'Buffet',
           description:
               'Duis aute irure dolor in reprehend voluptate velit esse cillum',
           imagePath: 'assets/images/a3.png',
-          timetext: '06:00',endTimeText: '08:00',
+          timetext: '06:00',
+          endTimeText: '08:00',
           percentText: '80%'),
       NewItem(
           title: 'Pizza',
           description:
               'Duis aute irure dolor in reprehend voluptate velit esse cillum',
           imagePath: 'assets/images/a2.png',
-          timetext: '12:00',endTimeText: '08:00',
+          timetext: '12:00',
+          endTimeText: '08:00',
           percentText: '60%'),
       NewItem(
           title: 'Salad',
           description:
               'Duis aute irure dolor in reprehend voluptate velit esse cillum',
           imagePath: 'assets/images/a1.png',
-          timetext: '01:00',endTimeText: '08:00',
+          timetext: '01:00',
+          endTimeText: '08:00',
           percentText: '40%'),
       NewItem(
           title: 'Buffet',
           description:
               'Duis aute irure dolor in reprehend voluptate velit esse cillum',
           imagePath: 'assets/images/a2.png',
-          timetext: '18:00',endTimeText: '08:00',
+          timetext: '18:00',
+          endTimeText: '08:00',
           percentText: '20%'),
       NewItem(
           title: 'Pasta',
           description:
               'Duis aute irure dolor in reprehend voluptate velit esse cillum',
           imagePath: 'assets/images/a3.png',
-          timetext: '16:00',endTimeText: '08:00',
+          timetext: '16:00',
+          endTimeText: '08:00',
           percentText: '50%'),
       NewItem(
           title: 'Pizza',
           description:
               'Duis aute irure dolor in reprehend voluptate velit esse cillum',
           imagePath: 'assets/images/a2.png',
-          timetext: '03:00',endTimeText: '08:00',
+          timetext: '03:00',
+          endTimeText: '08:00',
           percentText: '56%'),
       NewItem(
         title: 'Salad',
         description:
             'Duis aute irure dolor in reprehend voluptate velit esse cillum',
         imagePath: 'assets/images/a1.png',
-        timetext: '06:00',endTimeText: '08:00',
+        timetext: '06:00',
+        endTimeText: '08:00',
         percentText: '07%',
       ),
     ]);

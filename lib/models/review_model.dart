@@ -28,7 +28,8 @@ class ReviewModel {
       restaurantID: json['restaurantID'],
       userName: json['userName'],
       userID: json['userID'],
-      images: (json['images'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      images:
+          (json['images'] as List<dynamic>?)?.map((e) => e as String).toList(),
       starRating: (json['starRating'] as num?)?.toDouble(),
       description: json['description'],
       createdAt: (json['createdAt'] as Timestamp?)?.toDate(),

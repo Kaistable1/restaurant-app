@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 class LocationListController extends GetxController {
   ScrollController scrollController = ScrollController();
 
@@ -10,6 +11,7 @@ class LocationListController extends GetxController {
       curve: Curves.easeInOut,
     );
   }
+
   void scrollRight() {
     scrollController.animateTo(
       scrollController.offset + 300, // Scroll right by 300 pixels
@@ -17,12 +19,14 @@ class LocationListController extends GetxController {
       curve: Curves.easeInOut,
     );
   }
+
   @override
   void onClose() {
     scrollController.dispose(); // Dispose the controller when not in use
     super.onClose();
   }
 }
+
 class LocationListModel {
   final String timeText;
   final String timeText2;
