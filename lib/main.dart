@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -11,13 +12,13 @@ import 'package:kaistable_website/widgets/global_functions.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/foundation.dart' show kIsWeb; /
+import 'package:flutter/foundation.dart' show kIsWeb; // ← CORRECTLY AT TOP
 import 'main_controller.dart';
 
-// Android channel for notifications
+// Android notification channel
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
-  'propertyRentalID', // id
-  'High Importance Notifications', // title
+  'propertyRentalID',
+  'High Importance Notifications',
   importance: Importance.max,
   playSound: true,
 );
@@ -39,8 +40,11 @@ Rx<UserModel>? currentUserDataModel;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Firebase
   await Firebase.initializeApp();
-  // Initialize local notification plugin
+
+  // Initialize local notifications
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('@mipmap/ic_launcher');
   const DarwinInitializationSettings initializationSettingsIOS =
@@ -49,66 +53,68 @@ void main() async {
     android: initializationSettingsAndroid,
     iOS: initializationSettingsIOS,
   );
-
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
-  // Handle background messages
+  // Set up background message handler
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-  // Disable system notification in foreground
+  // Disable foreground notifications (optional)
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
     alert: false,
     badge: false,
     sound: false,
   );
 
-// ... later in main() ...
-try {
-  await getCurrentUserData();
-  
-  // Only request location on mobile (not web)
-  if (!kIsWeb) {
-    await requestLocationPermission();
+  // Load user data and request permissions (web-safe)
+  try {
+    await getCurrentUserData();
+
+    if (!kIsWeb) {
+      await requestLocationPermission();
+    }
+  } on FirebaseAuthException catch (e) {
+    debugPrint('Firebase Auth Error: ${e.code} - ${e.message}');
+  } catch (e) {
+    debugPrint('Unhandled error: $e');
   }
-} on FirebaseAuthException catch (e) {
-  print('Error: ${e.code} - ${e.message}');
-} catch (e) {
-  print('Unhandled error: $e');
-}
 
-  // Temporarily disable topic subscription for testing
-  // await subscribeToTopic('allUsers');
-  // debugPrint("Subscribed to topic: allUsers");
-
+  // Initialize SharedPreferences
   preferences = await SharedPreferences.getInstance();
   remember_me_pref = await SharedPreferences.getInstance();
 
   // Log FCM token
   try {
-    FirebaseMessaging.instance.getToken().then((value) {
-      print("FCM token: $value");
-    });
+    final token = await FirebaseMessaging.instance.getToken();
+    debugPrint("FCM token: $token");
   } catch (e) {
-    print('token error $e');
+    debugPrint('FCM token error: $e');
   }
 
-  // Request notification permission
-  await Permission.notification.isDenied.then((value) {
-    if (value) {
-      Permission.notification.request();
-    }
-  });
-  await SendNotificationService()
-      .initialize(); // Initialize FCM + local notifications().initFirebaseNotification();
-  debugPrint("SendNotifiation initialized");
+  // Request notification permission (mobile only)
   if (!kIsWeb) {
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
-}
-runApp(MyApp());
+    final status = await Permission.notification.status;
+    if (status.isDenied) {
+      await Permission.notification.request();
+    }
+  }
 
+  // Initialize notification service
+  await SendNotificationService().initialize();
+  debugPrint("SendNotificationService initialized");
+
+  // Set preferred orientations (mobile only)
+  if (!kIsWeb) {
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+  }
+
+  // Start the app
+  runApp(MyApp());
+}
+
+// Optional: Subscribe to FCM topic
 Future<void> subscribeToTopic(String topic) async {
   try {
     await FirebaseMessaging.instance.subscribeToTopic(topic);
@@ -118,6 +124,7 @@ Future<void> subscribeToTopic(String topic) async {
   }
 }
 
+// Global reactive flag
 RxBool showcaseInProgress = false.obs;
 
 class MyApp extends StatelessWidget {
@@ -127,8 +134,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(
-          textScaler: TextScaler.linear(
-              min(MediaQuery.of(context).textScaleFactor, 0.8))),
+        textScaler: TextScaler.linear(
+          min(MediaQuery.of(context).textScaleFactor, 0.8),
+        ),
+      ),
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Kaistable',
@@ -137,4 +146,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-//
