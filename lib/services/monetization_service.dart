@@ -9,8 +9,10 @@ class MonetizationService {
 
   // Collection references
   CollectionReference get _badgesCollection => _firestore.collection('badges');
-  CollectionReference get _transactionsCollection => _firestore.collection('transactions');
-  CollectionReference get _userBadgesCollection => _firestore.collection('userBadges');
+  CollectionReference get _transactionsCollection =>
+      _firestore.collection('transactions');
+  CollectionReference get _userBadgesCollection =>
+      _firestore.collection('userBadges');
 
   // Get available badges
   Stream<List<BadgeModel>> getAvailableBadges() {
@@ -20,7 +22,8 @@ class MonetizationService {
         .snapshots()
         .map((snapshot) {
       return snapshot.docs
-          .map((doc) => BadgeModel.fromFirestore(doc.data() as Map<String, dynamic>))
+          .map((doc) =>
+              BadgeModel.fromFirestore(doc.data() as Map<String, dynamic>))
           .toList();
     });
   }
@@ -49,10 +52,10 @@ class MonetizationService {
       );
 
       await docRef.set(transaction.toFirestore());
-      
+
       // TODO: Integrate with actual payment gateway (Stripe/PayPal)
       // For now, this is a placeholder
-      
+
       return transaction.transactionID;
     } catch (e) {
       print('Error purchasing badge: $e');
@@ -86,9 +89,9 @@ class MonetizationService {
       );
 
       await docRef.set(transaction.toFirestore());
-      
+
       // TODO: Integrate with actual payment gateway (Stripe/PayPal)
-      
+
       return transaction.transactionID;
     } catch (e) {
       print('Error sending tip: $e');
@@ -109,13 +112,15 @@ class MonetizationService {
         .snapshots()
         .map((snapshot) {
       return snapshot.docs
-          .map((doc) => TransactionModel.fromFirestore(doc.data() as Map<String, dynamic>))
+          .map((doc) => TransactionModel.fromFirestore(
+              doc.data() as Map<String, dynamic>))
           .toList();
     });
   }
 
   // Complete a transaction (called after payment gateway confirmation)
-  Future<bool> completeTransaction(String transactionID, String paymentIntentID) async {
+  Future<bool> completeTransaction(
+      String transactionID, String paymentIntentID) async {
     try {
       await _transactionsCollection.doc(transactionID).update({
         'status': 'completed',
@@ -137,9 +142,10 @@ class MonetizationService {
     // TODO: Integrate with Stripe API
     // This would call Stripe's createPaymentIntent endpoint
     // For now, return a mock response
-    
+
     return {
-      'clientSecret': 'mock_client_secret_${DateTime.now().millisecondsSinceEpoch}',
+      'clientSecret':
+          'mock_client_secret_${DateTime.now().millisecondsSinceEpoch}',
       'paymentIntentID': 'mock_pi_${DateTime.now().millisecondsSinceEpoch}',
       'status': 'pending',
     };
@@ -153,7 +159,7 @@ class MonetizationService {
     // TODO: Integrate with PayPal API
     // This would call PayPal's create order endpoint
     // For now, return a mock response
-    
+
     return {
       'orderID': 'mock_order_${DateTime.now().millisecondsSinceEpoch}',
       'approvalUrl': 'https://paypal.com/mock-approval',

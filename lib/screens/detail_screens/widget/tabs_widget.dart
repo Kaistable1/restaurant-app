@@ -30,19 +30,18 @@ class Tabs extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: List.generate(
               controller.top.length,
-                  (index) {
+              (index) {
                 return Obx(() {
                   return InkWell(
                     onTap: () {
-                      controller.selectedTop.value =
-                      controller.top[index];
+                      controller.selectedTop.value = controller.top[index];
                     },
                     child: IntrinsicWidth(
                       child: Container(
                         height: 26,
                         decoration: BoxDecoration(
                           color: controller.selectedTop.value !=
-                              controller.top[index]
+                                  controller.top[index]
                               ? Colors.transparent
                               : AppColors.whiteColor,
                           borderRadius: BorderRadius.circular(5),
@@ -55,7 +54,7 @@ class Tabs extends StatelessWidget {
                               fontWeight: FontWeight.w600,
                               fontSize: 13,
                               color: controller.selectedTop.value !=
-                                  controller.top[index]
+                                      controller.top[index]
                                   ? AppColors.darkGrey
                                   : AppColors.primaryColor,
                               fontFamily: 'Nunito-Regular',
@@ -74,5 +73,3 @@ class Tabs extends StatelessWidget {
     );
   }
 }
-
-
