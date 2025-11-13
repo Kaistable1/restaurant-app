@@ -12,7 +12,7 @@ import 'package:kaistable_website/widgets/global_functions.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/foundation.dart' show kIsWeb; // ← CORRECTLY AT TOP
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'main_controller.dart';
 
 // Android notification channel
@@ -23,7 +23,7 @@ const AndroidNotificationChannel channel = AndroidNotificationChannel(
   playSound: true,
 );
 
-// FCM background message handler
+// FCM background message handler (only runs on mobile)
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   debugPrint(
       "Handling a background message: ${message.messageId}, Title: ${message.notification?.title}");
@@ -44,28 +44,30 @@ void main() async {
   // Initialize Firebase
   await Firebase.initializeApp();
 
-  // Initialize local notifications
-  const AndroidInitializationSettings initializationSettingsAndroid =
-      AndroidInitializationSettings('@mipmap/ic_launcher');
-  const DarwinInitializationSettings initializationSettingsIOS =
-      DarwinInitializationSettings();
-  const InitializationSettings initializationSettings = InitializationSettings(
-    android: initializationSettingsAndroid,
-    iOS: initializationSettingsIOS,
-  );
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  // === LOCAL NOTIFICATIONS (MOBILE ONLY) ===
+  if (!kIsWeb) {
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const DarwinInitializationSettings initializationSettingsIOS =
+        DarwinInitializationSettings();
+    const InitializationSettings initializationSettings = InitializationSettings(
+      android: initializationSettingsAndroid,
+      iOS: initializationSettingsIOS,
+    );
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
-  // Set up background message handler
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    // Set up background message handler
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-  // Disable foreground notifications (optional)
-  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-    alert: false,
-    badge: false,
-    sound: false,
-  );
+    // Disable foreground notifications
+    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+      alert: false,
+      badge: false,
+      sound: false,
+    );
+  }
 
-  // Load user data and request permissions (web-safe)
+  // === USER DATA & PERMISSIONS (WEB-SAFE) ===
   try {
     await getCurrentUserData();
 
@@ -78,31 +80,35 @@ void main() async {
     debugPrint('Unhandled error: $e');
   }
 
-  // Initialize SharedPreferences
+  // === SHARED PREFERENCES ===
   preferences = await SharedPreferences.getInstance();
   remember_me_pref = await SharedPreferences.getInstance();
 
-  // Log FCM token
-  try {
-    final token = await FirebaseMessaging.instance.getToken();
-    debugPrint("FCM token: $token");
-  } catch (e) {
-    debugPrint('FCM token error: $e');
-  }
-
-  // Request notification permission (mobile only)
+  // === FCM TOKEN (MOBILE ONLY) ===
   if (!kIsWeb) {
+    try {
+      final token = await FirebaseMessaging.instance.getToken();
+      debugPrint("FCM token: $token");
+    } catch (e) {
+      debugPrint('FCM token error: $e');
+    }
+
+    // Request notification permission
     final status = await Permission.notification.status;
     if (status.isDenied) {
       await Permission.notification.request();
     }
   }
 
-  // Initialize notification service
-  await SendNotificationService().initialize();
-  debugPrint("SendNotificationService initialized");
+  // === NOTIFICATION SERVICE (MOBILE ONLY) ===
+  if (!kIsWeb) {
+    await SendNotificationService().initialize();
+    debugPrint("SendNotificationService initialized");
+  } else {
+    debugPrint("SendNotificationService skipped on web");
+  }
 
-  // Set preferred orientations (mobile only)
+  // === ORIENTATION (MOBILE ONLY) ===
   if (!kIsWeb) {
     await SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -110,12 +116,13 @@ void main() async {
     ]);
   }
 
-  // Start the app
+  // === START APP ===
   runApp(MyApp());
 }
 
-// Optional: Subscribe to FCM topic
+// Optional: Subscribe to FCM topic (mobile only)
 Future<void> subscribeToTopic(String topic) async {
+  if (kIsWeb) return;
   try {
     await FirebaseMessaging.instance.subscribeToTopic(topic);
     debugPrint("Subscribed to topic: $topic");
