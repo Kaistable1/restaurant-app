@@ -7,7 +7,7 @@ on:
     branches: [ main, develop ]
 
 jobs:
-  build-flutter:
+  build-flutter-web:
     name: Build Flutter Web
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -27,18 +27,15 @@ jobs:
 
       - name: Verify formatting
         run: flutter format --set-exit-if-changed .
-        continue-on-error: true
 
       - name: Analyze code
         run: flutter analyze
-        continue-on-error: true
 
       - name: Run unit tests
-        run: flutter test
-        continue-on-error: true
+        run: flutter test --platform=chrome
 
       - name: Build web app
-        run: flutter build web --release
+        run: flutter build web --release --web-renderer=canvaskit
 
       - name: Upload web build
         uses: actions/upload-artifact@v4
@@ -49,7 +46,7 @@ jobs:
 
   cypress-smoke:
     name: Cypress Smoke Tests
-    needs: build-flutter
+    needs: build-flutter-web
     runs-on: ubuntu-latest
     timeout-minutes: 15
     if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
@@ -65,7 +62,7 @@ jobs:
 
       - name: Install Cypress
         run: |
-          npm install --save-dev cypress@13
+          npm ci
           npx cypress install
 
       - name: Download Flutter web build
@@ -76,21 +73,19 @@ jobs:
 
       - name: Serve Flutter app
         run: |
-          flutter pub get
-          flutter pub global activate dhttpd 2>/dev/null || npm install -g dhttpd
-          flutter pub global run dhttpd --path=build/web --port=8080 &
+          npm install -g dhttpd
+          dhttpd --path=build/web --port=8080 &
           echo "SERVER_PID=$!" >> $GITHUB_ENV
           sleep 8
 
       - name: Wait for server
         run: |
-          timeout 30 bash -c 'until curl -s -f http://localhost:8080 > /dev/null; do sleep 2; done' || echo "Warning: Server not responding"
+          timeout 30 bash -c 'until curl -s -f http://localhost:8080 > /dev/null; do sleep 2; done'
 
       - name: Run Cypress smoke tests
-        run: npx cypress run --spec "cypress/integration/smoke_spec.cy.js" --browser chrome
+        run: npx cypress run --spec "cypress/e2e/smoke_spec.cy.js" --browser chrome
         env:
           CYPRESS_baseUrl: http://localhost:8080
-        continue-on-error: false
 
       - name: Upload screenshots (on failure)
         if: failure()
