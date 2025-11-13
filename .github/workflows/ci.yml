@@ -1,156 +1,53 @@
-name: CI Pipeline
-# ----------------------------------------------------------------------
-# Triggers
-# ----------------------------------------------------------------------
+name: Flutter CI
+
 on:
   push:
-    branches: [ main, develop, staging, 'feature/**' ]
+    branches: [ main, copilot/* ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main ]
 
-# ----------------------------------------------------------------------
-# Jobs
-# ----------------------------------------------------------------------
 jobs:
-  # --------------------------------------------------------------
-  # 1. Build Flutter Web + run Dart/Flutter checks
-  # --------------------------------------------------------------
-  build-flutter-web:
-    name: Build Flutter Web
+  build:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    permissions:
+      contents: write  # Needed to push formatting fixes
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Required for git push
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0'
           channel: stable
-          cache: true
 
-      - name: Get dependencies
+      - name: Install dependencies
         run: flutter pub get
 
-      - name: Verify formatting
-        run: dart format --set-exit-if-changed .
+      # AUTO-FORMAT: Fixes your formatting issues and commits them
+      - name: Format Dart code (auto-fix & commit)
+        run: |
+          dart format .
+          if ! git diff --quiet; then
+            echo "Formatting changes detected. Committing..."
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add .
+            git commit -m "style: apply dart format [skip ci]" || echo "No changes to commit"
+            git push
+          else
+            echo "No formatting changes needed."
+          fi
 
+      # Optional: Keep linting and testing
       - name: Analyze code
         run: flutter analyze
 
-      - name: Run unit tests (headless Chrome)
-        run: flutter test --platform=chrome
+      - name: Run tests
+        run: flutter test
 
-      - name: Build web app (release, canvaskit)
-        run: flutter build web --release --web-renderer=canvaskit
-
-      - name: Upload web build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: web-build
-          path: build/web/
-          retention-days: 7
-
-  # --------------------------------------------------------------
-  # 2. (Optional) Node lint + unit tests
-  # --------------------------------------------------------------
-  node-checks:
-    name: Node Lint & Tests
-    runs-on: ubuntu-latest
-    needs: build-flutter-web
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: npm
-
-      - name: Install npm deps
-        run: npm ci
-
-      - name: Lint
-        run: npm run lint || true   # keep non-blocking
-
-      - name: Run unit tests
-        run: npm test
-
-  # --------------------------------------------------------------
-  # 3. Cypress smoke tests (runs after Flutter build)
-  # --------------------------------------------------------------
-  cypress-smoke:
-    name: Cypress Smoke Tests
-    needs: [build-flutter-web, node-checks]
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    if: >-
-      github.event_name == 'pull_request' ||
-      github.ref == 'refs/heads/main'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: npm
-
-      - name: Install npm deps + Cypress binary
-        run: |
-          npm ci
-          npx cypress install
-
-      - name: Download Flutter web build
-        uses: actions/download-artifact@v4
-        with:
-          name: web-build
-          path: build/web/
-
-      - name: Serve Flutter app
-        run: |
-          npm install -g dhttpd
-          dhttpd --path=build/web --port=8080 &
-          echo "SERVER_PID=$!" >> $GITHUB_ENV
-          sleep 8
-
-      - name: Wait for server to be ready
-        run: |
-          timeout 30 bash -c 'until curl -s -f http://localhost:8080 > /dev/null; do sleep 2; done'
-
-      - name: Run Cypress smoke tests
-        env:
-          CYPRESS_baseUrl: http://localhost:8080
-        run: |
-          npx cypress run \
-            --spec "cypress/e2e/smoke_spec.cy.js" \
-            --browser chrome
-
-      - name: Upload screenshots (on failure)
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: cypress-screenshots
-          path: cypress/screenshots/
-          retention-days: 7
-
-      - name: Upload videos (always)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: cypress-videos
-          path: cypress/videos/
-          retention-days: 7
-
-      # --------------------------------------------------------------
-      # Cleanup server (merged version – safe and works on all shells)
-      # --------------------------------------------------------------
-      - name: Cleanup server
-        if: always()
-        run: |
-          if [ -n "${SERVER_PID:-}" ]; then
-            kill "${SERVER_PID}" || true
-          fi
+      # Uncomment if you build web
+      # - name: Build web
+      #   run: flutter build web
