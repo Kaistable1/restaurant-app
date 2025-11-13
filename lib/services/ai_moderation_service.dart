@@ -16,22 +16,25 @@ class AIModerationService {
   Future<ModerationResult> moderateContent(String content) async {
     // TODO: Integrate with actual AI moderation service
     // For now, return a stub result
-    
+
     // Simple keyword-based filtering as placeholder
     final inappropriateKeywords = [
-      'spam', 'hate', 'violence', 'explicit',
+      'spam',
+      'hate',
+      'violence',
+      'explicit',
     ];
-    
+
     bool isFlagged = false;
     List<String> flaggedReasons = [];
-    
+
     for (var keyword in inappropriateKeywords) {
       if (content.toLowerCase().contains(keyword)) {
         isFlagged = true;
         flaggedReasons.add('Keyword detected: $keyword');
       }
     }
-    
+
     return ModerationResult(
       isFlagged: isFlagged,
       confidence: isFlagged ? 0.85 : 0.05,
@@ -47,7 +50,7 @@ class AIModerationService {
     // - Google Cloud Vision API
     // - AWS Rekognition
     // - Clarifai
-    
+
     return ModerationResult(
       isFlagged: false,
       confidence: 0.05,
@@ -73,7 +76,7 @@ class AIModerationService {
     // - violence
     // - sexual_content
     // - spam
-    
+
     return {
       'harassment': 0.01,
       'hate_speech': 0.01,

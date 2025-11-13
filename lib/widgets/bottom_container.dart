@@ -7,7 +7,8 @@ import '../utils/responsive.dart';
 class BottomContainer extends StatelessWidget {
   final Function(int)? onNavigate;
   final ScrollController scrollcontroller;
-  const BottomContainer({super.key, this.onNavigate, required this.scrollcontroller});
+  const BottomContainer(
+      {super.key, this.onNavigate, required this.scrollcontroller});
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -54,8 +55,9 @@ class BottomContainer extends StatelessWidget {
                       onTap: () {
                         if (onNavigate != null) {
                           onNavigate!(1);
-                          scrollcontroller.jumpTo(0);// Call the callback to navigate to the 7th screen
-                         // scrollcontroller.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);
+                          scrollcontroller.jumpTo(
+                              0); // Call the callback to navigate to the 7th screen
+                          // scrollcontroller.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);
                         }
                       },
                       child: Text(
@@ -83,10 +85,9 @@ class BottomContainer extends StatelessWidget {
                     InkWell(
                       onTap: () {
                         if (onNavigate != null) {
-                          onNavigate!(
-                              4);
+                          onNavigate!(4);
                           scrollcontroller.jumpTo(0);
-                         // scrollcontroller.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);// Call the callback to navigate to the 7th screen
+                          // scrollcontroller.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);// Call the callback to navigate to the 7th screen
                         }
                       },
                       child: Text(
@@ -155,15 +156,14 @@ class BottomContainer extends StatelessWidget {
                           ? 20
                           : isLargeScreen
                               ? 90
-                              :60,
+                              : 60,
                 ),
                 InkWell(
                   onTap: () {
                     if (onNavigate != null) {
-                      onNavigate!(
-                          0);
+                      onNavigate!(0);
                       scrollcontroller.jumpTo(0);
-                     // scrollcontroller.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);// Call the callback to navigate to the 7th screen
+                      // scrollcontroller.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);// Call the callback to navigate to the 7th screen
                     }
                   },
                   child: Image(
@@ -216,10 +216,9 @@ class BottomContainer extends StatelessWidget {
                     InkWell(
                       onTap: () {
                         if (onNavigate != null) {
-                          onNavigate!(
-                              5);
+                          onNavigate!(5);
                           scrollcontroller.jumpTo(0);
-                         // scrollcontroller.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);// Call the callback to navigate to the 7th screen
+                          // scrollcontroller.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);// Call the callback to navigate to the 7th screen
                         }
                       },
                       child: Text(
@@ -247,10 +246,9 @@ class BottomContainer extends StatelessWidget {
                     InkWell(
                       onTap: () {
                         if (onNavigate != null) {
-                          onNavigate!(
-                              2);
+                          onNavigate!(2);
                           scrollcontroller.jumpTo(0);
-                         // scrollcontroller.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);// Call the callback to navigate to the 7th screen
+                          // scrollcontroller.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);// Call the callback to navigate to the 7th screen
                         }
                       },
                       child: Text(
@@ -278,8 +276,7 @@ class BottomContainer extends StatelessWidget {
                     InkWell(
                       onTap: () {
                         if (onNavigate != null) {
-                          onNavigate!(
-                              3);
+                          onNavigate!(3);
                           scrollcontroller.jumpTo(0);
                           //scrollcontroller.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);// Call the callback to navigate to the 7th screen
                         }
@@ -407,7 +404,6 @@ class BottomContainer extends StatelessWidget {
                   width: Responsive.isMobile(context) ? 6 : 10,
                 ),
                 InkWell(
-
                   onTap: () async {
                     if (!await launchUrl(
                         Uri.parse('https://www.facebook.com'))) {

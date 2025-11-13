@@ -2,7 +2,6 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/screens/nav_bar/widgets/bottom_sheet.dart';
-
 import '../../../constants/app_colors.dart';
 import '../../../utils/responsive.dart';
 import '../../custom_widget/separate_text_field.dart';
@@ -14,9 +13,7 @@ class FilterWidget extends StatelessWidget {
   final HomeLocationController controller = Get.put(HomeLocationController());
   final FilterSelectionController filterController =
       Get.put(FilterSelectionController());
-  final List<String> items = [
-    'Happy Hours',
-  ];
+  final List<String> items = ['Happy Hours'];
   final List<String> diningItems = ['Breakfast', 'Lunch', 'Dinner', 'Brunch'];
   final RxBool isTapped = false.obs;
   final RxBool showFilterOptions = false.obs;
@@ -35,62 +32,58 @@ class FilterWidget extends StatelessWidget {
           child: Row(
             children: [
               Expanded(
-                  child: SizedBox(
-                height: 38,
-                child: CustomSeparateTextField(
-                  controller: controller.searchController,
-                  hintText: 'Try searching for restaurant name',
-                  hintStyle: TextStyle(
-                    color: AppColors.hintText,
-                    fontFamily: "Nunito-Regular",
-                    fontWeight: FontWeight.w400,
-                    fontSize: 12,
-                  ),
-                  isPrefixIcon: true,
-                  isShadow: true,
-                  prefixIcon: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 4, top: 8, bottom: 8, right: 0),
-                    child: Image.asset(
-                      'assets/images/search_icon.png',
-                      fit: BoxFit.contain,
-                      height: 20,
-                      width: 20,
+                child: SizedBox(
+                  height: 38,
+                  child: CustomSeparateTextField(
+                    controller: controller.searchController,
+                    hintText: 'Try searching for restaurant name',
+                    hintStyle: TextStyle(
+                      color: AppColors.hintText,
+                      fontFamily: "Nunito-Regular",
+                      fontWeight: FontWeight.w400,
+                      fontSize: 12,
                     ),
-                  ),
-                  isSuffixIcon: true,
-                  suffixIcon: Container(
-                    height: 38,
-                    width: 66,
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryColor,
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(10),
-                        bottomRight: Radius.circular(10),
+                    isPrefixIcon: true,
+                    isShadow: true,
+                    prefixIcon: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 4, top: 8, bottom: 8, right: 0),
+                      child: Image.asset(
+                        'assets/images/search_icon.png',
+                        fit: BoxFit.contain,
+                        height: 20,
+                        width: 20,
                       ),
                     ),
-                    child: Center(
-                      child: Text(
-                        'Search',
-                        style: TextStyle(
-                          color: AppColors.bottomSheetColor,
-                          fontFamily: "Nunito-Bold",
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
+                    isSuffixIcon: true,
+                    suffixIcon: Container(
+                      height: 38,
+                      width: 66,
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryColor,
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(10),
+                          bottomRight: Radius.circular(10),
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Search',
+                          style: TextStyle(
+                            color: AppColors.bottomSheetColor,
+                            fontFamily: "Nunito-Bold",
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              )),
-              SizedBox(
-                width: 4,
               ),
+              const SizedBox(width: 4),
               GestureDetector(
-                onTap: () {
-                  showFilterBottomSheet();
-                
-                },
+                onTap: showFilterBottomSheet,
                 child: Image.asset(
                   'assets/images/filter_image__.png',
                   width: 32,
@@ -100,89 +93,6 @@ class FilterWidget extends StatelessWidget {
             ],
           ),
         ),
-        // Obx(
-        //   () => filterController.aggregatedFilters.isNotEmpty
-        //       ? Column(
-        //           children: [
-        //             SizedBox(height: 10),
-        //             Padding(
-        //               padding: const EdgeInsets.symmetric(horizontal: 16),
-        //               child: Row(
-        //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //                 crossAxisAlignment: CrossAxisAlignment.start,
-        //                 children: [
-        //                   Expanded(
-        //                     child: SizedBox(
-        //                       width: 280,
-        //                       child: LayoutBuilder(
-        //                         builder: (context, constraints) {
-        //                           double availableWidth = constraints.maxWidth;
-        //                           return Obx(
-        //                             () => Wrap(
-        //                               direction: Axis.horizontal,
-        //                               spacing: 7,
-        //                               runSpacing: 10,
-        //                               children: [
-        //                                 ...filterController.aggregatedFilters
-        //                                     .map((filterName) {
-        //                                   return ConstrainedBox(
-        //                                     constraints: BoxConstraints(
-        //                                       maxWidth: availableWidth / 1,
-        //                                     ),
-        //                                     child: SelectedFilterWidgets(
-        //                                       filterName: filterName,
-        //                                       onTap: () {
-        //                                         filterController
-        //                                             .aggregatedFilters
-        //                                             .remove(filterName);
-        //                                         // Hide the filter list if it's empty after removal
-        //                                         if (filterController
-        //                                             .aggregatedFilters
-        //                                             .isEmpty) {
-        //                                           filterController
-        //                                               .isFilterListVisible
-        //                                               .value = false;
-        //                                         }
-        //                                         controller.update();
-        //                                       },
-        //                                     ),
-        //                                   );
-        //                                 }).toList(),
-        //                               ],
-        //                             ),
-        //                           );
-        //                         },
-        //                       ),
-        //                     ),
-        //                   ),
-        //                   GestureDetector(
-        //                     onTap: () {
-        //                       filterController.aggregatedFilters.clear();
-        //                       filterController.clearAll();
-        //                       final secondFilterController =
-        //                           Get.find<FilterController>();
-        //                       secondFilterController.clearAll();
-        //                     },
-        //                     child: Text(
-        //                       'clear all',
-        //                       style: TextStyle(
-        //                         color: AppColors.primaryColor,
-        //                         fontFamily: "Nunito-Sans",
-        //                         fontSize: 14,
-        //                         fontWeight: FontWeight.w400,
-        //                         decoration: TextDecoration.underline,
-        //                         decorationColor: AppColors.primaryColor,
-        //                       ),
-        //                     ),
-        //                   ),
-        //                 ],
-        //               ),
-        //             ),
-        //             SizedBox(height: 8),
-        //           ],
-        //         )
-        //       : SizedBox.shrink(),
-        // ),
       ],
     );
   }
@@ -209,30 +119,20 @@ class SelectedFilterWidgets extends StatelessWidget {
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Center(
-            child: Text(
-              filterName,
-              style: TextStyle(
-                color: AppColors.textColor,
-                fontFamily: "Nunito-Sans",
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-              ),
+          Text(
+            filterName,
+            style: TextStyle(
+              color: AppColors.textColor,
+              fontFamily: "Nunito-Sans",
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
             ),
           ),
-          SizedBox(
-            width: 6,
-          ),
+          const SizedBox(width: 6),
           GestureDetector(
             onTap: onTap,
-            child: Icon(
-              Icons.close,
-              color: AppColors.textColor,
-              size: 14,
-            ),
+            child: Icon(Icons.close, color: AppColors.textColor, size: 14),
           ),
         ],
       ),
@@ -242,10 +142,7 @@ class SelectedFilterWidgets extends StatelessWidget {
 
 class FilterBox extends StatelessWidget {
   final HomeLocationController controller = Get.put(HomeLocationController());
-  final List<String> items = [
-    'Happy Hours',
-    'Dinner discount',
-  ];
+  final List<String> items = ['Happy Hours', 'Dinner discount'];
   final List<String> diningItems = ['Breakfast', 'Lunch', 'Dinner', 'Brunch'];
 
   FilterBox({super.key});
@@ -253,28 +150,19 @@ class FilterBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(
-        left: 7,
-        right: 7,
-      ),
+      padding: const EdgeInsets.only(left: 7, right: 7),
       child: Container(
         width: Get.width,
         height: 38,
         decoration: BoxDecoration(
           color: const Color(0xFFEEEFF2),
-          borderRadius: BorderRadius.circular(
-            10,
-          ),
+          borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
           children: [
-            SizedBox(
-              width: 11,
-            ),
+            const SizedBox(width: 11),
             InkWell(
-              onTap: () {
-                controller.selectedTop.value = '';
-              },
+              onTap: () => controller.selectedTop.value = '',
               child: Text(
                 'Filter:',
                 style: TextStyle(
@@ -285,359 +173,261 @@ class FilterBox extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(
-              width: 3,
-            ),
+            const SizedBox(width: 3),
             Expanded(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: List.generate(
-                  controller.top.length,
-                  (index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 6),
-                      child: Obx(() {
-                        return InkWell(
-                          onTap: () {
-                            if (controller.top[index] != 'Discount') {
-                              controller.selectedTop.value =
-                                  controller.top[index];
-                            }
-                          },
-                          child: Container(
-                            height: 26,
-                            decoration: BoxDecoration(
-                              color: controller.selectedTop.value ==
-                                          controller.top[index] ||
-                                      (controller.top[index] == 'Discount' &&
-                                          items.contains(
-                                              controller.selectedTop.value)) ||
-                                      (controller.top[index] == 'Dining' &&
-                                          diningItems.contains(
-                                              controller.selectedTop.value))
-                                  ? AppColors
-                                      .whiteColor // White background if selected
-                                  : Colors.transparent,
-                              // Transparent background if not selected
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Center(
-                              child: controller.top[index] == 'Discount'
-                                  ? Padding(
-                                      padding: EdgeInsets.only(
-                                          top: 4,
-                                          bottom: 4,
-                                          right: 4,
-                                          left: 20),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton2<String>(
-                                          iconStyleData: IconStyleData(
-                                            icon: Image.asset(
+                children: List.generate(controller.top.length, (index) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    child: Obx(() {
+                      return InkWell(
+                        onTap: () {
+                          if (controller.top[index] != 'Discount') {
+                            controller.selectedTop.value =
+                                controller.top[index];
+                          }
+                        },
+                        child: Container(
+                          height: 26,
+                          decoration: BoxDecoration(
+                            color: controller.selectedTop.value ==
+                                        controller.top[index] ||
+                                    (controller.top[index] == 'Discount' &&
+                                        items.contains(
+                                            controller.selectedTop.value)) ||
+                                    (controller.top[index] == 'Dining' &&
+                                        diningItems.contains(
+                                            controller.selectedTop.value))
+                                ? AppColors.whiteColor
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Center(
+                            child: controller.top[index] == 'Discount'
+                                ? Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 4, bottom: 4, right: 4, left: 20),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton2<String>(
+                                        iconStyleData: IconStyleData(
+                                          icon: Image.asset(
                                               'assets/images/drop_down_img.png',
                                               width: 10,
-                                              height: 10,
-                                            ),
+                                              height: 10),
+                                        ),
+                                        dropdownStyleData: DropdownStyleData(
+                                          width: 200,
+                                          maxHeight: 200,
+                                          decoration: BoxDecoration(
+                                            color: AppColors.whiteColor,
+                                            borderRadius:
+                                                BorderRadius.circular(10),
                                           ),
-                                          dropdownStyleData: DropdownStyleData(
-                                            width: 200,
-                                            maxHeight: 200,
-                                            decoration: BoxDecoration(
-                                              color: AppColors.whiteColor,
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                          ),
-                                          value: items.contains(
-                                                  controller.selectedTop.value)
-                                              ? controller.selectedTop.value
-                                              : null,
-                                          hint: Text(
-                                            'Discount',
+                                        ),
+                                        value: items.contains(
+                                                controller.selectedTop.value)
+                                            ? controller.selectedTop.value
+                                            : null,
+                                        hint: Text('Discount',
                                             style: TextStyle(
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.w500,
-                                              color: AppColors.darkGrey,
-                                              fontFamily: 'Nunito-Regular',
-                                            ),
-                                          ),
-                                          selectedItemBuilder:
-                                              (BuildContext context) {
-                                            return items.map((String item) {
-                                              return Text(
-                                                item,
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.w500,
+                                                color: AppColors.darkGrey,
+                                                fontFamily: 'Nunito-Regular')),
+                                        selectedItemBuilder: (context) => items
+                                            .map((item) => Text(item,
                                                 style: TextStyle(
-                                                  color: AppColors.darkGrey,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 10,
-                                                  fontFamily: 'Nunito-Regular',
-                                                ),
-                                              );
-                                            }).toList();
-                                          },
-                                          items: items.map((String item) {
-                                            return DropdownMenuItem<String>(
-                                              value: item,
-                                              child: Row(
-                                                children: [
-                                                  Checkbox(
-                                                    fillColor:
-                                                        MaterialStateProperty
-                                                            .resolveWith<Color>(
-                                                      (Set<MaterialState>
-                                                          states) {
-                                                        if (states.contains(
-                                                            MaterialState
-                                                                .selected)) {
-                                                          return AppColors
-                                                              .primaryColor;
-                                                        }
-                                                        return AppColors
-                                                            .whiteColor;
-                                                      },
-                                                    ),
-                                                    side: MaterialStateBorderSide
-                                                        .resolveWith(
-                                                            (Set<MaterialState>
-                                                                states) {
-                                                      return BorderSide(
-                                                          color: AppColors
-                                                              .primaryColor);
-                                                    }),
-                                                    value: controller
-                                                            .selectedTop
-                                                            .value ==
-                                                        item,
-                                                    // Ensure the correct item is checked
-                                                    onChanged:
-                                                        (bool? isSelected) {
-                                                      if (isSelected == true) {
-                                                        // If the item is selected, set it as the selected value
-                                                        controller.selectedTop
-                                                            .value = item;
-                                                      } else {
-                                                        // If the item is unselected, reset the selected value
-                                                        controller.selectedTop
-                                                                .value =
-                                                            ''; // Set to null or empty string to unselect
-                                                      }
-                                                      Get.to(
-                                                          () => HappyHours());
-                                                      // Close dropdown after selection/unselection
-                                                    },
+                                                    fontSize: 10,
+                                                    color: AppColors.darkGrey)))
+                                            .toList(),
+                                        items: items.map((item) {
+                                          return DropdownMenuItem<String>(
+                                            value: item,
+                                            child: Row(
+                                              children: [
+                                                Checkbox(
+                                                  fillColor: WidgetStateProperty
+                                                      .resolveWith<Color>(
+                                                    (states) => states.contains(
+                                                            WidgetState
+                                                                .selected)
+                                                        ? AppColors.primaryColor
+                                                        : AppColors.whiteColor,
                                                   ),
-                                                  Text(
-                                                    item,
+                                                  side: WidgetStateBorderSide
+                                                      .resolveWith((states) =>
+                                                          BorderSide(
+                                                              color: AppColors
+                                                                  .primaryColor)),
+                                                  value: controller
+                                                          .selectedTop.value ==
+                                                      item,
+                                                  onChanged: (selected) {
+                                                    controller
+                                                            .selectedTop.value =
+                                                        selected == true
+                                                            ? item
+                                                            : '';
+                                                    Get.to(() => HappyHours());
+                                                  },
+                                                ),
+                                                Text(item,
                                                     style: TextStyle(
-                                                      color: AppColors.darkGrey,
-                                                      fontWeight:
-                                                          FontWeight.w500,
+                                                        fontSize:
+                                                            Responsive.isMobile(
+                                                                    context)
+                                                                ? 10
+                                                                : 14,
+                                                        color: AppColors
+                                                            .darkGrey)),
+                                              ],
+                                            ),
+                                          );
+                                        }).toList(),
+                                        onChanged: (value) {
+                                          controller
+                                              .selectedTop.value = value ==
+                                                  controller.selectedTop.value
+                                              ? ''
+                                              : value!;
+                                          Get.to(() => HappyHours());
+                                        },
+                                      ),
+                                    ),
+                                  )
+                                : controller.top[index] == 'Dining'
+                                    ? Padding(
+                                        padding: const EdgeInsets.all(4),
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton2<String>(
+                                            iconStyleData: IconStyleData(
+                                              icon: Image.asset(
+                                                  'assets/images/drop_down_img.png',
+                                                  width: 10,
+                                                  height: 10),
+                                            ),
+                                            dropdownStyleData:
+                                                DropdownStyleData(
+                                              width: 200,
+                                              maxHeight: 200,
+                                              decoration: BoxDecoration(
+                                                  color: AppColors.whiteColor,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                            ),
+                                            value: diningItems.contains(
+                                                    controller
+                                                        .selectedTop.value)
+                                                ? controller.selectedTop.value
+                                                : null,
+                                            hint: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  right: 10, left: 8),
+                                              child: Text('Dining',
+                                                  style: TextStyle(
                                                       fontSize:
                                                           Responsive.isMobile(
                                                                   context)
                                                               ? 10
                                                               : 14,
-                                                      fontFamily:
-                                                          'Nunito-Regular',
+                                                      color:
+                                                          AppColors.darkGrey)),
+                                            ),
+                                            selectedItemBuilder: (context) =>
+                                                diningItems
+                                                    .map((item) => Text(item,
+                                                        style: TextStyle(
+                                                            fontSize: 10,
+                                                            color: AppColors
+                                                                .darkGrey)))
+                                                    .toList(),
+                                            items: diningItems.map((item) {
+                                              return DropdownMenuItem<String>(
+                                                value: item,
+                                                child: Row(
+                                                  children: [
+                                                    Checkbox(
+                                                      fillColor:
+                                                          WidgetStateProperty
+                                                              .resolveWith<
+                                                                  Color>(
+                                                        (states) => states
+                                                                .contains(
+                                                                    WidgetState
+                                                                        .selected)
+                                                            ? AppColors
+                                                                .primaryColor
+                                                            : AppColors
+                                                                .whiteColor,
+                                                      ),
+                                                      side: WidgetStateBorderSide
+                                                          .resolveWith((states) =>
+                                                              BorderSide(
+                                                                  color: AppColors
+                                                                      .primaryColor)),
+                                                      value: controller
+                                                              .selectedTop
+                                                              .value ==
+                                                          item,
+                                                      onChanged: (selected) {
+                                                        controller.selectedTop
+                                                                .value =
+                                                            selected == true
+                                                                ? item
+                                                                : '';
+                                                        Navigator.pop(context);
+                                                      },
                                                     ),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          }).toList(),
-                                          onChanged: (String? newValue) {
-                                            if (newValue ==
-                                                controller.selectedTop.value) {
-                                              // If the selected value is clicked again, unselect it
+                                                    Text(item,
+                                                        style: TextStyle(
+                                                            fontSize: 10,
+                                                            color: AppColors
+                                                                .darkGrey)),
+                                                  ],
+                                                ),
+                                              );
+                                            }).toList(),
+                                            onChanged: (value) {
                                               controller.selectedTop.value =
-                                                  ''; // Set to null or empty string to unselect
-                                            } else {
-                                              controller.selectedTop.value =
-                                                  newValue!;
-                                            }
-                                            Get.to(() => HappyHours());
-                                          },
+                                                  value ==
+                                                          controller
+                                                              .selectedTop.value
+                                                      ? ''
+                                                      : value!;
+                                            },
+                                          ),
+                                        ),
+                                      )
+                                    : Padding(
+                                        padding: const EdgeInsets.all(2),
+                                        child: Text(
+                                          controller.top[index],
+                                          style: TextStyle(
+                                            fontWeight:
+                                                controller.selectedTop.value !=
+                                                        controller.top[index]
+                                                    ? FontWeight.w500
+                                                    : FontWeight.w700,
+                                            fontSize: 10,
+                                            color:
+                                                controller.selectedTop.value !=
+                                                        controller.top[index]
+                                                    ? AppColors.darkGrey
+                                                    : AppColors.primaryColor,
+                                            fontFamily: 'Nunito-Regular',
+                                          ),
                                         ),
                                       ),
-                                    )
-                                  : controller.top[index] == 'Dining'
-                                      ? Padding(
-                                          padding: EdgeInsets.all(4),
-                                          child: DropdownButtonHideUnderline(
-                                            child: DropdownButton2<String>(
-                                              iconStyleData: IconStyleData(
-                                                icon: Image.asset(
-                                                  'assets/images/drop_down_img.png',
-                                                  width: 10,
-                                                  height: 10,
-                                                ),
-                                              ),
-                                              dropdownStyleData:
-                                                  DropdownStyleData(
-                                                width: 200,
-                                                maxHeight: 200,
-                                                decoration: BoxDecoration(
-                                                  color: AppColors.whiteColor,
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                ),
-                                              ),
-                                              value: diningItems.contains(
-                                                      controller
-                                                          .selectedTop.value)
-                                                  ? controller.selectedTop.value
-                                                  : null,
-                                              // Fallback to null if no matching item is found
-                                              hint: Padding(
-                                                padding: EdgeInsets.only(
-                                                    right: 10, left: 8),
-                                                child: Text(
-                                                  'Dining',
-                                                  style: TextStyle(
-                                                    fontSize:
-                                                        Responsive.isMobile(
-                                                                context)
-                                                            ? 10
-                                                            : 14,
-                                                    fontWeight: FontWeight.w500,
-                                                    color: AppColors.darkGrey,
-                                                    fontFamily:
-                                                        'Nunito-Regular',
-                                                  ),
-                                                ),
-                                              ),
-                                              selectedItemBuilder:
-                                                  (BuildContext context) {
-                                                return diningItems
-                                                    .map((String item) {
-                                                  return Text(
-                                                    item,
-                                                    style: TextStyle(
-                                                      color: AppColors.darkGrey,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      fontSize: 10,
-                                                      fontFamily:
-                                                          'Nunito-Regular',
-                                                    ),
-                                                  );
-                                                }).toList();
-                                              },
-                                              items: diningItems
-                                                  .map((String item) {
-                                                return DropdownMenuItem<String>(
-                                                  value: item,
-                                                  child: Row(
-                                                    children: [
-                                                      Checkbox(
-                                                        fillColor:
-                                                            MaterialStateProperty
-                                                                .resolveWith<
-                                                                    Color>(
-                                                          (Set<MaterialState>
-                                                              states) {
-                                                            if (states.contains(
-                                                                MaterialState
-                                                                    .selected)) {
-                                                              return AppColors
-                                                                  .primaryColor;
-                                                            }
-                                                            return AppColors
-                                                                .whiteColor;
-                                                          },
-                                                        ),
-                                                        side: MaterialStateBorderSide
-                                                            .resolveWith((Set<
-                                                                    MaterialState>
-                                                                states) {
-                                                          return BorderSide(
-                                                              color: AppColors
-                                                                  .primaryColor);
-                                                        }),
-                                                        value: controller
-                                                                .selectedTop
-                                                                .value ==
-                                                            item,
-                                                        // Ensure the correct item is checked
-                                                        onChanged:
-                                                            (bool? isSelected) {
-                                                          if (isSelected ==
-                                                              true) {
-                                                            controller
-                                                                .selectedTop
-                                                                .value = item;
-                                                          } else {
-                                                            controller
-                                                                .selectedTop
-                                                                .value = '';
-                                                          }
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                      ),
-                                                      Text(
-                                                        item,
-                                                        style: TextStyle(
-                                                          color: AppColors
-                                                              .darkGrey,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          fontSize: 10,
-                                                          fontFamily:
-                                                              'Nunito-Regular',
-                                                        ),
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                              }).toList(),
-                                              onChanged: (String? newValue) {
-                                                if (newValue ==
-                                                    controller
-                                                        .selectedTop.value) {
-                                                  // If the selected value is clicked again, unselect it
-                                                  controller.selectedTop.value =
-                                                      ''; // Set to null or empty string to unselect
-                                                } else {
-                                                  controller.selectedTop.value =
-                                                      newValue!;
-                                                }
-                                              },
-                                            ),
-                                          ),
-                                        )
-                                      : Padding(
-                                          padding: EdgeInsets.all(2),
-                                          child: Text(
-                                            controller.top[index],
-                                            style: TextStyle(
-                                              fontWeight: controller
-                                                          .selectedTop.value !=
-                                                      controller.top[index]
-                                                  ? FontWeight.w500
-                                                  : FontWeight.w700,
-                                              fontSize: 10,
-                                              color: controller
-                                                          .selectedTop.value !=
-                                                      controller.top[index]
-                                                  ? AppColors.darkGrey
-                                                  : AppColors.primaryColor,
-                                              fontFamily: 'Nunito-Regular',
-                                            ),
-                                          ),
-                                        ),
-                            ),
                           ),
-                        );
-                      }),
-                    );
-                  },
-                ),
+                        ),
+                      );
+                    }),
+                  );
+                }),
               ),
-            )
+            ),
           ],
         ),
       ),

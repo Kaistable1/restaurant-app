@@ -28,7 +28,8 @@ class _PostWidgetState extends State<PostWidget> {
   }
 
   Future<void> _checkLikeStatus() async {
-    final isLiked = await _postService.isPostLikedByCurrentUser(widget.post.postID ?? '');
+    final isLiked =
+        await _postService.isPostLikedByCurrentUser(widget.post.postID ?? '');
     setState(() {
       _isLiked = isLiked;
     });
@@ -65,12 +66,14 @@ class _PostWidgetState extends State<PostWidget> {
           onTap: _navigateToUserProfile,
           child: CircleAvatar(
             radius: 20,
-            backgroundImage: widget.post.userImage != null && widget.post.userImage!.isNotEmpty
+            backgroundImage: widget.post.userImage != null &&
+                    widget.post.userImage!.isNotEmpty
                 ? NetworkImage(widget.post.userImage!)
                 : null,
-            child: widget.post.userImage == null || widget.post.userImage!.isEmpty
-                ? Icon(Icons.person, size: 24)
-                : null,
+            child:
+                widget.post.userImage == null || widget.post.userImage!.isEmpty
+                    ? Icon(Icons.person, size: 24)
+                    : null,
           ),
         ),
         SizedBox(width: 12),
@@ -112,7 +115,7 @@ class _PostWidgetState extends State<PostWidget> {
           itemBuilder: (BuildContext context) {
             final currentUserID = FirebaseAuth.instance.currentUser?.uid;
             final isOwnPost = currentUserID == widget.post.userID;
-            
+
             return [
               if (!isOwnPost)
                 PopupMenuItem(
@@ -155,7 +158,7 @@ class _PostWidgetState extends State<PostWidget> {
 
   Widget _buildImages() {
     final images = widget.post.images!;
-    
+
     if (images.length == 1) {
       return Padding(
         padding: EdgeInsets.only(top: 12),
@@ -267,10 +270,10 @@ class _PostWidgetState extends State<PostWidget> {
 
   String _formatDate(DateTime? date) {
     if (date == null) return '';
-    
+
     final now = DateTime.now();
     final difference = now.difference(date);
-    
+
     if (difference.inMinutes < 1) {
       return 'Just now';
     } else if (difference.inHours < 1) {
@@ -343,16 +346,16 @@ class _PostWidgetState extends State<PostWidget> {
 
   void _navigateToUserProfile() {
     final currentUserID = FirebaseAuth.instance.currentUser?.uid;
-    
+
     // Don't navigate to own profile
     if (currentUserID == widget.post.userID) {
       return;
     }
 
     Get.to(() => UserProfileScreen(
-      userID: widget.post.userID ?? '',
-      userName: widget.post.userName ?? 'Unknown User',
-      userImage: widget.post.userImage,
-    ));
+          userID: widget.post.userID ?? '',
+          userName: widget.post.userName ?? 'Unknown User',
+          userImage: widget.post.userImage,
+        ));
   }
 }

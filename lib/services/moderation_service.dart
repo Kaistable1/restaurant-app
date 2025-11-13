@@ -8,8 +8,10 @@ class ModerationService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Collection references
-  CollectionReference get _reportsCollection => _firestore.collection('reports');
-  CollectionReference get _blockedUsersCollection => _firestore.collection('blockedUsers');
+  CollectionReference get _reportsCollection =>
+      _firestore.collection('reports');
+  CollectionReference get _blockedUsersCollection =>
+      _firestore.collection('blockedUsers');
 
   // Submit a report
   Future<String?> submitReport(ReportModel report) async {
@@ -18,7 +20,7 @@ class ModerationService {
       report.reportID = docRef.id;
       report.createdAt = DateTime.now();
       report.status = 'pending';
-      
+
       await docRef.set(report.toFirestore());
       return report.reportID;
     } catch (e) {
@@ -35,7 +37,8 @@ class ModerationService {
         .snapshots()
         .map((snapshot) {
       return snapshot.docs
-          .map((doc) => ReportModel.fromFirestore(doc.data() as Map<String, dynamic>))
+          .map((doc) =>
+              ReportModel.fromFirestore(doc.data() as Map<String, dynamic>))
           .toList();
     });
   }
@@ -43,14 +46,15 @@ class ModerationService {
   // Get all reports (for admin)
   Stream<List<ReportModel>> getAllReports({String? status}) {
     Query query = _reportsCollection.orderBy('createdAt', descending: true);
-    
+
     if (status != null) {
       query = query.where('status', isEqualTo: status);
     }
-    
+
     return query.snapshots().map((snapshot) {
       return snapshot.docs
-          .map((doc) => ReportModel.fromFirestore(doc.data() as Map<String, dynamic>))
+          .map((doc) =>
+              ReportModel.fromFirestore(doc.data() as Map<String, dynamic>))
           .toList();
     });
   }
@@ -79,7 +83,8 @@ class ModerationService {
   }
 
   // Block a user
-  Future<String?> blockUser(String blockedUserID, String blockedUserName, {String? reason}) async {
+  Future<String?> blockUser(String blockedUserID, String blockedUserName,
+      {String? reason}) async {
     try {
       final currentUserID = _auth.currentUser?.uid;
       if (currentUserID == null) return null;
@@ -146,7 +151,8 @@ class ModerationService {
         .snapshots()
         .map((snapshot) {
       return snapshot.docs
-          .map((doc) => BlockedUserModel.fromFirestore(doc.data() as Map<String, dynamic>))
+          .map((doc) => BlockedUserModel.fromFirestore(
+              doc.data() as Map<String, dynamic>))
           .toList();
     });
   }

@@ -63,7 +63,8 @@ class ProfileScreen extends StatelessWidget {
           // Admin moderation access - shown to all users for demo purposes
           // In production, this should check user roles/permissions
           IconButton(
-            icon: Icon(Icons.admin_panel_settings, color: AppColors.primaryColor),
+            icon:
+                Icon(Icons.admin_panel_settings, color: AppColors.primaryColor),
             tooltip: 'Admin Moderation',
             onPressed: () {
               Get.to(() => AdminModerationScreen());
