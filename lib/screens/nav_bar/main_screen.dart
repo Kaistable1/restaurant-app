@@ -52,8 +52,8 @@ class _MainScreenState extends State<MainScreen> {
       ),
       PersistentBottomNavBarItem(
         icon: Icon(Icons.explore, size: 28),
-        inactiveIcon: Icon(Icons.explore_outlined,
-            size: 25, color: AppColors.blackColor),
+        inactiveIcon:
+            Icon(Icons.explore_outlined, size: 25, color: AppColors.blackColor),
         title: "Explore",
         activeColorPrimary: AppColors.primaryColor,
       ),

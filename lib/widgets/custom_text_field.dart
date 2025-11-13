@@ -51,8 +51,7 @@ class CustomTextFormField extends StatelessWidget {
       width: width,
       decoration: BoxDecoration(
         color: containerColor ?? Colors.white, // Set container color
-        borderRadius:
-            BorderRadius.circular( 10 ),
+        borderRadius: BorderRadius.circular(10),
         boxShadow: isShadow // Conditional expression
             ? [
                 BoxShadow(
@@ -85,9 +84,9 @@ class CustomTextFormField extends StatelessWidget {
           border: InputBorder.none,
           // Removes the default border
           contentPadding: EdgeInsets.only(
-            top:  11,
+            top: 11,
             // bottom: Responsive.isMobile(context) ? 20 : 12,
-            left:  14 ,
+            left: 14,
             // right: Responsive.isMobile(context) ? 9 : 20,
           ),
           suffix: suffexWidget,

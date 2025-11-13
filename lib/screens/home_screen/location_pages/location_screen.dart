@@ -246,7 +246,6 @@ class LocationScreen extends StatelessWidget {
                                     imagePath: item.logoImage,
                                     timetext: '10 AM',
                                     percentText: '25%',
-                        
                                     isFavorite: false.obs,
                                   ),
                                 );
