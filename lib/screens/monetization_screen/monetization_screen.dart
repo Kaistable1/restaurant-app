@@ -12,7 +12,8 @@ class MonetizationScreen extends StatefulWidget {
   State<MonetizationScreen> createState() => _MonetizationScreenState();
 }
 
-class _MonetizationScreenState extends State<MonetizationScreen> with SingleTickerProviderStateMixin {
+class _MonetizationScreenState extends State<MonetizationScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final MonetizationService _monetizationService = MonetizationService();
 
@@ -94,7 +95,10 @@ class _MonetizationScreenState extends State<MonetizationScreen> with SingleTick
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.primaryColor, AppColors.primaryColor.withOpacity(0.7)],
+          colors: [
+            AppColors.primaryColor,
+            AppColors.primaryColor.withOpacity(0.7)
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -444,11 +448,14 @@ class _MonetizationScreenState extends State<MonetizationScreen> with SingleTick
                     child: Row(
                       children: [
                         Icon(
-                          method == 'Stripe' ? Icons.credit_card : Icons.account_balance_wallet,
+                          method == 'Stripe'
+                              ? Icons.credit_card
+                              : Icons.account_balance_wallet,
                           size: 20,
                         ),
                         SizedBox(width: 8),
-                        Text(method, style: TextStyle(fontFamily: 'Nunito-Regular')),
+                        Text(method,
+                            style: TextStyle(fontFamily: 'Nunito-Regular')),
                       ],
                     ),
                   );

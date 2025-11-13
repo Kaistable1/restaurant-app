@@ -10,7 +10,6 @@ class BannerModel {
   String userID;
   String status;
 
-
   BannerModel({
     required this.bannerImage,
     required this.title,
@@ -42,8 +41,8 @@ class BannerModel {
       'city': city,
       'startDate': startDate,
       'endDate': endDate,
-      'userID':userID,
-      'status':status,
+      'userID': userID,
+      'status': status,
     };
   }
 
@@ -57,8 +56,8 @@ class BannerModel {
       city: doc['city'] ?? '',
       startDate: doc['startDate'] ?? '',
       endDate: doc['endDate'] ?? '',
-      userID: doc['userID'] ??'',
-      status: doc['status']??'',
+      userID: doc['userID'] ?? '',
+      status: doc['status'] ?? '',
     );
   }
 }
