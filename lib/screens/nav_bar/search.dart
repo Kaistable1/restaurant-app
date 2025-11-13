@@ -4,7 +4,6 @@ import 'package:kaistable_website/screens/nav_bar/widgets/bottom_sheet.dart';
 
 import 'controller/search_controller.dart';
 
-
 class SearchScreen extends StatelessWidget {
   const SearchScreen({super.key});
 
