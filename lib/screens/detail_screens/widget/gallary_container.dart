@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../utils/responsive.dart';
+
 class GallaryContainer extends StatelessWidget {
   const GallaryContainer({super.key});
 
@@ -56,7 +57,7 @@ class GallaryContainer extends StatelessWidget {
         ),
         SizedBox(width: Responsive.isMobile(context) ? 4 : 8),
         Flexible(
-          flex:2,
+          flex: 2,
           child: Column(
             children: [
               Container(
@@ -119,5 +120,4 @@ class GallaryContainer extends StatelessWidget {
       ],
     );
   }
-
 }

@@ -39,9 +39,13 @@ class PostModel {
       userName: json['userName'],
       userImage: json['userImage'],
       content: json['content'],
-      images: (json['images'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      images:
+          (json['images'] as List<dynamic>?)?.map((e) => e as String).toList(),
       likesCount: json['likesCount'] ?? 0,
-      likedBy: (json['likedBy'] as List<dynamic>?)?.map((e) => e as String).toList() ?? [],
+      likedBy: (json['likedBy'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
       commentsCount: json['commentsCount'] ?? 0,
       createdAt: (json['createdAt'] as Timestamp?)?.toDate(),
       updatedAt: (json['updatedAt'] as Timestamp?)?.toDate(),

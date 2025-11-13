@@ -89,7 +89,6 @@ class FilterWidget extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   showFilterBottomSheet();
-                
                 },
                 child: Image.asset(
                   'assets/images/filter_image__.png',
