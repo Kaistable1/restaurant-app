@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
@@ -10,9 +8,9 @@ import 'package:kaistable_website/screens/nav_bar/controller/home_controller.dar
 import 'package:kaistable_website/screens/nav_bar/profile.dart';
 import 'package:kaistable_website/screens/trending_screen/trending_screen.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
-
 import '../home_screen/notification_screen/notification_screen.dart';
 import 'home_screen.dart';
+import 'package:flutter/foundation.dart' show kIsWeb; // ← ADDED FOR WEB SAFETY
 
 class MainScreen extends StatefulWidget {
   @override
@@ -22,7 +20,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   final PersistentTabController _controller =
       PersistentTabController(initialIndex: 0);
-  int _currentIndex = 0; // Track the selected index manually
+  int _currentIndex = 0;
 
   List<Widget> _buildScreens() {
     return [
@@ -54,7 +52,8 @@ class _MainScreenState extends State<MainScreen> {
       ),
       PersistentBottomNavBarItem(
         icon: Icon(Icons.explore, size: 28),
-        inactiveIcon: Icon(Icons.explore_outlined, size: 25, color: AppColors.blackColor),
+        inactiveIcon: Icon(Icons.explore_outlined,
+            size: 25, color: AppColors.blackColor),
         title: "Explore",
         activeColorPrimary: AppColors.primaryColor,
       ),
@@ -78,8 +77,23 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    // Run native-only init (e.g. FFI, platform channels) only on mobile/desktop
+    if (!kIsWeb) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        // PLACE ANY NATIVE-ONLY CODE HERE
+        // Example:
+        // final lib = DynamicLibrary.open('native_lib.so');
+        // lib.lookup<NativeFunction<...>>('...');
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-        HomeController homeController = Get.put(HomeController());
+    HomeController homeController = Get.put(HomeController());
 
     return Scaffold(
       appBar: _currentIndex == 0
@@ -89,78 +103,70 @@ class _MainScreenState extends State<MainScreen> {
               elevation: 0,
               centerTitle: true,
               title: Image.asset(
-                'assets/images/logo.png', // Replace with your logo path
-                height: 40, // Adjust as needed
+                'assets/images/logo.png',
+                height: 40,
               ),
               actions: [
                 GestureDetector(
                   onTap: () => Get.to(NotificationScreen()),
                   child: Container(
-                      height: 30,
-                      width: 30,
-                      decoration: BoxDecoration(
-                        color: AppColors.whiteColor,
-                        borderRadius: BorderRadius.circular(6),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(.2),
-                            spreadRadius: 0,
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Icon(
-                        Icons.email,
-                        color: AppColors.primaryColor,
-                        size: 22,
-                      )),
+                    height: 30,
+                    width: 30,
+                    decoration: BoxDecoration(
+                      color: AppColors.whiteColor,
+                      borderRadius: BorderRadius.circular(6),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(.2),
+                          spreadRadius: 0,
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      Icons.email,
+                      color: AppColors.primaryColor,
+                      size: 22,
+                    ),
+                  ),
                 ),
-                SizedBox(
-                  width: 12,
-                )
+                SizedBox(width: 12),
               ],
             )
-          : null, // Hide AppBar for other screens
-      body:
-         GetBuilder<HomeController>(
-              builder: (controller) {
-
-                return homeController.isSpotlightFinish.value == false
-            ? HomeScreen()
-            :  PersistentTabView(
-                    context,
-                    controller: _controller,
-                    screens: _buildScreens(),
-                    items: _navBarsItems(),
-                    handleAndroidBackButtonPress: true,
-                    // resizeToAvoidBottomInset: true,
-                    // stateManagement: true,
-                    hideNavigationBarWhenKeyboardAppears: true,
-                    popBehaviorOnSelectedNavBarItemPress: PopBehavior.all,
-                    backgroundColor: AppColors.whiteColor,
-                    decoration: NavBarDecoration(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
-                      ),
-                      colorBehindNavBar: AppColors.whiteColor.withOpacity(.3),
+          : null,
+      body: GetBuilder<HomeController>(
+        builder: (controller) {
+          return homeController.isSpotlightFinish.value == false
+              ? HomeScreen()
+              : PersistentTabView(
+                  context,
+                  controller: _controller,
+                  screens: _buildScreens(),
+                  items: _navBarsItems(),
+                  handleAndroidBackButtonPress: true,
+                  hideNavigationBarWhenKeyboardAppears: true,
+                  popBehaviorOnSelectedNavBarItemPress: PopBehavior.all,
+                  backgroundColor: AppColors.whiteColor,
+                  decoration: NavBarDecoration(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
                     ),
-                    isVisible: true,
-                    // confineToSafeArea: true,
-                    navBarHeight: 60,
-                    padding: EdgeInsets.zero,
-                    navBarStyle: NavBarStyle.style3,
-                    onItemSelected: (index) {
-                      setState(() {
-                        _currentIndex =
-                            index; // Update the AppBar visibility dynamically
-                      });
-                    },
-                  );
-              }
-            ),
-     
+                    colorBehindNavBar: AppColors.whiteColor.withOpacity(.3),
+                  ),
+                  isVisible: true,
+                  navBarHeight: 60,
+                  padding: EdgeInsets.zero,
+                  navBarStyle: NavBarStyle.style3,
+                  onItemSelected: (index) {
+                    setState(() {
+                      _currentIndex = index;
+                    });
+                  },
+                );
+        },
+      ),
     );
   }
 }

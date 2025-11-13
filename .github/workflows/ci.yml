@@ -26,16 +26,14 @@ jobs:
         run: flutter pub get
 
       - name: Verify formatting
-        run: flutter format --set-exit-if-changed .
-        continue-on-error: true
+        run: dart format --set-exit-if-changed .
 
       - name: Analyze code
         run: flutter analyze
-        continue-on-error: true
 
       - name: Run unit tests
         run: flutter test --platform=chrome
-        continue-on-error: true
+        continue-on-error: true   # <-- kept from the feature branch
 
       - name: Build web app
         run: flutter build web --release --web-renderer=canvaskit
@@ -65,7 +63,7 @@ jobs:
 
       - name: Install Cypress
         run: |
-          npm install --save-dev cypress@13
+          npm ci
           npx cypress install
 
       - name: Download Flutter web build
@@ -76,7 +74,7 @@ jobs:
 
       - name: Serve Flutter app
         run: |
-          npm install -g dhttpd  # fallback if not in PATH
+          npm install -g dhttpd
           dhttpd --path=build/web --port=8080 &
           echo "SERVER_PID=$!" >> $GITHUB_ENV
           sleep 8
@@ -84,6 +82,7 @@ jobs:
       - name: Wait for server
         run: |
           timeout 30 bash -c 'until curl -s -f http://localhost:8080 > /dev/null; do sleep 2; done' || echo "Warning: Server not ready"
+          # <-- kept the warning from the feature branch; you can remove the || part if you want the job to fail hard
 
       - name: Run Cypress smoke tests
         run: npx cypress run --spec "cypress/e2e/smoke_spec.cy.js" --browser chrome
