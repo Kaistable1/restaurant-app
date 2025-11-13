@@ -1,46 +1,47 @@
-# Savrli City — V1 Runbook (staging)
+# Savrli City V1 Operations Runbook
 
-Purpose
-- Quick guide to deploy to staging, verify core flow, and rollback if needed.
+**Purpose**  
+Quick guide to deploy, verify, monitor, and rollback the **Savrli City** restaurant concierge app (V1) in **staging** and **production**.
 
-Staging URL
-- https://staging.example.com (replace with your staging URL)
+**Staging URL**: `https://staging.savrli.city`  
+**Production URL**: `https://savrli.city`  
+**Last Updated**: 2025-11-12  
+**Version**: 1.0.0  
+**Owner**: Kaistable Team
 
-Deploy to staging
-- Command:
-  - ./scripts/deploy-staging.sh
-  - OR replace with your CI trigger: gh workflow run deploy-staging.yml
-- Verify:
-  - Open staging URL and complete the smoke flow below.
-  - Check Sentry for new errors and Slack #alerts channel.
+---
 
-Smoke verification (manual)
-1. Signup as a new user (use a test email).
-2. Complete onboarding steps.
-3. Perform the primary task and verify success.
-4. Check analytics dashboard for events:
-   - signup
-   - onboarding_start
-   - onboarding_complete
-   - primary_task_success
+## Table of Contents
+1. [Pre-Deployment Checklist](#pre-deployment-checklist)  
+2. [Staging Deployment](#staging-deployment)  
+3. [Smoke Test Verification](#smoke-test-verification)  
+4. [Production Deployment](#production-deployment)  
+5. [Rollback Procedures](#rollback-procedures)  
+6. [Concierge Onboarding](#concierge-onboarding)  
+7. [Monitoring & Alerts](#monitoring--alerts)  
+8. [Troubleshooting](#troubleshooting)  
+9. [Emergency Contacts](#emergency-contacts)  
+10. [Appendix](#appendix)
 
-Rollback
-- If deploy causes issues:
-  - Revert the last commit on staging branch and redeploy, or
-  - Use your host's rollback mechanism (e.g., previous version in cloud console).
-- Command example (git):
-  - git checkout staging
-  - git revert <commit_hash>
-  - git push origin staging
+---
 
-Contacts
-- Engineering: #savrli-city-dev
-- PM: #savrli-city-product
-- On-call: See PagerDuty schedule
+## Pre-Deployment Checklist
+Before deploying:
+- [ ] All CI tests pass
+- [ ] Code review approved
+- [ ] `openapi.yaml` is up-to-date
+- [ ] Firebase config verified
+- [ ] Secrets injected (Google Services, API keys)
+- [ ] Rollback plan ready
+- [ ] On-call notified
 
-Concierge steps (manual onboarding assist)
-1. Have the concierge team member sign up through the normal flow.
-2. Walk them through the onboarding steps, noting any UI issues.
-3. Guide them to complete the primary task (e.g., create first reservation or event).
-4. Document any feedback or blockers in the #concierge-feedback channel.
-5. Ensure they can repeat the flow independently before full rollout.
+---
+
+## Staging Deployment
+
+### Prerequisites
+```bash
+flutter --version  # ≥3.24.0
+firebase --version
+git checkout feature/savrli-v1-setup
+git pull

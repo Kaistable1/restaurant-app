@@ -1,0 +1,24 @@
+{
+  "name": "restaurant-app",
+  "version": "1.0.0",
+  "description": "Savrli City Restaurant Concierge Application",
+  "private": true,
+  "scripts": {
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "cypress:run:smoke": "cypress run --spec 'cypress/integration/smoke_spec.cy.js'",
+    "test:e2e": "cypress run --browser chrome",
+    "test:e2e:headed": "cypress run --browser chrome --headed"
+  },
+  "keywords": [
+    "flutter",
+    "restaurant",
+    "concierge",
+    "savrli"
+  ],
+  "author": "Kaistable Team",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "cypress": "^13.0.0"
+  }
+}
