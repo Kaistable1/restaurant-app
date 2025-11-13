@@ -14,6 +14,9 @@ servers:
     description: Staging server
 
 paths:
+  # ──────────────────────────────────────────────────────────────
+  # AUTH: User Signup
+  # ──────────────────────────────────────────────────────────────
   /auth/signup:
     post:
       summary: User signup
@@ -80,6 +83,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  # ──────────────────────────────────────────────────────────────
+  # ONBOARDING: Submit preferences & location
+  # ──────────────────────────────────────────────────────────────
   /onboarding:
     post:
       summary: Complete concierge onboarding
@@ -173,6 +179,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  # ──────────────────────────────────────────────────────────────
+  # TASKS: Create & List Primary Tasks
+  # ──────────────────────────────────────────────────────────────
   /tasks/primary:
     post:
       summary: Create primary task
@@ -249,7 +258,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-    
+
     get:
       summary: Get primary tasks
       description: Retrieve list of user's primary tasks
@@ -302,6 +311,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+# ──────────────────────────────────────────────────────────────
+# COMPONENTS
+# ──────────────────────────────────────────────────────────────
 components:
   securitySchemes:
     bearerAuth:

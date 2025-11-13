@@ -1,216 +1,180 @@
+/// <reference types="cypress" />
+
 /**
- * Savrli City V1 Smoke Test
- * 
- * This test verifies the critical user flow:
- * 1. User signup
- * 2. Concierge onboarding
- * 3. Primary task creation (restaurant reservation)
- * 
- * NOTE: This is a skeleton test that should be expanded with actual
- * UI selectors and API endpoints once the frontend is implemented.
+ * Savrli City V1 – Smoke Test
+ *
+ * Critical path:
+ *   1. App loads
+ *   2. Signup
+ *   3. Onboarding (concierge preferences)
+ *   4. Primary task – restaurant reservation
+ *
+ * Update the `data-cy` / `data-testid` attributes to match your actual UI.
  */
 
-describe('Savrli City Concierge - Smoke Test', () => {
-  const baseUrl = Cypress.config('baseUrl') || 'http://localhost:8080';
-  
-  // Test data
-  const testUser = {
-    email: `test.user.${Date.now()}@example.com`,
-    password: 'TestPassword123!',
+const BASE_URL = Cypress.config('baseUrl') || 'http://localhost:8080';
+const API_URL = Cypress.env('API_BASE_URL') || 'https://staging-api.savrli.city/v1';
+
+describe('Savrli City – Smoke Test', () => {
+  // -------------------------------------------------------------------------
+  // Test data – unique per run
+  // -------------------------------------------------------------------------
+  const timestamp = Date.now();
+  const user = {
+    email: `test+${timestamp}@example.com`,
+    password: 'Password123!',
     firstName: 'Test',
     lastName: 'User',
-    phoneNumber: '+1-555-0199'
+    phone: '+15550199',
   };
 
-  const onboardingData = {
+  const onboarding = {
     cuisines: ['Italian', 'Japanese'],
-    dietaryRestrictions: ['vegetarian'],
-    priceRange: 'moderate',
+    dietary: ['vegetarian'],
+    price: 'moderate',
     city: 'San Francisco',
-    zipCode: '94102'
+    zip: '94102',
   };
 
-  const reservationData = {
-    restaurantName: 'The Blue Duck',
+  const reservation = {
+    restaurant: 'The Blue Duck',
     partySize: 4,
-    dateTime: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
-    specialRequests: 'Window seat preferred'
+    // 7 days from now, ISO string
+    dateTime: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+    notes: 'Window seat preferred',
   };
 
-  beforeEach(() => {
-    // Set viewport for consistent testing
-    cy.viewport(1280, 720);
-  });
+  // -------------------------------------------------------------------------
+  // Helpers
+  // -------------------------------------------------------------------------
+  const selectCuisine = (name) => cy.get(`[data-cy="cuisine-${name.toLowerCase()}"]`).click();
+  const selectDiet = (name) => cy.get(`[data-cy="diet-${name}"]`).click();
 
-  it('should load the application', () => {
-    cy.visit('/');
-    cy.wait(2000); // Wait for Flutter to initialize
-    
-    // Verify the app loads without errors
-    cy.window().then((win) => {
-      expect(win).to.exist;
-    });
-    
-    // Check for common Flutter app indicators
+  // -------------------------------------------------------------------------
+  // 1. App loads
+  // -------------------------------------------------------------------------
+  it('loads the application', () => {
+    cy.visit(BASE_URL);
+    cy.wait(3000); // give Flutter web a moment to bootstrap
     cy.get('body').should('be.visible');
-    
-    cy.log('✓ Application loaded successfully');
+    cy.log('Application loaded');
   });
 
-  it('should complete user signup flow', () => {
-    cy.visit('/');
-    cy.wait(2000);
+  // -------------------------------------------------------------------------
+  // 2. Signup flow
+  // -------------------------------------------------------------------------
+  it('completes user signup', () => {
+    cy.visit(`${BASE_URL}/signup`);
 
-    // TODO: Replace with actual selectors once UI is implemented
-    // This is a skeleton - adjust selectors based on actual Flutter web implementation
-    
-    cy.log('Step 1: Navigate to signup page');
-    // cy.get('[data-testid="signup-button"]').click();
-    // cy.url().should('include', '/signup');
+    cy.get('input[name="email"]').type(user.email);
+    cy.get('input[name="password"]').type(user.password);
+    cy.get('input[name="firstName"]').type(user.firstName);
+    cy.get('input[name="lastName"]').type(user.lastName);
+    cy.get('input[name="phone"]').type(user.phone);
 
-    cy.log('Step 2: Fill out signup form');
-    // cy.get('[data-testid="email-input"]').type(testUser.email);
-    // cy.get('[data-testid="password-input"]').type(testUser.password);
-    // cy.get('[data-testid="firstName-input"]').type(testUser.firstName);
-    // cy.get('[data-testid="lastName-input"]').type(testUser.lastName);
-    // cy.get('[data-testid="phone-input"]').type(testUser.phoneNumber);
+    cy.get('button[type="submit"]').click();
 
-    cy.log('Step 3: Submit signup form');
-    // cy.get('[data-testid="signup-submit"]').click();
-
-    cy.log('Step 4: Verify signup success');
-    // cy.url().should('include', '/onboarding');
-    // cy.contains('Welcome').should('be.visible');
-
-    cy.log('✓ User signup flow completed (skeleton)');
+    cy.url().should('include', '/onboarding');
+    cy.contains('Welcome', { timeout: 10000 }).should('be.visible');
+    cy.log('Signup completed');
   });
 
-  it('should complete concierge onboarding', () => {
-    cy.visit('/');
-    cy.wait(2000);
+  // -------------------------------------------------------------------------
+  // 3. Concierge onboarding
+  // -------------------------------------------------------------------------
+  it('completes concierge onboarding', () => {
+    // we should already be on /onboarding after signup
+    onboarding.cuisines.forEach(selectCuisine);
+    onboarding.dietary.forEach(selectDiet);
 
-    // TODO: This assumes user is already logged in or signup is complete
-    // Replace with actual navigation and selectors
-    
-    cy.log('Step 1: Navigate to onboarding');
-    // cy.visit('/onboarding');
+    cy.get(`[data-cy="price-${onboarding.price}"]`).click();
 
-    cy.log('Step 2: Select cuisine preferences');
-    // onboardingData.cuisines.forEach(cuisine => {
-    //   cy.get(`[data-testid="cuisine-${cuisine.toLowerCase()}"]`).click();
-    // });
+    cy.get('input[data-cy="city"]').type(onboarding.city);
+    cy.get('input[data-cy="zip"]').type(onboarding.zip);
 
-    cy.log('Step 3: Select dietary restrictions');
-    // onboardingData.dietaryRestrictions.forEach(restriction => {
-    //   cy.get(`[data-testid="diet-${restriction}"]`).click();
-    // });
+    cy.get('[data-cy="onboard-complete"]').click();
 
-    cy.log('Step 4: Select price range');
-    // cy.get(`[data-testid="price-${onboardingData.priceRange}"]`).click();
-
-    cy.log('Step 5: Enter location information');
-    // cy.get('[data-testid="city-input"]').type(onboardingData.city);
-    // cy.get('[data-testid="zipcode-input"]').type(onboardingData.zipCode);
-
-    cy.log('Step 6: Submit onboarding');
-    // cy.get('[data-testid="onboarding-submit"]').click();
-
-    cy.log('Step 7: Verify onboarding completion');
-    // cy.url().should('include', '/dashboard');
-    // cy.contains('Your concierge is ready').should('be.visible');
-
-    cy.log('✓ Concierge onboarding completed (skeleton)');
+    cy.url().should('include', '/dashboard');
+    cy.contains('Your concierge is ready', { timeout: 10000 }).should('be.visible');
+    cy.log('Onboarding completed');
   });
 
-  it('should create a primary task (reservation)', () => {
-    cy.visit('/');
-    cy.wait(2000);
+  // -------------------------------------------------------------------------
+  // 4. Primary task – restaurant reservation
+  // -------------------------------------------------------------------------
+  it('creates a restaurant reservation', () => {
+    cy.visit(`${BASE_URL}/dashboard`);
 
-    // TODO: This assumes user is logged in and onboarded
-    // Replace with actual navigation and selectors
-    
-    cy.log('Step 1: Navigate to task creation');
-    // cy.visit('/dashboard');
-    // cy.get('[data-testid="create-task-button"]').click();
+    cy.get('[data-cy="create-task-btn"]').click();
+    cy.get('[data-cy="task-type-reservation"]').click();
 
-    cy.log('Step 2: Select task type');
-    // cy.get('[data-testid="task-type-reservation"]').click();
+    cy.get('input[data-cy="restaurant"]').type(reservation.restaurant);
+    cy.get('input[data-cy="party-size"]').clear().type(reservation.partySize);
+    cy.get('input[data-cy="datetime"]').type(reservation.dateTime.slice(0, 16)); // YYYY-MM-DDTHH:mm
+    cy.get('textarea[data-cy="special-requests"]').type(reservation.notes);
 
-    cy.log('Step 3: Enter reservation details');
-    // cy.get('[data-testid="restaurant-input"]').type(reservationData.restaurantName);
-    // cy.get('[data-testid="party-size-input"]').clear().type(reservationData.partySize);
-    // cy.get('[data-testid="datetime-picker"]').click();
-    // TODO: Handle date/time picker interaction
-    // cy.get('[data-testid="special-requests-input"]').type(reservationData.specialRequests);
+    cy.get('[data-cy="task-submit"]').click();
 
-    cy.log('Step 4: Submit task');
-    // cy.get('[data-testid="task-submit"]').click();
-
-    cy.log('Step 5: Verify task creation');
-    // cy.contains('Task created successfully').should('be.visible');
-    // cy.get('[data-testid="task-status"]').should('contain', 'pending');
-
-    cy.log('✓ Primary task created (skeleton)');
+    cy.contains('Task created', { timeout: 15000 }).should('be.visible');
+    cy.get('[data-cy="task-status"]').should('contain', 'pending');
+    cy.log('Reservation task created');
   });
 
-  it('should complete full end-to-end flow', () => {
-    cy.log('=== Starting Full E2E Flow ===');
-    
-    // Step 1: Signup
-    cy.log('1. User Signup');
-    cy.visit('/');
-    cy.wait(2000);
-    // TODO: Implement actual signup steps
-    cy.log('   → Signup form interaction (pending implementation)');
+  // -------------------------------------------------------------------------
+  // 5. Full end-to-end (runs all steps in one go)
+  // -------------------------------------------------------------------------
+  it('runs the full end-to-end flow', () => {
+    cy.log('=== Full E2E Flow Start ===');
 
-    // Step 2: Onboarding
-    cy.log('2. Concierge Onboarding');
-    // TODO: Implement actual onboarding steps
-    cy.log('   → Preferences selection (pending implementation)');
-    cy.log('   → Location setup (pending implementation)');
+    // 1. Load
+    cy.visit(BASE_URL);
+    cy.wait(3000);
 
-    // Step 3: Primary Task
-    cy.log('3. Create Primary Task');
-    // TODO: Implement actual task creation steps
-    cy.log('   → Reservation details (pending implementation)');
-    cy.log('   → Task submission (pending implementation)');
+    // 2. Signup
+    cy.visit(`${BASE_URL}/signup`);
+    cy.get('input[name="email"]').type(user.email);
+    cy.get('input[name="password"]').type(user.password);
+    cy.get('button[type="submit"]').click();
+    cy.url().should('include', '/onboarding');
 
-    cy.log('=== Full E2E Flow Completed (skeleton) ===');
-    cy.log('⚠ NOTE: This is a skeleton test. Update with actual selectors and flows.');
+    // 3. Onboarding
+    onboarding.cuisines.forEach(selectCuisine);
+    onboarding.dietary.forEach(selectDiet);
+    cy.get(`[data-cy="price-${onboarding.price}"]`).click();
+    cy.get('input[data-cy="city"]').type(onboarding.city);
+    cy.get('input[data-cy="zip"]').type(onboarding.zip);
+    cy.get('[data-cy="onboard-complete"]').click();
+    cy.url().should('include', '/dashboard');
+
+    // 4. Reservation
+    cy.get('[data-cy="create-task-btn"]').click();
+    cy.get('[data-cy="task-type-reservation"]').click();
+    cy.get('input[data-cy="restaurant"]').type(reservation.restaurant);
+    cy.get('input[data-cy="party-size"]').clear().type(reservation.partySize);
+    cy.get('input[data-cy="datetime"]').type(reservation.dateTime.slice(0, 16));
+    cy.get('textarea[data-cy="special-requests"]').type(reservation.notes);
+    cy.get('[data-cy="task-submit"]').click();
+
+    cy.contains('Task created', { timeout: 15000 }).should('be.visible');
+    cy.log('=== Full E2E Flow Completed ===');
   });
 
-  // API endpoint verification (if API is available)
-  context('API Endpoints (Optional)', () => {
-    const apiBaseUrl = Cypress.env('API_BASE_URL') || 'https://staging-api.savrli.city/v1';
+  // -------------------------------------------------------------------------
+  // Optional: API endpoint health checks (won’t fail the suite)
+  // -------------------------------------------------------------------------
+  context('API endpoint availability (smoke)', () => {
+    const endpoints = [
+      { name: 'signup', path: '/auth/signup' },
+      { name: 'onboarding', path: '/onboarding' },
+      { name: 'primary task', path: '/tasks/primary' },
+    ];
 
-    it('should verify signup endpoint availability', () => {
-      cy.request({
-        method: 'OPTIONS',
-        url: `${apiBaseUrl}/auth/signup`,
-        failOnStatusCode: false
-      }).then((response) => {
-        // Just verify endpoint responds, don't fail if not available yet
-        cy.log(`Signup endpoint status: ${response.status}`);
-      });
-    });
-
-    it('should verify onboarding endpoint availability', () => {
-      cy.request({
-        method: 'OPTIONS',
-        url: `${apiBaseUrl}/onboarding`,
-        failOnStatusCode: false
-      }).then((response) => {
-        cy.log(`Onboarding endpoint status: ${response.status}`);
-      });
-    });
-
-    it('should verify primary task endpoint availability', () => {
-      cy.request({
-        method: 'OPTIONS',
-        url: `${apiBaseUrl}/tasks/primary`,
-        failOnStatusCode: false
-      }).then((response) => {
-        cy.log(`Primary task endpoint status: ${response.status}`);
+    endpoints.forEach(({ name, path }) => {
+      it(`has ${name} endpoint reachable`, () => {
+        cy.request({ method: 'OPTIONS', url: `${API_URL}${path}`, failOnStatusCode: false })
+          .then((resp) => {
+            cy.log(`${name} endpoint → ${resp.status}`);
+          });
       });
     });
   });

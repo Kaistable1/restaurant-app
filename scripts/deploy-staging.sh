@@ -1,216 +1,179 @@
-#!/bin/bash
-
+#!/usr/bin/env bash
 ################################################################################
 # Savrli City V1 - Staging Deployment Script
 #
-# This script deploys the restaurant app to the staging environment.
-# It performs build, validation, and deployment steps with safety checks.
+# Deploys Flutter web app to Firebase Hosting (staging) with build, test, and smoke verification.
 #
-# Usage: ./scripts/deploy-staging.sh
+# Usage:
+#   ./scripts/deploy-staging.sh
+#
+# Environment Variables:
+#   DEPLOY_TARGET=stating     # or 'production'
+#   SKIP_TESTS=true           # Skip Flutter tests
+#   RUN_SMOKE=true            # Run Cypress smoke tests after deploy
+#   CYPRESS_BASE_URL=...      # Override base URL for smoke tests
 #
 # Prerequisites:
-#   - Flutter SDK installed and in PATH
-#   - Firebase CLI installed and authenticated
-#   - Proper environment variables configured
-#
-# Environment Variables (optional):
-#   - FIREBASE_PROJECT: Firebase project ID (default: auto-detected)
-#   - SKIP_TESTS: Skip test execution (default: false)
-#   - DEPLOY_TARGET: Deployment target (default: staging)
+#   - Flutter SDK
+ dichotom#   - Firebase CLI (firebase-tools)
+#   - Node.js + npm
+#   - Cypress installed (npm install)
 ################################################################################
 
-set -e  # Exit on error
-set -o pipefail  # Exit on pipe failure
+set -euo pipefail
 
-# Colors for output
+# ──────────────────────────────────────────────────────────────
+# Configuration & Colors
+# ──────────────────────────────────────────────────────────────
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
-# Configuration
 DEPLOY_TARGET="${DEPLOY_TARGET:-staging}"
 SKIP_TESTS="${SKIP_TESTS:-false}"
+RUN_SMOKE="${RUN_SMOKE:-true}"
 BUILD_DIR="build/web"
+STAGING_URL="https://staging.savrli.city"
+PROD_URL="https://savrli.city"
 
-################################################################################
+# ──────────────────────────────────────────────────────────────
 # Helper Functions
-################################################################################
+# ──────────────────────────────────────────────────────────────
+log_info()    { echo -e "${BLUE}[INFO]${NC} $1"; }
+log_success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
+log_warning() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
+log_error()   { echo -e "${RED}[ERROR]${NC} $1"; }
 
-log_info() {
-    echo -e "${BLUE}[INFO]${NC} $1"
-}
+banner() {
+    echo -e "${BLUE}"
+    cat << "EOF"
+   _____                 _      _    _____ _ _
+  / ____|               | |    (_)  / ____(_) |
+ | (___   __ ___   _____| |     _  | |     _| |_
+  \___ \ / _` \ \ / / _ \ |    | | | |    | | __|
+  ____) | (_| |\ V /  __/ |____| | | |____| | |_
+ |_____/ \__,_| \_/ \___|______|_|  \_____|_|\__|
 
-log_success() {
-    echo -e "${GREEN}[SUCCESS]${NC} $1"
-}
-
-log_warning() {
-    echo -e "${YELLOW}[WARNING]${NC} $1"
-}
-
-log_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
+EOF
+    echo -e "${NC}Savrli City V1 - ${DEPLOY_TARGET^} Deployment\n"
 }
 
 check_prerequisites() {
     log_info "Checking prerequisites..."
-    
-    # Check Flutter
-    if ! command -v flutter &> /dev/null; then
-        log_error "Flutter is not installed or not in PATH"
-        exit 1
-    fi
-    log_success "Flutter found: $(flutter --version | head -n1)"
-    
-    # Check Firebase CLI
-    if ! command -v firebase &> /dev/null; then
-        log_warning "Firebase CLI not found. Install with: npm install -g firebase-tools"
-        log_warning "Skipping Firebase deployment checks..."
-    else
-        log_success "Firebase CLI found: $(firebase --version)"
-    fi
-    
-    # Check if we're in the right directory
-    if [ ! -f "pubspec.yaml" ]; then
-        log_error "pubspec.yaml not found. Please run from project root."
-        exit 1
-    fi
+
+    command -v flutter >/dev/null || { log_error "Flutter not found"; exit 1; }
+    log_success "Flutter: $(flutter --version | head -n1)"
+
+    command -v firebase >/dev/null || { log_warning "Firebase CLI not found. Skipping deploy."; return 1; }
+    log_success "Firebase CLI: $(firebase --version)"
+
+    [[ -f "pubspec.yaml" ]] || { log_error "pubspec.yaml not found. Run from project root."; exit 1; }
+    [[ -f "package.json" ]] || { log_warning "package.json not found. Cypress tests will be skipped."; }
+
+    log_success "Prerequisites OK"
 }
 
 run_tests() {
-    if [ "$SKIP_TESTS" = "true" ]; then
-        log_warning "Skipping tests (SKIP_TESTS=true)"
-        return 0
-    fi
-    
-    log_info "Running tests..."
-    
-    # Run Flutter analyze
-    log_info "Running Flutter analyze..."
-    if flutter analyze; then
-        log_success "Code analysis passed"
-    else
-        log_warning "Code analysis found issues (continuing anyway)"
-    fi
-    
-    # Run Flutter tests
+    [[ "$SKIP_TESTS" == "true" ]] && { log_warning "Skipping tests"; return 0; }
+
     log_info "Running Flutter tests..."
-    if flutter test; then
-        log_success "Tests passed"
-    else
-        log_warning "Some tests failed (continuing anyway)"
-    fi
+
+    flutter analyze || log_warning "Analysis issues found"
+    flutter test || log_warning "Some unit tests failed"
+
+    log_success "Tests completed"
 }
 
 build_app() {
-    log_info "Building Flutter web app for ${DEPLOY_TARGET}..."
-    
-    # Clean previous build
-    log_info "Cleaning previous build..."
+    log_info "Building Flutter web app..."
+
     flutter clean
-    
-    # Get dependencies
-    log_info "Getting dependencies..."
     flutter pub get
-    
-    # Build web app
-    log_info "Building web app..."
-    if flutter build web --release --verbose; then
-        log_success "Build completed successfully"
-    else
-        log_error "Build failed"
-        exit 1
-    fi
-    
-    # Verify build output
-    if [ ! -d "$BUILD_DIR" ]; then
-        log_error "Build directory not found: $BUILD_DIR"
-        exit 1
-    fi
-    
-    log_success "Build artifacts ready in $BUILD_DIR"
+    flutter build web --release --web-renderer canvaskit
+
+    [[ -d "$BUILD_DIR" ]] || { log_error "Build failed: $BUILD_DIR missing"; exit 1; }
+
+    log_success "Build ready: $BUILD_DIR"
 }
 
 deploy_to_firebase() {
-    log_info "Deploying to Firebase Hosting (${DEPLOY_TARGET})..."
-    
-    if ! command -v firebase &> /dev/null; then
-        log_error "Firebase CLI not found. Cannot deploy."
-        log_info "Install Firebase CLI: npm install -g firebase-tools"
-        exit 1
-    fi
-    
-    # Check if user is logged in
-    if ! firebase projects:list &> /dev/null; then
-        log_error "Not authenticated with Firebase. Run: firebase login"
-        exit 1
-    fi
-    
-    # Deploy to staging
-    log_info "Deploying to Firebase Hosting..."
-    if firebase deploy --only hosting:${DEPLOY_TARGET}; then
-        log_success "Deployment completed successfully"
-    else
-        log_error "Deployment failed"
-        exit 1
-    fi
+    log_info "Deploying to Firebase Hosting ($DEPLOY_TARGET)..."
+
+    firebase deploy --only hosting:"$DEPLOY_TARGET" --message "Deploy via deploy-staging.sh"
+
+    log_success "Deployed successfully"
 }
 
-show_deployment_info() {
+run_smoke_tests() {
+    [[ "$RUN_SMOKE" != "true" ]] && return 0
+    [[ ! -f "package.json" ]] && { log_warning "No package.json — skipping Cypress"; return 0; }
+
+    log_info "Running Cypress smoke tests..."
+
+    local base_url="${CYPRESS_BASE_URL:-$STAGING_URL}"
+    local spec="cypress/e2e/smoke_spec.cy.js"
+
+    [[ -f "$spec" ]] || { log_error "Smoke spec not found: $spec"; exit 1; }
+
+    npm ci --silent
+    npx cypress run \
+        --spec "$spec" \
+        --browser chrome \
+        --headless \
+        --config baseUrl="$base_url" \
+        --env FAIL_ON_ERROR=true
+
+    log_success "Smoke tests passed"
+}
+
+show_summary() {
+    local url="$STAGING_URL"
+    [[ "$DEPLOY_TARGET" == "production" ]] && url="$PROD_URL"
+
     log_info "=========================================="
-    log_success "Deployment Summary"
+    log_success "DEPLOYMENT COMPLETE"
     log_info "=========================================="
-    log_info "Target: ${DEPLOY_TARGET}"
-    log_info "Build: ${BUILD_DIR}"
+    log_info "Target: $DEPLOY_TARGET"
+    log_info "URL: $url"
+    log_info "Build: $BUILD_DIR"
     log_info "Time: $(date)"
     log_info "=========================================="
-    log_info ""
+    echo
     log_info "Next Steps:"
-    log_info "1. Run smoke tests: npx cypress run"
-    log_info "2. Verify staging URL in browser"
-    log_info "3. Check Firebase Console for deployment status"
-    log_info "4. Review docs/V1-runbook.md for verification steps"
-    log_info ""
-    log_success "Deployment complete! 🚀"
+    echo "   1. Visit: $url"
+    echo "   2. Check Firebase Console"
+    echo "   3. Review docs/V1-runbook.md"
+    echo
+    log_success "All systems go!"
 }
 
-################################################################################
-# Main Deployment Flow
-################################################################################
-
+# ──────────────────────────────────────────────────────────────
+# Main
+# ──────────────────────────────────────────────────────────────
 main() {
-    log_info "=========================================="
-    log_info "Savrli City V1 - Staging Deployment"
-    log_info "=========================================="
-    log_info "Target: ${DEPLOY_TARGET}"
-    log_info "Skip Tests: ${SKIP_TESTS}"
-    log_info "=========================================="
-    echo ""
-    
-    # Step 1: Check prerequisites
+    banner
+    log_info "Target: $DEPLOY_TARGET | Skip Tests: $SKIP_TESTS | Run Smoke: $RUN_SMOKE"
+    echo
+
     check_prerequisites
-    echo ""
-    
-    # Step 2: Run tests
+    echo
+
     run_tests
-    echo ""
-    
-    # Step 3: Build app
+    echo
+
     build_app
-    echo ""
-    
-    # Step 4: Deploy to Firebase
+    echo
+
     deploy_to_firebase
-    echo ""
-    
-    # Step 5: Show deployment info
-    show_deployment_info
+    echo
+
+    run_smoke_tests
+    echo
+
+    show_summary
 }
 
-# Trap errors and cleanup
-trap 'log_error "Deployment failed at line $LINENO"' ERR
-
-# Run main deployment flow
+trap 'log_error "Failed at line $LINENO"; exit 1' ERR
 main "$@"

@@ -18,7 +18,7 @@ migrate_working_dir/
 *.iws
 .idea/
 
-# VS Code (optional: uncomment if you DON'T want to commit settings)
+# VS Code (uncomment to ignore local settings)
 # .vscode/
 
 # Flutter / Dart / Pub
@@ -64,10 +64,13 @@ android/app/src/main/res/values/strings.xml
 .env.local
 .env.*.local
 
-# Node modules and package files
+# Node.js
 node_modules/
 package-lock.json
 yarn.lock
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # Cypress artifacts
 cypress/videos/
