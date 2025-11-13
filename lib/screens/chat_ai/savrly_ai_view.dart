@@ -12,7 +12,7 @@ class SavrlyAIView extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('SAVRLY AI'),
+        title: const Text('Ask Kai'),
         leading: const Icon(Icons.sort, color: Colors.black),
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
@@ -88,7 +88,7 @@ class SavrlyAIView extends StatelessWidget {
                       children: [
                         InkWell(
                           onTap: () => controller.sendSuggestion(
-                              'Design a database schema for an online merch store'),
+                              'Where can I find a Date Night Restaurant'),
                           child: Container(
                             padding: EdgeInsets.symmetric(
                                 vertical: 13, horizontal: 16),
@@ -100,29 +100,29 @@ class SavrlyAIView extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Design a database schema',
+                                  'Where can I find a Date Night Restaurant',
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
                                     color: Color(0xFF000000),
                                   ),
                                 ),
-                                Text(
-                                  'for an online merch store',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w400,
-                                    color: Color(0xFF3C3C3C),
-                                  ),
-                                ),
+                                // Text(
+                                //   'a Date Night Restaurant',
+                                //   style: TextStyle(
+                                //     fontSize: 16,
+                                //     fontWeight: FontWeight.w400,
+                                //     color: Color(0xFF3C3C3C),
+                                //   ),
+                                // ),
                               ],
                             ),
                           ),
                         ),
                         SizedBox(width: 12),
                         InkWell(
-                          onTap: () => controller.sendSuggestion(
-                              'Explain airplain to someone 5 years old'),
+                          onTap: () => controller
+                              .sendSuggestion('Where is the closest Bar'),
                           child: Container(
                             padding: EdgeInsets.symmetric(
                                 vertical: 13, horizontal: 16),
@@ -134,21 +134,21 @@ class SavrlyAIView extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Explain airplain',
+                                  ' Where is the closest Bar',
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
                                     color: Color(0xFF000000),
                                   ),
                                 ),
-                                Text(
-                                  'to someone 5 years old',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w400,
-                                    color: Color(0xFF3C3C3C),
-                                  ),
-                                ),
+                                // Text(
+                                //   'to someone 5 years old',
+                                //   style: TextStyle(
+                                //     fontSize: 16,
+                                //     fontWeight: FontWeight.w400,
+                                //     color: Color(0xFF3C3C3C),
+                                //   ),
+                                // ),
                               ],
                             ),
                           ),

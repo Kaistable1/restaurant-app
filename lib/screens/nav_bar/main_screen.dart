@@ -51,7 +51,7 @@ class _MainScreenState extends State<MainScreen> {
             color: AppColors.primaryColor, width: 24, height: 24),
         inactiveIcon: Image.asset('assets/images/chat_unselected.png',
             color: AppColors.blackColor, width: 24, height: 24),
-        title: "AI",
+        title: "Ask Kai",
         activeColorPrimary: AppColors.primaryColor,
       ),
       PersistentBottomNavBarItem(
