@@ -1,3 +1,4 @@
+// lib/widgets/upload_dialogBox.dart
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -14,8 +15,7 @@ import '../utils/responsive.dart';
 
 @immutable
 class UploadImageSection extends StatefulWidget {
-  final String restaurantId; // ← NOW FINAL + REQUIRED
-
+  final String restaurantId;
   const UploadImageSection({
     super.key,
     required this.restaurantId,
@@ -67,14 +67,12 @@ class UploadImageSectionState extends State<UploadImageSection> {
       setState(() => _errorMessage = "Please enter your review.");
       return;
     }
-
     await homeLocationController.addRestaurantReview(
       restaurantID: widget.restaurantId,
       description: _reviewController.text,
       images: _selectedImages,
       starRating: ratingStars,
     );
-
     setState(() => _errorMessage = null);
     Get.snackbar(
       "Thank you for your feedback!",
@@ -196,7 +194,7 @@ class UploadImageSectionState extends State<UploadImageSection> {
                                             boxShadow: [
                                               BoxShadow(
                                                 color: Colors.black
-                                                    .withOpacity(0.2),
+                                                    .withValues(alpha: 0.2),
                                                 blurRadius: 3,
                                                 offset: const Offset(0, 1),
                                               ),
@@ -207,7 +205,6 @@ class UploadImageSectionState extends State<UploadImageSection> {
                                         ),
                                       ),
                                     ),
-                                    // Navigation arrows (same as before)
                                     if (_selectedImages.length > 1) ...[
                                       Positioned(
                                         top: 50,
@@ -221,12 +218,13 @@ class UploadImageSectionState extends State<UploadImageSection> {
                                           ),
                                           child: CircleAvatar(
                                             radius: 14,
-                                            backgroundColor:
-                                                Colors.white.withOpacity(0.7),
+                                            backgroundColor: Colors.white
+                                                .withValues(alpha: 0.7),
                                             child: Icon(
-                                                Icons.arrow_back_ios_rounded,
-                                                color: AppColors.primaryColor,
-                                                size: 14),
+                                              Icons.arrow_back_ios_rounded,
+                                              color: AppColors.primaryColor,
+                                              size: 14,
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -241,12 +239,13 @@ class UploadImageSectionState extends State<UploadImageSection> {
                                           ),
                                           child: CircleAvatar(
                                             radius: 14,
-                                            backgroundColor:
-                                                Colors.white.withOpacity(0.7),
+                                            backgroundColor: Colors.white
+                                                .withValues(alpha: 0.7),
                                             child: Icon(
-                                                Icons.arrow_forward_ios_rounded,
-                                                color: AppColors.primaryColor,
-                                                size: 14),
+                                              Icons.arrow_forward_ios_rounded,
+                                              color: AppColors.primaryColor,
+                                              size: 14,
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -260,10 +259,11 @@ class UploadImageSectionState extends State<UploadImageSection> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Image(
-                                      image: AssetImage(
-                                          'assets/images/document-upload.png'),
-                                      width: 24,
-                                      height: 24),
+                                    image: AssetImage(
+                                        'assets/images/document-upload.png'),
+                                    width: 24,
+                                    height: 24,
+                                  ),
                                   SizedBox(height: 16),
                                   Text(
                                     'Drop your images here, or Browse',
