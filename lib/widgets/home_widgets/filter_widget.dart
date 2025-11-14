@@ -84,7 +84,6 @@ class FilterWidget extends StatelessWidget {
               ),
               const SizedBox(width: 4),
               GestureDetector(
-                // pass context into the bottom sheet function
                 onTap: () => showFilterBottomSheet(context),
                 child: Image.asset(
                   'assets/images/filter_image__.png',
@@ -115,8 +114,8 @@ class SelectedFilterWidgets extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        // use withOpacity instead of withValues
-        color: AppColors.primaryColor.withOpacity(0.7),
+        // your Flutter SDK prefers withValues over withOpacity
+        color: AppColors.primaryColor.withValues(alpha: 0.7),
         borderRadius: BorderRadius.circular(15),
         border: Border.all(color: AppColors.primaryColor, width: 1),
       ),
@@ -185,30 +184,27 @@ class FilterBox extends StatelessWidget {
                   children: List.generate(
                     controller.top.length,
                     (index) {
-                      final String current =
-                          controller.top[index] as String; // explicit cast
-
-                      // Safely read selectedTop as String (or null)
-                      final dynamic rawSelectedTop =
+                      // current can be any type, convert to String only when rendering
+                      final dynamic currentDynamic = controller.top[index];
+                      final dynamic selectedTopDynamic =
                           controller.selectedTop.value;
-                      final String? selectedTop =
-                          rawSelectedTop is String ? rawSelectedTop : null;
 
                       final bool isSelected =
-                          (selectedTop != null && selectedTop == current) ||
-                              (current == 'Discount' &&
-                                  selectedTop != null &&
-                                  items.contains(selectedTop)) ||
-                              (current == 'Dining' &&
-                                  selectedTop != null &&
-                                  diningItems.contains(selectedTop));
+                          (selectedTopDynamic != null &&
+                              selectedTopDynamic == currentDynamic) ||
+                              (currentDynamic == 'Discount' &&
+                                  selectedTopDynamic != null &&
+                                  items.contains(selectedTopDynamic)) ||
+                              (currentDynamic == 'Dining' &&
+                                  selectedTopDynamic != null &&
+                                  diningItems.contains(selectedTopDynamic));
 
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 6),
                         child: InkWell(
                           onTap: () {
-                            if (current != 'Discount') {
-                              controller.selectedTop.value = current;
+                            if (currentDynamic != 'Discount') {
+                              controller.selectedTop.value = currentDynamic;
                             }
                           },
                           child: Container(
@@ -220,11 +216,12 @@ class FilterBox extends StatelessWidget {
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Center(
-                              child: current == 'Discount'
+                              child: currentDynamic == 'Discount'
                                   ? _buildDiscountDropdown(context)
-                                  : current == 'Dining'
+                                  : currentDynamic == 'Dining'
                                       ? _buildDiningDropdown(context)
-                                      : _buildTextChip(current, isSelected),
+                                      : _buildTextChip(
+                                          currentDynamic, isSelected),
                             ),
                           ),
                         ),
@@ -241,15 +238,13 @@ class FilterBox extends StatelessWidget {
   }
 
   Widget _buildDiscountDropdown(BuildContext context) {
-    // Safely convert selectedTop to String
-    final dynamic rawSelectedTop = controller.selectedTop.value;
-    final String? selectedTop =
-        rawSelectedTop is String ? rawSelectedTop : null;
+    final dynamic selectedTopDynamic = controller.selectedTop.value;
 
-    final String? dropdownValue =
-        (selectedTop != null && items.contains(selectedTop))
-            ? selectedTop
-            : null;
+    String? dropdownValue;
+    if (selectedTopDynamic != null &&
+        items.contains(selectedTopDynamic)) {
+      dropdownValue = selectedTopDynamic.toString();
+    }
 
     return Padding(
       padding: const EdgeInsets.only(top: 4, bottom: 4, right: 4, left: 20),
@@ -296,7 +291,7 @@ class FilterBox extends StatelessWidget {
                     onChanged: (selected) {
                       controller.selectedTop.value =
                           selected == true ? item : '';
-                      Get.to(() => const HappyHours());
+                      Get.to<HappyHours>(() => const HappyHours());
                     },
                   ),
                   Text(
@@ -312,8 +307,8 @@ class FilterBox extends StatelessWidget {
           }).toList(),
           onChanged: (String? value) {
             controller.selectedTop.value =
-                (value == selectedTop) ? '' : (value ?? '');
-            Get.to(() => const HappyHours());
+                (value == dropdownValue) ? '' : (value ?? '');
+            Get.to<HappyHours>(() => const HappyHours());
           },
         ),
       ),
@@ -321,15 +316,13 @@ class FilterBox extends StatelessWidget {
   }
 
   Widget _buildDiningDropdown(BuildContext context) {
-    // Safely convert selectedTop to String
-    final dynamic rawSelectedTop = controller.selectedTop.value;
-    final String? selectedTop =
-        rawSelectedTop is String ? rawSelectedTop : null;
+    final dynamic selectedTopDynamic = controller.selectedTop.value;
 
-    final String? dropdownValue =
-        (selectedTop != null && diningItems.contains(selectedTop))
-            ? selectedTop
-            : null;
+    String? dropdownValue;
+    if (selectedTopDynamic != null &&
+        diningItems.contains(selectedTopDynamic)) {
+      dropdownValue = selectedTopDynamic.toString();
+    }
 
     return Padding(
       padding: const EdgeInsets.all(4),
@@ -390,18 +383,18 @@ class FilterBox extends StatelessWidget {
           }).toList(),
           onChanged: (String? value) {
             controller.selectedTop.value =
-                (value == selectedTop) ? '' : (value ?? '');
+                (value == dropdownValue) ? '' : (value ?? '');
           },
         ),
       ),
     );
   }
 
-  Widget _buildTextChip(String text, bool isSelected) {
+  Widget _buildTextChip(dynamic text, bool isSelected) {
     return Padding(
       padding: const EdgeInsets.all(2),
       child: Text(
-        text,
+        text.toString(),
         style: TextStyle(
           fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
           fontSize: 10,
