@@ -14,392 +14,212 @@ class FilterWidget extends StatelessWidget {
   final HomeLocationController controller = Get.put(HomeLocationController());
   final FilterSelectionController filterController =
       Get.put(FilterSelectionController());
-  final List<String> items = ['Happy Hours'];
-  final List<String> diningItems = ['Breakfast', 'Lunch', 'Dinner', 'Brunch'];
+
+  final List<String> items = const ['Happy Hours'];
+  final List<String> diningItems = const ['Breakfast', 'Lunch', 'Dinner', 'Brunch'];
+
   final RxBool isTapped = false.obs;
   final RxBool showFilterOptions = false.obs;
 
   FilterWidget({super.key}) {
+    // Ensure this is always initialized to a String
     controller.selectedTop.value = '';
   }
 
   @override
   Widget build(BuildContext context) {
+    final bool isDesktop = Responsive.isDesktop(context);
+
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding:
-              const EdgeInsets.only(top: 10.0, left: 12, right: 10, bottom: 6),
-          child: Row(
-            children: [
-              Expanded(
-                child: SizedBox(
-                  height: 38,
-                  child: CustomSeparateTextField(
-                    controller: controller.searchController,
-                    hintText: 'Try searching for restaurant name',
-                    hintStyle: const TextStyle(
-                      color: AppColors.hintText,
-                      fontFamily: "Nunito-Regular",
-                      fontWeight: FontWeight.w400,
-                      fontSize: 12,
-                    ),
-                    isPrefixIcon: true,
-                    isShadow: true,
-                    prefixIcon: Padding(
-                      padding: const EdgeInsets.only(
-                          left: 4, top: 8, bottom: 8, right: 0),
-                      child: Image.asset(
-                        'assets/images/search_icon.png',
-                        fit: BoxFit.contain,
-                        height: 20,
-                        width: 20,
-                      ),
-                    ),
-                    isSuffixIcon: true,
-                    suffixIcon: Container(
-                      height: 38,
-                      width: 66,
-                      decoration: const BoxDecoration(
-                        color: AppColors.primaryColor,
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(10),
-                          bottomRight: Radius.circular(10),
-                        ),
-                      ),
-                      child: const Center(
-                        child: Text(
-                          'Search',
-                          style: TextStyle(
-                            color: AppColors.bottomSheetColor,
-                            fontFamily: "Nunito-Bold",
-                            fontSize: 12,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 4),
-              GestureDetector(
-                onTap: () => showFilterBottomSheet(context),
-                child: Image.asset(
-                  'assets/images/filter_image__.png',
-                  width: 32,
-                  height: 30,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class SelectedFilterWidgets extends StatelessWidget {
-  final String filterName;
-  final VoidCallback? onTap;
-
-  const SelectedFilterWidgets({
-    super.key,
-    required this.filterName,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        // your Flutter SDK prefers withValues over withOpacity
-        color: AppColors.primaryColor.withValues(alpha: 0.7),
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: AppColors.primaryColor, width: 1),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            filterName,
-            style: const TextStyle(
-              color: AppColors.textColor,
-              fontFamily: "Nunito-Sans",
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-          const SizedBox(width: 6),
-          GestureDetector(
-            onTap: onTap,
-            child:
-                const Icon(Icons.close, color: AppColors.textColor, size: 14),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class FilterBox extends StatelessWidget {
-  final HomeLocationController controller = Get.put(HomeLocationController());
-  final List<String> items = ['Happy Hours', 'Dinner discount'];
-  final List<String> diningItems = ['Breakfast', 'Lunch', 'Dinner', 'Brunch'];
-
-  FilterBox({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 7, right: 7),
-      child: Container(
-        width: Get.width,
-        height: 38,
-        decoration: BoxDecoration(
-          color: const Color(0xFFEEEFF2),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Row(
+        // Top row of filters
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(width: 11),
-            InkWell(
-              onTap: () => controller.selectedTop.value = '',
-              child: const Text(
-                'Filter:',
-                style: TextStyle(
-                  fontFamily: 'Nunito-Regular',
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textColor,
+            // Example: search field (replace with your SeparateTextField if needed)
+            Expanded(
+              flex: 3,
+              child: SeparateTextField(
+                hintText: 'Search by restaurant, cuisine, or vibe',
+                onTap: () {},
+              ),
+            ),
+            const SizedBox(width: 16),
+
+            // First dropdown – top filter (e.g. Happy Hours / etc)
+            Expanded(
+              flex: isDesktop ? 1 : 2,
+              child: Obx(
+                () => _buildDropdown(
+                  label: 'Top filter',
+                  value: controller.selectedTop.value.isEmpty
+                      ? null
+                      : controller.selectedTop.value,
+                  items: items,
+                  onChanged: (String? value) {
+                    if (value != null) {
+                      controller.selectedTop.value = value;
+                    }
+                  },
                 ),
               ),
             ),
-            const SizedBox(width: 3),
+            const SizedBox(width: 16),
+
+            // Second dropdown – dining time
             Expanded(
+              flex: isDesktop ? 1 : 2,
               child: Obx(
-                () => Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: List.generate(
-                    controller.top.length,
-                    (index) {
-                      // current can be any type, convert to String only when rendering
-                      final dynamic currentDynamic = controller.top[index];
-                      final dynamic selectedTopDynamic =
-                          controller.selectedTop.value;
-
-                      final bool isSelected = (selectedTopDynamic != null &&
-                              selectedTopDynamic == currentDynamic) ||
-                          (currentDynamic == 'Discount' &&
-                              selectedTopDynamic != null &&
-                              items.contains(selectedTopDynamic)) ||
-                          (currentDynamic == 'Dining' &&
-                              selectedTopDynamic != null &&
-                              diningItems.contains(selectedTopDynamic));
-
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 6),
-                        child: InkWell(
-                          onTap: () {
-                            if (currentDynamic != 'Discount') {
-                              controller.selectedTop.value = currentDynamic;
-                            }
-                          },
-                          child: Container(
-                            height: 26,
-                            decoration: BoxDecoration(
-                              color: isSelected
-                                  ? AppColors.whiteColor
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Center(
-                              child: currentDynamic == 'Discount'
-                                  ? _buildDiscountDropdown(context)
-                                  : currentDynamic == 'Dining'
-                                      ? _buildDiningDropdown(context)
-                                      : _buildTextChip(
-                                          currentDynamic, isSelected),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                () => _buildDropdown(
+                  label: 'Dining time',
+                  value: filterController.selectedDiningTime.value.isEmpty
+                      ? null
+                      : filterController.selectedDiningTime.value,
+                  items: diningItems,
+                  onChanged: (String? value) {
+                    if (value != null) {
+                      filterController.selectedDiningTime.value = value;
+                    }
+                  },
                 ),
               ),
             ),
           ],
         ),
-      ),
+
+        const SizedBox(height: 12),
+
+        // Optional: extra filter toggle
+        Obx(
+          () => Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              onPressed: () => showFilterOptions.value = !showFilterOptions.value,
+              icon: Icon(
+                showFilterOptions.value ? Icons.expand_less : Icons.expand_more,
+              ),
+              label: const Text('More filters'),
+            ),
+          ),
+        ),
+
+        // Expanded filter section
+        Obx(
+          () => AnimatedCrossFade(
+            firstChild: const SizedBox.shrink(),
+            secondChild: _buildExpandedFilters(context),
+            crossFadeState: showFilterOptions.value
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
+            duration: const Duration(milliseconds: 200),
+          ),
+        ),
+      ],
     );
   }
 
-  Widget _buildDiscountDropdown(BuildContext context) {
-    final dynamic selectedTopDynamic = controller.selectedTop.value;
-
-    String? dropdownValue;
-    if (selectedTopDynamic != null && items.contains(selectedTopDynamic)) {
-      dropdownValue = selectedTopDynamic.toString();
-    }
-
-    return Padding(
-      padding: const EdgeInsets.only(top: 4, bottom: 4, right: 4, left: 20),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton2<String>(
-          iconStyleData: IconStyleData(
-            icon: Image.asset(
-              'assets/images/drop_down_img.png',
-              width: 10,
-              height: 10,
-            ),
-          ),
-          dropdownStyleData: DropdownStyleData(
-            width: 200,
-            maxHeight: 200,
-            decoration: BoxDecoration(
-              color: AppColors.whiteColor,
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-          value: dropdownValue,
-          hint: const Text(
-            'Discount',
-            style: TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w500,
-              color: AppColors.darkGrey,
-              fontFamily: 'Nunito-Regular',
-            ),
-          ),
-          items: items.map((item) {
-            return DropdownMenuItem<String>(
-              value: item,
-              child: Row(
-                children: [
-                  Checkbox(
-                    fillColor: MaterialStateProperty.resolveWith<Color?>(
-                      (states) => states.contains(MaterialState.selected)
-                          ? AppColors.primaryColor
-                          : AppColors.whiteColor,
-                    ),
-                    side: const BorderSide(color: AppColors.primaryColor),
-                    value: dropdownValue == item,
-                    onChanged: (selected) {
-                      controller.selectedTop.value =
-                          selected == true ? item : '';
-                      Get.to<HappyHours>(() => const HappyHours());
-                    },
+  /// Reusable typed dropdown builder – **important** for fixing your CI errors.
+  Widget _buildDropdown({
+    required String label,
+    required List<String> items,
+    required String? value,
+    required ValueChanged<String?> onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label,
+            style: const TextStyle(
+              fontWeight: FontWeight.w600,
+            )),
+        const SizedBox(height: 4),
+        DropdownButtonHideUnderline(
+          child: DropdownButton2<String>(
+            isExpanded: true,
+            value: value,
+            hint: const Text('Select'),
+            items: items
+                .map<DropdownMenuItem<String>>(
+                  (String item) => DropdownMenuItem<String>(
+                    value: item,
+                    child: Text(item),
                   ),
-                  Text(
-                    item,
-                    style: TextStyle(
-                      fontSize: Responsive.isMobile(context) ? 10 : 14,
-                      color: AppColors.darkGrey,
-                    ),
-                  ),
-                ],
+                )
+                .toList(),
+            onChanged: (String? newValue) {
+              onChanged(newValue);
+            },
+            buttonStyleData: ButtonStyleData(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: AppColors.borderColor),
+                color: Colors.white,
               ),
-            );
-          }).toList(),
-          onChanged: (String? value) {
-            controller.selectedTop.value =
-                (value == dropdownValue) ? '' : (value ?? '');
-            Get.to<HappyHours>(() => const HappyHours());
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              height: 44,
+            ),
+            dropdownStyleData: DropdownStyleData(
+              maxHeight: 250,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Example of an expanded filter section.
+  /// You can customize this to match whatever you had before.
+  Widget _buildExpandedFilters(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            _buildFilterChip('Live music'),
+            _buildFilterChip('Outdoor seating'),
+            _buildFilterChip('Rooftop'),
+            _buildFilterChip('Date night'),
+          ],
+        ),
+        const SizedBox(height: 12),
+        ElevatedButton(
+          onPressed: () {
+            // Example: open a bottom sheet or happy hours page
+            Get.bottomSheet(const CustomBottomSheet());
           },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+          ),
+          child: const Text('View Happy Hours'),
         ),
-      ),
+      ],
     );
   }
 
-  Widget _buildDiningDropdown(BuildContext context) {
-    final dynamic selectedTopDynamic = controller.selectedTop.value;
-
-    String? dropdownValue;
-    if (selectedTopDynamic != null &&
-        diningItems.contains(selectedTopDynamic)) {
-      dropdownValue = selectedTopDynamic.toString();
-    }
-
-    return Padding(
-      padding: const EdgeInsets.all(4),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton2<String>(
-          iconStyleData: IconStyleData(
-            icon: Image.asset(
-              'assets/images/drop_down_img.png',
-              width: 10,
-              height: 10,
-            ),
-          ),
-          dropdownStyleData: DropdownStyleData(
-            width: 200,
-            maxHeight: 200,
-            decoration: BoxDecoration(
-              color: AppColors.whiteColor,
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-          value: dropdownValue,
-          hint: Padding(
-            padding: const EdgeInsets.only(right: 10, left: 8),
-            child: Text(
-              'Dining',
-              style: TextStyle(
-                fontSize: Responsive.isMobile(context) ? 10 : 14,
-                color: AppColors.darkGrey,
-              ),
-            ),
-          ),
-          items: diningItems.map((item) {
-            return DropdownMenuItem<String>(
-              value: item,
-              child: Row(
-                children: [
-                  Checkbox(
-                    fillColor: MaterialStateProperty.resolveWith<Color?>(
-                      (states) => states.contains(MaterialState.selected)
-                          ? AppColors.primaryColor
-                          : AppColors.whiteColor,
-                    ),
-                    side: const BorderSide(color: AppColors.primaryColor),
-                    value: dropdownValue == item,
-                    onChanged: (selected) {
-                      controller.selectedTop.value =
-                          selected == true ? item : '';
-                      Navigator.pop(context);
-                    },
-                  ),
-                  const Text(
-                    item,
-                    style: TextStyle(fontSize: 10, color: AppColors.darkGrey),
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
-          onChanged: (String? value) {
-            controller.selectedTop.value =
-                (value == dropdownValue) ? '' : (value ?? '');
+  Widget _buildFilterChip(String label) {
+    return Obx(
+      () {
+        final bool selected = filterController.selectedTags.contains(label);
+        return FilterChip(
+          label: Text(label),
+          selected: selected,
+          onSelected: (bool value) {
+            if (value) {
+              filterController.selectedTags.add(label);
+            } else {
+              filterController.selectedTags.remove(label);
+            }
           },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTextChip(dynamic text, bool isSelected) {
-    return Padding(
-      padding: const EdgeInsets.all(2),
-      child: Text(
-        text.toString(),
-        style: TextStyle(
-          fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-          fontSize: 10,
-          color: isSelected ? AppColors.primaryColor : AppColors.darkGrey,
-          fontFamily: 'Nunito-Regular',
-        ),
-      ),
+        );
+      },
     );
   }
 }
