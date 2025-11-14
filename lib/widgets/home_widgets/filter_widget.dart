@@ -1,3 +1,4 @@
+// lib/widgets/home_widgets/filter_widget.dart
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,8 +12,7 @@ import '../../screens/home_screen/home_controller/home_location_controller.dart'
 
 class FilterWidget extends StatelessWidget {
   final HomeLocationController controller = Get.put(HomeLocationController());
-  final FilterSelectionController filterController =
-      Get.put(FilterSelectionController());
+  final FilterSelectionController filterController = Get.put(FilterSelectionController());
   final List<String> items = ['Happy Hours'];
   final List<String> diningItems = ['Breakfast', 'Lunch', 'Dinner', 'Brunch'];
   final RxBool isTapped = false.obs;
@@ -27,8 +27,7 @@ class FilterWidget extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding:
-              const EdgeInsets.only(top: 10.0, left: 12, right: 10, bottom: 6),
+          padding: const EdgeInsets.only(top: 10.0, left: 12, right: 10, bottom: 6),
           child: Row(
             children: [
               Expanded(
@@ -37,7 +36,7 @@ class FilterWidget extends StatelessWidget {
                   child: CustomSeparateTextField(
                     controller: controller.searchController,
                     hintText: 'Try searching for restaurant name',
-                    hintStyle: TextStyle(
+                    hintStyle: const TextStyle(
                       color: AppColors.hintText,
                       fontFamily: "Nunito-Regular",
                       fontWeight: FontWeight.w400,
@@ -46,8 +45,7 @@ class FilterWidget extends StatelessWidget {
                     isPrefixIcon: true,
                     isShadow: true,
                     prefixIcon: Padding(
-                      padding: const EdgeInsets.only(
-                          left: 4, top: 8, bottom: 8, right: 0),
+                      padding: const EdgeInsets.only(left: 4, top: 8, bottom: 8, right: 0),
                       child: Image.asset(
                         'assets/images/search_icon.png',
                         fit: BoxFit.contain,
@@ -59,14 +57,14 @@ class FilterWidget extends StatelessWidget {
                     suffixIcon: Container(
                       height: 38,
                       width: 66,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: AppColors.primaryColor,
                         borderRadius: BorderRadius.only(
                           topRight: Radius.circular(10),
                           bottomRight: Radius.circular(10),
                         ),
                       ),
-                      child: Center(
+                      child: const Center(
                         child: Text(
                           'Search',
                           style: TextStyle(
@@ -100,8 +98,7 @@ class FilterWidget extends StatelessWidget {
 
 class SelectedFilterWidgets extends StatelessWidget {
   final String filterName;
-  final void Function()? onTap;
-
+  final VoidCallback? onTap;
   const SelectedFilterWidgets({
     super.key,
     required this.filterName,
@@ -122,7 +119,7 @@ class SelectedFilterWidgets extends StatelessWidget {
         children: [
           Text(
             filterName,
-            style: TextStyle(
+            style: const TextStyle(
               color: AppColors.textColor,
               fontFamily: "Nunito-Sans",
               fontSize: 12,
@@ -132,7 +129,7 @@ class SelectedFilterWidgets extends StatelessWidget {
           const SizedBox(width: 6),
           GestureDetector(
             onTap: onTap,
-            child: Icon(Icons.close, color: AppColors.textColor, size: 14),
+            child: const Icon(Icons.close, color: AppColors.textColor, size: 14),
           ),
         ],
       ),
@@ -154,8 +151,8 @@ class FilterBox extends StatelessWidget {
       child: Container(
         width: Get.width,
         height: 38,
-        decoration: BoxDecoration(
-          color: const Color(0xFFEEEFF2),
+        decoration: const BoxDecoration(
+          color: Color(0xFFEEEFF2),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
@@ -163,7 +160,7 @@ class FilterBox extends StatelessWidget {
             const SizedBox(width: 11),
             InkWell(
               onTap: () => controller.selectedTop.value = '',
-              child: Text(
+              child: const Text(
                 'Filter:',
                 style: TextStyle(
                   fontFamily: 'Nunito-Regular',
@@ -175,260 +172,157 @@ class FilterBox extends StatelessWidget {
             ),
             const SizedBox(width: 3),
             Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: List.generate(controller.top.length, (index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 6),
-                    child: Obx(() {
-                      return InkWell(
-                        onTap: () {
-                          if (controller.top[index] != 'Discount') {
-                            controller.selectedTop.value =
-                                controller.top[index];
-                          }
-                        },
-                        child: Container(
-                          height: 26,
-                          decoration: BoxDecoration(
-                            color: controller.selectedTop.value ==
-                                        controller.top[index] ||
-                                    (controller.top[index] == 'Discount' &&
-                                        items.contains(
-                                            controller.selectedTop.value)) ||
-                                    (controller.top[index] == 'Dining' &&
-                                        diningItems.contains(
-                                            controller.selectedTop.value))
-                                ? AppColors.whiteColor
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Center(
-                            child: controller.top[index] == 'Discount'
-                                ? Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 4, bottom: 4, right: 4, left: 20),
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton2<String>(
-                                        iconStyleData: IconStyleData(
-                                          icon: Image.asset(
-                                              'assets/images/drop_down_img.png',
-                                              width: 10,
-                                              height: 10),
-                                        ),
-                                        dropdownStyleData: DropdownStyleData(
-                                          width: 200,
-                                          maxHeight: 200,
-                                          decoration: BoxDecoration(
-                                            color: AppColors.whiteColor,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                        ),
-                                        value: items.contains(
-                                                controller.selectedTop.value)
-                                            ? controller.selectedTop.value
-                                            : null,
-                                        hint: Text('Discount',
-                                            style: TextStyle(
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.w500,
-                                                color: AppColors.darkGrey,
-                                                fontFamily: 'Nunito-Regular')),
-                                        selectedItemBuilder: (context) => items
-                                            .map((item) => Text(item,
-                                                style: TextStyle(
-                                                    fontSize: 10,
-                                                    color: AppColors.darkGrey)))
-                                            .toList(),
-                                        items: items.map((item) {
-                                          return DropdownMenuItem<String>(
-                                            value: item,
-                                            child: Row(
-                                              children: [
-                                                Checkbox(
-                                                  fillColor: WidgetStateProperty
-                                                      .resolveWith<Color>(
-                                                    (states) => states.contains(
-                                                            WidgetState
-                                                                .selected)
-                                                        ? AppColors.primaryColor
-                                                        : AppColors.whiteColor,
-                                                  ),
-                                                  side: WidgetStateBorderSide
-                                                      .resolveWith((states) =>
-                                                          BorderSide(
-                                                              color: AppColors
-                                                                  .primaryColor)),
-                                                  value: controller
-                                                          .selectedTop.value ==
-                                                      item,
-                                                  onChanged: (selected) {
-                                                    controller
-                                                            .selectedTop.value =
-                                                        selected == true
-                                                            ? item
-                                                            : '';
-                                                    Get.to(() => HappyHours());
-                                                  },
-                                                ),
-                                                Text(item,
-                                                    style: TextStyle(
-                                                        fontSize:
-                                                            Responsive.isMobile(
-                                                                    context)
-                                                                ? 10
-                                                                : 14,
-                                                        color: AppColors
-                                                            .darkGrey)),
-                                              ],
-                                            ),
-                                          );
-                                        }).toList(),
-                                        onChanged: (value) {
-                                          controller
-                                              .selectedTop.value = value ==
-                                                  controller.selectedTop.value
-                                              ? ''
-                                              : value!;
-                                          Get.to(() => HappyHours());
-                                        },
-                                      ),
-                                    ),
-                                  )
-                                : controller.top[index] == 'Dining'
-                                    ? Padding(
-                                        padding: const EdgeInsets.all(4),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton2<String>(
-                                            iconStyleData: IconStyleData(
-                                              icon: Image.asset(
-                                                  'assets/images/drop_down_img.png',
-                                                  width: 10,
-                                                  height: 10),
-                                            ),
-                                            dropdownStyleData:
-                                                DropdownStyleData(
-                                              width: 200,
-                                              maxHeight: 200,
-                                              decoration: BoxDecoration(
-                                                  color: AppColors.whiteColor,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10)),
-                                            ),
-                                            value: diningItems.contains(
-                                                    controller
-                                                        .selectedTop.value)
-                                                ? controller.selectedTop.value
-                                                : null,
-                                            hint: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  right: 10, left: 8),
-                                              child: Text('Dining',
-                                                  style: TextStyle(
-                                                      fontSize:
-                                                          Responsive.isMobile(
-                                                                  context)
-                                                              ? 10
-                                                              : 14,
-                                                      color:
-                                                          AppColors.darkGrey)),
-                                            ),
-                                            selectedItemBuilder: (context) =>
-                                                diningItems
-                                                    .map((item) => Text(item,
-                                                        style: TextStyle(
-                                                            fontSize: 10,
-                                                            color: AppColors
-                                                                .darkGrey)))
-                                                    .toList(),
-                                            items: diningItems.map((item) {
-                                              return DropdownMenuItem<String>(
-                                                value: item,
-                                                child: Row(
-                                                  children: [
-                                                    Checkbox(
-                                                      fillColor:
-                                                          WidgetStateProperty
-                                                              .resolveWith<
-                                                                  Color>(
-                                                        (states) => states
-                                                                .contains(
-                                                                    WidgetState
-                                                                        .selected)
-                                                            ? AppColors
-                                                                .primaryColor
-                                                            : AppColors
-                                                                .whiteColor,
-                                                      ),
-                                                      side: WidgetStateBorderSide
-                                                          .resolveWith((states) =>
-                                                              BorderSide(
-                                                                  color: AppColors
-                                                                      .primaryColor)),
-                                                      value: controller
-                                                              .selectedTop
-                                                              .value ==
-                                                          item,
-                                                      onChanged: (selected) {
-                                                        controller.selectedTop
-                                                                .value =
-                                                            selected == true
-                                                                ? item
-                                                                : '';
-                                                        Navigator.pop(context);
-                                                      },
-                                                    ),
-                                                    Text(item,
-                                                        style: TextStyle(
-                                                            fontSize: 10,
-                                                            color: AppColors
-                                                                .darkGrey)),
-                                                  ],
-                                                ),
-                                              );
-                                            }).toList(),
-                                            onChanged: (value) {
-                                              controller.selectedTop.value =
-                                                  value ==
-                                                          controller
-                                                              .selectedTop.value
-                                                      ? ''
-                                                      : value!;
-                                            },
-                                          ),
-                                        ),
-                                      )
-                                    : Padding(
-                                        padding: const EdgeInsets.all(2),
-                                        child: Text(
-                                          controller.top[index],
-                                          style: TextStyle(
-                                            fontWeight:
-                                                controller.selectedTop.value !=
-                                                        controller.top[index]
-                                                    ? FontWeight.w500
-                                                    : FontWeight.w700,
-                                            fontSize: 10,
-                                            color:
-                                                controller.selectedTop.value !=
-                                                        controller.top[index]
-                                                    ? AppColors.darkGrey
-                                                    : AppColors.primaryColor,
-                                            fontFamily: 'Nunito-Regular',
-                                          ),
-                                        ),
-                                      ),
+              child: Obx(() => Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: List.generate(controller.top.length, (index) {
+                      final String current = controller.top[index];
+                      final bool isSelected = controller.selectedTop.value == current ||
+                          (current == 'Discount' && items.contains(controller.selectedTop.value)) ||
+                          (current == 'Dining' && diningItems.contains(controller.selectedTop.value));
+
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 6),
+                        child: InkWell(
+                          onTap: () {
+                            if (current != 'Discount') {
+                              controller.selectedTop.value = current;
+                            }
+                          },
+                          child: Container(
+                            height: 26,
+                            decoration: BoxDecoration(
+                              color: isSelected ? AppColors.whiteColor : Colors.transparent,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Center(
+                              child: current == 'Discount'
+                                  ? _buildDiscountDropdown(context)
+                                  : current == 'Dining'
+                                      ? _buildDiningDropdown(context)
+                                      : _buildTextChip(current, isSelected),
+                            ),
                           ),
                         ),
                       );
                     }),
-                  );
-                }),
-              ),
+                  )),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDiscountDropdown(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 4, bottom: 4, right: 4, left: 20),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton2<String>(
+          iconStyleData: const IconStyleData(
+            icon: Image.asset('assets/images/drop_down_img.png', width: 10, height: 10),
+          ),
+          dropdownStyleData: const DropdownStyleData(
+            width: 200,
+            maxHeight: 200,
+            decoration: BoxDecoration(
+              color: AppColors.whiteColor,
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          value: items.contains(controller.selectedTop.value) ? controller.selectedTop.value : null,
+          hint: const Text('Discount',
+              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: AppColors.darkGrey, fontFamily: 'Nunito-Regular')),
+          items: items.map((item) {
+            return DropdownMenuItem<String>(
+              value: item,
+              child: Row(
+                children: [
+                  Checkbox(
+                    fillColor: WidgetStateProperty.resolveWith<Color>((states) =>
+                        states.contains(WidgetState.selected) ? AppColors.primaryColor : AppColors.whiteColor),
+                    side: WidgetStateBorderSide.resolveWith((_) => const BorderSide(color: AppColors.primaryColor)),
+                    value: controller.selectedTop.value == item,
+                    onChanged: (selected) {
+                      controller.selectedTop.value = selected == true ? item : '';
+                      Get.to(() => const HappyHours());
+                    },
+                  ),
+                  Text(item,
+                      style: TextStyle(
+                          fontSize: Responsive.isMobile(context) ? 10 : 14,
+                          color: AppColors.darkGrey)),
+                ],
+              ),
+            );
+          }).toList(),
+          onChanged: (value) {
+            controller.selectedTop.value = value == controller.selectedTop.value ? '' : value!;
+            Get.to(() => const HappyHours());
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDiningDropdown(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(4),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton2<String>(
+          iconStyleData: const IconStyleData(
+            icon: Image.asset('assets/images/drop_down_img.png', width: 10, height: 10),
+          ),
+          dropdownStyleData: const DropdownStyleData(
+            width: 200,
+            maxHeight: 200,
+            decoration: BoxDecoration(color: AppColors.whiteColor, borderRadius: BorderRadius.circular(10)),
+          ),
+          value: diningItems.contains(controller.selectedTop.value) ? controller.selectedTop.value : null,
+          hint: Padding(
+            padding: const EdgeInsets.only(right: 10, left: 8),
+            child: Text('Dining',
+                style: TextStyle(
+                    fontSize: Responsive.isMobile(context) ? 10 : 14,
+                    color: AppColors.darkGrey)),
+          ),
+          items: diningItems.map((item) {
+            return DropdownMenuItem<String>(
+              value: item,
+              child: Row(
+                children: [
+                  Checkbox(
+                    fillColor: WidgetStateProperty.resolveWith<Color>((states) =>
+                        states.contains(WidgetState.selected) ? AppColors.primaryColor : AppColors.whiteColor),
+                    side: WidgetStateBorderSide.resolveWith((_) => const BorderSide(color: AppColors.primaryColor)),
+                    value: controller.selectedTop.value == item,
+                    onChanged: (selected) {
+                      controller.selectedTop.value = selected == true ? item : '';
+                      Navigator.pop(context);
+                    },
+                  ),
+                  Text(item, style: const TextStyle(fontSize: 10, color: AppColors.darkGrey)),
+                ],
+              ),
+            );
+          }).toList(),
+          onChanged: (value) {
+            controller.selectedTop.value = value == controller.selectedTop.value ? '' : value!;
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextChip(String text, bool isSelected) {
+    return Padding(
+      padding: const EdgeInsets.all(2),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+          fontSize: 10,
+          color: isSelected ? AppColors.primaryColor : AppColors.darkGrey,
+          fontFamily: 'Nunito-Regular',
         ),
       ),
     );
