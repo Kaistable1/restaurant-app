@@ -1,4 +1,5 @@
 // lib/widgets/home_widgets/filter_widget.dart
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,18 +17,16 @@ class FilterWidget extends StatelessWidget {
       Get.put(FilterSelectionController());
 
   final List<String> items = const ['Happy Hours'];
-  final List<String> diningItems = const [
-    'Breakfast',
-    'Lunch',
-    'Dinner',
-    'Brunch'
-  ];
+  final List<String> diningItems = const ['Breakfast', 'Lunch', 'Dinner', 'Brunch'];
 
   final RxBool isTapped = false.obs;
   final RxBool showFilterOptions = false.obs;
 
+  // Local state for dining time so we don’t rely on unknown fields
+  final RxString selectedDiningTime = ''.obs;
+
   FilterWidget({super.key}) {
-    // Ensure this is always initialized to a String
+    // Make sure this is initialized as a String
     controller.selectedTop.value = '';
   }
 
@@ -38,56 +37,52 @@ class FilterWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Top row of filters
+        // Top row with 2 dropdowns
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Example: search field (replace with your SeparateTextField if needed)
+            // Left spacer so layout doesn’t break on web/desktop
+            if (isDesktop) const SizedBox(width: 8),
+
+            // Top filter dropdown (uses HomeLocationController.selectedTop)
             Expanded(
-              flex: 3,
-              child: SeparateTextField(
-                hintText: 'Search by restaurant, cuisine, or vibe',
-                onTap: () {},
+              flex: 1,
+              child: Obx(
+                () {
+                  final String selectedTop = controller.selectedTop.value;
+                  return _buildDropdown(
+                    label: 'Top filter',
+                    value: selectedTop.isEmpty ? null : selectedTop,
+                    items: items,
+                    onChanged: (String? value) {
+                      if (value != null) {
+                        controller.selectedTop.value = value;
+                      }
+                    },
+                  );
+                },
               ),
             ),
-            const SizedBox(width: 16),
 
-            // First dropdown – top filter (e.g. Happy Hours / etc)
-            Expanded(
-              flex: isDesktop ? 1 : 2,
-              child: Obx(
-                () => _buildDropdown(
-                  label: 'Top filter',
-                  value: controller.selectedTop.value.isEmpty
-                      ? null
-                      : controller.selectedTop.value,
-                  items: items,
-                  onChanged: (String? value) {
-                    if (value != null) {
-                      controller.selectedTop.value = value;
-                    }
-                  },
-                ),
-              ),
-            ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 12),
 
-            // Second dropdown – dining time
+            // Dining time dropdown (local RxString)
             Expanded(
-              flex: isDesktop ? 1 : 2,
+              flex: 1,
               child: Obx(
-                () => _buildDropdown(
-                  label: 'Dining time',
-                  value: filterController.selectedDiningTime.value.isEmpty
-                      ? null
-                      : filterController.selectedDiningTime.value,
-                  items: diningItems,
-                  onChanged: (String? value) {
-                    if (value != null) {
-                      filterController.selectedDiningTime.value = value;
-                    }
-                  },
-                ),
+                () {
+                  final String value = selectedDiningTime.value;
+                  return _buildDropdown(
+                    label: 'Dining time',
+                    value: value.isEmpty ? null : value,
+                    items: diningItems,
+                    onChanged: (String? v) {
+                      if (v != null) {
+                        selectedDiningTime.value = v;
+                      }
+                    },
+                  );
+                },
               ),
             ),
           ],
@@ -95,13 +90,12 @@ class FilterWidget extends StatelessWidget {
 
         const SizedBox(height: 12),
 
-        // Optional: extra filter toggle
+        // Toggle for more filters (just a simple example)
         Obx(
           () => Align(
             alignment: Alignment.centerLeft,
             child: TextButton.icon(
-              onPressed: () =>
-                  showFilterOptions.value = !showFilterOptions.value,
+              onPressed: () => showFilterOptions.value = !showFilterOptions.value,
               icon: Icon(
                 showFilterOptions.value ? Icons.expand_less : Icons.expand_more,
               ),
@@ -110,22 +104,24 @@ class FilterWidget extends StatelessWidget {
           ),
         ),
 
-        // Expanded filter section
+        // Expanded filter zone
         Obx(
           () => AnimatedCrossFade(
+            duration: const Duration(milliseconds: 200),
             firstChild: const SizedBox.shrink(),
             secondChild: _buildExpandedFilters(context),
             crossFadeState: showFilterOptions.value
                 ? CrossFadeState.showSecond
                 : CrossFadeState.showFirst,
-            duration: const Duration(milliseconds: 200),
           ),
         ),
       ],
     );
   }
 
-  /// Reusable typed dropdown builder – **important** for fixing your CI errors.
+  /// ---------- REUSABLE WIDGETS BELOW ----------
+
+  /// Strongly-typed dropdown builder (no `dynamic`).
   Widget _buildDropdown({
     required String label,
     required List<String> items,
@@ -135,10 +131,10 @@ class FilterWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label,
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-            )),
+        Text(
+          label,
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
         const SizedBox(height: 4),
         DropdownButtonHideUnderline(
           child: DropdownButton2<String>(
@@ -153,17 +149,15 @@ class FilterWidget extends StatelessWidget {
                   ),
                 )
                 .toList(),
-            onChanged: (String? newValue) {
-              onChanged(newValue);
-            },
+            onChanged: (String? newValue) => onChanged(newValue),
             buttonStyleData: ButtonStyleData(
+              height: 44,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: AppColors.borderColor),
                 color: Colors.white,
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              height: 44,
             ),
             dropdownStyleData: DropdownStyleData(
               maxHeight: 250,
@@ -178,8 +172,8 @@ class FilterWidget extends StatelessWidget {
     );
   }
 
-  /// Example of an expanded filter section.
-  /// You can customize this to match whatever you had before.
+  /// Example of an expanded filter area.
+  /// (You can customize this later as needed.)
   Widget _buildExpandedFilters(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -189,16 +183,16 @@ class FilterWidget extends StatelessWidget {
           spacing: 8,
           runSpacing: 8,
           children: [
-            _buildFilterChip('Live music'),
-            _buildFilterChip('Outdoor seating'),
-            _buildFilterChip('Rooftop'),
-            _buildFilterChip('Date night'),
+            _simpleChip('Live music'),
+            _simpleChip('Outdoor seating'),
+            _simpleChip('Rooftop'),
+            _simpleChip('Date night'),
           ],
         ),
         const SizedBox(height: 12),
         ElevatedButton(
           onPressed: () {
-            // Example: open a bottom sheet or happy hours page
+            // Example use of imported bottom sheet / happy hours
             Get.bottomSheet(const CustomBottomSheet());
           },
           style: ElevatedButton.styleFrom(
@@ -210,10 +204,11 @@ class FilterWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildFilterChip(String label) {
+  Widget _simpleChip(String label) {
     return Obx(
       () {
-        final bool selected = filterController.selectedTags.contains(label);
+        final bool selected =
+            filterController.selectedTags.contains(label); // assuming exists
         return FilterChip(
           label: Text(label),
           selected: selected,
