@@ -69,6 +69,7 @@ dependencies:
   permission_handler: ^10.4.0
   geoflutterfire_plus: ^0.0.32
   flutter_polyline_points: ^2.1.0
+  dio: ^5.9.0
 
 
 dev_dependencies:
