@@ -1,0 +1,369 @@
+openapi: 3.0.3
+info:
+  title: Savrli City Concierge API
+  description: |
+    REST API for Savrli City V1 — restaurant concierge service.
+    Covers user signup, concierge onboarding, and primary task creation (e.g., reservations).
+  version: 1.0.0
+  contact:
+    name: Kaistable Team
+    email: support@kaistable.com
+
+servers:
+  - url: https://api.savrli.city/v1
+    description: Production
+  - url: https://staging-api.savrli.city/v1
+    description: Staging
+
+paths:
+  # ──────────────────────────────────────────────────────────────
+  # AUTH: User Signup
+  # ──────────────────────────────────────────────────────────────
+  /auth/signup:
+    post:
+      summary: Register new user
+      description: Create a new Savrli City user account
+      operationId: userSignup
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - firstName
+                - lastName
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: test+1698765432@example.com
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+                  description: Must include uppercase, lowercase, number, and special char
+                  example: SecurePass123!
+                firstName:
+                  type: string
+                  example: Alex
+                lastName:
+                  type: string
+                  example: Rivera
+                phoneNumber:
+                  type: string
+                  pattern: '^\+?[1-9]\d{1,14}$'
+                  example: +15550123456
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: string
+                    format: uuid
+                  email:
+                    type: string
+                  message:
+                    type: string
+                    example: User registered successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          description: Email already in use
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ──────────────────────────────────────────────────────────────
+  # ONBOARDING: Submit preferences & location
+  # ──────────────────────────────────────────────────────────────
+  /onboarding:
+    post:
+      summary: Complete concierge onboarding
+      description: Submit user preferences and location to activate concierge service
+      operationId: completeOnboarding
+      tags:
+        - Onboarding
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - preferences
+                - location
+              properties:
+                preferences:
+                  type: object
+                  properties:
+                    cuisines:
+                      type: array
+                      items:
+                        type: string
+                      example: ["Italian", "Japanese", "Vegan"]
+                    dietaryRestrictions:
+                      type: array
+                      items:
+                        type: string
+                      example: ["gluten-free", "nut-allergy"]
+                    priceRange:
+                      type: string
+                      enum: [budget, moderate, upscale, fine-dining]
+                      example: moderate
+                location:
+                  type: object
+                  required:
+                    - city
+                    - zipCode
+                  properties:
+                    city:
+                      type: string
+                      example: San Francisco
+                    zipCode:
+                      type: string
+                      pattern: '^\d{5}(-\d{4})?$'
+                      example: "94102"
+                    address:
+                      type: string
+                      example: 123 Market St
+                notifications:
+                  type: object
+                  properties:
+                    email:
+                      type: boolean
+                      default: true
+                    push:
+                      type: boolean
+                      default: true
+                    sms:
+                      type: boolean
+                      default: false
+      responses:
+        '200':
+          description: Onboarding completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: completed
+                  onboardingId:
+                    type: string
+                    format: uuid
+                  message:
+                    type: string
+                    example: Onboarding completed successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # ──────────────────────────────────────────────────────────────
+  # TASKS: Create & List Primary Tasks
+  # ──────────────────────────────────────────────────────────────
+  /tasks/primary:
+    post:
+      summary: Create primary concierge task
+      description: Submit a high-priority task (e.g., make a restaurant reservation)
+      operationId: createPrimaryTask
+      tags:
+        - Tasks
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - taskType
+                - details
+              properties:
+                taskType:
+                  type: string
+                  enum: [reservation, recommendation, delivery]
+                  example: reservation
+                details:
+                  type: object
+                  properties:
+                    restaurantName:
+                      type: string
+                      example: The Blue Duck
+                    partySize:
+                      type: integer
+                      minimum: 1
+                      maximum: 20
+                      example: 4
+                    dateTime:
+                      type: string
+                      format: date-time
+                      example: "2025-11-20T19:00:00Z"
+                    specialRequests:
+                      type: string
+                      example: Window seat, high chair needed
+                priority:
+                  type: string
+                  enum: [low, normal, high, urgent]
+                  default: normal
+      responses:
+        '201':
+          description: Task created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  taskId:
+                    type: string
+                    format: uuid
+                  status:
+                    type: string
+                    example: pending
+                  createdAt:
+                    type: string
+                    format: date-time
+                  estimatedCompletion:
+                    type: string
+                    format: date-time
+                    description: When concierge will respond
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    get:
+      summary: List user's primary tasks
+      operationId: getPrimaryTasks
+      tags:
+        - Tasks
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, in-progress, completed, cancelled]
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        '200':
+          description: Paginated task list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tasks:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Task'
+                  total:
+                    type: integer
+                  limit:
+                    type: integer
+                  offset:
+                    type: integer
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+# ──────────────────────────────────────────────────────────────
+# COMPONENTS
+# ──────────────────────────────────────────────────────────────
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Error:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          example: VALIDATION_ERROR
+        message:
+          type: string
+          example: Invalid email format
+        details:
+          type: array
+          items:
+            type: string
+          example: ["password must be at least 8 characters"]
+
+    Task:
+      type: object
+      properties:
+        taskId:
+          type: string
+          format: uuid
+        taskType:
+          type: string
+          enum: [reservation, recommendation, delivery]
+        status:
+          type: string
+          enum: [pending, in-progress, completed, cancelled]
+        details:
+          type: object
+        priority:
+          type: string
+          enum: [low, normal, high, urgent]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+          nullable: true
+
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'

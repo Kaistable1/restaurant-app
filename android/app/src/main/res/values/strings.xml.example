@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Google Maps API Key - DO NOT COMMIT REAL KEY -->
+    <!-- 
+         How to set up:
+         1. Copy this file to:
+            - android/app/src/debug/res/values/strings.xml
+            - android/app/src/release/res/values/strings.xml
+         2. Replace YOUR_GOOGLE_MAPS_API_KEY_HERE with your real key
+         3. Keep android/app/src/main/res/values/strings.xml in .gitignore
+         4. The placeholder below is safe to commit
+    -->
+    <string name="app_name">kaistable</string>
+    <string name="google_maps_api_key" translatable="false">PLACEHOLDER_DO_NOT_USE</string>
+</resources>
