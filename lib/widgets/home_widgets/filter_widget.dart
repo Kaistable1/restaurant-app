@@ -189,15 +189,14 @@ class FilterBox extends StatelessWidget {
                       final dynamic selectedTopDynamic =
                           controller.selectedTop.value;
 
-                      final bool isSelected =
-                          (selectedTopDynamic != null &&
+                      final bool isSelected = (selectedTopDynamic != null &&
                               selectedTopDynamic == currentDynamic) ||
-                              (currentDynamic == 'Discount' &&
-                                  selectedTopDynamic != null &&
-                                  items.contains(selectedTopDynamic)) ||
-                              (currentDynamic == 'Dining' &&
-                                  selectedTopDynamic != null &&
-                                  diningItems.contains(selectedTopDynamic));
+                          (currentDynamic == 'Discount' &&
+                              selectedTopDynamic != null &&
+                              items.contains(selectedTopDynamic)) ||
+                          (currentDynamic == 'Dining' &&
+                              selectedTopDynamic != null &&
+                              diningItems.contains(selectedTopDynamic));
 
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 6),
@@ -241,8 +240,7 @@ class FilterBox extends StatelessWidget {
     final dynamic selectedTopDynamic = controller.selectedTop.value;
 
     String? dropdownValue;
-    if (selectedTopDynamic != null &&
-        items.contains(selectedTopDynamic)) {
+    if (selectedTopDynamic != null && items.contains(selectedTopDynamic)) {
       dropdownValue = selectedTopDynamic.toString();
     }
 
