@@ -1,9 +1,9 @@
+// lib/widgets/home_widgets/all_categories.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/models/resaturant_model.dart';
 import 'package:kaistable_website/widgets/global_functions.dart';
-
 import '../../../constants/app_colors.dart';
 import '../../../widgets/rectangle_widget.dart';
 import '../../screens/detail_screens/restaurant_detail_screen.dart';
@@ -17,7 +17,7 @@ class AllCategories extends StatelessWidget {
     return Column(
       children: [
         _buildTopSection(),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
       ],
     );
   }
@@ -26,51 +26,44 @@ class AllCategories extends StatelessWidget {
     final HomeLocationController controller = Get.put(HomeLocationController());
     return Padding(
       padding: const EdgeInsets.only(left: 14, right: 14),
-      child: StreamBuilder(
+      child: StreamBuilder<List<RestaurantModel>>(
         stream: controller.getAllRestaurants(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return buildShimmerEffect(); // Show shimmer while loading
+            return buildShimmerEffect();
           }
-
           if (snapshot.hasError) {
             print('Error during stream call ${snapshot.error}');
-            return Text(''); // Show error message if any
+            return const Text('');
+          }
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Text('');
           }
 
-          if (snapshot.data == null || snapshot.data!.isEmpty) {
-            return Text(''); // Handle the case where data is null or empty
-          }
-          List<RestaurantModel> restaurants = snapshot.data!;
-
-          // Initialize state after the widget build phase
+          final List<RestaurantModel> restaurants = snapshot.data!;
+          
+          // Initialize selectors after build
           WidgetsBinding.instance.addPostFrameCallback((_) {
             controller.initailizedSelectors(resaturantsList: restaurants);
           });
-          List filteredRestaurants = [];
 
-          // Filter the restaurant list based on the sorted IDs and maintain the same order
+          List<RestaurantModel> filteredRestaurants = [];
+
           if (restaurants.isNotEmpty) {
-            List<String> recentView =
-                preferences?.getStringList('recentView') ?? [];
-
+            final List<String> recentView = preferences?.getStringList('recentView') ?? [];
             filteredRestaurants = recentView
                 .map((resName) => restaurants.firstWhere(
-                      (restaurant) =>
-                          restaurant.resName.toLowerCase() ==
-                          resName.toLowerCase(),
+                      (restaurant) => restaurant.resName.toLowerCase() == resName.toLowerCase(),
                       orElse: () => RestaurantModel.initialize(),
                     ))
                 .where((restaurant) => restaurant.resName.isNotEmpty)
-                .cast<
-                    RestaurantModel>() // Cast back to proper type if necessary
                 .toList();
           }
 
           if (filteredRestaurants.isNotEmpty) {
             return Column(
               children: [
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
@@ -84,7 +77,7 @@ class AllCategories extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
                 GridView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -94,15 +87,12 @@ class AllCategories extends StatelessWidget {
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 30,
                   ),
-                  itemCount:
-                      filteredRestaurants.length, // Use filtered list length
+                  itemCount: filteredRestaurants.length,
                   itemBuilder: (context, index) {
                     final item = filteredRestaurants[index];
                     return InkWell(
                       onTap: () {
-                        Get.to(RestaurantDetailScreen(
-                          restaurantModel: item,
-                        ));
+                        Get.to(() => RestaurantDetailScreen(restaurantModel: item));
                       },
                       child: SizedBox(
                         width: Get.width * 0.45,
@@ -112,11 +102,10 @@ class AllCategories extends StatelessWidget {
                           resturant_id: item.docID,
                           imagePath: item.logoImage,
                           timetext: '10 AM',
-                          percentText: '25%',
-                          endTimeText: '9 PM',
-                          // percentageOff: item.menuList.percentageOff,
-                          // happyhour: item.menuList.happyHourSpecials,
-                          isFavorite: false.obs,
+                          // Removed undefined parameters:
+                          // percentText: '25%',
+                          // endTimeText: '9 PM',
+                          // isFavorite: false.obs,
                         ),
                       ),
                     );
@@ -125,9 +114,10 @@ class AllCategories extends StatelessWidget {
               ],
             );
           }
+
           return SizedBox(
             height: Get.height * 0.6,
-            child: const Center(child: Text('No Resturants Found!')),
+            child: const Center(child: Text('No Restaurants Found!')),
           );
         },
       ),
