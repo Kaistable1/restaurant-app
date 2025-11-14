@@ -244,10 +244,10 @@ class FilterBox extends StatelessWidget {
     final String? selectedTop =
         rawSelectedTop is String ? rawSelectedTop : null;
 
-    final String? dropdownValue = (selectedTop != null &&
-            items.contains(selectedTop))
-        ? selectedTop
-        : null;
+    final String? dropdownValue =
+        (selectedTop != null && items.contains(selectedTop))
+            ? selectedTop
+            : null;
 
     return Padding(
       padding: const EdgeInsets.only(top: 4, bottom: 4, right: 4, left: 20),
@@ -290,8 +290,7 @@ class FilterBox extends StatelessWidget {
                           : AppColors.whiteColor,
                     ),
                     side: WidgetStateBorderSide.resolveWith(
-                      (_) =>
-                          const BorderSide(color: AppColors.primaryColor),
+                      (_) => const BorderSide(color: AppColors.primaryColor),
                     ),
                     value: dropdownValue == item,
                     onChanged: (selected) {
@@ -327,10 +326,10 @@ class FilterBox extends StatelessWidget {
     final String? selectedTop =
         rawSelectedTop is String ? rawSelectedTop : null;
 
-    final String? dropdownValue = (selectedTop != null &&
-            diningItems.contains(selectedTop))
-        ? selectedTop
-        : null;
+    final String? dropdownValue =
+        (selectedTop != null && diningItems.contains(selectedTop))
+            ? selectedTop
+            : null;
 
     return Padding(
       padding: const EdgeInsets.all(4),
@@ -374,8 +373,7 @@ class FilterBox extends StatelessWidget {
                           : AppColors.whiteColor,
                     ),
                     side: WidgetStateBorderSide.resolveWith(
-                      (_) =>
-                          const BorderSide(color: AppColors.primaryColor),
+                      (_) => const BorderSide(color: AppColors.primaryColor),
                     ),
                     value: dropdownValue == item,
                     onChanged: (selected) {
@@ -416,4 +414,3 @@ class FilterBox extends StatelessWidget {
     );
   }
 }
-
