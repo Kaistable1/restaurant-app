@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
 import 'package:kaistable_website/screens/change_pass/changePassword_dialoge.dart';
+import 'package:kaistable_website/screens/chat_ai/savrly_ai_view.dart';
 import 'package:kaistable_website/screens/favorite_screen/favorite_screen.dart';
 import 'package:kaistable_website/screens/home_screen/my_home_screen.dart';
 import 'package:kaistable_website/screens/nav_bar/controller/home_controller.dart';
@@ -25,6 +26,7 @@ class _MainScreenState extends State<MainScreen> {
   List<Widget> _buildScreens() {
     return [
       HomeScreen(),
+      SavrlyAIView(),
       MyHomeScreen(),
       TrendingScreen(),
       FavoriteScreen(),
@@ -40,6 +42,14 @@ class _MainScreenState extends State<MainScreen> {
         inactiveIcon: Image.asset('assets/images/home_unselected.png',
             color: AppColors.blackColor, width: 24, height: 24),
         title: "Home",
+        activeColorPrimary: AppColors.primaryColor,
+      ),
+      PersistentBottomNavBarItem(
+        icon: Image.asset('assets/images/chat_selected.png',
+            color: AppColors.primaryColor, width: 24, height: 24),
+        inactiveIcon: Image.asset('assets/images/chat_unselected.png',
+            color: AppColors.blackColor, width: 24, height: 24),
+        title: "Ask Kai",
         activeColorPrimary: AppColors.primaryColor,
       ),
       PersistentBottomNavBarItem(
