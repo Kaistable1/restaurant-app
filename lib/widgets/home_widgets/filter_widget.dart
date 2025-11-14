@@ -24,8 +24,12 @@ class FilterWidget extends StatelessWidget {
 
   // Example static lists
   final List<String> topItems = const ['Happy Hours'];
-  final List<String> diningItems =
-      const ['Breakfast', 'Lunch', 'Dinner', 'Brunch'];
+  final List<String> diningItems = const [
+    'Breakfast',
+    'Lunch',
+    'Dinner',
+    'Brunch'
+  ];
 
   FilterWidget({super.key});
 
