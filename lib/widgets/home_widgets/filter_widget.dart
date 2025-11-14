@@ -16,7 +16,12 @@ class FilterWidget extends StatelessWidget {
       Get.put(FilterSelectionController());
 
   final List<String> items = const ['Happy Hours'];
-  final List<String> diningItems = const ['Breakfast', 'Lunch', 'Dinner', 'Brunch'];
+  final List<String> diningItems = const [
+    'Breakfast',
+    'Lunch',
+    'Dinner',
+    'Brunch'
+  ];
 
   final RxBool isTapped = false.obs;
   final RxBool showFilterOptions = false.obs;
@@ -95,7 +100,8 @@ class FilterWidget extends StatelessWidget {
           () => Align(
             alignment: Alignment.centerLeft,
             child: TextButton.icon(
-              onPressed: () => showFilterOptions.value = !showFilterOptions.value,
+              onPressed: () =>
+                  showFilterOptions.value = !showFilterOptions.value,
               icon: Icon(
                 showFilterOptions.value ? Icons.expand_less : Icons.expand_more,
               ),
