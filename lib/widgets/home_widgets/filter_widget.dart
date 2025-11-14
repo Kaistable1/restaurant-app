@@ -84,7 +84,8 @@ class FilterWidget extends StatelessWidget {
               ),
               const SizedBox(width: 4),
               GestureDetector(
-                onTap: showFilterBottomSheet,
+                // pass context into the bottom sheet function
+                onTap: () => showFilterBottomSheet(context),
                 child: Image.asset(
                   'assets/images/filter_image__.png',
                   width: 32,
@@ -114,7 +115,8 @@ class SelectedFilterWidgets extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: AppColors.primaryColor.withValues(alpha: 0.7),
+        // use withOpacity instead of withValues
+        color: AppColors.primaryColor.withOpacity(0.7),
         borderRadius: BorderRadius.circular(15),
         border: Border.all(color: AppColors.primaryColor, width: 1),
       ),
@@ -156,8 +158,8 @@ class FilterBox extends StatelessWidget {
       child: Container(
         width: Get.width,
         height: 38,
-        decoration: const BoxDecoration(
-          color: Color(0xFFEEEFF2),
+        decoration: BoxDecoration(
+          color: const Color(0xFFEEEFF2),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
@@ -239,7 +241,7 @@ class FilterBox extends StatelessWidget {
   }
 
   Widget _buildDiscountDropdown(BuildContext context) {
-    // Safely convert selectedTop to String?
+    // Safely convert selectedTop to String
     final dynamic rawSelectedTop = controller.selectedTop.value;
     final String? selectedTop =
         rawSelectedTop is String ? rawSelectedTop : null;
@@ -253,14 +255,14 @@ class FilterBox extends StatelessWidget {
       padding: const EdgeInsets.only(top: 4, bottom: 4, right: 4, left: 20),
       child: DropdownButtonHideUnderline(
         child: DropdownButton2<String>(
-          iconStyleData: const IconStyleData(
+          iconStyleData: IconStyleData(
             icon: Image.asset(
               'assets/images/drop_down_img.png',
               width: 10,
               height: 10,
             ),
           ),
-          dropdownStyleData: const DropdownStyleData(
+          dropdownStyleData: DropdownStyleData(
             width: 200,
             maxHeight: 200,
             decoration: BoxDecoration(
@@ -284,14 +286,12 @@ class FilterBox extends StatelessWidget {
               child: Row(
                 children: [
                   Checkbox(
-                    fillColor: WidgetStateProperty.resolveWith<Color>(
-                      (states) => states.contains(WidgetState.selected)
+                    fillColor: MaterialStateProperty.resolveWith<Color?>(
+                      (states) => states.contains(MaterialState.selected)
                           ? AppColors.primaryColor
                           : AppColors.whiteColor,
                     ),
-                    side: WidgetStateBorderSide.resolveWith(
-                      (_) => const BorderSide(color: AppColors.primaryColor),
-                    ),
+                    side: const BorderSide(color: AppColors.primaryColor),
                     value: dropdownValue == item,
                     onChanged: (selected) {
                       controller.selectedTop.value =
@@ -321,7 +321,7 @@ class FilterBox extends StatelessWidget {
   }
 
   Widget _buildDiningDropdown(BuildContext context) {
-    // Safely convert selectedTop to String?
+    // Safely convert selectedTop to String
     final dynamic rawSelectedTop = controller.selectedTop.value;
     final String? selectedTop =
         rawSelectedTop is String ? rawSelectedTop : null;
@@ -335,14 +335,14 @@ class FilterBox extends StatelessWidget {
       padding: const EdgeInsets.all(4),
       child: DropdownButtonHideUnderline(
         child: DropdownButton2<String>(
-          iconStyleData: const IconStyleData(
+          iconStyleData: IconStyleData(
             icon: Image.asset(
               'assets/images/drop_down_img.png',
               width: 10,
               height: 10,
             ),
           ),
-          dropdownStyleData: const DropdownStyleData(
+          dropdownStyleData: DropdownStyleData(
             width: 200,
             maxHeight: 200,
             decoration: BoxDecoration(
@@ -367,14 +367,12 @@ class FilterBox extends StatelessWidget {
               child: Row(
                 children: [
                   Checkbox(
-                    fillColor: WidgetStateProperty.resolveWith<Color>(
-                      (states) => states.contains(WidgetState.selected)
+                    fillColor: MaterialStateProperty.resolveWith<Color?>(
+                      (states) => states.contains(MaterialState.selected)
                           ? AppColors.primaryColor
                           : AppColors.whiteColor,
                     ),
-                    side: WidgetStateBorderSide.resolveWith(
-                      (_) => const BorderSide(color: AppColors.primaryColor),
-                    ),
+                    side: const BorderSide(color: AppColors.primaryColor),
                     value: dropdownValue == item,
                     onChanged: (selected) {
                       controller.selectedTop.value =
