@@ -12,28 +12,22 @@ import '../../screens/home_screen/home_controller/filter_selection_controller.da
 import '../../screens/home_screen/home_controller/home_location_controller.dart';
 
 class FilterWidget extends StatelessWidget {
-  final HomeLocationController controller = Get.put(HomeLocationController());
-  final FilterSelectionController filterController =
+  // Keep your controllers so other parts of the app can still find them.
+  final HomeLocationController homeLocationController =
+      Get.put(HomeLocationController());
+  final FilterSelectionController filterSelectionController =
       Get.put(FilterSelectionController());
 
-  final List<String> items = const ['Happy Hours'];
-  final List<String> diningItems = const [
-    'Breakfast',
-    'Lunch',
-    'Dinner',
-    'Brunch'
-  ];
-
-  final RxBool isTapped = false.obs;
-  final RxBool showFilterOptions = false.obs;
-
-  // Local state for dining time so we don’t rely on unknown fields
+  // Local state just for this widget (strongly typed as String).
+  final RxString selectedTop = ''.obs;
   final RxString selectedDiningTime = ''.obs;
 
-  FilterWidget({super.key}) {
-    // Make sure this is initialized as a String
-    controller.selectedTop.value = '';
-  }
+  // Example static lists
+  final List<String> topItems = const ['Happy Hours'];
+  final List<String> diningItems =
+      const ['Breakfast', 'Lunch', 'Dinner', 'Brunch'];
+
+  FilterWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -42,48 +36,54 @@ class FilterWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Top row with 2 dropdowns
+        // Top row: search + two dropdowns
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Left spacer so layout doesn’t break on web/desktop
-            if (isDesktop) const SizedBox(width: 8),
-
-            // Top filter dropdown (uses HomeLocationController.selectedTop)
+            // Search field
             Expanded(
-              flex: 1,
+              flex: 2,
+              child: SeparateTextField(
+                hintText: 'Search by restaurant, cuisine, or vibe',
+                onTap: () {},
+              ),
+            ),
+            const SizedBox(width: 12),
+
+            // Top filter dropdown (uses local selectedTop)
+            Expanded(
+              flex: isDesktop ? 1 : 2,
               child: Obx(
                 () {
-                  final String selectedTop = controller.selectedTop.value;
+                  final String current = selectedTop.value;
                   return _buildDropdown(
                     label: 'Top filter',
-                    value: selectedTop.isEmpty ? null : selectedTop,
-                    items: items,
+                    items: topItems,
+                    value: current.isEmpty ? null : current,
                     onChanged: (String? value) {
                       if (value != null) {
-                        controller.selectedTop.value = value;
+                        selectedTop.value = value;
                       }
                     },
                   );
                 },
               ),
             ),
-
             const SizedBox(width: 12),
 
-            // Dining time dropdown (local RxString)
+            // Dining time dropdown (uses local selectedDiningTime)
             Expanded(
-              flex: 1,
+              flex: isDesktop ? 1 : 2,
               child: Obx(
                 () {
-                  final String value = selectedDiningTime.value;
+                  final String current = selectedDiningTime.value;
                   return _buildDropdown(
                     label: 'Dining time',
-                    value: value.isEmpty ? null : value,
                     items: diningItems,
-                    onChanged: (String? v) {
-                      if (v != null) {
-                        selectedDiningTime.value = v;
+                    value: current.isEmpty ? null : current,
+                    onChanged: (String? value) {
+                      if (value != null) {
+                        selectedDiningTime.value = value;
                       }
                     },
                   );
@@ -93,41 +93,37 @@ class FilterWidget extends StatelessWidget {
           ],
         ),
 
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
 
-        // Toggle for more filters (just a simple example)
-        Obx(
-          () => Align(
-            alignment: Alignment.centerLeft,
-            child: TextButton.icon(
-              onPressed: () =>
-                  showFilterOptions.value = !showFilterOptions.value,
-              icon: Icon(
-                showFilterOptions.value ? Icons.expand_less : Icons.expand_more,
-              ),
-              label: const Text('More filters'),
-            ),
-          ),
+        // Example extra actions / filters
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            _simpleChip('Live music'),
+            _simpleChip('Outdoor seating'),
+            _simpleChip('Rooftop'),
+            _simpleChip('Date night'),
+          ],
         ),
 
-        // Expanded filter zone
-        Obx(
-          () => AnimatedCrossFade(
-            duration: const Duration(milliseconds: 200),
-            firstChild: const SizedBox.shrink(),
-            secondChild: _buildExpandedFilters(context),
-            crossFadeState: showFilterOptions.value
-                ? CrossFadeState.showSecond
-                : CrossFadeState.showFirst,
+        const SizedBox(height: 16),
+
+        ElevatedButton(
+          onPressed: () {
+            // Keep this since you had a bottom sheet / happy hours flow
+            Get.bottomSheet(const CustomBottomSheet());
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
           ),
+          child: const Text('View Happy Hours'),
         ),
       ],
     );
   }
 
-  /// ---------- REUSABLE WIDGETS BELOW ----------
-
-  /// Strongly-typed dropdown builder (no `dynamic`).
+  /// Strongly-typed dropdown helper (no dynamic anywhere).
   Widget _buildDropdown({
     required String label,
     required List<String> items,
@@ -155,7 +151,9 @@ class FilterWidget extends StatelessWidget {
                   ),
                 )
                 .toList(),
-            onChanged: (String? newValue) => onChanged(newValue),
+            onChanged: (String? newValue) {
+              onChanged(newValue);
+            },
             buttonStyleData: ButtonStyleData(
               height: 44,
               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -178,55 +176,19 @@ class FilterWidget extends StatelessWidget {
     );
   }
 
-  /// Example of an expanded filter area.
-  /// (You can customize this later as needed.)
-  Widget _buildExpandedFilters(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            _simpleChip('Live music'),
-            _simpleChip('Outdoor seating'),
-            _simpleChip('Rooftop'),
-            _simpleChip('Date night'),
-          ],
-        ),
-        const SizedBox(height: 12),
-        ElevatedButton(
-          onPressed: () {
-            // Example use of imported bottom sheet / happy hours
-            Get.bottomSheet(const CustomBottomSheet());
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
-          ),
-          child: const Text('View Happy Hours'),
-        ),
-      ],
-    );
-  }
-
+  /// Simple FilterChip that doesn’t depend on any external controller.
   Widget _simpleChip(String label) {
+    // Local selection state for each chip if needed.
+    final RxBool selected = false.obs;
+
     return Obx(
-      () {
-        final bool selected =
-            filterController.selectedTags.contains(label); // assuming exists
-        return FilterChip(
-          label: Text(label),
-          selected: selected,
-          onSelected: (bool value) {
-            if (value) {
-              filterController.selectedTags.add(label);
-            } else {
-              filterController.selectedTags.remove(label);
-            }
-          },
-        );
-      },
+      () => FilterChip(
+        label: Text(label),
+        selected: selected.value,
+        onSelected: (bool value) {
+          selected.value = value;
+        },
+      ),
     );
   }
 }
