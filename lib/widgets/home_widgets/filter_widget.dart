@@ -12,8 +12,7 @@ import '../../screens/home_screen/home_controller/home_location_controller.dart'
 
 class FilterWidget extends StatelessWidget {
   final HomeLocationController controller = Get.put(HomeLocationController());
-  final FilterSelectionController filterController =
-      Get.put(FilterSelectionController());
+  final FilterSelectionController filterController = Get.put(FilterSelectionController());
   final List<String> items = ['Happy Hours'];
   final List<String> diningItems = ['Breakfast', 'Lunch', 'Dinner', 'Brunch'];
   final RxBool isTapped = false.obs;
@@ -28,8 +27,7 @@ class FilterWidget extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding:
-              const EdgeInsets.only(top: 10.0, left: 12, right: 10, bottom: 6),
+          padding: const EdgeInsets.only(top: 10.0, left: 12, right: 10, bottom: 6),
           child: Row(
             children: [
               Expanded(
@@ -47,8 +45,7 @@ class FilterWidget extends StatelessWidget {
                     isPrefixIcon: true,
                     isShadow: true,
                     prefixIcon: Padding(
-                      padding: const EdgeInsets.only(
-                          left: 4, top: 8, bottom: 8, right: 0),
+                      padding: const EdgeInsets.only(left: 4, top: 8, bottom: 8, right: 0),
                       child: Image.asset(
                         'assets/images/search_icon.png',
                         fit: BoxFit.contain,
@@ -102,6 +99,7 @@ class FilterWidget extends StatelessWidget {
 class SelectedFilterWidgets extends StatelessWidget {
   final String filterName;
   final VoidCallback? onTap;
+
   const SelectedFilterWidgets({
     super.key,
     required this.filterName,
@@ -113,7 +111,7 @@ class SelectedFilterWidgets extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: AppColors.primaryColor.withOpacity(0.7),
+        color: AppColors.primaryColor.withValues(alpha: 0.7), // ← FIXED
         borderRadius: BorderRadius.circular(15),
         border: Border.all(color: AppColors.primaryColor, width: 1),
       ),
@@ -132,8 +130,7 @@ class SelectedFilterWidgets extends StatelessWidget {
           const SizedBox(width: 6),
           GestureDetector(
             onTap: onTap,
-            child:
-                const Icon(Icons.close, color: AppColors.textColor, size: 14),
+            child: const Icon(Icons.close, color: AppColors.textColor, size: 14),
           ),
         ],
       ),
@@ -180,13 +177,9 @@ class FilterBox extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: List.generate(controller.top.length, (index) {
                       final String current = controller.top[index];
-                      final bool isSelected = controller.selectedTop.value ==
-                              current ||
-                          (current == 'Discount' &&
-                              items.contains(controller.selectedTop.value)) ||
-                          (current == 'Dining' &&
-                              diningItems
-                                  .contains(controller.selectedTop.value));
+                      final bool isSelected = controller.selectedTop.value == current ||
+                          (current == 'Discount' && items.contains(controller.selectedTop.value)) ||
+                          (current == 'Dining' && diningItems.contains(controller.selectedTop.value));
 
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 6),
@@ -199,9 +192,7 @@ class FilterBox extends StatelessWidget {
                           child: Container(
                             height: 26,
                             decoration: BoxDecoration(
-                              color: isSelected
-                                  ? AppColors.whiteColor
-                                  : Colors.transparent,
+                              color: isSelected ? AppColors.whiteColor : Colors.transparent,
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Center(
@@ -229,8 +220,7 @@ class FilterBox extends StatelessWidget {
       child: DropdownButtonHideUnderline(
         child: DropdownButton2<String>(
           iconStyleData: const IconStyleData(
-            icon: Image.asset('assets/images/drop_down_img.png',
-                width: 10, height: 10),
+            icon: Image.asset('assets/images/drop_down_img.png', width: 10, height: 10),
           ),
           dropdownStyleData: const DropdownStyleData(
             width: 200,
@@ -240,15 +230,16 @@ class FilterBox extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
           ),
-          value: items.contains(controller.selectedTop.value)
-              ? controller.selectedTop.value
-              : null,
-          hint: const Text('Discount',
-              style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.darkGrey,
-                  fontFamily: 'Nunito-Regular')),
+          value: items.contains(controller.selectedTop.value) ? controller.selectedTop.value : null,
+          hint: const Text(
+            'Discount',
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w500,
+              color: AppColors.darkGrey,
+              fontFamily: 'Nunito-Regular',
+            ),
+          ),
           items: items.map((item) {
             return DropdownMenuItem<String>(
               value: item,
@@ -256,29 +247,33 @@ class FilterBox extends StatelessWidget {
                 children: [
                   Checkbox(
                     fillColor: WidgetStateProperty.resolveWith<Color>(
-                        (states) => states.contains(WidgetState.selected)
-                            ? AppColors.primaryColor
-                            : AppColors.whiteColor),
+                      (states) => states.contains(WidgetState.selected)
+                          ? AppColors.primaryColor
+                          : AppColors.whiteColor,
+                    ),
                     side: WidgetStateBorderSide.resolveWith(
-                        (_) => const BorderSide(color: AppColors.primaryColor)),
+                      (_) => const BorderSide(color: AppColors.primaryColor),
+                    ),
                     value: controller.selectedTop.value == item,
                     onChanged: (selected) {
-                      controller.selectedTop.value =
-                          selected == true ? item : '';
+                      controller.selectedTop.value = selected == true ? item : '';
                       Get.to(() => const HappyHours());
                     },
                   ),
-                  Text(item,
-                      style: TextStyle(
-                          fontSize: Responsive.isMobile(context) ? 10 : 14,
-                          color: AppColors.darkGrey)),
+                  Text(
+                    item,
+                    style: TextStyle(
+                      fontSize: Responsive.isMobile(context) ? 10 : 14,
+                      color: AppColors.darkGrey,
+                    ),
+                  ),
                 ],
               ),
             );
           }).toList(),
           onChanged: (value) {
             controller.selectedTop.value =
-                value == controller.selectedTop.value ? '' : value!;
+                (value == controller.selectedTop.value) ? '' : (value ?? '');
             Get.to(() => const HappyHours());
           },
         ),
@@ -292,25 +287,26 @@ class FilterBox extends StatelessWidget {
       child: DropdownButtonHideUnderline(
         child: DropdownButton2<String>(
           iconStyleData: const IconStyleData(
-            icon: Image.asset('assets/images/drop_down_img.png',
-                width: 10, height: 10),
+            icon: Image.asset('assets/images/drop_down_img.png', width: 10, height: 10),
           ),
           dropdownStyleData: const DropdownStyleData(
             width: 200,
             maxHeight: 200,
             decoration: BoxDecoration(
-                color: AppColors.whiteColor,
-                borderRadius: BorderRadius.circular(10)),
+              color: AppColors.whiteColor,
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
-          value: diningItems.contains(controller.selectedTop.value)
-              ? controller.selectedTop.value
-              : null,
+          value: diningItems.contains(controller.selectedTop.value) ? controller.selectedTop.value : null,
           hint: Padding(
             padding: const EdgeInsets.only(right: 10, left: 8),
-            child: Text('Dining',
-                style: TextStyle(
-                    fontSize: Responsive.isMobile(context) ? 10 : 14,
-                    color: AppColors.darkGrey)),
+            child: Text(
+              'Dining',
+              style: TextStyle(
+                fontSize: Responsive.isMobile(context) ? 10 : 14,
+                color: AppColors.darkGrey,
+              ),
+            ),
           ),
           items: diningItems.map((item) {
             return DropdownMenuItem<String>(
@@ -319,28 +315,30 @@ class FilterBox extends StatelessWidget {
                 children: [
                   Checkbox(
                     fillColor: WidgetStateProperty.resolveWith<Color>(
-                        (states) => states.contains(WidgetState.selected)
-                            ? AppColors.primaryColor
-                            : AppColors.whiteColor),
+                      (states) => states.contains(WidgetState.selected)
+                          ? AppColors.primaryColor
+                          : AppColors.whiteColor,
+                    ),
                     side: WidgetStateBorderSide.resolveWith(
-                        (_) => const BorderSide(color: AppColors.primaryColor)),
+                      (_) => const BorderSide(color: AppColors.primaryColor),
+                    ),
                     value: controller.selectedTop.value == item,
                     onChanged: (selected) {
-                      controller.selectedTop.value =
-                          selected == true ? item : '';
+                      controller.selectedTop.value = selected == true ? item : '';
                       Navigator.pop(context);
                     },
                   ),
-                  Text(item,
-                      style: const TextStyle(
-                          fontSize: 10, color: AppColors.darkGrey)),
+                  const Text(
+                    item,
+                    style: TextStyle(fontSize: 10, color: AppColors.darkGrey),
+                  ),
                 ],
               ),
             );
           }).toList(),
           onChanged: (value) {
             controller.selectedTop.value =
-                value == controller.selectedTop.value ? '' : value!;
+                (value == controller.selectedTop.value) ? '' : (value ?? '');
           },
         ),
       ),
