@@ -118,9 +118,12 @@ class UploadImageSectionState extends State<UploadImageSection> {
                 allowHalfRating: true,
                 itemCount: 5,
                 ratingWidget: RatingWidget(
-                  full: Image.asset('assets/images/star yellow.png', height: 14),
-                  half: Image.asset('assets/images/star yellow.png', height: 14),
-                  empty: Image.asset('assets/images/star_empty_yellow.png', height: 14),
+                  full:
+                      Image.asset('assets/images/star yellow.png', height: 14),
+                  half:
+                      Image.asset('assets/images/star yellow.png', height: 14),
+                  empty: Image.asset('assets/images/star_empty_yellow.png',
+                      height: 14),
                 ),
                 itemPadding: const EdgeInsets.only(left: 2.0),
                 onRatingUpdate: (rating) {
@@ -186,10 +189,12 @@ class UploadImageSectionState extends State<UploadImageSection> {
                                           padding: const EdgeInsets.all(4.0),
                                           decoration: BoxDecoration(
                                             color: Colors.white,
-                                            borderRadius: BorderRadius.circular(50),
+                                            borderRadius:
+                                                BorderRadius.circular(50),
                                             boxShadow: [
                                               BoxShadow(
-                                                color: Colors.black.withValues(alpha: 0.2),
+                                                color: Colors.black
+                                                    .withValues(alpha: 0.2),
                                                 blurRadius: 3,
                                                 offset: const Offset(0, 1),
                                               ),
@@ -205,13 +210,16 @@ class UploadImageSectionState extends State<UploadImageSection> {
                                         top: 50,
                                         left: 6,
                                         child: GestureDetector(
-                                          onTap: () => _pageController.previousPage(
-                                            duration: const Duration(milliseconds: 300),
+                                          onTap: () =>
+                                              _pageController.previousPage(
+                                            duration: const Duration(
+                                                milliseconds: 300),
                                             curve: Curves.easeInOut,
                                           ),
                                           child: CircleAvatar(
                                             radius: 14,
-                                            backgroundColor: Colors.white.withValues(alpha: 0.7),
+                                            backgroundColor: Colors.white
+                                                .withValues(alpha: 0.7),
                                             child: Icon(
                                               Icons.arrow_back_ios_rounded,
                                               color: AppColors.primaryColor,
@@ -225,12 +233,14 @@ class UploadImageSectionState extends State<UploadImageSection> {
                                         right: 6,
                                         child: GestureDetector(
                                           onTap: () => _pageController.nextPage(
-                                            duration: const Duration(milliseconds: 300),
+                                            duration: const Duration(
+                                                milliseconds: 300),
                                             curve: Curves.easeInOut,
                                           ),
                                           child: CircleAvatar(
                                             radius: 14,
-                                            backgroundColor: Colors.white.withValues(alpha: 0.7),
+                                            backgroundColor: Colors.white
+                                                .withValues(alpha: 0.7),
                                             child: Icon(
                                               Icons.arrow_forward_ios_rounded,
                                               color: AppColors.primaryColor,
@@ -249,7 +259,8 @@ class UploadImageSectionState extends State<UploadImageSection> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Image(
-                                    image: AssetImage('assets/images/document-upload.png'),
+                                    image: AssetImage(
+                                        'assets/images/document-upload.png'),
                                     width: 24,
                                     height: 24,
                                   ),
