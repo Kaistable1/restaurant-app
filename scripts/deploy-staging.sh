@@ -10,7 +10,7 @@
 #   ./scripts/deploy-staging.sh
 #
 # Environment Variables:
-#   DEPLOY_TARGET=stating   # or 'production'
+#   DEPLOY_TARGET=staging   # or 'production'
 #   SKIP_TESTS=true         # Skip Flutter tests
 #   RUN_SMOKE=true          # Run Cypress smoke tests after deploy
 #   CYPRESS_BASE_URL=...    # Override base URL for smoke tests

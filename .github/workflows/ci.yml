@@ -10,15 +10,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # Allows git push for auto-fixes
-      pull-requests: write  # For PR comments if needed
+      contents: write
+      pull-requests: write
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Full history for git operations
-          token: ${{ secrets.GITHUB_TOKEN }}  # Use token for authenticated push
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -28,13 +28,12 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      # AUTO-FORMAT: Fix and commit if needed
+      # AUTO-FORMAT + COMMIT (this is the magic that saved you today)
       - name: Auto-format Dart code
         id: format
         run: |
           echo "Running dart format..."
           dart format .
-          
           if git diff --quiet; then
             echo "No changes needed."
             echo "changed=false" >> $GITHUB_OUTPUT
@@ -43,24 +42,28 @@ jobs:
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add .
-            git commit -m "style: auto-format Dart code [skip ci]" || echo "No commit needed"
+            git commit -m "style: auto-format Dart code [skip ci]" || echo "Nothing to commit"
             git push origin HEAD:${{ github.head_ref || github.ref_name }}
             echo "changed=true" >> $GITHUB_OUTPUT
-            echo "Auto-fixed formatting – re-run checks to verify."
           fi
 
-      # VERIFY: Only fail if still broken after auto-fix
-      - name: Verify formatting (post-fix check)
-        if: steps.format.outputs.changed == 'false'  # Skip if we just fixed it
+      # Only fail formatting if we didn't just auto-fix it
+      - name: Verify formatting
+        if: steps.format.outputs.changed == 'false'
         run: dart format --set-exit-if-changed .
 
-      # Your other steps (lint, test, etc.)
       - name: Analyze code
         run: flutter analyze
 
       - name: Run tests
         run: flutter test
 
-      # Build web (your failing job – add this if not present)
       - name: Build Flutter Web
-        run: flutter build web --release
+        run: flutter build web --release --web-renderer=canvaskit
+
+      - name: Upload web build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: build/web/
+          retention-days: 7

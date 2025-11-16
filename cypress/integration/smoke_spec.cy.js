@@ -50,6 +50,10 @@ describe('Savrli City – Smoke Test', () => {
   const selectCuisine = (name) => cy.get(`[data-cy="cuisine-${name.toLowerCase()}"]`).click();
   const selectDiet = (name) => cy.get(`[data-cy="diet-${name}"]`).click();
 
+  beforeEach(() => {
+    cy.viewport(1280, 720);
+  });
+
   // -------------------------------------------------------------------------
   // 1. App loads
   // -------------------------------------------------------------------------
