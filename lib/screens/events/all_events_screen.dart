@@ -629,6 +629,7 @@ class AllEventsScreen extends StatelessWidget {
                                                 RxBool bookmarked = false.obs;
 
                                                 return Column(
+                                                  mainAxisSize: MainAxisSize.min,
                                                   children: [
                                                     GestureDetector(
                                                       onTap: () async {
@@ -679,7 +680,7 @@ class AllEventsScreen extends StatelessWidget {
                                                           ),
                                                         ),
                                                         child: SizedBox(
-                                                          height: 150,
+                                                          height: 160,
                                                           child: Row(
                                                             mainAxisAlignment:
                                                                 MainAxisAlignment
@@ -709,9 +710,9 @@ class AllEventsScreen extends StatelessWidget {
                                                                                 .asset(
                                                                                 'assets/images/event_img5.png',
                                                                                 width:
-                                                                                    120,
-                                                                                height:
                                                                                     150,
+                                                                                height:
+                                                                                    160,
                                                                                 fit: BoxFit
                                                                                     .cover,
                                                                               )
@@ -721,9 +722,9 @@ class AllEventsScreen extends StatelessWidget {
                                                                                     .imageUrls
                                                                                     .first,
                                                                                 width:
-                                                                                    120,
-                                                                                height:
                                                                                     150,
+                                                                                height:
+                                                                                    160,
                                                                                 fit: BoxFit
                                                                                     .cover,
                                                                               ),
@@ -815,11 +816,11 @@ class AllEventsScreen extends StatelessWidget {
                                                         ),
                                                       ),
                                                     ),
-                                                    const SizedBox(height: 4),
+                                                    const SizedBox(height: 8),
                                                     Divider(
                                                         color:
                                                             AppColors.dividerColor),
-                                                    const SizedBox(height: 4),
+                                                    const SizedBox(height: 8),
                                                   ],
                                                 );
                                               });
