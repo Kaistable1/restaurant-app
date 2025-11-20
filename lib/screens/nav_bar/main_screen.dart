@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kaistable_website/screens/ask_kai/savrly_ai_view.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_location_controller.dart';
 import 'package:kaistable_website/screens/nav_bar/widgets/saved_Resturant.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
@@ -23,11 +24,11 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-
   // List of screens for the bottom navigation bar
   List<Widget> _buildScreens() {
     return [
       const HomeScreenNew(),
+      SavrlyAIView(),
       DiscoverListsPage(fromHome: false),
       // RestaurantsPage(fromHome: false),
       VideosListView(fromHome: false),
@@ -40,6 +41,7 @@ class _MainScreenState extends State<MainScreen> {
   List<Widget> _buildSplashScreen() {
     return [
       const HomeScreenNew(),
+      SavrlyAIView(),
       DiscoverListsPage(fromHome: false),
       // RestaurantsPage(fromHome: false),
       VideosListView(fromHome: false),
@@ -52,19 +54,34 @@ class _MainScreenState extends State<MainScreen> {
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [
       PersistentBottomNavBarItem(
-        icon: Image.asset('assets/images/icons8-home (2).png', width: 24, height: 24),
+        icon: Image.asset('assets/images/icons8-home (2).png',
+            width: 24, height: 24),
         title: "Home",
         activeColorPrimary: AppColors.primaryColor,
         inactiveColorPrimary: AppColors.blackColor,
       ),
       PersistentBottomNavBarItem(
-        icon: Image.asset('assets/images/icons8-car (2) (2).png', width: 34, height: 34),
+        icon: Image.asset('assets/images/chat_selected.png',
+            color: AppColors.primaryColor, width: 24, height: 24),
+        inactiveIcon: Image.asset('assets/images/chat_unselected.png',
+            color: AppColors.blackColor, width: 24, height: 24),
+        title: "Ask Kai",
+        activeColorPrimary: AppColors.primaryColor,
+      ),
+      PersistentBottomNavBarItem(
+        icon: Image.asset('assets/images/icons8-car (2) (2).png',
+            width: 34, height: 34),
         title: "Discover",
         activeColorPrimary: AppColors.primaryColor,
         inactiveColorPrimary: AppColors.blackColor,
       ),
       PersistentBottomNavBarItem(
-        icon: Image.asset('assets/images/streams_navbar.png', width: 36, height: 36, color: Colors.grey[300],),
+        icon: Image.asset(
+          'assets/images/streams_navbar.png',
+          width: 36,
+          height: 36,
+          color: Colors.grey[300],
+        ),
         title: "Streams",
         activeColorPrimary: AppColors.primaryColor,
         inactiveColorPrimary: AppColors.blackColor,
@@ -76,7 +93,8 @@ class _MainScreenState extends State<MainScreen> {
       //   inactiveColorPrimary: AppColors.blackColor,
       // ),
       PersistentBottomNavBarItem(
-        icon: Image.asset('assets/images/icons8-account (1).png', width: 34, height: 34),
+        icon: Image.asset('assets/images/icons8-account (1).png',
+            width: 34, height: 34),
         title: "Profile",
         activeColorPrimary: AppColors.primaryColor,
         inactiveColorPrimary: AppColors.blackColor,
@@ -88,19 +106,30 @@ class _MainScreenState extends State<MainScreen> {
   List<PersistentBottomNavBarItem> _splashNavBarItems() {
     return [
       PersistentBottomNavBarItem(
-        icon: Image.asset('assets/images/icons8-home (2).png', width: 24, height: 24),
+        icon: Image.asset('assets/images/icons8-home (2).png',
+            width: 24, height: 24),
         title: "Home",
         activeColorPrimary: AppColors.primaryColor,
         inactiveColorPrimary: AppColors.blackColor,
       ),
       PersistentBottomNavBarItem(
-        icon: Image.asset('assets/images/icons8-car (2) (2).png', width: 34, height: 34),
+        icon: Image.asset('assets/images/chat_selected.png',
+            color: AppColors.primaryColor, width: 24, height: 24),
+        inactiveIcon: Image.asset('assets/images/chat_unselect.png',
+            color: AppColors.blackColor, width: 24, height: 24),
+        title: "Ask Kai",
+        activeColorPrimary: AppColors.primaryColor,
+      ),
+      PersistentBottomNavBarItem(
+        icon: Image.asset('assets/images/icons8-car (2) (2).png',
+            width: 34, height: 34),
         title: "Discover",
         activeColorPrimary: AppColors.primaryColor,
         inactiveColorPrimary: AppColors.blackColor,
       ),
       PersistentBottomNavBarItem(
-        icon: Image.asset('assets/images/streams_navbar.png', width: 34, height: 34),
+        icon: Image.asset('assets/images/streams_navbar.png',
+            width: 34, height: 34),
         title: "Streams",
         activeColorPrimary: AppColors.primaryColor,
         inactiveColorPrimary: AppColors.blackColor,
@@ -112,7 +141,8 @@ class _MainScreenState extends State<MainScreen> {
       //   inactiveColorPrimary: AppColors.blackColor,
       // ),
       PersistentBottomNavBarItem(
-        icon: Image.asset('assets/images/icons8-account (1).png', width: 34, height: 34),
+        icon: Image.asset('assets/images/icons8-account (1).png',
+            width: 34, height: 34),
         title: "Profile",
         activeColorPrimary: AppColors.primaryColor,
         inactiveColorPrimary: AppColors.blackColor,
@@ -122,7 +152,6 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void initState() {
-
     navbarController = PersistentTabController(initialIndex: 0);
 
     super.initState();
@@ -141,8 +170,12 @@ class _MainScreenState extends State<MainScreen> {
           return PersistentTabView(
             context,
             controller: navbarController,
-            screens: controller.isSpotlightFinish.value ? _buildScreens() : _buildSplashScreen(),
-            items: controller.isSpotlightFinish.value ? _navBarsItems() : _splashNavBarItems(),
+            screens: controller.isSpotlightFinish.value
+                ? _buildScreens()
+                : _buildSplashScreen(),
+            items: controller.isSpotlightFinish.value
+                ? _navBarsItems()
+                : _splashNavBarItems(),
             handleAndroidBackButtonPress: true,
             hideNavigationBarWhenKeyboardAppears: true,
             popBehaviorOnSelectedNavBarItemPress: PopBehavior.all,
