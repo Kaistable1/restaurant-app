@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../constants/app_colors.dart';
 
@@ -43,10 +44,10 @@ class PreferencesSelectionWidget extends StatelessWidget {
                 child: Text(
                   name,
                   style: TextStyle(
-                    fontFamily: 'Nunito-Sans',
+                    fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                     color: isSelected ? Colors.white : AppColors.lightGrey,
                     fontWeight: FontWeight.w400,
-                    fontSize: 13,
+                    fontSize: 13*(5/4),
                   ),
                 ),
               ),

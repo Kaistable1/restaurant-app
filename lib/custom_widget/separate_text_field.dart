@@ -48,7 +48,7 @@ class CustomSeparateTextField extends StatelessWidget {
     this.borderRadius = 10,
     this.fontWeight = FontWeight.w400,
     this.suffixIcon,
-    this.fontSize = 16,
+    this.fontSize = 16 * (5/4),
     this.isSuffixIcon = false,
     this.labelColor,
     this.isPrefixIcon = false,
@@ -134,7 +134,7 @@ class CustomSeparateTextField extends StatelessWidget {
              TextStyle(
                 color: AppColors.hintText,
                 fontWeight: FontWeight.w400,
-                fontSize: 14,
+                fontSize: 16 * (5/4),
                 fontFamily: 'Nunito-Sans',
               ),
           suffixIcon: isSuffixIcon ? suffixIcon : null,

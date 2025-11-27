@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/screens/ask_kai/savrly_ai_view.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_location_controller.dart';
-import 'package:kaistable_website/screens/nav_bar/widgets/saved_Resturant.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
 import 'package:kaistable_website/screens/nav_bar/widgets/home_screen_new.dart';
@@ -17,7 +16,9 @@ import '../../main.dart';
 import '../../streams/views/streams_view.dart';
 
 class MainScreen extends StatefulWidget {
-  MainScreen({super.key});
+  final int? initialTabIndex; // 0 for Home, 1 for Ask Kai
+  
+  MainScreen({super.key, this.initialTabIndex});
 
   @override
   _MainScreenState createState() => _MainScreenState();
@@ -152,7 +153,9 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void initState() {
-    navbarController = PersistentTabController(initialIndex: 0);
+    navbarController = PersistentTabController(
+      initialIndex: widget.initialTabIndex ?? 0,
+    );
 
     super.initState();
     // Initialize controllers

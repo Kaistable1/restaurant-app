@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:kaistable_website/screens/auth_screens/signup/controller/signup_controller.dart';
 import 'package:kaistable_website/screens/general_preferences/screens_general/preference_1.dart';
 import 'package:kaistable_website/utils/loading.dart';
@@ -69,8 +70,8 @@ class VerifyPage extends StatelessWidget {
                 style: TextStyle(
                   color: AppColors.blackColor,
                   fontWeight: FontWeight.w700,
-                  fontFamily: 'Nunito-Sans',
-                  fontSize: 28,
+                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                  fontSize: 28 * (5/4),
                 ),
               ),
               SizedBox(
@@ -81,8 +82,8 @@ class VerifyPage extends StatelessWidget {
                 style: TextStyle(
                   color: AppColors.blackColor,
                   fontWeight: FontWeight.w300,
-                  fontFamily: 'Nunito-Sans',
-                  fontSize: 15,
+                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                  fontSize: 15*(5/4),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -106,9 +107,9 @@ class VerifyPage extends StatelessWidget {
                   closeKeyboardWhenCompleted: true,
                   defaultPinTheme: PinTheme(
                     textStyle: TextStyle(
-                      fontSize: 15,
+                      fontSize: 15*(5/4),
                       fontWeight: FontWeight.w600,
-                      fontFamily: 'Nunito-Sans',
+                      fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                       color: AppColors.darkGrey,
                     ),
                     width: 50,
@@ -124,7 +125,7 @@ class VerifyPage extends StatelessWidget {
                   focusedPinTheme: PinTheme(
                     textStyle: TextStyle(
                       fontWeight: FontWeight.w400,
-                      fontFamily: 'Nunito-Sans',
+                      fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                       color: Colors.red,
                     ),
                     width: 52,
@@ -147,9 +148,9 @@ class VerifyPage extends StatelessWidget {
                 child: CustomButton(
                   laBelText: 'Verify code',
                   width: 200,
-                  fontSize: 17,
+                  fontSize: 17*(5/4),
                   fontWeight: FontWeight.w600,
-                  fontFamily: 'Nunito-Sans',
+                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                   textColor: Colors.white,
                   ontapp: () async {
                     controller.onClick.value = !controller.onClick.value;
@@ -187,9 +188,9 @@ class VerifyPage extends StatelessWidget {
                 child: Text(
                   'Haven’t received the code yet?',
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 14 * (5/4),
                     fontWeight: FontWeight.w600,
-                    fontFamily: 'Nunito-Sans',
+                    fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                     color: AppColors.hintText,
                   ),
                 ),
@@ -214,8 +215,8 @@ class VerifyPage extends StatelessWidget {
                     'Resend!',
                     style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                        fontFamily: 'Nunito-Sans',
+                        fontSize: 16*(5/4),
+                        fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                         color: AppColors.primaryColor),
                   ),
                 ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:kaistable_website/custom_widget/separate_text_field.dart';
 
 import '../constants/app_colors.dart';
@@ -39,8 +40,8 @@ class TextAndFieldWidget extends StatelessWidget {
           style: TextStyle(
             color: AppColors.blackColor,
             fontWeight: FontWeight.w600,
-            fontFamily: 'Nunito-Sans',
-            fontSize: 16,
+            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+            fontSize: 16 * (5/4),
           ),
         ),
         SizedBox(

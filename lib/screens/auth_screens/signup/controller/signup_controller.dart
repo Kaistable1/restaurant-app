@@ -169,6 +169,12 @@ class SignupController extends GetxController {
     var data = await userModel.toMap();
     final onbordingController = Get.put(OnboardingController());
 
+    // Add uid and isAdmin fields to data for Firebase rules validation
+    // The rules require request.resource.data.uid == request.auth.uid
+    data['uid'] = auth.currentUser!.uid;
+    data['userID'] = auth.currentUser!.uid; // Also set userID for consistency
+    data['isAdmin'] = false; // Set isAdmin to false for new users (required by update rule)
+
     await FirebaseFirestore.instance
         .collection('users')
         .doc(auth.currentUser!.uid.toString())

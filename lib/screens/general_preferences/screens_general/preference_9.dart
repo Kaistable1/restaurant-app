@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
 import 'package:kaistable_website/screens/auth_screens/signup/controller/signup_controller.dart';
 import 'package:kaistable_website/screens/general_preferences/screens_general/preference_11.dart';
@@ -56,10 +57,10 @@ class Preference9 extends StatelessWidget {
         title: Text(
           'General Preferences',
           style: TextStyle(
-            fontSize: 17,
+            fontSize: 18*(5/4),
             color: AppColors.bottomSheetColor,
             fontWeight: FontWeight.w700,
-            fontFamily: 'Nunito-Sans',
+            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
           ),
           textAlign: TextAlign.center,
         ),
@@ -70,8 +71,8 @@ class Preference9 extends StatelessWidget {
               child: Text(
                 '9/10',
                 style: TextStyle(
-                  fontSize: 12,
-                  fontFamily: 'Nunito-Sans',
+                  fontSize: 12*(5/4),
+                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                   color: AppColors.lightGrey,
                   fontWeight: FontWeight.w400,
                 ),
@@ -92,10 +93,10 @@ class Preference9 extends StatelessWidget {
               Text(
                 'How often would you like to be notified about dining opportunities?',
                 style: TextStyle(
-                  fontFamily: 'Nunito-Sans',
+                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                   color: AppColors.lightGrey,
                   fontWeight: FontWeight.w600,
-                  fontSize: 16,
+                  fontSize: 16*(5/4),
                 ),
               ),
               SizedBox(
@@ -158,10 +159,10 @@ class Preference9 extends StatelessWidget {
                   laBelText: 'Next',
                   height: 43,
                   width: 190,
-                  fontFamily: 'Nunito-Sans',
+                  fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                   fontWeight: FontWeight.w600,
-                  fontSize: 17,
-                  textColor: Colors.white,
+                    fontSize: 17*(5/4),
+                    textColor: Colors.white,
                   ontapp: () {
                     if (controller.selectedPreferences9.length < 1) {
                       Get.snackbar(

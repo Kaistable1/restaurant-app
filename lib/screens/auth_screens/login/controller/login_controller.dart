@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:kaistable_website/main.dart';
+import 'package:kaistable_website/screens/entry_mode/entry_mode_screen.dart';
 import 'package:kaistable_website/screens/home_screen/my_home_screen.dart';
 import 'package:kaistable_website/screens/nav_bar/main_screen.dart';
 import 'package:kaistable_website/screens/onboarding_screen/onboarding_controller/onboarding_controller.dart';
@@ -59,13 +60,14 @@ class LoginController extends GetxController {
 
         // update user fcm token by "Modassir"
         FirebaseMessaging.instance.getToken().then((fcmToken) =>
-        FirebaseFirestore.instance.collection("users").doc(auth.currentUser!.uid).update({"fcmToken": fcmToken}));
+        FirebaseFirestore.instance.collection("users").doc(value.user!.uid /*auth.currentUser!.uid*/).update({"fcmToken": fcmToken}));
 
         // Close the loading dialog
         Get.back();
 
         if (currentUserDataModel != null) {
-          Get.offAll(() =>MainScreen());
+          Get.offAll(()=>EntryModeScreen());
+          // Get.offAll(() =>MainScreen());
           // Clear the email and password fields
           emailController.clear();
           passwordController.clear();
