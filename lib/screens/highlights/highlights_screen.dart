@@ -19,19 +19,23 @@ class _HighlightsScreenState extends State<HighlightsScreen> {
   final List<Map<String, String>> _screens = [
     {
       'title': 'Ask Kai Anything',
-      'subtitle': 'Get real-time answer and\nupdate dinner plans on the fly.',
+      'subtitle': 'Your personal AI for restaurants, vibes, trips, and last-minute plans.',
+      'image': 'assets/images/highlight1.png',
     },
     {
-      'title': 'Find Your Tribe',
-      'subtitle': 'Explore food shows, creator videos, and real stories from your favorite cities.',
+      'title': 'Community',
+      'subtitle': 'Explore food shows, creator picks, and the best restaurants in your favorite cities.',
+      'image': 'assets/images/highlight2.png',
     },
     {
-      'title': 'Watch The City\nCome Alive',
-      'subtitle': 'Build your trip and access\nbookings all in one place.',
+      'title': 'Savrli City',
+      'subtitle': 'Build your trip and access bookings all in one place.',
+      'image': 'assets/images/highlight3.png',
     },
     {
-      'title': 'See Whats Happening\nAround You',
-      'subtitle': 'Build your trip and access\nbookings all in one place.',
+      'title': 'See the City in Motion',
+      'subtitle': 'Explore short videos from creators, restaurants, and locals.',
+      'image': 'assets/images/highlight4.png',
     },
   ];
 
@@ -65,35 +69,42 @@ class _HighlightsScreenState extends State<HighlightsScreen> {
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        const Color(0xFFB0E0E6), // Light blue-green at top
-                        const Color(0xFF4ECCA3), // Darker green at bottom
-                      ],
-                    ),
+                    color: Colors.white,
                   ),
-                  child: Align(
-                    alignment: const Alignment(0, 0.5), // Center horizontally, 75% down vertically (halfway between center and bottom)
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: List.generate(
-                        _screens.length,
-                        (index) => Container(
-                          width: 8,
-                          height: 8,
-                          margin: const EdgeInsets.symmetric(horizontal: 4),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: index == _currentIndex
-                                ? Colors.white
-                                : Colors.grey.shade300,
+                  child: Stack(
+                    children: [
+                      // Image at the top
+                      Align(
+                        alignment: Alignment.topCenter,
+                        child: Image.asset(
+                          currentScreen['image']!,
+                          width: Get.width,
+                          fit: BoxFit.fitWidth,
+                        ),
+                      ),
+                      // Pagination dots at the bottom
+                      Align(
+                        alignment: const Alignment(0, 0.75),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: List.generate(
+                            _screens.length,
+                            (index) => Container(
+                              width: 10,
+                              height: 10,
+                              margin: const EdgeInsets.symmetric(horizontal: 4),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: index == _currentIndex
+                                    ? Colors.white
+                                    : Colors.grey.shade300,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
               ),
@@ -126,17 +137,18 @@ class _HighlightsScreenState extends State<HighlightsScreen> {
                             color: AppColors.blackColor,
                             fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                             height: 0.9, // Reduced line spacing for tighter line height
+
                           ),
                           textAlign: TextAlign.center,
                         ),
 
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 32),
 
                         // Subtitle
                         Text(
                           currentScreen['subtitle']!,
                           style: TextStyle(
-                            fontSize: 20 * (5/4),
+                            fontSize: 16 * (5/4),
                             fontWeight: FontWeight.w400,
                             color: AppColors.blackColor,
                             fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
@@ -156,7 +168,7 @@ class _HighlightsScreenState extends State<HighlightsScreen> {
             left: 0,
             right: 0,
             child: Container(
-              padding: const EdgeInsets.only(left: 24, right: 24, top: 28, bottom: 40),
+              padding: const EdgeInsets.only(left: 24, right: 24, top: 28, bottom: 48),
               decoration: const BoxDecoration(
                 color: Colors.white,
               ),

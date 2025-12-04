@@ -44,6 +44,9 @@ class _HomeScreenNewState extends State<HomeScreenNew>
   final RxBool showDistanceOptions = false.obs;
   final RxMap<String, bool> showFilterDropdowns = <String, bool>{}.obs;
   final RxBool isLoading = true.obs;
+  
+  // GlobalKeys for filter buttons to get their positions
+  final Map<String, GlobalKey> filterButtonKeys = {};
 
   // Cache for the restaurant list to prevent reloading
   final RxList<RestaurantModel> cachedRestaurants = <RestaurantModel>[].obs;
@@ -359,7 +362,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
 
   Widget buildRestaurantCard(RestaurantModel restaurant) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final cardWidth = (screenWidth * 0.5) - 32; // .clamp(120.0, 160.0);
+    final cardWidth = (screenWidth * 0.5) - 20; // .clamp(120.0, 160.0);
     final imageHeight = (cardWidth * (117/175)); // .clamp(66.0, 88.0);
 
     return GestureDetector(
@@ -581,7 +584,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
 
   Widget buildStreamCard(VideoModel video, int index) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final cardWidth = (screenWidth * 0.5) - 32;
+    final cardWidth = (screenWidth * 0.5) - 20;
     final videoHeight = (cardWidth * (196/175));
 
     if (homeLocationCtrl.thumbnailPaths[index] == null &&
@@ -602,7 +605,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
       },
       child: Container(
         width: cardWidth,
-        height: 264,
+        height: 277,
         margin: const EdgeInsets.only(right: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1217,19 +1220,22 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                   borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                   boxShadow: [BoxShadow(blurRadius: 10, color: Colors.black12)],
                 ),
-                child: ClipRRect(
-                  clipBehavior: Clip.hardEdge,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                  child: Obx(
-                    () {
-                      if (homeLocationCtrl.isFetchingInitialData.value) {
-                        return _buildShimmer();
-                      }
-                      return ListView(
-                        controller: scrollCtrl,
-                        physics: const ClampingScrollPhysics(),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        children: [
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    ClipRRect(
+                      clipBehavior: Clip.hardEdge,
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                      child: Obx(
+                        () {
+                          if (homeLocationCtrl.isFetchingInitialData.value) {
+                            return _buildShimmer();
+                          }
+                          return ListView(
+                            controller: scrollCtrl,
+                            physics: const ClampingScrollPhysics(),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            children: [
                           Center(
                             child: Container(
                               width: 65,
@@ -1241,6 +1247,97 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                               ),
                             ),
                           ),
+                          // Filters section
+                          Obx(
+                            () {
+                              if (filterCtrl.filterOptions.isEmpty) {
+                                return const SizedBox.shrink();
+                              }
+                              // Initialize GlobalKeys for filter buttons
+                              for (var category in filterCtrl.filterOptions.keys) {
+                                filterButtonKeys.putIfAbsent(category, () => GlobalKey());
+                              }
+                              
+                              return SizedBox(
+                                height: 56, // Fixed height - dropdown will overlay
+                                child: ListView(
+                                  scrollDirection: Axis.horizontal,
+                                  clipBehavior: Clip.none, // Allow dropdowns to overflow
+                                  padding: const EdgeInsets.only(
+                                      left: 16, right: 8, top: 4, bottom: 8),
+                                  children: filterCtrl.filterOptions.keys.map((category) {
+                                    return GestureDetector(
+                                      key: filterButtonKeys[category],
+                                      onTap: () {
+                                        showFilterDropdowns[category] =
+                                            !showFilterDropdowns[category]!;
+                                        showFilterDropdowns.forEach((key, value) {
+                                          if (key != category) {
+                                            showFilterDropdowns[key] = false;
+                                          }
+                                        });
+                                        showFilterDropdowns.refresh();
+                                      },
+                                      child: Obx(
+                                        () => Container(
+                                          height: 44,
+                                          margin: const EdgeInsets.only(right: 8),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16),
+                                          decoration: BoxDecoration(
+                                            // No border - blends with background
+                                            borderRadius: BorderRadius.circular(8),
+                                            color: filterCtrl
+                                                        .selectedFilters[category]
+                                                        ?.isNotEmpty ??
+                                                    false
+                                                ? AppColors.primaryColor
+                                                : Colors.transparent,
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                category +
+                                                    (filterCtrl
+                                                                .selectedFilters[
+                                                                    category]
+                                                                ?.isNotEmpty ??
+                                                            false
+                                                        ? ' (${filterCtrl.selectedFilters[category]?.length ?? 0})'
+                                                        : ''),
+                                                style: TextStyle(
+                                                  color: filterCtrl
+                                                              .selectedFilters[
+                                                                  category]
+                                                              ?.isNotEmpty ??
+                                                          false
+                                                      ? Colors.white
+                                                      : Colors.black,
+                                                  fontSize: 19,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Icon(Icons.arrow_drop_down,
+                                                  size: 20, 
+                                                  color: filterCtrl
+                                                              .selectedFilters[
+                                                                  category]
+                                                              ?.isNotEmpty ??
+                                                          false
+                                                      ? Colors.white
+                                                      : Colors.black),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 8),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: Text(
@@ -1272,16 +1369,17 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                     ),
                             );
                           }),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 24),
                           Align(
                             alignment: Alignment.center,
                             child: CustomButton(
                               width: 84,
                               height: 36,
+                              radius: BorderRadius.circular(99),
                               laBelText: 'See All',
                               textColor: Colors.white,
-                              fontSize: 17,
-                              fontWeight: FontWeight.w700,
+                              fontSize: 14 * (5/4),
+                              fontWeight: FontWeight.w500,
                               fontFamily:
                                   GoogleFonts.plusJakartaSans().fontFamily,
                               // isPrefixIcon: true,
@@ -1309,7 +1407,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                           const SizedBox(height: 8),
                           Obx(() {
                             return SizedBox(
-                              height: 264,
+                              height: 277,
                               child: homeLocationCtrl.filteredVideos.isEmpty
                                   ? const Center(
                                       child: Text('No videos available'))
@@ -1329,16 +1427,17 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                     ),
                             );
                           }),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 24),
                           Align(
                             alignment: Alignment.center,
                             child: CustomButton(
                               width: 84,
                               height: 36,
+                              radius: BorderRadius.circular(99),
                               laBelText: 'See All',
                               textColor: Colors.white,
-                              fontSize: 17,
-                              fontWeight: FontWeight.w700,
+                              fontSize: 14 * (5/4),
+                              fontWeight: FontWeight.w500,
                               fontFamily:
                                   GoogleFonts.plusJakartaSans().fontFamily,
                               // isPrefixIcon: true,
@@ -1349,7 +1448,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                               },
                             ),
                           ),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 8),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: Text(
@@ -1421,6 +1520,174 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                       );
                     },
                   ),
+                    ),
+                    // Dropdown overlays - positioned using GlobalKeys to appear above all content
+                    Builder(
+                      builder: (stackContext) {
+                        return Obx(() {
+                          if (filterCtrl.filterOptions.isEmpty) {
+                            return const SizedBox.shrink();
+                          }
+                          return Stack(
+                            clipBehavior: Clip.none,
+                            children: filterCtrl.filterOptions.keys.map((category) {
+                              return Obx(() {
+                                if (showFilterDropdowns[category] ?? false) {
+                                  final key = filterButtonKeys[category];
+                                  if (key?.currentContext == null) {
+                                    return const SizedBox.shrink();
+                                  }
+                                  
+                                  final RenderBox? renderBox = key?.currentContext?.findRenderObject() as RenderBox?;
+                                  if (renderBox == null) {
+                                    return const SizedBox.shrink();
+                                  }
+                                  
+                                  final position = renderBox.localToGlobal(Offset.zero);
+                                  final size = renderBox.size;
+                                  
+                                  final optionCount = filterCtrl
+                                          .filterOptions[category]?.length ??
+                                      0;
+                                  final dropdownHeight = optionCount * 40.0;
+                                  
+                                  // Get the position relative to the Stack
+                                  final stackRenderBox = stackContext.findRenderObject() as RenderBox?;
+                                  if (stackRenderBox == null) {
+                                    return const SizedBox.shrink();
+                                  }
+                                  
+                                  final stackPosition = stackRenderBox.localToGlobal(Offset.zero);
+                                  final relativeLeft = position.dx - stackPosition.dx;
+                                  final relativeTop = position.dy - stackPosition.dy;
+                              
+                              return Positioned(
+                                top: relativeTop + size.height + 8, // Below the filter button
+                                left: relativeLeft, // Aligned with left edge of button
+                                child: Material(
+                                  elevation: 8,
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Container(
+                                    width: 150,
+                                    height: dropdownHeight < 190
+                                        ? dropdownHeight
+                                        : 190,
+                                    padding: const EdgeInsets.fromLTRB(
+                                        8, 8, 8, 16),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius:
+                                          BorderRadius.circular(12),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.1),
+                                          blurRadius: 10,
+                                          spreadRadius: 2,
+                                        ),
+                                      ],
+                                    ),
+                                    child: SingleChildScrollView(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: (filterCtrl.filterOptions[
+                                                    category] ??
+                                                [])
+                                            .map((option) => InkWell(
+                                                  onTap: () {
+                                                    final selectedList =
+                                                        filterCtrl.selectedFilters[
+                                                                category] ??
+                                                            <String>[].obs;
+                                                    if (selectedList
+                                                        .contains(option)) {
+                                                      selectedList
+                                                          .remove(option);
+                                                    } else {
+                                                      selectedList
+                                                          .add(option);
+                                                    }
+                                                    filterCtrl.selectedFilters[
+                                                            category] =
+                                                        selectedList;
+                                                    filterCtrl
+                                                        .selectedFilters
+                                                        .refresh();
+                                                    showFilterDropdowns[
+                                                        category] = false;
+                                                    showFilterDropdowns
+                                                        .refresh();
+                                                    isLoading.value = true;
+                                                    Future.delayed(
+                                                        const Duration(
+                                                            milliseconds:
+                                                                500), () {
+                                                      homeLocationCtrl
+                                                          .applySearchAndFilters();
+                                                      isLoading.value =
+                                                          false;
+                                                    });
+                                                  },
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets
+                                                            .symmetric(
+                                                            vertical: 8),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Row(
+                                                          children: [
+                                                            Text(
+                                                              emojiMap[
+                                                                      option] ??
+                                                                  '',
+                                                              style: const TextStyle(
+                                                                  fontSize:
+                                                                      17),
+                                                            ),
+                                                            const SizedBox(
+                                                                width: 4),
+                                                            Text(
+                                                              option,
+                                                              style: const TextStyle(
+                                                                  fontSize:
+                                                                      17),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        if (filterCtrl
+                                                                .selectedFilters[
+                                                                    category]
+                                                                ?.contains(
+                                                                    option) ??
+                                                            false)
+                                                          const Icon(
+                                                              Icons.check,
+                                                              color: Colors
+                                                                  .green,
+                                                              size: 16),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ))
+                                            .toList(),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+                            return const SizedBox.shrink();
+                          });
+                        }).toList(),
+                          );
+                        });
+                      },
+                    ),
+                  ],
                 ),
               );
             },
@@ -1601,216 +1868,217 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
-                Obx(
-                  () => SizedBox(
-                    height:
-                        showFilterDropdowns.values.contains(true) ? 262 : 56,
-                    child: Obx(() {
-                      if (filterCtrl.filterOptions.isEmpty) {
-                        return const SizedBox.shrink();
-                      }
-                      return ListView(
-                        scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.only(
-                            left: 16, right: 8, top: 4, bottom: 8),
-                        children: filterCtrl.filterOptions.keys.map((category) {
-                          return Stack(
-                            clipBehavior: Clip.none,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  showFilterDropdowns[category] =
-                                      !showFilterDropdowns[category]!;
-                                  showFilterDropdowns.forEach((key, value) {
-                                    if (key != category) {
-                                      showFilterDropdowns[key] = false;
-                                    }
-                                  });
-                                  showFilterDropdowns.refresh();
-                                },
-                                child: Obx(
-                                  () => Container(
-                                    height: 44,
-                                    margin: const EdgeInsets.only(right: 8),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16),
-                                    decoration: BoxDecoration(
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.2),
-                                          blurRadius: 4,
-                                          spreadRadius: 0,
-                                          offset: Offset(0, 4),
-                                        ),
-                                      ],
-                                      border: Border.all(
-                                          color: Colors.grey.shade300),
-                                      color: filterCtrl
-                                                  .selectedFilters[category]
-                                                  ?.isNotEmpty ??
-                                              false
-                                          ? AppColors.primaryColor
-                                          : Colors.white,
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          category +
-                                              (filterCtrl
-                                                          .selectedFilters[
-                                                              category]
-                                                          ?.isNotEmpty ??
-                                                      false
-                                                  ? ' (${filterCtrl.selectedFilters[category]?.length ?? 0})'
-                                                  : ''),
-                                          style: TextStyle(
-                                            color: filterCtrl
-                                                        .selectedFilters[
-                                                            category]
-                                                        ?.isNotEmpty ??
-                                                    false
-                                                ? Colors.white
-                                                : Colors.black,
-                                            fontSize: 19,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 4),
-                                        const Icon(Icons.arrow_drop_down,
-                                            size: 20, color: Colors.black),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Obx(() {
-                                if (showFilterDropdowns[category] ?? false) {
-                                  final optionCount = filterCtrl
-                                          .filterOptions[category]?.length ??
-                                      0;
-                                  final dropdownHeight = optionCount * 40.0;
-                                  return Positioned(
-                                    top: 58,
-                                    left: 0,
-                                    child: Material(
-                                      elevation: 5,
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: Container(
-                                        width: 150,
-                                        height: dropdownHeight < 190
-                                            ? dropdownHeight
-                                            : 190,
-                                        padding: const EdgeInsets.fromLTRB(
-                                            8, 8, 8, 16),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                        ),
-                                        child: SingleChildScrollView(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: (filterCtrl.filterOptions[
-                                                        category] ??
-                                                    [])
-                                                .map((option) => InkWell(
-                                                      onTap: () {
-                                                        final selectedList =
-                                                            filterCtrl.selectedFilters[
-                                                                    category] ??
-                                                                <String>[].obs;
-                                                        if (selectedList
-                                                            .contains(option)) {
-                                                          selectedList
-                                                              .remove(option);
-                                                        } else {
-                                                          selectedList
-                                                              .add(option);
-                                                        }
-                                                        filterCtrl.selectedFilters[
-                                                                category] =
-                                                            selectedList;
-                                                        filterCtrl
-                                                            .selectedFilters
-                                                            .refresh();
-                                                        showFilterDropdowns[
-                                                            category] = false;
-                                                        showFilterDropdowns
-                                                            .refresh();
-                                                        isLoading.value = true;
-                                                        Future.delayed(
-                                                            const Duration(
-                                                                milliseconds:
-                                                                    500), () {
-                                                          homeLocationCtrl
-                                                              .applySearchAndFilters();
-                                                          isLoading.value =
-                                                              false;
-                                                        });
-                                                      },
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                vertical: 8),
-                                                        child: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                          children: [
-                                                            Row(
-                                                              children: [
-                                                                Text(
-                                                                  emojiMap[
-                                                                          option] ??
-                                                                      '',
-                                                                  style: const TextStyle(
-                                                                      fontSize:
-                                                                          17),
-                                                                ),
-                                                                const SizedBox(
-                                                                    width: 4),
-                                                                Text(
-                                                                  option,
-                                                                  style: const TextStyle(
-                                                                      fontSize:
-                                                                          17),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            if (filterCtrl
-                                                                    .selectedFilters[
-                                                                        category]
-                                                                    ?.contains(
-                                                                        option) ??
-                                                                false)
-                                                              const Icon(
-                                                                  Icons.check,
-                                                                  color: Colors
-                                                                      .green,
-                                                                  size: 16),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ))
-                                                .toList(),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                }
-                                return const SizedBox.shrink();
-                              }),
-                            ],
-                          );
-                        }).toList(),
-                      );
-                    }),
-                  ),
-                ),
+                // Filters below search bar - commented out (filters are now in bottom sheet)
+                // const SizedBox(height: 8),
+                // Obx(
+                //   () => SizedBox(
+                //     height:
+                //         showFilterDropdowns.values.contains(true) ? 262 : 56,
+                //     child: Obx(() {
+                //       if (filterCtrl.filterOptions.isEmpty) {
+                //         return const SizedBox.shrink();
+                //       }
+                //       return ListView(
+                //         scrollDirection: Axis.horizontal,
+                //         padding: const EdgeInsets.only(
+                //             left: 16, right: 8, top: 4, bottom: 8),
+                //         children: filterCtrl.filterOptions.keys.map((category) {
+                //           return Stack(
+                //             clipBehavior: Clip.none,
+                //             children: [
+                //               GestureDetector(
+                //                 onTap: () {
+                //                   showFilterDropdowns[category] =
+                //                       !showFilterDropdowns[category]!;
+                //                   showFilterDropdowns.forEach((key, value) {
+                //                     if (key != category) {
+                //                       showFilterDropdowns[key] = false;
+                //                     }
+                //                   });
+                //                   showFilterDropdowns.refresh();
+                //                 },
+                //                 child: Obx(
+                //                   () => Container(
+                //                     height: 44,
+                //                     margin: const EdgeInsets.only(right: 8),
+                //                     padding: const EdgeInsets.symmetric(
+                //                         horizontal: 16),
+                //                     decoration: BoxDecoration(
+                //                       boxShadow: [
+                //                         BoxShadow(
+                //                           color: Colors.black.withOpacity(0.2),
+                //                           blurRadius: 4,
+                //                           spreadRadius: 0,
+                //                           offset: Offset(0, 4),
+                //                         ),
+                //                       ],
+                //                       border: Border.all(
+                //                           color: Colors.grey.shade300),
+                //                       color: filterCtrl
+                //                                   .selectedFilters[category]
+                //                                   ?.isNotEmpty ??
+                //                               false
+                //                           ? AppColors.primaryColor
+                //                           : Colors.white,
+                //                     ),
+                //                     child: Row(
+                //                       mainAxisSize: MainAxisSize.min,
+                //                       children: [
+                //                         Text(
+                //                           category +
+                //                               (filterCtrl
+                //                                           .selectedFilters[
+                //                                               category]
+                //                                           ?.isNotEmpty ??
+                //                                       false
+                //                                   ? ' (${filterCtrl.selectedFilters[category]?.length ?? 0})'
+                //                                   : ''),
+                //                           style: TextStyle(
+                //                             color: filterCtrl
+                //                                         .selectedFilters[
+                //                                             category]
+                //                                         ?.isNotEmpty ??
+                //                                     false
+                //                                 ? Colors.white
+                //                                 : Colors.black,
+                //                             fontSize: 19,
+                //                           ),
+                //                         ),
+                //                         const SizedBox(width: 4),
+                //                         const Icon(Icons.arrow_drop_down,
+                //                             size: 20, color: Colors.black),
+                //                       ],
+                //                     ),
+                //                   ),
+                //                 ),
+                //               ),
+                //               Obx(() {
+                //                 if (showFilterDropdowns[category] ?? false) {
+                //                   final optionCount = filterCtrl
+                //                           .filterOptions[category]?.length ??
+                //                       0;
+                //                   final dropdownHeight = optionCount * 40.0;
+                //                   return Positioned(
+                //                     top: 58,
+                //                     left: 0,
+                //                     child: Material(
+                //                       elevation: 5,
+                //                       borderRadius: BorderRadius.circular(12),
+                //                       child: Container(
+                //                         width: 150,
+                //                         height: dropdownHeight < 190
+                //                             ? dropdownHeight
+                //                             : 190,
+                //                         padding: const EdgeInsets.fromLTRB(
+                //                             8, 8, 8, 16),
+                //                         decoration: BoxDecoration(
+                //                           color: Colors.white,
+                //                           borderRadius:
+                //                               BorderRadius.circular(12),
+                //                         ),
+                //                         child: SingleChildScrollView(
+                //                           child: Column(
+                //                             crossAxisAlignment:
+                //                                 CrossAxisAlignment.start,
+                //                             children: (filterCtrl.filterOptions[
+                //                                         category] ??
+                //                                     [])
+                //                                 .map((option) => InkWell(
+                //                                       onTap: () {
+                //                                         final selectedList =
+                //                                             filterCtrl.selectedFilters[
+                //                                                     category] ??
+                //                                                 <String>[].obs;
+                //                                         if (selectedList
+                //                                             .contains(option)) {
+                //                                           selectedList
+                //                                               .remove(option);
+                //                                         } else {
+                //                                           selectedList
+                //                                               .add(option);
+                //                                         }
+                //                                         filterCtrl.selectedFilters[
+                //                                                 category] =
+                //                                             selectedList;
+                //                                         filterCtrl
+                //                                             .selectedFilters
+                //                                             .refresh();
+                //                                         showFilterDropdowns[
+                //                                             category] = false;
+                //                                         showFilterDropdowns
+                //                                             .refresh();
+                //                                         isLoading.value = true;
+                //                                         Future.delayed(
+                //                                             const Duration(
+                //                                                 milliseconds:
+                //                                                     500), () {
+                //                                           homeLocationCtrl
+                //                                               .applySearchAndFilters();
+                //                                           isLoading.value =
+                //                                               false;
+                //                                         });
+                //                                       },
+                //                                       child: Padding(
+                //                                         padding:
+                //                                             const EdgeInsets
+                //                                                 .symmetric(
+                //                                                 vertical: 8),
+                //                                         child: Row(
+                //                                           mainAxisAlignment:
+                //                                               MainAxisAlignment
+                //                                                   .spaceBetween,
+                //                                           children: [
+                //                                             Row(
+                //                                               children: [
+                //                                                 Text(
+                //                                                   emojiMap[
+                //                                                           option] ??
+                //                                                       '',
+                //                                                   style: const TextStyle(
+                //                                                       fontSize:
+                //                                                           17),
+                //                                                 ),
+                //                                                 const SizedBox(
+                //                                                     width: 4),
+                //                                                 Text(
+                //                                                   option,
+                //                                                   style: const TextStyle(
+                //                                                       fontSize:
+                //                                                           17),
+                //                                                 ),
+                //                                               ],
+                //                                             ),
+                //                                             if (filterCtrl
+                //                                                     .selectedFilters[
+                //                                                         category]
+                //                                                     ?.contains(
+                //                                                         option) ??
+                //                                                 false)
+                //                                               const Icon(
+                //                                                   Icons.check,
+                //                                                   color: Colors
+                //                                                       .green,
+                //                                                   size: 16),
+                //                                           ],
+                //                                         ),
+                //                                       ),
+                //                                     ))
+                //                                 .toList(),
+                //                           ),
+                //                         ),
+                //                       ),
+                //                     ),
+                //                   );
+                //                 }
+                //                 return const SizedBox.shrink();
+                //               }),
+                //             ],
+                //           );
+                //         }).toList(),
+                //       );
+                //     }),
+                //   ),
+                // ),
               ],
             ),
           ),
