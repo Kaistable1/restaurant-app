@@ -7,7 +7,7 @@ import '../constants/app_colors.dart';
 import '../models/restaurant_model.dart';
 import '../screens/nav_bar/widgets/custom_button.dart';
 
-void showCustomDialog(BuildContext context,
+void showCustomDialog(BuildContext context1,
     {required RestaurantModel resaturant_model}) {
   TextEditingController nameController = TextEditingController();
   TextEditingController resNameController = TextEditingController();
@@ -16,7 +16,7 @@ void showCustomDialog(BuildContext context,
   TextEditingController contactController = TextEditingController();
 
   showDialog(
-    context: context,
+    context: context1,
     builder: (BuildContext context) {
       return Dialog(
         backgroundColor: Colors.white,
@@ -120,7 +120,9 @@ void showCustomDialog(BuildContext context,
                           emailController.text.isEmpty ||
                           messageController.text.isEmpty ||
                           contactController.text.isEmpty) {
-                        Get.snackbar('SAVRLY', 'Please fill all fields');
+                        showScaffoldMessenger(
+                            context, 'SAVRLY', 'Please fill all fields',
+                            isSuccess: false);
                       } else {
                         try {
                           Navigator.pop(context);
@@ -139,26 +141,22 @@ void showCustomDialog(BuildContext context,
                             'createdAt': FieldValue.serverTimestamp(),
                             'status': 'Pending',
                             'password': '',
-                            'priceRange': '', // Hardcoded for now; you can add a field for this
+                            'priceRange': '',
+                            // Hardcoded for now; you can add a field for this
                             'email': emailController.text.trim(),
                             'restaurantData': resaturant_model.toMap()
                           };
 
                           // Upload to Firestore
                           await docRef.set(data);
-
-                          // Show success message
-                          Get.snackbar(
-                            'SAVRLY',
-                            'Your claim submitted successfully!',
-                            backgroundColor: Colors.green,
-                            colorText: Colors.white,
-                            maxWidth: 400,
-                          );
+                          showScaffoldMessenger(context1, 'SAVRLY',
+                              'Your claim submitted successfully!',
+                              isSuccess: true);
                         } catch (e) {
-                          print('Error submitting claim: $e');
-                          Get.snackbar('Error',
-                              'Something went wrong. Please try again later.');
+                          print('Error submitting claim: ${e.toString()}');
+                          showScaffoldMessenger(context1, 'Error',
+                              'Something went wrong. Please try again later.',
+                              isSuccess: false);
                         }
                       }
                     },
@@ -181,6 +179,35 @@ TextStyle _textStyle() {
     fontWeight: FontWeight.w400,
     color: AppColors.textColor,
   );
+}
+
+showScaffoldMessenger(BuildContext context, String title, String description,
+    {bool? isSuccess = false}) {
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      backgroundColor: isSuccess! ? Colors.green : Colors.red,
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 14,
+                fontFamily: 'Nunito-Bold'),
+          ),
+          SizedBox(
+            height: 8,
+          ),
+          Text(
+            description,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+              fontFamily: 'Nunito-Regular',
+            ),
+          ),
+        ],
+      )));
 }
 
 // Common InputDecoration for TextFields

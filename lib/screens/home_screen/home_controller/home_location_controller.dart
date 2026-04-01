@@ -59,6 +59,7 @@ class HomeLocationController extends GetxController {
   bool _isGeneratingThumbnail = false;
   final RxMap<String, RestaurantModel?> restaurantCache =
       <String, RestaurantModel?>{}.obs;
+
   ////
 
   @override
@@ -113,7 +114,8 @@ class HomeLocationController extends GetxController {
         video: videoUrl,
         thumbnailPath: (await getTemporaryDirectory()).path,
         imageFormat: ImageFormat.PNG,
-        maxHeight: 200, // Reduced for performance
+        maxHeight: 200,
+        // Reduced for performance
         quality: 50, // Reduced for performance
       );
       if (thumbnailPath != null) {
@@ -125,6 +127,7 @@ class HomeLocationController extends GetxController {
       _isGeneratingThumbnail = false;
     }
   }
+
   ////
 
   // Method to save position to shared prefs
@@ -286,73 +289,76 @@ class HomeLocationController extends GetxController {
       var restaurants = snapshot.docs
           .map((doc) => RestaurantModel.fromDocumentSnapshot(doc))
           .toList();
-
-      // Apply AND logic across categories
-      for (var category in filterCtrl.selectedFilters.keys) {
-        final selectedOptions = filterCtrl.selectedFilters[category];
-        if (selectedOptions != null && selectedOptions.isNotEmpty) {
-          restaurants = restaurants.where((restaurant) {
-            if (category == 'Dietary') {
-              return selectedOptions
-                  .every((option) => restaurant.dietaryList.contains(option));
-            } else if (category == 'Vibes') {
-              return selectedOptions
-                  .every((option) => restaurant.vibesList.contains(option));
-              // } else if (category == 'Time') {
-              //   final hours = operatingHoursCache[restaurant.docID];
-              //   if (hours == null || hours.isEmpty) {
-              //     getOperatingHours(restaurant.docID, triggerFilterUpdate: true);
-              //     return false;
-              //   }
-              //   return hours.values.any((dayHours) =>
-              //       selectedOptions.every((timeOfDay) => !(dayHours[timeOfDay]?['isClosed'] ?? true))
-              //   );
-            } else if (category == 'Cuisines') {
-              final menuList = restaurant.menuList;
-              if (menuList.isEmpty) {
-                return false;
+      if (filterCtrl.selectedFilters.isNotEmpty ||
+          selectedDistance.value != 0) {
+        // Apply AND logic across categories
+        for (var category in filterCtrl.selectedFilters.keys) {
+          final selectedOptions = filterCtrl.selectedFilters[category];
+          if (selectedOptions != null && selectedOptions.isNotEmpty) {
+            restaurants = restaurants.where((restaurant) {
+              if (category == 'Dietary') {
+                return selectedOptions
+                    .every((option) => restaurant.dietaryList.contains(option));
+              } else if (category == 'Vibes') {
+                return selectedOptions
+                    .every((option) => restaurant.vibesList.contains(option));
+                // } else if (category == 'Time') {
+                //   final hours = operatingHoursCache[restaurant.docID];
+                //   if (hours == null || hours.isEmpty) {
+                //     getOperatingHours(restaurant.docID, triggerFilterUpdate: true);
+                //     return false;
+                //   }
+                //   return hours.values.any((dayHours) =>
+                //       selectedOptions.every((timeOfDay) => !(dayHours[timeOfDay]?['isClosed'] ?? true))
+                //   );
+              } else if (category == 'Cuisines') {
+                final menuList = restaurant.menuList;
+                if (menuList.isEmpty) {
+                  return false;
+                }
+                return selectedOptions.every((cuisine) =>
+                    menuList.any((menu) => menu.cuisineType == cuisine));
+              } else if (category == 'Experience') {
+                final entertainmentList = restaurant.entertainmentScheduleList;
+                if (entertainmentList.isEmpty) {
+                  return false;
+                }
+                return selectedOptions.every((experience) => entertainmentList
+                    .any((event) => event.eventName == experience));
+              } else if (category == 'Entertainment') {
+                final entertainmentList = restaurant.entertainmentScheduleList;
+                if (entertainmentList.isEmpty) {
+                  return false;
+                }
+                return selectedOptions.every((entertainment) =>
+                    entertainmentList
+                        .any((event) => event.eventName == entertainment));
               }
-              return selectedOptions.every((cuisine) =>
-                  menuList.any((menu) => menu.cuisineType == cuisine));
-            } else if (category == 'Experience') {
-              final entertainmentList = restaurant.entertainmentScheduleList;
-              if (entertainmentList.isEmpty) {
-                return false;
-              }
-              return selectedOptions.every((experience) => entertainmentList
-                  .any((event) => event.eventName == experience));
-            } else if (category == 'Entertainment') {
-              final entertainmentList = restaurant.entertainmentScheduleList;
-              if (entertainmentList.isEmpty) {
-                return false;
-              }
-              return selectedOptions.every((entertainment) => entertainmentList
-                  .any((event) => event.eventName == entertainment));
-            }
-            return true;
-          }).toList();
+              return true;
+            }).toList();
+          }
         }
-      }
 
-      // Sort by distance if user position is available
-      if (userPosition.value != null) {
-        restaurants.sort((a, b) {
-          if (a.latitude == 0.0 && a.longitude == 0.0) return 1;
-          if (b.latitude == 0.0 && b.longitude == 0.0) return -1;
-          final distanceA = Geolocator.distanceBetween(
-            userPosition.value!.latitude,
-            userPosition.value!.longitude,
-            a.latitude,
-            a.longitude,
-          );
-          final distanceB = Geolocator.distanceBetween(
-            userPosition.value!.latitude,
-            userPosition.value!.longitude,
-            b.latitude,
-            b.longitude,
-          );
-          return distanceA.compareTo(distanceB);
-        });
+        // Sort by distance if user position is available
+        if (userPosition.value != null) {
+          restaurants.sort((a, b) {
+            if (a.latitude == 0.0 && a.longitude == 0.0) return 1;
+            if (b.latitude == 0.0 && b.longitude == 0.0) return -1;
+            final distanceA = Geolocator.distanceBetween(
+              userPosition.value!.latitude,
+              userPosition.value!.longitude,
+              a.latitude,
+              a.longitude,
+            );
+            final distanceB = Geolocator.distanceBetween(
+              userPosition.value!.latitude,
+              userPosition.value!.longitude,
+              b.latitude,
+              b.longitude,
+            );
+            return distanceA.compareTo(distanceB);
+          });
+        }
       }
 
       return restaurants;
@@ -874,6 +880,7 @@ class HomeLocationController extends GetxController {
   }
 
   late Future<Position?> positionFuture;
+
   Future<Position?> getCurrentLocation(BuildContext? context) async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
 

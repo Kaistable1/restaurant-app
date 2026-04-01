@@ -1,3 +1,41 @@
-# Project exclude paths
-/.dart_tool/
-/build/
+# Flutter/Dart
+.dart_tool/
+android/.dart_tool/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+build_output.log
+*.log
+*.tmp
+
+# Android
+# User requested to keep local.properties and key.properties
+# android/local.properties
+# android/key.properties
+*.apk
+*.aar
+*.jks
+*.keystore
+
+# iOS
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+ios/Pods/
+ios/Runner.xcworkspace/xcuserdata/
+ios/Runner.xcodeproj/project.xcworkspace/xcuserdata/
+ios/Runner.xcodeproj/xcuserdata/
+DerivedData/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Web
+build/web/

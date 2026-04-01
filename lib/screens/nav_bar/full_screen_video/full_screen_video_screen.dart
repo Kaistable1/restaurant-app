@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -38,13 +40,15 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
         .limit(1)
         .get();
 
-    if (widget.video.mediaType == 'video') {  // Only initialize for videos
-      _controller = VideoPlayerController.networkUrl(Uri.parse(widget.video.url!))
-        ..initialize().then((_) {
-          _controller!.play();
-          _controller!.setLooping(true);
-          setState(() {});
-        });
+    if (widget.video.mediaType == 'video') {
+      // Only initialize for videos
+      _controller =
+          VideoPlayerController.networkUrl(Uri.parse(widget.video.url!))
+            ..initialize().then((_) {
+              _controller!.play();
+              _controller!.setLooping(true);
+              setState(() {});
+            });
     }
 
     // Explanation: For authenticated users, listen to Firestore stream; for unauthenticated, check SharedPreferences.
@@ -54,18 +58,18 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
           .collection('users')
           .doc(userId)
           .collection('saved_videos')
-          .doc(widget.video.videoId) // Assumes videoId property; adjust if different
+          .doc(widget
+              .video.videoId) // Assumes videoId property; adjust if different
           .snapshots()
           .listen(
-            (snapshot) async {
+        (snapshot) async {
           _isBookmarked.value = snapshot.exists;
           final prefs = await SharedPreferences.getInstance();
           final savedVideos = prefs.getStringList('saved_videos') ?? [];
-          if(!savedVideos.contains(widget.video.videoId)){
+          if (!savedVideos.contains(widget.video.videoId)) {
             savedVideos.add(widget.video.videoId!);
             prefs.setStringList('saved_videos', savedVideos) ?? [];
           }
-
         },
         onError: (e) {
           print('Error streaming bookmark status: $e');
@@ -80,7 +84,7 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
 
   @override
   void dispose() {
-    if(_controller != null){
+    if (_controller != null) {
       _controller?.dispose();
     }
     super.dispose();
@@ -102,7 +106,8 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
   // Explanation: Adds or removes the video from favorites in Firestore or SharedPreferences.
   Future<void> _toggleBookmark() async {
     try {
-      final videoId = widget.video.videoId; // Assumes videoId property; adjust if different
+      final videoId =
+          widget.video.videoId; // Assumes videoId property; adjust if different
       if (_isBookmarked.value) {
         // Remove from favorites
         if (auth.currentUser != null) {
@@ -115,13 +120,12 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
               .delete();
           print('Removed video $videoId from Firestore saved_videos');
         }
-          final prefs = await SharedPreferences.getInstance();
-          final savedVideos = prefs.getStringList('saved_videos') ?? [];
-          savedVideos.remove(videoId);
-          await prefs.setStringList('saved_videos', savedVideos);
-          print('Removed video $videoId from SharedPreferences');
-          _isBookmarked.value = false; // Update RxBool for unauthenticated users
-
+        final prefs = await SharedPreferences.getInstance();
+        final savedVideos = prefs.getStringList('saved_videos') ?? [];
+        savedVideos.remove(videoId);
+        await prefs.setStringList('saved_videos', savedVideos);
+        print('Removed video $videoId from SharedPreferences');
+        _isBookmarked.value = false; // Update RxBool for unauthenticated users
       } else {
         // Add to favorites
         if (auth.currentUser != null) {
@@ -134,15 +138,14 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
               .set({'videoID': videoId});
           print('Added video $videoId to Firestore saved_videos');
         }
-          final prefs = await SharedPreferences.getInstance();
-          final savedVideos = prefs.getStringList('saved_videos') ?? [];
-          if (!savedVideos.contains(videoId)) {
-            savedVideos.add(videoId!);
-            await prefs.setStringList('saved_videos', savedVideos);
-            print('Added video $videoId to SharedPreferences');
-            _isBookmarked.value = true; // Update RxBool for unauthenticated users
-          }
-
+        final prefs = await SharedPreferences.getInstance();
+        final savedVideos = prefs.getStringList('saved_videos') ?? [];
+        if (!savedVideos.contains(videoId)) {
+          savedVideos.add(videoId!);
+          await prefs.setStringList('saved_videos', savedVideos);
+          print('Added video $videoId to SharedPreferences');
+          _isBookmarked.value = true; // Update RxBool for unauthenticated users
+        }
       }
     } catch (e) {
       print('Error toggling bookmark: $e');
@@ -152,7 +155,7 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
   }
 
   void _togglePlayPause() {
-    if (widget.video.mediaType != 'video') return;  // Skip for images
+    if (widget.video.mediaType != 'video') return; // Skip for images
     setState(() {
       _isPlaying = !_isPlaying;
       if (_isPlaying) {
@@ -165,6 +168,7 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    log("video url -->${widget.video.url}");
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -172,7 +176,10 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            log("video url -->${widget.video.url}");
+            Navigator.pop(context);
+          },
         ),
       ),
       body: GestureDetector(
@@ -186,27 +193,29 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
               color: Colors.black,
               child: widget.video.mediaType == 'video'
                   ? (_controller?.value.isInitialized ?? false
-                  ? FittedBox(
-                fit: BoxFit.cover,
-                child: SizedBox(
-                  width: _controller!.value.size.width,
-                  height: _controller!.value.size.height,
-                  child: VideoPlayer(_controller!),
-                ),
-              )
-                  : const Center(child: CircularProgressIndicator()))
-                  : Image.network(  // For images
-                widget.video.url ?? '',
-                fit: BoxFit.cover,
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return const Center(child: CircularProgressIndicator());
-                },
-                errorBuilder: (context, error, stackTrace) => Container(
-                  color: Colors.grey[300],
-                  child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
-                ),
-              ),
+                      ? FittedBox(
+                          fit: BoxFit.cover,
+                          child: SizedBox(
+                            width: _controller!.value.size.width,
+                            height: _controller!.value.size.height,
+                            child: VideoPlayer(_controller!),
+                          ),
+                        )
+                      : const Center(child: CircularProgressIndicator()))
+                  : Image.network(
+                      // For images
+                      widget.video.url ?? '',
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return const Center(child: CircularProgressIndicator());
+                      },
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        color: Colors.grey[300],
+                        child: const Icon(Icons.broken_image,
+                            size: 50, color: Colors.grey),
+                      ),
+                    ),
             ),
             Positioned(
               bottom: 16, // Position above the bottom navigation bar height
@@ -215,8 +224,10 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 decoration: BoxDecoration(
-                  color: Colors.transparent, // Colors.black.withOpacity(0.7), // Semi-transparent for readability
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                  color: Colors.transparent,
+                  // Colors.black.withOpacity(0.7), // Semi-transparent for readability
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(12)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -226,7 +237,8 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
                       children: [
                         const CircleAvatar(
                           radius: 20,
-                          backgroundImage: AssetImage('assets/images/show_logo.png'),
+                          backgroundImage:
+                              AssetImage('assets/images/show_logo.png'),
                         ),
                         const SizedBox(width: 8),
                         Expanded(
@@ -241,12 +253,14 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
                           ),
                         ),
                         Obx(
-                              () => GestureDetector(
+                          () => GestureDetector(
                             onTap: _toggleBookmark,
                             child: Padding(
                               padding: const EdgeInsets.only(top: 8),
                               child: Icon(
-                                _isBookmarked.value ? Icons.bookmark : Icons.bookmark_border,
+                                _isBookmarked.value
+                                    ? Icons.bookmark
+                                    : Icons.bookmark_border,
                                 color: Colors.white,
                                 size: 22,
                               ),
@@ -259,8 +273,10 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
                     Padding(
                       padding: const EdgeInsets.only(right: 64),
                       child: Text(
-                        widget.video.description == null || widget.video.description!.isEmpty
-                            ? '' : widget.video.description!,
+                        widget.video.description == null ||
+                                widget.video.description!.isEmpty
+                            ? ''
+                            : widget.video.description!,
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.white,
@@ -272,10 +288,24 @@ class _FullVideoScreenState extends State<FullVideoScreen> {
                     Row(
                       children: [
                         // const Icon(Icons.location_pin, color: Colors.white, size: 16),
-                        Image.asset('assets/icons/location.png', height: 12, width: 12, color: Colors.white,),
+                        Image.asset(
+                          'assets/icons/location.png',
+                          height: 12,
+                          width: 12,
+                          color: Colors.white,
+                        ),
                         const SizedBox(width: 4),
                         Text(
-                          (widget.video.streetNo ?? '') + ', ' + (widget.video.city ?? '') + ', ' + (widget.video.state ?? '') + (widget.video.zipCode == null || widget.video.zipCode == '' ? '' : ', ${widget.video.zipCode}'), // 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                          (widget.video.streetNo ?? '') +
+                              ', ' +
+                              (widget.video.city ?? '') +
+                              ', ' +
+                              (widget.video.state ?? '') +
+                              (widget.video.zipCode == null ||
+                                      widget.video.zipCode == ''
+                                  ? ''
+                                  : ', ${widget.video.zipCode}'),
+                          // 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.white,
