@@ -1379,7 +1379,10 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                       child: Obx(
                         () {
                           if (homeLocationCtrl.isFetchingInitialData.value) {
-                            return _buildShimmer();
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 16.0),
+                              child: _buildShimmer(),
+                            );
                           }
                           return ListView(
                             controller: scrollCtrl,

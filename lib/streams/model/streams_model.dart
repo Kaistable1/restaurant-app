@@ -18,6 +18,11 @@ class VideoModel {
   final String? mediaType;
   final String? description;
 
+  /// Local filesystem path to the cached video file.
+  /// Null means the video has not been cached yet.
+  /// Mutable so it can be updated in-place once caching completes.
+  String? cachedPath;
+
   VideoModel({
     this.videoId,
     this.atmosphere,
@@ -35,6 +40,7 @@ class VideoModel {
     this.zipCode,
     this.mediaType,
     this.description,
+    this.cachedPath,
   });
 
   factory VideoModel.fromMap(Map<String, dynamic> map, String docId) {
@@ -59,6 +65,7 @@ class VideoModel {
       zipCode: map['zipCode'],
       mediaType: map['mediaType'],
       description: map['description'],
+      // cachedPath is only stored locally, never in Firestore
     );
   }
 
@@ -80,6 +87,7 @@ class VideoModel {
       'zipCode': zipCode,
       'mediaType': mediaType,
       'description': description,
+      'cachedPath': cachedPath, // persisted so it survives app restarts
     };
   }
 
@@ -103,6 +111,7 @@ class VideoModel {
       zipCode: json['zipCode'],
       mediaType: json['mediaType'],
       description: json['description'],
+      cachedPath: json['cachedPath'],
     );
   }
 }

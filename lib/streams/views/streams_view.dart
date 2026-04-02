@@ -5,7 +5,6 @@ import 'dart:io';
 
 import '../../main.dart';
 import '../../screens/nav_bar/full_screen_video/scrollable_full_video_screen.dart';
-import '../../utils/video_cache_manager.dart';
 import '../controllers/streams_controller.dart';
 
 class VideosListView extends StatefulWidget {
@@ -189,33 +188,21 @@ class _VideosListViewState extends State<VideosListView>
                           );
                         }
                         final video = controller.filteredVideos[index];
+                        // Lazily generate thumbnail on first appearance
                         if (controller.thumbnailPaths[video.url] == null &&
                             video.url != null &&
                             video.url!.isNotEmpty) {
                           controller.generateThumbnail(video.url!);
                         }
 
-                        // Proactive background caching for current and next 3
-                        if (video.url != null && video.url!.isNotEmpty) {
-                          VideoCacheManager.preCacheVideo(video.url!);
-                          // Cache next 3
-                          for (int i = 1; i <= 3; i++) {
-                            if (index + i < controller.filteredVideos.length) {
-                              final nextUrl =
-                                  controller.filteredVideos[index + i].url;
-                              if (nextUrl != null && nextUrl.isNotEmpty) {
-                                VideoCacheManager.preCacheVideo(nextUrl);
-                              }
-                            }
-                          }
-                        }
-
                         return GestureDetector(
                           onTap: () {
                             _navigateTo(
                               () => ScrollableFullVideoScreen(
-                                videos: controller.filteredVideos,
                                 initialIndex: index,
+                                videos: controller.filteredVideos,
+                                thumbnailPaths: controller.thumbnailPaths,
+                                onLoadMore: controller.loadMoreVideos,
                               ),
                             );
                           },

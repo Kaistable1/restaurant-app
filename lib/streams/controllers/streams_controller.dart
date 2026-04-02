@@ -22,7 +22,8 @@ class VideoController extends GetxController {
   var playingIndex = (-1).obs;
   var thumbnailPaths = <String, String>{}.obs;
   VideoPlayerController? playerController;
-  bool _isGeneratingThumbnail = false;
+  // Tracks which URLs are currently generating a thumbnail — allows concurrent generation
+  final Set<String> _generatingThumbnails = {};
   static const String _localVideoPath = 'cached_videos_metadata.json';
 
   @override
@@ -59,7 +60,10 @@ class VideoController extends GetxController {
       filteredVideos.value = videos.toList();
       saveVideosToLocal();
       
-      for (var video in filteredVideos) {
+      // Only eagerly generate thumbnails for the first 5 visible videos;
+      // the rest are generated lazily as the user scrolls.
+      final eager = filteredVideos.take(5);
+      for (var video in eager) {
         if (video.url != null && video.url!.isNotEmpty) {
           generateThumbnail(video.url!);
         }
@@ -101,7 +105,9 @@ class VideoController extends GetxController {
         filteredVideos.value = videos.toList();
         saveVideosToLocal();
 
-        for (var video in newVideos) {
+        // Eager-generate thumbnails for the first 5 newly-loaded videos.
+        final eagerNew = newVideos.take(5);
+        for (var video in eagerNew) {
           if (video.url != null && video.url!.isNotEmpty) {
             generateThumbnail(video.url!);
           }
@@ -136,7 +142,8 @@ class VideoController extends GetxController {
         videos.value = jsonList.map((j) => VideoModel.fromJson(j)).toList();
         filteredVideos.value = videos.toList();
         
-        for (var video in filteredVideos) {
+        final eagerLocal = filteredVideos.take(5);
+        for (var video in eagerLocal) {
           if (video.url != null && video.url!.isNotEmpty) {
             generateThumbnail(video.url!);
           }
@@ -188,24 +195,26 @@ class VideoController extends GetxController {
   }
 
   Future<void> generateThumbnail(String videoUrl) async {
-    if (_isGeneratingThumbnail || thumbnailPaths[videoUrl] != null) return;
-    _isGeneratingThumbnail = true;
+    // Already have it or already generating — skip
+    if (thumbnailPaths[videoUrl] != null) return;
+    if (_generatingThumbnails.contains(videoUrl)) return;
 
+    _generatingThumbnails.add(videoUrl);
     try {
       final thumbnailPath = await VideoThumbnail.thumbnailFile(
         video: videoUrl,
         thumbnailPath: (await getTemporaryDirectory()).path,
-        imageFormat: ImageFormat.PNG,
+        imageFormat: ImageFormat.JPEG, // JPEG is smaller than PNG
         maxHeight: 200,
-        quality: 100,
+        quality: 75, // Good enough for a thumbnail placeholder
       );
       if (thumbnailPath != null) {
         thumbnailPaths[videoUrl] = thumbnailPath;
       }
-    } catch (e) {
-      print("Error generating thumbnail for $videoUrl: $e");
+    } catch (_) {
+      // Silent fail — a missing thumbnail is non-fatal
     } finally {
-      _isGeneratingThumbnail = false;
+      _generatingThumbnails.remove(videoUrl);
     }
   }
 
