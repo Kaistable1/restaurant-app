@@ -24,10 +24,11 @@ class SavrlyAIController extends GetxController {
   final String apiUrl = 'https://savrli-ai.vercel.app/ai/chat';
 
   @override
-  void onClose() {
+  void dispose() {
+    super.dispose();
     messageController.dispose();
     scrollController.dispose();
-    super.onClose();
+    super.dispose();
   }
 
   Future<void> sendMessage(String prompt) async {

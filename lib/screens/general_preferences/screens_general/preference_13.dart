@@ -46,7 +46,7 @@ class Preference13 extends StatelessWidget {
             ),
             child: GestureDetector(
               onTap: () {
-                Get.back();
+                Navigator.pop(context);
               },
               child: Icon(Icons.arrow_back, size: 18),
             ),

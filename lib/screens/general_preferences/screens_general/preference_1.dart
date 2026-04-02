@@ -15,6 +15,7 @@ class Preference1 extends StatelessWidget {
 
   final controller = Get.put(GeneralPreferencesController());
   bool? isComeFromSetting;
+
   @override
   Widget build(BuildContext context) {
     controller.fetchUserPreferences();
@@ -49,7 +50,7 @@ class Preference1 extends StatelessWidget {
                   ),
                   child: GestureDetector(
                     onTap: () {
-                      Get.back();
+                      Navigator.pop(context);
                     },
                     child: Icon(Icons.arrow_back, size: 18),
                   ),
@@ -58,7 +59,7 @@ class Preference1 extends StatelessWidget {
         title: Text(
           'General Preferences',
           style: TextStyle(
-            fontSize: 18*(5/4),
+            fontSize: 18 * (5 / 4),
             color: AppColors.bottomSheetColor,
             fontWeight: FontWeight.w700,
             fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
@@ -71,7 +72,7 @@ class Preference1 extends StatelessWidget {
               child: Text(
                 '1/10',
                 style: TextStyle(
-                  fontSize: 12*(5/4),
+                  fontSize: 12 * (5 / 4),
                   fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                   color: AppColors.lightGrey,
                   fontWeight: FontWeight.w400,
@@ -98,7 +99,7 @@ class Preference1 extends StatelessWidget {
                     fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                     color: AppColors.lightGrey,
                     fontWeight: FontWeight.w600,
-                    fontSize: 16*(5/4),
+                    fontSize: 16 * (5 / 4),
                   ),
                 ),
                 SizedBox(
@@ -110,7 +111,7 @@ class Preference1 extends StatelessWidget {
                     fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                     color: AppColors.lightGrey,
                     fontWeight: FontWeight.w400,
-                    fontSize: 14*(5/4),
+                    fontSize: 14 * (5 / 4),
                   ),
                 ),
                 SizedBox(
@@ -183,7 +184,7 @@ class Preference1 extends StatelessWidget {
                     width: 190,
                     fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                     fontWeight: FontWeight.w600,
-                    fontSize: 17*(5/4),
+                    fontSize: 17 * (5 / 4),
                     textColor: Colors.white,
                     ontapp: () async {
                       if (_formKey.currentState!.validate()) {

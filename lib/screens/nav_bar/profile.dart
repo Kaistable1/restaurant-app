@@ -12,7 +12,6 @@ import 'package:kaistable_website/screens/auth_screens/signup/signup_screen.dart
 import 'package:kaistable_website/screens/change_pass/changePassword_dialoge.dart';
 import 'package:kaistable_website/screens/app_info/contact_us/contact_us.dart';
 import 'package:kaistable_website/screens/edit_profile/edit_profile_page.dart';
-import 'package:kaistable_website/screens/favorite_screen/favorite_screen.dart';
 import 'package:kaistable_website/screens/general_preferences/screens_general/preference_1.dart';
 import 'package:kaistable_website/screens/nav_bar/widgets/custom_button.dart';
 import 'package:kaistable_website/screens/nav_bar/widgets/saved_Resturant.dart';

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kaistable_website/screens/auth_screens/signup/controller/signup_controller.dart';
 import 'package:kaistable_website/screens/entry_mode/entry_mode_screen.dart';
+import 'package:kaistable_website/screens/nav_bar/controller/home_controller.dart';
 import 'package:kaistable_website/screens/nav_bar/controller/search_controller.dart';
 import 'package:kaistable_website/screens/nav_bar/main_screen.dart';
 
@@ -46,7 +47,7 @@ class Preference14 extends StatelessWidget {
             ),
             child: GestureDetector(
               onTap: () {
-                Get.back();
+                Navigator.pop(context);
               },
               child: Icon(Icons.arrow_back, size: 18),
             ),
@@ -55,7 +56,7 @@ class Preference14 extends StatelessWidget {
         title: Text(
           'Location and Coverage',
           style: TextStyle(
-            fontSize: 18*(5/4),
+            fontSize: 18 * (5 / 4),
             color: AppColors.bottomSheetColor,
             fontWeight: FontWeight.w700,
             fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
@@ -69,7 +70,7 @@ class Preference14 extends StatelessWidget {
               child: Text(
                 '10/10',
                 style: TextStyle(
-                  fontSize: 12*(5/4),
+                  fontSize: 12 * (5 / 4),
                   fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                   color: AppColors.lightGrey,
                   fontWeight: FontWeight.w400,
@@ -94,7 +95,7 @@ class Preference14 extends StatelessWidget {
                   fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                   color: AppColors.lightGrey,
                   fontWeight: FontWeight.w600,
-                  fontSize: 16*(5/4),
+                  fontSize: 16 * (5 / 4),
                 ),
               ),
               SizedBox(
@@ -153,7 +154,7 @@ class Preference14 extends StatelessWidget {
                   width: 190,
                   fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                   fontWeight: FontWeight.w600,
-                  fontSize: 17*(5/4),
+                  fontSize: 17 * (5 / 4),
                   textColor: Colors.white,
                   ontapp: () {
                     print(controller.selectedCountry.value);
@@ -174,9 +175,13 @@ class Preference14 extends StatelessWidget {
                           entry: controller.selectedCountry.value);
                       signupController.updateUserData(
                           field: 'city', entry: controller.selectedCity.value);
-                      Get.offAll(
-                        () => EntryModeScreen(),
-                      );
+                      if (Get.isRegistered<HomeController>()) {
+                        Get.offAll(() => MainScreen());
+                      } else {
+                        Get.offAll(
+                          () => EntryModeScreen(),
+                        );
+                      }
                     }
                   },
                 ),

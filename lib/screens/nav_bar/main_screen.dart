@@ -17,7 +17,7 @@ import '../../streams/views/streams_view.dart';
 
 class MainScreen extends StatefulWidget {
   final int? initialTabIndex; // 0 for Home, 1 for Ask Kai
-  
+
   MainScreen({super.key, this.initialTabIndex});
 
   @override
@@ -52,11 +52,15 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   // Bottom navigation bar items
-  List<PersistentBottomNavBarItem> _navBarsItems() {
+  List<PersistentBottomNavBarItem> _navBarsItems(int index) {
     return [
       PersistentBottomNavBarItem(
-        icon: Image.asset('assets/images/icons8-home (2).png',
-            width: 24, height: 24),
+        icon: Image.asset(
+          'assets/images/icons8-home (2).png',
+          width: 24,
+          height: 24,
+          color: index == 0 ? AppColors.primaryColor : Colors.black,
+        ),
         title: "Home",
         activeColorPrimary: AppColors.primaryColor,
         inactiveColorPrimary: AppColors.blackColor,
@@ -64,14 +68,23 @@ class _MainScreenState extends State<MainScreen> {
       PersistentBottomNavBarItem(
         icon: Image.asset('assets/images/chat_selected.png',
             color: AppColors.primaryColor, width: 24, height: 24),
-        inactiveIcon: Image.asset('assets/images/chat_unselected.png',
-            color: AppColors.blackColor, width: 24, height: 24),
+        inactiveIcon: Image.asset(
+          'assets/images/chat_unselected.png',
+          width: 24,
+          height: 24,
+          color: Colors.black,
+        ),
         title: "Ask Kai",
         activeColorPrimary: AppColors.primaryColor,
+        inactiveColorPrimary: AppColors.blackColor,
       ),
       PersistentBottomNavBarItem(
-        icon: Image.asset('assets/images/icons8-car (2) (2).png',
-            width: 34, height: 34),
+        icon: Image.asset(
+          'assets/images/icons8-car (2) (2).png',
+          width: 34,
+          height: 34,
+          color: index == 2 ? AppColors.primaryColor : Colors.black,
+        ),
         title: "Discover",
         activeColorPrimary: AppColors.primaryColor,
         inactiveColorPrimary: AppColors.blackColor,
@@ -81,7 +94,7 @@ class _MainScreenState extends State<MainScreen> {
           'assets/images/streams_navbar.png',
           width: 36,
           height: 36,
-          color: Colors.grey[300],
+          color: index == 3 ? AppColors.primaryColor : Colors.black,
         ),
         title: "Streams",
         activeColorPrimary: AppColors.primaryColor,
@@ -94,8 +107,12 @@ class _MainScreenState extends State<MainScreen> {
       //   inactiveColorPrimary: AppColors.blackColor,
       // ),
       PersistentBottomNavBarItem(
-        icon: Image.asset('assets/images/icons8-account (1).png',
-            width: 34, height: 34),
+        icon: Image.asset(
+          'assets/images/icons8-account (1).png',
+          width: 34,
+          height: 34,
+          color: index == 4 ? AppColors.primaryColor : Colors.black,
+        ),
         title: "Profile",
         activeColorPrimary: AppColors.primaryColor,
         inactiveColorPrimary: AppColors.blackColor,
@@ -104,33 +121,47 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   // Bottom navigation bar items for splash (only Home)
-  List<PersistentBottomNavBarItem> _splashNavBarItems() {
+  List<PersistentBottomNavBarItem> _splashNavBarItems(int index) {
     return [
       PersistentBottomNavBarItem(
-        icon: Image.asset('assets/images/icons8-home (2).png',
-            width: 24, height: 24),
+        icon: Image.asset(
+          'assets/images/icons8-home (2).png',
+          width: 24,
+          height: 24,
+          color: index == 0 ? AppColors.primaryColor : Colors.black,
+        ),
         title: "Home",
         activeColorPrimary: AppColors.primaryColor,
         inactiveColorPrimary: AppColors.blackColor,
       ),
       PersistentBottomNavBarItem(
         icon: Image.asset('assets/images/chat_selected.png',
-            color: AppColors.primaryColor, width: 24, height: 24),
+            color: index == 1 ? AppColors.primaryColor : Colors.black,
+            width: 24,
+            height: 24),
         inactiveIcon: Image.asset('assets/images/chat_unselect.png',
             color: AppColors.blackColor, width: 24, height: 24),
         title: "Ask Kai",
         activeColorPrimary: AppColors.primaryColor,
       ),
       PersistentBottomNavBarItem(
-        icon: Image.asset('assets/images/icons8-car (2) (2).png',
-            width: 34, height: 34),
+        icon: Image.asset(
+          'assets/images/icons8-car (2) (2).png',
+          width: 34,
+          height: 34,
+          color: index == 2 ? AppColors.primaryColor : Colors.black,
+        ),
         title: "Discover",
         activeColorPrimary: AppColors.primaryColor,
         inactiveColorPrimary: AppColors.blackColor,
       ),
       PersistentBottomNavBarItem(
-        icon: Image.asset('assets/images/streams_navbar.png',
-            width: 34, height: 34),
+        icon: Image.asset(
+          'assets/images/streams_navbar.png',
+          width: 34,
+          height: 34,
+          color: index == 3 ? AppColors.primaryColor : Colors.black,
+        ),
         title: "Streams",
         activeColorPrimary: AppColors.primaryColor,
         inactiveColorPrimary: AppColors.blackColor,
@@ -142,8 +173,12 @@ class _MainScreenState extends State<MainScreen> {
       //   inactiveColorPrimary: AppColors.blackColor,
       // ),
       PersistentBottomNavBarItem(
-        icon: Image.asset('assets/images/icons8-account (1).png',
-            width: 34, height: 34),
+        icon: Image.asset(
+          'assets/images/icons8-account (1).png',
+          width: 34,
+          height: 34,
+          color: index == 4 ? AppColors.primaryColor : Colors.black,
+        ),
         title: "Profile",
         activeColorPrimary: AppColors.primaryColor,
         inactiveColorPrimary: AppColors.blackColor,
@@ -177,8 +212,8 @@ class _MainScreenState extends State<MainScreen> {
                 ? _buildScreens()
                 : _buildSplashScreen(),
             items: controller.isSpotlightFinish.value
-                ? _navBarsItems()
-                : _splashNavBarItems(),
+                ? _navBarsItems(navbarController.index)
+                : _splashNavBarItems(navbarController.index),
             handleAndroidBackButtonPress: true,
             hideNavigationBarWhenKeyboardAppears: true,
             popBehaviorOnSelectedNavBarItemPress: PopBehavior.all,
@@ -194,9 +229,8 @@ class _MainScreenState extends State<MainScreen> {
             padding: EdgeInsets.zero,
             navBarStyle: NavBarStyle.style3,
             onItemSelected: (index) {
-              // Unfocus any active text field when switching tabs to prevent keyboard from auto-opening
               FocusManager.instance.primaryFocus?.unfocus();
-              setState(() {}); // Update UI if needed
+              setState(() {});
             },
           );
         },

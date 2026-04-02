@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:kaistable_website/constants/app_colors.dart';
 import 'package:kaistable_website/main.dart';
 import 'package:kaistable_website/screens/auth_screens/login/controller/login_controller.dart';
+import 'package:kaistable_website/widgets/social_login_buttons.dart';
 
 import '../../../custom_widget/TextAndWidget.dart';
 import '../../../utils/validations.dart';
@@ -14,7 +15,7 @@ import '../signup/signup_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   final String? fromScreen; // 'highlights' or 'signup'
-  
+
   LoginScreen({super.key, this.fromScreen});
 
   final controller = Get.put(LoginController());
@@ -57,7 +58,7 @@ class LoginScreen extends StatelessWidget {
                       color: AppColors.blackColor,
                       fontWeight: FontWeight.w700,
                       fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                      fontSize: 28 * (5/4),
+                      fontSize: 28 * (5 / 4),
                     ),
                   ),
                   SizedBox(
@@ -69,7 +70,7 @@ class LoginScreen extends StatelessWidget {
                       color: AppColors.blackColor,
                       fontWeight: FontWeight.w600,
                       fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                      fontSize: 16 * (5/4),
+                      fontSize: 16 * (5 / 4),
                     ),
                   ),
                   SizedBox(
@@ -148,7 +149,7 @@ class LoginScreen extends StatelessWidget {
                           color: AppColors.primaryColor,
                           fontWeight: FontWeight.w600,
                           fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                          fontSize: 14 * (5/4),
+                          fontSize: 14 * (5 / 4),
                         ),
                       ),
                     ),
@@ -203,7 +204,7 @@ class LoginScreen extends StatelessWidget {
                           color: AppColors.primaryColor,
                           fontWeight: FontWeight.w600,
                           fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                          fontSize: 14 * (5/4),
+                          fontSize: 14 * (5 / 4),
                         ),
                       )
                     ],
@@ -214,7 +215,7 @@ class LoginScreen extends StatelessWidget {
                   Center(
                     child: CustomButton(
                       laBelText: 'Login',
-                      fontSize: 16 * (5/4),
+                      fontSize: 16 * (5 / 4),
                       fontWeight: FontWeight.w600,
                       fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                       textColor: Colors.white,
@@ -227,6 +228,18 @@ class LoginScreen extends StatelessWidget {
                       },
                     ),
                   ),
+                  const SocialDivider(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const GoogleSignInButton(),
+                      // if (GetPlatform.isIOS || GetPlatform.isMacOS) ...[
+
+                      const SizedBox(width: 16),
+                      const AppleSignInButton(),
+                      // ],
+                    ],
+                  ),
                   SizedBox(
                     height: 24,
                   ),
@@ -237,22 +250,26 @@ class LoginScreen extends StatelessWidget {
                           TextSpan(
                             text: 'Don\'t have an account?',
                             style: TextStyle(
-                                fontSize: 16 * (5/4),
+                                fontSize: 16 * (5 / 4),
                                 fontWeight: FontWeight.w600,
-                                fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                                fontFamily:
+                                    GoogleFonts.plusJakartaSans().fontFamily,
                                 color: AppColors.headingTextColor),
                           ),
                           TextSpan(
                             text: ' Signup',
                             style: TextStyle(
                               color: AppColors.primaryColor,
-                              fontSize: 16 * (5/4),
-                              fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                              fontSize: 16 * (5 / 4),
+                              fontFamily:
+                                  GoogleFonts.plusJakartaSans().fontFamily,
                               fontWeight: FontWeight.w600,
                             ),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                              Get.to(()=>SignupScreen(fromScreen: 'login',));
+                                Get.to(() => SignupScreen(
+                                      fromScreen: 'login',
+                                    ));
                               },
                           ),
                         ],

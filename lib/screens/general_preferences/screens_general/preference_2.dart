@@ -48,7 +48,7 @@ class Preference2 extends StatelessWidget {
             ),
             child: GestureDetector(
               onTap: () {
-                Get.back();
+                Navigator.pop(context);
               },
               child: Icon(Icons.arrow_back, size: 18),
             ),
@@ -57,7 +57,7 @@ class Preference2 extends StatelessWidget {
         title: Text(
           'General Preferences',
           style: TextStyle(
-            fontSize: 18*(5/4),
+            fontSize: 18 * (5 / 4),
             color: AppColors.bottomSheetColor,
             fontWeight: FontWeight.w700,
             fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
@@ -70,7 +70,7 @@ class Preference2 extends StatelessWidget {
               child: Text(
                 '2/10',
                 style: TextStyle(
-                  fontSize: 12*(5/4),
+                  fontSize: 12 * (5 / 4),
                   fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                   color: AppColors.lightGrey,
                   fontWeight: FontWeight.w400,
@@ -97,7 +97,7 @@ class Preference2 extends StatelessWidget {
                     fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                     color: AppColors.lightGrey,
                     fontWeight: FontWeight.w600,
-                    fontSize: 16*(5/4),
+                    fontSize: 16 * (5 / 4),
                   ),
                 ),
                 SizedBox(
@@ -170,7 +170,7 @@ class Preference2 extends StatelessWidget {
                     width: 190,
                     fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                     fontWeight: FontWeight.w600,
-                    fontSize: 17*(5/4),
+                    fontSize: 17 * (5 / 4),
                     textColor: Colors.white,
                     ontapp: () {
                       if (formKey.currentState!.validate()) {
