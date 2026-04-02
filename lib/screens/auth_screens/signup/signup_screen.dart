@@ -323,7 +323,8 @@ class SignupScreen extends StatelessWidget {
                             ),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                if (fromScreen == 'highlights') {
+                                if (fromScreen == 'highlights' ||
+                                    fromScreen == "splash") {
                                   Get.offAll(() =>
                                       LoginScreen(fromScreen: 'highlights'));
                                 } else {

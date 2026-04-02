@@ -43,21 +43,24 @@ class _SplashScreenState extends State<SplashScreen>
 
     // Start the timer to navigate based on user state
     Timer(Duration(seconds: 3), () async {
-      if(auth.currentUser != null){
+      if (auth.currentUser != null) {
         // User is logged in, go to main screen
         Get.offAll(() => MainScreen());
       } else {
         // User is not logged in
         // Check if it's the first time using the app
         // If hasSeenHighlights is null or false, it's the first time
-        bool hasSeenHighlights = preferences?.getBool('hasSeenHighlights') ?? false;
-        
-        if(!hasSeenHighlights){
+        bool hasSeenHighlights =
+            preferences?.getBool('hasSeenHighlights') ?? false;
+
+        if (!hasSeenHighlights) {
           // First time user - show highlights screen
           Get.offAll(() => HighlightsScreen());
         } else {
           // Returning user - go directly to signup screen
-          Get.offAll(() => SignupScreen());
+          Get.offAll(() => SignupScreen(
+                fromScreen: 'splash',
+              ));
         }
       }
     });
@@ -78,7 +81,7 @@ class _SplashScreenState extends State<SplashScreen>
           scale: _animation,
           child: Padding(
             padding: const EdgeInsets.all(55.0),
-            child: Image.asset('assets/icons/logo.png'), // 'assets/images/botomsheet_logo.png'),
+            child: Image.asset('assets/icons/logo.png'),
           ),
         ),
       ),
