@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -5,7 +6,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../main.dart';
+import '../../../streams/controllers/streams_controller.dart';
 import '../../../streams/model/streams_model.dart';
+import '../../../utils/video_cache_manager.dart';
 
 class ScrollableFullVideoScreen extends StatefulWidget {
   final List<VideoModel> videos;
@@ -18,34 +21,49 @@ class ScrollableFullVideoScreen extends StatefulWidget {
   });
 
   @override
-  State<ScrollableFullVideoScreen> createState() => _ScrollableFullVideoScreenState();
+  State<ScrollableFullVideoScreen> createState() =>
+      _ScrollableFullVideoScreenState();
 }
 
 class _ScrollableFullVideoScreenState extends State<ScrollableFullVideoScreen> {
   late PageController _pageController;
   late int _currentIndex;
+  late final VideoController _videoController;
 
   // Map to store video controllers for each video
   final Map<int, VideoPlayerController> _controllers = {};
   final Map<int, bool> _initialized = {};
-  final Map<int, bool> _isInitializing = {}; // Track videos currently being initialized
+  final Map<int, bool> _isInitializing = {};
+  final Set<int> _disposedIndices =
+      {}; // Strictly track which indices are truly disposed
+  bool _isScreenDisposed = false;
 
   @override
   void initState() {
     super.initState();
+    _videoController = Get.find<VideoController>();
     _currentIndex = widget.initialIndex;
     _pageController = PageController(initialPage: widget.initialIndex);
 
-    // Aggressively preload videos for better performance
+    // Initial preloading
     _preloadVideosAround(_currentIndex);
   }
 
   @override
   void dispose() {
-    // Dispose all video controllers
+    _isScreenDisposed = true;
+    // Dispose all video controllers safely
     for (var controller in _controllers.values) {
-      controller.dispose();
+      try {
+        if (!controller.value.isInitialized || !controller.value.isPlaying) {
+          // still safe to dispose
+        }
+        controller.dispose();
+      } catch (_) {}
     }
+    _controllers.clear();
+    _initialized.clear();
+    _isInitializing.clear();
     _pageController.dispose();
     super.dispose();
   }
@@ -57,25 +75,43 @@ class _ScrollableFullVideoScreenState extends State<ScrollableFullVideoScreen> {
     super.deactivate();
   }
 
-  // Optimized video initialization with better buffering options
-  void _initializeVideo(int index) {
+  // Optimized video initialization with caching
+  Future<void> _initializeVideo(int index) async {
     // Skip if already initialized or currently initializing
     if (_initialized[index] == true || _isInitializing[index] == true) return;
 
-    final video = widget.videos[index];
+    // Bounds check
+    if (index < 0 || index >= _videoController.filteredVideos.length) return;
+
+    final video = _videoController.filteredVideos[index];
     if (video.mediaType == 'video' && video.url != null) {
       _isInitializing[index] = true;
 
-      final controller = VideoPlayerController.networkUrl(
-        Uri.parse(video.url!),
-        videoPlayerOptions: VideoPlayerOptions(
-          mixWithOthers: true,
-          allowBackgroundPlayback: false,
-        ),
-      );
-      _controllers[index] = controller;
+      try {
+        VideoPlayerController controller;
 
-      controller.initialize().then((_) {
+        // Check local cache first
+        final localPath =
+            await VideoCacheManager.getCachedVideoPath(video.url!);
+        if (localPath != null && File(localPath).existsSync()) {
+          print('Playing from cache: $localPath');
+          controller = VideoPlayerController.file(
+            File(localPath),
+            videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
+          );
+        } else {
+          print('Playing from network: ${video.url}');
+          controller = VideoPlayerController.networkUrl(
+            Uri.parse(video.url!),
+            videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
+          );
+          // Proactively start caching this video if it's the current one or near
+          VideoCacheManager.preCacheVideo(video.url!);
+        }
+
+        _controllers[index] = controller;
+
+        await controller.initialize();
         if (mounted) {
           setState(() {
             _initialized[index] = true;
@@ -86,73 +122,109 @@ class _ScrollableFullVideoScreenState extends State<ScrollableFullVideoScreen> {
             controller.play();
             controller.setLooping(true);
           } else {
-            // Ensure preloaded videos are paused
             controller.pause();
           }
         }
-      }).catchError((error) {
+      } catch (error) {
         print('Error initializing video at index $index: $error');
-        _isInitializing[index] = false;
-      });
+        if (mounted) {
+          setState(() {
+            _isInitializing[index] = false;
+          });
+        }
+      }
     }
   }
 
   // Preload videos around the current index for smoother experience
   void _preloadVideosAround(int index) {
-    // Initialize current video (will auto-play based on _currentIndex check)
+    // Initialize current video
     _initializeVideo(index);
 
-    // Preload next 2 videos (will be paused)
-    if (index + 1 < widget.videos.length) {
-      _initializeVideo(index + 1);
-    }
-    if (index + 2 < widget.videos.length) {
-      _initializeVideo(index + 2);
+    // Preload next 4 videos (TikTok-like aggressive preloading)
+    for (int i = 1; i <= 4; i++) {
+      if (index + i < _videoController.filteredVideos.length) {
+        _initializeVideo(index + i);
+        // Proactively cache files for even further videos
+        final nextVideo = _videoController.filteredVideos[index + i];
+        if (nextVideo.url != null) {
+          VideoCacheManager.preCacheVideo(nextVideo.url!);
+        }
+      }
     }
 
-    // Preload previous video (will be paused)
-    if (index - 1 >= 0) {
-      _initializeVideo(index - 1);
+    // Preload previous 2 videos
+    for (int i = 1; i <= 2; i++) {
+      if (index - i >= 0) {
+        _initializeVideo(index - i);
+      }
     }
 
-    // Clean up videos that are far away to save memory (keep only 3 before and 3 after)
+    // Clean up videos that are far away to save memory
+    // Increased buffer from 3 to 8 to prevent disposal of cached/visible pages
     _cleanupDistantVideos(index);
   }
 
   // Cleanup videos that are too far from current index to save memory
   void _cleanupDistantVideos(int currentIndex) {
+    if (_isScreenDisposed) return;
+
     final indicesToRemove = <int>[];
-    
+
     _controllers.forEach((index, controller) {
-      // Keep videos within range of 3 indices before and after
-      if ((index < currentIndex - 3 || index > currentIndex + 3)) {
+      // Keep a larger buffer (8 pages) to prevent disposal of cached/visible pages
+      if ((index < currentIndex - 8 || index > currentIndex + 8)) {
         indicesToRemove.add(index);
       }
     });
 
     for (var index in indicesToRemove) {
-      _controllers[index]?.dispose();
-      _controllers.remove(index);
-      _initialized.remove(index);
-      _isInitializing.remove(index);
+      final controller = _controllers[index];
+      if (controller != null && !_disposedIndices.contains(index)) {
+        _controllers.remove(index);
+        _initialized.remove(index);
+        _isInitializing.remove(index);
+        _disposedIndices.add(index); // Mark as disposed BEFORE the actual call
+
+        // Final safety check and delayed disposal
+        Future.delayed(const Duration(milliseconds: 1000), () {
+          if (!_isScreenDisposed) {
+            try {
+              controller.dispose();
+            } catch (e) {
+              print('Silent error disposing controller at index $index: $e');
+            }
+          }
+        });
+      }
     }
   }
 
   void _onPageChanged(int index) {
-    // Pause ALL videos first to ensure no background playback
+    // Pause ALL videos first
     _pauseAllVideos();
 
     setState(() {
       _currentIndex = index;
     });
 
-    // Play the current video immediately if already initialized
+    // Play current if ready
     if (_controllers[index] != null && _initialized[index] == true) {
       _controllers[index]?.play();
       _controllers[index]?.setLooping(true);
     }
 
-    // Preload videos around the new current index
+    // Fetch more videos if we reach index 7 of current batch
+    if (index % 10 == 7) {
+      _videoController.loadMoreVideos();
+    }
+
+    // Preload & Cache next 4 if we reach index 5 of current batch
+    if (index % 10 == 5) {
+      // Preloading already handles next 4 in _preloadVideosAround,
+      // but we can explicitly trigger cache manager here if needed.
+    }
+
     _preloadVideosAround(index);
   }
 
@@ -177,20 +249,31 @@ class _ScrollableFullVideoScreenState extends State<ScrollableFullVideoScreen> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: PageView.builder(
-        controller: _pageController,
-        scrollDirection: Axis.vertical,
-        itemCount: widget.videos.length,
-        onPageChanged: _onPageChanged,
-        itemBuilder: (context, index) {
-          return _VideoPage(
-            video: widget.videos[index],
-            controller: _controllers[index],
-            isInitialized: _initialized[index] == true,
-            isCurrentPage: _currentIndex == index,
-          );
-        },
-      ),
+      body: Obx(() {
+        final totalVideos = _videoController.filteredVideos.length;
+        if (totalVideos == 0) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        return PageView.builder(
+          key: const ValueKey('video_page_view'),
+          // Keep widget state stable
+          controller: _pageController,
+          scrollDirection: Axis.vertical,
+          itemCount: totalVideos,
+          onPageChanged: _onPageChanged,
+          itemBuilder: (context, index) {
+            if (index >= _videoController.filteredVideos.length)
+              return const SizedBox();
+            return _VideoPage(
+              video: _videoController.filteredVideos[index],
+              controller: _controllers[index],
+              isInitialized: _initialized[index] == true &&
+                  !_disposedIndices.contains(index),
+              isCurrentPage: _currentIndex == index,
+            );
+          },
+        );
+      }),
     );
   }
 }
@@ -229,7 +312,7 @@ class _VideoPageState extends State<_VideoPage> {
           .doc(widget.video.videoId)
           .snapshots()
           .listen(
-            (snapshot) async {
+        (snapshot) async {
           _isBookmarked.value = snapshot.exists;
           final prefs = await SharedPreferences.getInstance();
           final savedVideos = prefs.getStringList('saved_videos') ?? [];
@@ -331,29 +414,37 @@ class _VideoPageState extends State<_VideoPage> {
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
             color: Colors.black,
-            child: widget.video.mediaType == 'video'
-                ? (widget.isInitialized
-                ? FittedBox(
-              fit: BoxFit.cover,
-              child: SizedBox(
-                width: widget.controller!.value.size.width,
-                height: widget.controller!.value.size.height,
-                child: VideoPlayer(widget.controller!),
-              ),
-            )
-                : const Center(child: CircularProgressIndicator()))
-                : Image.network(
-              widget.video.url ?? '',
-              fit: BoxFit.cover,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return const Center(child: CircularProgressIndicator());
-              },
-              errorBuilder: (context, error, stackTrace) => Container(
-                color: Colors.grey[300],
-                child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
-              ),
-            ),
+            child: widget.video.mediaType == 'video' &&
+                    widget.video.url != null &&
+                    widget.video.url!.isNotEmpty
+                ? (widget.isInitialized &&
+                        widget.controller != null &&
+                        widget.controller!.value.isInitialized
+                    ? FittedBox(
+                        fit: BoxFit.cover,
+                        child: SizedBox(
+                          width: widget.controller!.value.size.width,
+                          height: widget.controller!.value.size.height,
+                          child: VideoPlayer(widget.controller!),
+                        ),
+                      )
+                    : const Center(child: CircularProgressIndicator()))
+                : widget.video.url != null && widget.video.url!.isNotEmpty
+                    ? Image.network(
+                        widget.video.url!,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        },
+                        errorBuilder: (context, error, stackTrace) => Container(
+                          color: Colors.grey[300],
+                          child: const Icon(Icons.broken_image,
+                              size: 50, color: Colors.grey),
+                        ),
+                      )
+                    : Container(color: Colors.black),
           ),
           Positioned(
             bottom: 16,
@@ -363,7 +454,8 @@ class _VideoPageState extends State<_VideoPage> {
               padding: const EdgeInsets.symmetric(horizontal: 24),
               decoration: BoxDecoration(
                 color: Colors.transparent,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(12)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -373,7 +465,8 @@ class _VideoPageState extends State<_VideoPage> {
                     children: [
                       const CircleAvatar(
                         radius: 20,
-                        backgroundImage: AssetImage('assets/images/show_logo.png'),
+                        backgroundImage:
+                            AssetImage('assets/images/show_logo.png'),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
@@ -388,12 +481,14 @@ class _VideoPageState extends State<_VideoPage> {
                         ),
                       ),
                       Obx(
-                            () => GestureDetector(
+                        () => GestureDetector(
                           onTap: _toggleBookmark,
                           child: Padding(
                             padding: const EdgeInsets.only(top: 8),
                             child: Icon(
-                              _isBookmarked.value ? Icons.bookmark : Icons.bookmark_border,
+                              _isBookmarked.value
+                                  ? Icons.bookmark
+                                  : Icons.bookmark_border,
                               color: Colors.white,
                               size: 22,
                             ),
@@ -406,8 +501,10 @@ class _VideoPageState extends State<_VideoPage> {
                   Padding(
                     padding: const EdgeInsets.only(right: 64),
                     child: Text(
-                      widget.video.description == null || widget.video.description!.isEmpty
-                          ? '' : widget.video.description!,
+                      widget.video.description == null ||
+                              widget.video.description!.isEmpty
+                          ? ''
+                          : widget.video.description!,
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.white,
@@ -418,10 +515,23 @@ class _VideoPageState extends State<_VideoPage> {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      Image.asset('assets/icons/location.png', height: 12, width: 12, color: Colors.white,),
+                      Image.asset(
+                        'assets/icons/location.png',
+                        height: 12,
+                        width: 12,
+                        color: Colors.white,
+                      ),
                       const SizedBox(width: 4),
                       Text(
-                        (widget.video.streetNo ?? '') + ', ' + (widget.video.city ?? '') + ', ' + (widget.video.state ?? '') + (widget.video.zipCode == null || widget.video.zipCode == '' ? '' : ', ${widget.video.zipCode}'),
+                        (widget.video.streetNo ?? '') +
+                            ', ' +
+                            (widget.video.city ?? '') +
+                            ', ' +
+                            (widget.video.state ?? '') +
+                            (widget.video.zipCode == null ||
+                                    widget.video.zipCode == ''
+                                ? ''
+                                : ', ${widget.video.zipCode}'),
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.white,
@@ -439,4 +549,3 @@ class _VideoPageState extends State<_VideoPage> {
     );
   }
 }
-

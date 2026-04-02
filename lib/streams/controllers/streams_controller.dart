@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,6 +13,9 @@ class VideoController extends GetxController {
   final TextEditingController searchController = TextEditingController();
 
   RxBool isLoading = false.obs;
+  RxBool isMoreLoading = false.obs;
+  RxBool hasMore = true.obs;
+  QueryDocumentSnapshot? lastDocument;
 
   var videos = <VideoModel>[].obs;
   var filteredVideos = <VideoModel>[].obs;
@@ -19,9 +23,11 @@ class VideoController extends GetxController {
   var thumbnailPaths = <String, String>{}.obs;
   VideoPlayerController? playerController;
   bool _isGeneratingThumbnail = false;
+  static const String _localVideoPath = 'cached_videos_metadata.json';
 
   @override
   void onInit() {
+    loadVideosFromLocal(); // Load local data first for instant visibility
     fetchVideos();
     super.onInit();
   }
@@ -29,16 +35,30 @@ class VideoController extends GetxController {
   Future<void> fetchVideos() async {
     try {
       isLoading.value = true;
+      hasMore.value = true;
+      lastDocument = null;
 
-      var snapshot = await FirebaseFirestore.instance
-          .collection('videos').where('mediaType', isEqualTo: 'video')
+      var query = FirebaseFirestore.instance
+          .collection('videos')
+          .where('mediaType', isEqualTo: 'video')
           .orderBy('timestamp', descending: true)
-          .get();
+          .limit(10);
 
-      videos.value = snapshot.docs
-          .map((doc) => VideoModel.fromMap(doc.data(), doc.id))
-          .toList();
-      filteredVideos.value = videos; // Initialize filteredVideos with all videos
+      var snapshot = await query.get();
+
+      if (snapshot.docs.isNotEmpty) {
+        lastDocument = snapshot.docs.last;
+        videos.value = snapshot.docs
+            .map((doc) => VideoModel.fromMap(doc.data(), doc.id))
+            .toList();
+      } else {
+        videos.clear();
+        hasMore.value = false;
+      }
+
+      filteredVideos.value = videos.toList();
+      saveVideosToLocal();
+      
       for (var video in filteredVideos) {
         if (video.url != null && video.url!.isNotEmpty) {
           generateThumbnail(video.url!);
@@ -49,8 +69,81 @@ class VideoController extends GetxController {
     } catch (e) {
       isLoading.value = false;
       print("Error fetching videos: $e");
-      Get.snackbar('Error', 'Failed to load videos: $e',
-          snackPosition: SnackPosition.BOTTOM);
+      // If fetching fails, we already have local data loaded in onInit
+    }
+  }
+
+  Future<void> loadMoreVideos() async {
+    if (isMoreLoading.value || !hasMore.value) return;
+
+    try {
+      isMoreLoading.value = true;
+
+      var query = FirebaseFirestore.instance
+          .collection('videos')
+          .where('mediaType', isEqualTo: 'video')
+          .orderBy('timestamp', descending: true)
+          .startAfterDocument(lastDocument!)
+          .limit(10);
+
+      var snapshot = await query.get();
+
+      if (snapshot.docs.length < 10) {
+        hasMore.value = false;
+      }
+
+      if (snapshot.docs.isNotEmpty) {
+        lastDocument = snapshot.docs.last;
+        var newVideos = snapshot.docs
+            .map((doc) => VideoModel.fromMap(doc.data(), doc.id))
+            .toList();
+        videos.addAll(newVideos);
+        filteredVideos.value = videos.toList();
+        saveVideosToLocal();
+
+        for (var video in newVideos) {
+          if (video.url != null && video.url!.isNotEmpty) {
+            generateThumbnail(video.url!);
+          }
+        }
+      }
+
+      isMoreLoading.value = false;
+    } catch (e) {
+      isMoreLoading.value = false;
+      print("Error loading more videos: $e");
+    }
+  }
+
+  Future<void> saveVideosToLocal() async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/$_localVideoPath');
+      final jsonList = videos.map((v) => v.toJson()).toList();
+      await file.writeAsString(json.encode(jsonList));
+    } catch (e) {
+      print("Error saving videos to local: $e");
+    }
+  }
+
+  Future<void> loadVideosFromLocal() async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/$_localVideoPath');
+      if (await file.exists()) {
+        final content = await file.readAsString();
+        final List<dynamic> jsonList = json.decode(content);
+        videos.value = jsonList.map((j) => VideoModel.fromJson(j)).toList();
+        filteredVideos.value = videos.toList();
+        
+        for (var video in filteredVideos) {
+          if (video.url != null && video.url!.isNotEmpty) {
+            generateThumbnail(video.url!);
+          }
+        }
+      }
+    } catch (e) {
+      print("Error loading videos from local: $e");
     }
   }
 
@@ -168,7 +261,10 @@ class VideoController extends GetxController {
       oldController?.dispose();
     }
     for (var path in thumbnailPaths.values) {
-      File(path).delete().catchError((e) => print("Error deleting thumbnail: $e"));
+      File(path).delete().catchError((e) {
+        print("Error deleting thumbnail: $e");
+        return File(path); // Return satisfying the FutureOr<FileSystemEntity>
+      });
     }
     thumbnailPaths.clear();
     super.onClose();

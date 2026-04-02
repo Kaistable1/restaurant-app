@@ -1,5 +1,8 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:kaistable_website/notification_service.dart';
 import 'package:kaistable_website/screens/ask_kai/savrly_ai_view.dart';
 import 'package:kaistable_website/screens/home_screen/home_controller/home_location_controller.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
@@ -14,7 +17,23 @@ import 'package:kaistable_website/screens/nav_bar/controller/search_controller.d
 
 import '../../main.dart';
 import '../../streams/views/streams_view.dart';
+///notifications related content
+// Android channel for notifications
+AndroidNotificationChannel channel = AndroidNotificationChannel(
+  'propertyRentalID', // id
+  'High Importance Notifications', // title
+  importance: Importance.max,
+  playSound: true,
+);
 
+// FCM background message handler
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  debugPrint(
+      "Handling a background message: ${message.messageId}, Title: ${message.notification?.title}");
+}
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+FlutterLocalNotificationsPlugin();
 class MainScreen extends StatefulWidget {
   final int? initialTabIndex; // 0 for Home, 1 for Ask Kai
 
@@ -198,6 +217,40 @@ class _MainScreenState extends State<MainScreen> {
     Get.put(FilterController());
     Get.put(HomeLocationController());
     Get.put(RestaurantController());
+    handleNotificationPermissions();
+  }
+
+
+  ///notification permissions
+  handleNotificationPermissions() async{
+    // Initialize local notification plugin
+    const AndroidInitializationSettings initializationSettingsAndroid =
+    AndroidInitializationSettings('@mipmap/ic_launcher');
+    const DarwinInitializationSettings initializationSettingsIOS =
+    DarwinInitializationSettings();
+    const InitializationSettings initializationSettings = InitializationSettings(
+      android: initializationSettingsAndroid,
+      iOS: initializationSettingsIOS,
+    );
+
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+    // Handle background messages
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+    // Disable system notification in foreground
+    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+      alert: false,
+      badge: false,
+      sound: false,
+    );
+    initialiseNotificationService();
+  }
+
+  initialiseNotificationService(){
+     SendNotificationService()
+        .initialize(); // Initialize FCM + local notifications().initFirebaseNotification();
+    debugPrint("SendNotifiation initialized");
   }
 
   @override

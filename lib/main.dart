@@ -12,24 +12,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
-import 'main_controller.dart';
-
-// Android channel for notifications
-const AndroidNotificationChannel channel = AndroidNotificationChannel(
-  'propertyRentalID', // id
-  'High Importance Notifications', // title
-  importance: Importance.max,
-  playSound: true,
-);
-
-// FCM background message handler
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  debugPrint(
-      "Handling a background message: ${message.messageId}, Title: ${message.notification?.title}");
-}
-
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+import 'notification_service.dart';
 
 bool myFlag = false;
 final auth = FirebaseAuth.instance;
@@ -40,27 +23,6 @@ Rx<UserModel>? currentUserDataModel;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  // Initialize local notification plugin
-  const AndroidInitializationSettings initializationSettingsAndroid =
-      AndroidInitializationSettings('@mipmap/ic_launcher');
-  const DarwinInitializationSettings initializationSettingsIOS =
-      DarwinInitializationSettings();
-  const InitializationSettings initializationSettings = InitializationSettings(
-    android: initializationSettingsAndroid,
-    iOS: initializationSettingsIOS,
-  );
-
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-
-  // Handle background messages
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-  // Disable system notification in foreground
-  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-    alert: false,
-    badge: false,
-    sound: false,
-  );
   try {
     await getCurrentUserData();
     await requestLocationPermission();
@@ -92,9 +54,6 @@ void main() async {
       Permission.notification.request();
     }
   });
-  await SendNotificationService()
-      .initialize(); // Initialize FCM + local notifications().initFirebaseNotification();
-  debugPrint("SendNotifiation initialized");
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -133,4 +92,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

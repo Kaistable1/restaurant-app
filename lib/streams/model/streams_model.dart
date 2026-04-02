@@ -50,13 +50,59 @@ class VideoModel {
       state: map['state'],
       streetNo: map['streetNo'],
       timestamp: map['timestamp'] != null
-          ? (map['timestamp'] as Timestamp).toDate()
+          ? (map['timestamp'] is Timestamp
+              ? (map['timestamp'] as Timestamp).toDate()
+              : DateTime.tryParse(map['timestamp'].toString()))
           : null,
       url: map['url'],
       vibes: map['vibes'],
       zipCode: map['zipCode'],
       mediaType: map['mediaType'],
       description: map['description'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'videoId': videoId,
+      'atmosphere': atmosphere,
+      'causines': causines,
+      'city': city,
+      'experience': experience,
+      'fileName': fileName,
+      'restaurantName': restaurantName,
+      'restaurantType': restaurantType,
+      'state': state,
+      'streetNo': streetNo,
+      'timestamp': timestamp?.toIso8601String(),
+      'url': url,
+      'vibes': vibes,
+      'zipCode': zipCode,
+      'mediaType': mediaType,
+      'description': description,
+    };
+  }
+
+  factory VideoModel.fromJson(Map<String, dynamic> json) {
+    return VideoModel(
+      videoId: json['videoId'],
+      atmosphere: json['atmosphere'],
+      causines: json['causines'],
+      city: json['city'],
+      experience: json['experience'],
+      fileName: json['fileName'],
+      restaurantName: json['restaurantName'],
+      restaurantType: json['restaurantType'],
+      state: json['state'],
+      streetNo: json['streetNo'],
+      timestamp: json['timestamp'] != null
+          ? DateTime.tryParse(json['timestamp'])
+          : null,
+      url: json['url'],
+      vibes: json['vibes'],
+      zipCode: json['zipCode'],
+      mediaType: json['mediaType'],
+      description: json['description'],
     );
   }
 }

@@ -5,6 +5,7 @@ import 'dart:io';
 
 import '../../main.dart';
 import '../../screens/nav_bar/full_screen_video/scrollable_full_video_screen.dart';
+import '../../utils/video_cache_manager.dart';
 import '../controllers/streams_controller.dart';
 
 class VideosListView extends StatefulWidget {
@@ -19,6 +20,7 @@ class VideosListView extends StatefulWidget {
 class _VideosListViewState extends State<VideosListView>
     with WidgetsBindingObserver {
   late final VideoController controller;
+  final ScrollController _scrollController = ScrollController();
   final RxMap<String, bool> showFilterDropdowns = <String, bool>{}.obs;
   final RxMap<String, String> selectedFilters = <String, String>{}.obs;
   final filterOptions = <String, List<String>>{
@@ -60,6 +62,14 @@ class _VideosListViewState extends State<VideosListView>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     controller = Get.put(VideoController());
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent - 200) {
+        controller.loadMoreVideos();
+      }
+    });
+
     filterOptions.forEach((key, _) {
       showFilterDropdowns[key] = false;
     });
@@ -76,6 +86,7 @@ class _VideosListViewState extends State<VideosListView>
     WidgetsBinding.instance.removeObserver(this);
     _dismissKeyboard();
     _searchFocusNode.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -119,7 +130,7 @@ class _VideosListViewState extends State<VideosListView>
                         borderRadius: BorderRadius.circular(30),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.04),
+                            color: Colors.black.withAlpha((0.04 * 255).toInt()),
                             blurRadius: 16,
                             spreadRadius: 0,
                             offset: Offset(0, 4),
@@ -143,9 +154,9 @@ class _VideosListViewState extends State<VideosListView>
                                 _dismissKeyboard();
                                 Get.find<VideoController>()
                                     .applySearchAndFilters(
-                                      controller.searchController.text,
-                                      selectedFilters,
-                                    );
+                                  controller.searchController.text,
+                                  selectedFilters,
+                                );
                               },
                             ),
                           ),
@@ -166,15 +177,39 @@ class _VideosListViewState extends State<VideosListView>
                       return const Center(child: Text('No videos available'));
                     }
                     return ListView.builder(
-                      itemCount: controller.filteredVideos.length,
+                      controller: _scrollController,
+                      itemCount: controller.filteredVideos.length +
+                          (controller.isMoreLoading.value ? 1 : 0),
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       itemBuilder: (context, index) {
+                        if (index == controller.filteredVideos.length) {
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 32),
+                            child: Center(child: CircularProgressIndicator()),
+                          );
+                        }
                         final video = controller.filteredVideos[index];
                         if (controller.thumbnailPaths[video.url] == null &&
                             video.url != null &&
                             video.url!.isNotEmpty) {
                           controller.generateThumbnail(video.url!);
                         }
+
+                        // Proactive background caching for current and next 3
+                        if (video.url != null && video.url!.isNotEmpty) {
+                          VideoCacheManager.preCacheVideo(video.url!);
+                          // Cache next 3
+                          for (int i = 1; i <= 3; i++) {
+                            if (index + i < controller.filteredVideos.length) {
+                              final nextUrl =
+                                  controller.filteredVideos[index + i].url;
+                              if (nextUrl != null && nextUrl.isNotEmpty) {
+                                VideoCacheManager.preCacheVideo(nextUrl);
+                              }
+                            }
+                          }
+                        }
+
                         return GestureDetector(
                           onTap: () {
                             _navigateTo(
@@ -200,86 +235,78 @@ class _VideosListViewState extends State<VideosListView>
                                     AspectRatio(
                                       aspectRatio: 356 / 520,
                                       child: Obx(() {
-                                        return controller.thumbnailPaths[video
-                                                    .url] !=
+                                        return controller.thumbnailPaths[
+                                                    video.url] !=
                                                 null
                                             ? Image.file(
                                                 File(
-                                                  controller
-                                                      .thumbnailPaths[video
-                                                      .url]!,
+                                                  controller.thumbnailPaths[
+                                                      video.url]!,
                                                 ),
                                                 fit: BoxFit.cover,
-                                                errorBuilder:
-                                                    (
-                                                      context,
-                                                      error,
-                                                      stackTrace,
-                                                    ) => Image.network(
-                                                      'https://via.placeholder.com/640x360',
-                                                      fit: BoxFit.cover,
-                                                      loadingBuilder:
-                                                          (
-                                                            context,
-                                                            child,
-                                                            loadingProgress,
-                                                          ) {
-                                                            if (loadingProgress ==
-                                                                null)
-                                                              return child;
-                                                            return const Center(
-                                                              child:
-                                                                  CircularProgressIndicator(),
-                                                            );
-                                                          },
-                                                      errorBuilder:
-                                                          (
-                                                            context,
-                                                            error,
-                                                            stackTrace,
-                                                          ) => Container(
-                                                            color: Colors
-                                                                .grey[300],
-                                                            child: const Icon(
-                                                              Icons
-                                                                  .broken_image,
-                                                              size: 50,
-                                                              color:
-                                                                  Colors.grey,
-                                                            ),
-                                                          ),
+                                                errorBuilder: (
+                                                  context,
+                                                  error,
+                                                  stackTrace,
+                                                ) =>
+                                                    Image.network(
+                                                  'https://via.placeholder.com/640x360',
+                                                  fit: BoxFit.cover,
+                                                  loadingBuilder: (
+                                                    context,
+                                                    child,
+                                                    loadingProgress,
+                                                  ) {
+                                                    if (loadingProgress == null)
+                                                      return child;
+                                                    return const Center(
+                                                      child:
+                                                          CircularProgressIndicator(),
+                                                    );
+                                                  },
+                                                  errorBuilder: (
+                                                    context,
+                                                    error,
+                                                    stackTrace,
+                                                  ) =>
+                                                      Container(
+                                                    color: Colors.grey[300],
+                                                    child: const Icon(
+                                                      Icons.broken_image,
+                                                      size: 50,
+                                                      color: Colors.grey,
                                                     ),
+                                                  ),
+                                                ),
                                               )
                                             : Image.network(
                                                 'https://via.placeholder.com/640x360',
                                                 fit: BoxFit.cover,
-                                                loadingBuilder:
-                                                    (
-                                                      context,
-                                                      child,
-                                                      loadingProgress,
-                                                    ) {
-                                                      if (loadingProgress ==
-                                                          null)
-                                                        return child;
-                                                      return const Center(
-                                                        child:
-                                                            CircularProgressIndicator(),
-                                                      );
-                                                    },
-                                                errorBuilder:
-                                                    (
-                                                      context,
-                                                      error,
-                                                      stackTrace,
-                                                    ) => Container(
-                                                      color: Colors.grey[300],
-                                                      child: const Icon(
-                                                        Icons.broken_image,
-                                                        size: 50,
-                                                        color: Colors.grey,
-                                                      ),
-                                                    ),
+                                                loadingBuilder: (
+                                                  context,
+                                                  child,
+                                                  loadingProgress,
+                                                ) {
+                                                  if (loadingProgress == null)
+                                                    return child;
+                                                  return const Center(
+                                                    child:
+                                                        CircularProgressIndicator(),
+                                                  );
+                                                },
+                                                errorBuilder: (
+                                                  context,
+                                                  error,
+                                                  stackTrace,
+                                                ) =>
+                                                    Container(
+                                                  color: Colors.grey[300],
+                                                  child: const Icon(
+                                                    Icons.broken_image,
+                                                    size: 50,
+                                                    color: Colors.grey,
+                                                  ),
+                                                ),
                                               );
                                       }),
                                     ),
@@ -354,9 +381,9 @@ class _VideosListViewState extends State<VideosListView>
                                                       147,
                                                       1,
                                                     ),
-                                                    fontFamily:
-                                                        GoogleFonts.plusJakartaSans()
-                                                            .fontFamily,
+                                                    fontFamily: GoogleFonts
+                                                            .plusJakartaSans()
+                                                        .fontFamily,
                                                     fontWeight: FontWeight.w500,
                                                   ),
                                                 ),
@@ -475,16 +502,15 @@ class _VideosListViewState extends State<VideosListView>
                                               showFilterDropdowns.refresh();
                                               controller.applySearchAndFilters(
                                                 controller
-                                                    .searchController
-                                                    .text,
+                                                    .searchController.text,
                                                 selectedFilters,
                                               );
                                             },
                                             child: Padding(
                                               padding:
                                                   const EdgeInsets.symmetric(
-                                                    vertical: 8,
-                                                  ),
+                                                vertical: 8,
+                                              ),
                                               child: Text(
                                                 'Clear',
                                                 style: TextStyle(
@@ -501,23 +527,23 @@ class _VideosListViewState extends State<VideosListView>
                                                     selectedFilters[category] =
                                                         option;
                                                     selectedFilters.refresh();
-                                                    showFilterDropdowns[category] =
-                                                        false;
+                                                    showFilterDropdowns[
+                                                        category] = false;
                                                     showFilterDropdowns
                                                         .refresh();
                                                     controller
                                                         .applySearchAndFilters(
-                                                          controller
-                                                              .searchController
-                                                              .text,
-                                                          selectedFilters,
-                                                        );
+                                                      controller
+                                                          .searchController
+                                                          .text,
+                                                      selectedFilters,
+                                                    );
                                                   },
                                                   child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.symmetric(
-                                                          vertical: 8,
-                                                        ),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                      vertical: 8,
+                                                    ),
                                                     child: Row(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
@@ -527,10 +553,11 @@ class _VideosListViewState extends State<VideosListView>
                                                           option,
                                                           style:
                                                               const TextStyle(
-                                                                fontSize: 16,
-                                                              ),
+                                                            fontSize: 16,
+                                                          ),
                                                         ),
-                                                        if (selectedFilters[category] ==
+                                                        if (selectedFilters[
+                                                                category] ==
                                                             option)
                                                           const Icon(
                                                             Icons.check,
