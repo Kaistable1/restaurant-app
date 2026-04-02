@@ -19,12 +19,14 @@ class _HighlightsScreenState extends State<HighlightsScreen> {
   final List<Map<String, String>> _screens = [
     {
       'title': 'Ask Kai Anything',
-      'subtitle': 'Your personal AI for restaurants, vibes, trips, and last-minute plans.',
+      'subtitle':
+          'Your personal AI for restaurants, vibes, trips, and last-minute plans.',
       'image': 'assets/images/highlight1.png',
     },
     {
       'title': 'Community',
-      'subtitle': 'Explore food shows, creator picks, and the best restaurants in your favorite cities.',
+      'subtitle':
+          'Explore food shows, creator picks, and the best restaurants in your favorite cities.',
       'image': 'assets/images/highlight2.png',
     },
     {
@@ -34,7 +36,8 @@ class _HighlightsScreenState extends State<HighlightsScreen> {
     },
     {
       'title': 'See the City in Motion',
-      'subtitle': 'Explore short videos from creators, restaurants, and locals.',
+      'subtitle':
+          'Explore short videos from creators, restaurants, and locals.',
       'image': 'assets/images/highlight4.png',
     },
   ];
@@ -48,7 +51,7 @@ class _HighlightsScreenState extends State<HighlightsScreen> {
       // User has finished viewing all highlights
       // Mark that they've seen the highlights so they won't see it again
       await preferences?.setBool('hasSeenHighlights', true);
-      
+
       Get.offAll(() => SignupScreen(fromScreen: 'highlights'));
     }
   }
@@ -68,7 +71,9 @@ class _HighlightsScreenState extends State<HighlightsScreen> {
                 flex: 8,
                 child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+                    borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(30),
+                        bottomRight: Radius.circular(30)),
                     color: Colors.white,
                   ),
                   child: Stack(
@@ -90,16 +95,17 @@ class _HighlightsScreenState extends State<HighlightsScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: List.generate(
                             _screens.length,
-                            (index) => Container(
+                            (index) => AnimatedContainer(
                               width: 10,
                               height: 10,
                               margin: const EdgeInsets.symmetric(horizontal: 4),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: index == _currentIndex
-                                    ? Colors.white
+                                    ? AppColors.primaryColor
                                     : Colors.grey.shade300,
                               ),
+                              duration: Duration(milliseconds: 300),
                             ),
                           ),
                         ),
@@ -132,12 +138,13 @@ class _HighlightsScreenState extends State<HighlightsScreen> {
                         Text(
                           currentScreen['title']!,
                           style: TextStyle(
-                            fontSize: 32 * (5/4),
+                            fontSize: 32 * (5 / 4),
                             fontWeight: FontWeight.w600,
                             color: AppColors.blackColor,
-                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                            height: 0.9, // Reduced line spacing for tighter line height
-
+                            fontFamily:
+                                GoogleFonts.plusJakartaSans().fontFamily,
+                            height:
+                                0.9, // Reduced line spacing for tighter line height
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -148,10 +155,11 @@ class _HighlightsScreenState extends State<HighlightsScreen> {
                         Text(
                           currentScreen['subtitle']!,
                           style: TextStyle(
-                            fontSize: 16 * (5/4),
+                            fontSize: 16 * (5 / 4),
                             fontWeight: FontWeight.w400,
                             color: AppColors.blackColor,
-                            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+                            fontFamily:
+                                GoogleFonts.plusJakartaSans().fontFamily,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -168,17 +176,21 @@ class _HighlightsScreenState extends State<HighlightsScreen> {
             left: 0,
             right: 0,
             child: Container(
-              padding: const EdgeInsets.only(left: 24, right: 24, top: 28, bottom: 48),
+              padding: const EdgeInsets.only(
+                  left: 24, right: 24, top: 28, bottom: 48),
               decoration: const BoxDecoration(
                 color: Colors.white,
               ),
               child: CustomButton(
-                laBelText: _currentIndex == _screens.length - 1 ? 'Get Started' : 'Next',
-                fontSize: 16 * (5/4),
+                laBelText: _currentIndex == _screens.length - 1
+                    ? 'Get Started'
+                    : 'Next',
+                fontSize: 16 * (5 / 4),
                 fontWeight: FontWeight.w600,
                 fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                 textColor: AppColors.whiteColor,
-                containerColor: AppColors.primaryColor, // AppColors.blackColor,
+                containerColor: AppColors.primaryColor,
+                // AppColors.blackColor,
                 width: Get.width * 0.9,
                 height: 44,
                 radius: BorderRadius.circular(99),
@@ -191,4 +203,3 @@ class _HighlightsScreenState extends State<HighlightsScreen> {
     );
   }
 }
-
