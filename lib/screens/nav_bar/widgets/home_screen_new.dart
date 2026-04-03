@@ -1784,7 +1784,6 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                         },
                       ),
                     ),
-
                   ],
                 ),
               );
@@ -2286,87 +2285,87 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
-                                        children: (filterCtrl.filterOptions[
-                                                        category] ??
-                                                    [])
-                                                .map((option) => InkWell(
-                                                      onTap: () {
-                                                        final selectedList =
-                                                            filterCtrl.selectedFilters[
-                                                                    category] ??
-                                                                <String>[]
-                                                                    .obs;
-                                                        if (selectedList
-                                                            .contains(option)) {
-                                                          selectedList
-                                                              .remove(option);
-                                                        } else {
-                                                          selectedList
-                                                              .add(option);
-                                                        }
+                                        children: (filterCtrl
+                                                    .filterOptions[category] ??
+                                                [])
+                                            .map((option) => InkWell(
+                                                  onTap: () {
+                                                    final selectedList =
                                                         filterCtrl.selectedFilters[
-                                                                category] =
-                                                            selectedList;
-                                                        filterCtrl
-                                                            .selectedFilters
-                                                            .refresh();
-                                                        showFilterDropdowns[
-                                                            category] = false;
-                                                        showFilterDropdowns
-                                                            .refresh();
-                                                        isLoading.value = true;
-                                                        Future.delayed(
-                                                            const Duration(
-                                                                milliseconds:
-                                                                    500), () {
-                                                          homeLocationCtrl
-                                                              .applySearchAndFilters();
-                                                          isLoading.value =
-                                                              false;
-                                                        });
-                                                      },
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                vertical: 8),
-                                                        child: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
+                                                                category] ??
+                                                            <String>[].obs;
+                                                    if (selectedList
+                                                        .contains(option)) {
+                                                      selectedList
+                                                          .remove(option);
+                                                    } else {
+                                                      selectedList.add(option);
+                                                    }
+                                                    filterCtrl.selectedFilters[
+                                                            category] =
+                                                        selectedList;
+                                                    filterCtrl.selectedFilters
+                                                        .refresh();
+                                                    showFilterDropdowns[
+                                                        category] = false;
+                                                    showFilterDropdowns
+                                                        .refresh();
+                                                    isLoading.value = true;
+                                                    Future.delayed(
+                                                        const Duration(
+                                                            milliseconds: 500),
+                                                        () {
+                                                      homeLocationCtrl
+                                                          .applySearchAndFilters();
+                                                      isLoading.value = false;
+                                                    });
+                                                  },
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(vertical: 8),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Row(
                                                           children: [
-                                                            Row(
-                                                              children: [
-                                                                Text(
-                                                                  emojiMap[
-                                                                          option] ??
-                                                                      '',
-                                                                  style: const TextStyle(
+                                                            Text(
+                                                              emojiMap[
+                                                                      option] ??
+                                                                  '',
+                                                              style:
+                                                                  const TextStyle(
                                                                       fontSize:
                                                                           17),
-                                                                ),
-                                                                const SizedBox(
-                                                                    width: 4),
-                                                                Text(
-                                                                  option,
-                                                                  style: const TextStyle(
-                                                                      fontSize:
-                                                                          17),
-                                                                ),
-                                                              ],
                                                             ),
-                                                            if (filterCtrl.selectedFilters[category]?.contains(option) ??
-                                                                false)
-                                                              const Icon(
-                                                                  Icons.check,
-                                                                  color: Colors
-                                                                      .green,
-                                                                  size: 16),
+                                                            const SizedBox(
+                                                                width: 4),
+                                                            Text(
+                                                              option,
+                                                              style:
+                                                                  const TextStyle(
+                                                                      fontSize:
+                                                                          17),
+                                                            ),
                                                           ],
                                                         ),
-                                                      ),
-                                                    ))
-                                                .toList(),
+                                                        if (filterCtrl
+                                                                .selectedFilters[
+                                                                    category]
+                                                                ?.contains(
+                                                                    option) ??
+                                                            false)
+                                                          const Icon(
+                                                              Icons.check,
+                                                              color:
+                                                                  Colors.green,
+                                                              size: 16),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ))
+                                            .toList(),
                                       ),
                                     ),
                                   ),

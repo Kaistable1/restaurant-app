@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,7 +15,6 @@ import '../controller/search_controller.dart';
 import '../restaurant_detail_screens/restaurant_detail_screen.dart';
 import '../../../constants/app_colors.dart';
 import '../../../models/restaurant_model.dart';
-import '../../../widgets/rectangle_widget.dart';
 import '../widgets/discover_controller.dart';
 
 class SeeAllRestaurantsScreen extends StatefulWidget {
@@ -307,12 +308,15 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen>
             if (!(showFilterDropdowns[category] ?? false))
               return const SizedBox.shrink();
             final key = filterButtonKeys[category];
+            if (key?.currentContext == null) return const SizedBox.shrink();
+
             final RenderBox? renderBox =
                 key?.currentContext?.findRenderObject() as RenderBox?;
             if (renderBox == null) return const SizedBox.shrink();
 
             final position = renderBox.localToGlobal(Offset.zero);
             final size = renderBox.size;
+
             final stackRenderBox =
                 stackContext.findRenderObject() as RenderBox?;
             if (stackRenderBox == null) return const SizedBox.shrink();
@@ -321,21 +325,33 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen>
             final relativeLeft = position.dx - stackPosition.dx;
             final relativeTop = position.dy - stackPosition.dy;
 
+            final optionCount = filterCtrl.filterOptions[category]?.length ?? 0;
+            final dropdownHeight = optionCount * 40.0;
+
             return Positioned(
-              top: relativeTop + size.height + 4,
+              top: relativeTop + size.height + 8,
               left: relativeLeft,
-              child: GestureDetector(
-                onTap: () {}, // Consume taps to prevent pass-through
+              child: InkWell(
+                onTap: () {
+                  log("tapped the filter dropdown");
+                },
                 child: Material(
-                  elevation: 4,
+                  elevation: 8,
                   borderRadius: BorderRadius.circular(12),
                   child: Container(
                     width: 160,
-                    constraints: const BoxConstraints(maxHeight: 200),
-                    padding: const EdgeInsets.all(8),
+                    height: dropdownHeight < 190 ? dropdownHeight : 190,
+                    padding: const EdgeInsets.fromLTRB(8, 8, 8, 16),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.1),
+                          blurRadius: 10,
+                          spreadRadius: 2,
+                        ),
+                      ],
                     ),
                     child: SingleChildScrollView(
                       child: Column(
@@ -348,7 +364,12 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen>
                               filterCtrl.toggleFilter(category, option);
                               showFilterDropdowns[category] = false;
                               showFilterDropdowns.refresh();
-                              controller.applySearchAndFilters();
+                              isLoading.value = true;
+                              Future.delayed(const Duration(milliseconds: 500),
+                                  () {
+                                controller.applySearchAndFilters();
+                                isLoading.value = false;
+                              });
                             },
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
@@ -406,7 +427,7 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen>
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 16,
             offset: const Offset(0, 4),
           )
@@ -525,7 +546,7 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen>
                     ),
                   ],
                 ),
-                _buildDropdownOverlays(stackContext),
+                Positioned.fill(child: _buildDropdownOverlays(stackContext)),
               ],
             );
           }),
@@ -609,25 +630,22 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen>
   }
 
   Widget _buildRestaurantCard(RestaurantModel restaurant) {
-    final isBookmarked = restaurantCtrl.favoriteIds
-        .contains(restaurant.docID)
-        .obs;
+    final isBookmarked =
+        restaurantCtrl.favoriteIds.contains(restaurant.docID).obs;
     return InkWell(
       onTap: () => _navigateTo(
           () => RestaurantDetailScreen(restaurantModel: restaurant)),
       child: Container(
-        margin: const EdgeInsets.symmetric(
-            vertical: 8.0, horizontal: 8.0),
+        margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(10),
           ),
-          border:
-          Border.all(color: AppColors.borderColor),
+          border: Border.all(color: AppColors.borderColor),
           boxShadow: [
             BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: Colors.black.withValues(alpha: 0.04),
                 blurRadius: 16,
                 spreadRadius: 0,
                 offset: Offset(0, 4))
@@ -657,49 +675,39 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen>
                   padding: const EdgeInsets.symmetric(
                       horizontal: 12.0, vertical: 10.0),
                   child: Column(
-                    crossAxisAlignment:
-                    CrossAxisAlignment.start,
-                    mainAxisAlignment:
-                    MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Row(
-                        mainAxisAlignment:
-                        MainAxisAlignment
-                            .spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
                             child: Text(
-                              restaurant
-                                  .resName.isNotEmpty
+                              restaurant.resName.isNotEmpty
                                   ? restaurant.resName
                                   : 'Unknown Restaurant',
                               style: TextStyle(
                                 fontSize: 15,
-                                fontWeight:
-                                FontWeight.w700,
-                                fontFamily: GoogleFonts
-                                    .plusJakartaSans()
-                                    .fontFamily,
+                                fontWeight: FontWeight.w700,
+                                fontFamily:
+                                    GoogleFonts.plusJakartaSans().fontFamily,
                               ),
                               maxLines: 1,
-                              overflow:
-                              TextOverflow.ellipsis,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           GestureDetector(
                             onTap: () {
                               _dismissKeyboard();
                               toggleFavoriteRestaurant(
-                                  restaurant.docID,
-                                  isBookmarked.value);
+                                  restaurant.docID, isBookmarked.value);
                               isBookmarked.toggle();
                             },
                             child: Obx(
-                                  () => Icon(
+                              () => Icon(
                                 isBookmarked.value
                                     ? Icons.bookmark
-                                    : Icons
-                                    .bookmark_border,
+                                    : Icons.bookmark_border,
                                 color: isBookmarked.value
                                     ? Colors.green
                                     : Colors.grey,
@@ -709,39 +717,28 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen>
                         ],
                       ),
                       Obx(() {
-                        final operatingHours = controller
-                            .operatingHoursCache[
-                        restaurant.docID];
-                        final isFetching = controller
-                            .fetchingOperatingHours
+                        final operatingHours =
+                            controller.operatingHoursCache[restaurant.docID];
+                        final isFetching = controller.fetchingOperatingHours
                             .contains(restaurant.docID);
                         final currentDay =
-                        DateFormat('EEEE')
-                            .format(DateTime.now());
-                        final timeFilter = filterCtrl
-                            .selectedFilters['Time'];
+                            DateFormat('EEEE').format(DateTime.now());
+                        final timeFilter = filterCtrl.selectedFilters['Time'];
 
                         if (operatingHours == null ||
-                            operatingHours[currentDay] ==
-                                null) {
+                            operatingHours[currentDay] == null) {
                           if (!isFetching) {
-                            controller.getOperatingHours(
-                                restaurant.docID,
-                                triggerFilterUpdate:
-                                false);
+                            controller.getOperatingHours(restaurant.docID,
+                                triggerFilterUpdate: false);
                           }
                           return Text(
-                            isFetching
-                                ? 'Loading...'
-                                : 'Unavailable',
+                            isFetching ? 'Loading...' : 'Unavailable',
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
-                              fontFamily: GoogleFonts
-                                  .plusJakartaSans()
-                                  .fontFamily,
-                              color: const Color.fromRGBO(
-                                  142, 142, 147, 1),
+                              fontFamily:
+                                  GoogleFonts.plusJakartaSans().fontFamily,
+                              color: const Color.fromRGBO(142, 142, 147, 1),
                             ),
                           );
                         }
@@ -752,79 +749,58 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen>
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
-                              fontFamily: GoogleFonts
-                                  .plusJakartaSans()
-                                  .fontFamily,
-                              color: const Color.fromRGBO(
-                                  142, 142, 147, 1),
+                              fontFamily:
+                                  GoogleFonts.plusJakartaSans().fontFamily,
+                              color: const Color.fromRGBO(142, 142, 147, 1),
                             ),
                           );
                         }
 
-                        final dayHours =
-                        operatingHours[currentDay]!;
+                        final dayHours = operatingHours[currentDay]!;
                         // Check if no time filter is selected
-                        if (timeFilter == null ||
-                            timeFilter.isEmpty) {
+                        if (timeFilter == null || timeFilter.isEmpty) {
                           // Use the new method to get current operating hours
-                          final hoursText = controller
-                              .getDisplayHours(dayHours);
-                          final isOpen = controller
-                              .isRestaurantOpen(dayHours);
+                          final hoursText =
+                              controller.getDisplayHours(dayHours);
+                          final isOpen = controller.isRestaurantOpen(dayHours);
                           return Text(
                             hoursText,
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
-                              fontFamily: GoogleFonts
-                                  .plusJakartaSans()
-                                  .fontFamily,
+                              fontFamily:
+                                  GoogleFonts.plusJakartaSans().fontFamily,
                               color: isOpen
                                   ? Colors.green
-                                  : const Color.fromRGBO(
-                                  142, 142, 147, 1),
+                                  : const Color.fromRGBO(142, 142, 147, 1),
                             ),
                           );
                         }
 
                         // Use selected time slot
-                        final timeOfDay =
-                            timeFilter.first;
+                        final timeOfDay = timeFilter.first;
                         final isClosed =
-                            dayHours[timeOfDay]
-                            ?['isClosed'] ??
-                                true;
+                            dayHours[timeOfDay]?['isClosed'] ?? true;
                         final startTime =
-                            dayHours[timeOfDay]
-                            ?['startTime'] ??
-                                '6:00 PM';
+                            dayHours[timeOfDay]?['startTime'] ?? '6:00 PM';
                         final endTime =
-                            dayHours[timeOfDay]
-                            ?['endTime'] ??
-                                '9:00 PM';
+                            dayHours[timeOfDay]?['endTime'] ?? '9:00 PM';
                         return Text(
-                          isClosed
-                              ? 'Closed'
-                              : '$startTime–$endTime',
+                          isClosed ? 'Closed' : '$startTime–$endTime',
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
-                            fontFamily: GoogleFonts
-                                .plusJakartaSans()
-                                .fontFamily,
-                            color: const Color.fromRGBO(
-                                142, 142, 147, 1),
+                            fontFamily:
+                                GoogleFonts.plusJakartaSans().fontFamily,
+                            color: const Color.fromRGBO(142, 142, 147, 1),
                           ),
                         );
                       }),
                       Row(
-                        mainAxisAlignment:
-                        MainAxisAlignment
-                            .spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Row(
-                            mainAxisSize:
-                            MainAxisSize.min,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               Image.asset(
                                 'assets/images/Icon (1).png',
@@ -833,50 +809,38 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen>
                               ),
                               // Replace the per-restaurant getCurrentLocation call with a shared positionFuture. This calculates distance only if position is available, showing 'Unknown' if location is disabled or error occurred, preventing multiple dialogs.
                               Obx(() {
-                                final pos = controller
-                                    .userPosition.value;
+                                final pos = controller.userPosition.value;
                                 if (pos == null) {
                                   return Text(
-                                    controller
-                                        .isFetchingInitialData
-                                        .value
+                                    controller.isFetchingInitialData.value
                                         ? 'Fetching...'
                                         : 'Location disabled',
                                     style: TextStyle(
                                       fontSize: 12,
-                                      fontWeight:
-                                      FontWeight.w500,
-                                      fontFamily: GoogleFonts
-                                          .plusJakartaSans()
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: GoogleFonts.plusJakartaSans()
                                           .fontFamily,
-                                      color: const Color
-                                          .fromRGBO(142,
-                                          142, 147, 1),
+                                      color: const Color.fromRGBO(
+                                          142, 142, 147, 1),
                                     ),
                                   );
                                 } else {
-                                  double distance = Geolocator
-                                      .distanceBetween(
-                                    pos.latitude,
-                                    pos.longitude,
-                                    restaurant
-                                        .latitude,
-                                    restaurant
-                                        .longitude,
-                                  ) /
+                                  double distance = Geolocator.distanceBetween(
+                                        pos.latitude,
+                                        pos.longitude,
+                                        restaurant.latitude,
+                                        restaurant.longitude,
+                                      ) /
                                       1000;
                                   return Text(
                                     '${distance.toStringAsFixed(1)} km away',
                                     style: TextStyle(
                                       fontSize: 12,
-                                      fontWeight:
-                                      FontWeight.w500,
-                                      fontFamily: GoogleFonts
-                                          .plusJakartaSans()
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: GoogleFonts.plusJakartaSans()
                                           .fontFamily,
-                                      color: const Color
-                                          .fromRGBO(142,
-                                          142, 147, 1),
+                                      color: const Color.fromRGBO(
+                                          142, 142, 147, 1),
                                     ),
                                   );
                                 }
@@ -885,8 +849,7 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen>
                             ],
                           ),
                           Row(
-                            mainAxisSize:
-                            MainAxisSize.min,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               Image.asset(
                                 'assets/images/Group (5).png',
@@ -907,9 +870,5 @@ class _SeeAllRestaurantsScreenState extends State<SeeAllRestaurantsScreen>
         ),
       ),
     );
-
-
-
-
   }
 }
