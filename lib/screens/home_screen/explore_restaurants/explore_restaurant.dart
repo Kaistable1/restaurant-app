@@ -172,12 +172,12 @@ class ExploreRestaurant extends StatelessWidget {
                               .toList();
                         }
                         controller.searchController.addListener(() {
-                          controller.filteredRestaurants = restaurants
+                          controller.filteredRestaurants.assignAll(restaurants
                               .where((item) => item.resName
                                   .toLowerCase()
                                   .contains(controller.searchController.text
                                       .toLowerCase()))
-                              .toList();
+                              .toList());
                           controller.update();
                         });
                         WidgetsBinding.instance.addPostFrameCallback((_) {

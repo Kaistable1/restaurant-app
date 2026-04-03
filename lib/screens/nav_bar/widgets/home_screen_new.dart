@@ -133,19 +133,13 @@ class _HomeScreenNewState extends State<HomeScreenNew>
 
       homeLocationCtrl.applySearchAndFilters();
 
-      ever(homeLocationCtrl.filteredRestaurantsStream,
-          (Stream<List<RestaurantModel>> newStream) {
-        _filteredSub?.cancel();
-        _filteredSub = newStream.listen((list) {
-          final items = list
-              .where((r) => r.latitude != 0.0 && r.longitude != 0.0)
-              .toList();
-          _manager.setItems(items);
-          cachedRestaurants.assignAll(items);
-          Future.wait(items.take(4).map((restaurant) =>
-              homeLocationCtrl.getOperatingHours(restaurant.docID,
-                  triggerFilterUpdate: false)));
-        });
+      ever(homeLocationCtrl.filteredRestaurants, (List<RestaurantModel> list) {
+        final items =
+            list.where((r) => r.latitude != 0.0 && r.longitude != 0.0).toList();
+        _manager.setItems(items);
+        cachedRestaurants.assignAll(items);
+        Future.wait(items.take(4).map((restaurant) => homeLocationCtrl
+            .getOperatingHours(restaurant.docID, triggerFilterUpdate: false)));
       });
 
       // listener to userPosition to update map camera and re-sort
@@ -1541,8 +1535,11 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                             fontFamily:
                                                 GoogleFonts.plusJakartaSans()
                                                     .fontFamily,
-                                            ontapp:
-                                                () {}, // Disabled when loading
+                                            ontapp: () {
+                                              _navigateTo(() =>
+                                                  const SeeAllRestaurantsScreen(
+                                                      fromHome: true));
+                                            },
                                           ),
                                         ),
                                       ]
@@ -1834,126 +1831,129 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                       position.dy - stackPosition.dy;
 
                                   return Positioned(
-                                    top: relativeTop + size.height + 8,
-                                    // Below the filter button
-                                    left: relativeLeft,
-                                    // Aligned with left edge of button
-                                    child: Material(
-                                      elevation: 8,
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: Container(
-                                        width: 150,
-                                        height: dropdownHeight < 190
-                                            ? dropdownHeight
-                                            : 190,
-                                        padding: const EdgeInsets.fromLTRB(
-                                            8, 8, 8, 16),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
+                                      top: relativeTop + size.height + 8,
+                                      // Below the filter button
+                                      left: relativeLeft,
+                                      // Aligned with left edge of button
+                                      child: GestureDetector(
+                                        onTap: () {},
+                                        // Consume taps to prevent pass-through
+                                        child: Material(
+                                          elevation: 8,
                                           borderRadius:
                                               BorderRadius.circular(12),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black
-                                                  .withValues(alpha: 0.1),
-                                              blurRadius: 10,
-                                              spreadRadius: 2,
+                                          child: Container(
+                                            width: 150,
+                                            height: dropdownHeight < 190
+                                                ? dropdownHeight
+                                                : 190,
+                                            padding: const EdgeInsets.fromLTRB(
+                                                8, 8, 8, 16),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black
+                                                      .withValues(alpha: 0.1),
+                                                  blurRadius: 10,
+                                                  spreadRadius: 2,
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
-                                        child: SingleChildScrollView(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: (filterCtrl.filterOptions[
-                                                        category] ??
-                                                    [])
-                                                .map((option) => InkWell(
-                                                      onTap: () {
-                                                        final selectedList =
-                                                            filterCtrl.selectedFilters[
-                                                                    category] ??
-                                                                <String>[].obs;
-                                                        if (selectedList
-                                                            .contains(option)) {
-                                                          selectedList
-                                                              .remove(option);
-                                                        } else {
-                                                          selectedList
-                                                              .add(option);
-                                                        }
-                                                        filterCtrl.selectedFilters[
-                                                                category] =
-                                                            selectedList;
-                                                        filterCtrl
-                                                            .selectedFilters
-                                                            .refresh();
-                                                        showFilterDropdowns[
-                                                            category] = false;
-                                                        showFilterDropdowns
-                                                            .refresh();
-                                                        isLoading.value = true;
-                                                        Future.delayed(
-                                                            const Duration(
-                                                                milliseconds:
-                                                                    500), () {
-                                                          homeLocationCtrl
-                                                              .applySearchAndFilters();
-                                                          isLoading.value =
-                                                              false;
-                                                        });
-                                                      },
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                vertical: 8),
-                                                        child: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                          children: [
-                                                            Row(
-                                                              children: [
-                                                                Text(
-                                                                  emojiMap[
-                                                                          option] ??
-                                                                      '',
-                                                                  style: const TextStyle(
-                                                                      fontSize:
-                                                                          17),
-                                                                ),
-                                                                const SizedBox(
-                                                                    width: 4),
-                                                                Text(
-                                                                  option,
-                                                                  style: const TextStyle(
-                                                                      fontSize:
-                                                                          17),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            if (filterCtrl
-                                                                    .selectedFilters[
-                                                                        category]
-                                                                    ?.contains(
-                                                                        option) ??
-                                                                false)
-                                                              const Icon(
-                                                                  Icons.check,
-                                                                  color: Colors
-                                                                      .green,
-                                                                  size: 16),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ))
-                                                .toList(),
+                                            child: SingleChildScrollView(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children:
+                                                    (filterCtrl.filterOptions[
+                                                                category] ??
+                                                            [])
+                                                        .map(
+                                                            (option) => InkWell(
+                                                                  onTap: () {
+                                                                    final selectedList = filterCtrl.selectedFilters[
+                                                                            category] ??
+                                                                        <String>[]
+                                                                            .obs;
+                                                                    if (selectedList
+                                                                        .contains(
+                                                                            option)) {
+                                                                      selectedList
+                                                                          .remove(
+                                                                              option);
+                                                                    } else {
+                                                                      selectedList
+                                                                          .add(
+                                                                              option);
+                                                                    }
+                                                                    filterCtrl.selectedFilters[
+                                                                            category] =
+                                                                        selectedList;
+                                                                    filterCtrl
+                                                                        .selectedFilters
+                                                                        .refresh();
+                                                                    showFilterDropdowns[
+                                                                            category] =
+                                                                        false;
+                                                                    showFilterDropdowns
+                                                                        .refresh();
+                                                                    isLoading
+                                                                            .value =
+                                                                        true;
+                                                                    Future.delayed(
+                                                                        const Duration(
+                                                                            milliseconds:
+                                                                                500),
+                                                                        () {
+                                                                      homeLocationCtrl
+                                                                          .applySearchAndFilters();
+                                                                      isLoading
+                                                                              .value =
+                                                                          false;
+                                                                    });
+                                                                  },
+                                                                  child:
+                                                                      Padding(
+                                                                    padding: const EdgeInsets
+                                                                        .symmetric(
+                                                                        vertical:
+                                                                            8),
+                                                                    child: Row(
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .spaceBetween,
+                                                                      children: [
+                                                                        Row(
+                                                                          children: [
+                                                                            Text(
+                                                                              emojiMap[option] ?? '',
+                                                                              style: const TextStyle(fontSize: 17),
+                                                                            ),
+                                                                            const SizedBox(width: 4),
+                                                                            Text(
+                                                                              option,
+                                                                              style: const TextStyle(fontSize: 17),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                        if (filterCtrl.selectedFilters[category]?.contains(option) ??
+                                                                            false)
+                                                                          const Icon(
+                                                                              Icons.check,
+                                                                              color: Colors.green,
+                                                                              size: 16),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ))
+                                                        .toList(),
+                                              ),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ),
-                                  );
+                                      ));
                                 }
                                 return const SizedBox.shrink();
                               });

@@ -209,12 +209,12 @@ class LocationScreen extends StatelessWidget {
                         return GetBuilder<HomeLocationController>(
                           builder: (controller) {
                             if (city != null && country != null) {
-                              controller.filteredRestaurants = controller
+                              controller.filteredRestaurants.assignAll(controller
                                   .filteredRestaurants
                                   .where((restaurant) {
                                 return restaurant.city == city &&
                                     restaurant.country == country;
-                              }).toList();
+                              }).toList());
                             }
 
                             return GridView.builder(

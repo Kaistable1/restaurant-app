@@ -306,8 +306,8 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                               // Add a listener to update filtering whenever the search query changes
                               controller.searchController.addListener(() {
                                 final text = controller.searchController.text;
-                                controller.filteredRestaurants =
-                                    filterRestaurants(restaurants, text);
+                                controller.filteredRestaurants.assignAll(
+                                    filterRestaurants(restaurants, text));
                               });
                               // Build the restaurant grid
                               return GetBuilder<HomeLocationController>(
@@ -595,14 +595,14 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                                       .map((e) =>
                                                           e.toLowerCase())
                                                       .contains(filter))) {
-                                            controller.filteredRestaurants =
-                                                timeOfDayRestaurants;
+                                            controller.filteredRestaurants.assignAll(
+                                                timeOfDayRestaurants);
                                           }
 
                                           // Listen for search changes and filter restaurants accordingly
                                           controller.searchController
                                               .addListener(() {
-                                            controller.filteredRestaurants =
+                                            controller.filteredRestaurants.assignAll(
                                                 restaurants
                                                     .where((item) => item
                                                         .resName
@@ -611,7 +611,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                                             .searchController
                                                             .text
                                                             .toLowerCase()))
-                                                    .toList();
+                                                    .toList());
                                             controller.update();
                                           });
                                           if (controller

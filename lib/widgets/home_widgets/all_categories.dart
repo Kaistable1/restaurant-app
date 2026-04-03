@@ -26,7 +26,7 @@ class AllCategories extends StatelessWidget {
     final HomeLocationController controller = Get.put(HomeLocationController());
     return Padding(
       padding: const EdgeInsets.only(left: 14, right: 14),
-      child: StreamBuilder(
+      child: StreamBuilder<List<RestaurantModel>>(
         stream: controller.getAllRestaurants(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -35,11 +35,11 @@ class AllCategories extends StatelessWidget {
 
           if (snapshot.hasError) {
             print('Error during stream call ${snapshot.error}');
-            return Text(''); // Show error message if any
+            return const Text(''); // Show error message if any
           }
 
           if (snapshot.data == null || snapshot.data!.isEmpty) {
-            return Text(''); // Handle the case where data is null or empty
+            return const Text(''); // Handle the case where data is null or empty
           }
           List<RestaurantModel> restaurants = snapshot.data!;
 

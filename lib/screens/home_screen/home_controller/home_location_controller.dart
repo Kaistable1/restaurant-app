@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -43,14 +44,21 @@ class HomeLocationController extends GetxController {
   DocumentSnapshot? lastDocument;
   RxList<RestaurantModel> restaurants = <RestaurantModel>[].obs;
   final _searchSubject = BehaviorSubject<String>.seeded('');
-  List<RestaurantModel> allRestaurants = [];
-  List<RestaurantModel> filteredRestaurants = [];
+  RxList<RestaurantModel> filteredRestaurants = <RestaurantModel>[].obs;
+  final RxBool isFetchingNextBatch = false.obs;
+  final RxBool allFetched = false.obs;
+  final List<RestaurantModel> _allRawRestaurants = [];
+
+  List<RestaurantModel> get allRestaurants => _allRawRestaurants;
+
   RxString selectedTop = ''.obs;
   RxList selectedPersentage = [].obs;
   RxList selectedHappyhour = [].obs;
   Map<String, List<String>> cusinesMapFilter = {};
   final FilterController filterCtrl = Get.put(FilterController());
   List top = ['Most Reviewed', 'Discount', 'Dining'];
+
+  Timer? _filterDebounce;
 
   //// video variables
   final RxList<VideoModel> filteredVideos = <VideoModel>[].obs;
@@ -66,6 +74,19 @@ class HomeLocationController extends GetxController {
   void onInit() {
     super.onInit();
     isFetchingInitialData.value = true;
+    
+    // Listen for position updates and re-filter if distance is set
+    ever(userPosition, (pos) {
+      if (pos != null && selectedDistance.value > 0) {
+        applySearchAndFilters();
+      }
+    });
+
+    // Listen for distance selection changes
+    ever(selectedDistance, (dist) {
+      applySearchAndFilters();
+    });
+
     positionFuture = getCurrentLocation(null).catchError((e) {
       print('Location error: $e');
       return null;
@@ -73,11 +94,12 @@ class HomeLocationController extends GetxController {
     positionFuture.then((pos) {
       if (pos != null) {
         userPosition.value = pos;
-        _saveUserPosition(pos); // NEW: Save to shared prefs
+        _saveUserPosition(pos);
       }
     }).whenComplete(() {
       isFetchingInitialData.value = false;
     });
+    
     fetchVideos();
     applySearchAndFilters();
   }
@@ -248,271 +270,171 @@ class HomeLocationController extends GetxController {
     }
   }
 
-  Stream<List<RestaurantModel>> getAllRestaurants() {
-    return FirebaseFirestore.instance
-        .collection('restaurants')
-        .snapshots()
-        .map((snapshot) {
-      var restaurants = snapshot.docs
-          .map((doc) => RestaurantModel.fromDocumentSnapshot(doc))
-          .toList();
-      // Sort by distance if user position is available
-      if (userPosition.value != null) {
-        restaurants.sort((a, b) {
-          if (a.latitude == 0.0 && a.longitude == 0.0) return 1;
-          if (b.latitude == 0.0 && b.longitude == 0.0) return -1;
-          final distanceA = Geolocator.distanceBetween(
-            userPosition.value!.latitude,
-            userPosition.value!.longitude,
-            a.latitude,
-            a.longitude,
-          );
-          final distanceB = Geolocator.distanceBetween(
-            userPosition.value!.latitude,
-            userPosition.value!.longitude,
-            b.latitude,
-            b.longitude,
-          );
-          return distanceA.compareTo(distanceB);
-        });
+  Future<void> fetchFilteredRestaurants(
+      {bool isLoadMore = false, int targetCount = 10}) async {
+    // If not loading more, we can "reset" even if a fetch is in progress
+    if (!isLoadMore) {
+      isFetchingNextBatch.value = false; // Force reset guard for fresh filter calls
+      lastDocument = null;
+      _allRawRestaurants.clear();
+      filteredRestaurants.clear();
+      allFetched.value = false;
+    }
+
+    if (isFetchingNextBatch.value || (allFetched.value && isLoadMore)) return;
+
+    isFetchingNextBatch.value = true;
+    try {
+      int currentMatchCount = filteredRestaurants.length;
+      bool hasMore = true;
+
+      while (currentMatchCount <
+              (isLoadMore
+                  ? filteredRestaurants.length + targetCount
+                  : targetCount) &&
+          hasMore) {
+        Query query = FirebaseFirestore.instance
+            .collection('restaurants')
+            .orderBy('createdAt', descending: true)
+            .limit(20);
+
+        if (lastDocument != null) {
+          query = query.startAfterDocument(lastDocument!);
+        }
+
+        final snapshot = await query.get();
+        if (snapshot.docs.isEmpty) {
+          allFetched.value = true;
+          hasMore = false;
+          break;
+        }
+
+        lastDocument = snapshot.docs.last;
+        final newBatch = snapshot.docs
+            .map((doc) => RestaurantModel.fromDocumentSnapshot(
+                doc as DocumentSnapshot<Map<String, dynamic>>))
+            .toList();
+
+        _allRawRestaurants.addAll(newBatch);
+
+        // Apply filters to the newly fetched batch and add to filteredRestaurantsList
+        final filteredBatch = _applyFiltersToBatch(newBatch);
+        filteredRestaurants.addAll(filteredBatch);
+
+        currentMatchCount = filteredRestaurants.length;
+
+        if (snapshot.docs.length < 20) {
+          allFetched.value = true;
+          hasMore = false;
+        }
       }
-      return restaurants;
-    });
+    } catch (e) {
+      print('Error fetching restaurants: $e');
+    } finally {
+      isFetchingNextBatch.value = false;
+      update();
+    }
   }
 
-  Stream<List<RestaurantModel>> getFilteredRestaurants() {
-    final filterCtrl = Get.find<FilterController>();
-    return FirebaseFirestore.instance
-        .collection('restaurants')
-        .snapshots()
-        .map((snapshot) {
-      var restaurants = snapshot.docs
-          .map((doc) => RestaurantModel.fromDocumentSnapshot(doc))
-          .toList();
-      if (filterCtrl.selectedFilters.isNotEmpty ||
-          selectedDistance.value != 0) {
-        // Apply AND logic across categories
-        for (var category in filterCtrl.selectedFilters.keys) {
-          final selectedOptions = filterCtrl.selectedFilters[category];
-          if (selectedOptions != null && selectedOptions.isNotEmpty) {
-            restaurants = restaurants.where((restaurant) {
-              if (category == 'Dietary') {
-                return selectedOptions
-                    .every((option) => restaurant.dietaryList.contains(option));
-              } else if (category == 'Vibes') {
-                return selectedOptions
-                    .every((option) => restaurant.vibesList.contains(option));
-                // } else if (category == 'Time') {
-                //   final hours = operatingHoursCache[restaurant.docID];
-                //   if (hours == null || hours.isEmpty) {
-                //     getOperatingHours(restaurant.docID, triggerFilterUpdate: true);
-                //     return false;
-                //   }
-                //   return hours.values.any((dayHours) =>
-                //       selectedOptions.every((timeOfDay) => !(dayHours[timeOfDay]?['isClosed'] ?? true))
-                //   );
-              } else if (category == 'Cuisines') {
-                final menuList = restaurant.menuList;
-                if (menuList.isEmpty) {
-                  return false;
-                }
-                return selectedOptions.every((cuisine) =>
-                    menuList.any((menu) => menu.cuisineType == cuisine));
-              } else if (category == 'Experience') {
-                final entertainmentList = restaurant.entertainmentScheduleList;
-                if (entertainmentList.isEmpty) {
-                  return false;
-                }
-                return selectedOptions.every((experience) => entertainmentList
-                    .any((event) => event.eventName == experience));
-              } else if (category == 'Entertainment') {
-                final entertainmentList = restaurant.entertainmentScheduleList;
-                if (entertainmentList.isEmpty) {
-                  return false;
-                }
-                return selectedOptions.every((entertainment) =>
-                    entertainmentList
-                        .any((event) => event.eventName == entertainment));
-              }
-              return true;
-            }).toList();
+  List<RestaurantModel> _applyFiltersToBatch(List<RestaurantModel> batch) {
+    var results = batch;
+
+    // Apply search query
+    if (searchQuery.value.isNotEmpty) {
+      final query = searchQuery.value.toLowerCase();
+      results = results.where((r) {
+        return r.resName.toLowerCase().contains(query) ||
+            r.address.toLowerCase().contains(query) ||
+            r.city.toLowerCase().contains(query) ||
+            r.state.toLowerCase().contains(query);
+      }).toList();
+    }
+
+    // Apply category filters
+    for (var category in filterCtrl.selectedFilters.keys) {
+      final selectedOptions = filterCtrl.selectedFilters[category];
+      if (selectedOptions != null && selectedOptions.isNotEmpty) {
+        results = results.where((restaurant) {
+          if (category == 'Dietary') {
+            return selectedOptions
+                .any((option) => restaurant.dietaryList.contains(option));
+          } else if (category == 'Vibes') {
+            return selectedOptions
+                .any((option) => restaurant.vibesList.contains(option));
+          } else if (category == 'Cuisines') {
+            return selectedOptions.any((cuisine) =>
+                restaurant.menuList.any((menu) => menu.cuisineType == cuisine));
+          } else if (category == 'Experience') {
+            return selectedOptions.any((experience) =>
+                restaurant.experiencesList.contains(experience));
+          } else if (category == 'Entertainment') {
+            return selectedOptions.any((entertainment) =>
+                restaurant.entertainmentList.contains(entertainment));
           }
-        }
-
-        // Sort by distance if user position is available
-        if (userPosition.value != null) {
-          restaurants.sort((a, b) {
-            if (a.latitude == 0.0 && a.longitude == 0.0) return 1;
-            if (b.latitude == 0.0 && b.longitude == 0.0) return -1;
-            final distanceA = Geolocator.distanceBetween(
-              userPosition.value!.latitude,
-              userPosition.value!.longitude,
-              a.latitude,
-              a.longitude,
-            );
-            final distanceB = Geolocator.distanceBetween(
-              userPosition.value!.latitude,
-              userPosition.value!.longitude,
-              b.latitude,
-              b.longitude,
-            );
-            return distanceA.compareTo(distanceB);
-          });
-        }
+          return true;
+        }).toList();
       }
+    }
 
-      return restaurants;
-    });
+    // Apply distance filter
+    if (selectedDistance.value > 0 && userPosition.value != null) {
+      final maxDistanceKm = selectedDistance.value * 1.60934;
+      results = results.where((restaurant) {
+        if (restaurant.latitude == 0.0 && restaurant.longitude == 0.0)
+          return false;
+        final distance = Geolocator.distanceBetween(
+              userPosition.value!.latitude,
+              userPosition.value!.longitude,
+              restaurant.latitude,
+              restaurant.longitude,
+            ) /
+            1000;
+        return distance <= maxDistanceKm;
+      }).toList();
+    }
+
+    return results;
   }
 
   void applySearchAndFilters() {
-    filteredRestaurantsStream.value = FirebaseFirestore.instance
-        .collection('restaurants')
-        .snapshots()
-        .map((snapshot) {
-      var restaurants = snapshot.docs
-          .map((doc) => RestaurantModel.fromDocumentSnapshot(doc))
-          .toList();
+    _filterDebounce?.cancel();
+    _filterDebounce = Timer(const Duration(milliseconds: 300), () {
+      fetchFilteredRestaurants(isLoadMore: false, targetCount: 10);
 
-      // Apply search query
-      if (searchQuery.value.isNotEmpty) {
+      // Filter videos separately
+      if (videos.isNotEmpty) {
         final query = searchQuery.value.toLowerCase();
-        restaurants = restaurants.where((restaurant) {
-          return restaurant.resName.toLowerCase().contains(query) ||
-              restaurant.address.toLowerCase().contains(query) ||
-              restaurant.city.toLowerCase().contains(query) ||
-              restaurant.state.toLowerCase().contains(query) ||
-              restaurant.country.toLowerCase().contains(query);
+        final selectedCuisines =
+            filterCtrl.selectedFilters['Cuisines'] ?? <String>[].obs;
+        final selectedExperiences =
+            filterCtrl.selectedFilters['Experience'] ?? <String>[].obs;
+        final selectedVibes =
+            filterCtrl.selectedFilters['Vibes'] ?? <String>[].obs;
+
+        filteredVideos.value = videos.where((video) {
+          final matchesSearch = query.isEmpty ||
+              (video.restaurantName?.toLowerCase().contains(query) ?? false);
+          final videoCuisines =
+              video.causines?.split(',').map((c) => c.trim()).toList() ?? [];
+          final matchesCuisines = selectedCuisines.isEmpty ||
+              selectedCuisines
+                  .any((cuisine) => videoCuisines.contains(cuisine));
+          final videoExperiences =
+              video.experience?.split(',').map((e) => e.trim()).toList() ?? [];
+          final matchesExperiences = selectedExperiences.isEmpty ||
+              selectedExperiences
+                  .any((experience) => videoExperiences.contains(experience));
+          final videoVibes =
+              video.vibes?.split(',').map((v) => v.trim()).toList() ?? [];
+          final matchesVibes = selectedVibes.isEmpty ||
+              selectedVibes.any((vibe) => videoVibes.contains(vibe));
+          return matchesSearch &&
+              matchesCuisines &&
+              matchesExperiences &&
+              matchesVibes;
         }).toList();
       }
-
-      // Apply AND logic across category filters
-      final filterCtrl = Get.find<FilterController>();
-      for (var category in filterCtrl.selectedFilters.keys) {
-        final selectedOptions = filterCtrl.selectedFilters[category];
-        if (selectedOptions != null && selectedOptions.isNotEmpty) {
-          restaurants = restaurants.where((restaurant) {
-            if (category == 'Dietary') {
-              return selectedOptions
-                  .every((option) => restaurant.dietaryList.contains(option));
-            } else if (category == 'Vibes') {
-              return selectedOptions
-                  .every((option) => restaurant.vibesList.contains(option));
-              // } else if (category == 'Time') {
-              //   final hours = operatingHoursCache[restaurant.docID];
-              //   if (hours == null || hours.isEmpty) {
-              //     getOperatingHours(restaurant.docID, triggerFilterUpdate: true);
-              //     return false;
-              //   }
-              //   return hours.values.any((dayHours) =>
-              //       selectedOptions.every((timeOfDay) => !(dayHours[timeOfDay]?['isClosed'] ?? true))
-              //   );
-            } else if (category == 'Cuisines') {
-              final menuList = restaurant.menuList;
-              if (menuList.isEmpty) {
-                return false;
-              }
-              return selectedOptions.every((cuisine) =>
-                  menuList.any((menu) => menu.cuisineType == cuisine));
-            } else if (category == 'Experience') {
-              final entertainmentList = restaurant.entertainmentScheduleList;
-              if (entertainmentList.isEmpty) {
-                return false;
-              }
-              return selectedOptions.every((experience) => entertainmentList
-                  .any((event) => event.eventName == experience));
-            } else if (category == 'Entertainment') {
-              final entertainmentList = restaurant.entertainmentScheduleList;
-              if (entertainmentList.isEmpty) {
-                return false;
-              }
-              return selectedOptions.every((entertainment) => entertainmentList
-                  .any((event) => event.eventName == entertainment));
-            }
-            return true;
-          }).toList();
-        }
-      }
-
-      // Apply distance filter
-      if (selectedDistance.value > 0 && userPosition.value != null) {
-        final maxDistanceKm = selectedDistance.value * 1.60934;
-        restaurants = restaurants.where((restaurant) {
-          if (restaurant.latitude == 0.0 && restaurant.longitude == 0.0) {
-            return false;
-          }
-          final distance = Geolocator.distanceBetween(
-                userPosition.value!.latitude,
-                userPosition.value!.longitude,
-                restaurant.latitude,
-                restaurant.longitude,
-              ) /
-              1000;
-          return distance <= maxDistanceKm;
-        }).toList();
-      }
-
-      // Sort by distance if user position is available
-      if (userPosition.value != null) {
-        restaurants.sort((a, b) {
-          if (a.latitude == 0.0 && a.longitude == 0.0) return 1;
-          if (b.latitude == 0.0 && b.longitude == 0.0) return -1;
-          final distanceA = Geolocator.distanceBetween(
-            userPosition.value!.latitude,
-            userPosition.value!.longitude,
-            a.latitude,
-            a.longitude,
-          );
-          final distanceB = Geolocator.distanceBetween(
-            userPosition.value!.latitude,
-            userPosition.value!.longitude,
-            b.latitude,
-            b.longitude,
-          );
-          return distanceA.compareTo(distanceB);
-        });
-      }
-
-      return restaurants;
     });
-
-    // Filter videos directly using cuisines, vibes, experience fields
-    if (videos.isNotEmpty) {
-      final filterCtrl = Get.find<FilterController>();
-      final query = searchQuery.value.toLowerCase();
-      final selectedCuisines =
-          filterCtrl.selectedFilters['Cuisines'] ?? <String>[].obs;
-      final selectedExperiences =
-          filterCtrl.selectedFilters['Experience'] ?? <String>[].obs;
-      final selectedVibes =
-          filterCtrl.selectedFilters['Vibes'] ?? <String>[].obs;
-
-      filteredVideos.value = videos.where((video) {
-        final matchesSearch = query.isEmpty ||
-            (video.restaurantName?.toLowerCase().contains(query) ?? false);
-
-        final videoCuisines =
-            video.causines?.split(',').map((c) => c.trim()).toList() ?? [];
-        final matchesCuisines = selectedCuisines.isEmpty ||
-            selectedCuisines.any((cuisine) => videoCuisines.contains(cuisine));
-
-        final videoExperiences =
-            video.experience?.split(',').map((e) => e.trim()).toList() ?? [];
-        final matchesExperiences = selectedExperiences.isEmpty ||
-            selectedExperiences
-                .any((experience) => videoExperiences.contains(experience));
-
-        final videoVibes =
-            video.vibes?.split(',').map((v) => v.trim()).toList() ?? [];
-        final matchesVibes = selectedVibes.isEmpty ||
-            selectedVibes.any((vibe) => videoVibes.contains(vibe));
-
-        return matchesSearch &&
-            matchesCuisines &&
-            matchesExperiences &&
-            matchesVibes;
-      }).toList();
-    }
   }
 
   Stream<List<RestaurantModel>> getRestaurants() {
@@ -542,35 +464,15 @@ class HomeLocationController extends GetxController {
     });
   }
 
-  // Future<void> getOperatingHours(String restaurantId) async {
-  //   if (operatingHoursCache.containsKey(restaurantId)) {
-  //     return;
-  //   }
-  //
-  //   try {
-  //     var querySnapshot = await FirebaseFirestore.instance
-  //         .collection('restaurants')
-  //         .doc(restaurantId)
-  //         .collection('operatingHours')
-  //         .get();
-  //
-  //     Map<String, Map<String, Map<String, dynamic>>> daysHours = {};
-  //
-  //     for (var doc in querySnapshot.docs) {
-  //       String day = doc.id;
-  //       daysHours[day] = (doc.data()).map((key, value) => MapEntry(key, value as Map<String, dynamic>));
-  //     }
-  //
-  //     operatingHoursCache[restaurantId] = daysHours;
-  //     operatingHoursCache.refresh();
-  //     applySearchAndFilters(); // Trigger re-filter after fetch
-  //   } catch (e) {
-  //     print('Error fetching operating hours for $restaurantId: $e');
-  //     operatingHoursCache[restaurantId] = {};
-  //     operatingHoursCache.refresh();
-  //     applySearchAndFilters();
-  //   }
-  // }
+  Stream<List<RestaurantModel>> getFilteredRestaurants() {
+    return filteredRestaurants.stream;
+  }
+
+  Stream<List<RestaurantModel>> getAllRestaurants() {
+    // For now, return the filtered set to satisfy the generic list requirements
+    // but in a real-time reactive way.
+    return filteredRestaurants.stream;
+  }
 
   Future<Map<String, Map<String, Map<String, dynamic>>>?> getOperatingHours(
       String restaurantId,
@@ -942,13 +844,13 @@ class HomeLocationController extends GetxController {
 
   void filterRestaurants(String query) {
     if (query.isEmpty) {
-      filteredRestaurants = allRestaurants;
+      filteredRestaurants.assignAll(allRestaurants);
     } else {
-      filteredRestaurants = allRestaurants
+      filteredRestaurants.assignAll(allRestaurants
           .where((restaurant) => restaurant.resName
               .toLowerCase()
               .contains(query.toLowerCase().trim()))
-          .toList();
+          .toList());
     }
     update();
   }
@@ -982,8 +884,9 @@ class HomeLocationController extends GetxController {
   }
 
   void initializeSelectors(List<RestaurantModel> screenRestaurants) {
-    allRestaurants = screenRestaurants;
-    filteredRestaurants = screenRestaurants;
+    _allRawRestaurants.clear();
+    _allRawRestaurants.addAll(screenRestaurants);
+    filteredRestaurants.assignAll(screenRestaurants);
     update();
   }
 
