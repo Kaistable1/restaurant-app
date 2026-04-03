@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:ui' as ui;
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -1420,9 +1421,10 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                           bottom: 8),
                                       children: filterCtrl.filterOptions.keys
                                           .map((category) {
-                                        return GestureDetector(
+                                        return InkWell(
                                           key: filterButtonKeys[category],
                                           onTap: () {
+                                            debugPrint("tapped");
                                             showFilterDropdowns[category] =
                                                 !showFilterDropdowns[category]!;
                                             showFilterDropdowns
@@ -1832,12 +1834,11 @@ class _HomeScreenNewState extends State<HomeScreenNew>
 
                                   return Positioned(
                                       top: relativeTop + size.height + 8,
-                                      // Below the filter button
                                       left: relativeLeft,
-                                      // Aligned with left edge of button
-                                      child: GestureDetector(
-                                        onTap: () {},
-                                        // Consume taps to prevent pass-through
+                                      child: InkWell(
+                                        onTap: () {
+                                          log("tapped the filter");
+                                        },
                                         child: Material(
                                           elevation: 8,
                                           borderRadius:
@@ -2443,52 +2444,53 @@ class FilterOptionsSheet extends StatelessWidget {
                         ctrl.selectedFilters[category]?.contains(option) ??
                             false;
                     return InkWell(
-                      onTap: () {
-                        final selectedList =
-                            ctrl.selectedFilters[category] ?? <String>[].obs;
-                        if (isSelected) {
-                          selectedList.remove(option);
-                        } else {
-                          selectedList.add(option);
-                        }
-                        ctrl.selectedFilters[category] = selectedList;
-                        ctrl.selectedFilters.refresh();
-                        Navigator.pop(context);
-                        homeScreenState.isLoading.value = true;
-                        Future.delayed(const Duration(milliseconds: 1500), () {
-                          homeScreenState.isLoading.value = false;
-                          homeScreenState.setState(() {});
-                        });
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  emojiMap[option] ?? '',
-                                  style: const TextStyle(fontSize: 17),
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  option,
-                                  style: const TextStyle(fontSize: 17),
-                                ),
-                              ],
-                            ),
-                            if (isSelected)
-                              const Icon(Icons.check,
-                                  color: Colors.green, size: 16),
-                          ],
-                        ),
-                      ),
-                    );
+                        onTap: () {
+                          log("tapped -->${option}");
+                          final selectedList =
+                              ctrl.selectedFilters[category] ?? <String>[].obs;
+                          if (isSelected) {
+                            selectedList.remove(option);
+                          } else {
+                            selectedList.add(option);
+                          }
+                          ctrl.selectedFilters[category] = selectedList;
+                          ctrl.selectedFilters.refresh();
+                          Navigator.pop(context);
+                          homeScreenState.isLoading.value = true;
+                        },
+                        child:
+                            filterOptionWidget(option, isSelected: isSelected));
                   }).toList(),
                 )),
           ],
         ),
+      ),
+    );
+  }
+
+  ///filter option widget
+  filterOptionWidget(String option, {bool isSelected = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Text(
+                filterOptionWidget(emojiMap[option]!),
+                style: const TextStyle(fontSize: 17),
+              ),
+              const SizedBox(width: 4),
+              Text(
+                option,
+                style: const TextStyle(fontSize: 17),
+              ),
+            ],
+          ),
+          if (isSelected)
+            const Icon(Icons.check, color: Colors.green, size: 16),
+        ],
       ),
     );
   }

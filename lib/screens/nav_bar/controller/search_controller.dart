@@ -59,26 +59,6 @@ class FilterController extends GetxController {
   }
 
   var selectedFilters = <String, RxList<String>>{}.obs;
-  // var filterOptions = <String, List<String>>{
-  //   "Time": ['Breakfast', 'Brunch', 'Lunch', 'Dinner', 'Late Night'],
-  //   "Cuisines": [
-  //     "American", "Mexican", "Italian", "French", "Chinese", "Japanese",
-  //     "Thai", "Indian", "Korean", "Vietnamese", "Mediterranean", "Caribbean",
-  //     "African", "Middle Eastern", "Spanish", "Filipino", "Brazilian",
-  //     "Peruvian", "Russian", "German",
-  //   ],
-  //   "Dietary": [
-  //     "Vegan", "Vegetarian", "Plant Based", "Pescatarian",
-  //   ],
-  //   "Vibes": [
-  //     "Lively", "High-Energy", "LaidBack", "Intimate",
-  //     "Loud", "Lowkey", "UpBeat"
-  //   ],
-  //   "Experience": [
-  //     "Live Music", "Dj Night", "Ladies Night",
-  //     "Hookah", "Karaoke",
-  //   ],
-  // }.obs;
 
   var filterOptions = <String, List<String>>{
     "Vibes": [
@@ -98,7 +78,6 @@ class FilterController extends GetxController {
       "Late Night",
       "Show"
     ],
-    // "Time": ['Breakfast', 'Brunch', 'Lunch', 'Dinner', 'Late Night'],
     "Cuisines": [
       "American",
       "Mexican",
@@ -134,6 +113,7 @@ class FilterController extends GetxController {
       "Plant Based",
       "Pescatarian",
     ],
+    "Time": ["Breakfast", "Lunch", "Dinner"],
   }.obs;
 
   List<String> losAngelusCities = [

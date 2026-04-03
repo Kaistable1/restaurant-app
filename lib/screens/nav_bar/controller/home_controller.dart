@@ -71,7 +71,7 @@ class HomeController extends GetxController {
 
   void selectCategory(String category, Widget page) {
     selectedCategory.value = category;
-    Get.to(() => page); // Navigate using Get.to()
+    Get.to(() => page);
   }
 
   // banner

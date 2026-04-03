@@ -274,7 +274,7 @@ class HomeLocationController extends GetxController {
       {bool isLoadMore = false, int targetCount = 10}) async {
     // If not loading more, we can "reset" even if a fetch is in progress
     if (!isLoadMore) {
-      isFetchingNextBatch.value = false; // Force reset guard for fresh filter calls
+      isFetchingNextBatch.value = false;
       lastDocument = null;
       _allRawRestaurants.clear();
       filteredRestaurants.clear();
@@ -285,14 +285,11 @@ class HomeLocationController extends GetxController {
 
     isFetchingNextBatch.value = true;
     try {
-      int currentMatchCount = filteredRestaurants.length;
+      int currentMatchCount = 0;
       bool hasMore = true;
+      final int targetMatchCount = isLoadMore ? targetCount : targetCount;
 
-      while (currentMatchCount <
-              (isLoadMore
-                  ? filteredRestaurants.length + targetCount
-                  : targetCount) &&
-          hasMore) {
+      while (currentMatchCount < targetMatchCount && hasMore) {
         Query query = FirebaseFirestore.instance
             .collection('restaurants')
             .orderBy('createdAt', descending: true)
@@ -310,18 +307,26 @@ class HomeLocationController extends GetxController {
         }
 
         lastDocument = snapshot.docs.last;
-        final newBatch = snapshot.docs
-            .map((doc) => RestaurantModel.fromDocumentSnapshot(
-                doc as DocumentSnapshot<Map<String, dynamic>>))
-            .toList();
+        final newDocs = snapshot.docs;
 
-        _allRawRestaurants.addAll(newBatch);
+        for (var doc in newDocs) {
+          final restaurant = RestaurantModel.fromDocumentSnapshot(
+              doc as DocumentSnapshot<Map<String, dynamic>>);
+          
+          if (!_allRawRestaurants.any((r) => r.docID == restaurant.docID)) {
+            _allRawRestaurants.add(restaurant);
+          }
 
-        // Apply filters to the newly fetched batch and add to filteredRestaurantsList
-        final filteredBatch = _applyFiltersToBatch(newBatch);
-        filteredRestaurants.addAll(filteredBatch);
-
-        currentMatchCount = filteredRestaurants.length;
+          if (_shouldShowRestaurant(restaurant)) {
+            // Check if already in filtered list to avoid duplicates
+            if (!filteredRestaurants.any((r) => r.docID == restaurant.docID)) {
+              filteredRestaurants.add(restaurant);
+              currentMatchCount++;
+              // If we reached our target for this specific call, we stop
+              if (currentMatchCount >= targetMatchCount) break;
+            }
+          }
+        }
 
         if (snapshot.docs.length < 20) {
           allFetched.value = true;
@@ -334,6 +339,72 @@ class HomeLocationController extends GetxController {
       isFetchingNextBatch.value = false;
       update();
     }
+  }
+
+  bool _shouldShowRestaurant(RestaurantModel restaurant) {
+    // 1. Apply search query
+    if (searchQuery.value.isNotEmpty) {
+      final query = searchQuery.value.toLowerCase();
+      bool matchesSearch = restaurant.resName.toLowerCase().contains(query) ||
+          restaurant.address.toLowerCase().contains(query) ||
+          restaurant.city.toLowerCase().contains(query) ||
+          restaurant.state.toLowerCase().contains(query);
+      if (!matchesSearch) return false;
+    }
+
+    // 2. Apply category filters (Dietary, Vibes, Cuisines, Experience, Entertainment)
+    for (var category in filterCtrl.selectedFilters.keys) {
+      final selectedOptions = filterCtrl.selectedFilters[category];
+      if (selectedOptions == null || selectedOptions.isEmpty) continue;
+
+      if (category == 'Dietary') {
+        if (!selectedOptions.any((o) => restaurant.dietaryList.contains(o)))
+          return false;
+      } else if (category == 'Vibes') {
+        if (!selectedOptions.any((o) => restaurant.vibesList.contains(o)))
+          return false;
+      } else if (category == 'Cuisines') {
+        bool cuisineMatch = selectedOptions.any((cuisine) =>
+            restaurant.menuList.any((menu) => menu.cuisineType == cuisine));
+        if (!cuisineMatch) return false;
+      } else if (category == 'Experience') {
+        if (!selectedOptions.any((o) => restaurant.experiencesList.contains(o)))
+          return false;
+      } else if (category == 'Entertainment') {
+        if (!selectedOptions.any((o) => restaurant.entertainmentList.contains(o)))
+          return false;
+      } else if (category == 'Time') {
+        // Time filter: Breakfast, Lunch, Dinner
+        final currentSelection = selectedOptions.first;
+        final operatingHours = operatingHoursCache[restaurant.docID];
+        if (operatingHours != null) {
+          final currentDay = DateFormat('EEEE').format(DateTime.now());
+          final dayHours = operatingHours[currentDay];
+          if (dayHours != null) {
+            final slot = dayHours[currentSelection];
+            if (slot == null || (slot['isClosed'] ?? true)) return false;
+          }
+        }
+        // Note: if not cached, we let it pass but it might show as Breakfast/Lunch in UI later
+      }
+    }
+
+    // 3. Apply distance filter
+    if (selectedDistance.value > 0 && userPosition.value != null) {
+      if (restaurant.latitude == 0.0 && restaurant.longitude == 0.0)
+        return false;
+      final maxDistanceKm = selectedDistance.value * 1.60934;
+      final distance = Geolocator.distanceBetween(
+            userPosition.value!.latitude,
+            userPosition.value!.longitude,
+            restaurant.latitude,
+            restaurant.longitude,
+          ) /
+          1000;
+      if (distance > maxDistanceKm) return false;
+    }
+
+    return true;
   }
 
   List<RestaurantModel> _applyFiltersToBatch(List<RestaurantModel> batch) {
