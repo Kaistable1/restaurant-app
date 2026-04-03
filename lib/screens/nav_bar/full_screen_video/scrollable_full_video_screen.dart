@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../main.dart';
 import '../../../streams/model/streams_model.dart';
 import '../../../utils/video_cache_manager.dart';
-import '../../../widgets/tiktok_video_widget.dart';
+import '../../../widgets/app_video_widget.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ScrollableFullVideoScreen
