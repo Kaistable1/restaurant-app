@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -50,6 +51,9 @@ void showCustomDialog(BuildContext context1,
                 height: 40,
                 child: TextField(
                   controller: nameController,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.deny(RegExp(r'\d')),
+                  ],
                   decoration: _inputDecoration("Enter your name"),
                 ),
               ),
@@ -73,7 +77,11 @@ void showCustomDialog(BuildContext context1,
                 child: TextField(
                   controller: contactController,
                   keyboardType: TextInputType.phone,
-                  decoration: _inputDecoration("Enter your email"),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9+]')),
+                    PhoneInputFormatter(),
+                  ],
+                  decoration: _inputDecoration("Enter your contact number"),
                 ),
               ),
               SizedBox(height: 10),
@@ -116,48 +124,73 @@ void showCustomDialog(BuildContext context1,
                     width: Get.width * 0.3,
                     height: 40,
                     ontapp: () async {
-                      if (nameController.text.isEmpty ||
-                          emailController.text.isEmpty ||
-                          messageController.text.isEmpty ||
-                          contactController.text.isEmpty) {
+                      String name = nameController.text.trim();
+                      String email = emailController.text.trim();
+                      String contact = contactController.text.trim();
+                      String message = messageController.text.trim();
+
+                      // Basic Empty Validation
+                      if (name.isEmpty ||
+                          email.isEmpty ||
+                          message.isEmpty ||
+                          contact.isEmpty) {
                         showScaffoldMessenger(
                             context, 'SAVRLY', 'Please fill all fields',
                             isSuccess: false);
-                      } else {
-                        try {
-                          Navigator.pop(context);
+                        return;
+                      }
 
-                          // Get reference and auto-generate doc
-                          final docRef = FirebaseFirestore.instance
-                              .collection('businessClaims')
-                              .doc();
+                      // Email Validation
+                      final emailRegex = RegExp(
+                          r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+                      if (!emailRegex.hasMatch(email)) {
+                        showScaffoldMessenger(
+                            context, 'SAVRLY', 'Invalid email format',
+                            isSuccess: false);
+                        return;
+                      }
 
-                          // Prepare data
-                          final data = {
-                            'id': docRef.id,
-                            'ownerName': nameController.text.trim(),
-                            'contact': contactController.text.trim(),
-                            'message': messageController.text.trim(),
-                            'createdAt': FieldValue.serverTimestamp(),
-                            'status': 'Pending',
-                            'password': '',
-                            'priceRange': '',
-                            // Hardcoded for now; you can add a field for this
-                            'email': emailController.text.trim(),
-                            'restaurantData': resaturant_model.toMap()
-                          };
+                      // Phone Validation (Starts with + or 00)
+                      if (!contact.startsWith('+') &&
+                          !contact.startsWith('00')) {
+                        showScaffoldMessenger(context, 'SAVRLY',
+                            'Phone number must start with + or 00',
+                            isSuccess: false);
+                        return;
+                      }
 
-                          // Upload to Firestore
-                          await docRef.set(data);
-                          showScaffoldMessenger(context1, 'SAVRLY',
-                              'Your claim submitted successfully!',
-                              isSuccess: true);
-                        } catch (e) {
-                          print('Error submitting claim: ${e.toString()}');
-                          showScaffoldMessenger(context1, 'Error',
-                              'Something went wrong. Please try again later.',
-                              isSuccess: false);
-                        }
+                      try {
+                        Navigator.pop(context);
+
+                        // Get reference and auto-generate doc
+                        final docRef = FirebaseFirestore.instance
+                            .collection('businessClaims')
+                            .doc();
+
+                        // Prepare data
+                        final data = {
+                          'id': docRef.id,
+                          'ownerName': name,
+                          'contact': contact,
+                          'message': message,
+                          'createdAt': FieldValue.serverTimestamp(),
+                          'status': 'Pending',
+                          'password': '',
+                          'priceRange': '',
+                          'email': email,
+                          'restaurantData': resaturant_model.toMap()
+                        };
+
+                        // Upload to Firestore
+                        await docRef.set(data);
+                        showScaffoldMessenger(context1, 'SAVRLY',
+                            'Your claim submitted successfully!',
+                            isSuccess: true);
+                      } catch (e) {
+                        print('Error submitting claim: ${e.toString()}');
+                        showScaffoldMessenger(context1, 'Error',
+                            'Something went wrong. Please try again later.',
+                            isSuccess: false);
                       }
                     },
                   ),
@@ -218,4 +251,24 @@ InputDecoration _inputDecoration(String hint) {
     contentPadding: EdgeInsets.only(bottom: 4, left: 12),
     border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
   );
+}
+
+class PhoneInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.text.isEmpty) return newValue;
+
+    // Must start with + or 0
+    if (newValue.text.startsWith('+') || newValue.text.startsWith('0')) {
+      // If it starts with 0, it must be 00
+      if (newValue.text.startsWith('0')) {
+        if (newValue.text.length == 1) return newValue; // Allow first 0
+        if (newValue.text.startsWith('00')) return newValue;
+        return oldValue; // Block if second char is not 0
+      }
+      return newValue;
+    }
+    return oldValue;
+  }
 }

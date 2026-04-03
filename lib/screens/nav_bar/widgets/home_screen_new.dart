@@ -1302,7 +1302,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                 target: initialPosition,
                 zoom: 14,
               ),
-              zoomControlsEnabled: false,
+              zoomControlsEnabled: true,
               myLocationEnabled: true,
               myLocationButtonEnabled: true,
               mapType: MapType.normal,
