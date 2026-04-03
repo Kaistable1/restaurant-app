@@ -1784,185 +1784,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                         },
                       ),
                     ),
-                    // Dropdown overlays - positioned using GlobalKeys to appear above all content
-                    Builder(
-                      builder: (stackContext) {
-                        return Obx(() {
-                          if (filterCtrl.filterOptions.isEmpty) {
-                            return const SizedBox.shrink();
-                          }
-                          return Stack(
-                            clipBehavior: Clip.none,
-                            children:
-                                filterCtrl.filterOptions.keys.map((category) {
-                              return Obx(() {
-                                if (showFilterDropdowns[category] ?? false) {
-                                  final key = filterButtonKeys[category];
-                                  if (key?.currentContext == null) {
-                                    return const SizedBox.shrink();
-                                  }
 
-                                  final RenderBox? renderBox =
-                                      key?.currentContext?.findRenderObject()
-                                          as RenderBox?;
-                                  if (renderBox == null) {
-                                    return const SizedBox.shrink();
-                                  }
-
-                                  final position =
-                                      renderBox.localToGlobal(Offset.zero);
-                                  final size = renderBox.size;
-
-                                  final optionCount = filterCtrl
-                                          .filterOptions[category]?.length ??
-                                      0;
-                                  final dropdownHeight = optionCount * 40.0;
-
-                                  // Get the position relative to the Stack
-                                  final stackRenderBox = stackContext
-                                      .findRenderObject() as RenderBox?;
-                                  if (stackRenderBox == null) {
-                                    return const SizedBox.shrink();
-                                  }
-
-                                  final stackPosition =
-                                      stackRenderBox.localToGlobal(Offset.zero);
-                                  final relativeLeft =
-                                      position.dx - stackPosition.dx;
-                                  final relativeTop =
-                                      position.dy - stackPosition.dy;
-
-                                  return Positioned(
-                                      top: relativeTop + size.height + 8,
-                                      left: relativeLeft,
-                                      child: InkWell(
-                                        onTap: () {
-                                          log("tapped the filter");
-                                        },
-                                        child: Material(
-                                          elevation: 8,
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                          child: Container(
-                                            width: 150,
-                                            height: dropdownHeight < 190
-                                                ? dropdownHeight
-                                                : 190,
-                                            padding: const EdgeInsets.fromLTRB(
-                                                8, 8, 8, 16),
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: Colors.black
-                                                      .withValues(alpha: 0.1),
-                                                  blurRadius: 10,
-                                                  spreadRadius: 2,
-                                                ),
-                                              ],
-                                            ),
-                                            child: SingleChildScrollView(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children:
-                                                    (filterCtrl.filterOptions[
-                                                                category] ??
-                                                            [])
-                                                        .map(
-                                                            (option) => InkWell(
-                                                                  onTap: () {
-                                                                    final selectedList = filterCtrl.selectedFilters[
-                                                                            category] ??
-                                                                        <String>[]
-                                                                            .obs;
-                                                                    if (selectedList
-                                                                        .contains(
-                                                                            option)) {
-                                                                      selectedList
-                                                                          .remove(
-                                                                              option);
-                                                                    } else {
-                                                                      selectedList
-                                                                          .add(
-                                                                              option);
-                                                                    }
-                                                                    filterCtrl.selectedFilters[
-                                                                            category] =
-                                                                        selectedList;
-                                                                    filterCtrl
-                                                                        .selectedFilters
-                                                                        .refresh();
-                                                                    showFilterDropdowns[
-                                                                            category] =
-                                                                        false;
-                                                                    showFilterDropdowns
-                                                                        .refresh();
-                                                                    isLoading
-                                                                            .value =
-                                                                        true;
-                                                                    Future.delayed(
-                                                                        const Duration(
-                                                                            milliseconds:
-                                                                                500),
-                                                                        () {
-                                                                      homeLocationCtrl
-                                                                          .applySearchAndFilters();
-                                                                      isLoading
-                                                                              .value =
-                                                                          false;
-                                                                    });
-                                                                  },
-                                                                  child:
-                                                                      Padding(
-                                                                    padding: const EdgeInsets
-                                                                        .symmetric(
-                                                                        vertical:
-                                                                            8),
-                                                                    child: Row(
-                                                                      mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .spaceBetween,
-                                                                      children: [
-                                                                        Row(
-                                                                          children: [
-                                                                            Text(
-                                                                              emojiMap[option] ?? '',
-                                                                              style: const TextStyle(fontSize: 17),
-                                                                            ),
-                                                                            const SizedBox(width: 4),
-                                                                            Text(
-                                                                              option,
-                                                                              style: const TextStyle(fontSize: 17),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                        if (filterCtrl.selectedFilters[category]?.contains(option) ??
-                                                                            false)
-                                                                          const Icon(
-                                                                              Icons.check,
-                                                                              color: Colors.green,
-                                                                              size: 16),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ))
-                                                        .toList(),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ));
-                                }
-                                return const SizedBox.shrink();
-                              });
-                            }).toList(),
-                          );
-                        });
-                      },
-                    ),
                   ],
                 ),
               );
@@ -2385,6 +2207,178 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                 //   ),
                 // ),
               ],
+            ),
+          ),
+          // Dropdown overlays - positioned using GlobalKeys to appear above all content
+          // Placed at top-level Stack to ensure hit-testing works correctly
+          Positioned.fill(
+            child: Builder(
+              builder: (stackContext) {
+                return Obx(() {
+                  if (filterCtrl.filterOptions.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+                  return Stack(
+                    clipBehavior: Clip.none,
+                    children: filterCtrl.filterOptions.keys.map((category) {
+                      return Obx(() {
+                        if (showFilterDropdowns[category] ?? false) {
+                          final key = filterButtonKeys[category];
+                          if (key?.currentContext == null) {
+                            return const SizedBox.shrink();
+                          }
+
+                          final RenderBox? renderBox = key?.currentContext
+                              ?.findRenderObject() as RenderBox?;
+                          if (renderBox == null) {
+                            return const SizedBox.shrink();
+                          }
+
+                          final position = renderBox.localToGlobal(Offset.zero);
+                          final size = renderBox.size;
+
+                          final optionCount =
+                              filterCtrl.filterOptions[category]?.length ?? 0;
+                          final dropdownHeight = optionCount * 40.0;
+
+                          // Get the position relative to the Stack
+                          final stackRenderBox =
+                              stackContext.findRenderObject() as RenderBox?;
+                          if (stackRenderBox == null) {
+                            return const SizedBox.shrink();
+                          }
+
+                          final stackPosition =
+                              stackRenderBox.localToGlobal(Offset.zero);
+                          final relativeLeft = position.dx - stackPosition.dx;
+                          final relativeTop = position.dy - stackPosition.dy;
+
+                          return Positioned(
+                              top: relativeTop + size.height + 8,
+                              left: relativeLeft,
+                              child: InkWell(
+                                onTap: () {
+                                  log("tapped the filter");
+                                },
+                                child: Material(
+                                  elevation: 8,
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Container(
+                                    width: 150,
+                                    height: dropdownHeight < 190
+                                        ? dropdownHeight
+                                        : 190,
+                                    padding:
+                                        const EdgeInsets.fromLTRB(8, 8, 8, 16),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(12),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black
+                                              .withValues(alpha: 0.1),
+                                          blurRadius: 10,
+                                          spreadRadius: 2,
+                                        ),
+                                      ],
+                                    ),
+                                    child: SingleChildScrollView(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: (filterCtrl.filterOptions[
+                                                        category] ??
+                                                    [])
+                                                .map((option) => InkWell(
+                                                      onTap: () {
+                                                        final selectedList =
+                                                            filterCtrl.selectedFilters[
+                                                                    category] ??
+                                                                <String>[]
+                                                                    .obs;
+                                                        if (selectedList
+                                                            .contains(option)) {
+                                                          selectedList
+                                                              .remove(option);
+                                                        } else {
+                                                          selectedList
+                                                              .add(option);
+                                                        }
+                                                        filterCtrl.selectedFilters[
+                                                                category] =
+                                                            selectedList;
+                                                        filterCtrl
+                                                            .selectedFilters
+                                                            .refresh();
+                                                        showFilterDropdowns[
+                                                            category] = false;
+                                                        showFilterDropdowns
+                                                            .refresh();
+                                                        isLoading.value = true;
+                                                        Future.delayed(
+                                                            const Duration(
+                                                                milliseconds:
+                                                                    500), () {
+                                                          homeLocationCtrl
+                                                              .applySearchAndFilters();
+                                                          isLoading.value =
+                                                              false;
+                                                        });
+                                                      },
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                vertical: 8),
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Row(
+                                                              children: [
+                                                                Text(
+                                                                  emojiMap[
+                                                                          option] ??
+                                                                      '',
+                                                                  style: const TextStyle(
+                                                                      fontSize:
+                                                                          17),
+                                                                ),
+                                                                const SizedBox(
+                                                                    width: 4),
+                                                                Text(
+                                                                  option,
+                                                                  style: const TextStyle(
+                                                                      fontSize:
+                                                                          17),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            if (filterCtrl.selectedFilters[category]?.contains(option) ??
+                                                                false)
+                                                              const Icon(
+                                                                  Icons.check,
+                                                                  color: Colors
+                                                                      .green,
+                                                                  size: 16),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ))
+                                                .toList(),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ));
+                        }
+                        return const SizedBox.shrink();
+                      });
+                    }).toList(),
+                  );
+                });
+              },
             ),
           ),
         ],
