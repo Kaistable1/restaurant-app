@@ -12,16 +12,20 @@ import '../../../utils/validations.dart';
 import '../../../widgets/custom_button.dart';
 import '../login/login_screen.dart';
 
-class SignupScreen extends StatelessWidget {
+class SignupScreen extends StatefulWidget {
   final String? fromScreen; // 'highlights' or 'login'
 
   SignupScreen({super.key, this.fromScreen});
 
+  @override
+  State<SignupScreen> createState() => _SignupScreenState();
+}
+
+class _SignupScreenState extends State<SignupScreen> {
   final controller = Get.put(SignupController());
 
   @override
   Widget build(BuildContext context) {
-    final _formKey = GlobalKey<FormState>();
     return GestureDetector(
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
@@ -32,7 +36,7 @@ class SignupScreen extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Form(
-              key: _formKey,
+              key: controller.formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -42,13 +46,9 @@ class SignupScreen extends StatelessWidget {
                   Center(
                     child: Image.asset(
                       'assets/images/botomsheet_logo.png',
-                      height: 74,
-                      width: 196,
                       color: AppColors.primaryColor,
+                      height: 170,
                     ),
-                  ),
-                  SizedBox(
-                    height: 73,
                   ),
                   Text(
                     'Welcome',
@@ -269,7 +269,7 @@ class SignupScreen extends StatelessWidget {
                       width: 200,
                       height: 48,
                       ontapp: () async {
-                        if (_formKey.currentState!.validate()) {
+                        if (controller.formKey.currentState!.validate()) {
                           if (!controller.termsAndConditions.value) {
                             Get.snackbar(
                               "Terms and Conditions",
@@ -323,8 +323,8 @@ class SignupScreen extends StatelessWidget {
                             ),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                if (fromScreen == 'highlights' ||
-                                    fromScreen == "splash") {
+                                if (widget.fromScreen == 'highlights' ||
+                                    widget.fromScreen == "splash") {
                                   Get.offAll(() =>
                                       LoginScreen(fromScreen: 'highlights'));
                                 } else {

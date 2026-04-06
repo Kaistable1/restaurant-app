@@ -44,13 +44,9 @@ class LoginScreen extends StatelessWidget {
                   Center(
                     child: Image.asset(
                       'assets/images/botomsheet_logo.png',
-                      height: 74,
-                      width: 196,
+                      height: 170,
                       color: AppColors.primaryColor,
                     ),
-                  ),
-                  SizedBox(
-                    height: 73,
                   ),
                   Text(
                     'Welcome',

@@ -17,6 +17,9 @@ import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server/gmail.dart';
 
 class SignupController extends GetxController {
+  // GlobalKey for the Signup form to persist state across rebuilds
+  final formKey = GlobalKey<FormState>();
+
   // Observable variable to track the state of Terms and Conditions checkbox
   var termsAndConditions = false.obs;
 

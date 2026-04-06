@@ -11,9 +11,10 @@ import '../controller/generalPreferences_Controller.dart';
 import '../widget/preferencesSelectionWidget.dart';
 
 class Preference7 extends StatelessWidget {
-  Preference7({super.key});
+  Preference7({super.key, this.isSequential = true});
 
   final controller = Get.put(GeneralPreferencesController());
+  final bool isSequential;
 
   @override
   Widget build(BuildContext context) {
@@ -155,7 +156,7 @@ class Preference7 extends StatelessWidget {
               ),
               Center(
                 child: CustomButton(
-                  laBelText: 'Next',
+                  laBelText: isSequential ? 'Next' : 'Save',
                   height: 43,
                   width: 190,
                   fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
@@ -178,7 +179,11 @@ class Preference7 extends StatelessWidget {
                       signupController.updateUserData(
                           field: 'willingToTravel',
                           entry: controller.selectedPreferences7.last);
-                      Get.to(() => Preference8());
+                      if (isSequential) {
+                        Get.to(() => Preference8());
+                      } else {
+                        Get.back();
+                      }
                     }
                   },
                 ),

@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kaistable_website/main.dart';
@@ -28,7 +28,7 @@ class SocialAuthController extends GetxController {
 
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
-        Get.back();
+        Navigator.of(Get.context!).pop();
         return;
       }
 
@@ -43,7 +43,7 @@ class SocialAuthController extends GetxController {
           await auth.signInWithCredential(credential);
       await _handleSocialLoginResult(userCredential.user);
     } catch (e) {
-      Get.back();
+      Navigator.of(Get.context!).pop();
       _showErrorSnackbar('Google Sign-In failed: $e');
     }
   }
@@ -71,7 +71,7 @@ class SocialAuthController extends GetxController {
           await auth.signInWithCredential(credential);
       await _handleSocialLoginResult(userCredential.user);
     } catch (e) {
-      Get.back(); // Close loading dialog
+      Navigator.of(Get.context!).pop(); // Close loading dialog
       _showErrorSnackbar('Apple Sign-In failed: $e');
     }
   }
@@ -79,7 +79,7 @@ class SocialAuthController extends GetxController {
   /// Handles the result of a social login (unified logic for creation/update)
   Future<void> _handleSocialLoginResult(User? user) async {
     if (user == null) {
-      Get.back();
+      Navigator.of(Get.context!).pop();
       _showErrorSnackbar('User information not found.');
       return;
     }
@@ -92,16 +92,16 @@ class SocialAuthController extends GetxController {
 
       if (!userDoc.exists) {
         await _createNewUserInFirestore(user);
-        Get.back();
+        Navigator.of(Get.context!).pop();
         Get.offAll(() => Preference1());
       } else {
         await _updateExistingUser(user.uid);
         await getCurrentUserData();
-        Get.back();
+        Navigator.of(Get.context!).pop();
         Get.offAll(() => EntryModeScreen());
       }
     } catch (e) {
-      Get.back();
+      Navigator.of(Get.context!).pop();
       _showErrorSnackbar('Error during account setup: $e');
     }
   }

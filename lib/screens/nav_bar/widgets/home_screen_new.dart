@@ -30,7 +30,7 @@ import 'dart:io';
 import '../../../constants/app_colors.dart';
 import '../../../models/restaurant_model.dart';
 import '../../../streams/model/streams_model.dart';
-import '../../general_preferences/screens_general/preference_1.dart';
+import 'package:kaistable_website/screens/general_preferences/screens_general/preference_overview.dart';
 import '../../home_screen/home_controller/home_location_controller.dart';
 import '../controller/search_controller.dart';
 import '../full_screen_video/full_screen_video_screen.dart';
@@ -47,8 +47,9 @@ class HomeScreenNew extends StatefulWidget {
 class _HomeScreenNewState extends State<HomeScreenNew>
     with WidgetsBindingObserver {
   final FilterController filterCtrl = Get.put(FilterController());
-  final HomeLocationController homeLocationCtrl =
-      Get.put(HomeLocationController());
+  final HomeLocationController homeLocationCtrl = Get.put(
+    HomeLocationController(),
+  );
   final RxBool showDistanceOptions = false.obs;
   final RxMap<String, bool> showFilterDropdowns = <String, bool>{}.obs;
   final RxBool isLoading = true.obs;
@@ -139,8 +140,14 @@ class _HomeScreenNewState extends State<HomeScreenNew>
             list.where((r) => r.latitude != 0.0 && r.longitude != 0.0).toList();
         _manager.setItems(items);
         cachedRestaurants.assignAll(items);
-        Future.wait(items.take(4).map((restaurant) => homeLocationCtrl
-            .getOperatingHours(restaurant.docID, triggerFilterUpdate: false)));
+        Future.wait(
+          items.take(4).map(
+                (restaurant) => homeLocationCtrl.getOperatingHours(
+                  restaurant.docID,
+                  triggerFilterUpdate: false,
+                ),
+              ),
+        );
       });
 
       // listener to userPosition to update map camera and re-sort
@@ -282,10 +289,10 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                 spacing: 4,
                 runSpacing: 4,
                 children: emojiList
-                    .map((emoji) => Text(
-                          emoji,
-                          style: const TextStyle(fontSize: 17),
-                        ))
+                    .map(
+                      (emoji) =>
+                          Text(emoji, style: const TextStyle(fontSize: 17)),
+                    )
                     .toList(),
               ),
             ],
@@ -316,9 +323,10 @@ class _HomeScreenNewState extends State<HomeScreenNew>
       painter.text = TextSpan(
         text: text,
         style: TextStyle(
-            fontSize: size / 3 + 1,
-            color: Colors.white,
-            fontWeight: FontWeight.bold),
+          fontSize: size / 3 + 1,
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
       );
       painter.layout();
       painter.paint(
@@ -436,8 +444,9 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                           .operatingHoursCache[restaurant.docID];
                       final isFetching = homeLocationCtrl.fetchingOperatingHours
                           .contains(restaurant.docID);
-                      final currentDay =
-                          DateFormat('EEEE').format(DateTime.now());
+                      final currentDay = DateFormat(
+                        'EEEE',
+                      ).format(DateTime.now());
                       final timeFilter = filterCtrl.selectedFilters['Time'];
 
                       if (operatingHours == null) {
@@ -470,10 +479,12 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                       final dayHours = operatingHours[currentDay]!;
                       if (timeFilter == null || timeFilter.isEmpty) {
                         // Use the new method to get current operating hours
-                        final hoursText =
-                            homeLocationCtrl.getDisplayHours(dayHours);
-                        final isOpen =
-                            homeLocationCtrl.isRestaurantOpen(dayHours);
+                        final hoursText = homeLocationCtrl.getDisplayHours(
+                          dayHours,
+                        );
+                        final isOpen = homeLocationCtrl.isRestaurantOpen(
+                          dayHours,
+                        );
                         return Text(
                           hoursText,
                           style: TextStyle(
@@ -629,13 +640,17 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                   (context, child, loadingProgress) {
                                 if (loadingProgress == null) return child;
                                 return const Center(
-                                    child: CircularProgressIndicator());
+                                  child: CircularProgressIndicator(),
+                                );
                               },
                               errorBuilder: (context, error, stackTrace) =>
                                   Container(
                                 color: Colors.grey[300],
-                                child: const Icon(Icons.broken_image,
-                                    size: 50, color: Colors.grey),
+                                child: const Icon(
+                                  Icons.broken_image,
+                                  size: 50,
+                                  color: Colors.grey,
+                                ),
                               ),
                             ),
                           )
@@ -645,13 +660,17 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                             loadingBuilder: (context, child, loadingProgress) {
                               if (loadingProgress == null) return child;
                               return const Center(
-                                  child: CircularProgressIndicator());
+                                child: CircularProgressIndicator(),
+                              );
                             },
                             errorBuilder: (context, error, stackTrace) =>
                                 Container(
                               color: Colors.grey[300],
-                              child: const Icon(Icons.broken_image,
-                                  size: 50, color: Colors.grey),
+                              child: const Icon(
+                                Icons.broken_image,
+                                size: 50,
+                                color: Colors.grey,
+                              ),
                             ),
                           ),
                   ),
@@ -728,7 +747,11 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                               GoogleFonts.plusJakartaSans()
                                                   .fontFamily,
                                           color: const Color.fromRGBO(
-                                              142, 142, 147, 1),
+                                            142,
+                                            142,
+                                            147,
+                                            1,
+                                          ),
                                         ),
                                       )
                                     : FutureBuilder<RestaurantModel?>(
@@ -747,7 +770,11 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                                         .plusJakartaSans()
                                                     .fontFamily,
                                                 color: const Color.fromRGBO(
-                                                    142, 142, 147, 1),
+                                                  142,
+                                                  142,
+                                                  147,
+                                                  1,
+                                                ),
                                               ),
                                             );
                                           }
@@ -766,7 +793,11 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                                         .plusJakartaSans()
                                                     .fontFamily,
                                                 color: const Color.fromRGBO(
-                                                    142, 142, 147, 1),
+                                                  142,
+                                                  142,
+                                                  147,
+                                                  1,
+                                                ),
                                               ),
                                             );
                                           }
@@ -794,7 +825,11 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                                   GoogleFonts.plusJakartaSans()
                                                       .fontFamily,
                                               color: const Color.fromRGBO(
-                                                  142, 142, 147, 1),
+                                                142,
+                                                142,
+                                                147,
+                                                1,
+                                              ),
                                             ),
                                           );
                                         },
@@ -825,7 +860,8 @@ class _HomeScreenNewState extends State<HomeScreenNew>
         GestureDetector(
           onTap: () {
             _navigateTo(
-                () => RestaurantDetailScreen(restaurantModel: restaurant));
+              () => RestaurantDetailScreen(restaurantModel: restaurant),
+            );
           },
           child: Stack(
             children: [
@@ -895,8 +931,9 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                       final isFetching = homeLocationCtrl
                                           .fetchingOperatingHours
                                           .contains(restaurant.docID);
-                                      final currentDay = DateFormat('EEEE')
-                                          .format(DateTime.now());
+                                      final currentDay = DateFormat(
+                                        'EEEE',
+                                      ).format(DateTime.now());
                                       final timeFilter =
                                           filterCtrl.selectedFilters['Time'];
 
@@ -908,7 +945,11 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                           style: TextStyle(
                                             fontSize: 13,
                                             color: const Color.fromRGBO(
-                                                142, 142, 147, 1),
+                                              142,
+                                              142,
+                                              147,
+                                              1,
+                                            ),
                                             fontWeight: FontWeight.w500,
                                             fontFamily:
                                                 GoogleFonts.plusJakartaSans()
@@ -924,7 +965,11 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                           style: TextStyle(
                                             fontSize: 13,
                                             color: const Color.fromRGBO(
-                                                142, 142, 147, 1),
+                                              142,
+                                              142,
+                                              147,
+                                              1,
+                                            ),
                                             fontWeight: FontWeight.w500,
                                             fontFamily:
                                                 GoogleFonts.plusJakartaSans()
@@ -949,7 +994,11 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                             color: isOpen
                                                 ? Colors.green
                                                 : const Color.fromRGBO(
-                                                    142, 142, 147, 1),
+                                                    142,
+                                                    142,
+                                                    147,
+                                                    1,
+                                                  ),
                                             fontWeight: FontWeight.w500,
                                             fontFamily:
                                                 GoogleFonts.plusJakartaSans()
@@ -975,7 +1024,11 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                         style: TextStyle(
                                           fontSize: 13,
                                           color: const Color.fromRGBO(
-                                              142, 142, 147, 1),
+                                            142,
+                                            142,
+                                            147,
+                                            1,
+                                          ),
                                           fontFamily:
                                               GoogleFonts.plusJakartaSans()
                                                   .fontFamily,
@@ -999,7 +1052,11 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                               style: TextStyle(
                                                 fontSize: 13,
                                                 color: const Color.fromRGBO(
-                                                    142, 142, 147, 1),
+                                                  142,
+                                                  142,
+                                                  147,
+                                                  1,
+                                                ),
                                                 fontFamily: GoogleFonts
                                                         .plusJakartaSans()
                                                     .fontFamily,
@@ -1021,7 +1078,11 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                                 style: TextStyle(
                                                   fontSize: 13,
                                                   color: const Color.fromRGBO(
-                                                      142, 142, 147, 1),
+                                                    142,
+                                                    142,
+                                                    147,
+                                                    1,
+                                                  ),
                                                   fontWeight: FontWeight.w500,
                                                   fontFamily: GoogleFonts
                                                           .plusJakartaSans()
@@ -1041,7 +1102,11 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                                 style: TextStyle(
                                                   fontSize: 13,
                                                   color: const Color.fromRGBO(
-                                                      142, 142, 147, 1),
+                                                    142,
+                                                    142,
+                                                    147,
+                                                    1,
+                                                  ),
                                                   fontWeight: FontWeight.w500,
                                                   fontFamily: GoogleFonts
                                                           .plusJakartaSans()
@@ -1057,7 +1122,11 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                                 style: TextStyle(
                                                   fontSize: 13,
                                                   color: const Color.fromRGBO(
-                                                      142, 142, 147, 1),
+                                                    142,
+                                                    142,
+                                                    147,
+                                                    1,
+                                                  ),
                                                   fontWeight: FontWeight.w500,
                                                   fontFamily: GoogleFonts
                                                           .plusJakartaSans()
@@ -1084,7 +1153,11 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                               style: TextStyle(
                                                 fontSize: 13,
                                                 color: const Color.fromRGBO(
-                                                    142, 142, 147, 1),
+                                                  142,
+                                                  142,
+                                                  147,
+                                                  1,
+                                                ),
                                                 fontWeight: FontWeight.w500,
                                                 fontFamily: GoogleFonts
                                                         .plusJakartaSans()
@@ -1123,9 +1196,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
 
   Widget _buildEndDrawer() {
     return Drawer(
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.zero,
-      ),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       width: MediaQuery.of(context).size.width * 0.71,
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.transparent,
@@ -1148,8 +1219,11 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                   ),
                   InkWell(
                     onTap: () => Navigator.pop(context),
-                    child: Icon(Icons.cancel,
-                        color: Colors.grey.shade400, size: 28),
+                    child: Icon(
+                      Icons.cancel,
+                      color: Colors.grey.shade400,
+                      size: 28,
+                    ),
                   ),
                 ],
               ),
@@ -1161,33 +1235,54 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                 spacing: 20,
                 children: [
                   _buildDrawerItem(
-                      'assets/images/oui_app-saved-objects.png', 'Saved', () {
-                    endDrawerOnTap(0);
-                  }),
+                    'assets/images/oui_app-saved-objects.png',
+                    'Saved',
+                    () {
+                      endDrawerOnTap(0);
+                    },
+                  ),
                   _buildDrawerItem(
-                      'assets/images/change_pass.png', 'Change Password', () {
-                    endDrawerOnTap(1);
-                  }),
-                  _buildDrawerItem('assets/images/terms_condition-icon.png',
-                      'Change Preferences', () {
-                    endDrawerOnTap(2);
-                  }),
-                  _buildDrawerItem('assets/images/terms_condition-icon.png',
-                      'Terms and conditions', () {
-                    endDrawerOnTap(3);
-                  }),
+                    'assets/images/change_pass.png',
+                    'Change Password',
+                    () {
+                      endDrawerOnTap(1);
+                    },
+                  ),
                   _buildDrawerItem(
-                      'assets/images/privacy_img.png', 'Privacy policy', () {
-                    endDrawerOnTap(4);
-                  }),
-                  _buildDrawerItem('assets/images/about_img.png', 'About app',
-                      () {
-                    endDrawerOnTap(5);
-                  }),
+                    'assets/images/terms_condition-icon.png',
+                    'Change Preferences',
+                    () {
+                      endDrawerOnTap(2);
+                    },
+                  ),
                   _buildDrawerItem(
-                      'assets/images/contact_us_img.png', 'Contact us', () {
-                    endDrawerOnTap(6);
-                  }),
+                    'assets/images/terms_condition-icon.png',
+                    'Terms and conditions',
+                    () {
+                      endDrawerOnTap(3);
+                    },
+                  ),
+                  _buildDrawerItem(
+                    'assets/images/privacy_img.png',
+                    'Privacy policy',
+                    () {
+                      endDrawerOnTap(4);
+                    },
+                  ),
+                  _buildDrawerItem(
+                    'assets/images/about_img.png',
+                    'About app',
+                    () {
+                      endDrawerOnTap(5);
+                    },
+                  ),
+                  _buildDrawerItem(
+                    'assets/images/contact_us_img.png',
+                    'Contact us',
+                    () {
+                      endDrawerOnTap(6);
+                    },
+                  ),
                 ],
               ),
             ),
@@ -1206,12 +1301,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             child: Row(
               children: [
-                Image.asset(
-                  icon,
-                  height: 25,
-                  width: 23,
-                  color: Colors.black,
-                ),
+                Image.asset(icon, height: 25, width: 23, color: Colors.black),
                 const SizedBox(width: 16),
                 Text(
                   title,
@@ -1244,9 +1334,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
         changePasswordDialogBox();
         break;
       case 2:
-        Get.to(Preference1(
-          isComeFromSetting: true,
-        ));
+        Get.to(() => PreferenceOverviewScreen());
         break;
       case 3:
         Get.to(TermsAndCondition());
@@ -1297,7 +1385,8 @@ class _HomeScreenNewState extends State<HomeScreenNew>
 
             return GoogleMap(
               padding: EdgeInsets.only(
-                  top: (Platform.isAndroid ? 60 : 70) + 48 + 12 + 36 + 16 + 12),
+                top: (Platform.isAndroid ? 60 : 70) + 48 + 12 + 36 + 16 + 12,
+              ),
               initialCameraPosition: CameraPosition(
                 target: initialPosition,
                 zoom: 14,
@@ -1308,7 +1397,8 @@ class _HomeScreenNewState extends State<HomeScreenNew>
               mapType: MapType.normal,
               gestureRecognizers: {
                 Factory<OneSequenceGestureRecognizer>(
-                    () => EagerGestureRecognizer()),
+                  () => EagerGestureRecognizer(),
+                ),
               },
               onMapCreated: (GoogleMapController controller) {
                 _mapController = controller;
@@ -1369,420 +1459,456 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                   children: [
                     ClipRRect(
                       clipBehavior: Clip.hardEdge,
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(20)),
-                      child: Obx(
-                        () {
-                          if (homeLocationCtrl.isFetchingInitialData.value) {
-                            return Padding(
-                              padding: const EdgeInsets.only(top: 16.0),
-                              child: _buildShimmer(),
-                            );
-                          }
-                          return ListView(
-                            controller: scrollCtrl,
-                            physics: const ClampingScrollPhysics(),
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            children: [
-                              Center(
-                                child: Container(
-                                  width: 65,
-                                  height: 4,
-                                  margin: const EdgeInsets.only(bottom: 12),
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey,
-                                    borderRadius: BorderRadius.circular(2),
-                                  ),
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(20),
+                      ),
+                      child: Obx(() {
+                        if (homeLocationCtrl.isFetchingInitialData.value) {
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 16.0),
+                            child: _buildShimmer(),
+                          );
+                        }
+                        return ListView(
+                          controller: scrollCtrl,
+                          physics: const ClampingScrollPhysics(),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          children: [
+                            Center(
+                              child: Container(
+                                width: 65,
+                                height: 4,
+                                margin: const EdgeInsets.only(bottom: 12),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  borderRadius: BorderRadius.circular(2),
                                 ),
                               ),
-                              // Filters section
-                              Obx(
-                                () {
-                                  if (filterCtrl.filterOptions.isEmpty) {
-                                    return const SizedBox.shrink();
-                                  }
-                                  for (var category
-                                      in filterCtrl.filterOptions.keys) {
-                                    filterButtonKeys.putIfAbsent(
-                                        category, () => GlobalKey());
-                                  }
+                            ),
+                            // Filters section
+                            Obx(() {
+                              if (filterCtrl.filterOptions.isEmpty) {
+                                return const SizedBox.shrink();
+                              }
+                              for (var category
+                                  in filterCtrl.filterOptions.keys) {
+                                filterButtonKeys.putIfAbsent(
+                                  category,
+                                  () => GlobalKey(),
+                                );
+                              }
 
-                                  return SizedBox(
-                                    height: 56,
-                                    // Fixed height - dropdown will overlay
-                                    child: ListView(
-                                      scrollDirection: Axis.horizontal,
-                                      clipBehavior: Clip.none,
-                                      // Allow dropdowns to overflow
-                                      padding: const EdgeInsets.only(
-                                          left: 16,
-                                          right: 8,
-                                          top: 4,
-                                          bottom: 8),
-                                      children: filterCtrl.filterOptions.keys
-                                          .map((category) {
-                                        return InkWell(
-                                          key: filterButtonKeys[category],
-                                          onTap: () {
-                                            debugPrint("tapped");
-                                            showFilterDropdowns[category] =
-                                                !showFilterDropdowns[category]!;
-                                            showFilterDropdowns
-                                                .forEach((key, value) {
-                                              if (key != category) {
-                                                showFilterDropdowns[key] =
-                                                    false;
-                                              }
-                                            });
-                                            showFilterDropdowns.refresh();
-                                          },
-                                          child: Obx(
-                                            () => Container(
-                                              height: 44,
-                                              margin: const EdgeInsets.only(
-                                                  right: 8),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 16),
-                                              decoration: BoxDecoration(
-                                                // No border - blends with background
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
+                              return SizedBox(
+                                height: 56,
+                                // Fixed height - dropdown will overlay
+                                child: ListView(
+                                  scrollDirection: Axis.horizontal,
+                                  clipBehavior: Clip.none,
+                                  // Allow dropdowns to overflow
+                                  padding: const EdgeInsets.only(
+                                    left: 16,
+                                    right: 8,
+                                    top: 4,
+                                    bottom: 8,
+                                  ),
+                                  children: filterCtrl.filterOptions.keys.map((
+                                    category,
+                                  ) {
+                                    return InkWell(
+                                      key: filterButtonKeys[category],
+                                      onTap: () {
+                                        debugPrint("tapped");
+                                        showFilterDropdowns[category] =
+                                            !showFilterDropdowns[category]!;
+                                        showFilterDropdowns.forEach((
+                                          key,
+                                          value,
+                                        ) {
+                                          if (key != category) {
+                                            showFilterDropdowns[key] = false;
+                                          }
+                                        });
+                                        showFilterDropdowns.refresh();
+                                      },
+                                      child: Obx(
+                                        () => Container(
+                                          height: 44,
+                                          margin: const EdgeInsets.only(
+                                            right: 8,
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            // No border - blends with background
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                            color: filterCtrl
+                                                        .selectedFilters[
+                                                            category]
+                                                        ?.isNotEmpty ??
+                                                    false
+                                                ? AppColors.primaryColor
+                                                : Colors.transparent,
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                category +
+                                                    (filterCtrl
+                                                                .selectedFilters[
+                                                                    category]
+                                                                ?.isNotEmpty ??
+                                                            false
+                                                        ? ' (${filterCtrl.selectedFilters[category]?.length ?? 0})'
+                                                        : ''),
+                                                style: TextStyle(
+                                                  color: filterCtrl
+                                                              .selectedFilters[
+                                                                  category]
+                                                              ?.isNotEmpty ??
+                                                          false
+                                                      ? Colors.white
+                                                      : Colors.black,
+                                                  fontSize: 19,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Icon(
+                                                Icons.arrow_drop_down,
+                                                size: 20,
                                                 color: filterCtrl
                                                             .selectedFilters[
                                                                 category]
                                                             ?.isNotEmpty ??
                                                         false
-                                                    ? AppColors.primaryColor
-                                                    : Colors.transparent,
+                                                    ? Colors.white
+                                                    : Colors.black,
                                               ),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Text(
-                                                    category +
-                                                        (filterCtrl
-                                                                    .selectedFilters[
-                                                                        category]
-                                                                    ?.isNotEmpty ??
-                                                                false
-                                                            ? ' (${filterCtrl.selectedFilters[category]?.length ?? 0})'
-                                                            : ''),
-                                                    style: TextStyle(
-                                                      color: filterCtrl
-                                                                  .selectedFilters[
-                                                                      category]
-                                                                  ?.isNotEmpty ??
-                                                              false
-                                                          ? Colors.white
-                                                          : Colors.black,
-                                                      fontSize: 19,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 4),
-                                                  Icon(Icons.arrow_drop_down,
-                                                      size: 20,
-                                                      color: filterCtrl
-                                                                  .selectedFilters[
-                                                                      category]
-                                                                  ?.isNotEmpty ??
-                                                              false
-                                                          ? Colors.white
-                                                          : Colors.black),
-                                                ],
-                                              ),
-                                            ),
+                                            ],
                                           ),
-                                        );
-                                      }).toList(),
-                                    ),
-                                  );
-                                },
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              );
+                            }),
+                            const SizedBox(height: 8),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
                               ),
-                              const SizedBox(height: 8),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                child: Text(
-                                  'Restaurants in the area',
-                                  style: TextStyle(
-                                    fontSize: 18 * (5 / 4),
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: GoogleFonts.plusJakartaSans()
-                                        .fontFamily,
-                                  ),
+                              child: Text(
+                                'Restaurants in the area',
+                                style: TextStyle(
+                                  fontSize: 18 * (5 / 4),
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily:
+                                      GoogleFonts.plusJakartaSans().fontFamily,
                                 ),
                               ),
-                              const SizedBox(height: 11),
-                              Obx(() {
-                                if (isLoading.value) {
-                                  return Column(
-                                    children: [
-                                      SizedBox(
-                                        height: 225,
-                                        child: _buildShimmer(),
-                                      ),
-                                      if (cachedRestaurants.isNotEmpty) ...[
-                                        const SizedBox(height: 24),
-                                        Align(
-                                          alignment: Alignment.center,
-                                          child: CustomButton(
-                                            width: 84,
-                                            height: 36,
-                                            radius: BorderRadius.circular(99),
-                                            laBelText: 'See All',
-                                            textColor: Colors.white,
-                                            fontSize: 14 * (5 / 4),
-                                            fontWeight: FontWeight.w500,
-                                            fontFamily:
-                                                GoogleFonts.plusJakartaSans()
-                                                    .fontFamily,
-                                            ontapp: () {
-                                              _navigateTo(() =>
-                                                  const SeeAllRestaurantsScreen(
-                                                      fromHome: true));
-                                            },
-                                          ),
-                                        ),
-                                      ]
-                                    ],
-                                  );
-                                }
-
-                                if (cachedRestaurants.isEmpty) {
-                                  return Container(
-                                    height: 225,
-                                    width: double.infinity,
-                                    margin: const EdgeInsets.symmetric(
-                                        horizontal: 16),
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey.shade50,
-                                      borderRadius: BorderRadius.circular(16),
-                                      border: Border.all(
-                                          color: Colors.grey.shade300,
-                                          width: 1),
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.search_off_rounded,
-                                          size: 48,
-                                          color: Colors.grey.shade400,
-                                        ),
-                                        const SizedBox(height: 16),
-                                        Text(
-                                          'No dining spots nearby',
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w700,
-                                            color: Colors.grey.shade800,
-                                            fontFamily:
-                                                GoogleFonts.plusJakartaSans()
-                                                    .fontFamily,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          'Try adjusting your filters\nor exploring a different area.',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey.shade600,
-                                            height: 1.4,
-                                            fontFamily:
-                                                GoogleFonts.plusJakartaSans()
-                                                    .fontFamily,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }
-
+                            ),
+                            const SizedBox(height: 11),
+                            Obx(() {
+                              if (isLoading.value) {
                                 return Column(
                                   children: [
                                     SizedBox(
                                       height: 225,
-                                      child: ListView(
-                                        scrollDirection: Axis.horizontal,
-                                        padding: const EdgeInsets.only(
-                                            left: 16, right: 4),
-                                        children: cachedRestaurants
-                                            .take(4)
-                                            .map((restaurant) =>
-                                                buildRestaurantCard(restaurant))
-                                            .toList(),
-                                      ),
+                                      child: _buildShimmer(),
                                     ),
-                                    const SizedBox(height: 24),
-                                    Align(
-                                      alignment: Alignment.center,
-                                      child: CustomButton(
-                                        width: 84,
-                                        height: 36,
-                                        radius: BorderRadius.circular(99),
-                                        laBelText: 'See All',
-                                        textColor: Colors.white,
-                                        fontSize: 14 * (5 / 4),
-                                        fontWeight: FontWeight.w500,
-                                        fontFamily:
-                                            GoogleFonts.plusJakartaSans()
-                                                .fontFamily,
-                                        // isPrefixIcon: true,
-                                        // iconWidget: Icon(Icons.restaurant,
-                                        //     color: Colors.white, size: 20),
-                                        ontapp: () {
-                                          _navigateTo(() =>
-                                              SeeAllRestaurantsScreen(
-                                                  fromHome: true));
-                                        },
+                                    if (cachedRestaurants.isNotEmpty) ...[
+                                      const SizedBox(height: 24),
+                                      Align(
+                                        alignment: Alignment.center,
+                                        child: CustomButton(
+                                          width: 84,
+                                          height: 36,
+                                          radius: BorderRadius.circular(99),
+                                          laBelText: 'See All',
+                                          textColor: Colors.white,
+                                          fontSize: 14 * (5 / 4),
+                                          fontWeight: FontWeight.w500,
+                                          fontFamily:
+                                              GoogleFonts.plusJakartaSans()
+                                                  .fontFamily,
+                                          ontapp: () {
+                                            _navigateTo(
+                                              () =>
+                                                  const SeeAllRestaurantsScreen(
+                                                fromHome: true,
+                                              ),
+                                            );
+                                          },
+                                        ),
                                       ),
-                                    ),
+                                    ],
                                   ],
                                 );
-                              }),
-                              const SizedBox(height: 8),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                child: Text(
-                                  'Streams',
-                                  style: TextStyle(
-                                    fontSize: 18 * (5 / 4),
-                                    fontWeight: FontWeight.w900,
-                                    fontFamily: GoogleFonts.plusJakartaSans()
-                                        .fontFamily,
+                              }
+
+                              if (cachedRestaurants.isEmpty) {
+                                return Container(
+                                  height: 225,
+                                  width: double.infinity,
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 16,
                                   ),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Obx(() {
-                                return SizedBox(
-                                  height: 277,
-                                  child: homeLocationCtrl.filteredVideos.isEmpty
-                                      ? const Center(
-                                          child: Text('No videos available'))
-                                      : ListView(
-                                          scrollDirection: Axis.horizontal,
-                                          padding: const EdgeInsets.only(
-                                              left: 16, right: 4),
-                                          children: homeLocationCtrl
-                                              .filteredVideos
-                                              .asMap()
-                                              .entries
-                                              .take(4)
-                                              .map((entry) {
-                                            final index = entry.key;
-                                            final video = entry.value;
-                                            return buildStreamCard(
-                                                video, index);
-                                          }).toList(),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade50,
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(
+                                      color: Colors.grey.shade300,
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.search_off_rounded,
+                                        size: 48,
+                                        color: Colors.grey.shade400,
+                                      ),
+                                      const SizedBox(height: 16),
+                                      Text(
+                                        'No dining spots nearby',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w700,
+                                          color: Colors.grey.shade800,
+                                          fontFamily:
+                                              GoogleFonts.plusJakartaSans()
+                                                  .fontFamily,
                                         ),
-                                );
-                              }),
-                              const SizedBox(height: 24),
-                              Align(
-                                alignment: Alignment.center,
-                                child: CustomButton(
-                                  width: 84,
-                                  height: 36,
-                                  radius: BorderRadius.circular(99),
-                                  laBelText: 'See All',
-                                  textColor: Colors.white,
-                                  fontSize: 14 * (5 / 4),
-                                  fontWeight: FontWeight.w500,
-                                  fontFamily:
-                                      GoogleFonts.plusJakartaSans().fontFamily,
-                                  // isPrefixIcon: true,
-                                  // iconWidget: Icon(Icons.restaurant,
-                                  //     color: Colors.white, size: 20),
-                                  ontapp: () {
-                                    _navigateTo(
-                                        () => VideosListView(fromHome: true));
-                                  },
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                child: Text(
-                                  'Curated for you',
-                                  style: TextStyle(
-                                    fontSize: 18 * (5 / 4),
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: GoogleFonts.plusJakartaSans()
-                                        .fontFamily,
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        'Try adjusting your filters\nor exploring a different area.',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.grey.shade600,
+                                          height: 1.4,
+                                          fontFamily:
+                                              GoogleFonts.plusJakartaSans()
+                                                  .fontFamily,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              StreamBuilder<List<RestaurantModel>>(
-                                stream: filterCtrl.selectedFilters.values
-                                        .any((list) => list.isNotEmpty)
-                                    ? homeLocationCtrl.getFilteredRestaurants()
-                                    : homeLocationCtrl.getAllRestaurants(),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                          ConnectionState.waiting ||
-                                      isLoading.value) {
-                                    return _buildShimmer();
-                                  }
-                                  if (snapshot.hasError) {
-                                    return const Center(
-                                        child:
-                                            Text('Error loading restaurants'));
-                                  }
-                                  if (!snapshot.hasData ||
-                                      snapshot.data!.isEmpty) {
-                                    return const Center(
-                                        child:
-                                            Text('No restaurants available'));
-                                  }
-                                  final restaurants =
-                                      snapshot.data!.take(4).toList();
-                                  Future.wait(restaurants.map((restaurant) =>
-                                      homeLocationCtrl.getOperatingHours(
-                                          restaurant.docID,
-                                          triggerFilterUpdate: false)));
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: restaurants
-                                          .map((restaurant) => Padding(
-                                                padding: const EdgeInsets.only(
-                                                    bottom: 12),
-                                                child: buildExperienceVibeCard(
-                                                    restaurant),
-                                              ))
+                                );
+                              }
+
+                              return Column(
+                                children: [
+                                  SizedBox(
+                                    height: 225,
+                                    child: ListView(
+                                      scrollDirection: Axis.horizontal,
+                                      padding: const EdgeInsets.only(
+                                        left: 16,
+                                        right: 4,
+                                      ),
+                                      children: cachedRestaurants
+                                          .take(4)
+                                          .map(
+                                            (restaurant) =>
+                                                buildRestaurantCard(restaurant),
+                                          )
                                           .toList(),
                                     ),
+                                  ),
+                                  const SizedBox(height: 24),
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: CustomButton(
+                                      width: 84,
+                                      height: 36,
+                                      radius: BorderRadius.circular(99),
+                                      laBelText: 'See All',
+                                      textColor: Colors.white,
+                                      fontSize: 14 * (5 / 4),
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: GoogleFonts.plusJakartaSans()
+                                          .fontFamily,
+                                      // isPrefixIcon: true,
+                                      // iconWidget: Icon(Icons.restaurant,
+                                      //     color: Colors.white, size: 20),
+                                      ontapp: () {
+                                        _navigateTo(
+                                          () => SeeAllRestaurantsScreen(
+                                            fromHome: true,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }),
+                            const SizedBox(height: 8),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
+                              child: Text(
+                                'Streams',
+                                style: TextStyle(
+                                  fontSize: 18 * (5 / 4),
+                                  fontWeight: FontWeight.w900,
+                                  fontFamily:
+                                      GoogleFonts.plusJakartaSans().fontFamily,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Obx(() {
+                              return SizedBox(
+                                height: 277,
+                                child: homeLocationCtrl.filteredVideos.isEmpty
+                                    ? const Center(
+                                        child: Text('No videos available'),
+                                      )
+                                    : ListView(
+                                        scrollDirection: Axis.horizontal,
+                                        padding: const EdgeInsets.only(
+                                          left: 16,
+                                          right: 4,
+                                        ),
+                                        children: homeLocationCtrl
+                                            .filteredVideos
+                                            .asMap()
+                                            .entries
+                                            .take(4)
+                                            .map((entry) {
+                                          final index = entry.key;
+                                          final video = entry.value;
+                                          return buildStreamCard(
+                                            video,
+                                            index,
+                                          );
+                                        }).toList(),
+                                      ),
+                              );
+                            }),
+                            const SizedBox(height: 24),
+                            Align(
+                              alignment: Alignment.center,
+                              child: CustomButton(
+                                width: 84,
+                                height: 36,
+                                radius: BorderRadius.circular(99),
+                                laBelText: 'See All',
+                                textColor: Colors.white,
+                                fontSize: 14 * (5 / 4),
+                                fontWeight: FontWeight.w500,
+                                fontFamily:
+                                    GoogleFonts.plusJakartaSans().fontFamily,
+                                // isPrefixIcon: true,
+                                // iconWidget: Icon(Icons.restaurant,
+                                //     color: Colors.white, size: 20),
+                                ontapp: () {
+                                  _navigateTo(
+                                    () => VideosListView(fromHome: true),
                                   );
                                 },
                               ),
-                              const SizedBox(height: 10),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                child: CustomButton(
-                                  laBelText: 'Events',
-                                  textColor: Colors.white,
-                                  fontSize: 20,
-                                  ontapp: () {
-                                    _navigateTo(() => AllEventsScreen());
-                                  },
+                            ),
+                            const SizedBox(height: 8),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
+                              child: Text(
+                                'Curated for you',
+                                style: TextStyle(
+                                  fontSize: 18 * (5 / 4),
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily:
+                                      GoogleFonts.plusJakartaSans().fontFamily,
                                 ),
                               ),
-                            ],
-                          );
-                        },
-                      ),
+                            ),
+                            const SizedBox(height: 10),
+                            StreamBuilder<List<RestaurantModel>>(
+                              stream: filterCtrl.selectedFilters.values.any(
+                                (list) => list.isNotEmpty,
+                              )
+                                  ? homeLocationCtrl.getFilteredRestaurants()
+                                  : homeLocationCtrl.getAllRestaurants(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                        ConnectionState.waiting ||
+                                    isLoading.value) {
+                                  return _buildShimmer();
+                                }
+                                if (snapshot.hasError) {
+                                  return const Center(
+                                    child: Text('Error loading restaurants'),
+                                  );
+                                }
+                                if (!snapshot.hasData ||
+                                    snapshot.data!.isEmpty) {
+                                  return const Center(
+                                    child: Text('No restaurants available'),
+                                  );
+                                }
+                                final restaurants =
+                                    snapshot.data!.take(4).toList();
+                                Future.wait(
+                                  restaurants.map(
+                                    (restaurant) =>
+                                        homeLocationCtrl.getOperatingHours(
+                                      restaurant.docID,
+                                      triggerFilterUpdate: false,
+                                    ),
+                                  ),
+                                );
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: restaurants
+                                        .map(
+                                          (restaurant) => Padding(
+                                            padding: const EdgeInsets.only(
+                                              bottom: 12,
+                                            ),
+                                            child: buildExperienceVibeCard(
+                                              restaurant,
+                                            ),
+                                          ),
+                                        )
+                                        .toList(),
+                                  ),
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 10),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
+                              child: CustomButton(
+                                laBelText: 'Events',
+                                textColor: Colors.white,
+                                fontSize: 20,
+                                ontapp: () {
+                                  _navigateTo(() => AllEventsScreen());
+                                },
+                              ),
+                            ),
+                          ],
+                        );
+                      }),
                     ),
                   ],
                 ),
@@ -1816,16 +1942,17 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                             child: Row(
                               children: [
                                 Container(
-                                    padding: EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.primaryColor,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Icon(
-                                      Icons.search,
-                                      size: 24,
-                                      color: Colors.white,
-                                    )),
+                                  padding: EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primaryColor,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.search,
+                                    size: 24,
+                                    color: Colors.white,
+                                  ),
+                                ),
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: TextField(
@@ -1836,71 +1963,79 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                       hintText: 'Find places by vibes...',
                                       border: InputBorder.none,
                                       hintStyle: TextStyle(
-                                          fontSize: 17,
-                                          color: Colors.grey[600]),
+                                        fontSize: 17,
+                                        color: Colors.grey[600],
+                                      ),
                                     ),
                                     onChanged: (value) {
                                       // Cancel previous timer
                                       _searchDebounce?.cancel();
                                       // Start new timer for debounce
                                       _searchDebounce = Timer(
-                                          const Duration(milliseconds: 500),
-                                          () {
-                                        homeLocationCtrl.searchQuery.value =
-                                            value;
-                                        homeLocationCtrl
-                                            .applySearchAndFilters();
-                                        isLoading.value = true;
-                                        Future.delayed(
+                                        const Duration(milliseconds: 500),
+                                        () {
+                                          homeLocationCtrl.searchQuery.value =
+                                              value;
+                                          homeLocationCtrl
+                                              .applySearchAndFilters();
+                                          isLoading.value = true;
+                                          Future.delayed(
                                             const Duration(milliseconds: 500),
                                             () {
-                                          isLoading.value = false;
-                                          // Move map to first restaurant if search has results
-                                          if (value.trim().isNotEmpty &&
-                                              cachedRestaurants.isNotEmpty) {
-                                            final firstRestaurant =
-                                                cachedRestaurants.first;
-                                            if (firstRestaurant.latitude !=
-                                                    0.0 &&
-                                                firstRestaurant.longitude !=
-                                                    0.0) {
-                                              _mapController?.animateCamera(
-                                                CameraUpdate.newCameraPosition(
-                                                  CameraPosition(
-                                                    target: LatLng(
-                                                      firstRestaurant.latitude,
-                                                      firstRestaurant.longitude,
+                                              isLoading.value = false;
+                                              // Move map to first restaurant if search has results
+                                              if (value.trim().isNotEmpty &&
+                                                  cachedRestaurants
+                                                      .isNotEmpty) {
+                                                final firstRestaurant =
+                                                    cachedRestaurants.first;
+                                                if (firstRestaurant.latitude !=
+                                                        0.0 &&
+                                                    firstRestaurant.longitude !=
+                                                        0.0) {
+                                                  _mapController?.animateCamera(
+                                                    CameraUpdate
+                                                        .newCameraPosition(
+                                                      CameraPosition(
+                                                        target: LatLng(
+                                                          firstRestaurant
+                                                              .latitude,
+                                                          firstRestaurant
+                                                              .longitude,
+                                                        ),
+                                                        zoom: 15,
+                                                      ),
                                                     ),
-                                                    zoom: 15,
+                                                  );
+                                                }
+                                              } else if (value.trim().isEmpty &&
+                                                  homeLocationCtrl
+                                                          .userPosition.value !=
+                                                      null) {
+                                                // Move map back to user's current position when search is cleared
+                                                _mapController?.animateCamera(
+                                                  CameraUpdate
+                                                      .newCameraPosition(
+                                                    CameraPosition(
+                                                      target: LatLng(
+                                                        homeLocationCtrl
+                                                            .userPosition
+                                                            .value!
+                                                            .latitude,
+                                                        homeLocationCtrl
+                                                            .userPosition
+                                                            .value!
+                                                            .longitude,
+                                                      ),
+                                                      zoom: 14,
+                                                    ),
                                                   ),
-                                                ),
-                                              );
-                                            }
-                                          } else if (value.trim().isEmpty &&
-                                              homeLocationCtrl
-                                                      .userPosition.value !=
-                                                  null) {
-                                            // Move map back to user's current position when search is cleared
-                                            _mapController?.animateCamera(
-                                              CameraUpdate.newCameraPosition(
-                                                CameraPosition(
-                                                  target: LatLng(
-                                                    homeLocationCtrl
-                                                        .userPosition
-                                                        .value!
-                                                        .latitude,
-                                                    homeLocationCtrl
-                                                        .userPosition
-                                                        .value!
-                                                        .longitude,
-                                                  ),
-                                                  zoom: 14,
-                                                ),
-                                              ),
-                                            );
-                                          }
-                                        });
-                                      });
+                                                );
+                                              }
+                                            },
+                                          );
+                                        },
+                                      );
                                     },
                                   ),
                                 ),
@@ -1915,8 +2050,9 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                         width: 65,
                                         decoration: BoxDecoration(
                                           color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
                                         ),
                                       ),
                                       hint: Text(
@@ -1932,37 +2068,43 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                                                   .toString() +
                                               ' mi',
                                       items: homeLocationCtrl.distanceOptions
-                                          .map((ele) => DropdownMenuItem(
-                                                value: ele,
-                                                child: Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(vertical: 8),
-                                                  child: Text(
-                                                    ele,
-                                                    style: const TextStyle(
-                                                        fontSize: 15),
+                                          .map(
+                                            (ele) => DropdownMenuItem(
+                                              value: ele,
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                  vertical: 8,
+                                                ),
+                                                child: Text(
+                                                  ele,
+                                                  style: const TextStyle(
+                                                    fontSize: 15,
                                                   ),
                                                 ),
-                                              ))
+                                              ),
+                                            ),
+                                          )
                                           .toList(),
                                       onChanged: (val) {
                                         if (val == 'All') {
                                           homeLocationCtrl
                                               .selectedDistance.value = 0;
                                         } else {
-                                          homeLocationCtrl
-                                                  .selectedDistance.value =
-                                              int.parse(
-                                                  val!.replaceAll(' mi', ''));
+                                          homeLocationCtrl.selectedDistance
+                                              .value = int.parse(
+                                            val!.replaceAll(' mi', ''),
+                                          );
                                         }
                                         isLoading.value = true;
                                         Future.delayed(
-                                            const Duration(milliseconds: 500),
-                                            () {
-                                          homeLocationCtrl
-                                              .applySearchAndFilters();
-                                          isLoading.value = false;
-                                        });
+                                          const Duration(milliseconds: 500),
+                                          () {
+                                            homeLocationCtrl
+                                                .applySearchAndFilters();
+                                            isLoading.value = false;
+                                          },
+                                        );
                                       },
                                     ),
                                   ),
@@ -1972,9 +2114,7 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                           ),
                         ),
                       ),
-                      SizedBox(
-                        width: 12,
-                      ),
+                      SizedBox(width: 12),
                       GestureDetector(
                         onTap: () {
                           _scaffoldKey.currentState?.openEndDrawer();
@@ -1983,13 +2123,12 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                           height: 56,
                           width: 56,
                           decoration: BoxDecoration(
-                              shape: BoxShape.circle, color: Colors.white),
-                          child: Icon(
-                            Icons.menu,
-                            size: 30,
+                            shape: BoxShape.circle,
+                            color: Colors.white,
                           ),
+                          child: Icon(Icons.menu, size: 30),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -2247,130 +2386,142 @@ class _HomeScreenNewState extends State<HomeScreenNew>
                             return const SizedBox.shrink();
                           }
 
-                          final stackPosition =
-                              stackRenderBox.localToGlobal(Offset.zero);
+                          final stackPosition = stackRenderBox.localToGlobal(
+                            Offset.zero,
+                          );
                           final relativeLeft = position.dx - stackPosition.dx;
                           final relativeTop = position.dy - stackPosition.dy;
 
                           return Positioned(
-                              top: relativeTop + size.height + 8,
-                              left: relativeLeft,
-                              child: InkWell(
-                                onTap: () {
-                                  log("tapped the filter");
-                                },
-                                child: Material(
-                                  elevation: 8,
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: Container(
-                                    width: 150,
-                                    height: dropdownHeight < 190
-                                        ? dropdownHeight
-                                        : 190,
-                                    padding:
-                                        const EdgeInsets.fromLTRB(8, 8, 8, 16),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(12),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black
-                                              .withValues(alpha: 0.1),
-                                          blurRadius: 10,
-                                          spreadRadius: 2,
+                            top: relativeTop + size.height + 8,
+                            left: relativeLeft,
+                            child: InkWell(
+                              onTap: () {
+                                log("tapped the filter");
+                              },
+                              child: Material(
+                                elevation: 8,
+                                borderRadius: BorderRadius.circular(12),
+                                child: Container(
+                                  width: 150,
+                                  height: dropdownHeight < 190
+                                      ? dropdownHeight
+                                      : 190,
+                                  padding: const EdgeInsets.fromLTRB(
+                                    8,
+                                    8,
+                                    8,
+                                    16,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(12),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(
+                                          alpha: 0.1,
                                         ),
-                                      ],
-                                    ),
-                                    child: SingleChildScrollView(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: (filterCtrl
-                                                    .filterOptions[category] ??
-                                                [])
-                                            .map((option) => InkWell(
-                                                  onTap: () {
-                                                    final selectedList =
-                                                        filterCtrl.selectedFilters[
-                                                                category] ??
-                                                            <String>[].obs;
-                                                    if (selectedList
-                                                        .contains(option)) {
-                                                      selectedList
-                                                          .remove(option);
-                                                    } else {
-                                                      selectedList.add(option);
-                                                    }
+                                        blurRadius: 10,
+                                        spreadRadius: 2,
+                                      ),
+                                    ],
+                                  ),
+                                  child: SingleChildScrollView(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: (filterCtrl
+                                                  .filterOptions[category] ??
+                                              [])
+                                          .map(
+                                            (option) => InkWell(
+                                              onTap: () {
+                                                final selectedList =
                                                     filterCtrl.selectedFilters[
-                                                            category] =
-                                                        selectedList;
-                                                    filterCtrl.selectedFilters
-                                                        .refresh();
-                                                    showFilterDropdowns[
-                                                        category] = false;
-                                                    showFilterDropdowns
-                                                        .refresh();
-                                                    isLoading.value = true;
-                                                    Future.delayed(
-                                                        const Duration(
-                                                            milliseconds: 500),
-                                                        () {
-                                                      homeLocationCtrl
-                                                          .applySearchAndFilters();
-                                                      isLoading.value = false;
-                                                    });
+                                                            category] ??
+                                                        <String>[].obs;
+                                                if (selectedList.contains(
+                                                  option,
+                                                )) {
+                                                  selectedList.remove(option);
+                                                } else {
+                                                  selectedList.add(option);
+                                                }
+                                                filterCtrl.selectedFilters[
+                                                    category] = selectedList;
+                                                filterCtrl.selectedFilters
+                                                    .refresh();
+                                                showFilterDropdowns[category] =
+                                                    false;
+                                                showFilterDropdowns.refresh();
+                                                isLoading.value = true;
+                                                Future.delayed(
+                                                  const Duration(
+                                                    milliseconds: 500,
+                                                  ),
+                                                  () {
+                                                    homeLocationCtrl
+                                                        .applySearchAndFilters();
+                                                    isLoading.value = false;
                                                   },
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(vertical: 8),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
+                                                );
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                  vertical: 8,
+                                                ),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Row(
                                                       children: [
-                                                        Row(
-                                                          children: [
-                                                            Text(
-                                                              emojiMap[
-                                                                      option] ??
-                                                                  '',
-                                                              style:
-                                                                  const TextStyle(
-                                                                      fontSize:
-                                                                          17),
-                                                            ),
-                                                            const SizedBox(
-                                                                width: 4),
-                                                            Text(
-                                                              option,
-                                                              style:
-                                                                  const TextStyle(
-                                                                      fontSize:
-                                                                          17),
-                                                            ),
-                                                          ],
+                                                        Text(
+                                                          emojiMap[option] ??
+                                                              '',
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 17,
+                                                          ),
                                                         ),
-                                                        if (filterCtrl
-                                                                .selectedFilters[
-                                                                    category]
-                                                                ?.contains(
-                                                                    option) ??
-                                                            false)
-                                                          const Icon(
-                                                              Icons.check,
-                                                              color:
-                                                                  Colors.green,
-                                                              size: 16),
+                                                        const SizedBox(
+                                                          width: 4,
+                                                        ),
+                                                        Text(
+                                                          option,
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 17,
+                                                          ),
+                                                        ),
                                                       ],
                                                     ),
-                                                  ),
-                                                ))
-                                            .toList(),
-                                      ),
+                                                    if (filterCtrl
+                                                            .selectedFilters[
+                                                                category]
+                                                            ?.contains(
+                                                          option,
+                                                        ) ??
+                                                        false)
+                                                      const Icon(
+                                                        Icons.check,
+                                                        color: Colors.green,
+                                                        size: 16,
+                                                      ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                          .toList(),
                                     ),
                                   ),
                                 ),
-                              ));
+                              ),
+                            ),
+                          );
                         }
                         return const SizedBox.shrink();
                       });
@@ -2431,30 +2582,31 @@ class FilterOptionsSheet extends StatelessWidget {
               style: const TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-            Obx(() => Column(
-                  children: (ctrl.filterOptions[category] ?? []).map((option) {
-                    final isSelected =
-                        ctrl.selectedFilters[category]?.contains(option) ??
-                            false;
-                    return InkWell(
-                        onTap: () {
-                          log("tapped -->${option}");
-                          final selectedList =
-                              ctrl.selectedFilters[category] ?? <String>[].obs;
-                          if (isSelected) {
-                            selectedList.remove(option);
-                          } else {
-                            selectedList.add(option);
-                          }
-                          ctrl.selectedFilters[category] = selectedList;
-                          ctrl.selectedFilters.refresh();
-                          Navigator.pop(context);
-                          homeScreenState.isLoading.value = true;
-                        },
-                        child:
-                            filterOptionWidget(option, isSelected: isSelected));
-                  }).toList(),
-                )),
+            Obx(
+              () => Column(
+                children: (ctrl.filterOptions[category] ?? []).map((option) {
+                  final isSelected =
+                      ctrl.selectedFilters[category]?.contains(option) ?? false;
+                  return InkWell(
+                    onTap: () {
+                      log("tapped -->${option}");
+                      final selectedList =
+                          ctrl.selectedFilters[category] ?? <String>[].obs;
+                      if (isSelected) {
+                        selectedList.remove(option);
+                      } else {
+                        selectedList.add(option);
+                      }
+                      ctrl.selectedFilters[category] = selectedList;
+                      ctrl.selectedFilters.refresh();
+                      Navigator.pop(context);
+                      homeScreenState.isLoading.value = true;
+                    },
+                    child: filterOptionWidget(option, isSelected: isSelected),
+                  );
+                }).toList(),
+              ),
+            ),
           ],
         ),
       ),
@@ -2475,10 +2627,7 @@ class FilterOptionsSheet extends StatelessWidget {
                 style: const TextStyle(fontSize: 17),
               ),
               const SizedBox(width: 4),
-              Text(
-                option,
-                style: const TextStyle(fontSize: 17),
-              ),
+              Text(option, style: const TextStyle(fontSize: 17)),
             ],
           ),
           if (isSelected)

@@ -12,7 +12,7 @@ import 'package:kaistable_website/screens/auth_screens/signup/signup_screen.dart
 import 'package:kaistable_website/screens/change_pass/changePassword_dialoge.dart';
 import 'package:kaistable_website/screens/app_info/contact_us/contact_us.dart';
 import 'package:kaistable_website/screens/edit_profile/edit_profile_page.dart';
-import 'package:kaistable_website/screens/general_preferences/screens_general/preference_1.dart';
+import 'package:kaistable_website/screens/general_preferences/screens_general/preference_overview.dart';
 import 'package:kaistable_website/screens/nav_bar/widgets/custom_button.dart';
 import 'package:kaistable_website/screens/nav_bar/widgets/saved_Resturant.dart';
 
@@ -23,27 +23,6 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // List<String> iconPaths = [
-    //   'assets/images/oui_app-saved-objects.png'
-    //   'assets/images/change_pass.png',
-    //   'assets/images/terms_condition-icon.png',
-    //   'assets/images/terms_condition-icon.png',
-    //   'assets/images/privacy_img.png',
-    //   'assets/images/about_img.png',
-    //   'assets/images/contact_us_img.png',
-    //   'assets/images/privacy_img.png',
-    // ];
-    // List<String> tilesNames = [
-    //   'Saved',
-    //   'Change Password',
-    //   'Change preferences',
-    //   'Terms and conditions',
-    //   'Privacy policy',
-    //   'About app',
-    //   'Contact us',
-    //   'Delete Account'
-    // ];
-
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
@@ -215,7 +194,10 @@ class ProfileScreen extends StatelessWidget {
                 children: [
                   profileListTile(0, context,
                       'assets/images/oui_app-saved-objects.png', 'Saved'),
-                  auth.currentUser == null || currentUserDataModel == null
+                  auth.currentUser == null ||
+                          currentUserDataModel == null ||
+                          auth.currentUser?.providerData.contains('password') !=
+                              true
                       ? const SizedBox()
                       : profileListTile(
                           1,
@@ -385,9 +367,7 @@ profileListTile(
           changePasswordDialogBox();
           break;
         case 2:
-          Get.to(Preference1(
-            isComeFromSetting: true,
-          ));
+          Get.to(() => PreferenceOverviewScreen());
           break;
         case 3:
           Get.to(TermsAndCondition());

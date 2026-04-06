@@ -11,10 +11,10 @@ import '../controller/generalPreferences_Controller.dart';
 import '../widget/preferencesSelectionWidget.dart';
 
 class Preference1 extends StatelessWidget {
-  Preference1({super.key, this.isComeFromSetting});
+  Preference1({super.key, this.isSequential = true});
 
   final controller = Get.put(GeneralPreferencesController());
-  bool? isComeFromSetting;
+  final bool isSequential;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class Preference1 extends StatelessWidget {
         ),
         centerTitle: true,
         automaticallyImplyLeading: false,
-        leading: isComeFromSetting != true
+        leading: isSequential
             ? null
             : Padding(
                 padding: const EdgeInsets.all(12.0),
@@ -41,7 +41,7 @@ class Preference1 extends StatelessWidget {
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 0.1),
                         spreadRadius: 1,
                         blurRadius: 3,
                         offset: const Offset(0, 1),
@@ -179,7 +179,7 @@ class Preference1 extends StatelessWidget {
                 ),
                 Center(
                   child: CustomButton(
-                    laBelText: 'Next',
+                    laBelText: isSequential ? 'Next' : 'Save',
                     height: 43,
                     width: 190,
                     fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
@@ -221,7 +221,11 @@ class Preference1 extends StatelessWidget {
                         signupController.updateUserData(
                             field: 'topThreeCuisines',
                             entry: controller.selectedPreferences);
-                        Get.to(() => Preference2());
+                        if (isSequential) {
+                          Get.to(() => Preference2());
+                        } else {
+                          Get.back();
+                        }
                       }
                     },
                   ),
